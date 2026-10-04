@@ -637,17 +637,23 @@
   async function vistaCrecimiento() {
     const sem = semanaClave(), todos = lista(K_CREC), actual = todos.find((x) => x.sem === sem);
     const antes = todos.filter((x) => x.sem !== sem).sort((a, b) => b.sem.localeCompare(a.sem)).slice(0, 6);
+    const idAcc = leer(K_ID), accMes = idAcc && idAcc.codigo ? accTodas().filter((x) => x.mes === claveMes()).sort((x, y) => (!!y.esDefault - !!x.esDefault) || (new Date(x.fecha) - new Date(y.fecha))) : null;
+    const cardAccion = idAcc && idAcc.codigo ? `<h2 class="sep">Mi acción de este mes</h2><div class="card item">
+        ${accMes.length ? accMes.map((x) => `<p class="m0"><b>${x.esDefault ? '🌟' : '✚'} ${esc(x.titulo)}</b></p><p class="suave m0t">${x.comoMeFue ? esc(x.comoMeFue.length > 90 ? x.comoMeFue.slice(0, 90) + '…' : x.comoMeFue) : 'Aún no cuentas cómo te fue.'}</p>`).join('') : '<p class="suave m0">Este mes todavía no abres la Acción del mes de tu iglesia.</p>'}
+        <button type="button" class="btn sec chico" id="cracc">${accMes.length ? 'Contar cómo me fue' : 'Abrir la Acción del mes'} ›</button></div>` : '';
     $('#pantalla').innerHTML = `${cabecera('Mi crecimiento', 'Vivir lo que aprendemos')}
       <h2>Mi paso de esta semana</h2><p id="msg" role="alert" hidden></p>
       ${actual ? `<div class="card item"><p class="m0"><b>${esc(actual.icono || '🌱')} ${esc(actual.titulo)}</b></p>
           <label for="crnota">¿Cómo te fue con esto? Cuéntalo en pocas palabras.</label><textarea id="crnota" rows="3" maxlength="600" placeholder="Escribe cómo te fue…">${esc(actual.nota || '')}</textarea>
           <button type="button" class="btn chico" id="crsave">✍️ Guardar cómo me fue</button></div>`
         : '<p class="suave">Todavía no elegiste un paso para esta semana. Elige una idea abajo y pruébala con calma: uno pequeño basta.</p>'}
+      ${cardAccion}
       <h2 class="sep">${actual ? 'Cambiar mi paso' : 'Elegir una idea'}</h2>
       <div class="grid">${AREAS.map((a) => activa(a[1], a[2], 'Ideas sencillas para empezar.', a[0])).join('')}</div>
       ${antes.length ? `<h2 class="sep">Mis pasos anteriores</h2>${antes.map((x) => `<div class="card item"><p class="m0"><b>${esc(x.icono || '🌱')} ${esc(x.titulo)}</b></p><p class="suave m0">Semana ${esc(x.sem.replace('-S', ' · S'))}</p>${x.nota ? `<p class="m0t">${esc(x.nota)}</p>` : ''}</div>`).join('')}` : ''}`;
     volverA('Vivir lo que aprendemos', vistaVida);
     document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => vistaAreaCrec(b.dataset.ir)));
+    if (cardAccion) $('#cracc').onclick = () => vistaAccion(leer(K_ID));
     if (actual) $('#crsave').onclick = () => {
       const t = $('#crnota').value.trim(); if (!t) return msg('Cuéntanos algo antes de guardar, aunque sea breve.');
       const l = lista(K_CREC); const it = l.find((x) => x.sem === sem); if (it) { it.nota = t.slice(0, 600); guardar(K_CREC, l); msg('Guardado en este teléfono.', true); }
