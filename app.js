@@ -151,9 +151,9 @@
       <h2 class="sep">Pedir ayuda</h2>
       <div class="grid">${activa('🙏', 'Pedir oración', 'Cuéntale a tu pastor por qué orar.', 'oracion')}${activa('🤝', 'Pedir visita', 'Pide que tu pastor te visite.', 'visita')}</div>
       <h2 class="sep">Vivir con mi iglesia</h2>
-      <div class="grid">${activa('🧱', 'Muro', 'Peticiones que tu pastor compartió, para orar juntos.', 'muro')}${pronto('🌟', 'Acción del mes', 'Lo que viviremos juntos este mes.')}</div>
+      <div class="grid">${activa('🧱', 'Muro', 'Peticiones que tu pastor compartió, para orar juntos.', 'muro')}${activa('🌟', 'Acción del mes', 'Lo que viviremos juntos este mes.', 'accion')}</div>
       <button id="salir" class="btn sec sep28">Salir de mi iglesia</button>`;
-    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => (b.dataset.ir === 'oracion' ? vistaOracion(id) : b.dataset.ir === 'muro' ? vistaMuro(id) : vistaVisita(id))));
+    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ oracion: vistaOracion, muro: vistaMuro, accion: vistaAccion, visita: vistaVisita }[b.dataset.ir] || vistaVisita)(id)));
     $('#salir').onclick = async () => {
       if (!confirm('¿Salir de esta iglesia? Se borrará tu nombre en la iglesia y en este teléfono.')) return;
       await rpc('miembro_eliminar', { p_codigo: id.codigo, p_clave: id.clave });
@@ -208,7 +208,18 @@
     if (!l.length) { caja.innerHTML = '<p class="suave">Todavía no has enviado ninguna petición.</p>'; return; }
     caja.innerHTML = l.map((p) => `<div class="card item"><p>${esc(p.texto)}</p>
       <p class="suave m0">${esc(fecha(p.creado_en))}${p.tipo && TIPOS_ORACION[p.tipo] ? ' · ' + esc(TIPOS_ORACION[p.tipo]) : ''} · ${p.publica ? 'Toda mi iglesia' : 'Solo mi pastor'} · <b>${p.respondida ? '🎉 Dios respondió' : p.estado === 'vista' ? '✅ Tu pastor ya la vio' : '📨 Enviada'}</b></p>
-      <button type="button" class="btn sec chico" data-borrar="${esc(p.id)}">🗑️ Borrar</button></div>`).join('');
+      ${p.aprobada ? `<button type="button" class="btn sec chico" data-contestada="${esc(p.id)}" data-valor="${p.respondida ? '0' : '1'}">${p.respondida ? 'Quitar «contestada»' : '🎉 Marcar como contestada'}</button>` : ''}
+      <button type="button" class="btn sec chico" data-borrar="${esc(p.id)}">🗑️ Borrar</button>
+      ${p.respondida && p.respuesta !== undefined ? `<div class="respuesta"><label for="resp_${esc(p.id)}"><b>🎉 Cómo respondió Dios</b> <span class="suave">(solo lo ves tú)</span></label><textarea id="resp_${esc(p.id)}" rows="2" maxlength="400" placeholder="Si quieres, escribe aquí cómo viste la respuesta.">${esc(p.respuesta || '')}</textarea><button type="button" class="btn sec chico" data-guardarresp="${esc(p.id)}">Guardar</button></div>` : ''}</div>`).join('');
+    caja.querySelectorAll('[data-contestada]').forEach((b) => b.addEventListener('click', async () => {
+      const rr = await rpcRaw('peticion_respondida', { p_codigo: id.codigo, p_clave: id.clave, p_id: b.dataset.contestada, p_valor: b.dataset.valor === '1' });
+      if (!rr.ok) return msg(errTxt(rr.error)); msg(''); oracionesMias(id);
+    }));
+    caja.querySelectorAll('[data-guardarresp]').forEach((b) => b.addEventListener('click', async () => {
+      const t = $('#resp_' + b.dataset.guardarresp);
+      const rg = await rpcRaw('peticion_respuesta', { p_codigo: id.codigo, p_clave: id.clave, p_id: b.dataset.guardarresp, p_texto: t ? t.value : '' });
+      if (!rg.ok || primera(rg.data) === false) return msg(errTxt(rg.error || 'error')); msg('Guardado.', true);
+    }));
     caja.querySelectorAll('[data-borrar]').forEach((b) => b.addEventListener('click', async () => {
       if (!confirm('¿Borrar esta petición? Tu pastor ya no podrá verla en la app.')) return;
       const rb = await rpcRaw('peticion_borrar', { p_codigo: id.codigo, p_clave: id.clave, p_id: b.dataset.borrar });
@@ -253,6 +264,82 @@
     if (!r.ok || n < 0) { muroPintar(b, yoAntes, nAntes); msg(r.ok ? 'Esta petición ya no está en el muro.' : errTxt(r.error)); }
     else if (Number.isFinite(n)) muroPintar(b, quiere, n);   // el numero real que devolvio el servidor
     b.disabled = false;
+  }
+
+  // ---------- Acción del mes (MOV2d) ----------
+  // Igual que accion-mes.js del escritorio: el tema lo define el pastor (accion_mes_iglesia_leer); si no hay,
+  // se usa el catalogo general de 12 meses (accion_mes.json). Mis acciones y "como me fue" quedan SOLO en este
+  // telefono (sin cuenta); la copia al diario personal llega cuando exista "Mi crecimiento" en el movil.
+  const K_ACC = 'tb_movil_accion_mes', K_ACCIG = 'tb_movil_accion_iglesia';
+  const claveMes = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); };
+  const accTodas = () => { const l = leer(K_ACC); return Array.isArray(l) ? l : []; };
+  const accGuardar = (l) => guardar(K_ACC, l.slice(-200));
+  async function temaDelMes(id) {
+    const r = await rpcRaw('accion_mes_iglesia_leer', { p_codigo: id.codigo });
+    if (r.ok) {
+      const f = primera(r.data);
+      if (f && f.tema) { const t = { tema: f.tema, descripcion: f.descripcion || '', referencia: f.referencia || '', formas: f.formas || [], iglesia: true }; guardar(K_ACCIG, t); return t; }
+      borrar(K_ACCIG);   // el pastor no tiene una definida: manda el catalogo general
+    } else { const copia = leer(K_ACCIG); if (copia && copia.tema) return copia; }   // sin internet: la ultima copia
+    try {
+      const res = await fetch('accion_mes.json'); const cat = await res.json();
+      const m = cat && cat[String(new Date().getMonth() + 1)];
+      return m ? { tema: m.tema, descripcion: m.descripcion || '', referencia: m.referencia || '', formas: m.formas || [], iglesia: false } : null;
+    } catch (e) { return null; }
+  }
+  function vistaAccion(id) {
+    $('#pantalla').innerHTML = `${volver()}<h1>Acción del mes</h1><div class="filete"></div>
+      <div id="amtema"><p class="suave">Cargando…</p></div>
+      <h2 class="sep">Mis acciones de este mes</h2>
+      <p id="msg" role="alert" hidden></p>
+      <div id="amlista" aria-live="polite"></div>
+      <button type="button" id="amagregar" class="btn sec" hidden>+ Agregar otra acción</button>
+      <div id="amform" hidden>
+        <label for="amnuevo">Ponle un título corto a tu acción</label>
+        <input id="amnuevo" type="text" maxlength="80" placeholder="Ej. Visitar a una vecina">
+        <button type="button" id="amok" class="btn">Guardar acción</button>
+      </div>`;
+    alVolver();
+    accionCargar(id);
+  }
+  async function accionCargar(id) {
+    const t = await temaDelMes(id); const caja = $('#amtema'); if (!caja) return;
+    if (!t) { caja.innerHTML = `<p class="suave">${esc(errTxt('sin-internet'))}</p>`; return; }
+    const mes = new Date().toLocaleDateString('es-CL', { month: 'long', year: 'numeric' });
+    caja.innerHTML = `<div class="card"><p class="suave m0 mayus">${esc(mes)}${t.iglesia ? ' · 🌟 Esto es lo que vive tu iglesia' : ''}</p>
+      <h2 class="m0t">${esc(t.tema)}</h2><p>${esc(t.descripcion)}</p>
+      ${t.referencia ? `<p class="m0"><b>📖 Para leer:</b> ${esc(t.referencia)}</p>` : ''}
+      ${t.formas.length ? `<h3 class="sep">Formas de vivirla</h3><ul class="formas">${t.formas.map((f) => `<li>${esc(f)}</li>`).join('')}</ul>` : ''}</div>`;
+    // La accion por defecto (vivir el tema del mes) se crea sola, una vez por mes.
+    const clave = claveMes(); let todas = accTodas();
+    if (!todas.some((x) => x.mes === clave && x.esDefault)) { todas.push({ id: 'a' + Date.now().toString(36), mes: clave, titulo: t.tema, comoMeFue: '', esDefault: true, fecha: new Date().toISOString() }); accGuardar(todas); }
+    $('#amagregar').hidden = false;
+    $('#amagregar').onclick = () => { const f = $('#amform'); f.hidden = !f.hidden; if (!f.hidden) $('#amnuevo').focus(); };
+    $('#amok').onclick = () => {
+      const titulo = $('#amnuevo').value.trim();
+      if (!titulo) return msg('Ponle un título corto a tu acción para poder guardarla.');
+      const l = accTodas(); l.push({ id: 'a' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5), mes: claveMes(), titulo: titulo.slice(0, 80), comoMeFue: '', esDefault: false, fecha: new Date().toISOString() });
+      accGuardar(l); $('#amnuevo').value = ''; $('#amform').hidden = true; msg(''); accionPintar();
+    };
+    accionPintar();
+  }
+  function accionPintar() {
+    const caja = $('#amlista'); if (!caja) return;
+    const mias = accTodas().filter((x) => x.mes === claveMes()).sort((a, b) => (!!b.esDefault - !!a.esDefault) || (new Date(a.fecha) - new Date(b.fecha)));
+    caja.innerHTML = mias.map((a) => `<div class="card item"><div class="fila"><b>${a.esDefault ? '🌟 ' : '✚ '}${esc(a.titulo)}</b>${a.esDefault ? '' : `<button type="button" class="btn sec chico" data-amdel="${esc(a.id)}" aria-label="Eliminar acción">🗑️</button>`}</div>
+      <label class="suave" for="amt_${esc(a.id)}">¿Cómo te fue con esto? Cuéntalo en pocas palabras.</label>
+      <textarea id="amt_${esc(a.id)}" rows="3" maxlength="600" placeholder="Escribe cómo te fue…">${esc(a.comoMeFue || '')}</textarea>
+      <button type="button" class="btn chico" data-amsave="${esc(a.id)}">✍️ Guardar cómo me fue</button></div>`).join('');
+    caja.querySelectorAll('[data-amsave]').forEach((b) => b.addEventListener('click', () => {
+      const texto = ($('#amt_' + b.dataset.amsave).value || '').trim();
+      if (!texto) return msg('Cuéntanos algo antes de guardar, aunque sea breve.');
+      const l = accTodas(); const it = l.find((x) => x.id === b.dataset.amsave); if (!it) return;
+      it.comoMeFue = texto.slice(0, 600); accGuardar(l); msg('Guardado en este teléfono.', true);
+    }));
+    caja.querySelectorAll('[data-amdel]').forEach((b) => b.addEventListener('click', () => {
+      if (!confirm('¿Eliminar esta acción?')) return;
+      accGuardar(accTodas().filter((x) => x.id !== b.dataset.amdel)); msg(''); accionPintar();
+    }));
   }
 
   // ---------- Pedir visita (MOV2b) ----------
@@ -334,9 +421,91 @@
     };
   }
 
+  // ---------- Palabra (MOV3): Biblia RV1909 por libro + versiculo de hoy ----------
+  // Los libros viven en biblia/<COD>.json (herramientas/generar-biblia-movil.js). Se bajan de a uno y quedan
+  // guardados por el service worker: lo que ya leiste abre sin internet.
+  const LIBROS = [['GEN','Génesis',50],['EXO','Éxodo',40],['LEV','Levítico',27],['NUM','Números',36],['DEU','Deuteronomio',34],['JOS','Josué',24],['JDG','Jueces',21],['RUT','Rut',4],['1SA','1 Samuel',31],['2SA','2 Samuel',24],['1KI','1 Reyes',22],['2KI','2 Reyes',25],['1CH','1 Crónicas',29],['2CH','2 Crónicas',36],['EZR','Esdras',10],['NEH','Nehemías',13],['EST','Ester',10],['JOB','Job',42],['PSA','Salmos',150],['PRO','Proverbios',31],['ECC','Eclesiastés',12],['SNG','Cantares',8],['ISA','Isaías',66],['JER','Jeremías',52],['LAM','Lamentaciones',5],['EZK','Ezequiel',48],['DAN','Daniel',12],['HOS','Oseas',14],['JOL','Joel',3],['AMO','Amós',9],['OBA','Abdías',1],['JON','Jonás',4],['MIC','Miqueas',7],['NAM','Nahúm',3],['HAB','Habacuc',3],['ZEP','Sofonías',3],['HAG','Hageo',2],['ZEC','Zacarías',14],['MAL','Malaquías',4],['MAT','Mateo',28],['MRK','Marcos',16],['LUK','Lucas',24],['JHN','Juan',21],['ACT','Hechos',28],['ROM','Romanos',16],['1CO','1 Corintios',16],['2CO','2 Corintios',13],['GAL','Gálatas',6],['EPH','Efesios',6],['PHP','Filipenses',4],['COL','Colosenses',4],['1TH','1 Tesalonicenses',5],['2TH','2 Tesalonicenses',3],['1TI','1 Timoteo',6],['2TI','2 Timoteo',4],['TIT','Tito',3],['PHM','Filemón',1],['HEB','Hebreos',13],['JAS','Santiago',5],['1PE','1 Pedro',5],['2PE','2 Pedro',3],['1JN','1 Juan',5],['2JN','2 Juan',1],['3JN','3 Juan',1],['JUD','Judas',1],['REV','Apocalipsis',22]];
+  const K_BIB = 'tb_movil_biblia_ultimo', K_BIBTAM = 'tb_movil_biblia_tam';
+  const libroInfo = (cod) => LIBROS.find((l) => l[0] === cod);
+  const bibCache = {};
+  async function libroCargar(cod) {
+    if (bibCache[cod]) return bibCache[cod];
+    const r = await fetch('biblia/' + cod + '.json'); if (!r.ok) throw new Error('http ' + r.status);
+    const d = await r.json(); if (!Array.isArray(d)) throw new Error('formato'); return (bibCache[cod] = d);
+  }
+  const SIN_LIBRO = 'No pudimos abrir este libro. Revisa tu internet: lo que ya leíste antes se abre sin conexión.';
   function vistaPalabra() {
+    const ult = leer(K_BIB), inf = ult && libroInfo(ult.cod);
     $('#pantalla').innerHTML = `<h1>Palabra</h1><div class="filete"></div>
-      <div class="grid">${pronto('📖', 'Leer la Biblia', 'Capítulos para leer en el celular, aun sin internet.')}${pronto('✨', 'Versículo de hoy', 'Una frase para empezar el día.')}</div>`;
+      <div class="grid">${inf ? activa('▶️', 'Seguir leyendo', esc(inf[1]) + ' ' + Number(ult.cap) + ' · donde te quedaste', 'seguir') : ''}${activa('📖', 'Leer la Biblia', 'Reina-Valera 1909. Los libros que lees quedan para leer sin internet.', 'biblia')}${activa('✨', 'Versículo de hoy', 'Una frase para empezar el día.', 'versiculo')}</div>`;
+    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => {
+      const k = b.dataset.ir;
+      if (k === 'biblia') vistaBiblia(); else if (k === 'versiculo') vistaVersiculo(); else if (k === 'seguir' && inf) vistaCapitulo(ult.cod, Number(ult.cap));
+    }));
+  }
+  const volverA = (txt, fn) => { const b = $('#volver'); if (b) { b.textContent = '‹ ' + txt; b.onclick = fn; } };
+  function vistaBiblia() {
+    const fila = (l) => `<button type="button" class="libro" data-libro="${l[0]}">${esc(l[1])}</button>`;
+    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ Palabra</button><h1>Biblia</h1><div class="filete"></div>
+      <h2>Antiguo Testamento</h2><div class="libros">${LIBROS.slice(0, 39).map(fila).join('')}</div>
+      <h2 class="sep">Nuevo Testamento</h2><div class="libros">${LIBROS.slice(39).map(fila).join('')}</div>
+      <p class="suave sep">Reina-Valera 1909 · Dominio público</p>`;
+    volverA('Palabra', vistaPalabra);
+    document.querySelectorAll('[data-libro]').forEach((b) => b.addEventListener('click', () => vistaLibro(b.dataset.libro)));
+  }
+  function vistaLibro(cod) {
+    const inf = libroInfo(cod); if (!inf) return vistaBiblia();
+    let c = ''; for (let i = 1; i <= inf[2]; i++) c += `<button type="button" class="cap" data-cap="${i}">${i}</button>`;
+    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ Biblia</button><h1>${esc(inf[1])}</h1><div class="filete"></div>
+      <p class="suave">${inf[2] === 1 ? 'Tiene un solo capítulo.' : 'Elige un capítulo.'}</p><div class="caps">${c}</div>`;
+    volverA('Biblia', vistaBiblia);
+    document.querySelectorAll('[data-cap]').forEach((b) => b.addEventListener('click', () => vistaCapitulo(cod, Number(b.dataset.cap))));
+  }
+  async function vistaCapitulo(cod, cap) {
+    const inf = libroInfo(cod); if (!inf) return vistaBiblia();
+    cap = Math.min(Math.max(1, Number(cap) || 1), inf[2]);
+    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ ${esc(inf[1])}</button><h1>${esc(inf[1])} ${cap}</h1><div class="filete"></div><p class="suave" id="bibmsg">Cargando…</p>`;
+    volverA(inf[1], () => vistaLibro(cod));
+    let libro; try { libro = await libroCargar(cod); } catch (e) { const m = $('#bibmsg'); if (m) m.textContent = SIN_LIBRO; return; }
+    const versos = libro[cap - 1]; const m = $('#bibmsg'); if (!versos || !m) return;
+    guardar(K_BIB, { cod, cap });
+    const tam = Math.min(30, Math.max(16, Number(leer(K_BIBTAM)) || 18));
+    const idx = LIBROS.findIndex((l) => l[0] === cod);
+    const ant = cap > 1 ? [cod, cap - 1] : (idx > 0 ? [LIBROS[idx - 1][0], LIBROS[idx - 1][2]] : null);
+    const sig = cap < inf[2] ? [cod, cap + 1] : (idx < LIBROS.length - 1 ? [LIBROS[idx + 1][0], 1] : null);
+    const nombre = (x) => libroInfo(x[0])[1] + ' ' + x[1];
+    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ ${esc(inf[1])}</button><h1>${esc(inf[1])} ${cap}</h1><div class="filete"></div>
+      <div class="tamano" role="group" aria-label="Tamaño de la letra"><button type="button" class="btn sec chico" id="menos" aria-label="Letra más chica">A−</button><button type="button" class="btn sec chico" id="mas" aria-label="Letra más grande">A+</button></div>
+      <div class="lectura" id="lectura" style="font-size:${tam}px">${versos.map((t, i) => `<p class="vers"><sup>${i + 1}</sup> ${esc(t)}</p>`).join('')}</div>
+      <div class="navcap">${ant ? `<button type="button" class="btn sec chico" id="ant">‹ ${esc(nombre(ant))}</button>` : '<span></span>'}${sig ? `<button type="button" class="btn chico" id="sig">${esc(nombre(sig))} ›</button>` : ''}</div>`;
+    volverA(inf[1], () => vistaLibro(cod));
+    const cambiarTam = (d) => { const n = Math.min(30, Math.max(16, (Number(leer(K_BIBTAM)) || 18) + d)); guardar(K_BIBTAM, n); $('#lectura').style.fontSize = n + 'px'; };
+    $('#menos').onclick = () => cambiarTam(-2); $('#mas').onclick = () => cambiarTam(2);
+    if (ant) $('#ant').onclick = () => vistaCapitulo(ant[0], ant[1]);
+    if (sig) $('#sig').onclick = () => vistaCapitulo(sig[0], sig[1]);
+    window.scrollTo(0, 0);
+  }
+  // Una cita distinta cada dia del año (estable durante el dia), las mismas que usa el escritorio.
+  const VERSICULOS = ['JHN.3.16', 'PSA.23.1', 'PHP.4.13', 'JER.29.11', 'ROM.8.28', 'ISA.41.10', 'PRO.3.5', 'PSA.121.1', 'MAT.11.28', 'JOS.1.9', 'PSA.46.1', 'ROM.12.2', 'GAL.5.22', 'MAT.6.33', 'PRO.16.3', 'ISA.40.31', 'PSA.119.105', '1CO.13.4', 'EPH.2.8', 'HEB.11.1', 'JAS.1.5', '1PE.5.7', 'PSA.37.4', 'LAM.3.22', 'MIC.6.8', 'COL.3.23', 'JHN.14.6', 'PSA.27.1', 'MAT.5.16', '2TI.1.7', 'ROM.5.8'];
+  function versiculoDeHoy(hoy) {
+    const dia = Math.floor((hoy - new Date(hoy.getFullYear(), 0, 0)) / 86400000);
+    const [cod, cap, v] = VERSICULOS[dia % VERSICULOS.length].split('.'); return { cod, cap: Number(cap), v: Number(v) };
+  }
+  async function vistaVersiculo() {
+    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ Palabra</button><h1>Versículo de hoy</h1><div class="filete"></div><div id="vhoy"><p class="suave">Cargando…</p></div>`;
+    volverA('Palabra', vistaPalabra);
+    const r = versiculoDeHoy(new Date()), inf = libroInfo(r.cod); let texto = '';
+    try { texto = ((await libroCargar(r.cod))[r.cap - 1] || [])[r.v - 1] || ''; } catch (e) { texto = ''; }
+    const caja = $('#vhoy'); if (!caja) return;
+    if (!texto) { caja.innerHTML = `<div class="card"><p>«Jehová es mi pastor; nada me faltará.»</p><p class="suave m0">Salmos 23:1</p></div><p class="suave">${esc(SIN_LIBRO)}</p>`; return; }
+    const cita = inf[1] + ' ' + r.cap + ':' + r.v;
+    caja.innerHTML = `<div class="card versiculo"><p class="vgrande">«${esc(texto)}»</p><p class="suave m0"><b>${esc(cita)}</b></p></div>
+      <button type="button" class="btn" id="vcomp">Compartir</button><button type="button" class="btn sec" id="vleer">Leer el capítulo</button>`;
+    $('#vleer').onclick = () => vistaCapitulo(r.cod, r.cap);
+    $('#vcomp').onclick = async () => {
+      const t = '«' + texto + '» — ' + cita;
+      try { if (navigator.share) await navigator.share({ text: t }); else { await navigator.clipboard.writeText(t); $('#vcomp').textContent = 'Copiado ✓'; } } catch (e) { /* se cerro el menu de compartir */ }
+    };
   }
   function vistaVida() {
     $('#pantalla').innerHTML = `<h1>Vivir lo que aprendemos</h1><div class="filete"></div>
