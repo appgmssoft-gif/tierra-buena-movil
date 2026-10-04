@@ -211,7 +211,7 @@
     $('#salir').onclick = async () => {
       if (!confirm('¿Salir de esta iglesia? Se borrará tu nombre en la iglesia y en este teléfono.')) return;
       await rpc('miembro_eliminar', { p_codigo: id.codigo, p_clave: id.clave });
-      borrar(K_ID); borrar(K_SOL); borrar(K_IG); vistaUnirse();
+      borrar(K_ID); borrar(K_SOL); borrar(K_IG); try { history.replaceState(null, '', location.pathname); } catch (e) { /* nada */ } vistaUnirse();
     };
   }
 
