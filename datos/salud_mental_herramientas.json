@@ -1,0 +1,30 @@
+{
+  "respiracion": {
+    "titulo": "Respirar 1 minuto",
+    "intro": "Siéntate cómodo, suelta los hombros y sigue el círculo. Son 5 rondas: aire por la nariz, pausa corta y soltar despacio por la boca.",
+    "fases": [
+      { "id": "in", "texto": "Toma aire…", "segundos": 4 },
+      { "id": "hold", "texto": "Sostén…", "segundos": 2 },
+      { "id": "out", "texto": "Suelta despacio…", "segundos": 6 }
+    ],
+    "rondas": 5,
+    "fin": "Listo. Si quieres, dedica un momento a orar o agradecer antes de seguir."
+  },
+  "chequeo": {
+    "titulo": "Chequeo emocional (5 preguntas)",
+    "intro": "Piensa en las últimas 2 semanas. No se guarda nada y no hay respuestas buenas ni malas.",
+    "opciones": ["Nada", "Algunos días", "Varios días", "Casi todos los días"],
+    "preguntas": [
+      "¿Te has sentido con poco ánimo o sin ganas de hacer cosas que antes disfrutabas?",
+      "¿Te has sentido nervioso/a, preocupado/a o con la mente que no se detiene?",
+      "¿Has dormido mal (poco, mucho o con sueño interrumpido)?",
+      "¿Te has sentido muy cansado/a o sin energía?",
+      "¿Has sentido que te cuesta acercarte a otras personas o pedir ayuda?"
+    ],
+    "resultados": [
+      { "hasta": 4, "titulo": "Parece un momento tranquilo", "texto": "Sigue cuidando lo que te hace bien: descanso, oración, movimiento y tiempo con personas de confianza. Tu diario de abajo puede ayudarte a notar cambios.", "ayuda": false },
+      { "hasta": 9, "titulo": "Hay cosas que te están pesando", "texto": "Es común. Prueba respirar 1 minuto, descansar mejor y conversar con alguien de confianza (familia, hermano/a, pastor). Si esto sigue varias semanas, considera hablar con un profesional.", "ayuda": false },
+      { "hasta": 15, "titulo": "Estás cargando mucho", "texto": "No tienes que llevarlo solo/a. Te animamos a contárselo hoy a alguien de confianza y a consultar con un profesional de salud.", "ayuda": true }
+    ]
+  }
+}

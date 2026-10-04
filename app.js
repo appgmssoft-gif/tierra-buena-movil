@@ -527,9 +527,9 @@
   };
   function vistaVida() {
     $('#pantalla').innerHTML = `<h1>Vivir lo que aprendemos</h1><div class="filete"></div>
-      <h2>Con Dios y conmigo</h2><div class="grid">${activa('🕊️', 'Mi oración', 'Tu diario de peticiones, solo para ti.', 'mioracion')}${activa('🌱', 'Mi crecimiento', 'Pequeños pasos de cada semana.', 'crecimiento')}</div>
-      <h2 class="sep">Con los demás</h2><div class="grid">${activa('💡', 'Ideas y proyectos', 'Ideas para servir a tu comunidad.', 'ideas')}</div>`;
-    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ mioracion: vistaMiOracion, crecimiento: vistaCrecimiento, ideas: vistaIdeas }[b.dataset.ir] || vistaVida)()));
+      <h2>Con Dios y conmigo</h2><div class="grid">${activa('🕊️', 'Mi oración', 'Tu diario de peticiones, solo para ti.', 'mioracion')}${activa('🌱', 'Mi crecimiento', 'Pequeños pasos de cada semana.', 'crecimiento')}${activa('🧠', 'Salud mental', 'Respirar, un chequeo y dónde pedir ayuda.', 'salud')}</div>
+      <h2 class="sep">Con los demás</h2><div class="grid">${activa('💡', 'Ideas y proyectos', 'Ideas para servir a tu comunidad.', 'ideas')}${activa('🧰', 'Proyectos listos', 'Ya pensados: lugar, presupuesto y personas.', 'proyectos')}</div>`;
+    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ mioracion: vistaMiOracion, crecimiento: vistaCrecimiento, ideas: vistaIdeas, salud: vistaSalud, proyectos: vistaProyectos }[b.dataset.ir] || vistaVida)()));
   }
 
   // --- Mi oración: diario personal (no se envia a nadie) ---
@@ -638,6 +638,92 @@
     const pintar = () => { $('#fav').textContent = marcada() ? '⭐ Quitar de mis ideas' : '☆ Me interesa'; };
     $('#fav').onclick = () => { const l = lista(K_FAV).filter((x) => x !== i.id); if (!marcada()) l.push(i.id); guardar(K_FAV, l); pintar(); };
     pintar();
+  }
+
+  // ---------- Salud mental y Proyectos listos (MOV5) ----------
+  // Textos de datos/salud_mental_*.json y datos/servicio_proyectos_listos.json (copias de src/data/). El chequeo NO se guarda.
+  const telDe = (n) => 'tel:' + String(n).split(',')[0].replace(/[^\d*#]/g, '').replace(/\*/g, '%2A');
+  const lineasAyuda = (a) => `<div class="card ayuda"><p class="m0"><b>🆘 ${esc(a.urgente)}</b></p><ul class="lineas">${(a.lineas || []).map((l) => `<li><a class="btn chico tel" href="${telDe(l.numero)}">📞 ${esc(l.numero)}</a> <b>${esc(l.nombre)}</b><br><span class="suave">${esc(l.detalle)}</span></li>`).join('')}</ul><p class="suave m0">${esc(a.otroPais || '')}</p></div>`;
+  let respSesion = 0;
+  async function vistaSalud() {
+    respSesion++;
+    $('#pantalla').innerHTML = `${cabecera('Salud mental', 'Vivir lo que aprendemos')}<p class="suave" id="smmsg">Cargando…</p>`;
+    volverA('Vivir lo que aprendemos', vistaVida);
+    let q, h; try { q = await datoCargar('salud_mental_que_es'); h = await datoCargar('salud_mental_herramientas'); } catch (e) { q = null; }
+    const m = $('#smmsg'); if (!m) return; if (!q || !h) { m.textContent = SIN_DATOS; return; }
+    $('#pantalla').innerHTML = `${cabecera('Salud mental', 'Vivir lo que aprendemos')}<p class="suave">${esc(q.aviso)}</p>
+      ${lineasAyuda(q.ayuda)}
+      <h2 class="sep">Para cuidarme</h2><div class="grid">${activa('🫁', esc(h.respiracion.titulo), 'Para volver a la calma.', 'respirar')}${activa('📝', esc(h.chequeo.titulo), 'No se guarda nada.', 'chequeo')}</div>
+      <h2 class="sep">Para entender</h2><div class="grid">${q.tarjetas.map((t) => activa(esc(t.icono), esc(t.titulo), esc(t.resumen), 'sm_' + t.id)).join('')}</div>`;
+    volverA('Vivir lo que aprendemos', vistaVida);
+    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => {
+      const k = b.dataset.ir;
+      if (k === 'respirar') vistaRespirar(h.respiracion); else if (k === 'chequeo') vistaChequeo(h.chequeo, q.ayuda);
+      else vistaTarjetaSalud(q.tarjetas.find((t) => 'sm_' + t.id === k), q.ayuda);
+    }));
+  }
+  function vistaTarjetaSalud(t, ayuda) {
+    if (!t) return vistaSalud();
+    $('#pantalla').innerHTML = `${cabecera(t.titulo, 'Salud mental')}<div class="card"><p class="m0t">${esc(t.resumen)}</p><ul class="formas">${(t.puntos || []).map((x) => `<li>${esc(x)}</li>`).join('')}</ul>${t.paraPensar ? `<p class="sep"><b>💭 Para pensar:</b> ${esc(t.paraPensar)}</p>` : ''}</div>${t.mostrarLineas ? lineasAyuda(ayuda) : ''}`;
+    volverA('Salud mental', vistaSalud);
+  }
+  function vistaRespirar(r) {
+    const mi = ++respSesion;
+    $('#pantalla').innerHTML = `${cabecera(r.titulo, 'Salud mental')}<p>${esc(r.intro)}</p>
+      <div class="aro" id="aro" aria-hidden="true"></div><p class="grande" id="rtxt" role="status" aria-live="polite">Cuando quieras, pulsa Empezar.</p><p class="suave" id="rcont"></p>
+      <button type="button" class="btn" id="rini">Empezar</button>`;
+    volverA('Salud mental', () => { respSesion++; vistaSalud(); });
+    $('#rini').onclick = async () => {
+      const yo = ++respSesion; $('#rini').hidden = true;
+      const esperar = (ms) => new Promise((ok) => setTimeout(ok, ms));
+      for (let n = 1; n <= r.rondas; n++) for (const f of r.fases) {
+        const txt = $('#rtxt'), aro = $('#aro'); if (yo !== respSesion || !txt || !aro) return;   // saliste de esta pantalla
+        txt.textContent = f.texto; $('#rcont').textContent = 'Ronda ' + n + ' de ' + r.rondas;
+        aro.style.transitionDuration = f.segundos + 's'; aro.className = 'aro ' + f.id;
+        await esperar(f.segundos * 1000);
+      }
+      if (yo !== respSesion || !$('#rtxt')) return;
+      $('#rtxt').textContent = 'Listo.'; $('#rcont').textContent = r.fin; $('#aro').className = 'aro'; $('#rini').textContent = 'Repetir'; $('#rini').hidden = false;
+    };
+  }
+  function vistaChequeo(c, ayuda) {
+    $('#pantalla').innerHTML = `${cabecera(c.titulo, 'Salud mental')}<p>${esc(c.intro)}</p><p id="msg" role="alert" hidden></p>
+      ${c.preguntas.map((q, i) => `<fieldset class="preg"><legend>${i + 1}. ${esc(q)}</legend>${c.opciones.map((o, j) => `<label class="opc"><input type="radio" name="q${i}" value="${j}"> ${esc(o)}</label>`).join('')}</fieldset>`).join('')}
+      <button type="button" class="btn" id="cver">Ver mi resultado</button><div id="cres" aria-live="polite"></div>`;
+    volverA('Salud mental', vistaSalud);
+    $('#cver').onclick = () => {
+      let total = 0;
+      for (let i = 0; i < c.preguntas.length; i++) { const e = document.querySelector('input[name="q' + i + '"]:checked'); if (!e) return msg('Responde todas las preguntas para ver tu resultado.'); total += Number(e.value) || 0; }
+      msg(''); const res = c.resultados.find((x) => total <= x.hasta) || c.resultados[c.resultados.length - 1];
+      $('#cres').innerHTML = `<div class="card sep"><h2 class="m0">${esc(res.titulo)}</h2><p>${esc(res.texto)}</p><p class="suave m0">Esto orienta, no es un diagnóstico, y no se guardó.</p></div>${res.ayuda ? lineasAyuda(ayuda) : ''}`;
+    };
+  }
+
+  // --- Proyectos listos (ideas ya pensadas: lugar, presupuesto y personas) ---
+  let proyFiltro = 'todas';
+  const LUGARES = { iglesia: 'En la iglesia', publico: 'En un lugar público', casa: 'En casa' };
+  const PRESUPUESTOS = { sin: 'Sin costo', bajo: 'Presupuesto bajo', medio: 'Presupuesto medio' };
+  async function vistaProyectos() {
+    $('#pantalla').innerHTML = `${cabecera('Proyectos listos', 'Vivir lo que aprendemos')}<p class="suave" id="pymsg">Cargando…</p>`;
+    volverA('Vivir lo que aprendemos', vistaVida);
+    let d, cat; try { d = await datoCargar('servicio_proyectos_listos'); cat = await datoCargar('servicio_ideas'); } catch (e) { d = null; }
+    const m = $('#pymsg'); if (!m) return; if (!d || !cat) { m.textContent = SIN_DATOS; return; }
+    const chips = [['todas', '', 'Todos']].concat(cat.categorias.map((c) => [c.id, c.icono, c.label]));
+    const l = d.proyectos.filter((p) => proyFiltro === 'todas' || p.area === proyFiltro);
+    $('#pantalla').innerHTML = `${cabecera('Proyectos listos', 'Vivir lo que aprendemos')}
+      <p class="suave">Ya decidimos el lugar y el presupuesto; solo falta que lo hagas con tu iglesia. Toca uno para verlo.</p>
+      <div class="chips" role="group" aria-label="Filtrar por tema">${chips.map((c) => `<button type="button" class="chip${proyFiltro === c[0] ? ' on' : ''}" data-pfiltro="${esc(c[0])}" aria-pressed="${proyFiltro === c[0]}">${c[1] ? esc(c[1]) + ' ' : ''}${esc(c[2])}</button>`).join('')}</div>
+      ${l.map((p) => `<button type="button" class="card item" data-proy="${esc(p.id)}"><div class="t"><span aria-hidden="true">${esc(p.icono)}</span>${esc(p.titulo)}<span class="flecha" aria-hidden="true">›</span></div><p class="suave m0t">${esc(LUGARES[p.lugar] || p.lugar)} · ${esc(PRESUPUESTOS[p.presupuesto] || p.presupuesto)}</p></button>`).join('')}`;
+    volverA('Vivir lo que aprendemos', vistaVida);
+    document.querySelectorAll('[data-pfiltro]').forEach((b) => b.addEventListener('click', () => { proyFiltro = b.dataset.pfiltro; vistaProyectos(); }));
+    document.querySelectorAll('[data-proy]').forEach((b) => b.addEventListener('click', () => vistaProyecto(d.proyectos.find((p) => p.id === b.dataset.proy))));
+  }
+  function vistaProyecto(p) {
+    if (!p) return vistaProyectos();
+    $('#pantalla').innerHTML = `${cabecera(p.titulo, 'Proyectos listos')}<div class="card"><p class="m0t">${esc(p.resumen)}</p>
+      <p><b>📍 Dónde:</b> ${esc(LUGARES[p.lugar] || p.lugar)}<br><b>💰 Dinero:</b> ${esc(PRESUPUESTOS[p.presupuesto] || p.presupuesto)}<br><b>👥 Personas sugeridas:</b> ${Number(p.personasSugeridas) || ''}</p>
+      ${p.versiculo ? `<p class="suave m0">${esc(p.versiculo)}</p>` : ''}</div>`;
+    volverA('Proyectos listos', vistaProyectos);
   }
 
   // ---------- Navegación ----------

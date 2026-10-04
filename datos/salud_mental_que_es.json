@@ -1,0 +1,85 @@
+{
+    "revisado": "2026-09-21",
+    "aviso": "Esta información orienta: no diagnostica ni reemplaza a un psicólogo, un psiquiatra o un médico.",
+    "tarjetas": [
+        {
+            "id": "que-es",
+            "icono": "🧠",
+            "titulo": "¿Qué es la salud mental?",
+            "resumen": "Es cómo estamos por dentro para vivir el día a día: pensar, sentir, relacionarnos, trabajar y enfrentar las dificultades.",
+            "puntos": [
+                "No es solo «no estar enfermo»: también es poder descansar, disfrutar, trabajar y ayudar a otros.",
+                "No es un estado fijo: sube y baja según la semana, el sueño, los problemas y el apoyo que tenemos.",
+                "Todas las personas tenemos salud mental, igual que todas tenemos salud física; a veces hay que cuidarla más.",
+                "Sentir tristeza, rabia o miedo es normal. No significa que algo ande mal contigo."
+            ],
+            "paraPensar": "Si tuvieras que describir tu ánimo de esta semana en una palabra, ¿cuál sería?"
+        },
+        {
+            "id": "entendernos",
+            "icono": "🪞",
+            "titulo": "Entendernos a nosotros mismos",
+            "resumen": "Ponerle nombre a lo que sentimos ayuda a cuidarlo. Lo que no notamos, no lo podemos atender.",
+            "puntos": [
+                "Mira tu cuerpo: el cansancio, la tensión, los dolores sin causa clara, el sueño y el apetito suelen avisar antes que las palabras.",
+                "Nombra la emoción con más de una palabra: no solo «mal», sino cansado, asustado, dolido, solo o frustrado.",
+                "Pregúntate qué pasó antes y qué necesitas ahora: descanso, hablar con alguien, poner un límite o tomar una decisión.",
+                "Anotar unas líneas cada día en tu diario (aquí abajo) te ayuda a ver patrones con el tiempo."
+            ],
+            "paraPensar": "¿Qué emoción se repite últimamente y qué crees que la trae?"
+        },
+        {
+            "id": "entorno",
+            "icono": "🌍",
+            "titulo": "Mi entorno",
+            "resumen": "No vivimos solos: lo que nos rodea influye en cómo nos sentimos, y nosotros también influimos en ello.",
+            "puntos": [
+                "Lo cercano: la casa, la familia, la pareja, los amigos, el trabajo o los estudios.",
+                "La comunidad: la iglesia, el barrio, los vecinos. Sentirse acompañado protege; la soledad que se alarga pesa.",
+                "Lo más amplio: la situación económica, las noticias, la inseguridad o los cambios del país y del mundo también cansan.",
+                "Distingue lo que sí puedes cambiar (tus horarios, tus límites, con quién conversas) de lo que no. En lo segundo, cuida cuánto te expones."
+            ],
+            "paraPensar": "¿Qué parte de tu entorno te da fuerzas y cuál te deja agotado?"
+        },
+        {
+            "id": "rasgos",
+            "icono": "🧩",
+            "titulo": "Rasgos propios",
+            "resumen": "Cada persona siente, reacciona y se recupera a su manera. Conocer la tuya evita que te compares con otros.",
+            "puntos": [
+                "Hay quienes se recargan con gente y quienes se recargan con silencio; ninguna forma es mejor que la otra.",
+                "Algunas personas sienten todo muy intensamente y otras más despacio. Ambas formas son normales.",
+                "Observa cómo reaccionas ante la presión, los cambios o las críticas, y qué te ayuda a volver a la calma.",
+                "Lo que a otro le sirve puede no servirte a ti: prueba, mira el resultado y quédate con lo que de verdad te ayuda.",
+                "Estos rasgos no son etiquetas ni diagnósticos: son pistas para cuidarte mejor."
+            ],
+            "paraPensar": "¿Qué te recarga a ti y qué te gasta la energía?"
+        },
+        {
+            "id": "ayuda",
+            "icono": "🤝",
+            "titulo": "Cuándo pedir ayuda profesional",
+            "resumen": "Pedir ayuda a tiempo es una forma de cuidado. No es debilidad ni falta de fe.",
+            "puntos": [
+                "Conviene consultar si, por dos semanas o más, hay tristeza o angustia que no ceden, dificultad para dormir (o dormir demasiado), pérdida de interés en lo que antes disfrutabas, aislamiento, o cuesta cumplir con el trabajo o la casa.",
+                "También si hay crisis de pánico, pensamientos que no logras sacarte de la cabeza, consumo de alcohol u otras drogas para aguantar, o cambios fuertes en tu conducta que otros notan.",
+                "Un pastor, un líder o un amigo pueden escuchar y acompañar, pero no reemplazan a un psicólogo o a un médico cuando el malestar es intenso o dura mucho.",
+                "Si acompañas a alguien, tu papel es escuchar y orientar, no diagnosticar: cuando veas estas señales, anímalo a consultar y ofrécete a acompañarlo en ese paso.",
+                "Puedes empezar por tu centro de salud o por un psicólogo o psiquiatra.",
+                "Si piensas en hacerte daño o en quitarte la vida, o si alguien está en peligro, no esperes: pide ayuda ahora."
+            ],
+            "paraPensar": "¿Hay alguien de confianza a quien podrías contarle cómo estás?",
+            "mostrarLineas": true
+        }
+    ],
+    "ayuda": {
+        "pais": "Chile",
+        "urgente": "Si tú o alguien está en peligro ahora, llama al 131 (ambulancia). Si piensas en hacerte daño, llama al *4141: es gratis y atiende las 24 horas.",
+        "lineas": [
+            { "numero": "131", "nombre": "Urgencia médica (SAMU)", "detalle": "Si hay peligro inmediato." },
+            { "numero": "*4141", "nombre": "Línea de prevención del suicidio", "detalle": "Gratuita, atendida por psicólogos, todos los días las 24 horas." },
+            { "numero": "600 360 7777, opción 2", "nombre": "Salud Responde (salud mental)", "detalle": "Orientación y primera ayuda psicológica del Ministerio de Salud." }
+        ],
+        "otroPais": "Si estás fuera de Chile, busca el número de urgencias y la línea de ayuda en salud mental de tu país."
+    }
+}
