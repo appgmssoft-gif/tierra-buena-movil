@@ -18,8 +18,8 @@ p{margin:0 0 12px}.suave{color:var(--suave);font-size:.95rem}
 button.card{width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer}
 button.card:active,.btn:active,.tab:active{transform:scale(.97)}
 label{display:block;font-weight:600;margin:14px 0 6px}
-input[type=text],textarea{width:100%;min-height:48px;font:inherit;font-size:16px;color:var(--tinta);background:var(--tarjeta);border:1px solid var(--linea);border-radius:12px;padding:10px 12px}
-input[type=text]:focus,textarea:focus{outline:2px solid var(--verde);outline-offset:1px}
+input[type=text],input[type=email],input[type=password],textarea{width:100%;min-height:48px;font:inherit;font-size:16px;color:var(--tinta);background:var(--tarjeta);border:1px solid var(--linea);border-radius:12px;padding:10px 12px}
+input[type=text]:focus,input[type=email]:focus,input[type=password]:focus,textarea:focus{outline:2px solid var(--verde);outline-offset:1px}
 .chk{display:flex;gap:12px;align-items:flex-start;margin:12px 0;font-weight:400}
 .chk input{width:26px;height:26px;flex:none;margin-top:2px;accent-color:var(--verde)}
 .btn{display:block;width:100%;min-height:52px;margin-top:16px;font:inherit;font-weight:700;border-radius:14px;border:0;background:var(--verde);color:#fff;padding:12px 18px;cursor:pointer}
@@ -96,3 +96,5 @@ a.btn{display:inline-flex;align-items:center;text-decoration:none;margin-top:0}
 fieldset.preg{border:1px solid var(--linea);border-radius:14px;margin:12px 0;padding:8px 14px}
 fieldset.preg legend{font-weight:700;padding:0 6px}
 .opc{display:flex;gap:12px;align-items:center;min-height:48px}.opc input{width:24px;height:24px;accent-color:var(--verde)}
+
+.enlace{font:inherit;font-weight:600;color:var(--verde);background:none;border:0;padding:6px 2px;min-height:44px;text-decoration:underline;cursor:pointer}

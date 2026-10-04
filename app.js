@@ -1,15 +1,15 @@
 // app.js — F856 (MOV2a): esqueleto de la versión móvil/tablet de Tierra Buena.
 // Reutiliza lo que el escritorio ya decidió para el miembro (docs/PLAN_MI_IGLESIA_MIEMBRO.md):
 // identidad liviana con llave en el dispositivo, solicitud que aprueba el pastor, mismas funciones de Supabase.
-// No usa nada de Electron. Sin cuentas ni contraseñas.
+// No usa nada de Electron. F868-F869: se puede entrar con correo y contraseña (Supabase Auth, igual que el escritorio); sin cuenta sigue valiendo el código + llave.
 (function () {
   'use strict';
   const SUPABASE_URL = 'https://mxgvaspztajgzxfgtxfq.supabase.co';
   // Clave 'anon': pública por diseño (igual que en el escritorio). La seguridad la ponen las funciones/RLS de Supabase.
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14Z3Zhc3B6dGFqZ3p4Zmd0eGZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2ODE5NzcsImV4cCI6MjEwNTI1Nzk3N30.JWk7cBOR-K4adeHcokcZY0B2WcmTDLmEpIsBMQqtFjY';
-  const K_ID = 'tb_movil_identidad', K_SOL = 'tb_movil_solicitud', K_IG = 'tb_movil_iglesia';
+  const K_ID = 'tb_movil_identidad', K_SOL = 'tb_movil_solicitud', K_IG = 'tb_movil_iglesia', K_CUENTA = 'tb_movil_cuenta';
   const SB = (window.supabase && window.supabase.createClient)
-    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } })
+    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } })
     : null;
 
   const MOTIVOS = {
@@ -21,7 +21,15 @@
     'demasiadas-pendientes': 'Esa iglesia tiene muchas solicitudes esperando. Avísale a tu pastor.',
     'ya-es-miembro': 'Ya eres parte de esa iglesia.',
     'llave-invalida': 'Esa llave no funciona. Cópiala completa desde tu otro dispositivo.',
-    'sin-internet': 'Para esto necesitamos internet. Inténtalo de nuevo cuando tengas conexión.'
+    'sin-internet': 'Para esto necesitamos internet. Inténtalo de nuevo cuando tengas conexión.',
+    'correo-invalido': 'Ese correo parece incompleto. Revísalo, por favor.',
+    'clave-corta': 'La contraseña debe tener al menos 8 caracteres.',
+    'claves-distintas': 'Las dos contraseñas son distintas. Vuelve a escribirlas con calma.',
+    credenciales: 'Correo o contraseña incorrectos. Si tu cuenta es del computador y aún no la usas aquí, toca «Crear cuenta» con el mismo correo y contraseña.',
+    'sin-confirmar': 'Falta confirmar tu correo: abre el mensaje que te enviamos y toca el enlace. Después vuelve aquí y entra.',
+    'ya-existe': 'Ese correo ya tiene una cuenta. Toca «Entrar» y escribe tu contraseña.',
+    'clave-debil': 'Esa contraseña es muy fácil de adivinar. Prueba con una más larga o con números y letras.',
+    demasiados: 'Hubo muchos intentos seguidos. Espera unos minutos y vuelve a probar.'
   };
   const $ = (s, r) => (r || document).querySelector(s);
   const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -68,6 +76,182 @@
     return vistaUnirse();
   }
 
+  // ---------- Cuenta con correo y contraseña (F868) ----------
+  // Misma cuenta de Supabase Auth que usa el escritorio. La contraseña se escribe siempre y NUNCA se guarda; en este teléfono
+  // solo queda la sesión (token) hasta «Cerrar sesión». Su iglesia (código + llave) viaja en los datos privados de la cuenta
+  // (user_metadata.tb_iglesia): así, en otro teléfono, basta entrar con el correo y no hay que copiar la llave a mano.
+  const CORREO_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  const MIN_CLAVE = 8;
+  function motivoAuth(e) {
+    const t = String((e && e.message) || ''), st = e && e.status;
+    if (/invalid login|invalid credentials/i.test(t)) return 'credenciales';
+    if (/not confirmed|confirm/i.test(t)) return 'sin-confirmar';
+    if (st === 429 || /rate limit|too many|security purposes/i.test(t)) return 'demasiados';
+    if (/already registered|already been registered/i.test(t)) return 'ya-existe';
+    if (/weak|password should|pwned/i.test(t)) return 'clave-debil';
+    if (/fetch|network|failed to/i.test(t)) return 'sin-internet';
+    return 'otro';
+  }
+  const hayAuth = () => !!(SB && SB.auth);
+  async function cuentaEntrar(correo, clave) {
+    if (!hayAuth()) return { ok: false, motivo: 'sin-internet' };
+    try {
+      const { data, error } = await SB.auth.signInWithPassword({ email: correo, password: clave });
+      if (error) return { ok: false, motivo: motivoAuth(error) };
+      return data && data.user ? { ok: true, user: data.user } : { ok: false, motivo: 'otro' };
+    } catch (e) { return { ok: false, motivo: 'sin-internet' }; }
+  }
+  async function cuentaCrear(correo, clave) {
+    if (!hayAuth()) return { ok: false, motivo: 'sin-internet' };
+    try {
+      const { data, error } = await SB.auth.signUp({ email: correo, password: clave });
+      if (error) return { ok: false, motivo: motivoAuth(error) };
+      const u = data && data.user;
+      if (u && Array.isArray(u.identities) && u.identities.length === 0) return { ok: false, motivo: 'ya-existe' };   // Supabase no revela correos ya usados: llega «vacío»
+      if (data && data.session && u) return { ok: true, user: u };
+      return { ok: true, confirmar: true };                                                                            // la cuenta pide confirmar el correo antes de entrar
+    } catch (e) { return { ok: false, motivo: 'sin-internet' }; }
+  }
+  const iglesiaDeCuenta = (user) => {
+    const m = user && user.user_metadata && user.user_metadata.tb_iglesia;
+    return m && /^[A-Z0-9]{6}$/.test(m.c || '') && /^[0-9a-f]{64}$/.test(m.k || '') ? { codigo: m.c, clave: m.k } : null;
+  };
+  async function iglesiaAcuenta(id) {              // guarda (o borra, si id es null) la iglesia en los datos privados de la cuenta
+    if (!hayAuth() || !leer(K_CUENTA)) return false;
+    try { const { error } = await SB.auth.updateUser({ data: { tb_iglesia: id ? { c: id.codigo, k: id.clave } : null } }); return !error; } catch (e) { return false; }
+  }
+  async function restaurarIglesia(c, k) {          // misma comprobación que «Entrar con mi llave»
+    const v = await rpc('miembro_validar', { p_codigo: c, p_clave: k });
+    if (!v.ok) return { ok: false, motivo: 'sin-internet' };
+    if (!v.data || v.data.valido !== true) return { ok: false, motivo: 'llave-invalida' };
+    const p = await rpc('iglesia_perfil', { p_codigo: c });
+    guardar(K_ID, { codigo: c, nombre: v.data.nombre, clave: k, creadoEn: new Date().toISOString() });
+    guardar(K_IG, { codigo: c, nombre: (p.ok && p.data && p.data.nombre) || null });
+    borrar(K_SOL);
+    return { ok: true };
+  }
+  async function despuesDeCuenta(user) {
+    guardar(K_CUENTA, { correo: user.email || '' });
+    const local = leer(K_ID), enCuenta = iglesiaDeCuenta(user);
+    if (enCuenta && !(local && local.codigo === enCuenta.codigo && local.clave === enCuenta.clave)) {
+      if (local && typeof confirm === 'function' && !confirm('Tu cuenta ya tiene una iglesia guardada. ¿Usarla en lugar de la que está ahora en este teléfono?')) { await iglesiaAcuenta(local); return vistaIglesia(); }
+      const r = await restaurarIglesia(enCuenta.codigo, enCuenta.clave);
+      if (r.ok) return vistaIglesia();
+      if (local) { await iglesiaAcuenta(local); return vistaIglesia(); }
+      return vistaUnirse();                         // la iglesia guardada ya no sirve (por ejemplo, la persona salió de ella)
+    }
+    if (local && !enCuenta) await iglesiaAcuenta(local);
+    return vistaIglesia();
+  }
+  async function cerrarSesionCuenta() {
+    try { if (hayAuth()) await SB.auth.signOut(); } catch (e) { /* sin red: igual se cierra aquí */ }
+    borrar(K_CUENTA); borrar(K_ID); borrar(K_SOL); borrar(K_IG);
+    try { history.replaceState(null, '', location.pathname); } catch (e) { /* nada */ }
+    vistaUnirse();
+  }
+  const cuentaBarra = () => { const c = leer(K_CUENTA); return c ? `<p class="suave" id="cuentaBarra">Sesión iniciada: <b>${esc(c.correo)}</b> · <button type="button" class="enlace" id="cuentaSalir">Cerrar sesión</button></p>` : ''; };
+  function vistaCuenta(modo) {
+    const crear = modo === 'crear';
+    $('#pantalla').innerHTML = `
+      <button type="button" class="volver" id="atras">‹ Entrar</button>
+      <h1>${crear ? 'Crear mi cuenta' : 'Entrar con mi correo'}</h1><div class="filete"></div>
+      <div class="chips" role="group" aria-label="Elegir">
+        <button type="button" class="chip${crear ? '' : ' on'}" data-modo="entrar" aria-pressed="${!crear}">Entrar</button>
+        <button type="button" class="chip${crear ? ' on' : ''}" data-modo="crear" aria-pressed="${crear}">Crear cuenta</button>
+      </div>
+      <p class="suave">${crear ? 'Si ya usas Tierra Buena en el computador, escribe el mismo correo y la misma contraseña.' : 'Usa el correo y la contraseña de tu cuenta.'}</p>
+      <label for="cco">Correo</label>
+      <input id="cco" type="email" autocomplete="email" autocapitalize="off" spellcheck="false" inputmode="email" maxlength="120">
+      <label for="ccl">Contraseña</label>
+      <input id="ccl" type="password" autocomplete="${crear ? 'new-password' : 'current-password'}" maxlength="128">
+      ${crear ? '<label for="ccl2">Repite la contraseña</label><input id="ccl2" type="password" autocomplete="new-password" maxlength="128">' : ''}
+      <p id="err" class="error" role="alert" hidden></p>
+      <p id="msg" class="ok" role="status" hidden></p>
+      <button id="ccgo" class="btn">${crear ? 'Crear mi cuenta' : 'Entrar'}</button>
+      ${crear ? '' : '<p class="m0t"><button type="button" class="enlace" id="ccolvido">¿Olvidaste tu contraseña?</button></p>'}`;
+    $('#atras').onclick = vistaUnirse;
+    const ol = $('#ccolvido'); if (ol) ol.onclick = () => vistaOlvide($('#cco').value.trim());
+    document.querySelectorAll('[data-modo]').forEach((b) => b.addEventListener('click', () => vistaCuenta(b.dataset.modo)));
+    const enviar = async () => {
+      const correo = $('#cco').value.trim().toLowerCase(), clave = $('#ccl').value;
+      error(''); msg('');
+      if (!CORREO_RE.test(correo)) return error(MOTIVOS['correo-invalido']);
+      if (crear && clave.length < MIN_CLAVE) return error(MOTIVOS['clave-corta']);
+      if (!crear && !clave) return error('Escribe tu contraseña para entrar.');
+      if (crear && clave !== $('#ccl2').value) return error(MOTIVOS['claves-distintas']);
+      const b = $('#ccgo'); b.disabled = true; b.textContent = crear ? 'Creando…' : 'Entrando…';
+      const r = crear ? await cuentaCrear(correo, clave) : await cuentaEntrar(correo, clave);
+      b.disabled = false; b.textContent = crear ? 'Crear mi cuenta' : 'Entrar';
+      if (!r.ok) return error(MOTIVOS[r.motivo] || 'No pudimos entrar. Revisa tus datos e inténtalo otra vez.');
+      if (r.confirmar) { $('#ccl').value = ''; if ($('#ccl2')) $('#ccl2').value = ''; return msg('Te enviamos un correo para confirmar tu dirección. Toca el enlace del mensaje y luego vuelve aquí a «Entrar».', true); }
+      $('#ccl').value = ''; if ($('#ccl2')) $('#ccl2').value = '';
+      await despuesDeCuenta(r.user);
+    };
+    $('#ccgo').onclick = enviar;
+    ['#cco', '#ccl', '#ccl2'].forEach((q) => { const e = $(q); if (e && e.addEventListener) e.addEventListener('keydown', (ev) => { if (ev && ev.key === 'Enter') enviar(); }); });
+    $('#cco').focus();
+  }
+
+  // ---------- Olvidé mi contraseña (F869) ----------
+  // Supabase manda un enlace al correo; al tocarlo vuelve a esta página y avisa PASSWORD_RECOVERY: ahí se pide la contraseña nueva.
+  // Requiere en Supabase (Authentication → URL Configuration): «Site URL» = la dirección de esta página (GitHub Pages).
+  const URL_VUELTA = () => { try { return location.origin + location.pathname; } catch (e) { return undefined; } };
+  function vistaOlvide(correo) {
+    $('#pantalla').innerHTML = `
+      <button type="button" class="volver" id="atras">‹ Entrar</button>
+      <h1>Recuperar mi contraseña</h1><div class="filete"></div>
+      <p>Escribe el correo de tu cuenta. Te enviamos un enlace para elegir una contraseña nueva.</p>
+      <label for="cco">Correo</label>
+      <input id="cco" type="email" autocomplete="email" autocapitalize="off" spellcheck="false" inputmode="email" maxlength="120" value="${esc(correo || '')}">
+      <p id="err" class="error" role="alert" hidden></p>
+      <p id="msg" class="ok" role="status" hidden></p>
+      <button id="ccgo" class="btn">Enviarme el enlace</button>`;
+    $('#atras').onclick = () => vistaCuenta('entrar');
+    $('#ccgo').onclick = async () => {
+      const c = $('#cco').value.trim().toLowerCase(); error(''); msg('');
+      if (!CORREO_RE.test(c)) return error(MOTIVOS['correo-invalido']);
+      if (!hayAuth() || !SB.auth.resetPasswordForEmail) return error(MOTIVOS['sin-internet']);
+      const b = $('#ccgo'); b.disabled = true; b.textContent = 'Enviando…';
+      let r; try { r = await SB.auth.resetPasswordForEmail(c, { redirectTo: URL_VUELTA() }); } catch (e) { r = { error: { message: 'Failed to fetch' } }; }
+      b.disabled = false; b.textContent = 'Enviarme el enlace';
+      const m = r && r.error ? motivoAuth(r.error) : '';
+      if (m === 'sin-internet' || m === 'demasiados') return error(MOTIVOS[m]);
+      msg('Si ese correo tiene una cuenta, te enviamos un enlace. Revisa tu bandeja (y la carpeta de spam), tócalo y vuelve aquí.', true);   // misma respuesta exista o no la cuenta
+    };
+    $('#cco').focus();
+  }
+  function vistaNuevaClave() {
+    $('#pantalla').innerHTML = `
+      <h1>Elige tu contraseña nueva</h1><div class="filete"></div>
+      <p class="suave">Mínimo 8 caracteres. Anótala en un lugar seguro.</p>
+      <label for="ccl">Contraseña nueva</label>
+      <input id="ccl" type="password" autocomplete="new-password" maxlength="128">
+      <label for="ccl2">Repite la contraseña</label>
+      <input id="ccl2" type="password" autocomplete="new-password" maxlength="128">
+      <p id="err" class="error" role="alert" hidden></p>
+      <button id="ccgo" class="btn">Guardar contraseña</button>`;
+    $('#ccgo').onclick = async () => {
+      const a = $('#ccl').value; error('');
+      if (a.length < MIN_CLAVE) return error(MOTIVOS['clave-corta']);
+      if (a !== $('#ccl2').value) return error(MOTIVOS['claves-distintas']);
+      const b = $('#ccgo'); b.disabled = true; b.textContent = 'Guardando…';
+      let r; try { r = await SB.auth.updateUser({ password: a }); } catch (e) { r = { error: { message: 'Failed to fetch' } }; }
+      b.disabled = false; b.textContent = 'Guardar contraseña';
+      if (r && r.error) return error(MOTIVOS[motivoAuth(r.error)] || 'No pudimos guardar la contraseña. El enlace pudo haber vencido: pide otro.');
+      $('#ccl').value = ''; $('#ccl2').value = '';
+      try { history.replaceState(null, '', location.pathname); } catch (e) { /* nada */ }
+      if (r && r.data && r.data.user) return despuesDeCuenta(r.data.user);
+      vistaCuenta('entrar');
+    };
+    $('#ccl').focus();
+  }
+  // Enlaces que vuelven del correo (confirmar cuenta o recuperar contraseña).
+  let vinoDeEnlace = false; try { vinoDeEnlace = /access_token=|type=recovery|type=signup/.test(location.hash || ''); } catch (e) { /* nada */ }
+  if (hayAuth() && SB.auth.onAuthStateChange) SB.auth.onAuthStateChange((ev, ses) => {
+    if (ev === 'PASSWORD_RECOVERY') { vinoDeEnlace = false; setTimeout(vistaNuevaClave, 0); return; }
+    if (ev === 'SIGNED_IN' && vinoDeEnlace && ses && ses.user && !leer(K_CUENTA)) { vinoDeEnlace = false; setTimeout(() => { try { history.replaceState(null, '', location.pathname); } catch (e) { /* nada */ } despuesDeCuenta(ses.user); }, 0); }
+  });
+
   // ---------- Entrada (F865): portada con 3 caminos claros + instalar ----------
   let promptInstalar = null;
   if (window.addEventListener) window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); promptInstalar = e; document.querySelectorAll('[data-instalar-box]').forEach(pintarInstalar); });
@@ -94,14 +278,17 @@
     if (codigoDeEnlace()) return vistaCodigo();            // vino de un enlace con el código de su iglesia
     $('#pantalla').innerHTML = `
       <h1>Bienvenido a Tierra Buena</h1><div class="filete"></div>
-      <p>Elige cómo quieres entrar. No necesitas contraseña: tu pastor te acepta y este dispositivo guarda tu llave.</p>
+      <p>Elige cómo quieres entrar. Con tu correo y contraseña tu iglesia te sigue a cualquier teléfono; sin cuenta, tu pastor te acepta y este dispositivo guarda tu llave.</p>
+      ${cuentaBarra()}
       <div class="grid">
+        ${leer(K_CUENTA) ? '' : activa('✉️', 'Entrar con mi correo y contraseña', 'La misma cuenta del computador. Si no tienes, la creas aquí.', 'cuenta')}
         ${activa('⛪', 'Tengo el código de mi iglesia', 'Tu pastor te lo da. Son 6 letras o números.', 'codigo')}
         ${activa('🔑', 'Ya me uní en otro dispositivo', 'Pega tu llave y entras sin pedir permiso de nuevo.', 'llave')}
         ${activa('📖', 'Solo quiero leer y orar', 'Biblia, versículo del día y Vida y servicio, sin unirte.', 'solo')}
       </div>
       ${bloqueInstalar()}`;
-    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ codigo: vistaCodigo, llave: vistaLlave, solo: () => ir('palabra') }[b.dataset.ir]())));
+    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ cuenta: () => vistaCuenta('entrar'), codigo: vistaCodigo, llave: vistaLlave, solo: () => ir('palabra') }[b.dataset.ir]())));
+    const so = $('#cuentaSalir'); if (so) so.onclick = cerrarSesionCuenta;
     pintarInstalar($('[data-instalar-box]'));
   }
 
@@ -174,7 +361,7 @@
       b.disabled = false; b.textContent = 'Ver si ya me aceptaron';
       if (!r.ok) return ($('#msg').textContent = MOTIVOS['sin-internet']);
       const e = (r.data && r.data.estado) || 'ninguna';
-      if (e === 'aprobado') { guardar(K_ID, { codigo: sol.codigo, nombre: r.data.nombre || sol.nombre, clave: sol.clave, creadoEn: new Date().toISOString() }); borrar(K_SOL); return vistaIglesia(); }
+      if (e === 'aprobado') { const nuevo = { codigo: sol.codigo, nombre: r.data.nombre || sol.nombre, clave: sol.clave, creadoEn: new Date().toISOString() }; guardar(K_ID, nuevo); borrar(K_SOL); iglesiaAcuenta(nuevo); return vistaIglesia(); }
       if (e === 'rechazada' || e === 'ninguna') { borrar(K_SOL); borrar(K_IG); return vistaUnirse(); }
       $('#msg').textContent = 'Todavía está pendiente. Tu pastor lo verá pronto.';
     };
@@ -190,6 +377,10 @@
       <div class="grid">${activa('🙏', 'Pedir oración', 'Cuéntale a tu pastor por qué orar.', 'oracion')}${activa('🤝', 'Pedir visita', 'Pide que tu pastor te visite.', 'visita')}</div>
       <h2 class="sep">Vivir con mi iglesia</h2>
       <div class="grid">${activa('🧱', 'Muro', 'Peticiones que tu pastor compartió, para orar juntos.', 'muro')}${activa('🌟', 'Acción del mes', 'Lo que viviremos juntos este mes.', 'accion')}</div>
+      <h2 class="sep">Mi cuenta</h2>
+      ${leer(K_CUENTA)
+        ? `<div class="card"><div class="t"><span aria-hidden="true">✉️</span>Sesión iniciada</div><p class="suave m0t">${esc(leer(K_CUENTA).correo)}. Tu iglesia queda guardada en tu cuenta: en otro teléfono entras solo con tu correo y contraseña.</p><button type="button" class="btn sec" id="cuentaSalir">Cerrar sesión</button></div>`
+        : `<div class="card"><div class="t"><span aria-hidden="true">✉️</span>Guardar mi iglesia con mi correo</div><p class="suave m0t">Crea una cuenta (o entra con la que ya tienes) y tu iglesia te sigue a cualquier teléfono, sin copiar llaves.</p><button type="button" class="btn sec" id="cuentaIr">Entrar o crear cuenta</button></div>`}
       <h2 class="sep">Mi dispositivo</h2>
       <div class="card"><div class="t"><span aria-hidden="true">🔑</span>Pasar mi iglesia a otro dispositivo</div>
         <p class="suave m0t">Copia tu llave y pégala en tu otro teléfono o tablet, en «Ya me uní en otro dispositivo». Guárdala como una contraseña: quien la tenga entra como tú.</p>
@@ -198,6 +389,8 @@
       ${bloqueInstalar()}
       <button id="salir" class="btn sec sep28">Salir de mi iglesia</button>`;
     pintarInstalar($('[data-instalar-box]'));
+    const cs = $('#cuentaSalir'); if (cs) cs.onclick = () => { if (confirm('¿Cerrar sesión? Tu iglesia sigue guardada en tu cuenta; para volver a entrar necesitarás tu correo y contraseña. Tus notas personales de este teléfono (oración, crecimiento) no se borran.')) cerrarSesionCuenta(); };
+    const ci = $('#cuentaIr'); if (ci) ci.onclick = () => vistaCuenta('entrar');
     $('#verLlave').onclick = () => {
       let t = ''; try { t = 'PULPITO-ID-' + btoa(JSON.stringify({ c: id.codigo, k: id.clave })); } catch (e) { t = ''; }
       $('#llaveTxt').value = t; $('#llaveBox').hidden = false; $('#verLlave').hidden = true; $('#llaveTxt').focus(); $('#llaveTxt').select();
@@ -211,6 +404,7 @@
     $('#salir').onclick = async () => {
       if (!confirm('¿Salir de esta iglesia? Se borrará tu nombre en la iglesia y en este teléfono.')) return;
       await rpc('miembro_eliminar', { p_codigo: id.codigo, p_clave: id.clave });
+      await iglesiaAcuenta(null);
       borrar(K_ID); borrar(K_SOL); borrar(K_IG); try { history.replaceState(null, '', location.pathname); } catch (e) { /* nada */ } vistaUnirse();
     };
   }
@@ -483,6 +677,7 @@
       const p = await rpc('iglesia_perfil', { p_codigo: d.c });
       guardar(K_ID, { codigo: d.c, nombre: v.data.nombre, clave: d.k, creadoEn: new Date().toISOString() });
       guardar(K_IG, { codigo: d.c, nombre: (p.ok && p.data && p.data.nombre) || null });
+      iglesiaAcuenta({ codigo: d.c, clave: d.k });
       vistaIglesia();
     };
   }
