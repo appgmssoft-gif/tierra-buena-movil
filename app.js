@@ -29,7 +29,10 @@
     'sin-confirmar': 'Falta confirmar tu correo: abre el mensaje que te enviamos y toca el enlace. Después vuelve aquí y entra.',
     'ya-existe': 'Ese correo ya tiene una cuenta. Toca «Entrar» y escribe tu contraseña.',
     'clave-debil': 'Esa contraseña es muy fácil de adivinar. Prueba con una más larga o con números y letras.',
-    demasiados: 'Hubo muchos intentos seguidos. Espera unos minutos y vuelve a probar.'
+    demasiados: 'Hubo muchos intentos seguidos. Espera unos minutos y vuelve a probar.',
+    'correo-no-sale': 'Tu cuenta no se pudo crear porque el servidor no logró enviar el correo de confirmación (suele ser el límite de correos por hora de Supabase). Espera una hora y vuelve a intentarlo, o pide a quien administra la app que desactive «Confirm email» o conecte un correo propio (SMTP).',
+    'registro-cerrado': 'Crear cuentas nuevas está desactivado en el servidor. Avisa a quien administra la app.',
+    'correo-rechazado': 'El servidor no aceptó ese correo. Revisa que esté bien escrito o prueba con otro.'
   };
   const $ = (s, r) => (r || document).querySelector(s);
   const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -51,7 +54,7 @@
   // ---------- F872 · Avances por cuenta (nube) ----------
   // Lo personal (oración, crecimiento, ideas, cursos, lectura, acción del mes) se guarda en el teléfono Y en la cuenta
   // (tabla public.avances_cuenta, solo la ve su dueño: docs/sql/SQL_AVANCES_CUENTA.sql). Sin sesión o sin la tabla, todo sigue local.
-  const SYNC_CLAVES = ['tb_movil_mi_oracion', 'tb_movil_crecimiento', 'tb_movil_ideas_fav', 'tb_movil_aprender', 'tb_movil_biblia_ultimo', 'tb_movil_accion_mes'];
+  const SYNC_CLAVES = ['tb_movil_mi_oracion', 'tb_movil_crecimiento', 'tb_movil_ideas_fav', 'tb_movil_aprender', 'tb_movil_biblia_ultimo', 'tb_movil_accion_mes', 'tb_movil_perfil'];
   const K_SYNC = 'tb_movil_sync';
   const sync = { estado: 'local', cuando: null, timer: null, ocupado: false };   // estado: local | ok | pendiente | falta | error
   const metaLeer = () => { const m = leer(K_SYNC); return m && typeof m === 'object' ? { dueno: m.dueno || null, t: m.t || {}, d: m.d || {}, off: m.off === true } : { dueno: null, t: {}, d: {}, off: false }; };
@@ -164,10 +167,14 @@
     const t = String((e && e.message) || ''), st = e && e.status;
     ultimoErrAuth = [st, e && e.code, t].filter(Boolean).join(' · ').slice(0, 160);
     if (/invalid login|invalid credentials/i.test(t)) return 'credenciales';
-    if (/not confirmed|confirm/i.test(t)) return 'sin-confirmar';
-    if (st === 429 || /rate limit|too many|security purposes/i.test(t)) return 'demasiados';
-    if (/already registered|already been registered/i.test(t)) return 'ya-existe';
-    if (/weak|password should|pwned/i.test(t)) return 'clave-debil';
+    const cod = String((e && e.code) || '');
+    if (/sending.*(confirmation|email|mail)|error sending|smtp/i.test(t) || cod === 'unexpected_failure' || st >= 500) return 'correo-no-sale';   // F875: antes caía en «Falta confirmar tu correo» aunque la cuenta NO se había creado
+    if (cod === 'signup_disabled' || /signups? (not allowed|are disabled|disabled)/i.test(t)) return 'registro-cerrado';
+    if (cod === 'email_address_invalid' || /invalid.*email|email.*invalid/i.test(t)) return 'correo-rechazado';
+    if (cod === 'email_not_confirmed' || /not confirmed/i.test(t)) return 'sin-confirmar';
+    if (st === 429 || cod === 'over_email_send_rate_limit' || /rate limit|too many|security purposes/i.test(t)) return 'demasiados';
+    if (cod === 'user_already_exists' || /already registered|already been registered/i.test(t)) return 'ya-existe';
+    if (cod === 'weak_password' || /weak|password should|pwned/i.test(t)) return 'clave-debil';
     if (/fetch|network|failed to/i.test(t)) return 'sin-internet';
     return 'otro';
   }
@@ -504,12 +511,11 @@
   function vistaMiembro(id) {
     const ig = leer(K_IG);
     $('#pantalla').innerHTML = `
-      <h1>Mi iglesia</h1><div class="filete"></div>
-      <div class="card bienvenida"><h2>Hola, ${esc(id.nombre)}</h2><p class="suave m0">${ig ? esc(ig.nombre) : 'Tu iglesia'}</p></div>
+      <section class="saludo"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML(id.nombre, perfilLeer(), false)}<div><p class="suave m0">${saludoHora()}</p><h1>Hola, ${esc(id.nombre)}</h1><p class="suave m0">⛪ ${ig ? esc(ig.nombre) : 'Tu iglesia'}</p></div></section>
       <h2 class="sep">Pedir ayuda</h2>
       <div class="grid">${activa('🙏', 'Pedir oración', 'Cuéntale a tu pastor por qué orar.', 'oracion')}${activa('🤝', 'Pedir visita', 'Pide que tu pastor te visite.', 'visita')}</div>
       <h2 class="sep">Vivir con mi iglesia</h2>
-      <div class="grid">${activa('🧱', 'Muro', 'Peticiones que tu pastor compartió, para orar juntos.', 'muro')}${activa('🌟', 'Acción del mes', 'Lo que viviremos juntos este mes.', 'accion')}</div>
+      <div class="grid">${activa('📅', 'Agenda', 'Actividades de tu iglesia y de tus grupos.', 'agenda')}${activa('📣', 'Avisos', 'Mensajes de tu pastor y de los líderes.', 'avisos')}${activa('🕍', 'Mis ministerios', 'Los grupos donde sirves y quién los lidera.', 'ministerios')}${activa('🧱', 'Muro', 'Peticiones que tu pastor compartió, para orar juntos.', 'muro')}${activa('🌟', 'Acción del mes', 'Lo que viviremos juntos este mes.', 'accion')}</div>
       <h2 class="sep">Mis cosas</h2>
       <div class="grid">${activa('🕊️', 'Mi oración', 'Tu diario. Solo lo ves tú.', 'mioracion')}${activa('🌱', 'Mi crecimiento', 'Un paso por semana. Solo lo ves tú.', 'crec')}${activa('🔒', 'Mi privacidad', 'Qué ve tu pastor, descargar o borrar tus datos.', 'privacidad')}${activa('❓', 'Ayuda', 'Respuestas cortas a lo que más se pregunta.', 'ayuda')}</div>
       <h2 class="sep">Mi cuenta</h2>
@@ -535,7 +541,7 @@
       try { await navigator.clipboard.writeText(t.value); $('#llaveMsg').textContent = 'Llave copiada. Ahora pégala en tu otro dispositivo.'; }
       catch (e) { try { document.execCommand('copy'); $('#llaveMsg').textContent = 'Llave copiada.'; } catch (e2) { $('#llaveMsg').textContent = 'Mantén presionado el recuadro y elige «Copiar».'; } }
     };
-    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ oracion: vistaOracion, muro: vistaMuro, accion: vistaAccion, visita: vistaVisita, mioracion: () => vistaMiOracion(), crec: () => vistaCrecimiento(), privacidad: vistaPrivacidad, ayuda: () => vistaAyuda(id) }[b.dataset.ir] || vistaVisita)(id)));
+    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ oracion: vistaOracion, agenda: (i) => vistaAgenda(modoMiembro(i)), avisos: (i) => vistaAvisos(modoMiembro(i)), ministerios: vistaMinisterios, muro: vistaMuro, accion: vistaAccion, visita: vistaVisita, mioracion: () => vistaMiOracion(), crec: () => vistaCrecimiento(), privacidad: vistaPrivacidad, ayuda: () => vistaAyuda(id) }[b.dataset.ir] || vistaVisita)(id)));
     $('#salir').onclick = async () => {
       if (!confirm('¿Salir de esta iglesia? Se borrará tu nombre en la iglesia y en este teléfono.')) return;
       await rpc('miembro_eliminar', { p_codigo: id.codigo, p_clave: id.clave });
@@ -915,10 +921,10 @@
     $('#pantalla').innerHTML = `<div class="hoy"><span class="hoy-luz" aria-hidden="true"></span><p class="hoy-saludo">${saludo} 🌿</p>
       <h1>Hoy</h1><div class="hoy-verso" id="hoyVerso"><span class="esqueleto"></span><span class="esqueleto corto"></span></div></div>
       <h2 class="sep">Tu Palabra</h2>
-      <div class="grid">${inf ? activa('▶️', 'Seguir leyendo', esc(inf[1]) + ' ' + Number(ult.cap) + ' · donde te quedaste', 'seguir') : ''}${activa('📖', 'Leer la Biblia', 'Reina-Valera 1909. Los libros que lees quedan para leer sin internet.', 'biblia')}${activa('✨', 'Versículo de hoy', 'Una frase para empezar el día.', 'versiculo')}</div>`;
+      <div class="grid">${inf ? activa('▶️', 'Seguir leyendo', esc(inf[1]) + ' ' + Number(ult.cap) + ' · donde te quedaste', 'seguir') : ''}${activa('📖', 'Leer la Biblia', 'Reina-Valera 1909. Los libros que lees quedan para leer sin internet.', 'biblia')}${activa('✨', 'Versículo de hoy', 'Una frase para empezar el día.', 'versiculo')}${activa('📜', 'Fábula del mes', 'Un relato corto para practicar, capítulo a capítulo.', 'fabula')}</div>`;
     document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => {
       const k = b.dataset.ir;
-      if (k === 'biblia') vistaBiblia(); else if (k === 'versiculo') vistaVersiculo(); else if (k === 'seguir' && inf) vistaCapitulo(ult.cod, Number(ult.cap));
+      if (k === 'biblia') vistaBiblia(); else if (k === 'versiculo') vistaVersiculo(); else if (k === 'fabula') vistaFabula(); else if (k === 'seguir' && inf) vistaCapitulo(ult.cod, Number(ult.cap));
     }));
     // F871: el versículo del día aparece arriba, en «Hoy» (si no hay internet ni copia guardada, la zona se oculta sola).
     (async () => {
@@ -1270,10 +1276,372 @@
     volverA('Proyectos listos', vistaProyectos);
   }
 
+
+  // ---------- F875 · Perfil, Ministerios y efectos ----------
+  const K_PERFIL = 'tb_movil_perfil';
+  const AVATARES = ['🌿', '🕊️', '🌻', '⭐', '🔥', '🌊', '📖', '🦋'];
+  const perfilLeer = () => { const p = leer(K_PERFIL) || {}; return { g: Number.isInteger(p.g) && p.g >= 0 && p.g < 8 ? p.g : 0, e: AVATARES.indexOf(p.e) >= 0 ? p.e : '', t: typeof p.t === 'string' ? p.t : 'auto' }; };
+  const iniciales = (n) => (String(n || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0]).join('') || '?').toUpperCase();
+  const avatarHTML = (nombre, p, grande) => `<span class="avatar g${p.g}${grande ? ' grande' : ''}" aria-hidden="true">${p.e ? esc(p.e) : esc(iniciales(nombre))}</span>`;
+  const saludoHora = () => { const h = new Date().getHours(); return h < 6 ? 'Buenas noches' : h < 13 ? 'Buenos días' : h < 20 ? 'Buenas tardes' : 'Buenas noches'; };
+  const mesAnio = (iso) => { try { return new Date(iso).toLocaleDateString('es-CL', { month: 'long', year: 'numeric' }); } catch (e) { return ''; } };
+  const pintaColores = () => document.querySelectorAll('[data-mc]').forEach((e) => { if (/^#[0-9a-fA-F]{6}$/.test(e.dataset.mc || '')) e.style.setProperty('--mc', e.dataset.mc); });
+  const fila = (cls, ico, tit, sub, ir) => `<button type="button" class="fila" data-pf="${ir}"><span class="fila-ico ${cls}" aria-hidden="true">${ico}</span><span class="fila-txt">${tit}${sub ? `<small>${sub}</small>` : ''}</span><span class="flecha" aria-hidden="true">›</span></button>`;
+
+  async function misMinisterios(id) {
+    const r = await rpcRaw('miembro_mis_ministerios', { p_codigo: id.codigo, p_clave: id.clave });
+    return r.ok && Array.isArray(r.data) ? { ok: true, lista: r.data } : { ok: false, falta: !!r.falta };
+  }
+  async function vistaMinisterios(id) {
+    $('#pantalla').innerHTML = `${cabecera('Mis ministerios', 'Mi iglesia')}<p class="suave" id="mimsg">Cargando…</p><div id="milista" class="grid"></div>`;
+    volverA('Mi iglesia', vistaIglesia);
+    const r = await misMinisterios(id), m = $('#mimsg'); if (!m) return;
+    if (!r.ok) { m.textContent = r.falta ? 'Los ministerios se están preparando en el servidor. Vuelve a intentarlo pronto.' : MOTIVOS['sin-internet']; return; }
+    if (!r.lista.length) { m.innerHTML = 'Todavía no estás en ningún ministerio. Cuéntale a tu pastor en qué te gustaría servir: él te suma al grupo y aparecerá aquí.'; return; }
+    m.textContent = 'Los grupos donde sirves con tu iglesia.';
+    $('#milista').innerHTML = r.lista.map((x) => `<div class="card min-card" data-mc="${esc(x.color)}"><div class="t"><span class="min-ico" aria-hidden="true">${esc(x.icono || '👥')}</span>${esc(x.nombre)}${x.es_lider ? '<span class="etiqueta">Líder</span>' : ''}</div><p class="suave m0t">${x.lideres ? 'Lideran: ' + esc(x.lideres) : 'Tu pastor aún no designó líder.'}</p></div>`).join('');
+    pintaColores();
+  }
+
+  function vistaPerfil() {
+    const id = leer(K_ID), cu = leer(K_CUENTA), ig = leer(K_IG), p = perfilLeer();
+    const nombre = (id && id.nombre) || (cu && cu.correo && cu.correo.split('@')[0]) || 'Invitado';
+    const desde = id && id.creadoEn ? mesAnio(id.creadoEn) : '';
+    $('#pantalla').innerHTML = `
+      <section class="perfil-hero"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML(nombre, p, true)}
+        <h1>${esc(nombre)}</h1>
+        <p class="suave m0">${ig && ig.nombre ? '⛪ ' + esc(ig.nombre) : 'Aún sin iglesia'}${desde ? ' · desde ' + esc(desde) : ''}</p>
+        ${cu ? `<p class="suave m0">✉️ ${esc(cu.correo)}</p>` : ''}
+        <div class="chips-min" id="perfMin"></div></section>
+      <h2 class="sep">Tu avatar</h2>
+      <div class="card"><div class="av-sel" role="group" aria-label="Color del avatar">${[0, 1, 2, 3, 4, 5, 6, 7].map((i) => `<button type="button" class="avatar g${i}${p.g === i ? ' sel' : ''}" data-g="${i}" aria-label="Color ${i + 1}" aria-pressed="${p.g === i}"></button>`).join('')}</div>
+        <div class="av-sel emo" role="group" aria-label="Símbolo">${['']. concat(AVATARES).map((e) => `<button type="button" class="av-emo${p.e === e ? ' sel' : ''}" data-e="${e}" aria-pressed="${p.e === e}">${e || 'Aa'}</button>`).join('')}</div></div>
+      ${id ? `<h2 class="sep">Mi iglesia</h2><div class="lista">${fila('t1', '🕍', 'Mis ministerios', 'Dónde sirves', 'min')}${fila('t2', '🙏', 'Pedir oración', 'Tu pastor la recibe', 'ora')}${fila('t3', '🔒', 'Mi privacidad', 'Qué ve cada persona', 'priv')}${fila('t4', '❓', 'Ayuda', 'Respuestas cortas', 'ayu')}</div>` : `<h2 class="sep">Empieza</h2><div class="lista">${fila('t1', '⛪', 'Unirme a mi iglesia', 'Con el código de tu pastor', 'unir')}</div>`}
+      <h2 class="sep">Apariencia</h2><div class="lista">${fila('t3', '🎨', 'Temas', (TEMAS.find((x) => x[0] === p.t) || TEMAS[0])[1], 'temas')}</div>
+      <h2 class="sep">Administración</h2><div class="lista">${pastorLeer() ? fila('t1', '🛡️', 'Panel del pastor', 'Administra tu iglesia', 'pastor') : fila('t1', '🛡️', 'Entrar como pastor', 'Con la llave de tu computador', 'pastor')}</div>
+      <h2 class="sep">Cuenta</h2>
+      <div class="lista">${cu ? fila('t2', '☁️', 'Sesión iniciada', esc(cu.correo), 'nada') + fila('t4', '↩️', 'Cerrar sesión', '', 'salir') : fila('t2', '✉️', 'Entrar o crear cuenta', 'Tu iglesia te sigue a cualquier teléfono', 'cuenta')}</div>
+      ${cu ? '<p class="suave sinc-p" id="sincEstado"></p>' : ''}
+      ${bloqueInstalar()}`;
+    pintarInstalar($('[data-instalar-box]')); syncPintar();
+    document.querySelectorAll('[data-g]').forEach((b) => b.addEventListener('click', () => { const q = perfilLeer(); guardar(K_PERFIL, { g: Number(b.dataset.g), e: q.e, t: q.t }); vibra(); vistaPerfil(); }));
+    document.querySelectorAll('[data-e]').forEach((b) => b.addEventListener('click', () => { const q = perfilLeer(); guardar(K_PERFIL, { g: q.g, e: b.dataset.e, t: q.t }); vibra(); vistaPerfil(); }));
+    document.querySelectorAll('[data-pf]').forEach((b) => b.addEventListener('click', () => ({
+      min: () => vistaMinisterios(id), ora: () => vistaOracion(id), priv: () => vistaPrivacidad(id), ayu: () => vistaAyuda(id),
+      temas: vistaTemas, pastor: () => (pastorLeer() ? ir('pastor') : vistaPastorEntrar()), unir: vistaCodigo, cuenta: () => vistaCuenta('entrar'), nada: () => {},
+      salir: () => { if (confirm('¿Cerrar sesión? Tus notas personales quedan guardadas en tu cuenta y vuelven cuando entres.')) cerrarSesionCuenta(); }
+    }[b.dataset.pf] || (() => {}))()));
+    if (id) misMinisterios(id).then((r) => { const c = $('#perfMin'); if (!c || !r.ok) return; c.innerHTML = r.lista.map((x) => `<span class="min-chip" data-mc="${esc(x.color)}">${esc(x.icono || '👥')} ${esc(x.nombre)}</span>`).join(''); pintaColores(); });
+  }
+  const vibra = () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) { /* sin vibración */ } };
+
+  // Luciérnagas suaves de fondo (efecto de libro de cuentos). Solo CSS; se apagan con «reducir movimiento».
+  (function ambiente() {
+    if (!document.createElement || !document.body || !document.body.insertBefore) return;
+    const a = document.createElement('div'); a.className = 'ambiente'; a.setAttribute('aria-hidden', 'true');
+    for (let i = 0; i < 14; i++) { const s = document.createElement('i'); s.style.setProperty('--x', (Math.random() * 100).toFixed(1) + '%'); s.style.setProperty('--d', (11 + Math.random() * 14).toFixed(1) + 's'); s.style.setProperty('--r', (-Math.random() * 24).toFixed(1) + 's'); s.style.setProperty('--s', (3 + Math.random() * 5).toFixed(1) + 'px'); s.style.setProperty('--w', (Math.random() * 70 - 35).toFixed(0) + 'px'); a.appendChild(s); }
+    document.body.insertBefore(a, document.body.firstChild);
+  })();
+  // Título grande que se encoge en una barra de cristal al bajar (como las apps de iOS).
+  if (window.addEventListener) window.addEventListener('scroll', () => {
+    const t = $('#barraTop'), h = $('#pantalla h1'); if (!t || !t.classList) return;
+    const on = window.scrollY > 70 && !!h; t.classList.toggle('on', on); if (on) $('#barraTopTxt').textContent = h.textContent;
+  }, { passive: true });
+
+
+  // ---------- F876 · Temas, Fábula del mes, Agenda/Avisos y MODO PASTOR ----------
+  const TEMAS = [['auto', 'Automático', 'Sigue a tu teléfono', '#8a7d68'], ['amanecer', 'Amanecer', 'Dorado cálido', '#b8893a'], ['pergamino', 'Pergamino', 'Papel para leer', '#a83e2c'], ['bosque', 'Bosque', 'Verde sereno', '#2e8b57'], ['oceano', 'Océano', 'Azul profundo', '#2f6fa8'], ['atardecer', 'Atardecer', 'Naranja y rosa', '#d1603d'], ['vigilia', 'Vigilia', 'Violeta nocturno', '#8c7bff'], ['aurora', 'Aurora', 'Halos de color', '#c25bd6']];
+  const temaAplicar = (t) => {
+    if (!document.documentElement || !document.documentElement.setAttribute) return;
+    const ok = TEMAS.some((x) => x[0] === t && t !== 'auto');
+    if (ok) document.documentElement.setAttribute('data-tema', t); else document.documentElement.removeAttribute('data-tema');
+    try { const mc = getComputedStyle(document.documentElement).getPropertyValue('--papel').trim(); document.querySelectorAll('meta[name=theme-color]').forEach((m) => { m.removeAttribute('media'); if (mc) m.setAttribute('content', mc); }); } catch (e) { /* nada */ }
+  };
+  temaAplicar(perfilLeer().t);
+  const perfilGuardar = (cambio) => { const q = perfilLeer(); return guardar(K_PERFIL, Object.assign({ g: q.g, e: q.e, t: q.t }, cambio)); };
+
+  // ----- Fábula del mes (versión móvil de la del escritorio: escena ilustrada + capítulos que se abren uno a uno) -----
+  const ROM = ['I', 'II', 'III', 'IV', 'V', 'VI'];
+  const escenaSVG = () => `<svg viewBox="0 0 800 160" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><defs><linearGradient id="fbCielo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--fb-tono)" stop-opacity=".95"/><stop offset="1" stop-color="var(--fb-tono)" stop-opacity=".35"/></linearGradient></defs><rect width="800" height="160" fill="url(#fbCielo)"/><g class="fb-par0"><circle class="fb-halo" cx="120" cy="52" r="58" fill="#fff" opacity=".18"/><circle cx="120" cy="52" r="30" fill="#fff" opacity=".55"/></g><path d="M440 44q9-10 18 0q9-10 18 0" stroke="#fff" stroke-width="2.4" fill="none" opacity=".7"/><g class="fb-par1">${[0, 1, 2, 3, 4, 5, 6, 7].map((i) => `<circle class="fb-luz" data-i="${i}" cx="${60 + i * 98}" cy="${132 - (i % 3) * 10}" r="${(1.6 + (i % 3) * .7).toFixed(1)}" fill="#fff"/>`).join('')}</g><path d="M0 118 Q200 78 420 112 T800 98 V160 H0Z" fill="#000" opacity=".16"/><path d="M0 140 Q240 104 470 136 T800 126 V160 H0Z" fill="var(--tarjeta)"/></svg>`;
+  let fabPaso = 0, fabId = null;
+  const fabSemana = () => { const d = new Date(), j = new Date(d.getFullYear(), 0, 1); return d.getFullYear() + 'w' + Math.ceil(((d - j) / 864e5 + j.getDay() + 1) / 7); };
+  function destello(ancla, tono) {
+    const card = $('#fabCard'); if (!card || !ancla || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+    const rc = card.getBoundingClientRect(), ra = ancla.getBoundingClientRect(), cx = ra.left - rc.left + ra.width / 2, cy = ra.top - rc.top + ra.height / 2, col = ['#ffffff', '#ffd36b', /^#[0-9a-fA-F]{6}$/.test(tono || '') ? tono : '#ffffff'];
+    for (let i = 0; i < 18; i++) { const e = document.createElement('i'), a = (i / 18) * Math.PI * 2 + Math.random() * .5, d = 44 + Math.random() * 70; e.className = 'fb-spark'; e.style.left = cx + 'px'; e.style.top = cy + 'px'; e.style.setProperty('--dx', Math.cos(a) * d + 'px'); e.style.setProperty('--dy', Math.sin(a) * d + 'px'); e.style.setProperty('--c', col[i % 3]); card.appendChild(e); setTimeout(() => e.remove(), 1200); }
+  }
+  async function vistaFabula(sel) {
+    $('#pantalla').innerHTML = `${cabecera('Fábula del mes', 'Palabra')}<p class="suave" id="fabmsg">Cargando…</p>`;
+    volverA('Palabra', vistaPalabra);
+    let cat; try { cat = await datoCargar('fabulas'); } catch (e) { const m = $('#fabmsg'); if (m) m.textContent = SIN_DATOS; return; }
+    const ids = Object.keys(cat); if (!ids.length) return;
+    if (sel && cat[sel]) { fabId = sel; fabPaso = 0; }
+    if (!fabId || !cat[fabId]) { fabId = ids[(new Date().getMonth()) % ids.length]; fabPaso = 0; }
+    const f = cat[fabId], total = f.puertas.length + 1, tono = /^#[0-9a-fA-F]{6}$/.test(f.tono || '') ? f.tono : '#3f5d3a';
+    const puntos = Array.from({ length: total }, (_, i) => `<button type="button" class="fab-punto${i === fabPaso ? ' activo' : ''}${i < fabPaso ? ' visto' : ''}" data-fp="${i}"${i > fabPaso ? ' disabled' : ''} aria-label="${i === total - 1 ? 'Moraleja' : 'Capítulo ' + ROM[i]}">${i === total - 1 ? '✦' : ROM[i]}</button>`).join('<span class="fab-hilo" aria-hidden="true"></span>');
+    let cuerpo;
+    if (fabPaso < f.puertas.length) {
+      const p = f.puertas[fabPaso], ult = fabPaso === f.puertas.length - 1, tit = String(p.titulo || '').replace(/^(Primera|Segunda|Tercera|Cuarta)\s+reja:\s*/i, '');
+      cuerpo = `<div class="fab-puerta"><div class="fab-tit"><span class="fab-num">${ROM[fabPaso]}</span>${esc(tit)}</div><p class="fab-texto">${esc(p.texto)}</p><div class="fab-preg"><span aria-hidden="true">💭</span><p>${esc(p.pregunta)}</p></div></div>
+        <div class="fab-acc">${fabPaso > 0 ? '<button type="button" class="btn sec chico" id="fabAtras">← Atrás</button>' : ''}<button type="button" class="btn chico" id="fabSig">${ult ? 'Ver la moraleja ✦' : 'Continuar →'}</button></div>`;
+    } else {
+      const clave = 'tb_fabula_' + fabId + '_' + fabSemana(), hecho = leer(clave) === 1;
+      cuerpo = `<div class="fab-final"><div class="fab-tit">✦ Moraleja</div><blockquote class="fab-mor">${String(f.moraleja || '').split(/\s+/).filter(Boolean).map((w, i) => `<span class="fab-pal" data-i="${i}">${esc(w)}</span>`).join(' ')}</blockquote>
+        <div class="fab-practica"><b>🌱 Para practicar esta semana</b><p>${esc(f.practica)}</p><button type="button" class="btn chico${hecho ? '' : ' sec'}" id="fabComp" aria-pressed="${hecho}">${hecho ? '✓ Lo voy a practicar' : 'Me comprometo'}</button></div>
+        ${f.lee ? `<p class="suave">📖 Para seguir en la Biblia: <b>${esc(f.lee)}</b></p>` : ''}</div><div class="fab-acc"><button type="button" class="btn sec chico" id="fabRe">↺ Leerla de nuevo</button></div>`;
+    }
+    $('#pantalla').innerHTML = `${cabecera('Fábula del mes', 'Palabra')}
+      <article class="fab-card" id="fabCard"><div class="fab-escena" id="fabEsc">${escenaSVG()}<span class="fab-icono" aria-hidden="true">${esc(f.icono || '📖')}</span></div>
+        <div class="fab-cuerpo"><h2 class="m0">${esc(f.titulo)}</h2><p class="suave">${esc(f.atribucion)} · ${esc(f.tiempo || '')}</p>${fabPaso === 0 ? `<p class="fab-intro">${esc(f.intro)}</p>` : ''}<div class="fab-puntos">${puntos}</div>${cuerpo}</div></article>
+      <h2 class="sep">Otras fábulas</h2><div class="chips" role="group" aria-label="Elegir fábula">${ids.map((k) => `<button type="button" class="chip${k === fabId ? ' on' : ''}" data-fid="${esc(k)}" aria-pressed="${k === fabId}">${esc(cat[k].icono || '')} ${esc(cat[k].titulo)}</button>`).join('')}</div>`;
+    volverA('Palabra', vistaPalabra);
+    const card = $('#fabCard'); card.style.setProperty('--fb-tono', tono); card.style.setProperty('--fb-prog', (total > 1 ? fabPaso / (total - 1) : 1).toFixed(3));
+    document.querySelectorAll('.fb-luz').forEach((c) => { const i = Number(c.dataset.i) || 0; c.style.setProperty('--d', (7 + (i * 1.3) % 5).toFixed(1) + 's'); c.style.setProperty('--r', '-' + (i * 1.7).toFixed(1) + 's'); });
+    document.querySelectorAll('.fab-pal').forEach((w) => w.style.setProperty('--i', w.dataset.i));
+    const ir2 = (n) => { fabPaso = n; vibra(); vistaFabula(); window.scrollTo(0, 0); };
+    document.querySelectorAll('[data-fp]').forEach((b) => b.addEventListener('click', () => ir2(Number(b.dataset.fp))));
+    const s = $('#fabSig'); if (s) s.onclick = () => ir2(fabPaso + 1);
+    const a = $('#fabAtras'); if (a) a.onclick = () => ir2(fabPaso - 1);
+    const re = $('#fabRe'); if (re) re.onclick = () => ir2(0);
+    const co = $('#fabComp'); if (co) co.onclick = () => { const on = co.getAttribute('aria-pressed') !== 'true'; guardar('tb_fabula_' + fabId + '_' + fabSemana(), on ? 1 : 0); co.setAttribute('aria-pressed', String(on)); co.classList.toggle('sec', !on); co.textContent = on ? '✓ Lo voy a practicar' : 'Me comprometo'; if (on) destello(co, tono); };
+    if (fabPaso === total - 1) setTimeout(() => destello($('.fab-mor'), tono), 450);
+    document.querySelectorAll('[data-fid]').forEach((b) => b.addEventListener('click', () => vistaFabula(b.dataset.fid)));
+  }
+
+  // ----- Temas -----
+  function vistaTemas() {
+    const t = perfilLeer().t;
+    $('#pantalla').innerHTML = `${cabecera('Temas', 'Perfil')}<p class="suave">Elige cómo se ve tu app. Se guarda en tu cuenta.</p>
+      <div class="temas">${TEMAS.map((x) => `<button type="button" class="tema${t === x[0] ? ' sel' : ''}" data-t="${x[0]}" aria-pressed="${t === x[0]}"><span class="tema-bola" data-mc="${x[3]}"></span><b>${esc(x[1])}</b><small>${esc(x[2])}</small></button>`).join('')}</div>`;
+    volverA('Perfil', vistaPerfil); pintaColores();
+    document.querySelectorAll('[data-t]').forEach((b) => b.addEventListener('click', () => { perfilGuardar({ t: b.dataset.t }); temaAplicar(b.dataset.t); vibra(); vistaTemas(); }));
+  }
+
+  // ----- Agenda y avisos (los ven los miembros; los crean pastor y líderes) -----
+  const MOT2 = { 'sin-permiso': 'No tienes permiso para hacer esto.', 'titulo-invalido': 'Escribe un título de 2 a 80 letras.', 'fecha-invalida': 'Elige una fecha y hora que no sea pasada.', demasiados: 'Llegaste al límite por ahora. Inténtalo más tarde.', 'texto-invalido': 'Escribe un título (2 a 80 letras) y un texto (2 a 600 letras).', repetido: 'Ya existe un ministerio con ese nombre.', 'nombre-invalido': 'El nombre debe tener entre 2 y 40 letras.' };
+  const errP = (e) => MOT2[e] || errTxt(e);
+  const dtFmt = (iso) => { try { return new Date(iso).toLocaleString('es-CL', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; } };
+  const alcanceOpc = (mins, todaIglesia) => `${todaIglesia ? '<option value="">Toda la iglesia</option>' : ''}${mins.map((m) => `<option value="${esc(m.id)}">${esc(m.icono || '')} ${esc(m.nombre)}</option>`).join('')}`;
+  // Crea una acción (rpc) según quién es: pastor (secreto) o líder (clave de miembro).
+  const quien = (pas, id) => (pas ? { p_codigo: pas.codigo, p_secreto: pas.secreto, p_clave: null } : { p_codigo: id.codigo, p_secreto: null, p_clave: id.clave });
+  const formAgenda = (mins, todaIglesia) => `<div class="card sep16"><div class="t"><span aria-hidden="true">➕</span>Nueva actividad</div>
+    <label for="agt">Título</label><input id="agt" type="text" maxlength="80">
+    <label for="agf">Fecha y hora</label><input id="agf" type="datetime-local">
+    <label for="agl">Lugar (opcional)</label><input id="agl" type="text" maxlength="80">
+    <label for="agd">Detalle (opcional)</label><textarea id="agd" rows="2" maxlength="400"></textarea>
+    <label for="aga">Para quién</label><select id="aga">${alcanceOpc(mins, todaIglesia)}</select>
+    <p id="agerr" class="error" role="alert" hidden></p><button type="button" class="btn" id="agok">Agregar a la agenda</button></div>`;
+  const formAviso = (mins, todaIglesia) => `<div class="card sep16"><div class="t"><span aria-hidden="true">📣</span>Nuevo aviso</div>
+    <label for="avt">Título</label><input id="avt" type="text" maxlength="80">
+    <label for="avx">Mensaje</label><textarea id="avx" rows="3" maxlength="600"></textarea>
+    <label for="ava">Para quién</label><select id="ava">${alcanceOpc(mins, todaIglesia)}</select>
+    <p id="averr" class="error" role="alert" hidden></p><button type="button" class="btn" id="avok">Publicar aviso</button></div>`;
+  const eventoHTML = (e, borrable) => `<div class="card item evento"><div class="ev-fecha" aria-hidden="true"><b>${esc(new Date(e.inicio).toLocaleDateString('es-CL', { day: 'numeric' }))}</b><small>${esc(new Date(e.inicio).toLocaleDateString('es-CL', { month: 'short' }))}</small></div><div class="ev-txt"><b>${esc(e.titulo)}</b><p class="suave m0">${esc(dtFmt(e.inicio))}${e.lugar ? ' · 📍 ' + esc(e.lugar) : ''}${e.ministerio ? ' · ' + esc(e.ministerio) : ''}</p>${e.detalle ? `<p class="m0t">${esc(e.detalle)}</p>` : ''}${borrable ? `<button type="button" class="enlace" data-bev="${esc(e.id)}">Quitar</button>` : ''}</div></div>`;
+  const avisoHTML = (a, borrable) => `<div class="card item aviso"><div class="t"><span aria-hidden="true">📣</span>${esc(a.titulo)}${a.ministerio ? `<span class="etiqueta">${esc(a.ministerio)}</span>` : ''}</div><p class="m0t">${esc(a.texto)}</p><p class="suave m0t">${esc(fecha(a.creado_en))}${borrable ? ` · <button type="button" class="enlace" data-bav="${esc(a.id)}">Quitar</button>` : ''}</p></div>`;
+
+  // Pantalla común (miembro/líder y pastor). modo: { pas, id, volverTxt, volverFn }
+  async function vistaAgenda(modo) {
+    const { pas, id } = modo;
+    $('#pantalla').innerHTML = `${cabecera('Agenda', modo.volverTxt)}<p class="suave" id="agmsg">Cargando…</p><div id="aglista"></div><div id="agform"></div>`;
+    volverA(modo.volverTxt, modo.volverFn);
+    const [rE, rM] = await Promise.all([
+      pas ? rpcRaw('agenda_pastor_listar', { p_codigo: pas.codigo, p_secreto: pas.secreto }) : rpcRaw('agenda_miembro_listar', { p_codigo: id.codigo, p_clave: id.clave }),
+      pas ? rpcRaw('ministerio_pastor_listar', { p_codigo: pas.codigo, p_secreto: pas.secreto }) : misMinisterios(id).then((r) => ({ ok: r.ok, data: r.lista }))
+    ]);
+    const m = $('#agmsg'); if (!m) return;
+    if (!rE.ok) { m.textContent = rE.falta ? 'La agenda se está preparando en el servidor (falta correr SQL_F876_AGENDA_AVISOS.sql).' : MOTIVOS['sin-internet']; return; }
+    const mins = (rM.ok && Array.isArray(rM.data) ? rM.data : []).filter((x) => pas || x.es_lider);
+    const lista = rE.data || [];
+    m.textContent = lista.length ? 'Lo que viene en tu iglesia.' : 'Todavía no hay actividades.';
+    $('#aglista').innerHTML = lista.map((e) => eventoHTML(e, !!pas || e.puede_borrar)).join('');
+    if (pas || mins.length) $('#agform').innerHTML = formAgenda(mins, !!pas);
+    document.querySelectorAll('[data-bev]').forEach((b) => b.addEventListener('click', async () => {
+      if (!confirm('¿Quitar esta actividad de la agenda?')) return;
+      const q = quien(pas, id); const r = await rpcRaw('agenda_borrar', { p_codigo: q.p_codigo, p_secreto: q.p_secreto, p_clave: q.p_clave, p_id: b.dataset.bev });
+      r.ok && r.data ? vistaAgenda(modo) : (m.textContent = errTxt(r.error));
+    }));
+    const ok = $('#agok'); if (!ok) return;
+    ok.onclick = async () => {
+      const er = $('#agerr'), t = $('#agt').value.trim(), f = $('#agf').value; er.hidden = true;
+      if (t.length < 2) { er.textContent = MOT2['titulo-invalido']; er.hidden = false; return; }
+      const d = new Date(f); if (!f || isNaN(d)) { er.textContent = MOT2['fecha-invalida']; er.hidden = false; return; }
+      ok.disabled = true; const q = quien(pas, id);
+      const r = await rpcRaw('agenda_crear', { p_codigo: q.p_codigo, p_secreto: q.p_secreto, p_clave: q.p_clave, p_ministerio: $('#aga').value || null, p_titulo: t, p_detalle: $('#agd').value.trim() || null, p_lugar: $('#agl').value.trim() || null, p_inicio: d.toISOString() });
+      ok.disabled = false; const x = r.ok ? primera(r.data) : null;
+      if (x && x.ok) return vistaAgenda(modo);
+      er.textContent = errP(x ? x.motivo : r.error); er.hidden = false;
+    };
+  }
+  async function vistaAvisos(modo) {
+    const { pas, id } = modo;
+    $('#pantalla').innerHTML = `${cabecera('Avisos', modo.volverTxt)}<p class="suave" id="avmsg">Cargando…</p><div id="avlista"></div><div id="avform"></div>`;
+    volverA(modo.volverTxt, modo.volverFn);
+    const [rA, rM] = await Promise.all([
+      pas ? rpcRaw('aviso_pastor_listar', { p_codigo: pas.codigo, p_secreto: pas.secreto }) : rpcRaw('aviso_miembro_listar', { p_codigo: id.codigo, p_clave: id.clave }),
+      pas ? rpcRaw('ministerio_pastor_listar', { p_codigo: pas.codigo, p_secreto: pas.secreto }) : misMinisterios(id).then((r) => ({ ok: r.ok, data: r.lista }))
+    ]);
+    const m = $('#avmsg'); if (!m) return;
+    if (!rA.ok) { m.textContent = rA.falta ? 'Los avisos se están preparando en el servidor (falta correr SQL_F876_AGENDA_AVISOS.sql).' : MOTIVOS['sin-internet']; return; }
+    const mins = (rM.ok && Array.isArray(rM.data) ? rM.data : []).filter((x) => pas || x.es_lider), lista = rA.data || [];
+    m.textContent = lista.length ? 'Mensajes de tu pastor y de los líderes.' : 'Todavía no hay avisos.';
+    $('#avlista').innerHTML = lista.map((a) => avisoHTML(a, !!pas || a.puede_borrar)).join('');
+    if (pas || mins.length) $('#avform').innerHTML = formAviso(mins, !!pas);
+    document.querySelectorAll('[data-bav]').forEach((b) => b.addEventListener('click', async () => {
+      if (!confirm('¿Quitar este aviso?')) return;
+      const q = quien(pas, id); const r = await rpcRaw('aviso_borrar', { p_codigo: q.p_codigo, p_secreto: q.p_secreto, p_clave: q.p_clave, p_id: b.dataset.bav });
+      r.ok && r.data ? vistaAvisos(modo) : (m.textContent = errTxt(r.error));
+    }));
+    const ok = $('#avok'); if (!ok) return;
+    ok.onclick = async () => {
+      const er = $('#averr'); er.hidden = true; ok.disabled = true; const q = quien(pas, id);
+      const r = await rpcRaw('aviso_crear', { p_codigo: q.p_codigo, p_secreto: q.p_secreto, p_clave: q.p_clave, p_ministerio: $('#ava').value || null, p_titulo: $('#avt').value.trim(), p_texto: $('#avx').value.trim() });
+      ok.disabled = false; const x = r.ok ? primera(r.data) : null;
+      if (x && x.ok) return vistaAvisos(modo);
+      er.textContent = errP(x ? x.motivo : r.error); er.hidden = false;
+    };
+  }
+  const modoMiembro = (id) => ({ id, volverTxt: 'Mi iglesia', volverFn: vistaIglesia });
+
+  // ----- MODO PASTOR -----
+  const K_PASTOR = 'tb_movil_pastor';
+  const pastorLeer = () => { const p = leer(K_PASTOR); return p && /^[A-Z0-9]{6}$/.test(p.codigo || '') && /^[0-9a-f]{20,128}$/.test(p.secreto || '') ? p : null; };
+  const prpc = (fn, p, extra) => rpcRaw(fn, Object.assign({ p_codigo: p.codigo, p_secreto: p.secreto }, extra || {}));
+  const modoPastor = (p) => ({ pas: p, volverTxt: 'Panel', volverFn: vistaPastor });
+  function barraRefrescar(tab) {
+    const pt = $('.tab[data-tab="pastor"]'); if (pt) pt.hidden = !pastorLeer();
+    const vis = Array.prototype.slice.call(document.querySelectorAll('.tab')).filter((b) => !b.hidden), bar = $('.barra');
+    if (bar && bar.style && bar.style.setProperty) { bar.style.setProperty('--n', String(vis.length)); bar.style.setProperty('--i', String(Math.max(0, vis.findIndex((b) => b.dataset.tab === tab)))); }
+  }
+  const llaveDePastor = (txt) => {
+    const t = String(txt || '').trim().replace(/\s+/g, '');
+    try { const j = JSON.parse(atob(t.replace(/^PULPITO-PASTOR-/, ''))); const c = String(j.c || '').toUpperCase(); if (/^[A-Z0-9]{6}$/.test(c) && /^[0-9a-f]{20,128}$/.test(j.s || '')) return { codigo: c, secreto: j.s }; } catch (e) { /* llave mal copiada */ }
+    return null;
+  };
+  function vistaPastorEntrar() {
+    $('#pantalla').innerHTML = `${cabecera('Modo pastor', 'Perfil')}
+      <div class="cuenta-ico" aria-hidden="true">🛡️</div>
+      <p>Administra tu iglesia desde el celular: solicitudes, ministerios, oraciones, visitas, agenda y avisos. Las finanzas siguen solo en el computador.</p>
+      <div class="card ayuda"><b>Cómo obtener tu llave:</b> en el computador abre <b>Congregación → Código de tu iglesia</b> y toca <b>«Copiar llave de pastor»</b>. Envíatela por un medio privado y pégala aquí.</div>
+      <label for="pkey">Llave de pastor</label><textarea id="pkey" rows="3" spellcheck="false" autocapitalize="off" placeholder="PULPITO-PASTOR-…"></textarea>
+      <p id="err" class="error" role="alert" hidden></p><button id="pgo" class="btn">Entrar como pastor</button>
+      <p class="suave sep16">La llave es como una contraseña: quien la tenga administra tu iglesia. Se guarda solo en este teléfono hasta que toques «Salir del modo pastor».</p>`;
+    volverA('Perfil', vistaPerfil);
+    $('#pgo').onclick = async () => {
+      const p = llaveDePastor($('#pkey').value); error('');
+      if (!p) return error('Esa llave no parece completa. Cópiala de nuevo desde el computador.');
+      const b = $('#pgo'); b.disabled = true; b.textContent = 'Comprobando…';
+      const r = await rpcRaw('solicitud_pastor_resolver', { p_codigo: p.codigo, p_secreto: p.secreto, p_id: crypto.randomUUID(), p_aprobar: false, p_mensaje: null });
+      b.disabled = false; b.textContent = 'Entrar como pastor';
+      if (!r.ok) return error(r.falta ? 'Faltan funciones de pastor en Supabase (SQL_A2_SOLICITUDES_MIEMBRO.sql).' : MOTIVOS['sin-internet']);
+      if (r.data === 'sin-permiso') return error('Esa llave no corresponde a ninguna iglesia. Revisa que sea la última que copiaste.');
+      guardar(K_PASTOR, p); barraRefrescar('pastor'); ir('pastor');
+    };
+  }
+  async function vistaPastor() {
+    const p = pastorLeer(); if (!p) return vistaPastorEntrar();
+    const fil = (cls, ico, tit, sub, ir3, n) => `<button type="button" class="fila" data-pp="${ir3}"><span class="fila-ico ${cls}" aria-hidden="true">${ico}</span><span class="fila-txt">${tit}<small>${sub}</small></span><span class="insignia" id="n-${ir3}" hidden></span><span class="flecha" aria-hidden="true">›</span></button>`;
+    $('#pantalla').innerHTML = `<section class="saludo"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML('P', { g: perfilLeer().g, e: '🛡️' }, false)}<div><p class="suave m0">Modo pastor</p><h1 id="pIgl">Mi iglesia</h1><p class="suave m0">Código <b>${esc(p.codigo)}</b></p></div></section>
+      <h2 class="sep">Para atender hoy</h2><div class="lista">${fil('t1', '👋', 'Solicitudes', 'Quién quiere unirse', 'sol')}${fil('t2', '🙏', 'Oraciones', 'Peticiones recibidas', 'ora')}${fil('t3', '🤝', 'Visitas', 'Quién pide que lo visites', 'vis')}</div>
+      <h2 class="sep">Mi iglesia</h2><div class="lista">${fil('t4', '👥', 'Miembros', 'Quiénes forman tu iglesia', 'mie')}${fil('t1', '🕍', 'Ministerios y líderes', 'Grupos, personas y líderes', 'min')}${fil('t2', '📅', 'Agenda', 'Actividades y reuniones', 'age')}${fil('t3', '📣', 'Avisos', 'Mensajes para todos o un grupo', 'avi')}${fil('t4', '⚙️', 'Datos y código', 'Nombre, eslogan y código', 'dat')}</div>
+      <p class="suave sep16">💻 Las finanzas se administran solo desde el computador.</p>
+      <button type="button" class="btn sec sep16" id="pSalir">Salir del modo pastor</button>`;
+    document.querySelectorAll('[data-pp]').forEach((b) => b.addEventListener('click', () => ({ sol: pSolicitudes, ora: pOraciones, vis: pVisitas, mie: pMiembros, min: pMinisterios, age: () => vistaAgenda(modoPastor(p)), avi: () => vistaAvisos(modoPastor(p)), dat: pDatos }[b.dataset.pp])(p)));
+    $('#pSalir').onclick = () => { if (confirm('¿Salir del modo pastor en este teléfono? Tu llave se borra de aquí (sigue en tu computador).')) { borrar(K_PASTOR); barraRefrescar('perfil'); ir('perfil'); } };
+    const ins = (k, n) => { const e = $('#n-' + k); if (e && n > 0) { e.textContent = n > 99 ? '99+' : String(n); e.hidden = false; } };
+    rpc('iglesia_perfil', { p_codigo: p.codigo }).then((r) => { const h = $('#pIgl'); if (h && r.ok && r.data && r.data.nombre) h.textContent = r.data.nombre; });
+    prpc('solicitud_pastor_listar', p).then((r) => r.ok && ins('sol', (r.data || []).length));
+    prpc('peticion_pastor_listar_v2', p).then((r) => (r.ok ? r : prpc('peticion_pastor_listar', p))).then((r) => r.ok && ins('ora', (r.data || []).length));
+    prpc('visita_pastor_listar', p).then((r) => r.ok && ins('vis', (r.data || []).filter((v) => v.estado === 'solicitada').length));
+  }
+  const pCab = (tit, extra) => `${cabecera(tit, 'Panel')}${extra || ''}<p class="suave" id="pmsg">Cargando…</p><div id="plista"></div>`;
+  async function pSolicitudes(p) {
+    $('#pantalla').innerHTML = pCab('Solicitudes'); volverA('Panel', vistaPastor);
+    const r = await prpc('solicitud_pastor_listar', p), m = $('#pmsg'); if (!m) return;
+    if (!r.ok) { m.textContent = errTxt(r.error); return; }
+    const l = r.data || []; m.textContent = l.length ? 'Personas que piden unirse. Confirma que las conoces antes de aprobar.' : 'No hay solicitudes pendientes. 🎉';
+    $('#plista').innerHTML = l.map((s) => `<div class="card item"><div class="t"><span aria-hidden="true">👤</span>${esc(s.nombre_visible)}</div>${s.nombre_completo ? `<p class="m0t">${esc(s.nombre_completo)}</p>` : ''}${s.nota ? `<p class="suave m0t">«${esc(s.nota)}»</p>` : ''}<p class="suave m0t">${esc(fecha(s.creado_en))}</p><div class="fab-acc"><button type="button" class="btn chico" data-ap="${esc(s.id)}">Aprobar</button><button type="button" class="btn sec chico" data-re="${esc(s.id)}">Rechazar</button></div></div>`).join('');
+    const resolver = (id, si) => async () => { const r2 = await prpc('solicitud_pastor_resolver', p, { p_id: id, p_aprobar: si, p_mensaje: si ? 'Bienvenido a la iglesia' : null }); const x = r2.ok ? r2.data : null; if (x === 'aprobada' || x === 'rechazada' || x === 'no-existe') return pSolicitudes(p); m.textContent = x === 'iglesia-llena' ? 'La iglesia llegó a su límite de personas.' : errTxt(r2.error); };
+    document.querySelectorAll('[data-ap]').forEach((b) => b.addEventListener('click', resolver(b.dataset.ap, true)));
+    document.querySelectorAll('[data-re]').forEach((b) => b.addEventListener('click', () => { if (confirm('¿Rechazar esta solicitud?')) resolver(b.dataset.re, false)(); }));
+  }
+  async function pMiembros(p) {
+    $('#pantalla').innerHTML = pCab('Miembros'); volverA('Panel', vistaPastor);
+    const r = await prpc('miembros_pastor_listar', p), m = $('#pmsg'); if (!m) return;
+    if (!r.ok) { m.textContent = errTxt(r.error); return; }
+    const l = r.data || []; m.textContent = l.length + (l.length === 1 ? ' persona en tu iglesia.' : ' personas en tu iglesia.');
+    $('#plista').innerHTML = `<div class="lista">${l.map((x) => `<div class="fila">${avatarHTML(x.nombre_visible, { g: (x.nombre_visible || '').length % 8, e: '' }, false).replace('class="avatar', 'class="avatar mini')}<span class="fila-txt">${esc(x.nombre_visible)}<small>Desde ${esc(mesAnio(x.creado_en))}</small></span></div>`).join('')}</div>`;
+  }
+  async function pOraciones(p) {
+    $('#pantalla').innerHTML = pCab('Oraciones'); volverA('Panel', vistaPastor);
+    let r = await prpc('peticion_pastor_listar_v2', p); if (!r.ok && r.falta) r = await prpc('peticion_pastor_listar', p);
+    const m = $('#pmsg'); if (!m) return; if (!r.ok) { m.textContent = errTxt(r.error); return; }
+    const l = r.data || []; m.textContent = l.length ? 'Peticiones nuevas. Al marcarlas, la persona ve que las viste.' : 'No hay peticiones nuevas.';
+    $('#plista').innerHTML = l.map((x) => `<div class="card item"><div class="t"><span aria-hidden="true">🙏</span>${x.anonima ? 'Anónima' : esc(x.nombre || 'Sin nombre')}${x.tipo ? `<span class="etiqueta">${esc(x.tipo)}</span>` : ''}</div><p class="m0t">${esc(x.texto)}</p><p class="suave m0t">${esc(fecha(x.creado_en))}${x.publica ? ' · quiere que se comparta en el muro' : ''}</p><div class="fab-acc"><button type="button" class="btn chico" data-vi="${esc(x.id)}">Ya la vi</button>${x.publica && !x.aprobada ? `<button type="button" class="btn sec chico" data-pu="${esc(x.id)}" data-an="${x.anonima ? 1 : 0}">Compartir en el muro</button>` : ''}</div></div>`).join('');
+    document.querySelectorAll('[data-vi]').forEach((b) => b.addEventListener('click', async () => { await prpc('peticion_pastor_marcar_vista', p, { p_id: b.dataset.vi }); pOraciones(p); }));
+    document.querySelectorAll('[data-pu]').forEach((b) => b.addEventListener('click', async () => { await prpc('peticion_pastor_publicar', p, { p_id: b.dataset.pu, p_ocultar_nombre: b.dataset.an === '1' }); await prpc('peticion_pastor_marcar_vista', p, { p_id: b.dataset.pu }); pOraciones(p); }));
+  }
+  const ESTADO_V = { solicitada: 'Nueva', aceptada: 'Aceptada', agendada: 'Agendada', realizada: 'Realizada', no_disponible: 'No disponible' };
+  async function pVisitas(p) {
+    $('#pantalla').innerHTML = pCab('Visitas'); volverA('Panel', vistaPastor);
+    const r = await prpc('visita_pastor_listar', p), m = $('#pmsg'); if (!m) return; if (!r.ok) { m.textContent = errTxt(r.error); return; }
+    const l = r.data || []; m.textContent = l.length ? 'Pedidos de visita. La dirección aparece cuando aceptas.' : 'No hay pedidos de visita abiertos.';
+    $('#plista').innerHTML = l.map((v) => `<div class="card item"><div class="t"><span aria-hidden="true">🤝</span>${esc(v.nombre || 'Sin nombre')}<span class="etiqueta">${esc(ESTADO_V[v.estado] || v.estado)}</span></div><p class="m0t"><b>${esc(v.tipo)}</b>${v.urgencia ? ' · ' + esc(v.urgencia) : ''}</p><p class="m0t">${esc(v.motivo)}</p>${v.horarios ? `<p class="suave m0t">🕒 ${esc(v.horarios)}</p>` : ''}${v.telefono ? `<p class="suave m0t">📞 ${esc(v.telefono)}</p>` : ''}${v.direccion ? `<p class="suave m0t">📍 ${esc(v.direccion)}</p>` : ''}
+      <label for="vr-${esc(v.id)}">Mensaje para la persona</label><input id="vr-${esc(v.id)}" type="text" maxlength="200" value="${esc(v.respuesta || '')}"><label for="vc-${esc(v.id)}">Cuándo (si agendas)</label><input id="vc-${esc(v.id)}" type="text" maxlength="60" value="${esc(v.cuando || '')}" placeholder="Sábado 5 pm">
+      <div class="fab-acc"><button type="button" class="btn chico" data-ve="aceptada" data-id="${esc(v.id)}">Aceptar</button><button type="button" class="btn sec chico" data-ve="agendada" data-id="${esc(v.id)}">Agendar</button><button type="button" class="btn sec chico" data-ve="realizada" data-id="${esc(v.id)}">Realizada</button><button type="button" class="btn sec chico" data-ve="no_disponible" data-id="${esc(v.id)}">No puedo</button></div></div>`).join('');
+    document.querySelectorAll('[data-ve]').forEach((b) => b.addEventListener('click', async () => {
+      const id = b.dataset.id, cu = $('#vc-' + id).value.trim();
+      if (b.dataset.ve === 'agendada' && !cu) return (m.textContent = 'Escribe cuándo será la visita para agendarla.');
+      const r2 = await prpc('visita_pastor_responder', p, { p_id: id, p_estado: b.dataset.ve, p_respuesta: $('#vr-' + id).value.trim() || null, p_cuando: cu || null });
+      r2.ok && r2.data ? pVisitas(p) : (m.textContent = errTxt(r2.error));
+    }));
+  }
+  const ICONOS_MIN = ['👥', '🎵', '👶', '🧒', '📖', '🙏', '🤝', '🍞', '🎤', '🎬', '💒', '🌱'], COLORES_MIN = ['#4f8a5b', '#b8893a', '#4a7fb0', '#c4604a', '#7a55b0', '#2f8f86', '#c25b86', '#6b6b6b'];
+  async function pMinisterios(p) {
+    $('#pantalla').innerHTML = pCab('Ministerios'); volverA('Panel', vistaPastor);
+    const r = await prpc('ministerio_pastor_listar', p), m = $('#pmsg'); if (!m) return;
+    if (!r.ok) { m.textContent = r.falta ? 'Faltan los ministerios en Supabase (SQL_A1B_MINISTERIOS_LIDERES.sql).' : errTxt(r.error); return; }
+    const l = r.data || []; m.textContent = l.length ? 'Toca un ministerio para sumar personas y elegir líderes.' : 'Aún no hay ministerios. Crea el primero abajo.';
+    $('#plista').innerHTML = `<div class="grid">${l.map((x) => `<button type="button" class="card min-card" data-mc="${esc(x.color)}" data-mi="${esc(x.id)}"><div class="t"><span class="min-ico" aria-hidden="true">${esc(x.icono || '👥')}</span>${esc(x.nombre)}<span class="flecha" aria-hidden="true">›</span></div><p class="suave m0t">${Number(x.miembros) || 0} personas${x.lideres ? ' · Lidera: ' + esc(x.lideres) : ' · sin líder'}</p></button>`).join('')}</div>
+      <div class="card sep16"><div class="t"><span aria-hidden="true">➕</span>Nuevo ministerio</div><label for="mnn">Nombre</label><input id="mnn" type="text" maxlength="40"><label for="mni">Ícono</label><select id="mni">${ICONOS_MIN.map((i) => `<option>${i}</option>`).join('')}</select><label for="mnc">Color</label><select id="mnc">${COLORES_MIN.map((c, i) => `<option value="${c}">Color ${i + 1}</option>`).join('')}</select><p id="mnerr" class="error" role="alert" hidden></p><button type="button" class="btn" id="mnok">Crear ministerio</button></div>`;
+    pintaColores();
+    document.querySelectorAll('[data-mi]').forEach((b) => b.addEventListener('click', () => pMinisterio(p, l.find((x) => x.id === b.dataset.mi))));
+    $('#mnok').onclick = async () => {
+      const er = $('#mnerr'); er.hidden = true;
+      const r2 = await prpc('ministerio_crear', p, { p_nombre: $('#mnn').value.trim(), p_color: $('#mnc').value, p_icono: $('#mni').value }); const x = r2.ok ? primera(r2.data) : null;
+      if (x && x.ok) return pMinisterios(p); er.textContent = errP(x ? x.motivo : r2.error); er.hidden = false;
+    };
+  }
+  async function pMinisterio(p, mi) {
+    if (!mi) return pMinisterios(p);
+    $('#pantalla').innerHTML = `${cabecera(mi.nombre, 'Ministerios')}<p class="suave" id="pmsg">Cargando…</p><div id="plista"></div>`; volverA('Ministerios', () => pMinisterios(p));
+    const r = await prpc('ministerio_pastor_personas', p, { p_ministerio: mi.id }), m = $('#pmsg'); if (!m) return;
+    if (!r.ok) { m.textContent = errTxt(r.error); return; }
+    const l = r.data || []; m.textContent = l.length ? 'Marca quién sirve aquí y quién lidera. Un líder puede crear actividades y avisos de este grupo.' : 'Aún no hay personas en la iglesia para sumar.';
+    $('#plista').innerHTML = `<div class="lista">${l.map((x) => `<div class="fila persona"><span class="fila-txt">${esc(x.nombre)}<small>${x.es_lider ? '⭐ Líder' : x.asignado ? 'Sirve aquí' : 'No está en este grupo'}</small></span><button type="button" class="chip${x.asignado ? ' on' : ''}" data-as="${esc(x.miembro_id)}" data-l="${x.es_lider ? 1 : 0}" data-a="${x.asignado ? 1 : 0}">${x.asignado ? 'Quitar' : 'Sumar'}</button>${x.asignado ? `<button type="button" class="chip${x.es_lider ? ' on' : ''}" data-li="${esc(x.miembro_id)}" data-l="${x.es_lider ? 1 : 0}">${x.es_lider ? 'Quitar líder' : 'Hacer líder'}</button>` : ''}</div>`).join('')}</div><button type="button" class="btn sec sep16" id="mnDel">Borrar este ministerio</button>`;
+    const cambia = async (idm, asig, lid) => { const r2 = await prpc('ministerio_asignar', p, { p_ministerio: mi.id, p_miembro: idm, p_asignado: asig, p_lider: lid }); r2.ok ? pMinisterio(p, mi) : (m.textContent = errTxt(r2.error)); };
+    document.querySelectorAll('[data-as]').forEach((b) => b.addEventListener('click', () => cambia(b.dataset.as, b.dataset.a !== '1', false)));
+    document.querySelectorAll('[data-li]').forEach((b) => b.addEventListener('click', () => cambia(b.dataset.li, true, b.dataset.l !== '1')));
+    $('#mnDel').onclick = async () => { if (!confirm('¿Borrar el ministerio «' + mi.nombre + '»? Sus actividades y avisos también se borran.')) return; await prpc('ministerio_borrar', p, { p_ministerio: mi.id }); pMinisterios(p); };
+  }
+  async function pDatos(p) {
+    $('#pantalla').innerHTML = `${cabecera('Datos y código', 'Panel')}<p class="suave" id="pmsg">Cargando…</p><div id="plista"></div>`; volverA('Panel', vistaPastor);
+    const r = await rpc('iglesia_perfil', { p_codigo: p.codigo }), m = $('#pmsg'); if (!m) return;
+    const d = (r.ok && r.data) || {}; m.textContent = '';
+    const enlace = location.origin + location.pathname + '?c=' + p.codigo;
+    $('#plista').innerHTML = `<div class="card"><div class="t"><span aria-hidden="true">⛪</span>Código de tu iglesia</div><p class="codigo-grande">${esc(p.codigo)}</p><p class="suave m0">Compártelo con tus hermanos para que se unan.</p><button type="button" class="btn sec" id="dCopiar">📋 Copiar enlace de invitación</button><p id="dmsg" class="ok" role="status"></p></div>
+      <div class="card sep16"><label for="dn">Nombre de la iglesia</label><input id="dn" type="text" maxlength="60" value="${esc(d.nombre || '')}"><label for="de">Eslogan</label><input id="de" type="text" maxlength="80" value="${esc(d.eslogan || '')}"><p id="derr" class="error" role="alert" hidden></p><button type="button" class="btn" id="dGuardar">Guardar</button></div>
+      <div class="card sep16"><div class="t"><span aria-hidden="true">🔄</span>Cambiar el código</div><p class="suave m0t">Si el código se filtró, crea uno nuevo. El anterior deja de servir y tendrás que copiar de nuevo la llave desde el computador.</p><button type="button" class="btn sec" id="dRotar">Crear un código nuevo</button></div>`;
+    $('#dCopiar').onclick = async () => { try { await navigator.clipboard.writeText(enlace); $('#dmsg').textContent = 'Enlace copiado.'; } catch (e) { $('#dmsg').textContent = enlace; } };
+    $('#dGuardar').onclick = async () => { const r2 = await prpc('iglesia_guardar_perfil', p, { p_nombre: $('#dn').value.trim(), p_eslogan: $('#de').value.trim() || null }); const er = $('#derr'); if (r2.ok && r2.data) { er.hidden = true; $('#dmsg').textContent = 'Guardado.'; } else { er.textContent = 'No se pudo guardar. Revisa el nombre (2 a 60 letras) y tu conexión.'; er.hidden = false; } };
+    $('#dRotar').onclick = async () => { if (!confirm('¿Crear un código nuevo? El actual dejará de servir.')) return; const r2 = await prpc('iglesia_rotar_codigo', p), x = r2.ok ? primera(r2.data) : null; if (x && x.ok && x.codigo_nuevo) { guardar(K_PASTOR, { codigo: x.codigo_nuevo, secreto: p.secreto }); alert('Tu código nuevo es ' + x.codigo_nuevo + '. En el computador, toca «Cambiar el código» o copia de nuevo la llave.'); vistaPastor(); } else $('#dmsg').textContent = 'No se pudo cambiar el código.'; };
+  }
+
   // ---------- Navegación ----------
-  const VISTAS = { iglesia: vistaIglesia, palabra: vistaPalabra, vida: vistaVida };
+  const VISTAS = { iglesia: vistaIglesia, palabra: vistaPalabra, vida: vistaVida, perfil: vistaPerfil, pastor: vistaPastor };
   function ir(tab) {
     document.querySelectorAll('.tab').forEach((b) => { if (b.dataset.tab === tab) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
+    barraRefrescar(tab);
+    const tp = $('#barraTop'); if (tp && tp.classList && tp.classList.remove) tp.classList.remove('on');
     VISTAS[tab](); window.scrollTo(0, 0); $('#pantalla').focus({ preventScroll: true });
   }
   document.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) { /* sin vibración */ } ir(b.dataset.tab); }));

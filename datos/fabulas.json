@@ -1,0 +1,202 @@
+{
+ "tres-rejas": {
+  "titulo": "Las tres rejas",
+  "atribucion": "Relato tradicional, atribuido a Sócrates",
+  "intro": "Antes de repetir algo que escuchaste de otra persona, hazlo pasar por estas tres rejas.",
+  "puertas": [
+   {
+    "titulo": "Primera reja: la Verdad",
+    "pregunta": "¿Estás totalmente seguro de que es cierto?",
+    "texto": "Cuentan que un discípulo llegó corriendo donde su maestro, ansioso por contarle algo que acababa de escuchar sobre un amigo suyo. El maestro lo detuvo antes de dejarlo empezar: «Espera. Lo que me vas a contar, ¿ya lo pasaste por tres rejas?» El discípulo no entendía. «La primera reja es la Verdad», le dijo. «¿Comprobaste con tus propios ojos que eso es cierto, o solo te lo contaron?» El discípulo, pensándolo bien, tuvo que admitir que solo lo había oído de boca de otros."
+   },
+   {
+    "titulo": "Segunda reja: la Bondad",
+    "pregunta": "¿Es algo bueno para la persona de la que hablas?",
+    "texto": "El maestro continuó: «Supongamos que fuera cierto. La segunda reja es la Bondad: ¿lo que me vas a contar habla bien de esa persona, o la deja mal parada?» El discípulo bajó la mirada — lo que traía para contar no era nada bueno, todo lo contrario."
+   },
+   {
+    "titulo": "Tercera reja: la Necesidad",
+    "pregunta": "¿De verdad hace falta que yo lo sepa?",
+    "texto": "«Y la tercera reja», siguió el maestro, «es la Necesidad: ¿me sirve de algo saberlo? ¿Cambia algo en mi vida o en la tuya?» El discípulo tuvo que reconocer que no, que contarlo no iba a ayudar a nadie. «Entonces», le dijo el maestro con calma, «si no es verdad comprobada, ni es bueno, ni es necesario, mejor dejarlo ir. Nos habremos ahorrado un peso que no valía la pena cargar»."
+   }
+  ],
+  "moraleja": "No todo lo que se puede repetir merece ser repetido. Antes de pasar un comentario, un chisme o una crítica, conviene detenerse a mirarlo de frente con estas tres preguntas.",
+  "practica": "Esta semana, antes de repetir algo que escuchaste sobre alguien, detente un segundo y hazlo pasar por las tres rejas: ¿es verdad?, ¿es bueno?, ¿es necesario? Si no pasa las tres, déjalo ir.",
+  "icono": "🚪",
+  "escena": "rejas",
+  "tono": "#C9892B",
+  "tema": "Palabras",
+  "lee": "Santiago 3:2-10 · Efesios 4:29",
+  "tiempo": "2 min"
+ },
+ "dos-lobos": {
+  "titulo": "Los dos lobos",
+  "atribucion": "Leyenda tradicional, de origen cherokee",
+  "intro": "Una historia sobre la batalla que todos llevamos por dentro, y sobre quién la termina ganando.",
+  "puertas": [
+   {
+    "titulo": "Primera reja: la Batalla",
+    "pregunta": "¿Cuál de los dos crees que gana?",
+    "texto": "Un abuelo le contaba a su nieto: «Dentro de cada persona hay dos lobos que pelean todo el tiempo. Uno es la ira, la envidia, el orgullo, la mentira. El otro es la paz, el amor, la humildad, la verdad». El nieto se quedó pensando un momento y después preguntó lo que cualquiera hubiera preguntado: «Abuelo... ¿y cuál de los dos gana?»"
+   },
+   {
+    "titulo": "Segunda reja: el Alimento",
+    "pregunta": "¿A cuál de los dos alimentaste hoy con tus pensamientos y tus actos?",
+    "texto": "El abuelo sonrió y le dijo: «Gana el que tú alimentes». El nieto no entendía bien qué quería decir eso, así que el abuelo se lo explicó despacio: cada palabra dura que decimos, cada pensamiento de envidia que dejamos crecer, cada vez que preferimos tener razón antes que hacer las paces, le estamos dando de comer a uno de los lobos. Y cada vez que elegimos perdonar, escuchar, o callar a tiempo, le estamos dando de comer al otro."
+   }
+  ],
+  "moraleja": "No decidimos de una vez y para siempre quiénes somos: lo decidimos cada día, con lo que alimentamos por dentro.",
+  "practica": "Esta semana, cada vez que sientas que la ira, el orgullo o la envidia quieren hablar por ti, haz una pausa y elige alimentar, en cambio, la paciencia o la humildad, aunque sea con un gesto pequeño.",
+  "icono": "🐺",
+  "escena": "lobos",
+  "tono": "#5B6FB5",
+  "tema": "Corazón",
+  "lee": "Gálatas 5:16-25 · Romanos 12:21",
+  "tiempo": "2 min"
+ },
+ "vasija-agrietada": {
+  "titulo": "La vasija agrietada",
+  "atribucion": "Cuento tradicional, de origen chino",
+  "intro": "Una historia sobre lo que Dios puede hacer incluso con nuestras grietas.",
+  "puertas": [
+   {
+    "titulo": "Primera reja: la Vergüenza",
+    "pregunta": "¿Alguna vez sentiste que tu propia grieta te hacía inútil para algo importante?",
+    "texto": "Un aguador cargaba todos los días dos vasijas colgadas de una vara sobre los hombros. Una era perfecta y llegaba siempre llena. La otra tenía una grieta, y en el camino desde el río hasta la casa perdía la mitad del agua. Durante años, la vasija agrietada se disculpó con el aguador cada mañana: «Perdóname. Por mi culpa solo llevas la mitad de lo que deberías». Se sentía, sencillamente, inútil."
+   },
+   {
+    "titulo": "Segunda reja: la Mirada",
+    "pregunta": "¿Y si lo que ves como tu falla fuera, sin que lo sepas, la forma en que haces bien a alguien?",
+    "texto": "Un día el aguador le dijo: «Mira el costado del camino la próxima vez que volvamos». La vasija miró, y vio flores: hermosas, coloridas, creciendo justo en la línea del sendero que ella recorría todos los días. «Durante todo este tiempo», le dijo el aguador, «tu agua, la que tú creías que se perdía, regó estas semillas. Con esas flores alegro la mesa de mi casa desde hace años. Si hubieras sido perfecta, esto nunca habría crecido»."
+   }
+  ],
+  "moraleja": "Lo que a nosotros nos parece una grieta puede ser justo el lugar por donde Dios deja pasar algo bueno que nunca hubiéramos imaginado.",
+  "practica": "Esta semana, en vez de esconder algo de ti que te avergüenza, pregúntate con calma si no habrá servido, sin que lo notaras, para algo o alguien.",
+  "icono": "🏺",
+  "escena": "vasija",
+  "tono": "#B5603A",
+  "tema": "Identidad",
+  "lee": "2 Corintios 12:9-10 · 2 Corintios 4:7",
+  "tiempo": "2 min"
+ },
+ "piedra-en-el-camino": {
+  "titulo": "La piedra en el camino",
+  "atribucion": "Cuento tradicional",
+  "intro": "Todos nos topamos con piedras. Lo que cambia la historia es qué hacemos con ellas.",
+  "icono": "🪨",
+  "escena": "camino",
+  "tono": "#6B8E5A",
+  "tema": "Servicio",
+  "lee": "Gálatas 6:2 · Romanos 14:13",
+  "tiempo": "3 min",
+  "puertas": [
+   {
+    "titulo": "La piedra",
+    "pregunta": "¿Qué piedra hay hoy en tu camino y todos esquivan?",
+    "texto": "Un rey mandó poner una enorme piedra en medio del camino principal y se escondió a mirar. Pasaron mercaderes, soldados y nobles. Todos la rodearon murmurando: «Qué descuido, alguien debería quitarla». Ninguno movió un dedo."
+   },
+   {
+    "titulo": "El campesino",
+    "pregunta": "¿Cuántas veces dijiste «alguien debería» en lugar de «yo puedo»?",
+    "texto": "Al caer la tarde llegó un campesino cargado de verduras. Dejó su carga a un lado, apoyó el hombro contra la piedra y empujó, sudó y volvió a empujar hasta que logró correrla del camino."
+   },
+   {
+    "titulo": "El tesoro",
+    "pregunta": "¿Qué podría esperarte debajo de lo que te cuesta mover?",
+    "texto": "Bajo la piedra había una bolsa con monedas de oro y una nota del rey: “Este tesoro es para quien se tome la molestia de quitar el obstáculo”. El campesino volvió a casa con más que verduras: con la lección de que el bien que hacemos por todos suele volver a nosotros."
+   }
+  ],
+  "moraleja": "Cada obstáculo es una invitación. Quien se hace cargo de lo que otros solo comentan termina sirviendo a todos, y a sí mismo.",
+  "practica": "Esta semana elige una «piedra pequeña» (un desorden, una tarea que nadie hace, alguien que está solo) y muévela tú, sin esperar que otro lo haga."
+ },
+ "tortuga-y-liebre": {
+  "titulo": "La tortuga y la liebre",
+  "atribucion": "Fábula de Esopo",
+  "intro": "La carrera más famosa del mundo, contada para quienes sienten que avanzan despacio.",
+  "icono": "🐢",
+  "escena": "carrera",
+  "tono": "#3F9E86",
+  "tema": "Constancia",
+  "lee": "Gálatas 6:9 · Hebreos 12:1",
+  "tiempo": "2 min",
+  "puertas": [
+   {
+    "titulo": "La burla",
+    "pregunta": "¿A quién has subestimado por su lentitud, o quién te ha subestimado a ti?",
+    "texto": "Una liebre se burlaba de la tortuga: «¡Qué lenta eres! Podría darte una hora de ventaja y aun así ganarte». La tortuga, sin enojarse, respondió: «Corramos». Y se fijó la carrera hasta el viejo roble del final del valle."
+   },
+   {
+    "titulo": "La siesta",
+    "pregunta": "¿En qué área de tu vida te estás confiando demasiado?",
+    "texto": "La liebre salió disparada y en un momento perdió de vista a la tortuga. Confiada, se echó a descansar bajo un árbol «solo un ratito». Mientras tanto, la tortuga seguía: un paso, otro paso, otro paso, sin detenerse ni mirar atrás."
+   },
+   {
+    "titulo": "La meta",
+    "pregunta": "¿Cuál es el siguiente paso pequeño que sí puedes dar hoy?",
+    "texto": "Cuando la liebre despertó, vio a lo lejos a la tortuga cruzando la meta. Corrió con todas sus fuerzas, pero ya era tarde. Ese día aprendió que la velocidad impresiona, pero la constancia llega."
+   }
+  ],
+  "moraleja": "No gana quien corre más rápido un día, sino quien sigue caminando todos los días.",
+  "practica": "Elige un hábito diminuto (leer un salmo, llamar a alguien, orar dos minutos) y hazlo cada día de esta semana. Que sea tan pequeño que no puedas decir que no."
+ },
+ "haz-de-varas": {
+  "titulo": "El haz de varas",
+  "atribucion": "Fábula de Esopo",
+  "intro": "Un anciano, tres hijos que no se llevan bien y una lección que no se olvida.",
+  "icono": "🌾",
+  "escena": "varas",
+  "tono": "#A0793A",
+  "tema": "Unidad",
+  "lee": "Eclesiastés 4:9-12 · Salmo 133",
+  "tiempo": "2 min",
+  "puertas": [
+   {
+    "titulo": "La discordia",
+    "pregunta": "¿Qué desacuerdo pequeño ha ido separándote de alguien?",
+    "texto": "Un campesino ya anciano tenía hijos que discutían todo el tiempo: por la tierra, por las tareas, por quién tenía razón. Sabía que cuando él faltara, esa división los dejaría solos y débiles. Entonces los llamó a su cama."
+   },
+   {
+    "titulo": "Las varas",
+    "pregunta": "¿Qué fuerza tienes sola, y cuál tendrías acompañado?",
+    "texto": "Les dio un haz de varas atadas y les dijo: «Rómpanlo». Uno por uno lo intentaron con todas sus fuerzas, y ninguno pudo. Entonces el padre desató el haz y les dio varas sueltas. Se rompieron con facilidad, una tras otra, como ramitas secas."
+   },
+   {
+    "titulo": "El nudo",
+    "pregunta": "¿Con quién necesitas «atarte» de nuevo?",
+    "texto": "«Hijos míos», dijo el anciano, «mientras estén unidos serán invencibles; separados, cualquier viento los quebrará». Los hermanos se miraron, bajaron la cabeza y, por primera vez en mucho tiempo, se dieron la mano."
+   }
+  ],
+  "moraleja": "La unión no borra las diferencias: las vuelve pequeñas frente a lo que juntos podemos sostener.",
+  "practica": "Esta semana da un paso de reconciliación o de cercanía con alguien: un mensaje, un café, una disculpa sincera. Un nudo a la vez."
+ },
+ "semilla-de-bambu": {
+  "titulo": "La semilla de bambú",
+  "atribucion": "Relato tradicional de Oriente",
+  "intro": "A veces lo más importante está creciendo donde todavía no se ve nada.",
+  "icono": "🎋",
+  "escena": "bambu",
+  "tono": "#2F9E6B",
+  "tema": "Paciencia",
+  "lee": "Marcos 4:26-29 · Santiago 5:7-8",
+  "tiempo": "3 min",
+  "puertas": [
+   {
+    "titulo": "La siembra",
+    "pregunta": "¿Qué sembraste hace tiempo y sigue sin dar señales?",
+    "texto": "Un jardinero plantó una semilla de bambú, la regó y la cuidó cada día. Pasó un año: nada. Pasaron dos, tres, cuatro años: ni un brote. Los vecinos se reían: «Estás regando tierra vacía». Él seguía, un día tras otro."
+   },
+   {
+    "titulo": "El silencio",
+    "pregunta": "¿Estás dispuesto a seguir cuidando sin ver resultados todavía?",
+    "texto": "Lo que nadie veía era que, bajo la tierra, el bambú estaba echando raíces profundas y extensas. Todo ese tiempo estaba construyendo la base que necesitaría para sostener lo que venía."
+   },
+   {
+    "titulo": "El brote",
+    "pregunta": "¿Qué raíces estás formando hoy para tu futuro?",
+    "texto": "Al quinto año, el brote asomó y en pocas semanas creció varios metros hacia el cielo. No había crecido de golpe: se había preparado en silencio. El jardinero sonrió, porque nunca había dejado de creerlo."
+   }
+  ],
+  "moraleja": "Lo que parece demora muchas veces es raíz. Dios trabaja profundo antes de que nosotros veamos algo.",
+  "practica": "Piensa en algo que estás cuidando sin ver fruto (una oración, una relación, un proyecto). Esta semana regarlo de nuevo, sin exigirle resultados, y agradece lo que no se ve."
+ }
+}
