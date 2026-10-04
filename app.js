@@ -68,19 +68,57 @@
     return vistaUnirse();
   }
 
+  // ---------- Entrada (F865): portada con 3 caminos claros + instalar ----------
+  let promptInstalar = null;
+  if (window.addEventListener) window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); promptInstalar = e; document.querySelectorAll('[data-instalar-box]').forEach(pintarInstalar); });
+  if (window.addEventListener) window.addEventListener('appinstalled', () => { promptInstalar = null; document.querySelectorAll('[data-instalar-box]').forEach(pintarInstalar); });
+  const yaInstalada = () => (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || (window.navigator || {}).standalone === true;
+  const NAV = () => (typeof navigator !== 'undefined' && navigator) || {};
+  const esIOS = () => /iphone|ipad|ipod/i.test(NAV().userAgent || '') || (NAV().platform === 'MacIntel' && NAV().maxTouchPoints > 1);
+  function pintarInstalar(box) {
+    if (!box) return;
+    if (yaInstalada()) { box.innerHTML = ''; return; }
+    if (promptInstalar) {
+      box.innerHTML = `<button type="button" class="btn sec" id="instalarYa">📲 Instalar en este ${/ipad|tablet/i.test(NAV().userAgent || '') ? 'dispositivo' : 'teléfono'}</button>`;
+      $('#instalarYa').onclick = async () => { try { promptInstalar.prompt(); await promptInstalar.userChoice; } catch (e) { /* nada */ } promptInstalar = null; pintarInstalar(box); };
+    } else if (esIOS()) {
+      box.innerHTML = `<div class="card ayuda"><b>📲 Dejarla como app:</b> toca <b>Compartir</b> ⬆️ (abajo en Safari) y luego <b>«Agregar a pantalla de inicio»</b>.</div>`;
+    } else {
+      box.innerHTML = `<p class="suave">📲 Para dejarla como app: menú ⋮ del navegador → <b>«Instalar app»</b> o «Agregar a pantalla de inicio».</p>`;
+    }
+  }
+  const bloqueInstalar = () => '<div data-instalar-box class="sep16"></div>';
+  const codigoDeEnlace = () => { try { const q = new URLSearchParams(location.search.slice(1) || location.hash.replace(/^#\??/, '')); const c = (q.get('c') || q.get('codigo') || '').toUpperCase(); return /^[A-Z0-9]{6}$/.test(c) ? c : ''; } catch (e) { return ''; } };
+
   function vistaUnirse() {
+    if (codigoDeEnlace()) return vistaCodigo();            // vino de un enlace con el código de su iglesia
     $('#pantalla').innerHTML = `
+      <h1>Bienvenido a Tierra Buena</h1><div class="filete"></div>
+      <p>Elige cómo quieres entrar. No necesitas contraseña: tu pastor te acepta y este dispositivo guarda tu llave.</p>
+      <div class="grid">
+        ${activa('⛪', 'Tengo el código de mi iglesia', 'Tu pastor te lo da. Son 6 letras o números.', 'codigo')}
+        ${activa('🔑', 'Ya me uní en otro dispositivo', 'Pega tu llave y entras sin pedir permiso de nuevo.', 'llave')}
+        ${activa('📖', 'Solo quiero leer y orar', 'Biblia, versículo del día y Vida y servicio, sin unirte.', 'solo')}
+      </div>
+      ${bloqueInstalar()}`;
+    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ codigo: vistaCodigo, llave: vistaLlave, solo: () => ir('palabra') }[b.dataset.ir]())));
+    pintarInstalar($('[data-instalar-box]'));
+  }
+
+  function vistaCodigo() {
+    const pre = codigoDeEnlace();
+    $('#pantalla').innerHTML = `
+      <button type="button" class="volver" id="atras">‹ Entrar</button>
       <h1>Mi iglesia</h1><div class="filete"></div>
-      <p>Para unirte, escribe el código que te dio tu pastor. Tu pastor decidirá si te acepta.</p>
+      <p>Escribe el código que te dio tu pastor. Tu pastor decidirá si te acepta.</p>
       <label for="cod">Código de tu iglesia</label>
-      <input id="cod" type="text" maxlength="6" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" placeholder="Ej. AB12CD">
+      <input id="cod" type="text" maxlength="6" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" placeholder="Ej. AB12CD" value="${esc(pre)}">
       <p id="err" class="error" role="alert" hidden></p>
       <button id="buscar" class="btn">Buscar mi iglesia</button>
-      <div id="paso2"></div>
-      <button id="llave" class="btn sec">Ya me uní en otro dispositivo</button>
-      <div id="paso3"></div>`;
+      <div id="paso2"></div>`;
+    $('#atras').onclick = () => { try { history.replaceState(null, '', location.pathname); } catch (e) { /* nada */ } vistaUnirse(); };
     $('#buscar').onclick = buscarIglesia;
-    $('#llave').onclick = vistaLlave;
+    if (pre) buscarIglesia(); else $('#cod').focus();
   }
   function error(msg) { const e = $('#err'); if (e) { e.textContent = msg; e.hidden = !msg; } }
 
@@ -152,7 +190,23 @@
       <div class="grid">${activa('🙏', 'Pedir oración', 'Cuéntale a tu pastor por qué orar.', 'oracion')}${activa('🤝', 'Pedir visita', 'Pide que tu pastor te visite.', 'visita')}</div>
       <h2 class="sep">Vivir con mi iglesia</h2>
       <div class="grid">${activa('🧱', 'Muro', 'Peticiones que tu pastor compartió, para orar juntos.', 'muro')}${activa('🌟', 'Acción del mes', 'Lo que viviremos juntos este mes.', 'accion')}</div>
+      <h2 class="sep">Mi dispositivo</h2>
+      <div class="card"><div class="t"><span aria-hidden="true">🔑</span>Pasar mi iglesia a otro dispositivo</div>
+        <p class="suave m0t">Copia tu llave y pégala en tu otro teléfono o tablet, en «Ya me uní en otro dispositivo». Guárdala como una contraseña: quien la tenga entra como tú.</p>
+        <button type="button" class="btn sec" id="verLlave">Mostrar mi llave</button>
+        <div id="llaveBox" hidden><textarea id="llaveTxt" rows="3" readonly spellcheck="false"></textarea><button type="button" class="btn" id="copiarLlave">📋 Copiar mi llave</button><p id="llaveMsg" class="ok" role="status"></p></div></div>
+      ${bloqueInstalar()}
       <button id="salir" class="btn sec sep28">Salir de mi iglesia</button>`;
+    pintarInstalar($('[data-instalar-box]'));
+    $('#verLlave').onclick = () => {
+      let t = ''; try { t = 'PULPITO-ID-' + btoa(JSON.stringify({ c: id.codigo, k: id.clave })); } catch (e) { t = ''; }
+      $('#llaveTxt').value = t; $('#llaveBox').hidden = false; $('#verLlave').hidden = true; $('#llaveTxt').focus(); $('#llaveTxt').select();
+    };
+    $('#copiarLlave').onclick = async () => {
+      const t = $('#llaveTxt'); t.select();
+      try { await navigator.clipboard.writeText(t.value); $('#llaveMsg').textContent = 'Llave copiada. Ahora pégala en tu otro dispositivo.'; }
+      catch (e) { try { document.execCommand('copy'); $('#llaveMsg').textContent = 'Llave copiada.'; } catch (e2) { $('#llaveMsg').textContent = 'Mantén presionado el recuadro y elige «Copiar».'; } }
+    };
     document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ oracion: vistaOracion, muro: vistaMuro, accion: vistaAccion, visita: vistaVisita }[b.dataset.ir] || vistaVisita)(id)));
     $('#salir').onclick = async () => {
       if (!confirm('¿Salir de esta iglesia? Se borrará tu nombre en la iglesia y en este teléfono.')) return;
@@ -399,19 +453,31 @@
   }
 
   function vistaLlave() {
-    $('#paso3').innerHTML = `
-      <label for="llv">Pega aquí tu llave (empieza con PULPITO-ID-)</label>
-      <textarea id="llv" rows="3" autocapitalize="off" spellcheck="false"></textarea>
+    $('#pantalla').innerHTML = `
+      <button type="button" class="volver" id="atras">‹ Entrar</button>
+      <h1>Entrar con mi llave</h1><div class="filete"></div>
+      <p>En tu otro dispositivo, abre <b>Mi iglesia</b> → «Pasar mi iglesia a otro dispositivo», copia la llave y pégala aquí.</p>
+      <label for="llv">Tu llave (empieza con PULPITO-ID-)</label>
+      <textarea id="llv" rows="3" autocapitalize="off" autocomplete="off" spellcheck="false"></textarea>
+      <button id="pegar" class="btn sec" hidden>📋 Pegar desde el portapapeles</button>
+      <p id="err" class="error" role="alert" hidden></p>
       <button id="usar" class="btn">Recuperar mi identidad</button>`;
+    $('#atras').onclick = vistaUnirse;
+    if (navigator.clipboard && navigator.clipboard.readText) {
+      $('#pegar').hidden = false;
+      $('#pegar').onclick = async () => { try { $('#llv').value = (await navigator.clipboard.readText()).trim(); } catch (e) { error('No pude leer el portapapeles. Mantén presionado el recuadro y elige «Pegar».'); } };
+    }
     $('#usar').onclick = async () => {
-      let d = null;
+      let d = null; error('');
       try {
         const limpio = $('#llv').value.trim().replace(/\s+/g, '');
         if (!limpio.startsWith('PULPITO-ID-')) throw 0;
         d = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(limpio.slice(11)), (c) => c.charCodeAt(0))));
       } catch (e) { return error(MOTIVOS['llave-invalida']); }
       if (!d || !/^[A-Z0-9]{6}$/.test(d.c || '') || !/^[0-9a-f]{64}$/.test(d.k || '')) return error(MOTIVOS['llave-invalida']);
+      const bu = $('#usar'); bu.disabled = true; bu.textContent = 'Revisando…';
       const v = await rpc('miembro_validar', { p_codigo: d.c, p_clave: d.k });
+      bu.disabled = false; bu.textContent = 'Recuperar mi identidad';
       if (!v.ok) return error(MOTIVOS['sin-internet']);
       if (!v.data || v.data.valido !== true) return error(MOTIVOS['llave-invalida']);
       const p = await rpc('iglesia_perfil', { p_codigo: d.c });
