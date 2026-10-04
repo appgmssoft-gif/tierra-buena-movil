@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://mxgvaspztajgzxfgtxfq.supabase.co; object-src 'none'; base-uri 'self'; form-action 'none';">
+<meta name="theme-color" content="#3f5d3a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="app.css">
+<title>Tierra Buena</title>
+</head>
+<body>
+<div id="sinRed" class="aviso-red" hidden>Sin internet: lo que ya viste sigue aquí; para unirte o enviar necesitas conexión.</div>
+<main id="pantalla" tabindex="-1"></main>
+<nav class="barra" aria-label="Secciones">
+  <button class="tab" data-tab="iglesia" aria-current="page"><span class="ico" aria-hidden="true">⛪</span><span>Mi iglesia</span></button>
+  <button class="tab" data-tab="palabra"><span class="ico" aria-hidden="true">📖</span><span>Palabra</span></button>
+  <button class="tab" data-tab="vida"><span class="ico" aria-hidden="true">🌱</span><span>Vida y servicio</span></button>
+</nav>
+<script src="vendor/supabase.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
