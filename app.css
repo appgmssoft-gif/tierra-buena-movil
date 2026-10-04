@@ -167,3 +167,45 @@ main{padding-bottom:calc(112px + var(--sa-b))}
   .grid>*:nth-child(2){animation-delay:.04s}.grid>*:nth-child(3){animation-delay:.08s}.grid>*:nth-child(4){animation-delay:.12s}.grid>*:nth-child(5){animation-delay:.16s}.grid>*:nth-child(n+6){animation-delay:.2s}
 }
 @media (prefers-reduced-motion:reduce){.btn,.tab,button.card{transition:none}}
+
+/* ====== F871 · Decoración y movimiento (Calm · Duolingo · Headspace · Apple) ======
+   «Hoy» con luz que respira y versículo en cristal; pantallas que entran suave; íconos que rebotan al tocar;
+   brillo que cruza el botón principal; esqueletos mientras carga. Borrar esta sección devuelve el diseño F870. */
+.hoy{position:relative;overflow:hidden;margin:0 0 6px;padding:22px 20px 20px;border-radius:28px;color:#fff;background:linear-gradient(160deg,#6c8f5c 0%,#46663f 52%,#2c4429 100%);box-shadow:0 20px 44px -22px rgba(44,68,41,.9)}
+.hoy::after{content:"";position:absolute;inset:auto -30px -60px auto;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.16),transparent 68%)}
+.hoy-luz{position:absolute;width:240px;height:240px;right:-80px;top:-110px;border-radius:50%;background:radial-gradient(circle,rgba(255,226,150,.6),transparent 70%)}
+.hoy h1{color:#fff;position:relative;margin:2px 0 12px}.hoy-saludo{position:relative;margin:0;font-size:.95rem;font-weight:600;opacity:.9}
+.hoy-verso{position:relative;z-index:1;padding:14px 16px;border-radius:20px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);min-height:76px;cursor:default}
+.hoy-verso.listo{cursor:pointer}.hoy-verso.listo:active{transform:scale(.985)}
+.hoy-verso.listo::before{content:"“";position:absolute;left:10px;top:-14px;font:700 3.6rem/1 Georgia,serif;color:rgba(255,226,150,.55)}
+.hoy-texto{font-family:Georgia,"Times New Roman",serif;font-size:1.08rem;line-height:1.55;margin:0 0 6px;color:#fff;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.hoy-cita{margin:0;font-size:.82rem;font-weight:700;letter-spacing:.04em;color:rgba(255,236,190,.95)}
+.esqueleto{display:block;height:14px;border-radius:8px;margin:8px 0;background:linear-gradient(90deg,rgba(255,255,255,.16) 25%,rgba(255,255,255,.34) 50%,rgba(255,255,255,.16) 75%);background-size:200% 100%}
+.esqueleto.corto{width:55%}
+.btn{position:relative;overflow:hidden}
+.filete{background:linear-gradient(90deg,var(--oro),var(--verde));border-radius:4px}
+.card.versiculo{position:relative;overflow:hidden;border-radius:24px;background:linear-gradient(160deg,color-mix(in srgb,var(--oro) 18%,var(--tarjeta)),var(--tarjeta))}
+.card.versiculo::before{content:"“";position:absolute;right:14px;top:-18px;font:700 6rem/1 Georgia,serif;color:color-mix(in srgb,var(--oro) 40%,transparent)}
+.hero-ico,.bienvenida .t>span:first-child{box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)}
+@media (prefers-reduced-motion:no-preference){
+  #pantalla>*{animation:entra .38s cubic-bezier(.2,.8,.2,1) both}
+  #pantalla>*:nth-child(2){animation-delay:.04s}#pantalla>*:nth-child(3){animation-delay:.08s}#pantalla>*:nth-child(n+4){animation-delay:.12s}
+  .hoy-luz,.hero::before{animation:respira 6s ease-in-out infinite}
+  .hero-ico{animation:flota 4.5s ease-in-out infinite}
+  .esqueleto{animation:brilla 1.3s linear infinite}
+  .hoy-verso.listo{animation:entra .5s cubic-bezier(.2,.8,.2,1) both}
+  .btn:not(.sec):not(:disabled)::after{content:"";position:absolute;top:0;bottom:0;left:-70%;width:45%;transform:skewX(-20deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);animation:cruza 5s ease-in-out 1.2s infinite;pointer-events:none}
+  .tab[aria-current=page] .ico svg{animation:rebota .45s cubic-bezier(.3,1.6,.5,1)}
+  .filete{transform-origin:left;animation:crece .5s .1s cubic-bezier(.2,.8,.2,1) both}
+  .card.item,.libro,.cap{transition:transform .12s}.card.item:active,.libro:active,.cap:active{transform:scale(.97)}
+  @keyframes respira{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.18);opacity:1}}
+  @keyframes flota{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  @keyframes brilla{to{background-position:-200% 0}}
+  @keyframes cruza{0%,70%{left:-70%}100%{left:140%}}
+  @keyframes rebota{0%{transform:scale(.7)}60%{transform:translateY(-3px) scale(1.2)}100%{transform:translateY(-1px) scale(1.08)}}
+  @keyframes crece{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+}
+
+/* F872 · estado de la copia en la nube */
+.sinc{display:inline-block;margin-top:4px;font-size:.82rem;color:var(--suave)}
+@media (prefers-reduced-motion:no-preference){.sinc{animation:entra .4s both}}

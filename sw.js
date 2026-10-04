@@ -1,6 +1,6 @@
 // sw.js — F856 (MOV2a). Guarda solo la «cáscara» de la app para que abra sin internet.
 // Nunca guarda llamadas a Supabase: lo que viene de la nube siempre se pide en vivo.
-const V = 'tb-movil-f870';
+const V = 'tb-movil-f872';
 const CASCARA = ['./', './index.html', './app.css', './app.js', './vendor/supabase.js', './manifest.webmanifest', './accion_mes.json', './icon-192.png', './icon-512.png', './icon-maskable-192.png', './icon-maskable-512.png'];
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(V).then((c) => c.addAll(CASCARA)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', (e) => {

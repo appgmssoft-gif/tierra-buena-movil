@@ -34,7 +34,7 @@
   const $ = (s, r) => (r || document).querySelector(s);
   const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const leer = (k) => { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } };
-  const guardar = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } };
+  const guardar = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { return false; } syncMarcar(k); return true; };
   const borrar = (k) => { try { localStorage.removeItem(k); } catch (e) { /* nada */ } };
 
   async function rpc(fn, args) {
@@ -46,6 +46,83 @@
     } catch (e) { return { ok: false, motivo: 'sin-internet' }; }
   }
   const llaveNueva = () => Array.from(crypto.getRandomValues(new Uint8Array(32)), (x) => x.toString(16).padStart(2, '0')).join('');
+
+
+  // ---------- F872 · Avances por cuenta (nube) ----------
+  // Lo personal (oración, crecimiento, ideas, cursos, lectura, acción del mes) se guarda en el teléfono Y en la cuenta
+  // (tabla public.avances_cuenta, solo la ve su dueño: docs/sql/SQL_AVANCES_CUENTA.sql). Sin sesión o sin la tabla, todo sigue local.
+  const SYNC_CLAVES = ['tb_movil_mi_oracion', 'tb_movil_crecimiento', 'tb_movil_ideas_fav', 'tb_movil_aprender', 'tb_movil_biblia_ultimo', 'tb_movil_accion_mes'];
+  const K_SYNC = 'tb_movil_sync';
+  const sync = { estado: 'local', cuando: null, timer: null, ocupado: false };   // estado: local | ok | pendiente | falta | error
+  const metaLeer = () => { const m = leer(K_SYNC); return m && typeof m === 'object' ? { dueno: m.dueno || null, t: m.t || {}, d: m.d || {} } : { dueno: null, t: {}, d: {} }; };
+  const metaGuardar = (m) => { try { localStorage.setItem(K_SYNC, JSON.stringify(m)); } catch (e) { /* nada */ } };
+  const crudoGuardar = (k, v) => { try { if (v === null || v === undefined) localStorage.removeItem(k); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* nada */ } };
+  function syncMarcar(k) {
+    if (SYNC_CLAVES.indexOf(k) < 0 || !leer(K_CUENTA)) return;
+    const m = metaLeer(); m.d[k] = true; metaGuardar(m);
+    sync.estado = 'pendiente'; syncPintar();
+    clearTimeout(sync.timer); sync.timer = setTimeout(syncSubir, 1500);
+  }
+  async function syncUsuario() {
+    if (!hayAuth() || !SB.from || !SB.auth.getSession) return null;
+    try { const r = await SB.auth.getSession(); return (r && r.data && r.data.session && r.data.session.user) || null; } catch (e) { return null; }
+  }
+  const tablaFalta = (er) => !!er && (er.code === '42P01' || er.code === 'PGRST205' || /avances_cuenta/i.test(er.message || '') && /not find|does not exist/i.test(er.message || ''));
+  async function syncSubir() {
+    if (sync.ocupado) { clearTimeout(sync.timer); sync.timer = setTimeout(syncSubir, 1500); return; }
+    const u = await syncUsuario(); if (!u) { sync.estado = 'local'; return syncPintar(); }
+    sync.ocupado = true;
+    try {
+      const m = metaLeer(); let fallo = false;
+      for (const k of SYNC_CLAVES) {
+        if (!m.d[k]) continue;
+        const v = leer(k);
+        try {
+          if (v === null) { const r = await SB.from('avances_cuenta').delete().eq('user_id', u.id).eq('clave', k); if (r.error) throw r.error; delete m.t[k]; }
+          else { const r = await SB.from('avances_cuenta').upsert({ user_id: u.id, clave: k, valor: v }, { onConflict: 'user_id,clave' }).select('actualizado'); if (r.error) throw r.error; const f = Array.isArray(r.data) ? r.data[0] : r.data; if (f && f.actualizado) m.t[k] = f.actualizado; }
+          delete m.d[k];
+        } catch (er) { fallo = true; if (tablaFalta(er)) { sync.estado = 'falta'; break; } }
+      }
+      m.dueno = u.id; metaGuardar(m);
+      if (sync.estado !== 'falta') { sync.estado = fallo ? 'error' : 'ok'; if (!fallo) sync.cuando = new Date(); }
+    } finally { sync.ocupado = false; syncPintar(); }
+  }
+  const mezclaLista = (loc, rem) => {            // dos listas con id: se juntan (gana lo local si el id se repite)
+    if (!Array.isArray(loc) || !Array.isArray(rem) || !loc.concat(rem).every((x) => x && typeof x === 'object' && x.id)) return loc;
+    const ids = new Set(loc.map((x) => x.id)); return loc.concat(rem.filter((x) => !ids.has(x.id)));
+  };
+  async function syncBajar(user) {
+    if (!user || !hayAuth() || !SB.from) return;
+    let filas;
+    try { const r = await SB.from('avances_cuenta').select('clave,valor,actualizado'); if (r.error) throw r.error; filas = r.data || []; }
+    catch (er) { sync.estado = tablaFalta(er) ? 'falta' : 'error'; return syncPintar(); }
+    const m = metaLeer(), otraCuenta = !!m.dueno && m.dueno !== user.id;
+    for (const k of SYNC_CLAVES) {
+      const rem = filas.find((f) => f.clave === k), loc = leer(k);
+      if (otraCuenta) { crudoGuardar(k, rem ? rem.valor : null); delete m.d[k]; if (rem) m.t[k] = rem.actualizado; else delete m.t[k]; continue; }   // lo del teléfono era de otra persona: manda la nube de esta cuenta
+      const sucioLocal = loc !== null && (!m.t[k] || m.d[k]);
+      if (!rem) { if (loc !== null) m.d[k] = true; continue; }
+      const remNuevo = !m.t[k] || new Date(rem.actualizado) > new Date(m.t[k]);
+      if (sucioLocal) { if (remNuevo) { crudoGuardar(k, mezclaLista(loc, rem.valor)); } m.d[k] = true; }
+      else if (remNuevo || loc === null) { crudoGuardar(k, rem.valor); m.t[k] = rem.actualizado; delete m.d[k]; }
+    }
+    m.dueno = user.id; metaGuardar(m);
+    sync.estado = 'ok'; sync.cuando = new Date(); syncPintar();
+    await syncSubir();
+  }
+  async function syncInicio() { const u = await syncUsuario(); if (u && leer(K_CUENTA)) syncBajar(u); }
+  async function syncCerrar() {                  // antes de cerrar sesión: sube lo pendiente y, si quedó todo en la nube, limpia el teléfono
+    try { await Promise.race([syncSubir(), new Promise((r) => setTimeout(r, 4000))]); } catch (e) { /* sin red */ }
+    const m = metaLeer(); if (SYNC_CLAVES.some((k) => m.d[k]) || sync.estado === 'falta' || sync.estado === 'error') return false;
+    SYNC_CLAVES.forEach((k) => crudoGuardar(k, null)); crudoGuardar(K_SYNC, null); return true;
+  }
+  function syncTexto() {
+    if (!leer(K_CUENTA)) return '';
+    const e = sync.estado;
+    return e === 'ok' ? '☁️ Tus avances están guardados en tu cuenta' : e === 'pendiente' ? '☁️ Guardando tus avances…' : e === 'falta' ? '☁️ La copia en la nube aún no está activa; tus notas quedan en este teléfono' : e === 'error' ? '☁️ Sin conexión: se guardarán en tu cuenta cuando vuelva internet' : '';
+  }
+  function syncPintar() { const el = $('#sincEstado'); if (el) el.textContent = syncTexto(); }
+  if (window.addEventListener) window.addEventListener('online', () => { if (leer(K_CUENTA)) syncSubir(); });
 
   // ---------- Pantallas ----------
   const pronto = (ico, titulo, ayuda) => `<div class="card pronto" role="note"><div class="t"><span aria-hidden="true">${ico}</span>${titulo}<span class="etiqueta">Pronto</span></div><p class="suave m0t">${ayuda}</p></div>`;
@@ -132,6 +209,7 @@
   }
   async function despuesDeCuenta(user) {
     guardar(K_CUENTA, { correo: user.email || '' });
+    await syncBajar(user);                          // F872: trae los avances de la cuenta (y sube los de este teléfono si la cuenta está vacía)
     const local = leer(K_ID), enCuenta = iglesiaDeCuenta(user);
     if (enCuenta && !(local && local.codigo === enCuenta.codigo && local.clave === enCuenta.clave)) {
       if (local && typeof confirm === 'function' && !confirm('Tu cuenta ya tiene una iglesia guardada. ¿Usarla en lugar de la que está ahora en este teléfono?')) { await iglesiaAcuenta(local); return vistaIglesia(); }
@@ -144,12 +222,13 @@
     return vistaIglesia();
   }
   async function cerrarSesionCuenta() {
+    await syncCerrar();                             // F872: lo pendiente viaja a la cuenta antes de salir
     try { if (hayAuth()) await SB.auth.signOut(); } catch (e) { /* sin red: igual se cierra aquí */ }
     borrar(K_CUENTA); borrar(K_ID); borrar(K_SOL); borrar(K_IG);
     try { history.replaceState(null, '', location.pathname); } catch (e) { /* nada */ }
     vistaUnirse();
   }
-  const cuentaBarra = () => { const c = leer(K_CUENTA); return c ? `<p class="suave" id="cuentaBarra">Sesión iniciada: <b>${esc(c.correo)}</b> · <button type="button" class="enlace" id="cuentaSalir">Cerrar sesión</button></p>` : ''; };
+  const cuentaBarra = () => { const c = leer(K_CUENTA); return c ? `<p class="suave" id="cuentaBarra">Sesión iniciada: <b>${esc(c.correo)}</b> · <button type="button" class="enlace" id="cuentaSalir">Cerrar sesión</button><br><span id="sincEstado" class="sinc">${esc(syncTexto())}</span></p>` : ''; };
   function vistaCuenta(modo) {
     const crear = modo === 'crear';
     $('#pantalla').innerHTML = `
@@ -390,7 +469,7 @@
       ${bloqueInstalar()}
       <button id="salir" class="btn sec sep28">Salir de mi iglesia</button>`;
     pintarInstalar($('[data-instalar-box]'));
-    const cs = $('#cuentaSalir'); if (cs) cs.onclick = () => { if (confirm('¿Cerrar sesión? Tu iglesia sigue guardada en tu cuenta; para volver a entrar necesitarás tu correo y contraseña. Tus notas personales de este teléfono (oración, crecimiento) no se borran.')) cerrarSesionCuenta(); };
+    const cs = $('#cuentaSalir'); if (cs) cs.onclick = () => { if (confirm('¿Cerrar sesión? Tu iglesia sigue guardada en tu cuenta; para volver a entrar necesitarás tu correo y contraseña. Tus notas personales (oración, crecimiento) quedan guardadas en tu cuenta y vuelven cuando entres.')) cerrarSesionCuenta(); };
     const ci = $('#cuentaIr'); if (ci) ci.onclick = () => vistaCuenta('entrar');
     $('#verLlave').onclick = () => {
       let t = ''; try { t = 'PULPITO-ID-' + btoa(JSON.stringify({ c: id.codigo, k: id.clave })); } catch (e) { t = ''; }
@@ -698,12 +777,28 @@
   const SIN_LIBRO = 'No pudimos abrir este libro. Revisa tu internet: lo que ya leíste antes se abre sin conexión.';
   function vistaPalabra() {
     const ult = leer(K_BIB), inf = ult && libroInfo(ult.cod);
-    $('#pantalla').innerHTML = `<h1>Palabra</h1><div class="filete"></div>
+    const hora = new Date().getHours(), saludo = hora < 12 ? 'Buenos días' : hora < 19 ? 'Buenas tardes' : 'Buenas noches';
+    $('#pantalla').innerHTML = `<div class="hoy"><span class="hoy-luz" aria-hidden="true"></span><p class="hoy-saludo">${saludo} 🌿</p>
+      <h1>Hoy</h1><div class="hoy-verso" id="hoyVerso"><span class="esqueleto"></span><span class="esqueleto corto"></span></div></div>
+      <h2 class="sep">Tu Palabra</h2>
       <div class="grid">${inf ? activa('▶️', 'Seguir leyendo', esc(inf[1]) + ' ' + Number(ult.cap) + ' · donde te quedaste', 'seguir') : ''}${activa('📖', 'Leer la Biblia', 'Reina-Valera 1909. Los libros que lees quedan para leer sin internet.', 'biblia')}${activa('✨', 'Versículo de hoy', 'Una frase para empezar el día.', 'versiculo')}</div>`;
     document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => {
       const k = b.dataset.ir;
       if (k === 'biblia') vistaBiblia(); else if (k === 'versiculo') vistaVersiculo(); else if (k === 'seguir' && inf) vistaCapitulo(ult.cod, Number(ult.cap));
     }));
+    // F871: el versículo del día aparece arriba, en «Hoy» (si no hay internet ni copia guardada, la zona se oculta sola).
+    (async () => {
+      const caja = $('#hoyVerso'); if (!caja) return;
+      try {
+        const r = versiculoDeHoy(new Date()), i2 = libroInfo(r.cod);
+        const t = ((await libroCargar(r.cod))[r.cap - 1] || [])[r.v - 1] || '';
+        if (!$('#hoyVerso')) return;
+        if (!t) { caja.hidden = true; return; }
+        caja.innerHTML = `<p class="hoy-texto">«${esc(t)}»</p><p class="hoy-cita">${esc(i2[1] + ' ' + r.cap + ':' + r.v)}</p>`;
+        caja.classList.add('listo');
+        caja.onclick = () => vistaVersiculo();
+      } catch (e) { if ($('#hoyVerso')) $('#hoyVerso').hidden = true; }
+    })();
   }
   const volverA = (txt, fn) => { const b = $('#volver'); if (b) { b.textContent = '‹ ' + txt; b.onclick = fn; } };
   function vistaBiblia() {
@@ -1052,4 +1147,5 @@
   window.addEventListener('online', red); window.addEventListener('offline', red); red();
   if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => { /* sin sw: igual funciona */ });
   ir('iglesia');
+  syncInicio();
 })();
