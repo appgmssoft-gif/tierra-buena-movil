@@ -507,10 +507,137 @@
       try { if (navigator.share) await navigator.share({ text: t }); else { await navigator.clipboard.writeText(t); $('#vcomp').textContent = 'Copiado ✓'; } } catch (e) { /* se cerro el menu de compartir */ }
     };
   }
+  // ---------- Vida y servicio (MOV4) ----------
+  // Todo lo personal (diario de oracion, pasos de crecimiento, ideas favoritas) queda SOLO en este telefono.
+  // Los textos de ideas viven en datos/*.json (copias de src/data/crecimiento_ideas.json y servicio_ideas.json).
+  const K_MIORACION = 'tb_movil_mi_oracion', K_CREC = 'tb_movil_crecimiento', K_FAV = 'tb_movil_ideas_fav';
+  const lista = (k) => { const l = leer(k); return Array.isArray(l) ? l : []; };
+  const nuevoId = () => 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  const cabecera = (titulo, atras) => `<button type="button" class="volver" id="volver">‹ ${esc(atras)}</button><h1>${esc(titulo)}</h1><div class="filete"></div>`;
+  const datosCache = {};
+  async function datoCargar(nombre) {
+    if (datosCache[nombre]) return datosCache[nombre];
+    const r = await fetch('datos/' + nombre + '.json'); if (!r.ok) throw new Error('http ' + r.status);
+    return (datosCache[nombre] = await r.json());
+  }
+  const SIN_DATOS = 'No pudimos abrir esto. Revisa tu internet: lo que ya abriste antes se ve sin conexión.';
+  const semanaClave = (d = new Date()) => {   // semana ISO (lunes a domingo): 2026-S40
+    const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())); t.setUTCDate(t.getUTCDate() + 4 - (t.getUTCDay() || 7));
+    const ini = new Date(Date.UTC(t.getUTCFullYear(), 0, 1)); return t.getUTCFullYear() + '-S' + String(Math.ceil(((t - ini) / 86400000 + 1) / 7)).padStart(2, '0');
+  };
   function vistaVida() {
     $('#pantalla').innerHTML = `<h1>Vivir lo que aprendemos</h1><div class="filete"></div>
-      <h2>Con Dios y conmigo</h2><div class="grid">${pronto('🕊️', 'Mi oración', 'Tu diario y tus peticiones, solo para ti.')}${pronto('🌱', 'Mi crecimiento', 'Pequeños pasos de cada semana.')}</div>
-      <h2 class="sep">Con los demás</h2><div class="grid">${pronto('💡', 'Ideas y proyectos', 'Ideas para servir a tu comunidad.')}</div>`;
+      <h2>Con Dios y conmigo</h2><div class="grid">${activa('🕊️', 'Mi oración', 'Tu diario de peticiones, solo para ti.', 'mioracion')}${activa('🌱', 'Mi crecimiento', 'Pequeños pasos de cada semana.', 'crecimiento')}</div>
+      <h2 class="sep">Con los demás</h2><div class="grid">${activa('💡', 'Ideas y proyectos', 'Ideas para servir a tu comunidad.', 'ideas')}</div>`;
+    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ mioracion: vistaMiOracion, crecimiento: vistaCrecimiento, ideas: vistaIdeas }[b.dataset.ir] || vistaVida)()));
+  }
+
+  // --- Mi oración: diario personal (no se envia a nadie) ---
+  function vistaMiOracion() {
+    $('#pantalla').innerHTML = `${cabecera('Mi oración', 'Vivir lo que aprendemos')}
+      <p class="suave">Escribe lo que quieras pedirle a Dios. Esto queda solo en tu teléfono; nadie más lo ve.</p>
+      <p id="msg" role="alert" hidden></p>
+      <label for="motxt">¿Por qué quieres orar?</label><textarea id="motxt" rows="3" maxlength="600" placeholder="Escribe aquí tu petición…"></textarea>
+      <button type="button" class="btn" id="moadd">Guardar en mi diario</button><div id="molista" aria-live="polite"></div>`;
+    volverA('Vivir lo que aprendemos', vistaVida);
+    $('#moadd').onclick = () => {
+      const t = $('#motxt').value.trim(); if (!t) return msg('Escribe algo antes de guardar.');
+      const l = lista(K_MIORACION); l.push({ id: nuevoId(), texto: t.slice(0, 600), fecha: new Date().toISOString(), contestada: false, respuesta: '' });
+      guardar(K_MIORACION, l.slice(-300)); $('#motxt').value = ''; msg(''); miOracionPintar();
+    };
+    miOracionPintar();
+  }
+  function miOracionPintar() {
+    const caja = $('#molista'); if (!caja) return;
+    const l = lista(K_MIORACION).slice().sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+    if (!l.length) { caja.innerHTML = '<p class="suave sep">Todavía no hay nada en tu diario.</p>'; return; }
+    caja.innerHTML = l.map((p) => `<div class="card item"><p class="m0">${esc(p.texto)}</p>
+      <p class="suave m0">${esc(fecha(p.fecha))}${p.contestada ? ' · 🎉 Dios respondió' : ''}</p>
+      <button type="button" class="btn sec chico" data-mocont="${esc(p.id)}">${p.contestada ? 'Quitar «contestada»' : '🎉 Marcar como contestada'}</button>
+      <button type="button" class="btn sec chico" data-model="${esc(p.id)}">🗑️ Borrar</button>
+      ${p.contestada ? `<div class="respuesta"><label for="mor_${esc(p.id)}"><b>🎉 Cómo respondió Dios</b></label><textarea id="mor_${esc(p.id)}" rows="2" maxlength="400" placeholder="Si quieres, escribe cómo viste la respuesta.">${esc(p.respuesta || '')}</textarea><button type="button" class="btn sec chico" data-mogr="${esc(p.id)}">Guardar</button></div>` : ''}</div>`).join('');
+    const cambiar = (id, f) => { const todas = lista(K_MIORACION); const it = todas.find((x) => x.id === id); if (it) { f(it); guardar(K_MIORACION, todas); } };
+    caja.querySelectorAll('[data-mocont]').forEach((b) => b.addEventListener('click', () => { cambiar(b.dataset.mocont, (it) => { it.contestada = !it.contestada; }); msg(''); miOracionPintar(); }));
+    caja.querySelectorAll('[data-mogr]').forEach((b) => b.addEventListener('click', () => { const t = $('#mor_' + b.dataset.mogr); cambiar(b.dataset.mogr, (it) => { it.respuesta = (t ? t.value : '').trim().slice(0, 400); }); msg('Guardado en este teléfono.', true); }));
+    caja.querySelectorAll('[data-model]').forEach((b) => b.addEventListener('click', () => {
+      if (!confirm('¿Borrar esta petición de tu diario?')) return;
+      guardar(K_MIORACION, lista(K_MIORACION).filter((x) => x.id !== b.dataset.model)); msg(''); miOracionPintar();
+    }));
+  }
+
+  // --- Mi crecimiento: una idea pequeña por semana ---
+  const AREAS = [['amor_propio', '💛', 'Cuidarme'], ['medio_ambiente', '🌎', 'Cuidar lo creado'], ['devocional', '🕯️', 'Mi tiempo con Dios']];
+  async function vistaCrecimiento() {
+    const sem = semanaClave(), todos = lista(K_CREC), actual = todos.find((x) => x.sem === sem);
+    const antes = todos.filter((x) => x.sem !== sem).sort((a, b) => b.sem.localeCompare(a.sem)).slice(0, 6);
+    $('#pantalla').innerHTML = `${cabecera('Mi crecimiento', 'Vivir lo que aprendemos')}
+      <h2>Mi paso de esta semana</h2><p id="msg" role="alert" hidden></p>
+      ${actual ? `<div class="card item"><p class="m0"><b>${esc(actual.icono || '🌱')} ${esc(actual.titulo)}</b></p>
+          <label for="crnota">¿Cómo te fue con esto? Cuéntalo en pocas palabras.</label><textarea id="crnota" rows="3" maxlength="600" placeholder="Escribe cómo te fue…">${esc(actual.nota || '')}</textarea>
+          <button type="button" class="btn chico" id="crsave">✍️ Guardar cómo me fue</button></div>`
+        : '<p class="suave">Todavía no elegiste un paso para esta semana. Elige una idea abajo y pruébala con calma: uno pequeño basta.</p>'}
+      <h2 class="sep">${actual ? 'Cambiar mi paso' : 'Elegir una idea'}</h2>
+      <div class="grid">${AREAS.map((a) => activa(a[1], a[2], 'Ideas sencillas para empezar.', a[0])).join('')}</div>
+      ${antes.length ? `<h2 class="sep">Mis pasos anteriores</h2>${antes.map((x) => `<div class="card item"><p class="m0"><b>${esc(x.icono || '🌱')} ${esc(x.titulo)}</b></p><p class="suave m0">Semana ${esc(x.sem.replace('-S', ' · S'))}</p>${x.nota ? `<p class="m0t">${esc(x.nota)}</p>` : ''}</div>`).join('')}` : ''}`;
+    volverA('Vivir lo que aprendemos', vistaVida);
+    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => vistaAreaCrec(b.dataset.ir)));
+    if (actual) $('#crsave').onclick = () => {
+      const t = $('#crnota').value.trim(); if (!t) return msg('Cuéntanos algo antes de guardar, aunque sea breve.');
+      const l = lista(K_CREC); const it = l.find((x) => x.sem === sem); if (it) { it.nota = t.slice(0, 600); guardar(K_CREC, l); msg('Guardado en este teléfono.', true); }
+    };
+  }
+  async function vistaAreaCrec(area) {
+    const inf = AREAS.find((a) => a[0] === area); if (!inf) return vistaCrecimiento();
+    $('#pantalla').innerHTML = `${cabecera(inf[2], 'Mi crecimiento')}<p class="suave" id="armsg">Cargando…</p>`;
+    volverA('Mi crecimiento', vistaCrecimiento);
+    let d; try { d = (await datoCargar('crecimiento_ideas'))[area]; } catch (e) { d = null; }
+    const m = $('#armsg'); if (!m) return; if (!d) { m.textContent = SIN_DATOS; return; }
+    $('#pantalla').innerHTML = `${cabecera(inf[2], 'Mi crecimiento')}<p>${esc(d.intro)}</p><p class="suave">${esc(d.aviso)}</p>
+      <div class="grid">${d.ideas.map((i) => `<button type="button" class="card" data-idea="${esc(i.id)}"><div class="t"><span aria-hidden="true">${esc(i.icono)}</span>${esc(i.titulo)}<span class="flecha" aria-hidden="true">›</span></div></button>`).join('')}</div>`;
+    volverA('Mi crecimiento', vistaCrecimiento);
+    document.querySelectorAll('[data-idea]').forEach((b) => b.addEventListener('click', () => vistaIdeaCrec(area, d.ideas.find((i) => i.id === b.dataset.idea))));
+  }
+  function vistaIdeaCrec(area, i) {
+    if (!i) return vistaAreaCrec(area);
+    $('#pantalla').innerHTML = `${cabecera(i.titulo, 'Atrás')}<p id="msg" role="alert" hidden></p>
+      <div class="card"><p class="m0t">${esc(i.resumen)}</p><ul class="formas">${(i.puntos || []).map((x) => `<li>${esc(x)}</li>`).join('')}</ul>${i.versiculo ? `<p class="suave"><b>📖 Para leer:</b> ${esc(i.versiculo)}</p>` : ''}</div>
+      <button type="button" class="btn" id="probar">🌱 Probar esta semana</button>`;
+    volverA('Atrás', () => vistaAreaCrec(area));
+    $('#probar').onclick = () => {
+      const sem = semanaClave(), l = lista(K_CREC).filter((x) => x.sem !== sem);
+      l.push({ sem, area, ideaId: i.id, icono: i.icono, titulo: i.titulo, nota: '' }); guardar(K_CREC, l.slice(-60)); vistaCrecimiento();
+    };
+  }
+
+  // --- Ideas y proyectos para servir ---
+  let ideasFiltro = 'todas';
+  async function vistaIdeas() {
+    $('#pantalla').innerHTML = `${cabecera('Ideas y proyectos', 'Vivir lo que aprendemos')}<p class="suave" id="idmsg">Cargando…</p>`;
+    volverA('Vivir lo que aprendemos', vistaVida);
+    let d; try { d = await datoCargar('servicio_ideas'); } catch (e) { d = null; }
+    const m = $('#idmsg'); if (!m) return; if (!d) { m.textContent = SIN_DATOS; return; }
+    const fav = lista(K_FAV);
+    const chips = [['todas', '', 'Todas'], ['fav', '⭐', 'Mis ideas']].concat(d.categorias.map((c) => [c.id, c.icono, c.label]));
+    const ideas = d.ideas.filter((i) => ideasFiltro === 'todas' || (ideasFiltro === 'fav' ? fav.includes(i.id) : i.categoria === ideasFiltro));
+    $('#pantalla').innerHTML = `${cabecera('Ideas y proyectos', 'Vivir lo que aprendemos')}
+      <p class="suave">Ideas para servir a tu comunidad. Toca una para ver cómo empezar.</p>
+      <div class="chips" role="group" aria-label="Filtrar por tema">${chips.map((c) => `<button type="button" class="chip${ideasFiltro === c[0] ? ' on' : ''}" data-filtro="${esc(c[0])}" aria-pressed="${ideasFiltro === c[0]}">${c[1] ? esc(c[1]) + ' ' : ''}${esc(c[2])}</button>`).join('')}</div>
+      ${ideas.length ? ideas.map((i) => `<button type="button" class="card item" data-ideaserv="${esc(i.id)}"><div class="t"><span aria-hidden="true">${esc(i.icono)}</span>${esc(i.titulo)}${fav.includes(i.id) ? ' ⭐' : ''}<span class="flecha" aria-hidden="true">›</span></div><p class="suave m0t">${esc(i.personas)} · ${esc(i.costo)}</p></button>`).join('') : '<p class="suave sep">Todavía no marcaste ninguna idea con ⭐.</p>'}`;
+    volverA('Vivir lo que aprendemos', vistaVida);
+    document.querySelectorAll('[data-filtro]').forEach((b) => b.addEventListener('click', () => { ideasFiltro = b.dataset.filtro; vistaIdeas(); }));
+    document.querySelectorAll('[data-ideaserv]').forEach((b) => b.addEventListener('click', () => vistaIdeaServ(d.ideas.find((i) => i.id === b.dataset.ideaserv))));
+  }
+  function vistaIdeaServ(i) {
+    if (!i) return vistaIdeas();
+    const marcada = () => lista(K_FAV).includes(i.id);
+    $('#pantalla').innerHTML = `${cabecera(i.titulo, 'Ideas y proyectos')}
+      <div class="card"><p class="m0t">${esc(i.queEs)}</p><h3 class="sep">Cómo empezar</h3><ol class="formas">${(i.comoEmpezar || []).map((x) => `<li>${esc(x)}</li>`).join('')}</ol>
+      <p class="suave"><b>👥 Personas:</b> ${esc(i.personas)} · <b>💰 Costo:</b> ${esc(i.costo)}</p></div>
+      <button type="button" class="btn sec" id="fav"></button>`;
+    volverA('Ideas y proyectos', vistaIdeas);
+    const pintar = () => { $('#fav').textContent = marcada() ? '⭐ Quitar de mis ideas' : '☆ Me interesa'; };
+    $('#fav').onclick = () => { const l = lista(K_FAV).filter((x) => x !== i.id); if (!marcada()) l.push(i.id); guardar(K_FAV, l); pintar(); };
+    pintar();
   }
 
   // ---------- Navegación ----------

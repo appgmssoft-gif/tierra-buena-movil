@@ -1,0 +1,310 @@
+{
+ "amor_propio": {
+  "intro": "Cuidarte no es egoísmo: es aprender a tratarte con la misma paciencia con que Dios te trata. Elige UNA idea, pruébala hoy y anota cómo te fue.",
+  "aviso": "Estas ideas acompañan, no reemplazan a un profesional. Si llevas semanas muy triste o sin ganas de nada, mira «Mi crecimiento → Salud Mental» o habla con una persona de confianza.",
+  "ideas": [
+   {
+    "id": "hablarte-bien",
+    "icono": "🪞",
+    "titulo": "Háblate como le hablarías a un amigo",
+    "versiculo": "Mateo 22:39",
+    "resumen": "La voz que llevas por dentro a veces es más dura que cualquier persona. Puedes aprender a hablarte con verdad y con cariño.",
+    "puntos": [
+     "Hoy, fíjate en una frase dura que te dices («soy un desastre», «siempre fallo»).",
+     "Pregúntate: «¿Se lo diría a un amigo?». Si la respuesta es no, cámbiala.",
+     "Escríbela de nuevo con verdad y bondad: «Hoy me equivoqué, y puedo aprender de esto»."
+    ]
+   },
+   {
+    "id": "quien-eres",
+    "icono": "💛",
+    "titulo": "Recuerda quién eres para Dios",
+    "versiculo": "Salmo 139:14 · Efesios 2:10",
+    "resumen": "Tu valor no depende de lo que rindes hoy. Depende de quién te hizo y de cuánto te ama.",
+    "puntos": [
+     "Lee los dos pasajes y anota tres cosas que Dios dice de ti.",
+     "Copia esas tres frases en un papel y déjalo donde lo veas al despertar.",
+     "Cuando te sientas poca cosa, léelas en voz alta antes de decidir cómo te ves."
+    ]
+   },
+   {
+    "id": "descansar",
+    "icono": "😴",
+    "titulo": "Descansar también es obedecer",
+    "versiculo": "Marcos 6:31",
+    "resumen": "Jesús mismo invitó a sus discípulos a apartarse y descansar. Descansar no es flojera: es cuidar lo que Dios te encargó, que eres tú.",
+    "puntos": [
+     "Separa hoy 15 minutos sin pantallas ni obligaciones.",
+     "Elige un día de la semana para bajar el ritmo, aunque sea medio día.",
+     "Si sientes culpa al descansar, anótala: ¿de dónde viene esa idea?"
+    ]
+   },
+   {
+    "id": "decir-no",
+    "icono": "🚧",
+    "titulo": "Aprende a decir «no» con cariño",
+    "versiculo": "Mateo 5:37",
+    "resumen": "Decir «sí» a todo te agota y no ayuda a nadie. Un «no» amable protege tu tiempo, tu familia y tu servicio.",
+    "puntos": [
+     "Antes de responder, pide tiempo: «Déjame pensarlo y te aviso».",
+     "Prueba una frase sencilla: «Gracias por pensar en mí, esta vez no puedo».",
+     "Elige una cosa que soltarás esta semana para poder hacer bien las importantes."
+    ]
+   },
+   {
+    "id": "pequenos-avances",
+    "icono": "🌱",
+    "titulo": "Celebra los pequeños avances",
+    "versiculo": "Zacarías 4:10",
+    "resumen": "Casi todo lo bueno crece de a poco. Si solo miras lo que falta, nunca verás lo que ya lograste.",
+    "puntos": [
+     "Al terminar el día, escribe una cosa que salió bien, aunque parezca chica.",
+     "Dale gracias a Dios por ella en voz alta.",
+     "Al final de la semana, relee tu lista: ahí está tu progreso."
+    ]
+   },
+   {
+    "id": "perdonarte",
+    "icono": "🕊️",
+    "titulo": "Perdónate lo que ya Dios perdonó",
+    "versiculo": "1 Juan 1:9",
+    "resumen": "Cargar con una culpa que ya fue perdonada no te hace más humilde, solo más cansado.",
+    "puntos": [
+     "Nombra el error con sencillez, sin adornos ni excusas.",
+     "Pídele perdón a Dios y, si corresponde, a la persona afectada.",
+     "Decide un paso concreto para reparar lo que puedas, y suelta el resto."
+    ]
+   },
+   {
+    "id": "cuerpo",
+    "icono": "🍎",
+    "titulo": "Cuida tu cuerpo con cariño",
+    "versiculo": "1 Corintios 6:19-20",
+    "resumen": "Tu cuerpo es un regalo que Dios te prestó para servir. Cuidarlo no es vanidad ni castigo: es gratitud.",
+    "puntos": [
+     "Toma agua a lo largo del día y come a tus horas.",
+     "Camina 10 minutos, aunque sea dentro de la casa.",
+     "Duerme lo suficiente: muchas preocupaciones se ven distintas después de descansar."
+    ]
+   },
+   {
+    "id": "no-solo",
+    "icono": "🤝",
+    "titulo": "No cargues solo",
+    "versiculo": "Gálatas 6:2",
+    "resumen": "Pedir ayuda no es debilidad. Dios puso a otros a tu lado para llevar las cargas entre todos.",
+    "puntos": [
+     "Elige a una persona de confianza y cuéntale cómo estás de verdad.",
+     "Pide algo concreto: «¿Puedes orar conmigo?» o «¿Puedes escucharme 10 minutos?».",
+     "Si el peso dura semanas, busca también a un profesional de salud mental."
+    ]
+   }
+  ]
+ },
+ "medio_ambiente": {
+  "intro": "Cuidar la creación es una forma de obedecer y de amar al prójimo. Empieza por una acción pequeña y repítela hasta que sea costumbre.",
+  "aviso": "Cada idea es un punto de partida: haz la que puedas, no todas a la vez. Lo importante es la constancia.",
+  "ideas": [
+   {
+    "id": "contemplar",
+    "icono": "🌅",
+    "titulo": "Contempla la creación",
+    "versiculo": "Salmo 19:1",
+    "resumen": "Se cuida mejor lo que se admira. Mirar con calma lo que Dios hizo despierta las ganas de cuidarlo.",
+    "puntos": [
+     "Sal 10 minutos a mirar el cielo, un árbol o el paisaje, sin el teléfono.",
+     "Agradece a Dios por tres cosas que ves.",
+     "Anota qué te hizo sentir; a eso lo vas a querer proteger."
+    ]
+   },
+   {
+    "id": "agua",
+    "icono": "💧",
+    "titulo": "Cuida el agua",
+    "versiculo": "Salmo 24:1",
+    "resumen": "La tierra y todo lo que hay en ella es de Dios; nosotros somos sus cuidadores. El agua es de lo más valioso.",
+    "puntos": [
+     "Cierra la llave mientras te enjabonas o te lavas los dientes.",
+     "Arregla las llaves que gotean: una gotera pierde muchos litros al día.",
+     "Reutiliza agua donde se pueda, por ejemplo para regar las plantas."
+    ]
+   },
+   {
+    "id": "energia",
+    "icono": "💡",
+    "titulo": "Gasta menos energía",
+    "versiculo": "Génesis 2:15",
+    "resumen": "Dios puso al ser humano en el jardín para cultivarlo y guardarlo. Usar solo la energía que necesitas es una forma de guardarlo.",
+    "puntos": [
+     "Apaga las luces y los cargadores que no estés usando.",
+     "Aprovecha la luz del día y abre las cortinas.",
+     "Un trayecto a la semana, camina o usa transporte público o compartido."
+    ]
+   },
+   {
+    "id": "reciclar",
+    "icono": "♻️",
+    "titulo": "Reduce, reutiliza y recicla",
+    "versiculo": "Génesis 2:15",
+    "resumen": "Lo que botas no desaparece: va a algún lugar. Bótalo menos y aprovecha más.",
+    "puntos": [
+     "Lleva tu propia bolsa cuando vayas a comprar.",
+     "Antes de botar algo, pregúntate si se puede arreglar o darle otro uso.",
+     "Esta semana separa un solo tipo de residuo (papel, plástico o vidrio) para reciclar."
+    ]
+   },
+   {
+    "id": "comida",
+    "icono": "🍽️",
+    "titulo": "No desperdicies comida",
+    "versiculo": "Juan 6:12",
+    "resumen": "Jesús pidió recoger lo que sobró para que nada se perdiera. Aprovechar la comida honra a Dios y ayuda a quien tiene menos.",
+    "puntos": [
+     "Sirve porciones que sí te vas a comer; puedes repetir si aún tienes hambre.",
+     "Usa las sobras al día siguiente o congélalas.",
+     "Si te sobra comida en buen estado, compártela con un vecino o con quien la necesite."
+    ]
+   },
+   {
+    "id": "plantar",
+    "icono": "🌳",
+    "titulo": "Planta algo vivo",
+    "versiculo": "Eclesiastés 3:2",
+    "resumen": "Hay tiempo de plantar. Cuidar algo que crece te enseña paciencia y te acerca a la creación.",
+    "puntos": [
+     "Elige algo fácil: una hierba (albahaca, menta) o una planta en maceta.",
+     "Ponle un día fijo para regarla y anótalo.",
+     "Invita a tu familia o a tu grupo a plantar juntos."
+    ]
+   },
+   {
+    "id": "animales",
+    "icono": "🐾",
+    "titulo": "Cuida a los animales",
+    "versiculo": "Proverbios 12:10",
+    "resumen": "El justo se preocupa por la vida de sus animales. El trato que damos a los seres vivos dice mucho de nuestro corazón.",
+    "puntos": [
+     "Si tienes una mascota, revisa que tenga agua, comida, sombra y cariño cada día.",
+     "No compres animales silvestres ni participes en maltrato.",
+     "Deja un plato de agua para los animales del barrio en días de calor."
+    ]
+   },
+   {
+    "id": "juntos",
+    "icono": "🏘️",
+    "titulo": "Cuidemos juntos el entorno",
+    "versiculo": "Gálatas 6:9",
+    "resumen": "Lo que uno solo no logra, un grupo lo consigue. Y no nos cansemos de hacer el bien, aunque sea de a poco.",
+    "puntos": [
+     "Propón a tu iglesia o grupo limpiar la plaza, la vereda o el frente del templo.",
+     "Fijen una fecha y lleven guantes y bolsas.",
+     "Después, registren la actividad en «Servicio → Medio Ambiente»."
+    ]
+   }
+  ]
+ },
+ "devocional": {
+  "intro": "Orar es hablar con Dios y también escucharle. No hay una forma «correcta»: Dios escucha lo sincero. Elige una idea, pruébala hoy y anota cómo te fue.",
+  "aviso": "Estas ideas son puntos de partida, no reglas. Si hoy solo puedes orar en una frase, esa frase cuenta.",
+  "ideas": [
+   {
+    "id": "cinco-minutos",
+    "icono": "🕯️",
+    "titulo": "Empieza con 5 minutos",
+    "versiculo": "Mateo 6:6",
+    "resumen": "Más que mucho tiempo, importa el hábito. Un rato corto todos los días vale más que una hora una vez al mes.",
+    "puntos": [
+     "Elige un lugar tranquilo y una hora fija (al despertar o antes de dormir).",
+     "Deja el teléfono en otra pieza o en silencio.",
+     "Pon una alarma de 5 minutos. Si quieres seguir, sigue; si no, termina en paz."
+    ]
+   },
+   {
+    "id": "cuatro-pasos",
+    "icono": "📖",
+    "titulo": "Devocional en 4 pasos",
+    "versiculo": "Salmo 119:105",
+    "resumen": "Un método sencillo para leer la Biblia sin perderte: leer, meditar, orar y aplicar.",
+    "puntos": [
+     "Leer: lee un pasaje corto (unos 10 versículos) una o dos veces, con calma.",
+     "Meditar: subraya una frase y pregúntate qué dice de Dios y qué dice de ti.",
+     "Orar: conviértela en conversación: gracias, perdón o ayuda.",
+     "Aplicar: decide una cosa pequeña que harás hoy por lo que leíste."
+    ]
+   },
+   {
+    "id": "cuatro-partes",
+    "icono": "🧭",
+    "titulo": "Las cuatro partes de una oración",
+    "versiculo": "Salmo 100:4",
+    "resumen": "Si no sabes cómo ordenar lo que quieres decir, estas cuatro partes te dan un camino.",
+    "puntos": [
+     "Adoración: dile a Dios quién es Él (bueno, fiel, poderoso).",
+     "Confesión: cuéntale en qué le fallaste y recibe su perdón.",
+     "Gratitud: agradécele por tres cosas concretas de hoy.",
+     "Petición: pídele por ti y por otros, con confianza."
+    ]
+   },
+   {
+    "id": "con-salmo",
+    "icono": "🎼",
+    "titulo": "Ora con un salmo",
+    "versiculo": "Salmo 23",
+    "resumen": "Los salmos son oraciones ya escritas para toda ocasión: alegría, miedo, culpa o cansancio.",
+    "puntos": [
+     "Elige uno según cómo estés: el 23 (confianza), el 51 (perdón) o el 121 (ayuda).",
+     "Léelo despacio, en voz alta, una frase a la vez.",
+     "Cambia algunas palabras para hablarle a Dios de ti mismo: «Tú eres mi pastor»."
+    ]
+   },
+   {
+    "id": "sin-palabras",
+    "icono": "😶",
+    "titulo": "Cuando no sabes qué decir",
+    "versiculo": "Romanos 8:26",
+    "resumen": "A veces el cansancio o el dolor te dejan sin palabras. Dios entiende igual, y su Espíritu te ayuda a orar.",
+    "puntos": [
+     "Dile tal cual cómo estás: «Señor, hoy no tengo palabras, pero aquí estoy».",
+     "Repite el Padrenuestro (Mateo 6:9-13) muy despacio, pensando en cada frase.",
+     "Quédate un minuto en silencio, sin pedir nada, solo estando con Él."
+    ]
+   },
+   {
+    "id": "por-otros",
+    "icono": "👥",
+    "titulo": "Ora por otros, con nombre",
+    "versiculo": "1 Timoteo 2:1",
+    "resumen": "Orar por alguien es una forma real de amarlo, aunque no puedas ayudarlo de otra manera.",
+    "puntos": [
+     "Anota en «Mis peticiones» a tres personas por las que orarás esta semana.",
+     "Ora una frase específica por cada una, por ejemplo: «Dale paz y buen descanso».",
+     "Si puedes, avísales: «Oré por ti hoy». Suele alegrarles el día."
+    ]
+   },
+   {
+    "id": "gratitud",
+    "icono": "🙌",
+    "titulo": "Un diario de gratitud",
+    "versiculo": "1 Tesalonicenses 5:18",
+    "resumen": "Dar gracias cambia la mirada: te ayuda a ver lo bueno que ya tienes aunque haya problemas.",
+    "puntos": [
+     "Cada noche escribe tres cosas por las que das gracias, aunque sean pequeñas.",
+     "Evita repetir las mismas: busca algo nuevo cada día.",
+     "Los domingos relee la semana y agradécele a Dios por todo junto."
+    ]
+   },
+   {
+    "id": "orar-biblia",
+    "icono": "🔁",
+    "titulo": "Ora un versículo",
+    "versiculo": "Salmo 119:18",
+    "resumen": "Convertir un versículo en petición es una de las formas más antiguas y sencillas de orar.",
+    "puntos": [
+     "Elige un versículo que te haya hablado hoy.",
+     "Conviértelo en petición: «Señor, ayúdame a vivir esto».",
+     "Repite la frase durante el día, cuando camines, esperes o te preocupes."
+    ]
+   }
+  ]
+ }
+}

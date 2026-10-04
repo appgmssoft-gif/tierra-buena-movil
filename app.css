@@ -78,3 +78,9 @@ select:focus{outline:2px solid var(--verde);outline-offset:1px}
 .navcap{display:flex;justify-content:space-between;gap:8px;margin:20px 0 8px;flex-wrap:wrap}.navcap .btn.chico{margin-top:0}
 .vgrande{font-size:1.25rem;line-height:1.5;margin:0 0 10px}
 .respuesta{margin-top:12px}.respuesta label{display:block;margin-bottom:6px}
+
+/* Vida y servicio (MOV4) */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px}
+.chip{min-height:44px;font:inherit;font-weight:600;color:var(--tinta);background:var(--tarjeta);border:1px solid var(--linea);border-radius:999px;padding:6px 14px;cursor:pointer}
+.chip.on{background:var(--verde);color:#fff;border-color:var(--verde)}
+ol.formas{margin:8px 0 0;padding-left:1.4rem;line-height:1.5}
