@@ -209,3 +209,49 @@ main{padding-bottom:calc(112px + var(--sa-b))}
 /* F872 · estado de la copia en la nube */
 .sinc{display:inline-block;margin-top:4px;font-size:.82rem;color:var(--suave)}
 @media (prefers-reduced-motion:no-preference){.sinc{animation:entra .4s both}}
+
+/* F873 · pantallas de cuenta: ícono con halo, «Ver» la clave, barra de fuerza, diagnóstico */
+.cuenta-ico{width:64px;height:64px;margin:6px 0 8px;border-radius:22px;display:grid;place-items:center;font-size:1.9rem;background:linear-gradient(145deg,var(--t1),var(--t2));box-shadow:var(--sombra);position:relative}
+.cuenta-ico::after{content:"";position:absolute;inset:-6px;border-radius:26px;border:2px solid color-mix(in srgb,var(--verde) 35%,transparent);opacity:0}
+.clave{position:relative;display:block}.clave input{padding-right:84px}
+.ver{position:absolute;right:8px;top:50%;transform:translateY(-50%);min-height:40px;padding:0 14px;border:0;border-radius:12px;font:600 .85rem system-ui,sans-serif;color:var(--verde);background:color-mix(in srgb,var(--verde) 12%,var(--tarjeta));cursor:pointer}
+.fuerza{height:6px;border-radius:6px;margin:8px 0 4px;background:color-mix(in srgb,var(--linea) 80%,transparent);overflow:hidden}
+.fuerza i{display:block;height:100%;width:0;border-radius:6px;background:#c0563d;transition:width .3s cubic-bezier(.2,.8,.2,1),background .3s}
+.fuerza i[data-f="1"]{width:25%}.fuerza i[data-f="2"]{width:50%;background:#d49a2a}.fuerza i[data-f="3"]{width:75%;background:#7aa043}.fuerza i[data-f="4"]{width:100%;background:var(--verde)}
+.fuerza-txt{font-size:.85rem;margin:0 0 6px}
+.tecnico{font-size:.78rem;color:var(--suave);word-break:break-word;margin:-4px 0 8px}
+.diag{margin:10px 0;padding:12px 14px;border-radius:16px;background:var(--tarjeta);box-shadow:var(--sombra)}
+.diag p{margin:6px 0;font-size:.9rem;line-height:1.4}.diag span{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;margin-right:6px;font-size:.75rem;font-weight:800;color:#fff}
+.diag-bien span{background:var(--verde)}.diag-mal span{background:#c0563d}.diag-aviso span{background:#d49a2a}
+@media (prefers-reduced-motion:no-preference){
+  .cuenta-ico{animation:entra .4s both}.cuenta-ico::after{animation:halo 2.8s ease-out infinite}
+  .diag p{animation:entra .3s both}.diag p:nth-child(2){animation-delay:.08s}.diag p:nth-child(3){animation-delay:.16s}.diag p:nth-child(n+4){animation-delay:.24s}
+  @keyframes halo{0%{opacity:.8;transform:scale(.92)}100%{opacity:0;transform:scale(1.25)}}
+}
+
+/* F874 · Mi privacidad y Ayuda: filas con insignia de «quién lo ve», interruptor, preguntas que se abren suave */
+.quien-lista{display:grid;gap:10px}
+.card.quien{display:flex;gap:14px;align-items:flex-start;padding:14px 16px}
+.quien-ico{flex:none;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:1.3rem;background:var(--t1)}
+.quien-lista>.quien:nth-child(3n+2) .quien-ico{background:var(--t2)}.quien-lista>.quien:nth-child(3n+3) .quien-ico{background:var(--t3)}
+.quien-chip{display:inline-block;margin:4px 0 0 8px;padding:2px 10px;border-radius:999px;font-size:.74rem;font-weight:700;letter-spacing:.02em;vertical-align:middle}
+.quien-yo{background:color-mix(in srgb,var(--verde) 18%,var(--tarjeta));color:var(--verde)}
+.quien-pastor{background:color-mix(in srgb,var(--oro) 28%,var(--tarjeta));color:var(--tinta)}
+.quien-iglesia{background:color-mix(in srgb,#4a7fb0 20%,var(--tarjeta));color:var(--tinta)}
+.interruptor-fila{display:flex;gap:14px;align-items:center;justify-content:space-between}
+.interruptor{flex:none;position:relative;width:58px;height:34px;border:0;border-radius:34px;cursor:pointer;background:color-mix(in srgb,var(--linea) 90%,transparent);transition:background .25s}
+.interruptor i{position:absolute;top:3px;left:3px;width:28px;height:28px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.3);transition:transform .25s cubic-bezier(.3,1.4,.5,1)}
+.interruptor[aria-checked=true]{background:var(--verde)}.interruptor[aria-checked=true] i{transform:translateX(24px)}
+.ayuda-lista{display:grid;gap:10px}
+.ayuda-it{padding:0;overflow:hidden}
+.ayuda-it summary{list-style:none;display:flex;gap:12px;align-items:center;min-height:56px;padding:12px 16px;font-weight:600;cursor:pointer}
+.ayuda-it summary::-webkit-details-marker{display:none}
+.ayuda-it summary::after{content:"›";margin-left:auto;font-size:1.4rem;color:var(--suave);transition:transform .25s}
+.ayuda-it[open] summary::after{transform:rotate(90deg)}
+.ayuda-it>p,.ayuda-it>.btn{margin:0 16px 14px}
+@media (prefers-reduced-motion:no-preference){
+  .quien-lista>.quien{animation:entra .35s cubic-bezier(.2,.8,.2,1) both}
+  .quien-lista>.quien:nth-child(2){animation-delay:.05s}.quien-lista>.quien:nth-child(3){animation-delay:.1s}.quien-lista>.quien:nth-child(n+4){animation-delay:.15s}
+  .ayuda-it[open]>p,.ayuda-it[open]>.btn{animation:entra .3s both}
+}
+@media (prefers-reduced-motion:reduce){.interruptor,.interruptor i{transition:none}}

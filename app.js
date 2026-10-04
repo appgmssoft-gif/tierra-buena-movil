@@ -54,11 +54,11 @@
   const SYNC_CLAVES = ['tb_movil_mi_oracion', 'tb_movil_crecimiento', 'tb_movil_ideas_fav', 'tb_movil_aprender', 'tb_movil_biblia_ultimo', 'tb_movil_accion_mes'];
   const K_SYNC = 'tb_movil_sync';
   const sync = { estado: 'local', cuando: null, timer: null, ocupado: false };   // estado: local | ok | pendiente | falta | error
-  const metaLeer = () => { const m = leer(K_SYNC); return m && typeof m === 'object' ? { dueno: m.dueno || null, t: m.t || {}, d: m.d || {} } : { dueno: null, t: {}, d: {} }; };
+  const metaLeer = () => { const m = leer(K_SYNC); return m && typeof m === 'object' ? { dueno: m.dueno || null, t: m.t || {}, d: m.d || {}, off: m.off === true } : { dueno: null, t: {}, d: {}, off: false }; };
   const metaGuardar = (m) => { try { localStorage.setItem(K_SYNC, JSON.stringify(m)); } catch (e) { /* nada */ } };
   const crudoGuardar = (k, v) => { try { if (v === null || v === undefined) localStorage.removeItem(k); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* nada */ } };
   function syncMarcar(k) {
-    if (SYNC_CLAVES.indexOf(k) < 0 || !leer(K_CUENTA)) return;
+    if (SYNC_CLAVES.indexOf(k) < 0 || !leer(K_CUENTA) || metaLeer().off) return;
     const m = metaLeer(); m.d[k] = true; metaGuardar(m);
     sync.estado = 'pendiente'; syncPintar();
     clearTimeout(sync.timer); sync.timer = setTimeout(syncSubir, 1500);
@@ -70,7 +70,7 @@
   const tablaFalta = (er) => !!er && (er.code === '42P01' || er.code === 'PGRST205' || /avances_cuenta/i.test(er.message || '') && /not find|does not exist/i.test(er.message || ''));
   async function syncSubir() {
     if (sync.ocupado) { clearTimeout(sync.timer); sync.timer = setTimeout(syncSubir, 1500); return; }
-    const u = await syncUsuario(); if (!u) { sync.estado = 'local'; return syncPintar(); }
+    const u = await syncUsuario(); if (!u || metaLeer().off) { sync.estado = 'local'; return syncPintar(); }
     sync.ocupado = true;
     try {
       const m = metaLeer(); let fallo = false;
@@ -92,7 +92,7 @@
     const ids = new Set(loc.map((x) => x.id)); return loc.concat(rem.filter((x) => !ids.has(x.id)));
   };
   async function syncBajar(user) {
-    if (!user || !hayAuth() || !SB.from) return;
+    if (!user || !hayAuth() || !SB.from || metaLeer().off) return;
     let filas;
     try { const r = await SB.from('avances_cuenta').select('clave,valor,actualizado'); if (r.error) throw r.error; filas = r.data || []; }
     catch (er) { sync.estado = tablaFalta(er) ? 'falta' : 'error'; return syncPintar(); }
@@ -113,7 +113,7 @@
   async function syncInicio() { const u = await syncUsuario(); if (u && leer(K_CUENTA)) syncBajar(u); }
   async function syncCerrar() {                  // antes de cerrar sesión: sube lo pendiente y, si quedó todo en la nube, limpia el teléfono
     try { await Promise.race([syncSubir(), new Promise((r) => setTimeout(r, 4000))]); } catch (e) { /* sin red */ }
-    const m = metaLeer(); if (SYNC_CLAVES.some((k) => m.d[k]) || sync.estado === 'falta' || sync.estado === 'error') return false;
+    const m = metaLeer(); if (m.off || SYNC_CLAVES.some((k) => m.d[k]) || sync.estado === 'falta' || sync.estado === 'error') return false;
     SYNC_CLAVES.forEach((k) => crudoGuardar(k, null)); crudoGuardar(K_SYNC, null); return true;
   }
   function syncTexto() {
@@ -159,8 +159,10 @@
   // (user_metadata.tb_iglesia): así, en otro teléfono, basta entrar con el correo y no hay que copiar la llave a mano.
   const CORREO_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   const MIN_CLAVE = 8;
+  let ultimoErrAuth = '';                          // F873: dato técnico del último fallo de cuenta, para quien ayude a resolver
   function motivoAuth(e) {
     const t = String((e && e.message) || ''), st = e && e.status;
+    ultimoErrAuth = [st, e && e.code, t].filter(Boolean).join(' · ').slice(0, 160);
     if (/invalid login|invalid credentials/i.test(t)) return 'credenciales';
     if (/not confirmed|confirm/i.test(t)) return 'sin-confirmar';
     if (st === 429 || /rate limit|too many|security purposes/i.test(t)) return 'demasiados';
@@ -181,7 +183,7 @@
   async function cuentaCrear(correo, clave) {
     if (!hayAuth()) return { ok: false, motivo: 'sin-internet' };
     try {
-      const { data, error } = await SB.auth.signUp({ email: correo, password: clave });
+      const { data, error } = await SB.auth.signUp({ email: correo, password: clave, options: { emailRedirectTo: URL_VUELTA() } });
       if (error) return { ok: false, motivo: motivoAuth(error) };
       const u = data && data.user;
       if (u && Array.isArray(u.identities) && u.identities.length === 0) return { ok: false, motivo: 'ya-existe' };   // Supabase no revela correos ya usados: llega «vacío»
@@ -229,10 +231,37 @@
     vistaUnirse();
   }
   const cuentaBarra = () => { const c = leer(K_CUENTA); return c ? `<p class="suave" id="cuentaBarra">Sesión iniciada: <b>${esc(c.correo)}</b> · <button type="button" class="enlace" id="cuentaSalir">Cerrar sesión</button><br><span id="sincEstado" class="sinc">${esc(syncTexto())}</span></p>` : ''; };
+  // ---------- F873 · Revisar la conexión con las cuentas y reenviar el correo de confirmación ----------
+  async function diagnosticoNube() {
+    const L = [], cab = { apikey: SUPABASE_ANON_KEY };
+    let st = null;
+    try {
+      const r = await fetch(SUPABASE_URL + '/auth/v1/settings', { headers: cab });
+      if (!r.ok) { L.push(['mal', 'El servidor de cuentas respondió con un problema (' + r.status + '). Si el proyecto de Supabase está pausado, hay que reactivarlo desde su panel.']); return L; }
+      st = await r.json(); L.push(['bien', 'Hay conexión con el servidor de cuentas.']);
+    } catch (e) { L.push(['mal', navigator.onLine ? 'No logramos hablar con el servidor de cuentas. Puede ser tu red, o que el proyecto de Supabase esté pausado.' : 'Tu teléfono no tiene internet en este momento.']); return L; }
+    if (st.external && st.external.email === false) L.push(['mal', 'En Supabase está apagado el ingreso con correo (Authentication → Sign In / Providers → Email).']);
+    else L.push(['bien', 'El ingreso con correo está activo.']);
+    if (st.disable_signup) L.push(['mal', 'En Supabase está desactivado crear cuentas nuevas.']);
+    else L.push(['bien', 'Se pueden crear cuentas nuevas.']);
+    L.push(st.mailer_autoconfirm ? ['bien', 'Las cuentas nuevas entran de inmediato.'] : ['aviso', 'Las cuentas nuevas piden confirmar el correo: el mensaje puede tardar o ir a «spam». El envío gratuito de Supabase tiene un límite por hora.']);
+    try {
+      const t = await fetch(SUPABASE_URL + '/rest/v1/avances_cuenta?select=clave&limit=1', { headers: cab });
+      L.push(t.status === 404 ? ['aviso', 'Falta correr el SQL de avances en Supabase (docs/sql/SQL_AVANCES_CUENTA.sql). Sin eso tus notas quedan solo en este teléfono.'] : ['bien', 'La copia de avances en la nube está lista.']);
+    } catch (e) { /* ya se avisó arriba */ }
+    return L;
+  }
+  const pintarDiag = (L, caja) => { caja.innerHTML = L.map((x) => `<p class="diag-${x[0]}"><span aria-hidden="true">${x[0] === 'bien' ? '✓' : x[0] === 'mal' ? '✕' : '!'}</span> ${esc(x[1])}</p>`).join(''); caja.hidden = false; };
+  async function reenviarConfirmacion(correo) {
+    if (!hayAuth() || !SB.auth.resend) return { ok: false, motivo: 'sin-internet' };
+    try { const { error } = await SB.auth.resend({ type: 'signup', email: correo, options: { emailRedirectTo: URL_VUELTA() } }); return error ? { ok: false, motivo: motivoAuth(error) } : { ok: true }; }
+    catch (e) { return { ok: false, motivo: 'sin-internet' }; }
+  }
   function vistaCuenta(modo) {
     const crear = modo === 'crear';
     $('#pantalla').innerHTML = `
       <button type="button" class="volver" id="atras">‹ Entrar</button>
+      <div class="cuenta-ico" aria-hidden="true">${crear ? '🌱' : '✉️'}</div>
       <h1>${crear ? 'Crear mi cuenta' : 'Entrar con mi correo'}</h1><div class="filete"></div>
       <div class="chips" role="group" aria-label="Elegir">
         <button type="button" class="chip${crear ? '' : ' on'}" data-modo="entrar" aria-pressed="${!crear}">Entrar</button>
@@ -242,12 +271,30 @@
       <label for="cco">Correo</label>
       <input id="cco" type="email" autocomplete="email" autocapitalize="off" spellcheck="false" inputmode="email" maxlength="120">
       <label for="ccl">Contraseña</label>
-      <input id="ccl" type="password" autocomplete="${crear ? 'new-password' : 'current-password'}" maxlength="128">
-      ${crear ? '<label for="ccl2">Repite la contraseña</label><input id="ccl2" type="password" autocomplete="new-password" maxlength="128">' : ''}
-      <p id="err" class="error" role="alert" hidden></p>
+      <span class="clave"><input id="ccl" type="password" autocomplete="${crear ? 'new-password' : 'current-password'}" maxlength="128"><button type="button" class="ver" data-ver="ccl,ccl2" aria-pressed="false">Ver</button></span>
+      ${crear ? '<div class="fuerza" aria-hidden="true"><i id="ccf" data-f="0"></i></div><p class="suave fuerza-txt" id="ccft">Mínimo 8 caracteres. Una frase corta con números es mejor que una palabra sola.</p><label for="ccl2">Repite la contraseña</label><input id="ccl2" type="password" autocomplete="new-password" maxlength="128">' : ''}
+      <p id="err" class="error" role="alert" hidden></p><p id="tecnico" class="tecnico" hidden></p>
       <p id="msg" class="ok" role="status" hidden></p>
       <button id="ccgo" class="btn">${crear ? 'Crear mi cuenta' : 'Entrar'}</button>
-      ${crear ? '' : '<p class="m0t"><button type="button" class="enlace" id="ccolvido">¿Olvidaste tu contraseña?</button></p>'}`;
+      ${crear ? '' : '<p class="m0t"><button type="button" class="enlace" id="ccolvido">¿Olvidaste tu contraseña?</button></p>'}
+      <p id="ccreenv" class="m0t" hidden><button type="button" class="enlace" id="ccreenvbtn">Reenviar el correo de confirmación</button></p>
+      <p class="m0t"><button type="button" class="enlace" id="ccdiag">¿No funciona? Revisar la conexión</button></p><div id="diag" class="diag" role="status" hidden></div>`;
+    document.querySelectorAll('[data-ver]').forEach((b) => b.addEventListener('click', () => {      // «Ver / Ocultar» la contraseña
+      const on = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', String(on)); b.textContent = on ? 'Ocultar' : 'Ver';
+      b.dataset.ver.split(',').forEach((id) => { const e = document.getElementById(id); if (e) e.type = on ? 'text' : 'password'; });
+    }));
+    const fz = $('#ccf');
+    if (fz) $('#ccl').addEventListener('input', () => {                                              // barra de fuerza de la contraseña
+      const v = $('#ccl').value; let n = 0;
+      if (v.length >= 8) n++; if (v.length >= 12) n++; if (/[a-z]/.test(v) && /[A-Z]/.test(v)) n++; if (/\d/.test(v)) n++; if (/[^A-Za-z0-9]/.test(v)) n++;
+      const f = !v ? 0 : v.length < 8 ? 1 : Math.min(4, Math.max(2, n - 1));
+      fz.dataset.f = String(f); $('#ccft').textContent = ['Mínimo 8 caracteres. Una frase corta con números es mejor que una palabra sola.', 'Muy corta todavía.', 'Aceptable. Puedes hacerla más larga.', 'Buena.', 'Muy buena.'][f];
+    });
+    $('#ccdiag').onclick = async () => { const c = $('#diag'); c.hidden = false; c.innerHTML = '<p class="suave">Revisando…</p>'; pintarDiag(await diagnosticoNube(), c); };
+    $('#ccreenvbtn').onclick = async () => {
+      const correo = $('#cco').value.trim().toLowerCase(); if (!CORREO_RE.test(correo)) return error(MOTIVOS['correo-invalido']);
+      const r = await reenviarConfirmacion(correo); if (r.ok) { error(''); msg('Listo, te mandamos otro correo. Revisa también la carpeta de spam.', true); } else error(MOTIVOS[r.motivo] || 'No pudimos reenviarlo. Inténtalo en unos minutos.');
+    };
     $('#atras').onclick = vistaUnirse;
     const ol = $('#ccolvido'); if (ol) ol.onclick = () => vistaOlvide($('#cco').value.trim());
     document.querySelectorAll('[data-modo]').forEach((b) => b.addEventListener('click', () => vistaCuenta(b.dataset.modo)));
@@ -261,8 +308,14 @@
       const b = $('#ccgo'); b.disabled = true; b.textContent = crear ? 'Creando…' : 'Entrando…';
       const r = crear ? await cuentaCrear(correo, clave) : await cuentaEntrar(correo, clave);
       b.disabled = false; b.textContent = crear ? 'Crear mi cuenta' : 'Entrar';
-      if (!r.ok) return error(MOTIVOS[r.motivo] || 'No pudimos entrar. Revisa tus datos e inténtalo otra vez.');
-      if (r.confirmar) { $('#ccl').value = ''; if ($('#ccl2')) $('#ccl2').value = ''; return msg('Te enviamos un correo para confirmar tu dirección. Toca el enlace del mensaje y luego vuelve aquí a «Entrar».', true); }
+      if (!r.ok) {
+        error(MOTIVOS[r.motivo] || 'No pudimos entrar. Revisa tus datos e inténtalo otra vez.');
+        const tc = $('#tecnico'); if (tc) { tc.textContent = ultimoErrAuth ? 'Para quien te ayude: ' + ultimoErrAuth : ''; tc.hidden = !ultimoErrAuth; }
+        if ($('#ccreenv')) $('#ccreenv').hidden = r.motivo !== 'sin-confirmar';
+        return;
+      }
+      if ($('#tecnico')) $('#tecnico').hidden = true;
+      if (r.confirmar) { if ($('#ccreenv')) $('#ccreenv').hidden = false; $('#ccl').value = ''; if ($('#ccl2')) $('#ccl2').value = ''; return msg('Te enviamos un correo para confirmar tu dirección. Toca el enlace del mensaje y luego vuelve aquí a «Entrar».', true); }
       $('#ccl').value = ''; if ($('#ccl2')) $('#ccl2').value = '';
       await despuesDeCuenta(r.user);
     };
@@ -457,6 +510,8 @@
       <div class="grid">${activa('🙏', 'Pedir oración', 'Cuéntale a tu pastor por qué orar.', 'oracion')}${activa('🤝', 'Pedir visita', 'Pide que tu pastor te visite.', 'visita')}</div>
       <h2 class="sep">Vivir con mi iglesia</h2>
       <div class="grid">${activa('🧱', 'Muro', 'Peticiones que tu pastor compartió, para orar juntos.', 'muro')}${activa('🌟', 'Acción del mes', 'Lo que viviremos juntos este mes.', 'accion')}</div>
+      <h2 class="sep">Mis cosas</h2>
+      <div class="grid">${activa('🕊️', 'Mi oración', 'Tu diario. Solo lo ves tú.', 'mioracion')}${activa('🌱', 'Mi crecimiento', 'Un paso por semana. Solo lo ves tú.', 'crec')}${activa('🔒', 'Mi privacidad', 'Qué ve tu pastor, descargar o borrar tus datos.', 'privacidad')}${activa('❓', 'Ayuda', 'Respuestas cortas a lo que más se pregunta.', 'ayuda')}</div>
       <h2 class="sep">Mi cuenta</h2>
       ${leer(K_CUENTA)
         ? `<div class="card"><div class="t"><span aria-hidden="true">✉️</span>Sesión iniciada</div><p class="suave m0t">${esc(leer(K_CUENTA).correo)}. Tu iglesia queda guardada en tu cuenta: en otro teléfono entras solo con tu correo y contraseña.</p><button type="button" class="btn sec" id="cuentaSalir">Cerrar sesión</button></div>`
@@ -480,13 +535,92 @@
       try { await navigator.clipboard.writeText(t.value); $('#llaveMsg').textContent = 'Llave copiada. Ahora pégala en tu otro dispositivo.'; }
       catch (e) { try { document.execCommand('copy'); $('#llaveMsg').textContent = 'Llave copiada.'; } catch (e2) { $('#llaveMsg').textContent = 'Mantén presionado el recuadro y elige «Copiar».'; } }
     };
-    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ oracion: vistaOracion, muro: vistaMuro, accion: vistaAccion, visita: vistaVisita }[b.dataset.ir] || vistaVisita)(id)));
+    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ oracion: vistaOracion, muro: vistaMuro, accion: vistaAccion, visita: vistaVisita, mioracion: () => vistaMiOracion(), crec: () => vistaCrecimiento(), privacidad: vistaPrivacidad, ayuda: () => vistaAyuda(id) }[b.dataset.ir] || vistaVisita)(id)));
     $('#salir').onclick = async () => {
       if (!confirm('¿Salir de esta iglesia? Se borrará tu nombre en la iglesia y en este teléfono.')) return;
       await rpc('miembro_eliminar', { p_codigo: id.codigo, p_clave: id.clave });
       await iglesiaAcuenta(null);
       borrar(K_ID); borrar(K_SOL); borrar(K_IG); try { history.replaceState(null, '', location.pathname); } catch (e) { /* nada */ } vistaUnirse();
     };
+  }
+
+  // ---------- F874 · Mi privacidad y Ayuda (plan M2 y M12) ----------
+  const QUIEN = { yo: ['Solo yo', 'quien-yo'], pastor: ['Tu pastor', 'quien-pastor'], iglesia: ['Tu iglesia si tu pastor lo comparte', 'quien-iglesia'] };
+  const PRIV_FILAS = [
+    ['👤', 'Tu nombre en la iglesia', 'pastor', 'Es lo único que tu pastor sabe de ti por unirte. No pedimos teléfono ni dirección.'],
+    ['🙏', 'Peticiones de oración', 'iglesia', 'Las ve tu pastor. Llegan al muro solo si él las comparte, y tú decides si va tu nombre.'],
+    ['🤝', 'Pedidos de visita', 'pastor', 'Solo tu pastor. Nunca van al muro.'],
+    ['🕊️', 'Mi oración y Mi crecimiento', 'yo', 'Tu diario. No lo ve tu pastor ni nadie de tu iglesia.'],
+    ['🌟', 'Cómo te fue en la Acción del mes', 'yo', 'Lo escribes tú y queda solo contigo.'],
+    ['📖', 'Lectura, ideas favoritas y cursos', 'yo', 'Tu avance es tuyo.']
+  ];
+  function misDatosArmar(id, peticiones) {
+    const d = { generado: new Date().toISOString(), nombre: id.nombre || null, iglesia: (leer(K_IG) || {}).nombre || null, cuenta: (leer(K_CUENTA) || {}).correo || null, avances: {}, peticiones: peticiones || [] };
+    SYNC_CLAVES.forEach((k) => { const v = leer(k); if (v !== null) d.avances[k] = v; });
+    return d;   // la llave de la iglesia NO se incluye: es como una contraseña
+  }
+  async function descargarMisDatos(id) {
+    let pet = [];
+    const args = { p_codigo: id.codigo, p_clave: id.clave };
+    let r = await rpcRaw('peticion_mias_v2', args); if (!r.ok && r.falta) r = await rpcRaw('peticion_mias', args);
+    if (r.ok && Array.isArray(r.data)) pet = r.data.map((p) => ({ texto: p.texto, tipo: p.tipo || null, creado_en: p.creado_en, estado: p.estado, publica: !!p.publica, respondida: !!p.respondida, respuesta: p.respuesta || null }));
+    const txt = JSON.stringify(misDatosArmar(id, pet), null, 2);
+    try {
+      const url = URL.createObjectURL(new Blob([txt], { type: 'application/json' }));
+      const a = document.createElement('a'); a.href = url; a.download = 'tierra-buena-mis-datos-' + new Date().toISOString().slice(0, 10) + '.json';
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000);
+      return { ok: true, n: pet.length, sinInternet: !r.ok };
+    } catch (e) { try { await navigator.clipboard.writeText(txt); return { ok: true, copiado: true, n: pet.length, sinInternet: !r.ok }; } catch (e2) { return { ok: false }; } }
+  }
+  async function nubeBorrar() {
+    const u = await syncUsuario(); if (!u) return false;
+    try { const r = await SB.from('avances_cuenta').delete().eq('user_id', u.id); return !r.error; } catch (e) { return false; }
+  }
+  function vistaPrivacidad(id) {
+    const cuenta = !!leer(K_CUENTA), off = metaLeer().off;
+    $('#pantalla').innerHTML = `${volver()}<h1>Mi privacidad</h1><div class="filete"></div>
+      <p class="suave">Tus datos son tuyos. Así de claro: qué ve cada persona y qué puedes hacer tú.</p>
+      <h2 class="sep">Qué ve cada persona</h2>
+      <div class="quien-lista">${PRIV_FILAS.map((f) => `<div class="card quien"><span class="quien-ico" aria-hidden="true">${f[0]}</span><div><b>${esc(f[1])}</b><span class="quien-chip ${QUIEN[f[2]][1]}">${esc(QUIEN[f[2]][0])}</span><p class="suave m0t">${esc(f[3])}</p></div></div>`).join('')}</div>
+      <h2 class="sep">Lo que puedes hacer</h2>
+      ${cuenta ? `<div class="card"><div class="interruptor-fila"><div><b>Guardar mis avances en mi cuenta</b><p class="suave m0t" id="nubeTxt">${off ? 'Apagado: tus notas quedan solo en este teléfono.' : 'Encendido: las ves igual en tu otro teléfono o tablet.'}</p></div><button type="button" class="interruptor" id="nubeSw" role="switch" aria-checked="${!off}" aria-label="Guardar mis avances en mi cuenta"><i></i></button></div></div>` : ''}
+      <div class="card"><div class="t"><span aria-hidden="true">📥</span>Descargar mis datos</div><p class="suave m0t">Un archivo con tu nombre, tus notas y tus peticiones. Sin tu llave.</p><button type="button" class="btn sec" id="privBaja">Descargar</button><p id="privMsg" class="ok" role="status" hidden></p></div>
+      <div class="card"><div class="t"><span aria-hidden="true">🚪</span>Salir de mi iglesia</div><p class="suave m0t">Se borra tu nombre de la lista de tu iglesia y de este teléfono. Puedes volver a unirte con el código cuando quieras. Está al final de «Mi iglesia».</p></div>`;
+    alVolver();
+    const sw = $('#nubeSw');
+    if (sw) sw.onclick = async () => {
+      const m = metaLeer(), apagar = !m.off, pm = $('#privMsg');
+      if (apagar) {
+        const borrar2 = confirm('¿Apagar la copia en tu cuenta? Tus notas seguirán en este teléfono.\n\nAceptar = apagar y BORRAR lo que ya está en la nube.\nCancelar = no cambiar nada.');
+        if (!borrar2) return;
+        if (!(await nubeBorrar())) { pm.hidden = false; pm.textContent = 'No pudimos borrar lo de la nube ahora (revisa tu internet). No cambié nada.'; return; }
+        m.off = true; m.d = {}; m.t = {}; metaGuardar(m); sync.estado = 'local';
+      } else { m.off = false; metaGuardar(m); syncInicio(); }
+      sw.setAttribute('aria-checked', String(!apagar));
+      $('#nubeTxt').textContent = apagar ? 'Apagado: tus notas quedan solo en este teléfono.' : 'Encendido: las ves igual en tu otro teléfono o tablet.';
+      pm.hidden = false; pm.textContent = apagar ? 'Listo: borré tus avances de la nube.' : 'Listo: tus avances vuelven a guardarse en tu cuenta.';
+    };
+    $('#privBaja').onclick = async () => {
+      const b = $('#privBaja'), pm = $('#privMsg'); b.disabled = true; b.textContent = 'Preparando…';
+      const r = await descargarMisDatos(id); b.disabled = false; b.textContent = 'Descargar';
+      pm.hidden = false; pm.textContent = !r.ok ? 'No pudimos preparar el archivo en este teléfono.' : (r.copiado ? 'Copié tus datos al portapapeles.' : 'Listo, el archivo quedó en tus descargas.') + (r.sinInternet ? ' Sin internet no pude incluir tus peticiones enviadas.' : '');
+    };
+  }
+  const AYUDA = [
+    ['⛪', '¿Cómo me uno a mi iglesia?', 'Pídele a tu pastor el código de 6 letras o números. Escríbelo en «Tengo el código de mi iglesia», pon tu nombre y espera: tu pastor aprueba la solicitud y listo.'],
+    ['📲', '¿Cómo uso mi cuenta en otro teléfono o en el computador?', 'Entra con el mismo correo y contraseña. Tu iglesia y tus avances te siguen solos. Si no tienes cuenta, créala en «Entrar con mi correo y contraseña».'],
+    ['🔒', '¿Qué ve mi pastor de mí?', 'Tu nombre, tus peticiones de oración y tus pedidos de visita. Tu diario, tu crecimiento y tus avances no los ve nadie de tu iglesia.', 'privacidad'],
+    ['📴', '¿Qué sirve sin internet?', 'La Biblia que ya abriste, el versículo, tu diario, tu crecimiento y los cursos que ya viste. Pedir oración o visita y el muro necesitan internet.'],
+    ['🔑', 'Olvidé mi contraseña', 'En «Entrar con mi correo» toca «¿Olvidaste tu contraseña?». Te llega un correo con un enlace; revisa también «spam».'],
+    ['🛠️', 'No puedo entrar o crear mi cuenta', 'En esa pantalla toca «¿No funciona? Revisar la conexión»: te dice qué falla. Si el correo de confirmación no llega, usa «Reenviar el correo de confirmación».'],
+    ['🗑️', '¿Cómo borro mis datos?', 'En «Mi privacidad» puedes descargarlos, apagar y borrar la copia de tu cuenta, o salir de la iglesia para borrar tu nombre de su lista.', 'privacidad']
+  ];
+  function vistaAyuda(id) {
+    $('#pantalla').innerHTML = `${volver()}<h1>Ayuda</h1><div class="filete"></div>
+      <p class="suave">Toca una pregunta para ver la respuesta.</p>
+      <div class="ayuda-lista">${AYUDA.map((a, i) => `<details class="card ayuda-it"><summary><span aria-hidden="true">${a[0]}</span>${esc(a[1])}</summary><p>${esc(a[2])}</p>${a[3] ? `<button type="button" class="btn sec chico" data-ayuda-ir="${a[3]}">Abrir «Mi privacidad»</button>` : ''}</details>`).join('')}</div>`;
+    alVolver();
+    document.querySelectorAll('[data-ayuda-ir]').forEach((b) => b.addEventListener('click', () => vistaPrivacidad(id)));
   }
 
   // ---------- Pedir oración (MOV2b) ----------
