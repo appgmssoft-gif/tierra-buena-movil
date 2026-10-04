@@ -594,8 +594,9 @@
   function vistaVida() {
     $('#pantalla').innerHTML = `<h1>Vivir lo que aprendemos</h1><div class="filete"></div>
       <h2>Con Dios y conmigo</h2><div class="grid">${activa('🕊️', 'Mi oración', 'Tu diario de peticiones, solo para ti.', 'mioracion')}${activa('🌱', 'Mi crecimiento', 'Pequeños pasos de cada semana.', 'crecimiento')}${activa('🧠', 'Salud mental', 'Respirar, un chequeo y dónde pedir ayuda.', 'salud')}</div>
-      <h2 class="sep">Con los demás</h2><div class="grid">${activa('💡', 'Ideas y proyectos', 'Ideas para servir a tu comunidad.', 'ideas')}${activa('🧰', 'Proyectos listos', 'Ya pensados: lugar, presupuesto y personas.', 'proyectos')}</div>`;
-    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ mioracion: vistaMiOracion, crecimiento: vistaCrecimiento, ideas: vistaIdeas, salud: vistaSalud, proyectos: vistaProyectos }[b.dataset.ir] || vistaVida)()));
+      <h2 class="sep">Con los demás</h2><div class="grid">${activa('💡', 'Ideas y proyectos', 'Ideas para servir a tu comunidad.', 'ideas')}${activa('🧰', 'Proyectos listos', 'Ya pensados: lugar, presupuesto y personas.', 'proyectos')}</div>
+      <h2 class="sep">Para aprender</h2><div class="grid">${activa('🎓', 'Aprender', 'Cursos gratuitos en internet para servir mejor, con tu avance.', 'aprender')}</div>`;
+    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ mioracion: vistaMiOracion, crecimiento: vistaCrecimiento, ideas: vistaIdeas, salud: vistaSalud, proyectos: vistaProyectos, aprender: vistaAprender }[b.dataset.ir] || vistaVida)()));
   }
 
   // --- Mi oración: diario personal (no se envia a nadie) ---
@@ -769,6 +770,52 @@
   let proyFiltro = 'todas';
   const LUGARES = { iglesia: 'En la iglesia', publico: 'En un lugar público', casa: 'En casa' };
   const PRESUPUESTOS = { sin: 'Sin costo', bajo: 'Presupuesto bajo', medio: 'Presupuesto medio' };
+  // ---------- Aprender (F866): cursos gratuitos en internet + mi avance (solo en este teléfono) ----------
+  const K_APR = 'tb_movil_aprender';
+  const ESTADOS_APR = [['pendiente', '⚪', 'Sin iniciar'], ['en_progreso', '▶️', 'En progreso'], ['completado', '✅', 'Completado']];
+  let aprFiltro = 'todas';
+  const aprMapa = () => { const m = leer(K_APR); return m && typeof m === 'object' && !Array.isArray(m) ? m : {}; };
+  const aprEstado = (id) => { const e = aprMapa()[id]; return ESTADOS_APR.some((x) => x[0] === e) ? e : 'pendiente'; };
+  const urlSegura = (u) => { try { const x = new URL(u); return x.protocol === 'https:' ? x.href : ''; } catch (e) { return ''; } };
+  async function vistaAprender() {
+    $('#pantalla').innerHTML = `${cabecera('Aprender', 'Vivir lo que aprendemos')}<p class="suave" id="aprmsg">Cargando…</p>`;
+    volverA('Vivir lo que aprendemos', vistaVida);
+    let d; try { d = await datoCargar('aprender_cursos'); } catch (e) { d = null; }
+    const m = $('#aprmsg'); if (!m) return; if (!d || !Array.isArray(d.categorias)) { m.textContent = SIN_DATOS; return; }
+    const todos = d.categorias.reduce((n, c) => n + c.cursos.length, 0);
+    const hechos = d.categorias.reduce((n, c) => n + c.cursos.filter((x) => aprEstado(x.id) === 'completado').length, 0);
+    const enCurso = d.categorias.reduce((n, c) => n + c.cursos.filter((x) => aprEstado(x.id) === 'en_progreso').length, 0);
+    const chips = [['todas', '', 'Todos']].concat(d.categorias.map((c) => [c.id, c.icon, c.titulo]));
+    if (!chips.some((c) => c[0] === aprFiltro)) aprFiltro = 'todas';
+    const cats = d.categorias.filter((c) => aprFiltro === 'todas' || c.id === aprFiltro);
+    $('#pantalla').innerHTML = `${cabecera('Aprender', 'Vivir lo que aprendemos')}
+      <p class="suave">Cursos gratuitos de otras organizaciones. Se abren en tu navegador; aquí solo anotas tu avance (queda en este teléfono).</p>
+      <div class="card bienvenida"><b>${hechos} de ${todos}</b> completados${enCurso ? ' · ' + enCurso + ' en progreso' : ''}</div>
+      <div class="chips" role="group" aria-label="Filtrar por tema">${chips.map((c) => `<button type="button" class="chip${aprFiltro === c[0] ? ' on' : ''}" data-afiltro="${esc(c[0])}" aria-pressed="${aprFiltro === c[0]}">${c[1] ? esc(c[1]) + ' ' : ''}${esc(c[2])}</button>`).join('')}</div>
+      ${cats.map((c) => `<h2 class="sep">${esc(c.icon)} ${esc(c.titulo)}</h2><p class="suave m0">${esc(c.subtitulo)}</p>` + c.cursos.map((x) => { const e = ESTADOS_APR.find((z) => z[0] === aprEstado(x.id)); return `<button type="button" class="card item" data-curso="${esc(x.id)}"><div class="t"><span aria-hidden="true">${e[1]}</span>${esc(x.titulo)}<span class="flecha" aria-hidden="true">›</span></div><p class="suave m0t">${esc(x.proveedor)} · ${esc(e[2])}</p></button>`; }).join('')).join('')}`;
+    volverA('Vivir lo que aprendemos', vistaVida);
+    document.querySelectorAll('[data-afiltro]').forEach((b) => b.addEventListener('click', () => { aprFiltro = b.dataset.afiltro; vistaAprender(); }));
+    document.querySelectorAll('[data-curso]').forEach((b) => b.addEventListener('click', () => vistaCurso(d, b.dataset.curso)));
+  }
+  function vistaCurso(d, id) {
+    let cur = null; d.categorias.forEach((c) => c.cursos.forEach((x) => { if (x.id === id) cur = x; }));
+    if (!cur) return vistaAprender();
+    const url = urlSegura(cur.url), est = aprEstado(id);
+    $('#pantalla').innerHTML = `${cabecera(cur.titulo, 'Aprender')}
+      <p class="suave">${esc(cur.proveedor)} · ${esc(cur.costo)}</p>
+      <div class="card"><p class="m0t">${esc(cur.queEs)}</p><h2 class="sep16">¿Cómo me ayuda?</h2><p>${esc(cur.comoAyuda)}</p>
+        ${(cur.ejemplos || []).length ? `<h2>Para ponerlo en práctica</h2><ul class="formas">${cur.ejemplos.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}</div>
+      ${url ? `<a class="btn" id="abrircurso" href="${esc(url)}" target="_blank" rel="noopener noreferrer">Abrir el curso ↗</a><p class="suave">Se abre en otra pestaña, en el sitio de ${esc(cur.proveedor)}. Allí puede pedirte crear una cuenta.</p>` : ''}
+      <fieldset class="opciones"><legend>Mi avance</legend>
+        ${ESTADOS_APR.map((e) => `<label class="opcion"><input type="radio" name="aest" value="${e[0]}"${est === e[0] ? ' checked' : ''}><span>${e[1]} ${e[2]}</span></label>`).join('')}</fieldset>
+      <p id="amsg" class="ok" role="status"></p>`;
+    volverA('Aprender', vistaAprender);
+    document.querySelectorAll('input[name=aest]').forEach((r) => r.addEventListener('change', () => {
+      const m = aprMapa(); if (r.value === 'pendiente') delete m[id]; else m[id] = r.value;
+      const ok = guardar(K_APR, m); const t = $('#amsg'); if (t) { t.textContent = ok ? 'Guardado en este teléfono.' : 'Este navegador no deja guardar datos.'; t.className = ok ? 'ok' : 'error'; }
+    }));
+  }
+
   async function vistaProyectos() {
     $('#pantalla').innerHTML = `${cabecera('Proyectos listos', 'Vivir lo que aprendemos')}<p class="suave" id="pymsg">Cargando…</p>`;
     volverA('Vivir lo que aprendemos', vistaVida);

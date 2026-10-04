@@ -1,0 +1,445 @@
+{
+  "categorias": [
+    {
+      "id": "blandas",
+      "icon": "🗣️",
+      "titulo": "Habilidades blandas",
+      "subtitulo": "Comunicación, liderazgo y habilidades sociales",
+      "color": "#3FA9F5",
+      "cursos": [
+        {
+          "id": "blandas-diploma-en-desarrollo-de-habilidades-blandas",
+          "titulo": "Diploma en Desarrollo de Habilidades Blandas",
+          "proveedor": "Alison",
+          "url": "https://alison.com/es/curso/diploma-en-desarrollo-de-habilidades-blandas",
+          "costo": "Gratis (certificado con costo opcional)",
+          "descripcion": "Comunicación efectiva, hablar en grupo, estilos de comunicación y habilidades sociales.",
+          "queEs": "Curso online gratuito que enseña a comunicarte con claridad, hablar en público sin miedo y reconocer los distintos estilos con los que se comunica la gente.",
+          "comoAyuda": "Ayuda a preparar mejor las prédicas y los anuncios, y a explicarte con más seguridad frente a la congregación, evitando malos entendidos con líderes y miembros.",
+          "ejemplos": [
+            "Practicar la estructura del curso antes de dar un anuncio importante en el culto.",
+            "Usar la técnica de escucha activa en una conversación pastoral difícil."
+          ]
+        },
+        {
+          "id": "blandas-habilidades-blandas",
+          "titulo": "Habilidades blandas",
+          "proveedor": "edX",
+          "url": "https://www.edx.org/es/aprende/habilidades-blandas",
+          "costo": "Gratis (certificado con costo opcional)",
+          "descripcion": "Cursos de universidades reales sobre liderazgo, motivación y comunicación en equipos.",
+          "queEs": "Selección de cursos de universidades reales sobre liderazgo, motivación de equipos y comunicación efectiva, gratis en modo de solo lectura (auditoría).",
+          "comoAyuda": "Da herramientas para coordinar mejor a los equipos de servicio (alabanza, diaconía, jóvenes) y motivar a los voluntarios sin generar roces.",
+          "ejemplos": [
+            "Aplicar una técnica de motivación de equipos antes del próximo evento de la iglesia.",
+            "Usar lo aprendido sobre liderazgo para delegar tareas del culto dominical."
+          ]
+        },
+        {
+          "id": "blandas-cursos-de-habilidades-de-comunicacion",
+          "titulo": "Cursos de Habilidades de Comunicación",
+          "proveedor": "Alison",
+          "url": "https://alison.com/es/etiquetar/habilidades-de-comunicaci%C3%B3n",
+          "costo": "Gratis (certificado con costo opcional)",
+          "descripcion": "Persuasión, escucha activa y comunicación no verbal en cursos cortos.",
+          "queEs": "Serie de cursos cortos y gratuitos sobre persuasión, escucha activa y comunicación no verbal.",
+          "comoAyuda": "Mejora la forma de aconsejar a alguien, de dar una charla de jóvenes o de presentar una idea nueva al liderazgo.",
+          "ejemplos": [
+            "Prestar más atención al lenguaje corporal al aconsejar a una familia.",
+            "Usar una técnica de persuasión aprendida para proponer un proyecto nuevo al liderazgo."
+          ]
+        },
+        {
+          "id": "blandas-cursos-online-gratis-de-inteligencia-emocional",
+          "titulo": "Cursos online gratis de Inteligencia Emocional",
+          "proveedor": "Alison",
+          "url": "https://alison.com/es/etiquetar/inteligencia-emocional",
+          "costo": "Gratis (certificado con costo opcional)",
+          "descripcion": "Serie de cursos cortos sobre autoconciencia, autorregulación emocional y empatía.",
+          "queEs": "Serie de cursos cortos y gratuitos que enseñan a reconocer y manejar las propias emociones, y a relacionarse mejor con los demás.",
+          "comoAyuda": "Ayuda a sostener conversaciones pastorales difíciles con más calma, a no reaccionar de más ante una crítica, y a acompañar mejor a alguien que está pasando un mal momento.",
+          "ejemplos": [
+            "Aplicar una técnica de autorregulación antes de responder a un conflicto entre dos miembros.",
+            "Usar lo aprendido sobre empatía al visitar a una familia que está atravesando un duelo."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "servidores",
+      "icon": "🤲",
+      "titulo": "Formación para servidores",
+      "subtitulo": "Escuela dominical, líderes de jóvenes y ayuda social",
+      "color": "#4E9D6D",
+      "cursos": [
+        {
+          "id": "servidores-clases-del-instituto-de-lideres-cristianos-ilc",
+          "titulo": "Clases del Instituto de Líderes Cristianos (ILC)",
+          "proveedor": "Christian Leaders Institute",
+          "url": "https://es.christianleadersinstitute.org/clases-del-ilc/",
+          "costo": "Completamente gratis, con certificado",
+          "descripcion": "Cursos graduales para pastores, líderes de jóvenes, maestros de escuela dominical y líderes de ministerio.",
+          "queEs": "Ruta de cursos gratuitos y en español para formar pastores, líderes de jóvenes y maestros de escuela dominical, con certificado al terminar.",
+          "comoAyuda": "Da una base teológica y ministerial ordenada para quien sirve sin formación formal, o quiere reforzar la que ya tiene.",
+          "ejemplos": [
+            "Tomar el primer curso de la ruta y aplicar una lección en la próxima clase de escuela dominical.",
+            "Usar el certificado obtenido para respaldar un nuevo rol de liderazgo en la iglesia."
+          ]
+        },
+        {
+          "id": "servidores-recursos-para-el-ministerio-infantil",
+          "titulo": "Recursos para el Ministerio Infantil",
+          "proveedor": "Los Niños Cuentan",
+          "url": "https://www.losninoscuentan.com/",
+          "costo": "Gratis",
+          "descripcion": "Planes de estudio, ideas y talleres para quienes enseñan escuela dominical y ministerio de niños.",
+          "queEs": "Planes de estudio, dinámicas y talleres gratuitos pensados específicamente para quienes enseñan a los niños de la iglesia.",
+          "comoAyuda": "Ahorra horas de preparación semanal y mejora la calidad de las clases de escuela dominical con actividades ya probadas.",
+          "ejemplos": [
+            "Bajar un plan de clase completo para el próximo domingo de escuela dominical.",
+            "Adaptar una dinámica del sitio para el campamento de niños de la iglesia."
+          ]
+        },
+        {
+          "id": "servidores-recursos-completos-para-ministerios-juveniles",
+          "titulo": "Recursos completos para ministerios juveniles",
+          "proveedor": "WHDL",
+          "url": "https://www.whdl.org/sites/default/files/resource/book/ES_recursos_completos_para_ministerios_juveniles.pdf",
+          "costo": "Gratis (guía descargable)",
+          "descripcion": "Guía práctica para organizar y liderar un ministerio juvenil de forma completa.",
+          "queEs": "Guía descargable y gratuita con todo lo necesario para organizar y liderar un ministerio de jóvenes desde cero.",
+          "comoAyuda": "Sirve como manual de referencia para quien recién asume el liderazgo de jóvenes o quiere reorganizar el ministerio existente.",
+          "ejemplos": [
+            "Usar la guía para armar el calendario anual del ministerio juvenil.",
+            "Aplicar una de las dinámicas propuestas en la próxima reunión de jóvenes."
+          ]
+        },
+        {
+          "id": "servidores-cursos-online-gratis-de-trabajo-social",
+          "titulo": "Cursos online gratis de Trabajo Social",
+          "proveedor": "Alison",
+          "url": "https://alison.com/es/etiquetar/trabajo-social",
+          "costo": "Gratis (certificado con costo opcional)",
+          "descripcion": "Fundamentos para apoyar a personas, familias y comunidades en situaciones difíciles.",
+          "queEs": "Cursos gratuitos que enseñan las bases del trabajo social: cómo acompañar a personas, familias y comunidades que atraviesan dificultades.",
+          "comoAyuda": "Da herramientas concretas para organizar mejor la ayuda social de la iglesia (comida, ropa, acompañamiento a familias necesitadas) y para derivar a alguien a un recurso adecuado cuando la iglesia no puede cubrir todo.",
+          "ejemplos": [
+            "Usar una técnica de entrevista social aprendida para conocer mejor la situación real de una familia antes de ayudarla.",
+            "Aplicar lo aprendido sobre trabajo comunitario para organizar una jornada de ayuda social del barrio."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "teologia",
+      "icon": "📜",
+      "titulo": "Teología, hebreo y griego",
+      "subtitulo": "Cursos avanzados de idiomas bíblicos y doctrina",
+      "color": "#B08D57",
+      "cursos": [
+        {
+          "id": "teologia-hebreo-biblico-gratis",
+          "titulo": "Hebreo bíblico gratis",
+          "proveedor": "Aleph con Beth",
+          "url": "https://freehebrew.online/es/elementor-2662/",
+          "costo": "Gratis",
+          "descripcion": "Curso en video para aprender a leer hebreo bíblico desde cero, sin costo.",
+          "queEs": "Curso en video, completamente gratis, para aprender a leer hebreo bíblico desde cero, sin necesidad de saber inglés.",
+          "comoAyuda": "Permite leer el Antiguo Testamento en su idioma original y entender matices que se pierden en la traducción, muy valioso al preparar un estudio o prédica.",
+          "ejemplos": [
+            "Leer una palabra clave del Antiguo Testamento en hebreo antes de explicarla en la prédica del domingo.",
+            "Usarlo como base para un estudio OIA más profundo sobre un pasaje del Antiguo Testamento."
+          ]
+        },
+        {
+          "id": "teologia-cursos-de-teologia-y-ministerio",
+          "titulo": "Cursos de teología y ministerio",
+          "proveedor": "Christian Leaders Institute",
+          "url": "https://es.christianleadersinstitute.org/clases-del-ilc/",
+          "costo": "Gratis, con certificado",
+          "descripcion": "Ruta progresiva de estudios teológicos hasta certificado o diplomado.",
+          "queEs": "Ruta progresiva de estudios teológicos gratuita, con certificado, hasta nivel de diplomado.",
+          "comoAyuda": "Ordena y profundiza el conocimiento doctrinal propio, útil para responder con más fundamento las preguntas de la congregación.",
+          "ejemplos": [
+            "Completar un módulo y usarlo como base de una nueva serie de prédicas.",
+            "Compartir el certificado con la directiva como respaldo de la formación teológica."
+          ]
+        },
+        {
+          "id": "teologia-griego-biblico-gratis",
+          "titulo": "Griego bíblico gratis",
+          "proveedor": "Alpha with Angela",
+          "url": "https://freegreek.online/es/inicio/",
+          "costo": "Gratis",
+          "descripcion": "Curso en video, gratuito y sin inscripción, para aprender griego bíblico koiné viendo y escuchando (canal hermano de Aleph con Beth).",
+          "queEs": "Curso en video completamente gratis (canal hermano de Aleph con Beth) para aprender griego bíblico koiné viendo y escuchando, sin explicaciones en inglés.",
+          "comoAyuda": "Da acceso al Nuevo Testamento en su idioma original, útil para estudiar con más profundidad palabras clave al preparar una prédica o estudio.",
+          "ejemplos": [
+            "Revisar el significado original de una palabra griega antes de explicar un versículo del Nuevo Testamento.",
+            "Usarlo junto con Aleph con Beth para comparar cómo el Antiguo y el Nuevo Testamento usan una misma idea."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "musica_familia",
+      "icon": "🎵",
+      "titulo": "Música, niños y familia",
+      "subtitulo": "Para músicos, padres y dueñas de casa",
+      "color": "#6C63A8",
+      "cursos": [
+        {
+          "id": "musica_familia-teoria-musical",
+          "titulo": "Teoría musical",
+          "proveedor": "Alison",
+          "url": "https://alison.com/es/etiquetar/teor%C3%ADa-musical",
+          "costo": "Gratis (certificado con costo opcional)",
+          "descripcion": "Notas, escalas, acordes y lectura musical desde cero.",
+          "queEs": "Curso gratuito sobre notas, escalas, acordes y lectura musical, pensado para quien parte desde cero.",
+          "comoAyuda": "Da las bases para tocar mejor en el grupo de alabanza, enseñar música a otros o simplemente entender lo que se está tocando.",
+          "ejemplos": [
+            "Aprender a leer un acorde nuevo y usarlo en el ensayo de alabanza de la semana.",
+            "Enseñar una noción básica de teoría musical a un joven que recién se suma al equipo de música."
+          ]
+        },
+        {
+          "id": "musica_familia-cursos-gratuitos-de-guitarra-piano-y-canto",
+          "titulo": "Cursos gratuitos de guitarra, piano y canto",
+          "proveedor": "La Escuela de Música .net",
+          "url": "https://laescuelademusica.net/todos-nuestros-cursos/",
+          "costo": "Gratis",
+          "descripcion": "Lecciones gratuitas para aprender guitarra, piano, saxo y lenguaje musical.",
+          "queEs": "Lecciones gratuitas en video para aprender guitarra, piano, saxofón y lenguaje musical desde el nivel inicial.",
+          "comoAyuda": "Permite sumar o mejorar un instrumento en el equipo de alabanza sin gastar en clases particulares.",
+          "ejemplos": [
+            "Aprender los primeros acordes de guitarra para acompañar un himno sencillo.",
+            "Practicar una lección de canto antes de dirigir la alabanza del domingo."
+          ]
+        },
+        {
+          "id": "musica_familia-habilidades-y-tecnicas-de-crianza-positiva",
+          "titulo": "Habilidades y Técnicas de Crianza Positiva",
+          "proveedor": "Alison",
+          "url": "https://alison.com/es/curso/habilidades-y-tecnicas-de-crianza-positiva",
+          "costo": "Gratis (certificado con costo opcional)",
+          "descripcion": "Herramientas prácticas para fortalecer los lazos familiares y criar con empatía.",
+          "queEs": "Curso gratuito con herramientas prácticas para criar con empatía y fortalecer los lazos familiares.",
+          "comoAyuda": "Útil tanto para la vida familiar propia como para aconsejar a familias de la congregación que piden orientación.",
+          "ejemplos": [
+            "Aplicar una técnica de crianza positiva esta semana en casa.",
+            "Recomendar una idea del curso a una familia joven de la iglesia que pide consejo."
+          ]
+        },
+        {
+          "id": "musica_familia-cursos-gratis-online-de-organizacion-del-hogar",
+          "titulo": "Cursos gratis online de organización del hogar",
+          "proveedor": "Alison",
+          "url": "https://alison.com/es/etiquetar/orden-y-organizacion",
+          "costo": "Gratis (certificado con costo opcional)",
+          "descripcion": "Consejos prácticos para organizar los espacios de la casa y adoptar hábitos de orden.",
+          "queEs": "Cursos cortos y gratuitos con consejos prácticos para organizar los espacios de la casa, desde un clóset hasta un estilo de vida más minimalista.",
+          "comoAyuda": "Ayuda a quien lleva la casa (y muchas veces también sirve en la iglesia) a ganar tiempo real en la semana, con menos desorden y menos estrés en el hogar.",
+          "ejemplos": [
+            "Aplicar una técnica de organización aprendida para ordenar el espacio donde se preparan las clases de escuela dominical.",
+            "Usar un método de orden del curso para simplificar la rutina semanal de la casa y tener más tiempo para servir en la iglesia."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vida_practica",
+      "icon": "🧭",
+      "titulo": "Vida práctica",
+      "subtitulo": "Cocina, emprendimiento, finanzas e idiomas",
+      "color": "#D97B4F",
+      "cursos": [
+        {
+          "id": "vida_practica-curso-de-cocina-profesional",
+          "titulo": "Curso de Cocina Profesional",
+          "proveedor": "Edutin",
+          "url": "https://edutin.com/curso-de-cocina-profesional-4271",
+          "costo": "Gratis, con certificado",
+          "descripcion": "Fundamentos de cocina, gastronomía internacional y organización de eventos.",
+          "queEs": "Curso gratuito y con certificado sobre fundamentos de cocina, gastronomía internacional y organización de eventos.",
+          "comoAyuda": "Sirve para mejorar la comida de casa, o para organizar mejor un ágape, un compartir o un evento grande de la iglesia.",
+          "ejemplos": [
+            "Usar una técnica del curso para preparar la comida de la próxima actividad de jóvenes.",
+            "Aplicar lo aprendido sobre organización de eventos al planear el ágape del aniversario de la iglesia."
+          ]
+        },
+        {
+          "id": "vida_practica-curso-de-educacion-financiera",
+          "titulo": "Curso de Educación Financiera",
+          "proveedor": "Edutin",
+          "url": "https://edutin.com/curso-de-educacion-financiera-4325",
+          "costo": "Gratis, con certificado",
+          "descripcion": "Fundamentos de educación financiera personal, ahorro y manejo de deudas.",
+          "queEs": "Curso gratuito y con certificado sobre cómo administrar ingresos, gastos, deudas y ahorro.",
+          "comoAyuda": "Ayuda a ordenar las finanzas personales y familiares, y da herramientas para orientar a otros que piden consejo financiero.",
+          "ejemplos": [
+            "Armar un presupuesto familiar simple con lo aprendido en el curso.",
+            "Usar una idea del curso para explicar mayordomía financiera en una prédica o estudio."
+          ]
+        },
+        {
+          "id": "vida_practica-cursos-gratuitos-de-emprendimiento-y-finanzas",
+          "titulo": "Cursos gratuitos de emprendimiento y finanzas",
+          "proveedor": "Santander Open Academy",
+          "url": "https://www.santanderopenacademy.com/es/sites/courses.html",
+          "costo": "Gratis, con certificado",
+          "descripcion": "Catálogo de cursos cortos y gratuitos sobre emprendimiento, productividad y manejo del dinero, sin necesidad de ser cliente del banco.",
+          "queEs": "Catálogo de cursos cortos, gratuitos y con certificado sobre emprendimiento, productividad y manejo del dinero, sin necesidad de ser cliente del banco.",
+          "comoAyuda": "Da herramientas concretas para quien quiere iniciar un pequeño negocio o mejorar el que ya tiene, además de organizar mejor sus finanzas.",
+          "ejemplos": [
+            "Tomar un curso corto antes de lanzar un pequeño emprendimiento familiar.",
+            "Usar lo aprendido sobre productividad para organizar mejor la semana entre el trabajo y el servicio en la iglesia."
+          ]
+        },
+        {
+          "id": "vida_practica-aprende-ingles-online-con-cursos-certificados",
+          "titulo": "Aprende inglés online con cursos certificados",
+          "proveedor": "edX",
+          "url": "https://www.edx.org/es/aprende/ingles",
+          "costo": "Gratis (certificado con costo opcional)",
+          "descripcion": "Cursos de universidades reconocidas para aprender inglés desde cero o mejorar el nivel.",
+          "queEs": "Catálogo de cursos de inglés de universidades reales (Oxford, UC Berkeley, entre otras), gratis en modo de solo lectura (auditoría), desde nivel básico hasta avanzado.",
+          "comoAyuda": "Abre la puerta a leer comentarios bíblicos, prédicas y recursos ministeriales que solo existen en inglés, y a comunicarse con misioneros o iglesias de otros países.",
+          "ejemplos": [
+            "Tomar un curso de nivel básico para poder leer un comentario bíblico en inglés con ayuda de un diccionario.",
+            "Practicar conversación básica antes de recibir a un misionero o visitante que no habla español."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "familia",
+      "icon": "🏠",
+      "titulo": "Familia y hogar",
+      "subtitulo": "Matrimonio, hijos y cuidado de los tuyos",
+      "color": "#C8577A",
+      "cursos": [
+        {
+          "id": "familia-introduccion-a-la-terapia-de-parejas",
+          "titulo": "Introducción a la Terapia de Parejas",
+          "proveedor": "Alison",
+          "url": "https://alison.com/es/curso/introduccion-a-la-terapia-de-parejas",
+          "costo": "Gratis (certificado con costo opcional)",
+          "descripcion": "Comunicación, conflicto y confianza en la pareja, vistos como los trabaja un consejero.",
+          "queEs": "Curso gratuito en español, de nivel intermedio y unas 3-4 horas. Explica cómo se trabaja la consejería de pareja: barreras para comunicarse, estilos y patrones de comunicación, etapas de una relación y qué hacer en una crisis. Está enfocado en cómo actúa un consejero, pero sirve a cualquiera que quiera entender mejor su matrimonio.",
+          "comoAyuda": "Da vocabulario y herramientas para acompañar a matrimonios de la congregación y para cuidar el propio matrimonio. No reemplaza a un profesional cuando hay violencia, abuso o una crisis grave.",
+          "ejemplos": [
+            "Practicar en casa la escucha sin interrumpir que enseña el curso, antes de aconsejar a otra pareja.",
+            "Reconocer cuándo una pareja necesita derivación profesional y no solo una conversación pastoral."
+          ]
+        },
+        {
+          "id": "familia-adolescencia-psicologia-y-salud",
+          "titulo": "Curso de adolescencia, psicología y salud",
+          "proveedor": "Edutin Academy",
+          "url": "https://edutin.com/curso-de-adolescencia-psicologia-y-salud",
+          "costo": "Gratis (certificado con costo; requiere crear cuenta)",
+          "descripcion": "Cómo es la adolescencia hoy: salud mental, familia y conductas de riesgo.",
+          "queEs": "Curso gratuito de unas 4 semanas (1-2 horas por semana) con un psicólogo. Trata el desarrollo físico, emocional y social del adolescente, el papel de la familia y la prevención de conductas de riesgo. Incluye una unidad de educación en salud sexual: revísala antes de recomendarlo a un grupo.",
+          "comoAyuda": "Ayuda a padres y a líderes de jóvenes a entender esta etapa, reconocer señales de alerta en la salud mental y saber cuándo derivar a un profesional.",
+          "ejemplos": [
+            "Usar lo aprendido para conversar con tu hijo adolescente sin sermonear primero.",
+            "Preparar una charla para padres del grupo de jóvenes sobre señales de alerta y a quién acudir."
+          ]
+        },
+        {
+          "id": "familia-primeros-auxilios-pediatricos",
+          "titulo": "Curso de primeros auxilios pediátricos",
+          "proveedor": "Edutin Academy",
+          "url": "https://edutin.com/curso-de-primeros-auxilios-pediatricos",
+          "costo": "Gratis (certificado con costo; requiere crear cuenta)",
+          "descripcion": "Qué hacer ante una emergencia con un niño: atragantamiento, heridas, quemaduras, convulsiones.",
+          "queEs": "Curso gratuito de unas 5 semanas (1-2 horas por semana), en videoclases. Cubre RCP y desobstrucción en lactantes y niños, hemorragias, fracturas, quemaduras, convulsiones, intoxicaciones, el botiquín pediátrico y protocolos de emergencia para la familia y la escuela. Al ser en línea, no reemplaza una práctica presencial de RCP.",
+          "comoAyuda": "Sirve a padres, maestros de escuela dominical y equipos de ministerio infantil que tienen niños a su cargo durante el culto.",
+          "ejemplos": [
+            "Armar el botiquín de la sala de niños siguiendo la unidad de prevención.",
+            "Repasar con los maestros de escuela dominical qué hacer si un niño se atraganta."
+          ]
+        },
+        {
+          "id": "familia-guia-para-el-cuidador-de-dependientes",
+          "titulo": "Guía para el cuidador de dependientes",
+          "proveedor": "Formación Carpe Diem (España)",
+          "url": "https://www.formacioncarpediem.com/curso/604/curso-curso-gratis-guia-para-el-cuidador-de-dependientes",
+          "costo": "Gratis (certificado digital 5 €). Pide matricularse con nombre y documento de identidad",
+          "descripcion": "Higiene, movilización, alimentación y apoyo emocional para cuidar a un mayor en casa.",
+          "queEs": "Curso en línea de 10 horas para familiares que cuidan a una persona mayor o dependiente: el papel del cuidador, cuidados básicos del día a día, comunicación y apoyo emocional, y autocuidado de quien cuida. Es de una escuela de España: si menciona ayudas o trámites, pueden no aplicar en tu país.",
+          "comoAyuda": "Ayuda a las familias de la congregación que atienden a un adulto mayor en casa y a quienes las visitan, e incluye el cuidado de la persona cuidadora, que suele olvidarse.",
+          "ejemplos": [
+            "Compartir con un hermano que cuida a su madre las pautas de autocuidado del último tema.",
+            "Preparar una visita pastoral a un hogar con un adulto mayor dependiente sabiendo qué apoyo práctico ofrecer."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "emprendimiento_finanzas_idiomas",
+      "icon": "💼",
+      "titulo": "Emprendimiento, finanzas e idiomas",
+      "subtitulo": "Para armar tu propio negocio y cuidar la plata de tu casa",
+      "color": "#2E7D6B",
+      "cursos": [
+        {
+          "id": "efi-curso-de-emprendimiento",
+          "titulo": "Curso de emprendimiento",
+          "proveedor": "Edutin Academy",
+          "url": "https://edutin.com/curso-de-emprendimiento",
+          "costo": "Gratis (certificado con costo opcional; requiere crear cuenta)",
+          "descripcion": "De una idea a un plan de negocio real: modelo Canvas, análisis de mercado y propuesta de valor.",
+          "queEs": "Curso gratuito de unas 4 semanas (1-2 horas por semana), en videoclases, con actividades prácticas y chats con otros estudiantes. Enseña a aplicar la metodología Canvas para estructurar una idea de negocio, definir visión/misión y objetivos, hacer un análisis de mercado y un análisis FODA, y describir productos/servicios hasta llegar a una propuesta de valor.",
+          "comoAyuda": "Sirve para quien quiere poner un pequeño emprendimiento (venta de comida, costura, un taller) o para acompañar a un miembro de la congregación que está por lanzar el suyo, dándole un método simple en vez de solo ánimo.",
+          "ejemplos": [
+            "Usar la plantilla Canvas del curso para ordenar la idea de un emprendimiento familiar antes de invertir en él.",
+            "Preparar, con lo aprendido, una charla corta para jóvenes de la iglesia sobre cómo evaluar una idea de negocio."
+          ]
+        },
+        {
+          "id": "efi-habilidades-financieras-basicas-para-la-vida",
+          "titulo": "Habilidades financieras básicas para la vida",
+          "proveedor": "Alison",
+          "url": "https://alison.com/es/curso/habilidades-financieras-basicas-para-la-vida",
+          "costo": "Gratis (certificado con costo opcional)",
+          "descripcion": "Presupuesto personal, ahorro, deudas y cómo funciona una cuenta bancaria, explicado desde cero.",
+          "queEs": "Curso gratuito en español de nivel intermedio, unas 4-5 horas con video. Enseña a armar y analizar un presupuesto personal (ingresos y gastos), qué son el ahorro, la deuda y el punto de equilibrio, los tipos de cuenta bancaria y sus beneficios, y a comparar comprar al contado versus a plazos.",
+          "comoAyuda": "Da un vocabulario y unos pasos concretos para ordenar las finanzas de la casa o de un pequeño negocio, y para poder orientar con más base a quien pide consejo sobre deudas o ahorro en la congregación.",
+          "ejemplos": [
+            "Armar el presupuesto mensual de la casa siguiendo el modelo que enseña el curso.",
+            "Explicarle a un joven que va a abrir su primera cuenta bancaria qué preguntar antes de elegir una."
+          ]
+        },
+        {
+          "id": "efi-ingles-nivel-principiante-1-fundamentos",
+          "titulo": "Inglés Nivel Principiante 1 - Fundamentos",
+          "proveedor": "Alison",
+          "url": "https://alison.com/es/curso/ingles-nivel-principiante-1-fundamentos",
+          "costo": "Gratis (certificado con costo opcional)",
+          "descripcion": "El primer paso para hablar inglés: el abecedario, saludos, presentarse y las primeras 15 palabras.",
+          "queEs": "Curso gratuito en español, de nivel principiante y unas 3-4 horas. Enseña el verbo \"to be\", los pronombres (I, you, he, she, it), el abecedario con pronunciación, saludos (\"Hello\", \"Good evening\"), cómo presentarse e iniciar una conversación, y palabras en singular y plural.",
+          "comoAyuda": "Un punto de partida real para quien nunca estudió inglés y lo necesita para un trabajo, un viaje o para ayudar a sus hijos con la tarea, sin pedir nada más que las ganas de empezar.",
+          "ejemplos": [
+            "Practicar 10 minutos al día el abecedario y los saludos antes de un viaje o una entrevista de trabajo.",
+            "Usarlo como primer paso antes de anotarse en un curso de inglés más largo o pago."
+          ]
+        },
+        {
+          "id": "efi-curso-de-atencion-al-cliente",
+          "titulo": "Curso de atención al cliente",
+          "proveedor": "Edutin Academy",
+          "url": "https://edutin.com/curso-de-atencion-al-cliente",
+          "costo": "Gratis (certificado con costo opcional; requiere crear cuenta)",
+          "descripcion": "Cómo tratar bien a un cliente, resolver problemas y no perder la calma con los difíciles.",
+          "queEs": "Curso gratuito de unas 4 semanas (1-2 horas por semana), con casos prácticos guiados por una profesora con experiencia en atención a clientes. Enseña a adaptar la atención según el tipo de cliente, personalizar el trato, redactar mensajes claros, resolver problemas paso a paso y dar seguimiento a un reclamo o pedido.",
+          "comoAyuda": "Útil para quien atiende un local, un emprendimiento propio o coordina un equipo de voluntarios que trata con público (bazar, comedor, feria de la iglesia), y para bajar la tensión en un conflicto con un cliente o vecino sin perder el respeto.",
+          "ejemplos": [
+            "Aplicar los pasos de resolución de problemas del curso ante un reclamo real de un cliente del emprendimiento.",
+            "Capacitar en 15 minutos a los voluntarios de un bazar o feria de la iglesia con las claves de trato al público que enseña el curso."
+          ]
+        }
+      ]
+    }
+  ]
+}
