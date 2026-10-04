@@ -277,8 +277,9 @@
   function vistaUnirse() {
     if (codigoDeEnlace()) return vistaCodigo();            // vino de un enlace con el código de su iglesia
     $('#pantalla').innerHTML = `
-      <h1>Bienvenido a Tierra Buena</h1><div class="filete"></div>
-      <p>Elige cómo quieres entrar. Con tu correo y contraseña tu iglesia te sigue a cualquier teléfono; sin cuenta, tu pastor te acepta y este dispositivo guarda tu llave.</p>
+      <div class="hero"><div class="hero-ico" aria-hidden="true">🌿</div><h1>Bienvenido a Tierra Buena</h1>
+      <p>Tu iglesia, la Palabra y tu crecimiento, en tu bolsillo.</p></div>
+      <h2 class="sep">Elige cómo entrar</h2>
       ${cuentaBarra()}
       <div class="grid">
         ${leer(K_CUENTA) ? '' : activa('✉️', 'Entrar con mi correo y contraseña', 'La misma cuenta del computador. Si no tienes, la creas aquí.', 'cuenta')}
@@ -1046,7 +1047,7 @@
     document.querySelectorAll('.tab').forEach((b) => { if (b.dataset.tab === tab) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
     VISTAS[tab](); window.scrollTo(0, 0); $('#pantalla').focus({ preventScroll: true });
   }
-  document.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => ir(b.dataset.tab)));
+  document.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) { /* sin vibración */ } ir(b.dataset.tab); }));
   const red = () => { $('#sinRed').hidden = navigator.onLine; };
   window.addEventListener('online', red); window.addEventListener('offline', red); red();
   if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => { /* sin sw: igual funciona */ });

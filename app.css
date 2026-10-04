@@ -98,3 +98,72 @@ fieldset.preg legend{font-weight:700;padding:0 6px}
 .opc{display:flex;gap:12px;align-items:center;min-height:48px}.opc input{width:24px;height:24px;accent-color:var(--verde)}
 
 .enlace{font:inherit;font-weight:600;color:var(--verde);background:none;border:0;padding:6px 2px;min-height:44px;text-decoration:underline;cursor:pointer}
+
+/* ====== F870 · Rediseño inspirado en las apps más queridas ======
+   Calm/Headspace: fondo con luz suave, héroe cálido, burbujas de color en cada tarjeta.
+   Duolingo: botones «gorditos» con relieve que se hunden al tocar.
+   Instagram/Spotify/iOS: barra inferior flotante de cristal con íconos de línea y píldora activa.
+   YouVersion/Kindle: lectura serif cómoda. Airbnb/Apple: tarjetas grandes con sombra suave. */
+:root{--sombra:0 1px 2px rgba(70,45,10,.06),0 10px 28px -14px rgba(70,45,10,.28);--verde-os:#2c4429;--cristal:rgba(255,253,247,.78);
+  --t1:#f3e3bd;--t2:#d9e8d2;--t3:#d6e4f2;--t4:#f1d9d4;--radio:20px}
+@media (prefers-color-scheme:dark){:root{--sombra:0 1px 2px rgba(0,0,0,.4),0 10px 28px -14px rgba(0,0,0,.7);--verde-os:#5d8556;--cristal:rgba(32,27,20,.78);
+  --t1:#4a3b1c;--t2:#2c4128;--t3:#26394d;--t4:#4a2b27}}
+body{background:radial-gradient(120% 55% at 50% -8%,color-mix(in srgb,var(--oro) 20%,var(--papel)),var(--papel) 62%) fixed,var(--papel)}
+main{padding-top:calc(22px + var(--sa-t))}
+h1{font-size:1.95rem;letter-spacing:-.01em}
+.filete{height:4px;width:40px;margin:10px 0 18px}
+/* Tarjetas: más aire, sin borde duro, burbuja de color para el ícono */
+.card{border:0;border-radius:var(--radio);padding:18px;box-shadow:var(--sombra)}
+.card.pronto{border:1.5px dashed var(--linea);box-shadow:none}
+.card .t>span:first-child:not(.flecha){flex:none;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:1.35rem;background:var(--t1)}
+.grid>.card:nth-child(4n+2) .t>span:first-child{background:var(--t2)}
+.grid>.card:nth-child(4n+3) .t>span:first-child{background:var(--t3)}
+.grid>.card:nth-child(4n+4) .t>span:first-child{background:var(--t4)}
+.card .t{gap:14px}
+button.card{transition:transform .12s,box-shadow .12s}
+button.card:active{transform:scale(.98);box-shadow:0 1px 2px rgba(70,45,10,.1)}
+.card.item .t>span:first-child{width:40px;height:40px;font-size:1.2rem}
+main>h2,h2.sep{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:.8rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--suave);margin:26px 2px 10px}
+/* Héroe de bienvenida (Calm) */
+.hero{text-align:center;padding:26px 18px 22px;margin:2px 0 20px;border-radius:28px;color:#fff;background:linear-gradient(155deg,#5b7f52 0%,#3f5d3a 55%,#2c4429 100%);box-shadow:0 18px 40px -20px rgba(44,68,41,.8);position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;width:220px;height:220px;right:-70px;top:-90px;border-radius:50%;background:radial-gradient(circle,rgba(255,226,150,.5),transparent 70%)}
+.hero h1{color:#fff;position:relative}.hero p{color:rgba(255,255,255,.88);position:relative;margin:6px 0 0;font-size:1rem}
+.hero-ico{width:68px;height:68px;margin:0 auto 10px;border-radius:22px;display:grid;place-items:center;font-size:2.1rem;background:rgba(255,255,255,.18);backdrop-filter:blur(6px);position:relative}
+.bienvenida{border-left:0!important;color:#fff;background:linear-gradient(155deg,#5b7f52 0%,#3f5d3a 60%,#2c4429 100%);box-shadow:0 16px 36px -20px rgba(44,68,41,.85)}
+.bienvenida h2{font-size:1.5rem;color:#fff}.bienvenida .suave,.bienvenida p{color:rgba(255,255,255,.88)}
+/* Botones con relieve (Duolingo) */
+.btn{border-radius:16px;min-height:54px;letter-spacing:.01em;box-shadow:0 4px 0 var(--verde-os);transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--verde-os)}
+.btn.sec{background:var(--tarjeta);color:var(--verde);border:2px solid color-mix(in srgb,var(--verde) 45%,var(--linea));box-shadow:0 3px 0 color-mix(in srgb,var(--verde) 25%,var(--linea))}
+.btn.sec:active{box-shadow:0 0 0 transparent}
+.btn.chico{border-radius:14px}
+a.btn{justify-content:center}
+.btn:disabled{box-shadow:none;transform:none}
+/* Campos */
+input[type=text],input[type=email],input[type=password],textarea,select{border:2px solid var(--linea);border-radius:16px;background:var(--tarjeta);transition:border-color .15s,box-shadow .15s}
+input[type=text]:focus,input[type=email]:focus,input[type=password]:focus,textarea:focus,select:focus{outline:0;border-color:var(--verde);box-shadow:0 0 0 4px color-mix(in srgb,var(--verde) 20%,transparent)}
+/* Chips (filtros tipo Spotify) */
+.chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:8px -16px 14px;padding:2px 16px}.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:0;background:color-mix(in srgb,var(--verde) 10%,var(--tarjeta));color:var(--tinta);box-shadow:none}
+.chip.on{background:var(--verde);color:#fff}
+/* Barra inferior flotante de cristal (Instagram/iOS) */
+.barra{left:12px;right:12px;bottom:calc(10px + var(--sa-b));border:1px solid color-mix(in srgb,var(--linea) 70%,transparent);border-radius:26px;padding:6px;background:var(--cristal);-webkit-backdrop-filter:saturate(1.6) blur(18px);backdrop-filter:saturate(1.6) blur(18px);box-shadow:0 14px 34px -12px rgba(40,25,5,.45);max-width:560px;margin:0 auto}
+.tab{min-height:58px;border-radius:20px;font-size:.74rem;font-weight:600;gap:3px;transition:background .2s,color .2s}
+.tab .ico{display:grid;place-items:center;height:26px}.tab .ico svg{transition:transform .2s}
+.tab[aria-current=page]{background:color-mix(in srgb,var(--verde) 16%,transparent)}
+.tab[aria-current=page] .ico svg{stroke-width:2.4;transform:translateY(-1px) scale(1.08)}
+main{padding-bottom:calc(112px + var(--sa-b))}
+/* Lectura cómoda (YouVersion/Kindle) */
+.lectura{font-family:Georgia,"Times New Roman",serif;font-size:1.12rem;line-height:1.75;max-width:38rem;margin-left:auto;margin-right:auto}
+.vgrande{font-family:Georgia,"Times New Roman",serif;font-size:1.4rem;line-height:1.55}
+.libro,.cap{border:0;box-shadow:var(--sombra);border-radius:14px}
+.cap{color:var(--verde)}
+.muro-card{border-radius:var(--radio)}
+.card.ayuda{border:2px solid var(--verde)}
+.resp{border-radius:12px}
+/* Movimiento amable: las tarjetas entran una tras otra */
+@media (prefers-reduced-motion:no-preference){
+  .grid>*{animation:entra .35s cubic-bezier(.2,.8,.2,1) both}
+  .grid>*:nth-child(2){animation-delay:.04s}.grid>*:nth-child(3){animation-delay:.08s}.grid>*:nth-child(4){animation-delay:.12s}.grid>*:nth-child(5){animation-delay:.16s}.grid>*:nth-child(n+6){animation-delay:.2s}
+}
+@media (prefers-reduced-motion:reduce){.btn,.tab,button.card{transition:none}}
