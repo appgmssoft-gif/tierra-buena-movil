@@ -627,3 +627,107 @@ body.entrando main{padding-bottom:calc(28px + var(--sa-b))}
 }
 @media (prefers-reduced-motion:reduce){.ent-op,.ent-op-ok,.ent-brote,.ent-barra i{transition:none}}
 .ent .btn:not(.sec){color:var(--papel)}   /* en los temas oscuros el verde es claro: el texto debe ser oscuro */
+
+/* ===== F885 — entrada: ícono «Mi código», hoja del código, portada viva y transiciones ===== */
+.ent-top{display:flex;justify-content:flex-end;margin:0 0 8px}
+.ico-cod{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:6px 16px 6px 6px;border:0;border-radius:999px;font:inherit;font-weight:700;font-size:.92rem;color:var(--tinta);background:var(--tarjeta);box-shadow:var(--sombra),inset 0 0 0 1px var(--linea);cursor:pointer;position:relative;transition:transform .35s var(--resorte),box-shadow .35s}
+.ico-cod:active{transform:scale(.94)}
+.ico-cod-in{position:relative;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:var(--papel);background:linear-gradient(150deg,var(--verde),var(--verde-os))}
+.ico-cod-in .ic{stroke-width:1.9}
+.ent-splash{position:relative}
+.ent-splash>.ico-cod{position:absolute;top:calc(14px + var(--sa-t));right:14px;z-index:2}
+.pista-cod{text-align:center;margin:16px 6px 0;font-size:.92rem}
+
+/* hoja donde se escribe el código */
+.hoja-cod{text-align:center}
+.hoja-asa{width:42px;height:5px;border-radius:99px;background:var(--linea);margin:-6px auto 14px}
+.hoja-cod-ic{width:60px;height:60px;margin:0 auto 8px;border-radius:20px;display:grid;place-items:center;color:var(--papel);background:linear-gradient(150deg,var(--verde),var(--verde-os))}
+.hoja-cod h3{color:var(--tinta);font-size:1.25rem;margin:0 0 4px}
+.cod-in{width:100%;text-align:center;font:700 1.9rem/1.2 var(--f-titulo,inherit);letter-spacing:.38em;text-transform:uppercase;padding:12px 8px 12px calc(8px + .38em);border-radius:16px;margin-top:6px}
+.cod-pts{display:flex;justify-content:center;gap:9px;margin:14px 0 6px}
+.cod-pts i{width:10px;height:10px;border-radius:50%;background:var(--linea);transition:transform .35s var(--resorte),background .2s}
+.cod-pts i.on{background:var(--oro);transform:scale(1.4)}
+.hoja-cod .hoja-bt{margin-top:10px}
+.cod-in.sacude{animation:cod-sacude .4s}
+@keyframes cod-sacude{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+
+/* portada viva de «Mi iglesia» / bienvenida */
+.hv-caja{position:absolute;inset:0;pointer-events:none}
+.hv-caja i{position:absolute;top:-16px;width:10px;height:16px;border-radius:0 100% 0 100%;background:color-mix(in srgb,var(--verde) 55%,transparent);opacity:0}
+.hv-caja i:nth-child(1){left:12%}.hv-caja i:nth-child(2){left:36%;width:8px;height:13px}.hv-caja i:nth-child(3){left:64%}.hv-caja i:nth-child(4){left:86%;width:8px;height:13px;background:color-mix(in srgb,var(--oro) 60%,transparent)}
+.pista-cod b{color:var(--verde)}
+@media (prefers-reduced-motion:no-preference){
+  html:not([data-anim=off]) .ico-cod-in::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--oro);opacity:0;animation:cod-onda 2.4s 1.4s ease-out 3}
+  html:not([data-anim=off]) .ico-cod{animation:tb-baja .6s .15s var(--resorte) both}
+  html:not([data-anim=off]) .hero-viva .hero-ico{animation:hero-flota 4.5s ease-in-out infinite}
+  html:not([data-anim=off]) .hero-viva::after{content:"";position:absolute;top:-40%;bottom:-40%;left:-60%;width:38%;transform:skewX(-20deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:hero-brilla 6s 1.2s ease-in-out infinite;pointer-events:none}
+  html:not([data-anim=off]) .hv-caja i{animation:hv-cae 8s linear infinite}
+  html:not([data-anim=off]) .hv-caja i:nth-child(2){animation-delay:2.2s}html:not([data-anim=off]) .hv-caja i:nth-child(3){animation-delay:4.4s}html:not([data-anim=off]) .hv-caja i:nth-child(4){animation-delay:6s}
+  html:not([data-anim=off]) .grid-ent>.card{animation:tb-sube .6s var(--resorte) both}
+  html:not([data-anim=off]) .grid-ent>.card:nth-child(1){animation-delay:.18s}html:not([data-anim=off]) .grid-ent>.card:nth-child(2){animation-delay:.3s}html:not([data-anim=off]) .grid-ent>.card:nth-child(3){animation-delay:.42s}
+  html:not([data-anim=off]) .pista-cod{animation:tb-sube .6s .55s var(--resorte) both}
+  @keyframes cod-onda{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(1.9)}}
+  @keyframes hero-flota{50%{transform:translateY(-6px) rotate(-3deg)}}
+  @keyframes hero-brilla{0%{left:-60%}55%,100%{left:130%}}
+  @keyframes hv-cae{0%{opacity:0;transform:translate(0,0) rotate(0)}12%{opacity:.8}100%{opacity:0;transform:translate(26px,190px) rotate(200deg)}}
+  @keyframes tb-sube{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
+  @keyframes tb-baja{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:none}}
+}
+
+/* ===== F886 — capa premium: aurora viva, bordes de luz, botones con brillo, pestañas con rebote, aparición al bajar ===== */
+/* Decoración fija (siempre visible) */
+.card{position:relative;overflow:hidden}
+.card::after{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;background:linear-gradient(140deg,color-mix(in srgb,var(--oro) 60%,transparent),transparent 38%,transparent 62%,color-mix(in srgb,var(--verde) 50%,transparent));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+.btn:not(.sec){background-image:linear-gradient(135deg,rgba(255,255,255,.2),rgba(255,255,255,0) 45%,rgba(0,0,0,.16))}
+.btn:not(.sec)::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:38%;transform:skewX(-20deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.38),transparent);pointer-events:none}
+main>h2,h2.sep{display:flex;align-items:center;gap:10px}
+main>h2::before,h2.sep::before{content:"";flex:none;width:20px;height:3px;border-radius:3px;background:linear-gradient(90deg,var(--oro),var(--verde))}
+.fila-ico{position:relative;box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 8px 16px -10px color-mix(in srgb,var(--oro) 85%,transparent);transition:transform .4s var(--resorte)}
+.fila:active .fila-ico{transform:scale(.88) rotate(-5deg)}
+.fila .flecha,.card .flecha{transition:transform .35s var(--resorte)}
+.fila:active .flecha,.card:active .flecha{transform:translateX(5px)}
+.stat{position:relative;overflow:hidden;background:linear-gradient(160deg,color-mix(in srgb,var(--oro) 10%,var(--tarjeta)),var(--tarjeta) 60%)}
+.stat b{font-size:1.7rem;background:linear-gradient(120deg,var(--oro),var(--verde));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.stat-ic{display:grid;place-items:center;width:36px;height:36px;border-radius:12px;background:color-mix(in srgb,var(--oro) 16%,transparent);margin-bottom:4px}
+.avatar.grande{position:relative}
+.avatar.grande::before{content:"";position:absolute;inset:-7px;border-radius:50%;pointer-events:none;background:conic-gradient(from 0deg,var(--oro),var(--verde),var(--oro));-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2px));mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2px))}
+.tab{overflow:hidden}
+.tab[aria-current=page]::after{content:"";position:absolute;top:4px;left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:var(--oro);box-shadow:0 0 10px 1px var(--oro)}
+.pildora{box-shadow:0 8px 22px -10px var(--verde)}
+.hero::after{content:"";position:absolute;top:-40%;bottom:-40%;left:-60%;width:38%;transform:skewX(-20deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);pointer-events:none}
+.onda{position:absolute;left:var(--ox,50%);top:var(--oy,50%);width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:currentColor;opacity:0;pointer-events:none;transform:scale(0)}
+.chip,.fila,.ico-cod{position:relative;overflow:hidden}
+.rv{opacity:0;transform:translateY(28px) scale(.98)}
+
+/* Movimiento (se apaga con «reducir movimiento» y con Animaciones: más tranquilo) */
+@media (prefers-reduced-motion:no-preference){
+  html:not([data-anim=off]) .ambiente::before,html:not([data-anim=off]) .ambiente::after{content:"";position:absolute;width:120vmax;height:120vmax;border-radius:50%;pointer-events:none;will-change:transform}
+  html:not([data-anim=off]) .ambiente::before{left:-60vmax;top:-70vmax;background:radial-gradient(circle,color-mix(in srgb,var(--oro) 30%,transparent),transparent 62%);animation:aurora-a 24s ease-in-out infinite alternate;translate:0 calc(var(--par,0)*-.25px)}
+  html:not([data-anim=off]) .ambiente::after{right:-70vmax;bottom:-75vmax;background:radial-gradient(circle,color-mix(in srgb,var(--verde) 26%,transparent),transparent 62%);animation:aurora-b 30s ease-in-out infinite alternate}
+  html:not([data-anim=off]) .card:active{transform:scale(.975)}
+  html:not([data-anim=off]) .btn:not(.sec)::after{animation:btn-brilla 5.5s 2s ease-in-out infinite}
+  html:not([data-anim=off]) .hero::after{animation:hero-brilla 6s 1.2s ease-in-out infinite}
+  html:not([data-anim=off]) main>h2::before,html:not([data-anim=off]) h2.sep::before{transform-origin:left;animation:barra-crece .9s .1s var(--resorte) both}
+  html:not([data-anim=off]) .avatar.grande::before{animation:gira 9s linear infinite}
+  html:not([data-anim=off]) .stat:nth-child(1) .stat-ic .ic{transform-origin:50% 90%;animation:llama 1.9s ease-in-out infinite}
+  html:not([data-anim=off]) .stat{animation:tb-sube .65s var(--resorte) both}
+  html:not([data-anim=off]) .stat:nth-child(2){animation-delay:.08s}html:not([data-anim=off]) .stat:nth-child(3){animation-delay:.16s}html:not([data-anim=off]) .stat:nth-child(4){animation-delay:.24s}
+  html:not([data-anim=off]) .logro.on .logro-ic{animation:latido 2.8s ease-in-out infinite}
+  html:not([data-anim=off]) .tab .ico.rebota{animation:tab-rebota .6s var(--resorte)}
+  html:not([data-anim=off]) .onda{animation:onda-toca .7s ease-out forwards}
+  html:not([data-anim=off]) .rv{transition:opacity .6s ease,transform .75s var(--resorte)}
+  html:not([data-anim=off]) .rv.rv-on{opacity:1;transform:none}
+  html:not([data-anim=off]) .hero .hero-ico,html:not([data-anim=off]) .perfil-aura{translate:0 calc(var(--par,0)*-.12px)}
+  @keyframes aurora-a{to{transform:translate(18vmax,16vmax) rotate(40deg) scale(1.08)}}
+  @keyframes aurora-b{to{transform:translate(-16vmax,-18vmax) rotate(-35deg) scale(1.1)}}
+  @keyframes btn-brilla{0%{left:-60%}50%,100%{left:140%}}
+  @keyframes barra-crece{from{transform:scaleX(0)}to{transform:none}}
+  @keyframes gira{to{transform:rotate(360deg)}}
+  @keyframes llama{0%,100%{transform:scale(1) rotate(-3deg)}50%{transform:scale(1.14,1.2) rotate(3deg)}}
+  @keyframes latido{0%,100%{transform:scale(1)}50%{transform:scale(1.1);box-shadow:0 0 0 7px color-mix(in srgb,var(--oro) 18%,transparent)}}
+  @keyframes tab-rebota{0%{transform:translateY(0) scale(1)}40%{transform:translateY(-9px) scale(1.28)}70%{transform:translateY(1px) scale(.95)}100%{transform:translateY(-1px) scale(1.12)}}
+  @keyframes onda-toca{0%{opacity:.28;transform:scale(0)}100%{opacity:0;transform:scale(26)}}
+}
+/* Sin movimiento: lo oculto por «aparición al bajar» nunca queda invisible */
+html[data-anim=off] .rv{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}}

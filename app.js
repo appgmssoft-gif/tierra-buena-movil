@@ -477,27 +477,61 @@
   const bloqueInstalar = () => '<div data-instalar-box class="sep16"></div>';
   const codigoDeEnlace = () => { try { const q = new URLSearchParams(location.search.slice(1) || location.hash.replace(/^#\??/, '')); const c = (q.get('c') || q.get('codigo') || '').toUpperCase(); return /^[A-Z0-9]{6}$/.test(c) ? c : ''; } catch (e) { return ''; } };
 
+  // ---------- F885: el código de la iglesia vive en un ícono arriba (ya no es una opción del inicio de sesión) ----------
+  let codigoPrevio = '';
+  const icoCodigoHTML = () => `<button type="button" class="ico-cod" id="icoCodigo" aria-label="Tengo el código de mi iglesia"><span class="ico-cod-in">${svg('iglesia', 22)}</span><span class="ico-cod-t">Mi código</span></button>`;
+  const ligaCodigo = () => { const b = $('#icoCodigo'); if (b) b.onclick = () => { vibra(); codigoHoja(); }; };
+  function irACodigo(cod) { try { clearTimeout(onbT); entrandoPon(false); } catch (e) { /* nada */ } codigoPrevio = /^[A-Z0-9]{6}$/.test(cod || '') ? cod : ''; vistaCodigo(); }
+  function codigoHoja() {                                  // hoja inferior: se escribe el código y se sigue al paso normal de unirse
+    const h = nuevoEl(`<div class="hoja" id="hojaCodigo" role="dialog" aria-modal="true" aria-label="Código de mi iglesia"><div class="hoja-in hoja-cod"><div class="hoja-asa" aria-hidden="true"></div><div class="hoja-cod-ic" aria-hidden="true">${svg('iglesia', 30)}</div><h3>El código de tu iglesia</h3><p class="suave">Tu pastor te lo da. Son 6 letras o números.</p><input id="codHoja" class="cod-in" type="text" maxlength="6" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" placeholder="AB12CD" aria-label="Código de 6 letras o números"><div class="cod-pts" id="codPts" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div><p id="codErr" class="error" role="alert" hidden></p><div class="hoja-bt"><button type="button" class="btn" id="codSig">Buscar mi iglesia</button><button type="button" class="btn sec" id="codX">Ahora no</button></div></div></div>`);
+    if (!h) return irACodigo('');                          // si la hoja no se puede mostrar, va directo a la pantalla del código
+    document.body.appendChild(h);
+    const inp = $('#codHoja'), cerrar = () => { try { h.remove(); } catch (e) { /* nada */ } };
+    const limpiar = () => { const v = String(inp.value || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6); if (inp.value !== v) inp.value = v; document.querySelectorAll('#codPts i').forEach((d, i) => clase(d, 'on', i < v.length)); const e = $('#codErr'); if (e) e.hidden = true; return v; };
+    const seguir = () => {
+      const v = limpiar();
+      if (!/^[A-Z0-9]{6}$/.test(v)) { const e = $('#codErr'); if (e) { e.textContent = 'El código tiene 6 letras o números.'; e.hidden = false; } clase(inp, 'sacude', false); void (inp.offsetWidth); clase(inp, 'sacude', true); vibra(); return; }
+      cerrar(); irACodigo(v);
+    };
+    inp.addEventListener('input', limpiar);
+    inp.addEventListener('keydown', (e) => { if (e && e.key === 'Enter') seguir(); });
+    $('#codSig').onclick = seguir; $('#codX').onclick = cerrar;
+    h.addEventListener('click', (e) => { if (e && e.target === h) cerrar(); });
+    setTimeout(() => { try { inp.focus(); } catch (e) { /* nada */ } }, 150);
+  }
+
   function vistaUnirse() {
     if (codigoDeEnlace()) return vistaCodigo();            // vino de un enlace con el código de su iglesia
-    $('#pantalla').innerHTML = `
-      <div class="hero"><div class="hero-ico" aria-hidden="true">${svg("hoja", 38)}</div><h1>Bienvenido a Tierra Buena</h1>
+    const conCuenta = !!leer(K_CUENTA);
+    $('#pantalla').innerHTML = conCuenta ? `
+      <div class="ent-top">${icoCodigoHTML()}</div>
+      <div class="hero hero-viva"><span class="hv-caja" aria-hidden="true"><i></i><i></i><i></i><i></i></span><div class="hero-ico" aria-hidden="true">${svg('iglesia', 38)}</div><h1>Tu iglesia te espera</h1>
+      <p>Únete con el código que te dio tu pastor y todo queda en un solo lugar.</p></div>
+      ${cuentaBarra()}
+      <div class="grid grid-ent">
+        ${activa('⛪', 'Poner el código de mi iglesia', 'Son 6 letras o números. Tu pastor aprueba tu solicitud.', 'codigo')}
+        ${activa('🛡️', 'Soy pastor', 'Entra con la llave que copias desde tu computador.', 'pastor')}
+        ${activa('📖', 'Seguir con la Palabra', 'Biblia, versículo del día y Vida y servicio.', 'solo')}
+      </div>
+      ${bloqueInstalar()}` : `
+      <div class="ent-top">${icoCodigoHTML()}</div>
+      <div class="hero hero-viva"><span class="hv-caja" aria-hidden="true"><i></i><i></i><i></i><i></i></span><div class="hero-ico" aria-hidden="true">${svg("hoja", 38)}</div><h1>Bienvenido a Tierra Buena</h1>
       <p>Tu iglesia, la Palabra y tu crecimiento, en tu bolsillo.</p></div>
       <h2 class="sep">Elige cómo entrar</h2>
-      ${cuentaBarra()}
-      <div class="grid">
-        ${leer(K_CUENTA) ? '' : activa('✉️', 'Entrar con mi correo y contraseña', 'La misma cuenta del computador. Si no tienes, la creas aquí.', 'cuenta')}
-        ${activa('⛪', 'Tengo el código de mi iglesia', 'Tu pastor te lo da. Son 6 letras o números.', 'codigo')}
-        ${activa('🔑', 'Ya me uní en otro dispositivo', 'Pega tu llave y entras sin pedir permiso de nuevo.', 'llave')}
+      <div class="grid grid-ent">
+        ${activa('✉️', 'Entrar con mi correo y contraseña', 'La misma cuenta del computador. Si no tienes, la creas aquí.', 'cuenta')}
         ${activa('📖', 'Solo quiero leer y orar', 'Biblia, versículo del día y Vida y servicio, sin unirte.', 'solo')}
       </div>
+      <p class="suave pista-cod">¿Tu pastor te dio un código? Toca <b>Mi código</b>, arriba a la derecha.</p>
       ${bloqueInstalar()}`;
-    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ cuenta: () => vistaCuenta('entrar'), codigo: vistaCodigo, llave: vistaLlave, solo: () => ir('palabra') }[b.dataset.ir]())));
+    ligaCodigo(); pantEntra('adelante');
+    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ cuenta: () => vistaCuenta('entrar'), codigo: () => codigoHoja(), pastor: () => vistaPastorEntrar(), solo: () => ir('palabra') }[b.dataset.ir]())));
     const so = $('#cuentaSalir'); if (so) so.onclick = cerrarSesionCuenta;
     pintarInstalar($('[data-instalar-box]'));
   }
 
   function vistaCodigo() {
-    const pre = codigoDeEnlace();
+    const pre = codigoDeEnlace() || codigoPrevio; codigoPrevio = '';
     $('#pantalla').innerHTML = `
       <button type="button" class="volver" id="atras">‹ Entrar</button>
       <h1>Mi iglesia</h1><div class="filete"></div>
@@ -588,7 +622,7 @@
         : `<div class="card"><div class="t"><span aria-hidden="true">✉️</span>Guardar mi iglesia con mi correo</div><p class="suave m0t">Crea una cuenta (o entra con la que ya tienes) y tu iglesia te sigue a cualquier teléfono, sin copiar llaves.</p><button type="button" class="btn sec" id="cuentaIr">Entrar o crear cuenta</button></div>`}
       <h2 class="sep">Mi dispositivo</h2>
       <div class="card"><div class="t"><span aria-hidden="true">🔑</span>Pasar mi iglesia a otro dispositivo</div>
-        <p class="suave m0t">Copia tu llave y pégala en tu otro teléfono o tablet, en «Ya me uní en otro dispositivo». Guárdala como una contraseña: quien la tenga entra como tú.</p>
+        <p class="suave m0t">Copia tu llave y pégala en tu otro teléfono o tablet, en Perfil → «Recuperar mi iglesia». Guárdala como una contraseña: quien la tenga entra como tú.</p>
         <button type="button" class="btn sec" id="verLlave">Mostrar mi llave</button>
         <div id="llaveBox" hidden><textarea id="llaveTxt" rows="3" readonly spellcheck="false"></textarea><button type="button" class="btn" id="copiarLlave">📋 Copiar mi llave</button><p id="llaveMsg" class="ok" role="status"></p></div></div>
       ${bloqueInstalar()}
@@ -677,7 +711,7 @@
     };
   }
   const AYUDA = [
-    ['⛪', '¿Cómo me uno a mi iglesia?', 'Pídele a tu pastor el código de 6 letras o números. Escríbelo en «Tengo el código de mi iglesia», pon tu nombre y espera: tu pastor aprueba la solicitud y listo.'],
+    ['⛪', '¿Cómo me uno a mi iglesia?', 'Pídele a tu pastor el código de 6 letras o números. Toca «Mi código» (el ícono de la iglesia, arriba en Mi iglesia), escríbelo, pon tu nombre y espera: tu pastor aprueba la solicitud y listo.'],
     ['📲', '¿Cómo uso mi cuenta en otro teléfono o en el computador?', 'Entra con el mismo correo y contraseña. Tu iglesia y tus avances te siguen solos. Si no tienes cuenta, créala en «Entrar con mi correo y contraseña».'],
     ['🔒', '¿Qué ve mi pastor de mí?', 'Tu nombre, tus peticiones de oración y tus pedidos de visita. Tu diario, tu crecimiento y tus avances no los ve nadie de tu iglesia.', 'privacidad'],
     ['📴', '¿Qué sirve sin internet?', 'La Biblia que ya abriste, el versículo, tu diario, tu crecimiento y los cursos que ya viste. Pedir oración o visita y el muro necesitan internet.'],
@@ -933,15 +967,15 @@
 
   function vistaLlave() {
     $('#pantalla').innerHTML = `
-      <button type="button" class="volver" id="atras">‹ Entrar</button>
-      <h1>Entrar con mi llave</h1><div class="filete"></div>
-      <p>En tu otro dispositivo, abre <b>Mi iglesia</b> → «Pasar mi iglesia a otro dispositivo», copia la llave y pégala aquí.</p>
+      <button type="button" class="volver" id="atras">‹ Perfil</button>
+      <h1>Recuperar mi iglesia</h1><div class="filete"></div>
+      <p>En tu otro teléfono, abre <b>Perfil</b> → «Pasar mi iglesia a otro dispositivo», copia la llave y pégala aquí. (Si tienes cuenta con correo, no la necesitas: tu iglesia te sigue sola.)</p>
       <label for="llv">Tu llave (empieza con PULPITO-ID-)</label>
       <textarea id="llv" rows="3" autocapitalize="off" autocomplete="off" spellcheck="false"></textarea>
       <button id="pegar" class="btn sec" hidden>📋 Pegar desde el portapapeles</button>
       <p id="err" class="error" role="alert" hidden></p>
       <button id="usar" class="btn">Recuperar mi identidad</button>`;
-    $('#atras').onclick = vistaUnirse;
+    $('#atras').onclick = () => ir('perfil'); pantEntra('adelante');
     if (navigator.clipboard && navigator.clipboard.readText) {
       $('#pegar').hidden = false;
       $('#pegar').onclick = async () => { try { $('#llv').value = (await navigator.clipboard.readText()).trim(); } catch (e) { error('No pude leer el portapapeles. Mantén presionado el recuadro y elige «Pegar».'); } };
@@ -1728,7 +1762,7 @@
       <h2 class="sep">Tu avatar</h2>
       <div class="card"><div class="av-sel" role="group" aria-label="Color del avatar">${[0, 1, 2, 3, 4, 5, 6, 7].map((i) => `<button type="button" class="avatar g${i}${p.g === i ? ' sel' : ''}" data-g="${i}" aria-label="Color ${i + 1}" aria-pressed="${p.g === i}"></button>`).join('')}</div>
         <div class="av-sel emo" role="group" aria-label="Símbolo">${['']. concat(AVATARES).map((e) => `<button type="button" class="av-emo${p.e === e ? ' sel' : ''}" data-e="${e}" aria-pressed="${p.e === e}">${e || 'Aa'}</button>`).join('')}</div></div>
-      ${id ? `<h2 class="sep">Mi iglesia</h2><div class="lista">${fila('t1', '🕍', 'Mis ministerios', 'Dónde sirves', 'min')}${fila('t2', '🙏', 'Pedir oración', 'Tu pastor la recibe', 'ora')}${fila('t3', '🔒', 'Mi privacidad', 'Qué ve cada persona', 'priv')}${fila('t4', '❓', 'Ayuda', 'Respuestas cortas', 'ayu')}</div>` : `<h2 class="sep">Empieza</h2><div class="lista">${fila('t1', '⛪', 'Unirme a mi iglesia', 'Con el código de tu pastor', 'unir')}</div>`}
+      ${id ? `<h2 class="sep">Mi iglesia</h2><div class="lista">${fila('t1', '🕍', 'Mis ministerios', 'Dónde sirves', 'min')}${fila('t2', '🙏', 'Pedir oración', 'Tu pastor la recibe', 'ora')}${fila('t3', '🔒', 'Mi privacidad', 'Qué ve cada persona', 'priv')}${fila('t4', '❓', 'Ayuda', 'Respuestas cortas', 'ayu')}</div>` : `<h2 class="sep">Empieza</h2><div class="lista">${fila('t1', '⛪', 'Unirme a mi iglesia', 'Con el código de tu pastor', 'unir')}${fila('t2', '🔑', 'Recuperar mi iglesia', 'Con la llave de otro teléfono', 'llave')}</div>`}
       <h2 class="sep">Apariencia</h2><div class="lista">${fila('t3', '🎨', 'Temas', (TEMAS.find((x) => x[0] === p.t) || TEMAS[0])[1], 'temas')}</div>
       <h2 class="sep">Administración</h2><div class="lista">${pastorLeer() ? fila('t1', '🛡️', 'Panel del pastor', 'Administra tu iglesia', 'pastor') : fila('t1', '🛡️', 'Entrar como pastor', 'Con la llave de tu computador', 'pastor')}</div>
       <h2 class="sep">Cuenta</h2>
@@ -1742,7 +1776,7 @@
     document.querySelectorAll('[data-e]').forEach((b) => b.addEventListener('click', () => { const q = perfilLeer(); perfilGuardar({ e: b.dataset.e }); vibra(); vistaPerfil(); }));
     document.querySelectorAll('[data-pf]').forEach((b) => b.addEventListener('click', () => ({
       min: () => vistaMinisterios(id), ora: () => vistaOracion(id), priv: () => vistaPrivacidad(id), ayu: () => vistaAyuda(id),
-      temas: vistaTemas, pastor: () => (pastorLeer() ? ir('pastor') : vistaPastorEntrar()), unir: vistaCodigo, cuenta: () => vistaCuenta('entrar'), nada: () => {},
+      temas: vistaTemas, pastor: () => (pastorLeer() ? ir('pastor') : vistaPastorEntrar()), unir: () => codigoHoja(), llave: vistaLlave, cuenta: () => vistaCuenta('entrar'), nada: () => {},
       salir: () => { if (confirm('¿Cerrar sesión? Tus notas personales quedan guardadas en tu cuenta y vuelven cuando entres.')) cerrarSesionCuenta(); }
     }[b.dataset.pf] || (() => {}))()));
     if (id) misMinisterios(id).then((r) => { const c = $('#perfMin'); if (!c || !r.ok) return; c.innerHTML = r.lista.map((x) => `<span class="min-chip" data-mc="${esc(x.color)}">${esc(x.icono || '👥')} ${esc(x.nombre)}</span>`).join(''); pintaColores(); });
@@ -2095,10 +2129,12 @@
   function onbSplash() {
     clearTimeout(onbT); entrandoPon(true);
     $('#pantalla').innerHTML = `<section class="ent ent-splash">
+      ${icoCodigoHTML()}
       <div class="ent-logo" aria-hidden="true"><i class="ent-aro"></i><i class="ent-aro a2"></i><span class="ent-hoja">${svg('hoja', 64)}</span></div>
       <h1 class="ent-marca">Tierra Buena</h1><p class="ent-lema">Donde la Palabra echa raíz</p>
       <div class="ent-pie"><button type="button" class="btn" id="onbEmpezar">Empezar</button>
       <p class="ent-links"><button type="button" class="enlace" id="onbYa">Ya tengo cuenta</button></p></div></section>`;
+    ligaCodigo();
     $('#onbEmpezar').onclick = () => onbPregunta(0);
     $('#onbYa').onclick = () => onbCuentaIr('entrar');
   }
@@ -2153,16 +2189,70 @@
   }
   // ---------- Navegación ----------
   const VISTAS = { iglesia: vistaIglesia, palabra: vistaPalabra, vida: vistaVida, perfil: vistaPerfil, pastor: vistaPastor };
+  const ORDEN_TAB = ['iglesia', 'palabra', 'vida', 'perfil', 'pastor']; let tabPrev = '';
+  function pantEntra(sentido) {                             // F885: la pantalla nueva entra deslizando (se apaga con «reducir movimiento» o Animaciones: más tranquilo)
+    try {
+      const p = $('#pantalla'); if (!p || !p.animate || document.documentElement.getAttribute('data-anim') === 'off' || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+      p.animate([{ opacity: 0, transform: 'translateX(' + (sentido === 'atras' ? -22 : 22) + 'px)' }, { opacity: 1, transform: 'none' }], { duration: 300, easing: 'cubic-bezier(.32,.72,0,1)' });
+    } catch (e) { /* sin animación */ }
+  }
   function ir(tab) {
+    const sentido = ORDEN_TAB.indexOf(tab) < ORDEN_TAB.indexOf(tabPrev) ? 'atras' : 'adelante'; tabPrev = tab;
     document.querySelectorAll('.tab').forEach((b) => { if (b.dataset.tab === tab) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
     barraRefrescar(tab);
     const tp = $('#barraTop'); if (tp && tp.classList && tp.classList.remove) tp.classList.remove('on');
-    VISTAS[tab](); window.scrollTo(0, 0); $('#pantalla').focus({ preventScroll: true });
+    VISTAS[tab](); window.scrollTo(0, 0); $('#pantalla').focus({ preventScroll: true }); pantEntra(sentido);
   }
   document.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) { /* sin vibración */ } ir(b.dataset.tab); }));
   const red = () => { $('#sinRed').hidden = navigator.onLine; };
   window.addEventListener('online', red); window.addEventListener('offline', red); red();
   if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => { /* sin sw: igual funciona */ });
+  // ---------- F886: capa premium (ondas al tocar, aparición al bajar, números que suben, rebote de pestañas, paralaje) ----------
+  (function premium() {
+    try {
+      const calma = () => { try { return document.documentElement.getAttribute('data-anim') === 'off' || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return true; } };
+      if (document.addEventListener) document.addEventListener('pointerdown', (ev) => {   // onda de luz donde tocas + rebote del ícono de la pestaña
+        try {
+          if (calma() || !ev || !ev.target || !ev.target.closest) return;
+          const t = ev.target.closest('.btn,.card,.fila,.chip,.tab,.ico-cod'); if (!t) return;
+          const r = t.getBoundingClientRect(), o = document.createElement('span'); o.className = 'onda'; o.setAttribute('aria-hidden', 'true');
+          o.style.setProperty('--ox', (ev.clientX - r.left) + 'px'); o.style.setProperty('--oy', (ev.clientY - r.top) + 'px');
+          t.appendChild(o); setTimeout(() => { try { o.remove(); } catch (e) { /* nada */ } }, 720);
+          if (t.classList.contains('tab')) { const ic = t.querySelector('.ico'); if (ic) { ic.classList.remove('rebota'); void ic.offsetWidth; ic.classList.add('rebota'); } }
+        } catch (e) { /* nada */ }
+      }, { passive: true });
+      let raf = 0;
+      if (window.addEventListener) window.addEventListener('scroll', () => {                // paralaje suave del fondo y de los íconos grandes
+        if (raf || calma() || typeof requestAnimationFrame !== 'function') return;
+        raf = requestAnimationFrame(() => { raf = 0; try { document.documentElement.style.setProperty('--par', String(Math.min(window.scrollY || 0, 400))); } catch (e) { /* nada */ } });
+      }, { passive: true });
+      const pan = document.querySelector('#pantalla');
+      if (!pan || typeof MutationObserver !== 'function') return;
+      const io = typeof IntersectionObserver === 'function' ? new IntersectionObserver((es) => es.forEach((e) => {
+        if (!e.isIntersecting) return; const n = e.target; io.unobserve(n); n.classList.add('rv-on');
+        setTimeout(() => { try { n.classList.remove('rv'); n.classList.remove('rv-on'); } catch (x) { /* nada */ } }, 1000);
+      }), { threshold: 0.06 }) : null;
+      let clave = '';
+      new MutationObserver(() => {
+        try {
+          if (calma()) return;
+          if (io) {
+            const alto = window.innerHeight || 800;
+            pan.querySelectorAll(':scope > .card, :scope > .lista, :scope > .stats, :scope > .grid > *, :scope > .logros > *').forEach((n) => { if (n.getBoundingClientRect().top > alto * 0.92) { n.classList.add('rv'); io.observe(n); } });
+            setTimeout(() => { try { pan.querySelectorAll('.rv').forEach((n) => { n.classList.add('rv-on'); n.classList.remove('rv'); }); } catch (x) { /* nada */ } }, 4000);   // red de seguridad: nada se queda oculto
+          }
+          const nums = Array.from(pan.querySelectorAll('.stat b')), k = nums.map((b) => b.textContent).join('|');
+          if (!nums.length) { clave = ''; return; }
+          if (k === clave) return; clave = k;
+          nums.forEach((b) => {                                                              // los números suben hasta su valor
+            const v = parseInt(b.textContent, 10); if (!(v > 0) || String(v) !== b.textContent.trim()) return;
+            const t0 = performance.now(), paso = (t) => { const f = Math.min(1, (t - t0) / 900); b.textContent = String(Math.round(v * (1 - Math.pow(1 - f, 3)))); if (f < 1) requestAnimationFrame(paso); };
+            b.textContent = '0'; requestAnimationFrame(paso);
+          });
+        } catch (e) { /* nada */ }
+      }).observe(pan, { childList: true });
+    } catch (e) { /* sin capa premium: la app funciona igual */ }
+  })();
   if (!hayOnb() && !codigoDeEnlace()) onbSplash(); else ir('iglesia');   // F884: solo la primera vez pasa por la entrada guiada
   syncInicio();
 })();
