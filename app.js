@@ -2056,6 +2056,101 @@
     $('#dRotar').onclick = async () => { if (!confirm('¿Crear un código nuevo? El actual dejará de servir.')) return; const r2 = await prpc('iglesia_rotar_codigo', p), x = r2.ok ? primera(r2.data) : null; if (x && x.ok && x.codigo_nuevo) { guardar(K_PASTOR, { codigo: x.codigo_nuevo, secreto: p.secreto }); alert('Tu código nuevo es ' + x.codigo_nuevo + '. En el computador, toca «Cambiar el código» o copia de nuevo la llave.'); vistaPastor(); } else $('#dmsg').textContent = 'No se pudo cambiar el código.'; };
   }
 
+  // ---------- F884 · Primera vez: animación, 4 preguntas y tu espacio ----------
+  // (El inicio de sesión NO se toca: se abre el de siempre.) Quien abre la app por primera vez ve: animación → 4 preguntas → «tu espacio» (plan, ambiente, horario, meta) → crear cuenta
+  // (solo nombre, correo y contraseña). Quien ya usaba la app (cuenta, iglesia o solicitud) no lo ve. Las respuestas viajan con la cuenta.
+  // La entrada como miembro (código/llave) vive en Mi iglesia y la del pastor en Perfil.
+  const K_ONB = 'tb_movil_onboarding';
+  const onbLeer = () => { const o = leer(K_ONB); return o && o.hecho === true ? o : null; };
+  const hayOnb = () => !!(onbLeer() || leer(K_ID) || leer(K_SOL) || leer(K_CUENTA));
+  const entrandoPon = (on) => { try { if (document.body && document.body.classList) document.body.classList.toggle('entrando', !!on); } catch (e) { /* nada */ } };
+  const clase = (e, c, on) => { try { e.classList.toggle(c, on); } catch (x) { /* nada */ } };
+  const ONB_P = [
+    { id: 'busca', multi: true, max: 3, t: '¿Qué te trae a Tierra Buena?', a: 'Elige hasta tres.', o: [['leer', 'libro', 'Leer la Biblia cada día'], ['orar', 'corazon', 'Orar y encontrar paz'], ['conocer', 'chispas', 'Conocer más a Dios'], ['iglesia', 'iglesia', 'Crecer con mi iglesia'], ['descansar', 'luna', 'Descansar en calma'], ['retos', 'estrella', 'Retos que me animen']] },
+    { id: 'exp', t: '¿Cómo es tu camino con la Biblia?', a: 'No hay respuesta mala.', o: [['nuevo', 'brote', 'Estoy empezando'], ['a_veces', 'libro', 'La leo de vez en cuando'], ['seguido', 'llama', 'La leo seguido'], ['profundo', 'rollo', 'Quiero profundizar']] },
+    { id: 'mom', t: '¿Cuándo te gusta leer?', a: 'Con eso armamos tu horario.', o: [['manana', 'sol', 'Por la mañana'], ['mediodia', 'sol', 'Al mediodía'], ['tarde', 'sol', 'Por la tarde'], ['noche', 'luna', 'De noche'], ['libre', 'calendario', 'Cuando pueda']] },
+    { id: 'meta', num: true, t: '¿Cuánto quieres leer al día?', a: 'Puedes cambiarlo cuando quieras.', o: [['1', 'brote', 'Un capítulo · unos 4 minutos'], ['2', 'libro', 'Dos capítulos · unos 8 minutos'], ['3', 'llama', 'Tres capítulos'], ['5', 'trofeo', 'Cinco capítulos']] }
+  ];
+  const ONB_MOM = { manana: ['Por la mañana', '07:00'], mediodia: ['Al mediodía', '12:30'], tarde: ['Por la tarde', '17:30'], noche: ['De noche', '21:30'], libre: ['Cuando puedas', ''] };
+  const onbEstado = { r: { busca: [], exp: '', mom: '', meta: 0 }, plan: true };
+  let onbT = 0;
+  function onbCalcular(r) {
+    const b = r.busca || [];
+    const calma = b.indexOf('descansar') >= 0 || (b.indexOf('orar') >= 0 && (!r.exp || r.exp === 'nuevo' || r.exp === 'a_veces'));
+    const plan = calma ? 'calma' : ({ nuevo: 'juan', a_veces: 'animo', seguido: 'sermon', profundo: 'prov' }[r.exp] || 'juan');
+    const tema = { manana: 'amanecer', mediodia: 'cielo', tarde: 'atardecer', noche: 'medianoche' }[r.mom] || (b.indexOf('descansar') >= 0 ? 'medianoche' : 'bosque');
+    return { plan, tema, hora: (ONB_MOM[r.mom] || ['', ''])[1], meta: [1, 2, 3, 5].indexOf(r.meta) >= 0 ? r.meta : 1 };
+  }
+  function onbGuardar(omitido) {                          // guarda las respuestas, aplica ambiente y meta, y empieza el plan si la persona lo dejó marcado
+    const r = onbEstado.r, c = onbCalcular(r);
+    guardar(K_ONB, Object.assign({ v: 1, hecho: true, ts: Date.now() }, omitido ? { omitido: true } : { busca: r.busca.slice(), exp: r.exp, mom: r.mom, meta: c.meta, hora: c.hora, plan: c.plan, tema: c.tema }));
+    if (omitido) return;
+    perfilGuardar({ meta: c.meta, t: c.tema }); temaAplicar(c.tema);
+    if (onbEstado.plan) { const q = rg(K_PLANES); if (!q[c.plan]) { q[c.plan] = { ini: new Date().toISOString(), h: [] }; guardar(K_PLANES, q); } }
+  }
+  function onbIr() { entrandoPon(false); ir('palabra'); toastBib('Tu espacio está listo'); }
+  // El inicio de sesión es el de siempre (vistaCuenta, sin cambios): aquí solo se abre. REGLA: no modificarlo sin que el usuario lo pida.
+  function onbCuentaIr(modo) { clearTimeout(onbT); entrandoPon(false); vistaCuenta(modo); }
+  const onbBrote = (n) => `<div class="ent-prog" data-paso="${n}" role="img" aria-label="Pregunta ${n} de ${ONB_P.length}"><span class="ent-brote">${svg('brote', 26)}</span><span class="ent-barra">${ONB_P.map((x, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</span></div>`;
+  function onbSplash() {
+    clearTimeout(onbT); entrandoPon(true);
+    $('#pantalla').innerHTML = `<section class="ent ent-splash">
+      <div class="ent-logo" aria-hidden="true"><i class="ent-aro"></i><i class="ent-aro a2"></i><span class="ent-hoja">${svg('hoja', 64)}</span></div>
+      <h1 class="ent-marca">Tierra Buena</h1><p class="ent-lema">Donde la Palabra echa raíz</p>
+      <div class="ent-pie"><button type="button" class="btn" id="onbEmpezar">Empezar</button>
+      <p class="ent-links"><button type="button" class="enlace" id="onbYa">Ya tengo cuenta</button></p></div></section>`;
+    $('#onbEmpezar').onclick = () => onbPregunta(0);
+    $('#onbYa').onclick = () => onbCuentaIr('entrar');
+  }
+  function onbPregunta(i) {
+    clearTimeout(onbT); entrandoPon(true);
+    const q = ONB_P[i], r = onbEstado.r, cur = (q.multi ? r.busca : [r[q.id]]).map(String);
+    $('#pantalla').innerHTML = `<section class="ent ent-preg">
+      <div class="ent-cab"><button type="button" class="volver" id="onbAtras" aria-label="Atrás">‹</button>${onbBrote(i + 1)}<button type="button" class="enlace" id="onbSaltar">Saltar</button></div>
+      <h1 class="ent-t">${esc(q.t)}</h1><p class="suave">${esc(q.a)}</p>
+      <div class="ent-ops" role="group" aria-label="${esc(q.t)}">${q.o.map((o) => { const on = cur.indexOf(o[0]) >= 0; return `<button type="button" class="ent-op${on ? ' on' : ''}" data-v="${o[0]}" aria-pressed="${on}"><span class="ent-op-ic">${svg(o[1], 24)}</span><span class="ent-op-t">${esc(o[2])}</span><span class="ent-op-ok">${svg('check', 18)}</span></button>`; }).join('')}</div>
+      ${q.multi ? '<button type="button" class="btn" id="onbSig">Continuar</button>' : ''}</section>`;
+    const sig = () => (i < ONB_P.length - 1 ? onbPregunta(i + 1) : onbResultado());
+    $('#onbAtras').onclick = () => (i ? onbPregunta(i - 1) : onbSplash());
+    $('#onbSaltar').onclick = sig;
+    document.querySelectorAll('[data-v]').forEach((b) => b.addEventListener('click', () => {
+      vibra();
+      if (q.multi) {
+        const k = r.busca.indexOf(b.dataset.v);
+        if (k >= 0) r.busca.splice(k, 1); else if (r.busca.length < q.max) r.busca.push(b.dataset.v); else { toastBib('Elige hasta tres'); return; }
+        clase(b, 'on', k < 0); b.setAttribute('aria-pressed', String(k < 0)); return;
+      }
+      r[q.id] = q.num ? Number(b.dataset.v) : b.dataset.v;
+      document.querySelectorAll('.ent-op').forEach((x) => { clase(x, 'on', x === b); x.setAttribute('aria-pressed', String(x === b)); });
+      clearTimeout(onbT); onbT = setTimeout(sig, 260);
+    }));
+    const s = $('#onbSig'); if (s) s.onclick = sig;
+  }
+  function onbResultado() {
+    clearTimeout(onbT); entrandoPon(true);
+    const r = onbEstado.r, c = onbCalcular(r), pl = PLANES.find((x) => x.id === c.plan) || PLANES[0], tm = TEMAS.find((x) => x[0] === c.tema) || TEMAS[0], mom = ONB_MOM[r.mom];
+    temaAplicar(c.tema);                                   // la persona ya ve su ambiente en esta pantalla
+    $('#pantalla').innerHTML = `<section class="ent ent-res">
+      <div class="ent-cab"><button type="button" class="volver" id="onbAtras" aria-label="Atrás">‹</button></div>
+      <h1 class="ent-t">Tu espacio está listo</h1><p class="suave">Lo armamos con lo que nos contaste. Todo se puede cambiar después.</p>
+      <div class="ent-filas">
+        <div class="ent-fila"><span class="ent-fila-ic">${svg('calendario', 24)}</span><div><small>Tu primer plan</small><b>${esc(pl.n)}</b><span class="suave">${esc(pl.d)}</span></div></div>
+        <div class="ent-fila"><span class="ent-fila-ic">${svg('chispas', 24)}</span><div><small>Tu ambiente</small><b>${esc(tm[1])}</b><span class="suave">${esc(tm[2])}</span></div></div>
+        <div class="ent-fila"><span class="ent-fila-ic">${svg(r.mom === 'noche' ? 'luna' : 'sol', 24)}</span><div><small>Tu momento</small><b>${esc(mom ? mom[0] : 'Cuando puedas')}</b><span class="suave">${c.hora ? 'Te sugeriremos las ' + c.hora + '.' : 'Sin horario fijo.'}</span></div></div>
+        <div class="ent-fila"><span class="ent-fila-ic">${svg('llama', 24)}</span><div><small>Tu meta</small><b>${c.meta} ${c.meta === 1 ? 'capítulo' : 'capítulos'} al día</b><span class="suave">Con pausa y sin prisa.</span></div></div>
+      </div>
+      <label class="chk"><input type="checkbox" id="onbPlan"${onbEstado.plan ? ' checked' : ''}><span>Empezar «${esc(pl.n)}» al entrar</span></label>
+      <button type="button" class="btn" id="onbSig">Crear mi cuenta</button>
+      <button type="button" class="btn sec" id="onbCambiar">Cambiar mis respuestas</button>
+      <p class="ent-links"><button type="button" class="enlace" id="onbYa">Ya tengo cuenta</button></p>
+      <p class="ent-links"><button type="button" class="enlace" id="onbLuego">Ahora no, solo quiero leer</button></p></section>`;
+    $('#onbAtras').onclick = () => onbPregunta(ONB_P.length - 1);
+    $('#onbCambiar').onclick = () => onbPregunta(0);
+    $('#onbPlan').addEventListener('change', (e) => { onbEstado.plan = !!(e && e.target ? e.target.checked : $('#onbPlan').checked); });
+    $('#onbSig').onclick = () => { onbGuardar(false); onbCuentaIr('crear'); };
+    $('#onbYa').onclick = () => onbCuentaIr('entrar');
+    $('#onbLuego').onclick = () => { onbGuardar(false); onbIr(); };
+  }
   // ---------- Navegación ----------
   const VISTAS = { iglesia: vistaIglesia, palabra: vistaPalabra, vida: vistaVida, perfil: vistaPerfil, pastor: vistaPastor };
   function ir(tab) {
@@ -2068,6 +2163,6 @@
   const red = () => { $('#sinRed').hidden = navigator.onLine; };
   window.addEventListener('online', red); window.addEventListener('offline', red); red();
   if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => { /* sin sw: igual funciona */ });
-  ir('iglesia');
+  if (!hayOnb() && !codigoDeEnlace()) onbSplash(); else ir('iglesia');   // F884: solo la primera vez pasa por la entrada guiada
   syncInicio();
 })();
