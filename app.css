@@ -895,3 +895,39 @@ input[type=tel]:focus{outline:0;border-color:var(--verde);box-shadow:0 0 0 4px c
   html:not([data-anim=off]) .ent-splash.ent-port .pt-sl.on .pt-a{animation:ent-sube .8s 1.4s ease-out both}
   @keyframes pt-flota{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
 }
+
+/* ===== F895 — menú de la persona (arriba a la izquierda), calendario santo y pantallas de lectura ===== */
+.btn-menu{position:fixed;z-index:10;top:calc(10px + var(--sa-t));left:calc(12px + var(--sa-l));width:48px;height:48px;padding:0;border:0;border-radius:50%;background:var(--cristal,var(--tarjeta));box-shadow:0 6px 18px -8px rgba(0,0,0,.5),0 0 0 1px color-mix(in srgb,var(--tinta) 12%,transparent);display:grid;place-items:center;cursor:pointer;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.btn-menu .avatar{width:38px;height:38px;font-size:.95rem;box-shadow:none}
+.btn-menu-pt{position:absolute;right:2px;bottom:2px;width:12px;height:12px;border-radius:50%;background:var(--oro);border:2px solid var(--papel)}
+.btn-menu:active{transform:scale(.92)}
+body.entrando .btn-menu{display:none}
+main{padding-top:calc(70px + var(--sa-t))}
+body.entrando main{padding-top:calc(22px + var(--sa-t))}
+.cajon{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.45);display:flex}
+.cajon-in{width:min(86vw,340px);height:100%;background:var(--tarjeta);padding:calc(16px + var(--sa-t)) 14px calc(16px + var(--sa-b));overflow-y:auto;box-shadow:12px 0 40px rgba(0,0,0,.35);border-radius:0 26px 26px 0}
+.cj-cab{display:flex;align-items:center;gap:12px;padding:6px 4px 16px;border-bottom:1px solid var(--linea);margin-bottom:8px}
+.cj-cab>div{flex:1;min-width:0;display:flex;flex-direction:column}
+.cj-cab b{font-family:"TB Titulo",Georgia,serif;font-size:1.2rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cj-cab small{color:var(--suave)}
+.cj-x{flex:none;width:40px;height:40px;border:0;border-radius:50%;background:none;color:var(--tinta);display:grid;place-items:center;cursor:pointer}
+.cj-it{display:flex;align-items:center;gap:14px;width:100%;min-height:58px;padding:8px 8px;border:0;border-radius:16px;background:none;color:var(--tinta);text-align:left;font:inherit;cursor:pointer}
+.cj-it:active,.cj-it:hover{background:color-mix(in srgb,var(--verde) 12%,transparent)}
+.cj-ic{flex:none;width:42px;height:42px;border-radius:14px;display:grid;place-items:center;color:#fff;background:linear-gradient(155deg,#6d9462,#3f5d3a)}
+.cj-tx{display:flex;flex-direction:column}.cj-tx small{color:var(--suave)}
+.txt-l{font-size:1.08rem;line-height:1.6;margin:0 0 14px}
+.cal-prox{text-align:center;padding:22px 18px;margin:14px 0}
+.cal-prox small{color:var(--suave);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.cal-prox h3{font-family:"TB Titulo",Georgia,serif;font-size:1.7rem;margin:6px 0 2px;color:var(--oro)}
+.cal-cuando{font-weight:700;margin:0 0 8px;text-transform:capitalize}
+.cal-paso{display:flex;gap:8px;align-items:center;justify-content:center;margin:10px 0 0;color:var(--tinta)}
+.cal-fila small{display:block;color:var(--suave);text-transform:capitalize}
+@media (prefers-reduced-motion:no-preference){
+  html:not([data-anim=off]) .cajon{animation:aparece .2s ease-out}
+  html:not([data-anim=off]) .cajon-in{animation:cj-entra .35s cubic-bezier(.2,.8,.2,1)}
+  html:not([data-anim=off]) .cj-it{animation:ent-sube .4s ease-out both}
+  html:not([data-anim=off]) .cj-it:nth-child(2){animation-delay:.05s}html:not([data-anim=off]) .cj-it:nth-child(3){animation-delay:.1s}html:not([data-anim=off]) .cj-it:nth-child(4){animation-delay:.15s}html:not([data-anim=off]) .cj-it:nth-child(5){animation-delay:.2s}html:not([data-anim=off]) .cj-it:nth-child(6){animation-delay:.25s}html:not([data-anim=off]) .cj-it:nth-child(7){animation-delay:.3s}html:not([data-anim=off]) .cj-it:nth-child(8){animation-delay:.35s}
+  @keyframes cj-entra{from{transform:translateX(-100%)}}
+}
+.cal-trad{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:10px 0 0;padding:10px 14px;border-radius:14px;background:color-mix(in srgb,var(--verde) 10%,transparent);font-weight:700}
+.cal-trad span{display:flex;align-items:center;gap:8px}

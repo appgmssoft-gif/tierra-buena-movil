@@ -1896,6 +1896,7 @@
       <div class="card"><div class="av-sel" role="group" aria-label="Color del avatar">${[0, 1, 2, 3, 4, 5, 6, 7].map((i) => `<button type="button" class="avatar g${i}${p.g === i ? ' sel' : ''}" data-g="${i}" aria-label="Color ${i + 1}" aria-pressed="${p.g === i}"></button>`).join('')}</div>
         <div class="av-sel emo" role="group" aria-label="Símbolo">${['']. concat(AVATARES).map((e) => `<button type="button" class="av-emo${p.e === e ? ' sel' : ''}" data-e="${e}" aria-pressed="${p.e === e}">${e || 'Aa'}</button>`).join('')}</div></div>
       ${id ? `<h2 class="sep">Mi iglesia</h2><div class="lista">${fila('t1', '🕍', 'Mis ministerios', 'Dónde sirves', 'min')}${fila('t2', '🙏', 'Pedir oración', 'Tu pastor la recibe', 'ora')}${fila('t3', '🔒', 'Mi privacidad', 'Qué ve cada persona', 'priv')}${fila('t4', '❓', 'Ayuda', 'Respuestas cortas', 'ayu')}</div>` : `<h2 class="sep">Empieza</h2><div class="lista">${fila('t1', '⛪', 'Unirme a mi iglesia', 'Con el código de tu pastor', 'unir')}${fila('t2', '🔑', 'Recuperar mi iglesia', 'Con la llave de otro teléfono', 'llave')}</div>`}
+      <h2 class="sep">Mi plan</h2><div class="lista">${fila('t2', '🧭', 'Mi plan', esc(planResumen()), 'plan')}${fila('t1', '🔄', 'Cambiar mi plan', 'Contesta de nuevo y la app se adapta', 'plan')}</div>
       <h2 class="sep">Apariencia</h2><div class="lista">${fila('t3', '🎨', 'Temas', (TEMAS.find((x) => x[0] === p.t) || TEMAS[0])[1], 'temas')}</div>
       <h2 class="sep">Administración</h2><div class="lista">${pastorLeer() ? fila('t1', '🛡️', 'Panel del pastor', 'Administra tu iglesia', 'pastor') : fila('t1', '🛡️', 'Entrar como pastor', 'Con la llave de tu computador', 'pastor')}</div>
       <h2 class="sep">Cuenta</h2>
@@ -1909,7 +1910,7 @@
     document.querySelectorAll('[data-e]').forEach((b) => b.addEventListener('click', () => { const q = perfilLeer(); perfilGuardar({ e: b.dataset.e }); vibra(); vistaPerfil(); }));
     document.querySelectorAll('[data-pf]').forEach((b) => b.addEventListener('click', () => ({
       min: () => vistaMinisterios(id), ora: () => vistaOracion(id), priv: () => vistaPrivacidad(id), ayu: () => vistaAyuda(id),
-      hacer: () => vistaHacer(null, vistaPerfil), invitar: invitarHoja, temas: vistaTemas, pastor: () => (pastorLeer() ? ir('pastor') : vistaPastorEntrar()), unir: () => codigoHoja(), llave: vistaLlave, cuenta: () => vistaCuenta('entrar'), nada: () => {},
+      hacer: () => vistaHacer(null, vistaPerfil), plan: planRehacer, invitar: invitarHoja, temas: vistaTemas, pastor: () => (pastorLeer() ? ir('pastor') : vistaPastorEntrar()), unir: () => codigoHoja(), llave: vistaLlave, cuenta: () => vistaCuenta('entrar'), nada: () => {},
       salir: () => { if (confirm('¿Cerrar sesión? Tus notas personales quedan guardadas en tu cuenta y vuelven cuando entres.')) cerrarSesionCuenta(); }
     }[b.dataset.pf] || (() => {}))()));
     if (id) misMinisterios(id).then((r) => { const c = $('#perfMin'); if (!c || !r.ok) return; c.innerHTML = r.lista.map((x) => `<span class="min-chip" data-mc="${esc(x.color)}">${esc(x.icono || '👥')} ${esc(x.nombre)}</span>`).join(''); pintaColores(); });
@@ -2275,6 +2276,7 @@
     { id: 'busca', multi: true, max: 3, t: '¿Qué te trae a Tierra Buena?', a: 'Elige hasta tres.', o: [['leer', 'libro', 'Leer la Biblia cada día'], ['orar', 'corazon', 'Orar y encontrar paz'], ['conocer', 'chispas', 'Conocer más a Dios'], ['iglesia', 'iglesia', 'Crecer con mi iglesia'], ['descansar', 'luna', 'Descansar en calma'], ['retos', 'estrella', 'Retos para poner en práctica']] },
     { id: 'info1', info: true, ic: 'gente', t: (r) => (r.nombre ? r.nombre + ', aquí la Palabra se vive' : 'Aquí la Palabra se vive'), a: 'Leer es el principio. Cada día das un paso pequeño: algo que haces por ti, por alguien o por tu comunidad. Empezamos por nosotros.' },
     { id: 'exp', t: '¿Cómo es tu camino con la Biblia?', a: 'No hay respuesta mala.', o: [['nuevo', 'brote', 'Estoy empezando'], ['a_veces', 'libro', 'La leo de vez en cuando'], ['seguido', 'llama', 'La leo seguido'], ['profundo', 'rollo', 'Quiero profundizar']] },
+    { id: 'trad', t: '¿Con qué tradición te sientes en casa?', a: 'Con esto armamos tu calendario y tus fechas. Es opcional y solo lo ves tú.', o: [['evangelica', 'iglesia', 'Evangélica o protestante'], ['catolica', 'iglesia', 'Católica'], ['ortodoxa', 'iglesia', 'Ortodoxa'], ['otra', 'gente', 'Otra iglesia cristiana'], ['explorando', 'chispas', 'Estoy explorando'], ['nodecir', 'candado', 'Prefiero no decirlo']] },
     { id: 'animo', t: '¿Cómo está tu corazón hoy?', a: 'Lo usamos para elegir tu primera lectura.', o: [['paz', 'paloma', 'En paz'], ['cansado', 'luna', 'Cansado'], ['ansioso', 'viento', 'Con preocupación'], ['agradecido', 'corazon', 'Agradecido'], ['dudas', 'ayuda', 'Con dudas']] },
     { id: 'area', t: '¿En qué quieres crecer?', a: 'Elige lo que más necesitas ahora.', o: [['fe', 'llama', 'Mi fe'], ['paz', 'paloma', 'Mi paz interior'], ['familia', 'gente', 'Mi familia'], ['proposito', 'estrella', 'Mi propósito'], ['sabiduria', 'foco', 'Sabiduría para decidir']] },
     { id: 'mom', t: '¿Cuándo te gusta leer?', a: 'Con eso armamos tu horario.', o: [['manana', 'sol', 'Por la mañana'], ['mediodia', 'sol', 'Al mediodía'], ['tarde', 'sol', 'Por la tarde'], ['noche', 'luna', 'De noche'], ['libre', 'calendario', 'Cuando pueda']] },
@@ -2284,7 +2286,7 @@
   const ONB_NQ = ONB_P.filter((x) => !x.info).length;
   const ONB_MOM = { manana: ['Por la mañana', '07:00'], mediodia: ['Al mediodía', '12:30'], tarde: ['Por la tarde', '17:30'], noche: ['De noche', '21:30'], libre: ['Cuando puedas', ''] };
   const ONB_VERS = { ansioso: 'PHP.4.6', cansado: 'MAT.11.28', paz: 'JHN.14.27', agradecido: 'PSA.100.4', dudas: 'JAS.1.5' };
-  const onbEstado = { r: { nombre: '', busca: [], exp: '', animo: '', area: '', mom: '', meta: 0 }, plan: true };
+  const onbEstado = { r: { nombre: '', busca: [], exp: '', trad: '', animo: '', area: '', mom: '', meta: 0 }, plan: true, cambiar: false };
   let onbT = 0, onbI = 0;
   const onbParar = () => { clearTimeout(onbT); clearInterval(onbI); };
   function onbRitmo(meta) {                                // la Biblia tiene 1189 capítulos: cuánto tardarías con tu meta
@@ -2300,7 +2302,7 @@
   }
   function onbGuardar(omitido) {                          // guarda las respuestas, aplica ambiente y meta, y empieza el plan si la persona lo dejó marcado
     const r = onbEstado.r, c = onbCalcular(r);
-    guardar(K_ONB, Object.assign({ v: 2, hecho: true, ts: Date.now() }, omitido ? { omitido: true } : { nombre: r.nombre, busca: r.busca.slice(), exp: r.exp, animo: r.animo, area: r.area, mom: r.mom, meta: c.meta, hora: c.hora, plan: c.plan, tema: c.tema }));
+    guardar(K_ONB, Object.assign({ v: 2, hecho: true, ts: Date.now() }, omitido ? { omitido: true } : { nombre: r.nombre, busca: r.busca.slice(), exp: r.exp, trad: r.trad, animo: r.animo, area: r.area, mom: r.mom, meta: c.meta, hora: c.hora, plan: c.plan, tema: c.tema }));
     if (omitido) return;
     perfilGuardar(Object.assign({ meta: c.meta, t: c.tema }, r.nombre ? { n: r.nombre.slice(0, 30) } : {})); temaAplicar(c.tema);
     if (onbEstado.plan) { const q = rg(K_PLANES); if (!q[c.plan]) { q[c.plan] = { ini: new Date().toISOString(), h: [] }; guardar(K_PLANES, q); } }
@@ -2309,6 +2311,128 @@
   // El inicio de sesión es el de siempre (vistaCuenta, sin cambios): aquí solo se abre. REGLA: no modificarlo sin que el usuario lo pida.
   function onbCuentaIr(modo) { onbParar(); entrandoPon(false); vistaCuenta(modo); }
   const onbBrote = (n) => `<div class="ent-prog" data-paso="${n}" role="img" aria-label="Pregunta ${n} de ${ONB_NQ}"><span class="ent-brote">${svg('brote', 26)}</span><span class="ent-barra">${ONB_P.filter((x) => !x.info).map((x, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</span></div>`;
+  // ---------- F895 · Menú de la persona (arriba a la izquierda): plan, información, calendario, compartir, widgets, configuración, suscripción, historia ----------
+  const textoPantalla = (titulo, trozos, extra, atras) => {   // pantalla simple de lectura con botón «‹ Menú»
+    $('#pantalla').innerHTML = `${cabecera(titulo, 'Menú')}${trozos.map((t) => `<p class="txt-l">${esc(t)}</p>`).join('')}${extra || ''}`;
+    $('#volver').onclick = atras || menuAbrir; window.scrollTo(0, 0);
+  };
+  function vistaHistoria() {
+    textoPantalla('Nuestra historia', [
+      'Tierra Buena nació de una idea sencilla: aprender es hermoso, pero vivir lo aprendido es todavía mejor.',
+      'Creemos que una sociedad mejor empieza en cada persona: en cómo nos tratamos en casa, con los vecinos, en el barrio y en la ciudad.',
+      'Por eso aquí lees, practicas y compartes. Cada día das un paso pequeño, y si solo lo intentas, también cuenta.',
+      'No juzgamos. Cuando vemos algo que falta, lo convertimos en ayuda. Nos perdonamos, nos valoramos, nos cuidamos y cuidamos la tierra que nos sostiene.',
+      'Nuestros valores son cuatro: humildad, empatía, acción y esperanza. Y la invitación es para todos, de cualquier iglesia o sin ella: lo que nos une es hacer el bien.'
+    ]);
+  }
+  function vistaInfo() {
+    textoPantalla('Información', [
+      'Tierra Buena es una app para leer la Biblia, orar y poner en práctica lo que aprendes, sola o con tu iglesia.',
+      'Palabra: lees y escuchas la Biblia a tu ritmo. Vida: das un paso pequeño cada día y lo compartes si quieres. Mi iglesia: pides oración, recibes avisos y te unes con el código de tu iglesia.',
+      'Tu plan se arma con lo que nos cuentas al empezar, y lo puedes cambiar cuando quieras desde el menú.',
+      'Tus notas y tu avance son tuyos. Nada se comparte sin que tú lo decidas.'
+    ]);
+  }
+  function vistaSuscripcion() {
+    textoPantalla('Suscripción', [
+      'Hoy Tierra Buena es gratis y todo está abierto.',
+      'Más adelante podría haber un apoyo voluntario para sostener la app. Si llega, será claro, sin letra chica, y lo que ya usas seguirá siendo tuyo.'
+    ]);
+  }
+  function vistaWidgets() {
+    textoPantalla('Widgets', [
+      'Pronto podrás poner en la pantalla de tu teléfono tu versículo del día, tu racha de lectura y el paso de acción de hoy.',
+      'Mientras llega, instala Tierra Buena en tu pantalla de inicio: se abre como una app y funciona aunque no tengas internet.'
+    ], '<button type="button" class="btn" id="wgInst">Ver cómo instalarla</button>');
+    $('#wgInst').onclick = () => ir('perfil');
+  }
+  // Fechas cristianas que celebran todas las iglesias (sin santos ni fiestas que dividan). La Pascua se calcula (método de Meeus).
+  function pascua(a) {
+    const A = a % 19, B = Math.floor(a / 100), C = a % 100, D = Math.floor(B / 4), E = B % 4, F = Math.floor((B + 8) / 25), G = Math.floor((B - F + 1) / 3);
+    const H = (19 * A + B - D - G + 15) % 30, I = Math.floor(C / 4), K = C % 4, L = (32 + 2 * E + 2 * I - H - K) % 7, M = Math.floor((A + 11 * H + 22 * L) / 451);
+    const mes = Math.floor((H + L - 7 * M + 114) / 31), dia = ((H + L - 7 * M + 114) % 31) + 1;
+    return new Date(a, mes - 1, dia);
+  }
+  function pascuaOrtodoxa(a) {                              // calendario juliano (+13 días hasta 2099)
+    const A = a % 4, B = a % 7, C = a % 19, D = (19 * C + 15) % 30, E = (2 * A + 4 * B - D + 34) % 7, M = Math.floor((D + E + 114) / 31), d = ((D + E + 114) % 31) + 1;
+    return new Date(a, M - 1, d + 13);
+  }
+  const TRAD_N = { evangelica: 'Evangélica o protestante', catolica: 'Católica', ortodoxa: 'Ortodoxa', otra: 'Otra iglesia cristiana', explorando: 'Explorando', nodecir: 'Fechas para todos' };
+  function fechasSantas(a, trad) {
+    const mk = (P) => (d) => new Date(P.getFullYear(), P.getMonth(), P.getDate() + d);
+    const P = pascua(a), mas = mk(P), nav = new Date(a, 11, 25), dom4 = new Date(a, 11, 24 - (new Date(a, 11, 24).getDay() % 7) - 21);
+    const Epi = [new Date(a, 0, 6), 'Epifanía', 'Recordamos a los que buscaron la luz.', 'Alegra a alguien con una palabra amable.'];
+    const Cen = [mas(-46), 'Miércoles de Ceniza', 'Empieza la Cuaresma: un tiempo de volver al corazón.', 'Elige algo de lo que te quieras liberar.'];
+    const Ram = [mas(-7), 'Domingo de Ramos', 'Se recuerda la entrada a Jerusalén.', 'Recibe a alguien con alegría.'];
+    const Jue = [mas(-3), 'Jueves Santo', 'Se recuerda la última cena y el servicio.', 'Sirve a alguien sin esperar nada.'];
+    const Vie = [mas(-2), 'Viernes Santo', 'Un día de silencio y gratitud.', 'Haz un momento de silencio y da gracias.'];
+    const Pas = [P, 'Domingo de Pascua', 'Celebramos la esperanza y la vida nueva.', 'Comparte una buena noticia.'];
+    const Asc = [mas(39), 'Ascensión', 'Se recuerda el envío a servir.', 'Haz algo bueno por tu barrio.'];
+    const Pen = [mas(49), 'Pentecostés', 'Se celebra el nacimiento de la iglesia.', 'Une a dos personas que se llevan mal.'];
+    const Adv = [dom4, 'Primer domingo de Adviento', 'Empieza la espera de la Navidad.', 'Prepara algo para dar.'];
+    const Nav = [nav, 'Navidad', 'Celebramos que la esperanza llegó a nuestro mundo.', 'Regala tiempo a alguien solo.'];
+    let l;
+    if (trad === 'evangelica') l = [Ram, Vie, Pas, Asc, Pen, Nav, [new Date(a, 9, 31), 'Día de las Iglesias Evangélicas y Protestantes', 'Agradecemos la Palabra al alcance de todos.', 'Lee un pasaje con alguien o regala una Biblia.']];
+    else if (trad === 'catolica') l = [[new Date(a, 0, 1), 'Santa María, Madre de Dios', 'Empezamos el año confiando en Dios.', 'Escribe una intención para el año.'], Epi, Cen, Ram, Jue, Vie, Pas, Asc, Pen, [mas(60), 'Corpus Christi', 'Se celebra la presencia de Cristo en la comunidad.', 'Comparte tu mesa con alguien.'], [new Date(a, 7, 15), 'Asunción de la Virgen María', 'Se recuerda a María y su esperanza.', 'Llama a tu mamá o a una madre que admires.'], [new Date(a, 10, 1), 'Todos los Santos', 'Recordamos a quienes vivieron el bien.', 'Agradece a alguien que te enseñó a ser mejor.'], [new Date(a, 11, 8), 'Inmaculada Concepción', 'Fiesta de María en Adviento.', 'Haz un gesto de pureza de corazón: perdona.'], Adv, Nav];
+    else if (trad === 'ortodoxa') { const O = pascuaOrtodoxa(a), mo = mk(O); l = [[new Date(a, 0, 7), 'Navidad ortodoxa', 'Celebramos el nacimiento de Cristo.', 'Regala tiempo a alguien solo.'], [new Date(a, 0, 19), 'Teofanía', 'Se recuerda el bautismo de Jesús.', 'Agradece por tu familia y tu comunidad.'], [mo(-7), 'Domingo de Ramos ortodoxo', 'Se recuerda la entrada a Jerusalén.', 'Recibe a alguien con alegría.'], [mo(-2), 'Viernes Santo ortodoxo', 'Un día de silencio y gratitud.', 'Haz un momento de silencio y da gracias.'], [O, 'Pascua ortodoxa', 'Celebramos la vida nueva: «¡Cristo ha resucitado!»', 'Comparte una buena noticia.'], [mo(39), 'Ascensión ortodoxa', 'Se recuerda el envío a servir.', 'Haz algo bueno por tu barrio.'], [mo(49), 'Pentecostés ortodoxo', 'Se celebra el nacimiento de la iglesia.', 'Une a dos personas que se llevan mal.']]; }
+    else l = [Epi, Cen, Ram, Jue, Vie, Pas, Asc, Pen, Adv, Nav];
+    return l.filter((x) => x[0] && !isNaN(x[0]));
+  }
+  const tradLeer = () => { try { const o = onbLeer(); return (o && o.trad) || ''; } catch (e) { return ''; } };
+  function vistaCalendario() {
+    const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+    const a = hoy.getFullYear(), lista = fechasSantas(a, tradLeer()).concat(fechasSantas(a + 1, tradLeer())).sort((x, y) => x[0] - y[0]).filter((x) => x[0] >= hoy).slice(0, 8);
+    const fmt = (d) => d.toLocaleDateString('es', { weekday: 'long', day: 'numeric', month: 'long' });
+    const dias = (d) => { const n = Math.round((d - hoy) / 86400000); return n === 0 ? 'Hoy' : n === 1 ? 'Mañana' : 'En ' + n + ' días'; };
+    const [p, ...resto] = lista;
+    $('#pantalla').innerHTML = `${cabecera('Calendario santo', 'Menú')}<p class="suave">Cada fecha trae un paso pequeño para vivirla.</p><p class="cal-trad"><span>${svg('calendario', 18)} ${esc(TRAD_N[tradLeer()] || 'Fechas para todos')}</span><button type="button" class="enlace" id="calCambiar">Cambiar</button></p>
+      ${p ? `<div class="card cal-prox"><small>Lo que viene</small><h3>${esc(p[1])}</h3><p class="cal-cuando">${esc(dias(p[0]))} · ${esc(fmt(p[0]))}</p><p>${esc(p[2])}</p><p class="cal-paso">${svg('chispas', 18)} <b>Tu paso:</b> ${esc(p[3])}</p></div>` : ''}
+      <h2 class="sep">Después</h2><div class="lista">${resto.map((x) => `<div class="fila cal-fila"><span class="fila-ico t2" aria-hidden="true">${svg('calendario', 20)}</span><span class="fila-txt"><b>${esc(x[1])}</b><small>${esc(dias(x[0]))} · ${esc(fmt(x[0]))}</small></span></div>`).join('')}</div>`;
+    $('#volver').onclick = menuAbrir; $('#calCambiar').onclick = planRehacer; window.scrollTo(0, 0);
+  }
+  const menuCerrar = () => { try { const c = $('#cajonMenu'); if (c) c.remove(); } catch (e) { /* nada */ } };
+  function menuAbrir() {
+    menuCerrar();
+    const p = perfilLeer(), o = onbLeer(), nombre = p.n || (o && o.nombre) || (leer(K_ID) && leer(K_ID).nombre) || 'Tu espacio';
+    const it = (k, ic, t, d) => `<button type="button" class="cj-it" data-cj="${k}"><span class="cj-ic">${svg(ic, 22)}</span><span class="cj-tx"><b>${esc(t)}</b><small>${esc(d)}</small></span></button>`;
+    const h = nuevoEl(`<div class="cajon" id="cajonMenu" role="dialog" aria-modal="true" aria-label="Menú"><nav class="cajon-in">
+      <div class="cj-cab">${avatarHTML(nombre, p, true)}<div><b>${esc(nombre)}</b><small>${esc(planResumen())}</small></div><button type="button" class="cj-x" id="cjX" aria-label="Cerrar">${svg('x', 20)}</button></div>
+      <div class="cj-lista">
+        ${it('plan', 'brote', 'Planes de trabajo', 'Contesta de nuevo y la app se adapta')}
+        ${it('info', 'ayuda', 'Información', 'Qué es y cómo usarla')}
+        ${it('cal', 'calendario', 'Calendario santo', 'Fechas para vivir juntos')}
+        ${it('comp', 'compartir', 'Compartir la app', 'Invita a alguien que quieras')}
+        ${it('wid', 'bloques', 'Widgets', 'Tu versículo en la pantalla')}
+        ${it('conf', 'foco', 'Configuración', 'Temas, cuenta y letra')}
+        ${it('sus', 'estrella', 'Suscripción', 'Hoy todo es gratis')}
+        ${it('hist', 'hoja', 'Lee nuestra historia', 'Por qué existe Tierra Buena')}
+      </div></nav></div>`);
+    if (!h) return ir('perfil');
+    document.body.appendChild(h);
+    const va = { plan: planRehacer, info: vistaInfo, cal: vistaCalendario, comp: invitarHoja, wid: vistaWidgets, conf: () => ir('perfil'), sus: vistaSuscripcion, hist: vistaHistoria };
+    h.querySelectorAll('.cj-it').forEach((b) => b.addEventListener('click', () => { vibra(); menuCerrar(); entrandoPon(false); (va[b.dataset.cj] || (() => {}))(); }));
+    $('#cjX').onclick = menuCerrar; h.addEventListener('click', (e) => { if (e && e.target === h) menuCerrar(); });
+  }
+  function menuBoton() {                                    // el botón fijo arriba a la izquierda; su avatar sigue a la persona
+    let b = $('#btnMenu');
+    if (!b) { b = nuevoEl('<button type="button" class="btn-menu" id="btnMenu" aria-label="Abrir mi menú"></button>'); if (!b) return; document.body.appendChild(b); b.onclick = () => { vibra(); menuAbrir(); }; }
+    const p = perfilLeer(), o = onbLeer(); b.innerHTML = avatarHTML(p.n || (o && o.nombre) || '', p, false) + '<i class="btn-menu-pt" aria-hidden="true"></i>';
+  }
+  // ---------- F894 · Mi plan: las respuestas de la entrada organizan la app, y se pueden repetir cuando la persona quiera otra experiencia ----------
+  const TAB_BUSCA = { leer: 'palabra', orar: 'palabra', conocer: 'palabra', descansar: 'palabra', iglesia: 'iglesia', retos: 'vida' };
+  function tabInicio() {                                   // la app abre en lo que la persona dijo que más busca (la primera opción que marcó)
+    try { const o = onbLeer(); const b = o && o.busca && o.busca[0]; return TAB_BUSCA[b] || 'iglesia'; } catch (e) { return 'iglesia'; }
+  }
+  function planResumen() {
+    const o = onbLeer(); if (!o || o.omitido || !o.plan) return 'Cuéntanos de ti y armamos tu plan';
+    const pl = PLANES.find((x) => x.id === o.plan);
+    return (pl ? pl.n : 'Tu plan') + ' · ' + (o.meta || 1) + (o.meta === 1 || !o.meta ? ' capítulo' : ' capítulos') + ' al día';
+  }
+  function planRehacer() {                                 // repite las preguntas con las respuestas de antes ya puestas; no pide cuenta
+    const o = onbLeer() || {};
+    onbEstado.r = { nombre: o.nombre || '', busca: (o.busca || []).slice(), exp: o.exp || '', trad: o.trad || '', animo: o.animo || '', area: o.area || '', mom: o.mom || '', meta: o.meta || 0 };
+    onbEstado.plan = true; onbEstado.cambiar = true; onbPregunta(0);
+  }
   // ---------- F892 · Portada con pantallas que cambian (idea de Bible Chat): se ve cada vez que se abre la app sin cuenta ----------
   // 5 pantallas cortas que muestran de qué trata la app + un cierre «de parte de Tierra Buena», y recién después se abre el lugar para entrar.
   // Se mueve sola (se detiene si la persona toca o desliza, y no se mueve con «reducir movimiento»). El inicio de sesión NO se toca: solo se abre.
@@ -2322,13 +2446,15 @@
   const portMov = () => { try { const h = document.documentElement; return !(h && h.getAttribute && h.getAttribute('data-anim') === 'off') && !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
   function onbSplash() {
     onbParar(); entrandoPon(true);
-    const ya = !!onbLeer(), n = PORT.length + 1;
+    const ya = !!onbLeer() && !leer(K_ID) && !leer(K_SOL) && !leer(K_CUENTA), dentro = !!(leer(K_ID) || leer(K_SOL) || leer(K_CUENTA)), n = PORT.length + 1;
     const sl = PORT.map((x, i) => `<div class="pt-sl" id="ptS${i}" role="group" aria-label="${i + 1} de ${n}"><div class="pt-esc" aria-hidden="true"><i class="pt-aro"></i><i class="pt-aro a2"></i><span class="pt-ic">${svg(x.ic, 52)}</span>${x.c.map((k, j) => `<span class="pt-chip c${j + 1}">${svg(k, 20)}</span>`).join('')}</div><h1 class="pt-t">${esc(x.t)}</h1><p class="pt-a">${esc(x.a)}</p></div>`).join('');
     const fin = `<div class="pt-sl pt-fin" id="ptS${PORT.length}" role="group" aria-label="${n} de ${n}"><div class="ent-logo" aria-hidden="true"><i class="ent-aro"></i><i class="ent-aro a2"></i><span class="ent-hoja">${svg('hoja', 64)}</span></div><h1 class="ent-marca">Tierra Buena</h1><p class="ent-lema">Donde la Palabra echa raíz</p><p class="pt-a">Hecho con cariño para que el bien eche raíz en ti, en los tuyos y en tu lugar.</p></div>`;
     const pts = Array.from({ length: n }, (_, i) => `<button type="button" class="pt-pt" data-pt="${i}" aria-label="Pantalla ${i + 1} de ${n}"></button>`).join('');
-    const botones = ya
+    const botones = dentro
+      ? `<button type="button" class="btn" id="onbEmpezar">Entrar</button>`
+      : ya
       ? `<button type="button" class="btn" id="onbEmpezar">Entrar a mi cuenta</button><p class="ent-links"><button type="button" class="enlace" id="onbCrear">Crear una cuenta nueva</button></p><p class="ent-links"><button type="button" class="enlace" id="onbLeer">Solo quiero leer</button></p>`
-      : `<button type="button" class="btn" id="onbEmpezar">Empezar</button>`;   // F888: la primera vez solo ofrece «Empezar»; «Ya tengo cuenta» aparece al final de las preguntas
+      : `<button type="button" class="btn" id="onbEmpezar">Empezar</button><p class="ent-links"><button type="button" class="enlace" id="onbYaTengo">Ya tengo cuenta</button></p>`;   // F888: la primera vez solo ofrece «Empezar»; «Ya tengo cuenta» aparece al final de las preguntas
     $('#pantalla').innerHTML = `<section class="ent ent-splash ent-port" data-i="0">${icoCodigoHTML()}<div class="pt-vista" id="ptVista"><div class="pt-pista">${sl}${fin}</div></div><div class="pt-pie"><div class="pt-pts">${pts}</div>${botones}</div></section>`;
     ligaCodigo();
     const sec = $('.ent-port'); let i = 0;
@@ -2341,14 +2467,15 @@
     };
     const quieta = () => clearInterval(onbI);
     ver(0);
-    if (portMov()) onbI = setInterval(() => { if (i >= n - 1) quieta(); else ver(i + 1); }, 4200);   // pasa sola; en el cierre de Tierra Buena se queda
+    if (portMov()) onbI = setInterval(() => { if (i >= n - 1) quieta(); else ver(i + 1); }, 7500);   // pasa sola; en el cierre de Tierra Buena se queda
     puntos().forEach((d) => { d.onclick = () => { quieta(); ver(Number(d.getAttribute('data-pt'))); }; });
     const vi = $('#ptVista'); let x0 = null;               // deslizar con el dedo
     if (vi && vi.addEventListener) {
       vi.addEventListener('touchstart', (e) => { x0 = e.touches && e.touches[0] ? e.touches[0].clientX : null; }, { passive: true });
       vi.addEventListener('touchend', (e) => { const t = e.changedTouches && e.changedTouches[0]; if (x0 === null || !t) return; const d = t.clientX - x0; x0 = null; if (Math.abs(d) > 40) { quieta(); ver(i + (d < 0 ? 1 : -1)); } }, { passive: true });
     }
-    $('#onbEmpezar').onclick = () => { quieta(); if (ya) onbCuentaIr('entrar'); else onbPregunta(0); };
+    $('#onbEmpezar').onclick = () => { quieta(); if (dentro) { onbParar(); entrandoPon(false); ir(tabInicio()); } else if (ya) onbCuentaIr('entrar'); else onbPregunta(0); };
+    if (!dentro && !ya) $('#onbYaTengo').onclick = () => { quieta(); onbCuentaIr('entrar'); };
     if (ya) { $('#onbCrear').onclick = () => onbCuentaIr('crear'); $('#onbLeer').onclick = () => { onbParar(); entrandoPon(false); ir('palabra'); }; }
   }
   function onbPregunta(i) {
@@ -2356,7 +2483,7 @@
     const q = ONB_P[i], r = onbEstado.r, nq = ONB_P.slice(0, i + 1).filter((x) => !x.info).length;
     const sig = () => (i < ONB_P.length - 1 ? onbPregunta(i + 1) : onbArmando());
     const cab = `<div class="ent-cab"><button type="button" class="volver" id="onbAtras" aria-label="Atrás">‹</button>${onbBrote(nq)}<button type="button" class="enlace" id="onbSaltar">Saltar</button></div>`;
-    const atras = () => (i ? onbPregunta(i - 1) : onbSplash());
+    const atras = () => (i ? onbPregunta(i - 1) : (onbEstado.cambiar ? (onbEstado.cambiar = false, entrandoPon(false), ir('perfil')) : onbSplash()));
     if (q.info) {                                          // pantalla de ánimo entre preguntas (como Bible Chat): un mensaje y seguir
       $('#pantalla').innerHTML = `<section class="ent ent-preg ent-info">${cab}<div class="ent-info-c"><div class="ent-info-ic" aria-hidden="true"><i></i>${svg(q.ic, 44)}</div><h1 class="ent-t">${esc(q.t(r))}</h1><p class="suave">${esc(q.a)}</p></div><button type="button" class="btn" id="onbSig">Continuar</button></section>`;
       $('#onbAtras').onclick = atras; $('#onbSaltar').onclick = sig; $('#onbSig').onclick = sig;
@@ -2425,14 +2552,14 @@
         <div class="ent-fila"><span class="ent-fila-ic">${svg('calendario', 24)}</span><div><small>Tu primer plan</small><b>${esc(pl.n)}</b><span class="suave">${esc(pl.d)}</span></div></div>
         <div class="ent-fila"><span class="ent-fila-ic">${svg('chispas', 24)}</span><div><small>Tu ambiente</small><b>${esc(tm[1])}</b><span class="suave">${esc(tm[2])}</span></div></div>
         <div class="ent-fila"><span class="ent-fila-ic">${svg(r.mom === 'noche' ? 'luna' : 'sol', 24)}</span><div><small>Tu momento</small><b>${esc(mom ? mom[0] : 'Cuando puedas')}</b><span class="suave">${c.hora ? 'Te sugeriremos las ' + c.hora + '.' : 'Sin horario fijo.'}</span></div></div>
+        ${r.trad && r.trad !== 'nodecir' ? `<div class="ent-fila"><span class="ent-fila-ic">${svg('calendario', 24)}</span><div><small>Tu calendario</small><b>${esc(TRAD_N[r.trad] || 'Cristiano')}</b><span class="suave">Con las fechas que viven en tu iglesia.</span></div></div>` : ''}
         <div class="ent-fila"><span class="ent-fila-ic">${svg('llama', 24)}</span><div><small>Tu meta</small><b>${c.meta} ${c.meta === 1 ? 'capítulo' : 'capítulos'} al día</b><span class="suave">Toda la Biblia en ${esc(onbRitmo(c.meta))}.</span></div></div>
         <div class="ent-fila"><span class="ent-fila-ic">${svg('chispas', 24)}</span><div><small>Tu primer paso de acción</small><b>Hoy lo hago</b><span class="suave">Cada día un paso pequeño para vivir lo que lees.</span></div></div>
       </div>
       <label class="chk"><input type="checkbox" id="onbPlan"${onbEstado.plan ? ' checked' : ''}><span>Empezar «${esc(pl.n)}» al entrar</span></label>
-      <button type="button" class="btn" id="onbSig">Crear mi cuenta</button>
+      <button type="button" class="btn" id="onbSig">${onbEstado.cambiar ? 'Guardar mi nuevo plan' : 'Crear mi cuenta'}</button>
       <button type="button" class="btn sec" id="onbCambiar">Cambiar mis respuestas</button>
-      <p class="ent-links"><button type="button" class="enlace" id="onbYa">Ya tengo cuenta</button></p>
-      <p class="ent-links"><button type="button" class="enlace" id="onbLuego">Ahora no, solo quiero leer</button></p></section>`;
+      ${onbEstado.cambiar ? '<p class="ent-links"><button type="button" class="enlace" id="onbCancelar">Dejar mi plan como estaba</button></p>' : '<p class="ent-links"><button type="button" class="enlace" id="onbYa">Ya tengo cuenta</button></p><p class="ent-links"><button type="button" class="enlace" id="onbLuego">Ahora no, solo quiero leer</button></p>'}</section>`;
     (async () => {                                         // el versículo sale de la Biblia que ya está en el teléfono
       try { const l = await libroCargar(vp[0]), t = l[Number(vp[1]) - 1][Number(vp[2]) - 1], a = $('#onbVersT'), b = $('#onbVersR'); if (a && t) { a.textContent = '«' + t + '»'; b.textContent = libroInfo(vp[0])[1] + ' ' + vp[1] + ':' + vp[2]; } else if ($('#onbVers')) $('#onbVers').hidden = true; } catch (e) { const v = $('#onbVers'); if (v) v.hidden = true; }
     })();
@@ -2440,9 +2567,10 @@
     $('#onbAtras').onclick = () => onbPregunta(ONB_P.length - 1);
     $('#onbCambiar').onclick = () => onbPregunta(0);
     $('#onbPlan').addEventListener('change', (e) => { onbEstado.plan = !!(e && e.target ? e.target.checked : $('#onbPlan').checked); });
-    $('#onbSig').onclick = () => { onbGuardar(false); onbCuentaIr('crear'); };
-    $('#onbYa').onclick = () => onbCuentaIr('entrar');
-    $('#onbLuego').onclick = () => { onbGuardar(false); onbIr(); };
+    $('#onbSig').onclick = () => { onbGuardar(false); if (onbEstado.cambiar) { onbEstado.cambiar = false; entrandoPon(false); ir('perfil'); toastBib('Tu nuevo plan está listo'); } else onbCuentaIr('crear'); };
+    if (onbEstado.cambiar) $('#onbCancelar').onclick = () => { onbEstado.cambiar = false; entrandoPon(false); ir('perfil'); };
+    else $('#onbYa').onclick = () => onbCuentaIr('entrar');
+    if (!onbEstado.cambiar) $('#onbLuego').onclick = () => { onbGuardar(false); onbIr(); };
   }
   // ---------- Navegación ----------
   const VISTAS = { iglesia: vistaIglesia, palabra: vistaPalabra, vida: vistaVida, perfil: vistaPerfil, pastor: vistaPastor };
@@ -2456,7 +2584,7 @@
   function ir(tab) {
     const sentido = ORDEN_TAB.indexOf(tab) < ORDEN_TAB.indexOf(tabPrev) ? 'atras' : 'adelante'; tabPrev = tab;
     document.querySelectorAll('.tab').forEach((b) => { if (b.dataset.tab === tab) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
-    barraRefrescar(tab);
+    barraRefrescar(tab); try { menuBoton(); } catch (e) { /* sin botón */ }
     const tp = $('#barraTop'); if (tp && tp.classList && tp.classList.remove) tp.classList.remove('on');
     VISTAS[tab](); window.scrollTo(0, 0); $('#pantalla').focus({ preventScroll: true }); pantEntra(sentido);
   }
@@ -2518,6 +2646,6 @@
   } catch (e) { /* sin modo prueba */ }
   // F892: sin cuenta, ni iglesia, ni solicitud (primera vez o quien dijo «solo quiero leer») se abre la portada animada cada vez; con cuenta o iglesia, directo a la app
   const portadaYaVista = () => { try { if (sessionStorage.getItem('tb_movil_portada') === '1') return true; sessionStorage.setItem('tb_movil_portada', '1'); return false; } catch (e) { return true; } };   // una vez por apertura (no en cada recarga); si no hay dónde anotarlo, no molesta
-  if (!codigoDeEnlace() && (!hayOnb() || (!leer(K_ID) && !leer(K_SOL) && !leer(K_CUENTA) && !portadaYaVista()))) onbSplash(); else ir('iglesia');
+  if (!codigoDeEnlace() && (!hayOnb() || !portadaYaVista())) onbSplash(); else ir(tabInicio());   // F893: la portada sale al abrir la app para todos (una vez por apertura)
   syncInicio();
 })();
