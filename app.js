@@ -30,9 +30,9 @@
     'ya-existe': 'Ese correo ya tiene una cuenta. Toca «Entrar» y escribe tu contraseña.',
     'clave-debil': 'Esa contraseña es muy fácil de adivinar. Prueba con una más larga o con números y letras.',
     demasiados: 'Hubo muchos intentos seguidos. Espera unos minutos y vuelve a probar.',
-    'correo-no-sale': 'Tu cuenta no se pudo crear porque el servidor no logró enviar el correo de confirmación (suele ser el límite de correos por hora de Supabase). Espera una hora y vuelve a intentarlo, o pide a quien administra la app que desactive «Confirm email» o conecte un correo propio (SMTP).',
-    'registro-cerrado': 'Crear cuentas nuevas está desactivado en el servidor. Avisa a quien administra la app.',
-    'correo-rechazado': 'El servidor no aceptó ese correo. Revisa que esté bien escrito o prueba con otro.'
+    'correo-no-sale': 'Tu cuenta no se pudo crear porque el servidor no logró enviar el correo de confirmación (el envío de correos tiene un límite por hora). Espera una hora y vuelve a intentarlo, o avisa a quien administra la app.',
+    'registro-cerrado': 'Por ahora no se pueden crear cuentas nuevas. Avisa a quien administra la app.',
+    'correo-rechazado': 'No pudimos usar ese correo. Revisa que esté bien escrito o prueba con otro.'
   };
   const $ = (s, r) => (r || document).querySelector(s);
   const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -301,17 +301,17 @@
     let st = null;
     try {
       const r = await fetch(SUPABASE_URL + '/auth/v1/settings', { headers: cab });
-      if (!r.ok) { L.push(['mal', 'El servidor de cuentas respondió con un problema (' + r.status + '). Si el proyecto de Supabase está pausado, hay que reactivarlo desde su panel.']); return L; }
-      st = await r.json(); L.push(['bien', 'Hay conexión con el servidor de cuentas.']);
-    } catch (e) { L.push(['mal', navigator.onLine ? 'No logramos hablar con el servidor de cuentas. Puede ser tu red, o que el proyecto de Supabase esté pausado.' : 'Tu teléfono no tiene internet en este momento.']); return L; }
-    if (st.external && st.external.email === false) L.push(['mal', 'En Supabase está apagado el ingreso con correo (Authentication → Sign In / Providers → Email).']);
+      if (!r.ok) { L.push(['mal', 'El servicio de cuentas tiene un problema en este momento (código ' + r.status + '). Avisa a quien administra la app.']); return L; }
+      st = await r.json(); L.push(['bien', 'Tu conexión con las cuentas funciona bien.']);
+    } catch (e) { L.push(['mal', navigator.onLine ? 'No logramos conectar con las cuentas. Revisa tu internet; si todo está bien, avisa a quien administra la app.' : 'Tu teléfono no tiene internet en este momento.']); return L; }
+    if (st.external && st.external.email === false) L.push(['mal', 'Entrar con correo está apagado. Avisa a quien administra la app.']);
     else L.push(['bien', 'El ingreso con correo está activo.']);
-    if (st.disable_signup) L.push(['mal', 'En Supabase está desactivado crear cuentas nuevas.']);
+    if (st.disable_signup) L.push(['mal', 'Crear cuentas nuevas está apagado. Avisa a quien administra la app.']);
     else L.push(['bien', 'Se pueden crear cuentas nuevas.']);
-    L.push(st.mailer_autoconfirm ? ['bien', 'Las cuentas nuevas entran de inmediato.'] : ['aviso', 'Las cuentas nuevas piden confirmar el correo: el mensaje puede tardar o ir a «spam». El envío gratuito de Supabase tiene un límite por hora.']);
+    L.push(st.mailer_autoconfirm ? ['bien', 'Las cuentas nuevas entran de inmediato.'] : ['aviso', 'Las cuentas nuevas piden confirmar el correo: el mensaje puede tardar o ir a «spam». Si no llega, espera un rato y revisa «spam».']);
     try {
       const t = await fetch(SUPABASE_URL + '/rest/v1/avances_cuenta?select=clave&limit=1', { headers: cab });
-      L.push(t.status === 404 ? ['aviso', 'Falta correr el SQL de avances en Supabase (docs/sql/SQL_AVANCES_CUENTA.sql). Sin eso tus notas quedan solo en este teléfono.'] : ['bien', 'La copia de avances en la nube está lista.']);
+      L.push(t.status === 404 ? ['aviso', 'La copia de tus avances en la nube aún no está activada. Por ahora tus notas se guardan solo en este teléfono.'] : ['bien', 'La copia de avances en la nube está lista.']);
     } catch (e) { /* ya se avisó arriba */ }
     return L;
   }
@@ -1903,7 +1903,7 @@
       pas ? rpcRaw('ministerio_pastor_listar', { p_codigo: pas.codigo, p_secreto: pas.secreto }) : misMinisterios(id).then((r) => ({ ok: r.ok, data: r.lista }))
     ]);
     const m = $('#agmsg'); if (!m) return;
-    if (!rE.ok) { m.textContent = rE.falta ? 'La agenda se está preparando en el servidor (falta correr SQL_F876_AGENDA_AVISOS.sql).' : MOTIVOS['sin-internet']; return; }
+    if (!rE.ok) { m.textContent = rE.falta ? 'La agenda aún no está lista. Estamos preparándola; vuelve a intentarlo más tarde.' : MOTIVOS['sin-internet']; return; }
     const mins = (rM.ok && Array.isArray(rM.data) ? rM.data : []).filter((x) => pas || x.es_lider);
     const lista = rE.data || [];
     m.textContent = lista.length ? 'Lo que viene en tu iglesia.' : 'Todavía no hay actividades.';
@@ -1935,7 +1935,7 @@
       pas ? rpcRaw('ministerio_pastor_listar', { p_codigo: pas.codigo, p_secreto: pas.secreto }) : misMinisterios(id).then((r) => ({ ok: r.ok, data: r.lista }))
     ]);
     const m = $('#avmsg'); if (!m) return;
-    if (!rA.ok) { m.textContent = rA.falta ? 'Los avisos se están preparando en el servidor (falta correr SQL_F876_AGENDA_AVISOS.sql).' : MOTIVOS['sin-internet']; return; }
+    if (!rA.ok) { m.textContent = rA.falta ? 'Los avisos aún no están listos. Estamos preparándolos; vuelve a intentarlo más tarde.' : MOTIVOS['sin-internet']; return; }
     const mins = (rM.ok && Array.isArray(rM.data) ? rM.data : []).filter((x) => pas || x.es_lider), lista = rA.data || [];
     m.textContent = lista.length ? 'Mensajes de tu pastor y de los líderes.' : 'Todavía no hay avisos.';
     $('#avlista').innerHTML = lista.map((a) => avisoHTML(a, !!pas || a.puede_borrar)).join('');
@@ -1986,7 +1986,7 @@
       const b = $('#pgo'); b.disabled = true; b.textContent = 'Comprobando…';
       const r = await rpcRaw('solicitud_pastor_resolver', { p_codigo: p.codigo, p_secreto: p.secreto, p_id: crypto.randomUUID(), p_aprobar: false, p_mensaje: null });
       b.disabled = false; b.textContent = 'Entrar como pastor';
-      if (!r.ok) return error(r.falta ? 'Faltan funciones de pastor en Supabase (SQL_A2_SOLICITUDES_MIEMBRO.sql).' : MOTIVOS['sin-internet']);
+      if (!r.ok) return error(r.falta ? 'Las funciones de pastor aún no están activadas. Avisa a quien administra la app.' : MOTIVOS['sin-internet']);
       if (r.data === 'sin-permiso') return error('Esa llave no corresponde a ninguna iglesia. Revisa que sea la última que copiaste.');
       guardar(K_PASTOR, p); barraRefrescar('pastor'); ir('pastor');
     };
@@ -2053,7 +2053,7 @@
   async function pMinisterios(p) {
     $('#pantalla').innerHTML = pCab('Ministerios'); volverA('Panel', vistaPastor);
     const r = await prpc('ministerio_pastor_listar', p), m = $('#pmsg'); if (!m) return;
-    if (!r.ok) { m.textContent = r.falta ? 'Faltan los ministerios en Supabase (SQL_A1B_MINISTERIOS_LIDERES.sql).' : errTxt(r.error); return; }
+    if (!r.ok) { m.textContent = r.falta ? 'Los ministerios aún no están activados. Avisa a quien administra la app.' : errTxt(r.error); return; }
     const l = r.data || []; m.textContent = l.length ? 'Toca un ministerio para sumar personas y elegir líderes.' : 'Aún no hay ministerios. Crea el primero abajo.';
     $('#plista').innerHTML = `<div class="grid">${l.map((x) => `<button type="button" class="card min-card" data-mc="${esc(x.color)}" data-mi="${esc(x.id)}"><div class="t"><span class="min-ico" aria-hidden="true">${esc(x.icono || '👥')}</span>${esc(x.nombre)}<span class="flecha" aria-hidden="true">›</span></div><p class="suave m0t">${Number(x.miembros) || 0} personas${x.lideres ? ' · Lidera: ' + esc(x.lideres) : ' · sin líder'}</p></button>`).join('')}</div>
       <div class="card sep16"><div class="t"><span aria-hidden="true">➕</span>Nuevo ministerio</div><label for="mnn">Nombre</label><input id="mnn" type="text" maxlength="40"><label for="mni">Ícono</label><select id="mni">${ICONOS_MIN.map((i) => `<option>${i}</option>`).join('')}</select><label for="mnc">Color</label><select id="mnc">${COLORES_MIN.map((c, i) => `<option value="${c}">Color ${i + 1}</option>`).join('')}</select><p id="mnerr" class="error" role="alert" hidden></p><button type="button" class="btn" id="mnok">Crear ministerio</button></div>`;
