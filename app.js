@@ -130,7 +130,41 @@
   // ---------- Pantallas ----------
   const pronto = (ico, titulo, ayuda) => `<div class="card pronto" role="note"><div class="t"><span aria-hidden="true">${ico}</span>${titulo}<span class="etiqueta">Pronto</span></div><p class="suave m0t">${ayuda}</p></div>`;
 
-  const activa = (ico, titulo, ayuda, ir) => `<button type="button" class="card" data-ir="${ir}"><div class="t"><span aria-hidden="true">${ico}</span>${titulo}<span class="flecha" aria-hidden="true">›</span></div><p class="suave m0t">${ayuda}</p></button>`;
+  // F881: íconos de línea propios (un solo estilo, hereda color). Los emojis de las tarjetas se traducen aquí;
+  // si un emoji no está en la tabla se muestra tal cual. Nada de style="" (la política de seguridad no lo permite).
+  const SV = {
+    libro: '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+    chispas: '<path d="M9.9 15.5a2 2 0 0 0-1.4-1.4l-6.1-1.6a.5.5 0 0 1 0-1l6.1-1.6a2 2 0 0 0 1.4-1.4l1.6-6.1a.5.5 0 0 1 1 0l1.6 6.1a2 2 0 0 0 1.4 1.4l6.1 1.6a.5.5 0 0 1 0 1l-6.1 1.6a2 2 0 0 0-1.4 1.4l-1.6 6.1a.5.5 0 0 1-1 0z"/><path d="M20 3v4M22 5h-4"/>',
+    rollo: '<path d="M19 17V5a2 2 0 0 0-2-2H4"/><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/>',
+    brote: '<path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/>',
+    corazon: '<path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7z"/>',
+    iglesia: '<path d="M10 9h4M12 7v5"/><path d="M14 22v-4a2 2 0 0 0-4 0v4"/><path d="M18 22V5.6a1 1 0 0 0-.6-.9l-4.5-2.3a2 2 0 0 0-1.8 0L6.6 4.7A1 1 0 0 0 6 5.6V22"/><path d="m18 7 3.4 1.7a1 1 0 0 1 .6.9V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.6a1 1 0 0 1 .6-.9L6 7"/>',
+    llave: '<path d="M2.6 17.4a2 2 0 0 0-.6 1.4V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.2a2 2 0 0 0 1.4-.6l.8-.8a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".6"/>',
+    correo: '<rect x="2" y="4" width="20" height="16" rx="3"/><path d="m22 7-9 5.7a2 2 0 0 1-2 0L2 7"/>',
+    candado: '<rect x="3" y="11" width="18" height="11" rx="3"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+    altavoz: '<path d="m3 11 18-5v12L3 14z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>',
+    calendario: '<path d="M8 2v4M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M3 10h18"/>',
+    foco: '<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6M10 22h4"/>',
+    birrete: '<path d="M21.4 10.9a1 1 0 0 0 0-1.8L12.8 5.2a2 2 0 0 0-1.6 0L2.6 9.1a1 1 0 0 0 0 1.8l8.6 3.9a2 2 0 0 0 1.6 0z"/><path d="M22 10v6M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>',
+    estrella: '<path d="M11.5 2.3a.5.5 0 0 1 1 0l2.3 4.7a2.1 2.1 0 0 0 1.6 1.2l5.2.7a.5.5 0 0 1 .3.9l-3.7 3.6a2.1 2.1 0 0 0-.6 1.9l.9 5.1a.5.5 0 0 1-.8.6l-4.6-2.4a2.1 2.1 0 0 0-2 0l-4.6 2.4a.5.5 0 0 1-.8-.6l.9-5.1a2.1 2.1 0 0 0-.6-1.9L2.2 9.8a.5.5 0 0 1 .3-.9l5.1-.7A2.1 2.1 0 0 0 9.200 7z"/>',
+    ayuda: '<circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/>',
+    play: '<path d="M7 4.5v15a1 1 0 0 0 1.5.9l12-7.5a1 1 0 0 0 0-1.8l-12-7.5A1 1 0 0 0 7 4.500z"/>',
+    pluma: '<path d="M12 20h9"/><path d="M16.4 3.6a2.1 2.1 0 0 1 3 3L7.4 18.600a2 2 0 0 1-.9.500l-2.900.8a.5.5 0 0 1-.6-.6l.8-2.900a2 2 0 0 1 .5-.9z"/>',
+    gente: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.100a4 4 0 0 1 0 7.800"/>',
+    mente: '<circle cx="12" cy="12" r="10"/><path d="M8 14s1.500 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/>',
+    viento: '<path d="M12.800 19.600A2 2 0 1 0 14 16H2"/><path d="M17.500 8a2.500 2.500 0 1 1 2 4H2"/><path d="M9.800 4.400A2 2 0 1 1 11 8H2"/>',
+    bloques: '<rect x="3" y="3" width="7" height="7" rx="1.500"/><rect x="14" y="3" width="7" height="7" rx="1.500"/><rect x="14" y="14" width="7" height="7" rx="1.500"/><rect x="3" y="14" width="7" height="7" rx="1.500"/>',
+    llave2: '<path d="M14.700 6.300a1 1 0 0 0 0 1.400l1.600 1.600a1 1 0 0 0 1.400 0l3.800-3.800a6 6 0 0 1-7.900 7.900l-6.900 6.900a2.100 2.100 0 0 1-3-3l6.900-6.900a6 6 0 0 1 7.900-7.900z"/>',
+    paloma: '<path d="M16 7h.01"/><path d="M3.400 18H12a8 8 0 0 0 8-8V7a4 4 0 0 0-7.300-2.300L2 20"/><path d="m20 7 2 .5-2 .5M10 18v3M14 17.800V21M7 18a6 6 0 0 0 3.800-10.600"/>',
+    llama: '<path d="M8.500 14.500A2.500 2.500 0 0 0 11 12c0-1.400-.5-2-1-3-1.100-2.100-.2-4.100 2-6 .5 2.500 2 4.900 4 6.500 2 1.600 3 3.500 3 5.500a7 7 0 1 1-14 0c0-1.200.4-2.300 1-3a2.500 2.500 0 0 0 2.500 2.500z"/>',
+    hoja: '<path d="M11 20A7 7 0 0 1 9.800 6.100C15.500 5 17 4.500 19 2c1 2 2 4.200 2 8 0 5.500-4.800 10-10 10z"/><path d="M2 21c0-3 1.900-5.500 5-6.700 3-1.200 5.500-2.300 7-5.300"/>',
+    luna: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/>',
+    sol: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.900 4.900l1.400 1.400M17.700 17.700l1.400 1.400M2 12h2M20 12h2M4.900 19.100l1.400-1.400M17.700 6.300l1.400-1.400"/>'
+  };
+  const EMO = { '📖': 'libro', '✨': 'chispas', '📜': 'rollo', '🌱': 'brote', '🙏': 'corazon', '🕍': 'iglesia', '⛪': 'iglesia', '🔑': 'llave', '✉': 'correo', '🔒': 'candado', '📣': 'altavoz', '📅': 'calendario', '💡': 'foco', '🎓': 'birrete', '🌟': 'estrella', '❓': 'ayuda', '▶': 'play', '📝': 'pluma', '🤝': 'gente', '🧠': 'mente', '🫁': 'viento', '🧱': 'bloques', '🧰': 'llave2', '🕊': 'paloma', '🌿': 'hoja' };
+  const svg = (k, tam) => `<svg class="ic" viewBox="0 0 24 24" width="${tam || 24}" height="${tam || 24}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${SV[k] || ''}</svg>`;
+  const icono = (e, tam) => { const k = EMO[String(e).replace(/\uFE0F/g, '')]; return k ? svg(k, tam) : e; };
+  const activa = (ico, titulo, ayuda, ir) => `<button type="button" class="card" data-ir="${ir}"><div class="t"><span aria-hidden="true">${icono(ico)}</span>${titulo}<span class="flecha" aria-hidden="true">›</span></div><p class="suave m0t">${ayuda}</p></button>`;
 
   // Igual que rpc() pero devuelve los datos tal cual (listas) y avisa si la función aún no existe en Supabase.
   async function rpcRaw(fn, args) {
@@ -424,7 +458,7 @@
   function vistaUnirse() {
     if (codigoDeEnlace()) return vistaCodigo();            // vino de un enlace con el código de su iglesia
     $('#pantalla').innerHTML = `
-      <div class="hero"><div class="hero-ico" aria-hidden="true">🌿</div><h1>Bienvenido a Tierra Buena</h1>
+      <div class="hero"><div class="hero-ico" aria-hidden="true">${svg("hoja", 38)}</div><h1>Bienvenido a Tierra Buena</h1>
       <p>Tu iglesia, la Palabra y tu crecimiento, en tu bolsillo.</p></div>
       <h2 class="sep">Elige cómo entrar</h2>
       ${cuentaBarra()}
@@ -923,11 +957,40 @@
     const d = await r.json(); if (!Array.isArray(d)) throw new Error('formato'); return (bibCache[cod] = d);
   }
   const SIN_LIBRO = 'No pudimos abrir este libro. Revisa tu internet: lo que ya leíste antes se abre sin conexión.';
+  // F881: racha de lectura (días seguidos en que abriste un capítulo). Solo vive en el teléfono.
+  const K_RACHA = 'tb_movil_racha';
+  const diaTxt = (d) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  function rachaMarcar() {
+    try {
+      const hoy = new Date(), ayer = new Date(hoy.getTime() - 86400000), r = leer(K_RACHA) || { u: '', n: 0 };
+      if (r.u === diaTxt(hoy)) return;
+      guardar(K_RACHA, { u: diaTxt(hoy), n: r.u === diaTxt(ayer) ? (Number(r.n) || 0) + 1 : 1 });
+    } catch (e) { /* sin racha */ }
+  }
+  function rachaActual() {
+    const r = leer(K_RACHA); if (!r || !r.u) return 0;
+    const hoy = new Date(), ayer = new Date(hoy.getTime() - 86400000);
+    return (r.u === diaTxt(hoy) || r.u === diaTxt(ayer)) ? Number(r.n) || 0 : 0;   // si faltó ayer, vuelve a empezar
+  }
+  // Portada viva: el cielo cambia con la hora (amanecer, día, atardecer, noche) y respira con calma.
+  function faseDelDia(h) { return h >= 5 && h < 9 ? 'amanecer' : h >= 9 && h < 17 ? 'dia' : h >= 17 && h < 20 ? 'atardecer' : 'noche'; }
+  function escenaHoy(fase) {
+    const alto = fase === 'dia';
+    const x = alto ? 316 : 322, y = alto ? 92 : 150;
+    const astro = fase === 'noche'
+      ? '<g class="h-astro"><circle class="h-halo" cx="314" cy="92" r="64"/><path class="h-luna" transform="translate(290 68) scale(2)" d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></g>'
+      : `<g class="h-astro"><circle class="h-halo" cx="${x}" cy="${y}" r="70"/><circle class="h-sol" cx="${x}" cy="${y}" r="26"/></g>`;
+    const estrellas = fase === 'noche' ? [[44,40],[96,96],[150,34],[204,78],[258,28],[300,170],[360,40],[64,170],[372,130],[176,150],[120,210],[330,230]].map((p, i) => `<circle class="h-est" cx="${p[0]}" cy="${p[1]}" r="${i % 3 ? 1.6 : 2.4}"/>`).join('') : '';
+    const nubes = fase === 'noche' ? '' : '<g class="h-nube n1"><ellipse cx="80" cy="70" rx="40" ry="12"/><ellipse cx="108" cy="62" rx="26" ry="11"/></g><g class="h-nube n2"><ellipse cx="220" cy="150" rx="34" ry="10"/><ellipse cx="244" cy="143" rx="20" ry="9"/></g>';
+    return `<svg class="hoy-escena" viewBox="0 0 400 420" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">${estrellas}${astro}${nubes}<path class="h-col1" d="M0 336 Q90 296 190 326 T400 308 V420 H0z"/><path class="h-col2" d="M0 372 Q110 344 220 366 T400 352 V420 H0z"/></svg>`;
+  }
   function vistaPalabra() {
     const ult = leer(K_BIB), inf = ult && libroInfo(ult.cod);
-    const hora = new Date().getHours(), saludo = hora < 12 ? 'Buenos días' : hora < 19 ? 'Buenas tardes' : 'Buenas noches';
-    $('#pantalla').innerHTML = `<div class="hoy"><span class="hoy-luz" aria-hidden="true"></span><p class="hoy-saludo">${saludo} 🌿</p>
-      <h1>Hoy</h1><div class="hoy-verso" id="hoyVerso"><span class="esqueleto"></span><span class="esqueleto corto"></span></div></div>
+    const hora = new Date().getHours(), fase = faseDelDia(hora), saludo = hora < 12 ? 'Buenos días' : hora < 19 ? 'Buenas tardes' : 'Buenas noches';
+    const id = leer(K_ID), nom = id && id.nombre ? String(id.nombre).trim().split(/\s+/)[0] : '', racha = rachaActual();
+    $('#pantalla').innerHTML = `<div class="hoy fase-${fase}">${escenaHoy(fase)}<p class="hoy-saludo">${esc(saludo)}${nom ? ', ' + esc(nom) : ''}</p>
+      <h1>Hoy</h1><div class="hoy-verso" id="hoyVerso"><span class="esqueleto"></span><span class="esqueleto corto"></span></div>
+      ${racha ? `<p class="hoy-racha">${svg('llama', 18)}<span>${racha === 1 ? '1 día leyendo la Palabra' : racha + ' días seguidos leyendo la Palabra'}</span></p>` : ''}</div>
       <h2 class="sep">Tu Palabra</h2>
       <div class="grid">${inf ? activa('▶️', 'Seguir leyendo', esc(inf[1]) + ' ' + Number(ult.cap) + ' · donde te quedaste', 'seguir') : ''}${activa('📖', 'Leer la Biblia', 'Reina-Valera 1909. Los libros que lees quedan para leer sin internet.', 'biblia')}${activa('✨', 'Versículo de hoy', 'Una frase para empezar el día.', 'versiculo')}${activa('📜', 'Fábula del mes', 'Un relato corto para practicar, capítulo a capítulo.', 'fabula')}</div>`;
     document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => {
@@ -952,11 +1015,16 @@
   function vistaBiblia() {
     const fila = (l) => `<button type="button" class="libro" data-libro="${l[0]}">${esc(l[1])}</button>`;
     $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ Palabra</button><h1>Biblia</h1><div class="filete"></div>
+      <input type="text" id="buscaLibro" class="busca-libro" placeholder="Buscar un libro…" aria-label="Buscar un libro" autocomplete="off" enterkeyhint="search">
       <h2>Antiguo Testamento</h2><div class="libros">${LIBROS.slice(0, 39).map(fila).join('')}</div>
       <h2 class="sep">Nuevo Testamento</h2><div class="libros">${LIBROS.slice(39).map(fila).join('')}</div>
       <p class="suave sep">Reina-Valera 1909 · Dominio público</p>`;
     volverA('Palabra', vistaPalabra);
     document.querySelectorAll('[data-libro]').forEach((b) => b.addEventListener('click', () => vistaLibro(b.dataset.libro)));
+    try {
+      const norm = (t) => String(t).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+      $('#buscaLibro').addEventListener('input', (e) => { const q = norm(e.target.value.trim()); document.querySelectorAll('[data-libro]').forEach((b) => { b.hidden = !!q && norm(b.textContent).indexOf(q) < 0; }); });
+    } catch (e) { /* sin filtro */ }
   }
   function vistaLibro(cod) {
     const inf = libroInfo(cod); if (!inf) return vistaBiblia();
@@ -966,28 +1034,93 @@
     volverA('Biblia', vistaBiblia);
     document.querySelectorAll('[data-cap]').forEach((b) => b.addEventListener('click', () => vistaCapitulo(cod, Number(b.dataset.cap))));
   }
-  async function vistaCapitulo(cod, cap) {
+  // F880: lector de primer nivel. Tocar un versículo lo selecciona (resaltar, copiar, compartir), deslizar cambia de
+  // capítulo, una barra fina muestra cuánto llevas leído. Todo con CSSOM (la política de seguridad no permite style="").
+  const K_RES = 'tb_movil_biblia_res';
+  const nuevoEl = (html) => { try { const d = document.createElement('div'); d.innerHTML = html; return d.firstElementChild; } catch (e) { return null; } };
+  function toastBib(msg) {
+    try {
+      let t = $('#toastBib'); if (!t) { t = nuevoEl('<div id="toastBib" class="toast-bib" role="status" aria-live="polite"></div>'); if (!t) return; document.body.appendChild(t); }
+      t.textContent = msg; t.classList.add('on'); clearTimeout(toastBib.t); toastBib.t = setTimeout(() => t.classList.remove('on'), 1700);
+    } catch (e) { /* sin aviso */ }
+  }
+  const citaVersos = (nombre, cap, vs) => {
+    const o = vs.slice().sort((x, y) => x - y), partes = []; let i = 0;
+    while (i < o.length) { let j = i; while (j + 1 < o.length && o[j + 1] === o[j] + 1) j++; partes.push(j > i ? o[i] + '-' + o[j] : String(o[i])); i = j + 1; }
+    return nombre + ' ' + cap + ':' + partes.join(',');
+  };
+  let lec = null;   // estado del capítulo abierto (para el panel de selección y el deslizar)
+  function lecPanel() {
+    try {
+      let p = $('#lecAcc'); const n = lec ? lec.sel.size : 0;
+      if (!n) { if (p) p.classList.remove('on'); return; }
+      if (!p) { p = nuevoEl('<div id="lecAcc" class="lec-acc" role="toolbar" aria-label="Versículos elegidos"><button type="button" id="aRes" class="btn chico"></button><button type="button" id="aCop" class="btn sec chico">Copiar</button><button type="button" id="aCom" class="btn sec chico">Compartir</button><button type="button" id="aX" class="btn sec chico" aria-label="Quitar selección">✕</button></div>'); if (!p) return; document.body.appendChild(p);
+        $('#aX').onclick = () => lecLimpiar();
+        $('#aRes').onclick = () => { const rs = leer(K_RES) || {}, k = lec.cod + '.' + lec.cap, ya = new Set(rs[k] || []), todos = [...lec.sel].every((v) => ya.has(v)); lec.sel.forEach((v) => (todos ? ya.delete(v) : ya.add(v))); if (ya.size) rs[k] = [...ya].sort((x, y) => x - y); else delete rs[k]; guardar(K_RES, rs); lecPintar(); toastBib(todos ? 'Resalte quitado' : 'Resaltado ✓'); lecLimpiar(); };
+        $('#aCop').onclick = async () => { const t = lecTexto(); try { await navigator.clipboard.writeText(t); toastBib('Copiado ✓'); } catch (e) { toastBib('No pude copiar'); } lecLimpiar(); };
+        $('#aCom').onclick = async () => { const t = lecTexto(); try { if (navigator.share) await navigator.share({ text: t }); else { await navigator.clipboard.writeText(t); toastBib('Copiado ✓'); } } catch (e) { /* se cerró el menú */ } lecLimpiar(); };
+      }
+      const rs = leer(K_RES) || {}, ya = new Set(rs[lec.cod + '.' + lec.cap] || []);
+      $('#aRes').textContent = [...lec.sel].every((v) => ya.has(v)) ? 'Quitar resalte' : 'Resaltar';
+      p.classList.add('on');
+    } catch (e) { /* sin panel */ }
+  }
+  function lecTexto() {
+    const vs = [...lec.sel].sort((x, y) => x - y), inf = libroInfo(lec.cod);
+    return vs.map((v) => '«' + lec.versos[v - 1] + '»').join(' ') + '\n— ' + citaVersos(inf[1], lec.cap, vs) + ' (Reina-Valera 1909)';
+  }
+  function lecPintar() {
+    if (!lec) return; const rs = (leer(K_RES) || {})[lec.cod + '.' + lec.cap] || [];
+    document.querySelectorAll('.vers').forEach((p) => { const v = Number(p.dataset.v); p.classList.toggle('res', rs.indexOf(v) >= 0); p.classList.toggle('sel', lec.sel.has(v)); p.setAttribute('aria-pressed', lec.sel.has(v) ? 'true' : 'false'); });
+  }
+  function lecLimpiar() { if (lec) lec.sel.clear(); lecPintar(); lecPanel(); }
+  let lecEscucha = false;
+  function lecGlobal() {   // una sola vez: progreso de lectura y limpieza al salir del capítulo
+    if (lecEscucha) return; lecEscucha = true;
+    window.addEventListener('scroll', () => {
+      try {
+        const bar = $('#lecProg'); if (!bar) return;
+        const h = document.documentElement.scrollHeight - window.innerHeight; bar.style.transform = 'scaleX(' + (h > 0 ? Math.min(1, Math.max(0, window.scrollY / h)) : 0) + ')';
+      } catch (e) { /* sin progreso */ }
+    }, { passive: true });
+    try { new MutationObserver(() => { if (!$('#lectura')) { lec = null; const p = $('#lecAcc'); if (p) p.classList.remove('on'); } }).observe($('#pantalla'), { childList: true }); } catch (e) { /* sin observador */ }
+  }
+  async function vistaCapitulo(cod, cap, dir) {
     const inf = libroInfo(cod); if (!inf) return vistaBiblia();
     cap = Math.min(Math.max(1, Number(cap) || 1), inf[2]);
-    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ ${esc(inf[1])}</button><h1>${esc(inf[1])} ${cap}</h1><div class="filete"></div><p class="suave" id="bibmsg">Cargando…</p>`;
+    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ ${esc(inf[1])}</button><h1>${esc(inf[1])} ${cap}</h1><div class="filete"></div><p class="suave" id="bibmsg"><span class="esq-claro"></span><span class="esq-claro"></span><span class="esq-claro corto"></span><span class="esq-claro"></span><span class="esq-claro corto"></span></p>`;
     volverA(inf[1], () => vistaLibro(cod));
     let libro; try { libro = await libroCargar(cod); } catch (e) { const m = $('#bibmsg'); if (m) m.textContent = SIN_LIBRO; return; }
     const versos = libro[cap - 1]; const m = $('#bibmsg'); if (!versos || !m) return;
-    guardar(K_BIB, { cod, cap });
+    guardar(K_BIB, { cod, cap }); rachaMarcar();
     const tam = Math.min(30, Math.max(16, Number(leer(K_BIBTAM)) || 18));
     const idx = LIBROS.findIndex((l) => l[0] === cod);
     const ant = cap > 1 ? [cod, cap - 1] : (idx > 0 ? [LIBROS[idx - 1][0], LIBROS[idx - 1][2]] : null);
     const sig = cap < inf[2] ? [cod, cap + 1] : (idx < LIBROS.length - 1 ? [LIBROS[idx + 1][0], 1] : null);
     const nombre = (x) => libroInfo(x[0])[1] + ' ' + x[1];
-    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ ${esc(inf[1])}</button><h1>${esc(inf[1])} ${cap}</h1><div class="filete"></div>
+    $('#pantalla').innerHTML = `<i class="lec-prog" id="lecProg" aria-hidden="true"></i><button type="button" class="volver" id="volver">‹ ${esc(inf[1])}</button><h1>${esc(inf[1])} ${cap}</h1><div class="filete"></div>
       <div class="tamano" role="group" aria-label="Tamaño de la letra"><button type="button" class="btn sec chico" id="menos" aria-label="Letra más chica">A−</button><button type="button" class="btn sec chico" id="mas" aria-label="Letra más grande">A+</button></div>
-      <div class="lectura" id="lectura" style="font-size:${tam}px">${versos.map((t, i) => `<p class="vers"><sup>${i + 1}</sup> ${esc(t)}</p>`).join('')}</div>
+      <p class="lec-pista suave">Toca un versículo para resaltarlo, copiarlo o compartirlo.</p>
+      <div class="lectura ${dir ? 'desde-' + dir : ''}" id="lectura">${versos.map((t, i) => `<p class="vers" data-v="${i + 1}" role="button" tabindex="0" aria-pressed="false"><sup>${i + 1}</sup> ${esc(t)}</p>`).join('')}</div>
       <div class="navcap">${ant ? `<button type="button" class="btn sec chico" id="ant">‹ ${esc(nombre(ant))}</button>` : '<span></span>'}${sig ? `<button type="button" class="btn chico" id="sig">${esc(nombre(sig))} ›</button>` : ''}</div>`;
     volverA(inf[1], () => vistaLibro(cod));
+    lec = { cod, cap, versos, sel: new Set() };
+    try { $('#lectura').style.fontSize = tam + 'px'; } catch (e) { /* sin estilo */ }
     const cambiarTam = (d) => { const n = Math.min(30, Math.max(16, (Number(leer(K_BIBTAM)) || 18) + d)); guardar(K_BIBTAM, n); $('#lectura').style.fontSize = n + 'px'; };
     $('#menos').onclick = () => cambiarTam(-2); $('#mas').onclick = () => cambiarTam(2);
-    if (ant) $('#ant').onclick = () => vistaCapitulo(ant[0], ant[1]);
-    if (sig) $('#sig').onclick = () => vistaCapitulo(sig[0], sig[1]);
+    const ir = (x, d) => { vibra(); vistaCapitulo(x[0], x[1], d); };
+    if (ant) $('#ant').onclick = () => ir(ant, 'izq'); if (sig) $('#sig').onclick = () => ir(sig, 'der');
+    try {
+      lecGlobal();
+      const lect = $('#lectura');
+      const alternar = (p) => { const v = Number(p.dataset.v); if (lec.sel.has(v)) lec.sel.delete(v); else lec.sel.add(v); vibra(); lecPintar(); lecPanel(); };
+      lect.addEventListener('click', (e) => { const p = e.target && e.target.closest && e.target.closest('.vers'); if (p) alternar(p); });
+      lect.addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && e.target.classList && e.target.classList.contains('vers')) { e.preventDefault(); alternar(e.target); } });
+      let x0 = 0, y0 = 0, t0 = 0;   // deslizar: izquierda = siguiente, derecha = anterior (solo gestos largos y horizontales)
+      lect.addEventListener('touchstart', (e) => { const t = e.touches[0]; x0 = t.clientX; y0 = t.clientY; t0 = Date.now(); }, { passive: true });
+      lect.addEventListener('touchend', (e) => { const t = e.changedTouches[0], dx = t.clientX - x0, dy = t.clientY - y0; if (Date.now() - t0 > 600 || Math.abs(dx) < 80 || Math.abs(dy) > Math.abs(dx) * .6) return; if (dx < 0 && sig) ir(sig, 'der'); else if (dx > 0 && ant) ir(ant, 'izq'); }, { passive: true });
+      lecPintar();
+    } catch (e) { /* sin gestos */ }
     window.scrollTo(0, 0);
   }
   // Una cita distinta cada dia del año (estable durante el dia), las mismas que usa el escritorio.

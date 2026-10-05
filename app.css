@@ -374,3 +374,92 @@ input[type=datetime-local]{width:100%;min-height:48px;font:inherit;font-size:16p
 .fila.persona{flex-wrap:wrap}.fila.persona .chip{min-height:40px}
 .codigo-grande{font:800 2.4rem/1.1 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.18em;text-align:center;margin:10px 0;color:var(--verde)}
 .tab[hidden]{display:none!important}
+
+/* ===== F880: tipografía propia + lector de primer nivel ===== */
+@font-face{font-family:"TB Texto";font-style:normal;font-weight:200 800;font-display:swap;src:url(fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2) format("woff2")}
+@font-face{font-family:"TB Lectura";font-style:normal;font-weight:200 900;font-display:swap;src:url(fonts/literata-latin-wght-normal.woff2) format("woff2")}
+@font-face{font-family:"TB Lectura";font-style:italic;font-weight:200 900;font-display:swap;src:url(fonts/literata-latin-wght-italic.woff2) format("woff2")}
+@font-face{font-family:"TB Titulo";font-style:normal;font-weight:100 900;font-display:swap;src:url(fonts/fraunces-latin-wght-normal.woff2) format("woff2")}
+:root{--f-texto:"TB Texto",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--f-titulo:"TB Titulo",Georgia,"Times New Roman",serif;--f-lectura:"TB Lectura",Georgia,"Times New Roman",serif}
+html,body{font-family:var(--f-texto)}
+h1,h2{font-family:var(--f-titulo);font-weight:650;letter-spacing:-.01em}
+h1{font-size:2.05rem}
+.lectura,.vgrande,.hoy-texto{font-family:var(--f-lectura)}
+.tab{white-space:nowrap}
+.libro[hidden]{display:none}
+.busca-libro{margin:4px 0 16px}
+/* Lector */
+.lec-prog{position:fixed;top:0;left:0;right:0;height:3px;z-index:30;background:linear-gradient(90deg,var(--oro),var(--verde));transform:scaleX(0);transform-origin:left;pointer-events:none;animation:none!important}
+.lec-pista{margin:2px 0 6px;text-align:center;font-size:.85rem}
+.lectura{max-width:36rem;line-height:1.8}
+.vers{position:relative;margin:0 -10px 2px;padding:5px 10px;border-radius:12px;cursor:pointer;transition:background .18s,box-shadow .18s;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.vers sup{font-family:var(--f-texto);color:var(--oro);font-weight:700;margin-right:5px}
+.vers.res{background:color-mix(in srgb,var(--oro) 26%,transparent)}
+.vers.sel{background:color-mix(in srgb,var(--verde) 20%,transparent);box-shadow:inset 3px 0 0 var(--verde)}
+.vers:focus-visible{outline:2px solid var(--verde);outline-offset:1px}
+.lec-acc{position:fixed;left:12px;right:12px;bottom:calc(92px + var(--sa-b));z-index:20;display:flex;gap:8px;padding:8px;border-radius:22px;background:var(--cristal,var(--tarjeta));-webkit-backdrop-filter:saturate(1.6) blur(18px);backdrop-filter:saturate(1.6) blur(18px);border:1px solid color-mix(in srgb,var(--linea) 70%,transparent);box-shadow:0 10px 30px rgba(0,0,0,.18);opacity:0;transform:translateY(24px) scale(.98);pointer-events:none;transition:opacity .2s,transform .28s cubic-bezier(.2,.9,.3,1.2)}
+.lec-acc.on{opacity:1;transform:none;pointer-events:auto}
+.lec-acc .btn{margin-top:0;flex:1;width:auto;min-height:48px;padding:8px 10px;font-size:.92rem}
+.lec-acc #aX{flex:none;width:52px}
+.toast-bib{position:fixed;left:50%;bottom:calc(168px + var(--sa-b));z-index:40;transform:translate(-50%,10px);padding:10px 18px;border-radius:999px;background:var(--tinta);color:var(--papel);font-weight:600;font-size:.92rem;opacity:0;pointer-events:none;transition:opacity .2s,transform .25s}
+.toast-bib.on{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:no-preference){
+  .lectura.desde-der{animation:desdeDer .34s cubic-bezier(.2,.8,.2,1) both}
+  .lectura.desde-izq{animation:desdeIzq .34s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes desdeDer{from{opacity:0;transform:translateX(30px)}}
+  @keyframes desdeIzq{from{opacity:0;transform:translateX(-30px)}}
+}
+@media (prefers-reduced-motion:reduce){.lec-acc,.toast-bib,.vers{transition:none}}
+
+/* ===== F881: íconos propios + portada «Hoy» viva ===== */
+.ic{display:block;flex:none}
+.card .t>span:first-child:not(.flecha){color:var(--ic,var(--verde))}
+.grid>.card:nth-child(4n+1) .t>span:first-child{--ic:#8a6420}
+.grid>.card:nth-child(4n+2) .t>span:first-child{--ic:#3f6b39}
+.grid>.card:nth-child(4n+3) .t>span:first-child{--ic:#3a6590}
+.grid>.card:nth-child(4n+4) .t>span:first-child{--ic:#a44f3a}
+@media (prefers-color-scheme:dark){
+  .grid>.card:nth-child(4n+1) .t>span:first-child{--ic:#e6bf6b}.grid>.card:nth-child(4n+2) .t>span:first-child{--ic:#9cc994}
+  .grid>.card:nth-child(4n+3) .t>span:first-child{--ic:#8fb8e3}.grid>.card:nth-child(4n+4) .t>span:first-child{--ic:#ec9f8b}}
+.card .t>span:first-child .ic{width:24px;height:24px;stroke-width:1.9}
+.hero-ico .ic{color:#fff;stroke-width:1.7}
+.flecha{font-family:var(--f-texto)}
+/* Portada viva */
+.hoy{--c1:#4d93b8;--c2:#2f6f8f;--c3:#244f66;--col1:#2a5a4a;--col2:#1d4236;min-height:300px;padding:24px 22px 22px;border-radius:32px;background:linear-gradient(172deg,var(--c1) 0%,var(--c2) 55%,var(--c3) 100%);box-shadow:0 24px 50px -24px var(--c3);display:flex;flex-direction:column}
+.hoy::after{display:none}
+.hoy.fase-amanecer{--c1:#e08f6a;--c2:#a65f86;--c3:#4b4a82;--col1:#4a3f6e;--col2:#33305a}
+.hoy.fase-atardecer{--c1:#d9774f;--c2:#9d4468;--c3:#392d68;--col1:#3b2f63;--col2:#291f4e}
+.hoy.fase-noche{--c1:#1f2a5a;--c2:#151d46;--c3:#0b1030;--col1:#16204a;--col2:#0e1536}
+.hoy>*:not(.hoy-escena){position:relative;z-index:1}
+.hoy-escena{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.hoy-saludo{text-shadow:0 1px 10px rgba(0,0,0,.28);font-size:1rem;letter-spacing:.01em}
+.hoy h1{font-size:2.6rem;margin:0 0 auto;padding-bottom:26px;text-shadow:0 2px 14px rgba(0,0,0,.25)}
+.hoy-verso{background:rgba(8,12,28,.34);border-color:rgba(255,255,255,.2);-webkit-backdrop-filter:blur(10px) saturate(1.3);backdrop-filter:blur(10px) saturate(1.3);border-radius:22px;padding:16px 18px}
+.hoy-verso.listo::before{display:none}
+.hoy-texto{font-size:1.14rem;line-height:1.6;-webkit-line-clamp:5}
+.hoy-cita{color:#ffe9b8}
+.hoy-racha{display:inline-flex;align-items:center;gap:8px;margin:14px 0 0;align-self:flex-start;padding:7px 14px 7px 11px;border-radius:999px;background:rgba(8,12,28,.34);font-size:.88rem;font-weight:600;color:#fff;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.hoy-racha .ic{color:#ffc46b;fill:color-mix(in srgb,#ffc46b 35%,transparent)}
+.h-halo{fill:rgba(255,236,170,.26)}.h-sol{fill:#ffe9a8}.h-luna{fill:#f3f0e1}
+.fase-noche .h-halo{fill:rgba(210,220,255,.16)}
+.h-est{fill:#fff;opacity:.85}
+.h-nube ellipse{fill:rgba(255,255,255,.28)}
+.h-col1{fill:var(--col1);opacity:.9}.h-col2{fill:var(--col2)}
+@media (prefers-reduced-motion:no-preference){
+  .h-halo{transform-box:fill-box;transform-origin:center;animation:haloR 5s ease-in-out infinite}
+  @keyframes haloR{50%{transform:scale(1.18);opacity:.7}}
+  .h-est{animation:titila 3.2s ease-in-out infinite}
+  .h-est:nth-child(2n){animation-delay:.9s}.h-est:nth-child(3n){animation-delay:1.7s;animation-duration:4.1s}
+  @keyframes titila{50%{opacity:.25}}
+  .h-nube{animation:nubeD 38s linear infinite}.h-nube.n2{animation-duration:54s;animation-delay:-20s}
+  @keyframes nubeD{from{transform:translateX(-60px)}to{transform:translateX(360px)}}
+  .h-col1{animation:colina 9s ease-in-out infinite alternate}
+  @keyframes colina{to{transform:translateY(-4px)}}
+  .hoy-saludo,.hoy h1,.hoy-racha{animation:entra .6s cubic-bezier(.2,.8,.2,1) both}.hoy h1{animation-delay:.06s}.hoy-racha{animation-delay:.3s}
+}
+/* Carga de capítulo */
+.esq-claro{display:block;height:16px;border-radius:8px;margin:14px 0;background:linear-gradient(90deg,color-mix(in srgb,var(--suave) 14%,transparent) 25%,color-mix(in srgb,var(--suave) 30%,transparent) 50%,color-mix(in srgb,var(--suave) 14%,transparent) 75%);background-size:200% 100%}
+.esq-claro.corto{width:62%}
+@media (prefers-reduced-motion:no-preference){.esq-claro{animation:brilla 1.3s linear infinite}}
+/* F881: el subtítulo de la portada de entrada se lee en claro (antes blanco sobre beige) */
+.hero p{color:var(--suave)}
