@@ -1754,6 +1754,7 @@
       <div class="card meta-hoy"><div class="anillo" role="img" aria-label="Meta de hoy: ${Math.min(leidosHoy(), p.meta)} de ${p.meta}"><svg viewBox="0 0 36 36" width="64" height="64" aria-hidden="true"><circle cx="18" cy="18" r="15.9" fill="none" stroke="currentColor" stroke-opacity=".15" stroke-width="3.4" pathLength="100"/><circle class="anillo-v" cx="18" cy="18" r="15.9" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" pathLength="100" stroke-dasharray="${Math.round(Math.min(1, leidosHoy() / p.meta) * 100)} 100" transform="rotate(-90 18 18)"/></svg><b>${Math.min(leidosHoy(), p.meta)}/${p.meta}</b></div>
         <div><div class="t">Meta de hoy</div><p class="suave m0t">${leidosHoy() >= p.meta ? '¡Meta cumplida! Gracias por dedicarle tiempo a la Palabra.' : 'Lee ' + p.meta + (p.meta === 1 ? ' capítulo' : ' capítulos') + ' hoy.'}</p>
         <div class="chips chips-meta" role="group" aria-label="Capítulos por día">${[1, 2, 3, 5].map((x) => `<button type="button" class="chip${p.meta === x ? ' on' : ''}" data-meta="${x}" aria-pressed="${p.meta === x}">${x}</button>`).join('')}</div></div></div>
+      <button type="button" class="card invita" data-pf="invitar"><span class="invita-ic" aria-hidden="true">${svg('compartir', 26)}</span><span class="invita-txt"><b>Invita a un amigo</b><small>Regálale un momento de paz con la Palabra</small></span><span class="flecha" aria-hidden="true">›</span></button>
       <h2 class="sep">Mis logros</h2>${logrosHTML()}
       <h2 class="sep">Sobre mí</h2>
       <div class="card"><label for="pfn">Cómo quieres que te llame</label><input id="pfn" type="text" maxlength="30" value="${esc(p.n)}" placeholder="${esc((id && id.nombre) || 'Tu nombre')}" autocomplete="given-name">
@@ -1776,12 +1777,50 @@
     document.querySelectorAll('[data-e]').forEach((b) => b.addEventListener('click', () => { const q = perfilLeer(); perfilGuardar({ e: b.dataset.e }); vibra(); vistaPerfil(); }));
     document.querySelectorAll('[data-pf]').forEach((b) => b.addEventListener('click', () => ({
       min: () => vistaMinisterios(id), ora: () => vistaOracion(id), priv: () => vistaPrivacidad(id), ayu: () => vistaAyuda(id),
-      temas: vistaTemas, pastor: () => (pastorLeer() ? ir('pastor') : vistaPastorEntrar()), unir: () => codigoHoja(), llave: vistaLlave, cuenta: () => vistaCuenta('entrar'), nada: () => {},
+      invitar: invitarHoja, temas: vistaTemas, pastor: () => (pastorLeer() ? ir('pastor') : vistaPastorEntrar()), unir: () => codigoHoja(), llave: vistaLlave, cuenta: () => vistaCuenta('entrar'), nada: () => {},
       salir: () => { if (confirm('¿Cerrar sesión? Tus notas personales quedan guardadas en tu cuenta y vuelven cuando entres.')) cerrarSesionCuenta(); }
     }[b.dataset.pf] || (() => {}))()));
     if (id) misMinisterios(id).then((r) => { const c = $('#perfMin'); if (!c || !r.ok) return; c.innerHTML = r.lista.map((x) => `<span class="min-chip" data-mc="${esc(x.color)}">${esc(x.icono || '👥')} ${esc(x.nombre)}</span>`).join(''); pintaColores(); });
   }
   const vibra = () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) { /* sin vibración */ } };
+
+  // ---------- F888 · Invitar a un amigo (WhatsApp o correo). No se guarda ni se envía a nuestros servidores ningún número ni correo. ----------
+  // <invitar>
+  const invitaUrl = () => { try { const l = window.location; return String(l.origin + l.pathname).replace(/index\.html$/, ''); } catch (e) { return ''; } };
+  const invitaTexto = (amigo, yo, url) => (amigo ? '¡Hola ' + amigo + '! ' : '¡Hola! ') + 'Estoy usando Tierra Buena para leer la Biblia un ratito cada día y me está haciendo mucho bien 🌱 Quiero que la pruebes: es gratis y en un minuto ya estás adentro.\n\nEntra aquí: ' + url + (yo ? '\n\n— ' + yo : '');
+  const invitaNumero = (t) => { let d = String(t || '').replace(/\D/g, ''); if (d.slice(0, 2) === '00') d = d.slice(2); if (/^9\d{8}$/.test(d)) d = '56' + d; else if (d[0] === '0') d = d.replace(/^0+/, ''); return d.length >= 8 && d.length <= 15 ? d : ''; };
+  const invitaCorreoOk = (t) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(t || '').trim());
+  const invitaWa = (num, txt) => 'https://wa.me/' + (num || '') + '?text=' + encodeURIComponent(txt);
+  const invitaMail = (correo, txt) => 'mailto:' + (correo || '').trim() + '?subject=' + encodeURIComponent('Te invito a Tierra Buena 🌱') + '&body=' + encodeURIComponent(txt);
+  // </invitar>
+  function invitarHoja() {
+    const p = perfilLeer(), id = leer(K_ID), yo = p.n || (id && id.nombre) || '';
+    const h = nuevoEl(`<div class="hoja" id="hojaInvitar" role="dialog" aria-modal="true" aria-label="Invita a un amigo"><div class="hoja-in hoja-inv"><div class="hoja-asa" aria-hidden="true"></div>
+      <div class="inv-sobre" aria-hidden="true">${svg('compartir', 30)}</div><h3>Invita a un amigo</h3><p class="suave">Regálale un momento de paz con la Palabra. Tu amigo entra gratis y empieza en un minuto.</p>
+      <label for="invNom">¿Cómo se llama? <span class="suave">(opcional)</span></label><input id="invNom" type="text" maxlength="30" autocomplete="off" placeholder="Ej. Camila">
+      <label for="invTel">Su WhatsApp <span class="suave">(opcional)</span></label><input id="invTel" type="tel" inputmode="tel" autocomplete="off" placeholder="Ej. 9 1234 5678">
+      <label for="invCor">Su correo <span class="suave">(opcional)</span></label><input id="invCor" type="email" inputmode="email" autocomplete="off" autocapitalize="none" placeholder="amigo@correo.com">
+      <p id="invErr" class="error" role="alert" hidden></p>
+      <div class="inv-msg" aria-live="polite"><small>Así llegará tu mensaje</small><p id="invTxt"></p></div>
+      <a class="btn inv-wa" id="invWa" target="_blank" rel="noopener">Enviar por WhatsApp</a><a class="btn inv-mail" id="invMail" target="_blank" rel="noopener">Enviar por correo</a>
+      <div class="hoja-bt"><button type="button" class="btn sec" id="invCopiar">Copiar mensaje</button><button type="button" class="btn sec" id="invX">Cerrar</button></div>
+      <p class="suave inv-priv">No guardamos su número ni su correo.</p></div></div>`);
+    if (!h) return;
+    document.body.appendChild(h);
+    const cerrar = () => { try { h.remove(); } catch (e) { /* nada */ } };
+    const txt = () => invitaTexto($('#invNom').value.trim(), yo, invitaUrl());
+    const pinta = () => {
+      const t = txt(), tel = $('#invTel').value.trim(), cor = $('#invCor').value.trim(), num = invitaNumero(tel), e = $('#invErr');
+      $('#invTxt').textContent = t; $('#invWa').href = invitaWa(num, t); $('#invMail').href = invitaMail(invitaCorreoOk(cor) ? cor : '', t);
+      const mal = (tel && !num) ? 'Ese número no parece completo. Puedes dejarlo vacío y elegir el contacto en WhatsApp.' : (cor && !invitaCorreoOk(cor)) ? 'Ese correo no parece completo. Puedes dejarlo vacío y elegirlo en tu app de correo.' : '';
+      e.textContent = mal; e.hidden = !mal;
+    };
+    ['invNom', 'invTel', 'invCor'].forEach((x) => $('#' + x).addEventListener('input', pinta));
+    ['invWa', 'invMail'].forEach((x) => $('#' + x).addEventListener('click', () => { vibra(); confeti($('#' + x)); toastBib('¡Gracias por compartir la Palabra!'); }));
+    $('#invCopiar').onclick = () => { const t = txt(); try { navigator.clipboard.writeText(t).then(() => toastBib('Mensaje copiado')); } catch (e) { toastBib('No pudimos copiarlo. Mantén el dedo sobre el mensaje.'); } };
+    $('#invX').onclick = cerrar; h.addEventListener('click', (e) => { if (e && e.target === h) cerrar(); });
+    pinta();
+  }
 
   // Luciérnagas suaves de fondo (efecto de libro de cuentos). Solo CSS; se apagan con «reducir movimiento».
   (function ambiente() {
@@ -2132,11 +2171,9 @@
       ${icoCodigoHTML()}
       <div class="ent-logo" aria-hidden="true"><i class="ent-aro"></i><i class="ent-aro a2"></i><span class="ent-hoja">${svg('hoja', 64)}</span></div>
       <h1 class="ent-marca">Tierra Buena</h1><p class="ent-lema">Donde la Palabra echa raíz</p>
-      <div class="ent-pie"><button type="button" class="btn" id="onbEmpezar">Empezar</button>
-      <p class="ent-links"><button type="button" class="enlace" id="onbYa">Ya tengo cuenta</button></p></div></section>`;
+      <div class="ent-pie"><button type="button" class="btn" id="onbEmpezar">Empezar</button></div></section>`;   // F888: la portada solo ofrece «Empezar»; «Ya tengo cuenta» aparece al final de las preguntas
     ligaCodigo();
     $('#onbEmpezar').onclick = () => onbPregunta(0);
-    $('#onbYa').onclick = () => onbCuentaIr('entrar');
   }
   function onbPregunta(i) {
     clearTimeout(onbT); entrandoPon(true);
@@ -2180,6 +2217,7 @@
       <button type="button" class="btn sec" id="onbCambiar">Cambiar mis respuestas</button>
       <p class="ent-links"><button type="button" class="enlace" id="onbYa">Ya tengo cuenta</button></p>
       <p class="ent-links"><button type="button" class="enlace" id="onbLuego">Ahora no, solo quiero leer</button></p></section>`;
+    try { setTimeout(() => { const b = $('#onbSig'); if (b) confeti(b); }, 450); } catch (e) { /* sin celebración */ }
     $('#onbAtras').onclick = () => onbPregunta(ONB_P.length - 1);
     $('#onbCambiar').onclick = () => onbPregunta(0);
     $('#onbPlan').addEventListener('change', (e) => { onbEstado.plan = !!(e && e.target ? e.target.checked : $('#onbPlan').checked); });
@@ -2253,6 +2291,12 @@
       }).observe(pan, { childList: true });
     } catch (e) { /* sin capa premium: la app funciona igual */ }
   })();
+  try {   // F888 · modo prueba: abrir la app con ?reiniciar=1 borra lo guardado en este dispositivo y vuelve a la primera vez
+    if (/[?&]reiniciar=1/.test(String((window.location && window.location.search) || ''))) {
+      Object.keys(localStorage).filter((k) => /^tb_movil_/.test(k)).forEach((k) => localStorage.removeItem(k));
+      if (window.history && history.replaceState) history.replaceState(null, '', window.location.pathname);
+    }
+  } catch (e) { /* sin modo prueba */ }
   if (!hayOnb() && !codigoDeEnlace()) onbSplash(); else ir('iglesia');   // F884: solo la primera vez pasa por la entrada guiada
   syncInicio();
 })();
