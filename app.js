@@ -218,6 +218,7 @@
   }
   async function despuesDeCuenta(user) {
     guardar(K_CUENTA, { correo: user.email || '' });
+    try { if (hayAuth() && SB.rpc) await SB.rpc('cuenta_registrar', { p_plataforma: 'movil' }); } catch (e) { /* F879: el registro es un extra; no frena la entrada */ }
     await syncBajar(user);                          // F872: trae los avances de la cuenta (y sube los de este teléfono si la cuenta está vacía)
     const local = leer(K_ID), enCuenta = iglesiaDeCuenta(user);
     if (enCuenta && !(local && local.codigo === enCuenta.codigo && local.clave === enCuenta.clave)) {
