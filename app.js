@@ -1050,10 +1050,10 @@
       <h1>Hoy</h1><div class="hoy-verso" id="hoyVerso"><span class="esqueleto"></span><span class="esqueleto corto"></span></div>
       ${racha ? `<p class="hoy-racha">${svg('llama', 18)}<span>${racha === 1 ? '1 día leyendo la Palabra' : racha + ' días seguidos leyendo la Palabra'}</span></p>` : ''}</div>
       <h2 class="sep">Tu Palabra</h2>
-      <div class="grid">${inf ? activa('▶️', 'Seguir leyendo', esc(inf[1]) + ' ' + Number(ult.cap) + ' · donde te quedaste', 'seguir') : ''}${activa('📖', 'Leer la Biblia', 'Reina-Valera 1909. Los libros que lees quedan para leer sin internet.', 'biblia')}${activa('🔖', 'Mi Biblia', 'Tus resaltes, notas y versículos guardados.', 'mibiblia')}${activa('🗓', 'Planes de lectura', 'Un poquito cada día, con tu avance.', 'planes')}${activa('✨', 'Versículo de hoy', 'Una frase para empezar el día.', 'versiculo')}${activa('📜', 'Fábula del mes', 'Un relato corto para practicar, capítulo a capítulo.', 'fabula')}</div>`;
+      <div class="grid">${activa('✨', 'Hoy lo hago', 'Leer es el principio: da un paso hoy.', 'hacer')}${inf ? activa('▶️', 'Seguir leyendo', esc(inf[1]) + ' ' + Number(ult.cap) + ' · donde te quedaste', 'seguir') : ''}${activa('📖', 'Leer la Biblia', 'Reina-Valera 1909. Los libros que lees quedan para leer sin internet.', 'biblia')}${activa('🔖', 'Mi Biblia', 'Tus resaltes, notas y versículos guardados.', 'mibiblia')}${activa('🗓', 'Planes de lectura', 'Un poquito cada día, con tu avance.', 'planes')}${activa('✨', 'Versículo de hoy', 'Una frase para empezar el día.', 'versiculo')}${activa('📜', 'Fábula del mes', 'Un relato corto para practicar, capítulo a capítulo.', 'fabula')}</div>`;
     document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => {
       const k = b.dataset.ir;
-      if (k === 'biblia') vistaBiblia(); else if (k === 'versiculo') vistaVersiculo(); else if (k === 'fabula') vistaFabula(); else if (k === 'mibiblia') vistaMiBiblia(); else if (k === 'planes') vistaPlanes(); else if (k === 'seguir' && inf) vistaCapitulo(ult.cod, Number(ult.cap));
+      if (k === 'hacer') vistaHacer(); else if (k === 'biblia') vistaBiblia(); else if (k === 'versiculo') vistaVersiculo(); else if (k === 'fabula') vistaFabula(); else if (k === 'mibiblia') vistaMiBiblia(); else if (k === 'planes') vistaPlanes(); else if (k === 'seguir' && inf) vistaCapitulo(ult.cod, Number(ult.cap));
     }));
     // F871: el versículo del día aparece arriba, en «Hoy» (si no hay internet ni copia guardada, la zona se oculta sola).
     (async () => {
@@ -1295,12 +1295,14 @@
       <div class="tamano" role="group" aria-label="Tamaño de la letra"><button type="button" class="btn sec chico" id="menos" aria-label="Letra más chica">A−</button><button type="button" class="btn sec chico" id="mas" aria-label="Letra más grande">A+</button><button type="button" class="btn sec chico" id="aparBtn" aria-label="Apariencia de la lectura">${svg('texto', 20)} Aa</button><button type="button" class="btn sec chico${aud.on && aud.cod === cod && aud.cap === cap ? ' on' : ''}" id="audBtn" aria-label="Escuchar este capítulo">${svg('audifonos', 20)} Escuchar</button></div>
       <p class="lec-pista suave">Toca un versículo: resáltalo con color, escribe una nota, guárdalo o hazle una imagen.</p>
       <div class="lectura ${dir ? 'desde-' + dir : ''}" id="lectura">${versos.map((t, i) => `<p class="vers" data-v="${i + 1}" role="button" tabindex="0" aria-pressed="false"><sup>${i + 1}</sup> ${esc(t)}</p>`).join('')}</div>
+      <div class="card hac-lector"><b>¿Qué harás con lo que leíste?</b><p class="suave m0t">Leer es el principio. Llévalo a una acción pequeña.</p><button type="button" class="btn chico" id="hacerBtn">${svg('chispas', 18)} Llevarlo a la acción</button></div>
       <div class="navcap">${ant ? `<button type="button" class="btn sec chico" id="ant">‹ ${esc(nombre(ant))}</button>` : '<span></span>'}${sig ? `<button type="button" class="btn chico" id="sig">${esc(nombre(sig))} ›</button>` : ''}</div>`;
     volverA(inf[1], () => vistaLibro(cod));
     lec = { cod, cap, versos, sel: new Set() };
     try { $('#lectura').style.fontSize = tam + 'px'; } catch (e) { /* sin estilo */ }
     const cambiarTam = (d) => { const n = Math.min(30, Math.max(16, (Number(leer(K_BIBTAM)) || 18) + d)); guardar(K_BIBTAM, n); $('#lectura').style.fontSize = n + 'px'; };
     $('#menos').onclick = () => cambiarTam(-2); $('#mas').onclick = () => cambiarTam(2);
+    $('#hacerBtn').onclick = () => vistaHacer({ ref: inf[1] + ' ' + cap }, () => vistaCapitulo(cod, cap));
     $('#aparBtn').onclick = () => aparienciaHoja(false);
     $('#audBtn').onclick = () => { vibra(); if (aud.on && aud.cod === cod && aud.cap === cap) audParar(); else audEmpezar(cod, cap, 0); };
     if (!leer(K_APAR)) { guardar(K_APAR, 1); setTimeout(() => aparienciaHoja(true), 500); }   // primera vez en la Biblia: ofrece elegir fondo, letra y tamaño
@@ -1363,10 +1365,64 @@
   };
   function vistaVida() {
     $('#pantalla').innerHTML = `<h1>Vivir lo que aprendemos</h1><div class="filete"></div>
-      <h2>Con Dios y conmigo</h2><div class="grid">${activa('🕊️', 'Mi oración', 'Tu diario de peticiones, solo para ti.', 'mioracion')}${activa('🎵', 'Música', 'Letras para cantar y para leer en el culto.', 'musica')}${activa('🌱', 'Mi crecimiento', 'Pequeños pasos de cada semana.', 'crecimiento')}${activa('🧠', 'Salud mental', 'Respirar, un chequeo y dónde pedir ayuda.', 'salud')}</div>
+      <div class="grid">${activa('✨', 'Hoy lo hago', 'Un paso pequeño hoy. Intentarlo ya cuenta.', 'hacer')}</div>
+      <h2 class="sep">Con Dios y conmigo</h2><div class="grid">${activa('🕊️', 'Mi oración', 'Tu diario de peticiones, solo para ti.', 'mioracion')}${activa('🎵', 'Música', 'Letras para cantar y para leer en el culto.', 'musica')}${activa('🌱', 'Mi crecimiento', 'Pequeños pasos de cada semana.', 'crecimiento')}${activa('🧠', 'Salud mental', 'Respirar, un chequeo y dónde pedir ayuda.', 'salud')}</div>
       <h2 class="sep">Con los demás</h2><div class="grid">${activa('💡', 'Ideas y proyectos', 'Ideas para servir a tu comunidad.', 'ideas')}${activa('🧰', 'Proyectos listos', 'Ya pensados: lugar, presupuesto y personas.', 'proyectos')}</div>
       <h2 class="sep">Para aprender</h2><div class="grid">${activa('🎓', 'Aprender', 'Cursos gratuitos en internet para servir mejor, con tu avance.', 'aprender')}</div>`;
-    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ musica: vistaMusica, mioracion: vistaMiOracion, crecimiento: vistaCrecimiento, ideas: vistaIdeas, salud: vistaSalud, proyectos: vistaProyectos, aprender: vistaAprender }[b.dataset.ir] || vistaVida)()));
+    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ hacer: () => vistaHacer(), musica: vistaMusica, mioracion: vistaMiOracion, crecimiento: vistaCrecimiento, ideas: vistaIdeas, salud: vistaSalud, proyectos: vistaProyectos, aprender: vistaAprender }[b.dataset.ir] || vistaVida)()));
+  }
+
+  // ---------- F891 · «Hoy lo hago»: la Palabra se vive ----------
+  // Principios de Tierra Buena: (1) accionar, no quedarse con lo aprendido; (2) mejorar la sociedad desde la acción de cada persona;
+  // (3) ver lo que falta en otros sirve para saber cómo ayudarlos, nunca para hablar mal; (5) compartir lo que hacemos y animar a intentarlo.
+  // Todo queda en este teléfono; compartir es una elección de la persona (nunca se sube nada solo).
+  const K_HACER = 'tb_movil_acciones';
+  const HAC_TIPOS = [['yo', 'Mejorar yo', 'corazon'], ['otros', 'Ayudar a alguien', 'gente'], ['sociedad', 'Mi comunidad', 'iglesia']];
+  const HAC_IDEAS = {
+    yo: ['Pedir perdón a alguien', 'Dejar un mal hábito por hoy', 'Orar 5 minutos en silencio', 'Dormir a mi hora'],
+    otros: ['Llamar a alguien que está solo', 'Escuchar sin interrumpir', 'Llevarle comida a un vecino', 'Ofrecer mi ayuda en la iglesia'],
+    sociedad: ['Recoger basura de mi calle', 'Visitar a un adulto mayor', 'Donar ropa que no uso', 'Cuidar un espacio de todos']
+  };
+  const hacLista = () => { const l = leer(K_HACER); return Array.isArray(l) ? l : []; };
+  const hacGuardar = (l) => guardar(K_HACER, l.slice(-300));
+  const nHechas = () => hacLista().filter((x) => x.est === 'hecho' || x.est === 'intente').length;
+  const hacTexto = (x) => (x.est === 'intente' ? 'Hoy lo intenté: ' : 'Hoy lo hice: ') + x.t + ' 🌱\nEmpecemos por nosotros. #TierraBuena';
+  function vistaHacer(pre, atras) {
+    const todas = hacLista(), mes = claveMes();
+    const pend = todas.filter((x) => x.est === 'pend'), fin = todas.filter((x) => x.est !== 'pend').reverse().slice(0, 8);
+    const delMes = todas.filter((x) => x.est !== 'pend' && String(x.fin || '').slice(0, 7) === mes);
+    let tipo = (pre && pre.tipo) || 'otros';
+    const volverFn = atras || vistaVida;
+    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ ${atras ? 'Volver' : 'Vida'}</button><h1>Hoy lo hago</h1><div class="filete"></div>
+      <p class="suave">Leer es el principio. Aquí damos el paso: algo pequeño, hoy, que mejora tu vida y la de los demás. Intentarlo ya cuenta.</p>
+      <div class="stats hac-stats"><div class="stat"><span class="stat-ic">${svg('check', 22)}</span><b>${delMes.length}</b><small>pasos este mes</small></div><div class="stat"><span class="stat-ic">${svg('trofeo', 22)}</span><b>${nHechas()}</b><small>en total</small></div></div>
+      <div class="card hac-nueva"><h3 class="m0">${pre && pre.ref ? 'Lo que leí en ' + esc(pre.ref) + ': ¿qué haré?' : '¿Qué vas a hacer hoy?'}</h3>
+        <div class="chips hac-tipos" role="group" aria-label="Tipo de acción">${HAC_TIPOS.map((t) => `<button type="button" class="chip${t[0] === tipo ? ' on' : ''}" data-tipo="${t[0]}" aria-pressed="${t[0] === tipo}">${esc(t[1])}</button>`).join('')}</div>
+        <div class="hac-ideas" id="hacIdeas"></div>
+        <label for="hacTxt" class="sr">Mi acción</label><input id="hacTxt" type="text" maxlength="140" placeholder="Algo pequeño y concreto" autocomplete="off" value="${esc((pre && pre.texto) || '')}">
+        <button type="button" class="btn" id="hacOk">Me comprometo</button></div>
+      <h2 class="sep">Mis compromisos</h2><div id="hacPend">${pend.length ? pend.map((x) => `<div class="card item hac-pend"><p class="m0">${esc(x.t)}</p>${x.nec ? `<small class="suave">Necesita: ${esc(x.nec)}</small>` : ''}<div class="hac-fila"><button type="button" class="btn chico" data-hec="${esc(x.id)}">Lo hice</button><button type="button" class="btn sec chico" data-int="${esc(x.id)}">Lo intenté</button><button type="button" class="enlace" data-quitar="${esc(x.id)}">Quitar</button></div></div>`).join('') : '<p class="suave">Aún no tienes ninguno. Elige uno arriba y empieza.</p>'}</div>
+      <div class="card hac-mirar"><h3 class="m0">${svg('foco', 20)} Mirar para ayudar</h3>
+        <p class="suave m0t">Ver lo que falta a nuestro alrededor sirve para saber cómo ayudar, no para hablar mal de nadie. Escribe la necesidad, <b>sin nombres</b>.</p>
+        <button type="button" class="btn sec" id="hacMirar">Quiero ayudar con algo que noté</button><div id="hacMirarForm" hidden>
+          <label for="mQue">¿Qué necesidad noté?</label><input id="mQue" type="text" maxlength="120" autocomplete="off" placeholder="Ej. Un vecino mayor vive solo">
+          <label for="mNec">¿Qué necesita?</label><input id="mNec" type="text" maxlength="120" autocomplete="off" placeholder="Ej. Compañía y alguien que le haga las compras">
+          <label for="mYo">¿Qué puedo hacer yo?</label><input id="mYo" type="text" maxlength="140" autocomplete="off" placeholder="Ej. Visitarlo el sábado y llevarle pan">
+          <button type="button" class="btn" id="mOk">Comprometerme a ayudar</button></div></div>
+      ${fin.length ? `<h2 class="sep">Lo que ya hice</h2><div id="hacFin">${fin.map((x) => `<div class="card item hac-fin"><span class="hac-sello ${x.est}">${x.est === 'hecho' ? 'Lo hice' : 'Lo intenté'}</span><p class="m0t">${esc(x.t)}</p><div class="hac-fila"><small class="suave">${esc(fecha(x.fin))}</small><button type="button" class="btn sec chico" data-comp="${esc(x.id)}">${svg('compartir', 18)} Compartir</button></div></div>`).join('')}</div>` : ''}`;
+    volverA(atras ? 'Volver' : 'Vida', volverFn);
+    const pintaIdeas = () => { const c = $('#hacIdeas'); if (!c) return; c.innerHTML = (HAC_IDEAS[tipo] || []).map((t) => `<button type="button" class="chip suave-chip" data-idea="${esc(t)}">${esc(t)}</button>`).join(''); c.querySelectorAll('[data-idea]').forEach((b) => b.addEventListener('click', () => { $('#hacTxt').value = b.dataset.idea; vibra(); })); };
+    pintaIdeas();
+    document.querySelectorAll('[data-tipo]').forEach((b) => b.addEventListener('click', () => { tipo = b.dataset.tipo; vibra(); document.querySelectorAll('[data-tipo]').forEach((x) => { clase(x, 'on', x === b); x.setAttribute('aria-pressed', String(x === b)); }); pintaIdeas(); }));
+    const nueva = (t, tp, ref) => { const l = hacLista(); l.push({ id: 'h' + Date.now().toString(36) + Math.floor(Math.random() * 1e3), t: String(t).trim().slice(0, 140), tipo: tp, ref: ref || '', ini: new Date().toISOString(), est: 'pend' }); hacGuardar(l); };
+    $('#hacOk').onclick = () => { const t = $('#hacTxt').value.trim(); if (!t) { toastBib('Escribe qué vas a hacer'); return; } nueva(t, tipo, pre && pre.ref); vibra(); confeti($('#hacOk')); toastBib('Compromiso guardado. ¡Tú puedes!'); setTimeout(() => vistaHacer(null, atras), 700); };
+    $('#hacMirar').onclick = () => { $('#hacMirarForm').hidden = false; $('#hacMirar').hidden = true; try { $('#mQue').focus(); } catch (e) { /* nada */ } };
+    $('#mOk').onclick = () => { const q = $('#mQue').value.trim(), n = $('#mNec').value.trim(), y = $('#mYo').value.trim(); if (!y) { toastBib('Cuéntanos qué puedes hacer tú'); return; } nueva(y, 'mirar', ''); const l = hacLista(), u = l[l.length - 1]; if (u) { u.vi = q.slice(0, 120); u.nec = n.slice(0, 120); hacGuardar(l); } toastBib('Mirar para ayudar: ¡gracias por actuar!'); setTimeout(() => vistaHacer(null, atras), 600); };
+    const cierra = (id, est) => { const l = hacLista(), x = l.find((y) => y.id === id); if (!x) return; x.est = est; x.fin = new Date().toISOString(); hacGuardar(l); };
+    document.querySelectorAll('[data-hec]').forEach((b) => b.addEventListener('click', () => { cierra(b.dataset.hec, 'hecho'); vibra(); confeti(b); toastBib('¡Lo hiciste! Así se mejora el mundo'); setTimeout(() => vistaHacer(null, atras), 800); }));
+    document.querySelectorAll('[data-int]').forEach((b) => b.addEventListener('click', () => { cierra(b.dataset.int, 'intente'); vibra(); toastBib('Intentarlo ya es avanzar. Sigue.'); setTimeout(() => vistaHacer(null, atras), 700); }));
+    document.querySelectorAll('[data-quitar]').forEach((b) => b.addEventListener('click', () => { hacGuardar(hacLista().filter((x) => x.id !== b.dataset.quitar)); vistaHacer(null, atras); }));
+    document.querySelectorAll('[data-comp]').forEach((b) => b.addEventListener('click', async () => { const x = hacLista().find((y) => y.id === b.dataset.comp); if (!x) return; const t = hacTexto(x); try { if (navigator.share) await navigator.share({ text: t }); else { await navigator.clipboard.writeText(t); toastBib('Copiado: pégalo donde quieras animar a otros'); } } catch (e) { /* se cerró el menú */ } }));
   }
 
 
@@ -1777,6 +1833,9 @@
     ['guardado', 'Guardián', 'Guardaste un versículo', 'marcador', () => lista(K_MARC).length >= 1],
     ['plan', 'Plan completo', 'Terminaste un plan de lectura', 'trofeo', () => PLANES.some((pl) => { const e = planEstado(pl.id); return e && e.h.length >= pl.dias.length; })],
     ['oracion', 'Orante', 'Escribiste en Mi oración', 'corazon', () => lista(K_MIORACION).length >= 1],
+    ['hizo1', 'Manos a la obra', 'Diste tu primer paso de acción', 'chispas', () => nHechas() >= 1],
+    ['hizo10', 'Constructor', '10 pasos de acción', 'trofeo', () => nHechas() >= 10],
+    ['ayuda', 'Ojo que ayuda', 'Te comprometiste a ayudar con algo que notaste', 'foco', () => hacLista().some((x) => x.tipo === 'mirar')],
     ['cancion', 'Cantor', 'Marcaste una canción favorita', 'nota', () => lista(K_CFAV).length >= 1]
   ];
   const logrosHTML = () => `<div class="logros">${LOGROS.map((l) => { const on = l[4](); return `<div class="logro${on ? ' on' : ''}" title="${esc(l[2])}"><span class="logro-ic">${svg(on ? l[3] : 'candado', 22)}</span><b>${esc(l[1])}</b><small>${esc(l[2])}</small></div>`; }).join('')}</div>`;
@@ -1826,6 +1885,7 @@
       <div class="card meta-hoy"><div class="anillo" role="img" aria-label="Meta de hoy: ${Math.min(leidosHoy(), p.meta)} de ${p.meta}"><svg viewBox="0 0 36 36" width="64" height="64" aria-hidden="true"><circle cx="18" cy="18" r="15.9" fill="none" stroke="currentColor" stroke-opacity=".15" stroke-width="3.4" pathLength="100"/><circle class="anillo-v" cx="18" cy="18" r="15.9" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" pathLength="100" stroke-dasharray="${Math.round(Math.min(1, leidosHoy() / p.meta) * 100)} 100" transform="rotate(-90 18 18)"/></svg><b>${Math.min(leidosHoy(), p.meta)}/${p.meta}</b></div>
         <div><div class="t">Meta de hoy</div><p class="suave m0t">${leidosHoy() >= p.meta ? '¡Meta cumplida! Gracias por dedicarle tiempo a la Palabra.' : 'Lee ' + p.meta + (p.meta === 1 ? ' capítulo' : ' capítulos') + ' hoy.'}</p>
         <div class="chips chips-meta" role="group" aria-label="Capítulos por día">${[1, 2, 3, 5].map((x) => `<button type="button" class="chip${p.meta === x ? ' on' : ''}" data-meta="${x}" aria-pressed="${p.meta === x}">${x}</button>`).join('')}</div></div></div>
+      <button type="button" class="card hac-perfil" data-pf="hacer"><span class="hac-perfil-n">${nHechas()}</span><span class="invita-txt"><b>Pasos de acción</b><small>${nHechas() ? 'Lo que has hecho por ti, por otros y por tu comunidad' : 'Empieza hoy: un paso pequeño cuenta'}</small></span><span class="flecha" aria-hidden="true">›</span></button>
       <button type="button" class="card invita" data-pf="invitar"><span class="invita-ic" aria-hidden="true">${svg('compartir', 26)}</span><span class="invita-txt"><b>Invita a un amigo</b><small>Regálale un momento de paz con la Palabra</small></span><span class="flecha" aria-hidden="true">›</span></button>
       <h2 class="sep">Mis logros</h2>${logrosHTML()}
       <h2 class="sep">Sobre mí</h2>
@@ -1849,7 +1909,7 @@
     document.querySelectorAll('[data-e]').forEach((b) => b.addEventListener('click', () => { const q = perfilLeer(); perfilGuardar({ e: b.dataset.e }); vibra(); vistaPerfil(); }));
     document.querySelectorAll('[data-pf]').forEach((b) => b.addEventListener('click', () => ({
       min: () => vistaMinisterios(id), ora: () => vistaOracion(id), priv: () => vistaPrivacidad(id), ayu: () => vistaAyuda(id),
-      invitar: invitarHoja, temas: vistaTemas, pastor: () => (pastorLeer() ? ir('pastor') : vistaPastorEntrar()), unir: () => codigoHoja(), llave: vistaLlave, cuenta: () => vistaCuenta('entrar'), nada: () => {},
+      hacer: () => vistaHacer(null, vistaPerfil), invitar: invitarHoja, temas: vistaTemas, pastor: () => (pastorLeer() ? ir('pastor') : vistaPastorEntrar()), unir: () => codigoHoja(), llave: vistaLlave, cuenta: () => vistaCuenta('entrar'), nada: () => {},
       salir: () => { if (confirm('¿Cerrar sesión? Tus notas personales quedan guardadas en tu cuenta y vuelven cuando entres.')) cerrarSesionCuenta(); }
     }[b.dataset.pf] || (() => {}))()));
     if (id) misMinisterios(id).then((r) => { const c = $('#perfMin'); if (!c || !r.ok) return; c.innerHTML = r.lista.map((x) => `<span class="min-chip" data-mc="${esc(x.color)}">${esc(x.icono || '👥')} ${esc(x.nombre)}</span>`).join(''); pintaColores(); });
@@ -2212,8 +2272,8 @@
   const clase = (e, c, on) => { try { e.classList.toggle(c, on); } catch (x) { /* nada */ } };
   const ONB_P = [
     { id: 'nombre', texto: true, t: '¿Cómo te llamas?', a: 'Así te saludamos cada día.', ph: 'Tu nombre' },
-    { id: 'busca', multi: true, max: 3, t: '¿Qué te trae a Tierra Buena?', a: 'Elige hasta tres.', o: [['leer', 'libro', 'Leer la Biblia cada día'], ['orar', 'corazon', 'Orar y encontrar paz'], ['conocer', 'chispas', 'Conocer más a Dios'], ['iglesia', 'iglesia', 'Crecer con mi iglesia'], ['descansar', 'luna', 'Descansar en calma'], ['retos', 'estrella', 'Retos que me animen']] },
-    { id: 'info1', info: true, ic: 'gente', t: (r) => (r.nombre ? r.nombre + ', no vas solo' : 'No vas solo'), a: 'Tierra Buena te acompaña con la Palabra, la oración y tu iglesia. Cada día un paso pequeño.' },
+    { id: 'busca', multi: true, max: 3, t: '¿Qué te trae a Tierra Buena?', a: 'Elige hasta tres.', o: [['leer', 'libro', 'Leer la Biblia cada día'], ['orar', 'corazon', 'Orar y encontrar paz'], ['conocer', 'chispas', 'Conocer más a Dios'], ['iglesia', 'iglesia', 'Crecer con mi iglesia'], ['descansar', 'luna', 'Descansar en calma'], ['retos', 'estrella', 'Retos para poner en práctica']] },
+    { id: 'info1', info: true, ic: 'gente', t: (r) => (r.nombre ? r.nombre + ', aquí la Palabra se vive' : 'Aquí la Palabra se vive'), a: 'Leer es el principio. Cada día das un paso pequeño: algo que haces por ti, por alguien o por tu comunidad. Empezamos por nosotros.' },
     { id: 'exp', t: '¿Cómo es tu camino con la Biblia?', a: 'No hay respuesta mala.', o: [['nuevo', 'brote', 'Estoy empezando'], ['a_veces', 'libro', 'La leo de vez en cuando'], ['seguido', 'llama', 'La leo seguido'], ['profundo', 'rollo', 'Quiero profundizar']] },
     { id: 'animo', t: '¿Cómo está tu corazón hoy?', a: 'Lo usamos para elegir tu primera lectura.', o: [['paz', 'paloma', 'En paz'], ['cansado', 'luna', 'Cansado'], ['ansioso', 'viento', 'Con preocupación'], ['agradecido', 'corazon', 'Agradecido'], ['dudas', 'ayuda', 'Con dudas']] },
     { id: 'area', t: '¿En qué quieres crecer?', a: 'Elige lo que más necesitas ahora.', o: [['fe', 'llama', 'Mi fe'], ['paz', 'paloma', 'Mi paz interior'], ['familia', 'gente', 'Mi familia'], ['proposito', 'estrella', 'Mi propósito'], ['sabiduria', 'foco', 'Sabiduría para decidir']] },
@@ -2334,6 +2394,7 @@
         <div class="ent-fila"><span class="ent-fila-ic">${svg('chispas', 24)}</span><div><small>Tu ambiente</small><b>${esc(tm[1])}</b><span class="suave">${esc(tm[2])}</span></div></div>
         <div class="ent-fila"><span class="ent-fila-ic">${svg(r.mom === 'noche' ? 'luna' : 'sol', 24)}</span><div><small>Tu momento</small><b>${esc(mom ? mom[0] : 'Cuando puedas')}</b><span class="suave">${c.hora ? 'Te sugeriremos las ' + c.hora + '.' : 'Sin horario fijo.'}</span></div></div>
         <div class="ent-fila"><span class="ent-fila-ic">${svg('llama', 24)}</span><div><small>Tu meta</small><b>${c.meta} ${c.meta === 1 ? 'capítulo' : 'capítulos'} al día</b><span class="suave">Toda la Biblia en ${esc(onbRitmo(c.meta))}.</span></div></div>
+        <div class="ent-fila"><span class="ent-fila-ic">${svg('chispas', 24)}</span><div><small>Tu primer paso de acción</small><b>Hoy lo hago</b><span class="suave">Cada día un paso pequeño para vivir lo que lees.</span></div></div>
       </div>
       <label class="chk"><input type="checkbox" id="onbPlan"${onbEstado.plan ? ' checked' : ''}><span>Empezar «${esc(pl.n)}» al entrar</span></label>
       <button type="button" class="btn" id="onbSig">Crear mi cuenta</button>
