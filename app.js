@@ -54,7 +54,7 @@
   // ---------- F872 · Avances por cuenta (nube) ----------
   // Lo personal (oración, crecimiento, ideas, cursos, lectura, acción del mes) se guarda en el teléfono Y en la cuenta
   // (tabla public.avances_cuenta, solo la ve su dueño: docs/sql/SQL_AVANCES_CUENTA.sql). Sin sesión o sin la tabla, todo sigue local.
-  const SYNC_CLAVES = ['tb_movil_mi_oracion', 'tb_movil_crecimiento', 'tb_movil_ideas_fav', 'tb_movil_aprender', 'tb_movil_biblia_ultimo', 'tb_movil_accion_mes', 'tb_movil_perfil'];
+  const SYNC_CLAVES = ['tb_movil_mi_oracion', 'tb_movil_crecimiento', 'tb_movil_ideas_fav', 'tb_movil_aprender', 'tb_movil_biblia_ultimo', 'tb_movil_accion_mes', 'tb_movil_perfil', 'tb_movil_racha', 'tb_movil_biblia_res', 'tb_movil_canciones_mias', 'tb_movil_canciones_fav', 'tb_movil_biblia_col', 'tb_movil_biblia_notas', 'tb_movil_biblia_marc', 'tb_movil_leidos', 'tb_movil_planes'];
   const K_SYNC = 'tb_movil_sync';
   const sync = { estado: 'local', cuando: null, timer: null, ocupado: false };   // estado: local | ok | pendiente | falta | error
   const metaLeer = () => { const m = leer(K_SYNC); return m && typeof m === 'object' ? { dueno: m.dueno || null, t: m.t || {}, d: m.d || {}, off: m.off === true } : { dueno: null, t: {}, d: {}, off: false }; };
@@ -158,13 +158,35 @@
     paloma: '<path d="M16 7h.01"/><path d="M3.400 18H12a8 8 0 0 0 8-8V7a4 4 0 0 0-7.300-2.300L2 20"/><path d="m20 7 2 .5-2 .5M10 18v3M14 17.800V21M7 18a6 6 0 0 0 3.800-10.600"/>',
     llama: '<path d="M8.500 14.500A2.500 2.500 0 0 0 11 12c0-1.400-.5-2-1-3-1.100-2.100-.2-4.100 2-6 .5 2.500 2 4.900 4 6.500 2 1.600 3 3.500 3 5.500a7 7 0 1 1-14 0c0-1.200.4-2.300 1-3a2.500 2.500 0 0 0 2.500 2.500z"/>',
     hoja: '<path d="M11 20A7 7 0 0 1 9.800 6.100C15.500 5 17 4.500 19 2c1 2 2 4.200 2 8 0 5.500-4.800 10-10 10z"/><path d="M2 21c0-3 1.900-5.500 5-6.700 3-1.200 5.500-2.300 7-5.300"/>',
+    marcador: '<path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/>',
+    imagen: '<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/>',
+    copiar: '<rect x="8" y="8" width="14" height="14" rx="2"/><path d="M4 16a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2"/>',
+    compartir: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/>',
+    x: '<path d="M18 6 6 18M6 6l12 12"/>',
+    trofeo: '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.7V17c0 .6-.5 1-1.2 1.2C7.8 18.7 7 20.2 7 22M14 14.7V17c0 .6.5 1 1.2 1.2 1 .5 1.8 2 1.8 3.8M18 2H6v7a6 6 0 0 0 12 0z"/>',
+    nota: '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    papelera: '<path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6"/>',
     luna: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/>',
     sol: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.900 4.900l1.400 1.400M17.700 17.700l1.400 1.400M2 12h2M20 12h2M4.900 19.100l1.400-1.400M17.700 6.300l1.400-1.400"/>'
   };
-  const EMO = { '📖': 'libro', '✨': 'chispas', '📜': 'rollo', '🌱': 'brote', '🙏': 'corazon', '🕍': 'iglesia', '⛪': 'iglesia', '🔑': 'llave', '✉': 'correo', '🔒': 'candado', '📣': 'altavoz', '📅': 'calendario', '💡': 'foco', '🎓': 'birrete', '🌟': 'estrella', '❓': 'ayuda', '▶': 'play', '📝': 'pluma', '🤝': 'gente', '🧠': 'mente', '🫁': 'viento', '🧱': 'bloques', '🧰': 'llave2', '🕊': 'paloma', '🌿': 'hoja' };
+  const EMO = { '📖': 'libro', '✨': 'chispas', '📜': 'rollo', '🌱': 'brote', '🙏': 'corazon', '🕍': 'iglesia', '⛪': 'iglesia', '🔑': 'llave', '✉': 'correo', '🔒': 'candado', '📣': 'altavoz', '📅': 'calendario', '💡': 'foco', '🎓': 'birrete', '🌟': 'estrella', '❓': 'ayuda', '▶': 'play', '📝': 'pluma', '🤝': 'gente', '🧠': 'mente', '🫁': 'viento', '🧱': 'bloques', '🧰': 'llave2', '🕊': 'paloma', '🌿': 'hoja', '🔖': 'marcador', '🗓': 'calendario', '🏆': 'trofeo', '🖼': 'imagen', '🎵': 'nota', '🎶': 'nota', '🎉': 'chispas', '🗑': 'papelera', '✓': 'check' };
   const svg = (k, tam) => `<svg class="ic" viewBox="0 0 24 24" width="${tam || 24}" height="${tam || 24}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${SV[k] || ''}</svg>`;
   const icono = (e, tam) => { const k = EMO[String(e).replace(/\uFE0F/g, '')]; return k ? svg(k, tam) : e; };
   const activa = (ico, titulo, ayuda, ir) => `<button type="button" class="card" data-ir="${ir}"><div class="t"><span aria-hidden="true">${icono(ico)}</span>${titulo}<span class="flecha" aria-hidden="true">›</span></div><p class="suave m0t">${ayuda}</p></button>`;
+
+
+  // F882: chispas de celebración en cualquier botón (se quitan solas; respeta «reducir movimiento»).
+  function confeti(ancla) {
+    if (!ancla || !document.body || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+    const r = ancla.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2, col = ['cf-a', 'cf-b', 'cf-c', 'cf-d'];
+    for (let i = 0; i < 16; i++) {
+      const e = document.createElement('i'), a = (i / 16) * Math.PI * 2 + Math.random() * .6, d = 40 + Math.random() * 64;
+      e.className = 'cf-pt ' + col[i % 4]; e.style.left = cx + 'px'; e.style.top = cy + 'px';
+      e.style.setProperty('--dx', Math.cos(a) * d + 'px'); e.style.setProperty('--dy', Math.sin(a) * d - 18 + 'px');
+      document.body.appendChild(e); setTimeout(() => e.remove(), 900);
+    }
+  }
 
   // Igual que rpc() pero devuelve los datos tal cual (listas) y avisa si la función aún no existe en Supabase.
   async function rpcRaw(fn, args) {
@@ -718,9 +740,9 @@
     if (!l.length) { caja.innerHTML = '<p class="suave">Todavía no has enviado ninguna petición.</p>'; return; }
     caja.innerHTML = l.map((p) => `<div class="card item"><p>${esc(p.texto)}</p>
       <p class="suave m0">${esc(fecha(p.creado_en))}${p.tipo && TIPOS_ORACION[p.tipo] ? ' · ' + esc(TIPOS_ORACION[p.tipo]) : ''} · ${p.publica ? 'Toda mi iglesia' : 'Solo mi pastor'} · <b>${p.respondida ? '🎉 Dios respondió' : p.estado === 'vista' ? '✅ Tu pastor ya la vio' : '📨 Enviada'}</b></p>
-      ${p.aprobada ? `<button type="button" class="btn sec chico" data-contestada="${esc(p.id)}" data-valor="${p.respondida ? '0' : '1'}">${p.respondida ? 'Quitar «contestada»' : '🎉 Marcar como contestada'}</button>` : ''}
+      ${p.aprobada ? `<button type="button" class="btn sec chico" data-contestada="${esc(p.id)}" data-valor="${p.respondida ? '0' : '1'}">${p.respondida ? 'Quitar «contestada»' : svg('chispas', 16) + ' Marcar como contestada'}</button>` : ''}
       <button type="button" class="btn sec chico" data-borrar="${esc(p.id)}">🗑️ Borrar</button>
-      ${p.respondida && p.respuesta !== undefined ? `<div class="respuesta"><label for="resp_${esc(p.id)}"><b>🎉 Cómo respondió Dios</b> <span class="suave">(solo lo ves tú)</span></label><textarea id="resp_${esc(p.id)}" rows="2" maxlength="400" placeholder="Si quieres, escribe aquí cómo viste la respuesta.">${esc(p.respuesta || '')}</textarea><button type="button" class="btn sec chico" data-guardarresp="${esc(p.id)}">Guardar</button></div>` : ''}</div>`).join('');
+      ${p.respondida && p.respuesta !== undefined ? `<div class="respuesta"><label for="resp_${esc(p.id)}"><b>${svg('chispas', 16)} Cómo respondió Dios</b> <span class="suave">(solo lo ves tú)</span></label><textarea id="resp_${esc(p.id)}" rows="2" maxlength="400" placeholder="Si quieres, escribe aquí cómo viste la respuesta.">${esc(p.respuesta || '')}</textarea><button type="button" class="btn sec chico" data-guardarresp="${esc(p.id)}">Guardar</button></div>` : ''}</div>`).join('');
     caja.querySelectorAll('[data-contestada]').forEach((b) => b.addEventListener('click', async () => {
       const rr = await rpcRaw('peticion_respondida', { p_codigo: id.codigo, p_clave: id.clave, p_id: b.dataset.contestada, p_valor: b.dataset.valor === '1' });
       if (!rr.ok) return msg(errTxt(rr.error)); msg(''); oracionesMias(id);
@@ -769,6 +791,7 @@
     // Respuesta inmediata: el boton cambia al tiro y, si falla, vuelve atras.
     const yoAntes = b.dataset.yo === '1', nAntes = Number(b.dataset.n) || 0, quiere = !yoAntes;
     muroPintar(b, quiere, nAntes + (quiere ? 1 : -1)); b.disabled = true; msg('');
+    if (quiere) { b.classList.add('latido'); setTimeout(() => b.classList.remove('latido'), 700); confeti(b); }
     const r = await rpcRaw('peticion_orando', { p_codigo: id.codigo, p_clave: id.clave, p_id: b.dataset.orando, p_orando: quiere });
     const n = r.ok ? Number(primera(r.data)) : NaN;
     if (!r.ok || n < 0) { muroPintar(b, yoAntes, nAntes); msg(r.ok ? 'Esta petición ya no está en el muro.' : errTxt(r.error)); }
@@ -987,15 +1010,15 @@
   function vistaPalabra() {
     const ult = leer(K_BIB), inf = ult && libroInfo(ult.cod);
     const hora = new Date().getHours(), fase = faseDelDia(hora), saludo = hora < 12 ? 'Buenos días' : hora < 19 ? 'Buenas tardes' : 'Buenas noches';
-    const id = leer(K_ID), nom = id && id.nombre ? String(id.nombre).trim().split(/\s+/)[0] : '', racha = rachaActual();
+    const id = leer(K_ID), nom = perfilLeer().n ? perfilLeer().n.split(/\s+/)[0] : (id && id.nombre ? String(id.nombre).trim().split(/\s+/)[0] : ''), racha = rachaActual();
     $('#pantalla').innerHTML = `<div class="hoy fase-${fase}">${escenaHoy(fase)}<p class="hoy-saludo">${esc(saludo)}${nom ? ', ' + esc(nom) : ''}</p>
       <h1>Hoy</h1><div class="hoy-verso" id="hoyVerso"><span class="esqueleto"></span><span class="esqueleto corto"></span></div>
       ${racha ? `<p class="hoy-racha">${svg('llama', 18)}<span>${racha === 1 ? '1 día leyendo la Palabra' : racha + ' días seguidos leyendo la Palabra'}</span></p>` : ''}</div>
       <h2 class="sep">Tu Palabra</h2>
-      <div class="grid">${inf ? activa('▶️', 'Seguir leyendo', esc(inf[1]) + ' ' + Number(ult.cap) + ' · donde te quedaste', 'seguir') : ''}${activa('📖', 'Leer la Biblia', 'Reina-Valera 1909. Los libros que lees quedan para leer sin internet.', 'biblia')}${activa('✨', 'Versículo de hoy', 'Una frase para empezar el día.', 'versiculo')}${activa('📜', 'Fábula del mes', 'Un relato corto para practicar, capítulo a capítulo.', 'fabula')}</div>`;
+      <div class="grid">${inf ? activa('▶️', 'Seguir leyendo', esc(inf[1]) + ' ' + Number(ult.cap) + ' · donde te quedaste', 'seguir') : ''}${activa('📖', 'Leer la Biblia', 'Reina-Valera 1909. Los libros que lees quedan para leer sin internet.', 'biblia')}${activa('🔖', 'Mi Biblia', 'Tus resaltes, notas y versículos guardados.', 'mibiblia')}${activa('🗓', 'Planes de lectura', 'Un poquito cada día, con tu avance.', 'planes')}${activa('✨', 'Versículo de hoy', 'Una frase para empezar el día.', 'versiculo')}${activa('📜', 'Fábula del mes', 'Un relato corto para practicar, capítulo a capítulo.', 'fabula')}</div>`;
     document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => {
       const k = b.dataset.ir;
-      if (k === 'biblia') vistaBiblia(); else if (k === 'versiculo') vistaVersiculo(); else if (k === 'fabula') vistaFabula(); else if (k === 'seguir' && inf) vistaCapitulo(ult.cod, Number(ult.cap));
+      if (k === 'biblia') vistaBiblia(); else if (k === 'versiculo') vistaVersiculo(); else if (k === 'fabula') vistaFabula(); else if (k === 'mibiblia') vistaMiBiblia(); else if (k === 'planes') vistaPlanes(); else if (k === 'seguir' && inf) vistaCapitulo(ult.cod, Number(ult.cap));
     }));
     // F871: el versículo del día aparece arriba, en «Hoy» (si no hay internet ni copia guardada, la zona se oculta sola).
     (async () => {
@@ -1036,7 +1059,7 @@
   }
   // F880: lector de primer nivel. Tocar un versículo lo selecciona (resaltar, copiar, compartir), deslizar cambia de
   // capítulo, una barra fina muestra cuánto llevas leído. Todo con CSSOM (la política de seguridad no permite style="").
-  const K_RES = 'tb_movil_biblia_res';
+  const K_RES = 'tb_movil_biblia_res', K_RESCOL = 'tb_movil_biblia_col', K_NOTAS = 'tb_movil_biblia_notas', K_MARC = 'tb_movil_biblia_marc', K_LEIDOS = 'tb_movil_leidos', K_PLANES = 'tb_movil_planes';
   const nuevoEl = (html) => { try { const d = document.createElement('div'); d.innerHTML = html; return d.firstElementChild; } catch (e) { return null; } };
   function toastBib(msg) {
     try {
@@ -1050,28 +1073,96 @@
     return nombre + ' ' + cap + ':' + partes.join(',');
   };
   let lec = null;   // estado del capítulo abierto (para el panel de selección y el deslizar)
+  const COL_NOM = ['amarillo', 'verde', 'azul', 'rosa'];
+  const kv = (v) => lec.cod + '.' + lec.cap + '.' + v;
+  const selOrd = () => [...lec.sel].sort((x, y) => x - y);
   function lecPanel() {
     try {
       let p = $('#lecAcc'); const n = lec ? lec.sel.size : 0;
       if (!n) { if (p) p.classList.remove('on'); return; }
-      if (!p) { p = nuevoEl('<div id="lecAcc" class="lec-acc" role="toolbar" aria-label="Versículos elegidos"><button type="button" id="aRes" class="btn chico"></button><button type="button" id="aCop" class="btn sec chico">Copiar</button><button type="button" id="aCom" class="btn sec chico">Compartir</button><button type="button" id="aX" class="btn sec chico" aria-label="Quitar selección">✕</button></div>'); if (!p) return; document.body.appendChild(p);
+      if (!p) {
+        const bt = (id, ic, tx) => `<button type="button" id="${id}" class="lec-b">${svg(ic, 20)}<span>${tx}</span></button>`;
+        p = nuevoEl(`<div id="lecAcc" class="lec-acc" role="toolbar" aria-label="Versículos elegidos"><div class="lec-col" role="group" aria-label="Resaltar con color">${[0, 1, 2, 3].map((i) => `<button type="button" class="col-dot rc${i}" data-rc="${i}" aria-label="Resaltar ${COL_NOM[i]}"></button>`).join('')}<button type="button" class="col-dot quita" id="aQuita" aria-label="Quitar resalte">${svg('x', 14)}</button><button type="button" id="aX" class="col-x" aria-label="Quitar la selección">${svg('x', 18)}</button></div><div class="lec-fil">${bt('aNota', 'pluma', 'Nota')}${bt('aMarc', 'marcador', 'Guardar')}${bt('aImg', 'imagen', 'Imagen')}${bt('aCop', 'copiar', 'Copiar')}${bt('aCom', 'compartir', 'Enviar')}</div></div>`);
+        if (!p) return; document.body.appendChild(p);
         $('#aX').onclick = () => lecLimpiar();
-        $('#aRes').onclick = () => { const rs = leer(K_RES) || {}, k = lec.cod + '.' + lec.cap, ya = new Set(rs[k] || []), todos = [...lec.sel].every((v) => ya.has(v)); lec.sel.forEach((v) => (todos ? ya.delete(v) : ya.add(v))); if (ya.size) rs[k] = [...ya].sort((x, y) => x - y); else delete rs[k]; guardar(K_RES, rs); lecPintar(); toastBib(todos ? 'Resalte quitado' : 'Resaltado ✓'); lecLimpiar(); };
-        $('#aCop').onclick = async () => { const t = lecTexto(); try { await navigator.clipboard.writeText(t); toastBib('Copiado ✓'); } catch (e) { toastBib('No pude copiar'); } lecLimpiar(); };
-        $('#aCom').onclick = async () => { const t = lecTexto(); try { if (navigator.share) await navigator.share({ text: t }); else { await navigator.clipboard.writeText(t); toastBib('Copiado ✓'); } } catch (e) { /* se cerró el menú */ } lecLimpiar(); };
+        const poner = (ci) => {
+          const rs = leer(K_RES) || {}, cs = leer(K_RESCOL) || {}, k = lec.cod + '.' + lec.cap, ya = new Set(rs[k] || []), vs = selOrd();
+          const igual = vs.every((v) => ya.has(v) && (Number(cs[kv(v)]) || 0) === ci);
+          vs.forEach((v) => { if (igual) { ya.delete(v); delete cs[kv(v)]; } else { ya.add(v); if (ci) cs[kv(v)] = ci; else delete cs[kv(v)]; } });
+          if (ya.size) rs[k] = [...ya].sort((x, y) => x - y); else delete rs[k];
+          guardar(K_RES, rs); guardar(K_RESCOL, cs); lecPintar(); toastBib(igual ? 'Resalte quitado' : 'Resaltado'); lecLimpiar();
+        };
+        document.querySelectorAll('[data-rc]').forEach((b) => b.addEventListener('click', () => { vibra(); poner(Number(b.dataset.rc)); }));
+        $('#aQuita').onclick = () => {
+          const rs = leer(K_RES) || {}, cs = leer(K_RESCOL) || {}, k = lec.cod + '.' + lec.cap, ya = new Set(rs[k] || []);
+          selOrd().forEach((v) => { ya.delete(v); delete cs[kv(v)]; }); if (ya.size) rs[k] = [...ya].sort((x, y) => x - y); else delete rs[k];
+          guardar(K_RES, rs); guardar(K_RESCOL, cs); lecPintar(); toastBib('Resalte quitado'); lecLimpiar();
+        };
+        $('#aNota').onclick = () => lecNota();
+        $('#aMarc').onclick = () => {
+          const vs = selOrd(), inf = libroInfo(lec.cod); let l = lista(K_MARC); const ya = vs.every((v) => l.some((x) => x.k === kv(v)));
+          if (ya) l = l.filter((x) => !vs.some((v) => x.k === kv(v)));
+          else vs.forEach((v) => { if (!l.some((x) => x.k === kv(v))) l.push({ k: kv(v), c: inf[1] + ' ' + lec.cap + ':' + v, t: String(lec.versos[v - 1] || '').slice(0, 160), f: new Date().toISOString() }); });
+          guardar(K_MARC, l.slice(-200)); lecPintar(); toastBib(ya ? 'Marcador quitado' : 'Guardado en Mi Biblia'); if (!ya) confeti($('#aMarc')); lecLimpiar();
+        };
+        $('#aImg').onclick = async () => { const t = lecTexto().split('\n— '); await versoImagen(t[0].replace(/[«»]/g, ''), (t[1] || '').replace(' (Reina-Valera 1909)', '')); lecLimpiar(); };
+        $('#aCop').onclick = async () => { const t = lecTexto(); try { await navigator.clipboard.writeText(t); toastBib('Copiado'); } catch (e) { toastBib('No pude copiar'); } lecLimpiar(); };
+        $('#aCom').onclick = async () => { const t = lecTexto(); try { if (navigator.share) await navigator.share({ text: t }); else { await navigator.clipboard.writeText(t); toastBib('Copiado'); } } catch (e) { /* se cerró el menú */ } lecLimpiar(); };
       }
-      const rs = leer(K_RES) || {}, ya = new Set(rs[lec.cod + '.' + lec.cap] || []);
-      $('#aRes').textContent = [...lec.sel].every((v) => ya.has(v)) ? 'Quitar resalte' : 'Resaltar';
+      const ya = new Set(((leer(K_MARC) && lista(K_MARC)) || []).map((x) => x.k));
+      $('#aMarc').lastChild.textContent = selOrd().every((v) => ya.has(kv(v))) ? 'Quitar' : 'Guardar';
       p.classList.add('on');
     } catch (e) { /* sin panel */ }
+  }
+  // Hoja inferior para escribir una nota sobre los versículos elegidos (se guarda en el primero).
+  function lecNota() {
+    try {
+      const vs = selOrd(), inf = libroInfo(lec.cod), k = kv(vs[0]), notas = leer(K_NOTAS) || {}, cita = citaVersos(inf[1], lec.cap, vs);
+      const h = nuevoEl(`<div class="hoja" id="hojaNota" role="dialog" aria-modal="true" aria-label="Nota"><div class="hoja-in"><h3>${esc(cita)}</h3><textarea id="notaTxt" rows="5" maxlength="800" placeholder="¿Qué te dice este pasaje? ¿Qué vas a hacer con él?"></textarea><div class="hoja-bt"><button type="button" class="btn" id="notaOk">Guardar nota</button>${notas[k] ? '<button type="button" class="btn sec" id="notaDel">Borrar</button>' : ''}<button type="button" class="btn sec" id="notaX">Cancelar</button></div></div></div>`);
+      if (!h) return; document.body.appendChild(h); $('#notaTxt').value = notas[k] ? notas[k].t : ''; try { $('#notaTxt').focus(); } catch (e) { /* nada */ }
+      const cerrar = () => { try { h.remove(); } catch (e) { /* nada */ } };
+      $('#notaX').onclick = cerrar;
+      $('#notaOk').onclick = () => { const t = $('#notaTxt').value.trim(); const n2 = leer(K_NOTAS) || {}; if (t) n2[k] = { t: t.slice(0, 800), c: cita, f: new Date().toISOString() }; else delete n2[k]; guardar(K_NOTAS, n2); cerrar(); lecPintar(); lecLimpiar(); toastBib(t ? 'Nota guardada' : 'Nota borrada'); };
+      const d = $('#notaDel'); if (d) d.onclick = () => { const n2 = leer(K_NOTAS) || {}; delete n2[k]; guardar(K_NOTAS, n2); cerrar(); lecPintar(); lecLimpiar(); toastBib('Nota borrada'); };
+    } catch (e) { /* sin nota */ }
+  }
+  // Imagen del versículo para compartir (como YouVersion): lienzo con los colores del tema elegido.
+  async function versoImagen(texto, cita) {
+    try {
+      const W = 1080, H = 1350, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d');
+      const cs = getComputedStyle(document.documentElement), v = (n, d) => (cs.getPropertyValue(n).trim() || d);
+      const papel = v('--papel', '#faf5ea'), tinta = v('--tinta', '#2b2218'), oro = v('--oro', '#b8893a'), verde = v('--verde', '#3f5d3a');
+      try { await document.fonts.load('600 60px "TB Lectura"'); await document.fonts.load('700 40px "TB Titulo"'); } catch (e) { /* fuentes del sistema */ }
+      const g = c.createLinearGradient(0, 0, W, H); g.addColorStop(0, papel); g.addColorStop(1, papel); c.fillStyle = g; c.fillRect(0, 0, W, H);
+      const halo = (x, y, r, col, a) => { const q = c.createRadialGradient(x, y, 0, x, y, r); q.addColorStop(0, col); q.addColorStop(1, 'rgba(0,0,0,0)'); c.globalAlpha = a; c.fillStyle = q; c.fillRect(0, 0, W, H); c.globalAlpha = 1; };
+      halo(180, 140, 760, oro, .42); halo(960, 1200, 820, verde, .32);
+      c.strokeStyle = oro; c.globalAlpha = .55; c.lineWidth = 3; c.strokeRect(54, 54, W - 108, H - 108); c.globalAlpha = 1;
+      c.fillStyle = oro; c.font = '700 220px "TB Titulo", Georgia, serif'; c.fillText('“', 110, 300);
+      let tam = texto.length > 260 ? 46 : texto.length > 160 ? 56 : 68; let lineas;
+      const parte = () => { c.font = '600 ' + tam + 'px "TB Lectura", Georgia, serif'; const ps = texto.split(' '), L = []; let ln = ''; ps.forEach((w) => { const t = ln ? ln + ' ' + w : w; if (c.measureText(t).width > W - 260 && ln) { L.push(ln); ln = w; } else ln = t; }); if (ln) L.push(ln); return L; };
+      lineas = parte(); while (lineas.length * tam * 1.38 > 760 && tam > 30) { tam -= 4; lineas = parte(); }
+      const alto = lineas.length * tam * 1.38, y0 = Math.max(380, (H - alto) / 2 - 20);
+      c.fillStyle = tinta; lineas.forEach((l, i) => c.fillText(l, 130, y0 + i * tam * 1.38));
+      c.fillStyle = oro; c.font = '700 44px "TB Titulo", Georgia, serif'; c.fillText(cita, 130, y0 + alto + 70);
+      c.fillStyle = tinta; c.globalAlpha = .6; c.font = '500 30px "TB Texto", system-ui, sans-serif'; c.fillText('Reina-Valera 1909  ·  Tierra Buena', 130, H - 110); c.globalAlpha = 1;
+      const blob = await new Promise((r) => cv.toBlob(r, 'image/png')); if (!blob) throw new Error('sin imagen');
+      const f = new File([blob], 'versiculo.png', { type: 'image/png' });
+      if (navigator.canShare && navigator.canShare({ files: [f] })) { try { await navigator.share({ files: [f], text: cita }); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'versiculo.png'; document.body.appendChild(a); a.click(); a.remove(); toastBib('Imagen guardada');
+    } catch (e) { toastBib('No pude crear la imagen'); }
   }
   function lecTexto() {
     const vs = [...lec.sel].sort((x, y) => x - y), inf = libroInfo(lec.cod);
     return vs.map((v) => '«' + lec.versos[v - 1] + '»').join(' ') + '\n— ' + citaVersos(inf[1], lec.cap, vs) + ' (Reina-Valera 1909)';
   }
   function lecPintar() {
-    if (!lec) return; const rs = (leer(K_RES) || {})[lec.cod + '.' + lec.cap] || [];
-    document.querySelectorAll('.vers').forEach((p) => { const v = Number(p.dataset.v); p.classList.toggle('res', rs.indexOf(v) >= 0); p.classList.toggle('sel', lec.sel.has(v)); p.setAttribute('aria-pressed', lec.sel.has(v) ? 'true' : 'false'); });
+    if (!lec) return; const rs = (leer(K_RES) || {})[lec.cod + '.' + lec.cap] || [], cs = leer(K_RESCOL) || {}, ns = leer(K_NOTAS) || {}, mk = new Set(lista(K_MARC).map((x) => x.k));
+    document.querySelectorAll('.vers').forEach((p) => {
+      const v = Number(p.dataset.v), k = kv(v), c = Number(cs[k]) || 0;
+      p.classList.toggle('res', rs.indexOf(v) >= 0); [0, 1, 2, 3].forEach((i) => p.classList.toggle('rc' + i, rs.indexOf(v) >= 0 && c === i));
+      p.classList.toggle('con-nota', !!ns[k]); p.classList.toggle('marc', mk.has(k));
+      p.classList.toggle('sel', lec.sel.has(v)); p.setAttribute('aria-pressed', lec.sel.has(v) ? 'true' : 'false');
+    });
   }
   function lecLimpiar() { if (lec) lec.sel.clear(); lecPintar(); lecPanel(); }
   let lecEscucha = false;
@@ -1092,7 +1183,7 @@
     volverA(inf[1], () => vistaLibro(cod));
     let libro; try { libro = await libroCargar(cod); } catch (e) { const m = $('#bibmsg'); if (m) m.textContent = SIN_LIBRO; return; }
     const versos = libro[cap - 1]; const m = $('#bibmsg'); if (!versos || !m) return;
-    guardar(K_BIB, { cod, cap }); rachaMarcar();
+    guardar(K_BIB, { cod, cap }); rachaMarcar(); leidoMarcar(cod, cap); planAuto(cod, cap);
     const tam = Math.min(30, Math.max(16, Number(leer(K_BIBTAM)) || 18));
     const idx = LIBROS.findIndex((l) => l[0] === cod);
     const ant = cap > 1 ? [cod, cap - 1] : (idx > 0 ? [LIBROS[idx - 1][0], LIBROS[idx - 1][2]] : null);
@@ -1100,7 +1191,7 @@
     const nombre = (x) => libroInfo(x[0])[1] + ' ' + x[1];
     $('#pantalla').innerHTML = `<i class="lec-prog" id="lecProg" aria-hidden="true"></i><button type="button" class="volver" id="volver">‹ ${esc(inf[1])}</button><h1>${esc(inf[1])} ${cap}</h1><div class="filete"></div>
       <div class="tamano" role="group" aria-label="Tamaño de la letra"><button type="button" class="btn sec chico" id="menos" aria-label="Letra más chica">A−</button><button type="button" class="btn sec chico" id="mas" aria-label="Letra más grande">A+</button></div>
-      <p class="lec-pista suave">Toca un versículo para resaltarlo, copiarlo o compartirlo.</p>
+      <p class="lec-pista suave">Toca un versículo: resáltalo con color, escribe una nota, guárdalo o hazle una imagen.</p>
       <div class="lectura ${dir ? 'desde-' + dir : ''}" id="lectura">${versos.map((t, i) => `<p class="vers" data-v="${i + 1}" role="button" tabindex="0" aria-pressed="false"><sup>${i + 1}</sup> ${esc(t)}</p>`).join('')}</div>
       <div class="navcap">${ant ? `<button type="button" class="btn sec chico" id="ant">‹ ${esc(nombre(ant))}</button>` : '<span></span>'}${sig ? `<button type="button" class="btn chico" id="sig">${esc(nombre(sig))} ›</button>` : ''}</div>`;
     volverA(inf[1], () => vistaLibro(cod));
@@ -1138,8 +1229,9 @@
     if (!texto) { caja.innerHTML = `<div class="card"><p>«Jehová es mi pastor; nada me faltará.»</p><p class="suave m0">Salmos 23:1</p></div><p class="suave">${esc(SIN_LIBRO)}</p>`; return; }
     const cita = inf[1] + ' ' + r.cap + ':' + r.v;
     caja.innerHTML = `<div class="card versiculo"><p class="vgrande">«${esc(texto)}»</p><p class="suave m0"><b>${esc(cita)}</b></p></div>
-      <button type="button" class="btn" id="vcomp">Compartir</button><button type="button" class="btn sec" id="vleer">Leer el capítulo</button>`;
+      <button type="button" class="btn" id="vcomp">Compartir</button><button type="button" class="btn sec" id="vimg">Crear imagen para compartir</button><button type="button" class="btn sec" id="vleer">Leer el capítulo</button>`;
     $('#vleer').onclick = () => vistaCapitulo(r.cod, r.cap);
+    $('#vimg').onclick = () => versoImagen(texto, cita);
     $('#vcomp').onclick = async () => {
       const t = '«' + texto + '» — ' + cita;
       try { if (navigator.share) await navigator.share({ text: t }); else { await navigator.clipboard.writeText(t); $('#vcomp').textContent = 'Copiado ✓'; } } catch (e) { /* se cerro el menu de compartir */ }
@@ -1165,10 +1257,83 @@
   };
   function vistaVida() {
     $('#pantalla').innerHTML = `<h1>Vivir lo que aprendemos</h1><div class="filete"></div>
-      <h2>Con Dios y conmigo</h2><div class="grid">${activa('🕊️', 'Mi oración', 'Tu diario de peticiones, solo para ti.', 'mioracion')}${activa('🌱', 'Mi crecimiento', 'Pequeños pasos de cada semana.', 'crecimiento')}${activa('🧠', 'Salud mental', 'Respirar, un chequeo y dónde pedir ayuda.', 'salud')}</div>
+      <h2>Con Dios y conmigo</h2><div class="grid">${activa('🕊️', 'Mi oración', 'Tu diario de peticiones, solo para ti.', 'mioracion')}${activa('🎵', 'Música', 'Letras para cantar y para leer en el culto.', 'musica')}${activa('🌱', 'Mi crecimiento', 'Pequeños pasos de cada semana.', 'crecimiento')}${activa('🧠', 'Salud mental', 'Respirar, un chequeo y dónde pedir ayuda.', 'salud')}</div>
       <h2 class="sep">Con los demás</h2><div class="grid">${activa('💡', 'Ideas y proyectos', 'Ideas para servir a tu comunidad.', 'ideas')}${activa('🧰', 'Proyectos listos', 'Ya pensados: lugar, presupuesto y personas.', 'proyectos')}</div>
       <h2 class="sep">Para aprender</h2><div class="grid">${activa('🎓', 'Aprender', 'Cursos gratuitos en internet para servir mejor, con tu avance.', 'aprender')}</div>`;
-    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ mioracion: vistaMiOracion, crecimiento: vistaCrecimiento, ideas: vistaIdeas, salud: vistaSalud, proyectos: vistaProyectos, aprender: vistaAprender }[b.dataset.ir] || vistaVida)()));
+    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ musica: vistaMusica, mioracion: vistaMiOracion, crecimiento: vistaCrecimiento, ideas: vistaIdeas, salud: vistaSalud, proyectos: vistaProyectos, aprender: vistaAprender }[b.dataset.ir] || vistaVida)()));
+  }
+
+
+  // ---------- Música (F882) ----------
+  // Letras para cantar o leer en el culto. Las de ejemplo son ORIGINALES (sin derechos de terceros); cada persona puede
+  // agregar las suyas (quedan en su teléfono y viajan con su cuenta). Pantalla encendida, letra grande y desplazamiento suave.
+  const K_CMIAS = 'tb_movil_canciones_mias', K_CFAV = 'tb_movil_canciones_fav', K_CTAM = 'tb_movil_cancion_tam';
+  const esTitulo = (l) => /^(verso|coro|puente|pre-?coro|estribillo|intro|final|interludio)\b/i.test(l.trim()) && l.trim().length <= 24;
+  const letraHtml = (t) => String(t || '').split(/\n{2,}/).map((b) => {
+    const ls = b.split('\n').filter((x) => x.trim()); if (!ls.length) return '';
+    const cab = esTitulo(ls[0]) ? `<h3 class="can-sec">${esc(ls.shift())}</h3>` : '';
+    return `<div class="can-bloque">${cab}${ls.map((x) => `<p>${esc(x)}</p>`).join('')}</div>`;
+  }).join('');
+  let musicaSel = 'canciones';
+  async function vistaMusica() {
+    respSesion++;
+    $('#pantalla').innerHTML = `${cabecera('Música', 'Vivir lo que aprendemos')}<p class="suave" id="mumsg">Cargando…</p>`;
+    volverA('Vivir lo que aprendemos', vistaVida);
+    let c, r; try { c = await datoCargar('canciones_ejemplo'); r = await datoCargar('musica_reflexiones'); } catch (e) { c = null; }
+    const m = $('#mumsg'); if (!m) return; if (!c || !r) { m.textContent = SIN_DATOS; return; }
+    const fav = new Set(lista(K_CFAV)), mias = lista(K_CMIAS);
+    const todas = mias.map((x) => ({ id: x.id, titulo: x.titulo, letra: x.letra, mia: true })).concat((c.biblioteca || []).map((x) => ({ id: x.id, titulo: String(x.titulo).replace(/^Ejemplo \d+\s—\s/, ''), letra: x.letra })));
+    todas.sort((a, b) => (fav.has(b.id) ? 1 : 0) - (fav.has(a.id) ? 1 : 0));
+    const pestanas = [['canciones', 'Canciones'], ['reflex', 'Para músicos']];
+    let cuerpo;
+    if (musicaSel === 'reflex') cuerpo = (r.tarjetas || []).map((t) => `<details class="card ayuda-it"><summary><span aria-hidden="true">${icono(t.icono)}</span> ${esc(t.titulo)}</summary><p class="m0t">${esc(t.resumen)}</p><ul class="formas">${(t.puntos || []).map((x) => `<li>${esc(x)}</li>`).join('')}</ul>${t.paraPensar ? `<p class="sep"><b>Para pensar:</b> ${esc(t.paraPensar)}</p>` : ''}</details>`).join('');
+    else cuerpo = `<div class="grid">${todas.map((x) => `<button type="button" class="card can-fila" data-can="${esc(x.id)}"><div class="t"><span aria-hidden="true">${svg('nota')}</span>${esc(x.titulo)}${fav.has(x.id) ? `<span class="etiqueta">${svg('estrella', 14)}</span>` : ''}<span class="flecha" aria-hidden="true">›</span></div>${x.mia ? '<p class="suave m0t">Tu canción</p>' : ''}</button>`).join('')}</div>
+      <button type="button" class="btn sec sep" id="canNueva">+ Agregar mi canción</button>
+      <p class="suave sep">Las letras de ejemplo son originales y se pueden usar libremente. Si agregas canciones de otros autores, revisa que tu iglesia tenga la licencia (por ejemplo CCLI).</p>`;
+    $('#pantalla').innerHTML = `${cabecera('Música', 'Vivir lo que aprendemos')}
+      <div class="chips" role="group" aria-label="Sección">${pestanas.map((x) => `<button type="button" class="chip${musicaSel === x[0] ? ' on' : ''}" data-mus="${x[0]}" aria-pressed="${musicaSel === x[0]}">${x[1]}</button>`).join('')}</div>${cuerpo}`;
+    volverA('Vivir lo que aprendemos', vistaVida);
+    document.querySelectorAll('[data-mus]').forEach((b) => b.addEventListener('click', () => { musicaSel = b.dataset.mus; vistaMusica(); }));
+    document.querySelectorAll('[data-can]').forEach((b) => b.addEventListener('click', () => vistaCancion(todas.find((x) => x.id === b.dataset.can))));
+    const nv = $('#canNueva'); if (nv) nv.onclick = () => vistaCancionNueva();
+  }
+  function vistaCancionNueva() {
+    $('#pantalla').innerHTML = `${cabecera('Agregar mi canción', 'Música')}
+      <p id="msg" role="alert" hidden></p>
+      <label for="cnt">Título</label><input id="cnt" type="text" maxlength="80" placeholder="Ej. Mi canción de gratitud">
+      <label for="cnl">Letra (deja una línea en blanco entre estrofas; puedes escribir «Verso 1», «Coro»…)</label><textarea id="cnl" rows="10" maxlength="6000"></textarea>
+      <button type="button" class="btn" id="cng">Guardar canción</button>`;
+    volverA('Música', vistaMusica);
+    $('#cng').onclick = () => {
+      const t = $('#cnt').value.trim(), l = $('#cnl').value.trim(); if (!t || !l) return msg('Escribe el título y la letra.');
+      const m = lista(K_CMIAS); m.push({ id: nuevoId(), titulo: t.slice(0, 80), letra: l.slice(0, 6000) }); guardar(K_CMIAS, m.slice(-60)); musicaSel = 'canciones'; vistaMusica();
+    };
+  }
+  let canTimer = null, canLuz = null;
+  function canParar() { if (canTimer) { clearInterval(canTimer); canTimer = null; } if (canLuz) { try { canLuz.release(); } catch (e) { /* nada */ } canLuz = null; } }
+  function vistaCancion(x) {
+    if (!x) return vistaMusica();
+    canParar();
+    const fav = new Set(lista(K_CFAV)); let tam = Number(leer(K_CTAM)) || 20; tam = Math.min(34, Math.max(14, tam));
+    $('#pantalla').innerHTML = `${cabecera(x.titulo, 'Música')}
+      <div class="can-barra" role="group" aria-label="Opciones de la letra">
+        <button type="button" class="chip" id="cMenos" aria-label="Letra más pequeña">A−</button><button type="button" class="chip" id="cMas" aria-label="Letra más grande">A+</button>
+        <button type="button" class="chip" id="cAuto" aria-pressed="false">${svg('play', 14)} Desplazar</button>
+        <button type="button" class="chip${fav.has(x.id) ? ' on' : ''}" id="cFav" aria-pressed="${fav.has(x.id)}">${svg('estrella', 14)} Favorita</button>
+      </div>
+      <div class="can-letra can-t${tam}" id="canLetra">${letraHtml(x.letra)}</div>
+      ${x.mia ? '<button type="button" class="btn sec sep" id="cBorrar">Borrar mi canción</button>' : ''}`;
+    volverA('Música', () => { canParar(); vistaMusica(); });
+    const fijar = (n) => { tam = Math.min(34, Math.max(14, n)); guardar(K_CTAM, tam); $('#canLetra').className = 'can-letra can-t' + tam; };
+    $('#cMenos').onclick = () => fijar(tam - 2); $('#cMas').onclick = () => fijar(tam + 2);
+    $('#cFav').onclick = () => { const f = new Set(lista(K_CFAV)), on = !f.has(x.id); if (on) f.add(x.id); else f.delete(x.id); guardar(K_CFAV, [...f]); $('#cFav').classList.toggle('on', on); $('#cFav').setAttribute('aria-pressed', String(on)); if (on) confeti($('#cFav')); };
+    $('#cAuto').onclick = async () => {
+      const b = $('#cAuto'), on = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', String(on)); b.classList.toggle('on', on);
+      if (!on) return canParar();
+      try { if (navigator.wakeLock) canLuz = await navigator.wakeLock.request('screen'); } catch (e) { /* sin pantalla encendida */ }
+      canTimer = setInterval(() => { window.scrollBy(0, 1); }, 60);
+    };
+    const bo = $('#cBorrar'); if (bo) bo.onclick = () => { if (!confirm('¿Borrar esta canción?')) return; guardar(K_CMIAS, lista(K_CMIAS).filter((y) => y.id !== x.id)); canParar(); vistaMusica(); };
   }
 
   // --- Mi oración: diario personal (no se envia a nadie) ---
@@ -1191,12 +1356,12 @@
     const l = lista(K_MIORACION).slice().sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
     if (!l.length) { caja.innerHTML = '<p class="suave sep">Todavía no hay nada en tu diario.</p>'; return; }
     caja.innerHTML = l.map((p) => `<div class="card item"><p class="m0">${esc(p.texto)}</p>
-      <p class="suave m0">${esc(fecha(p.fecha))}${p.contestada ? ' · 🎉 Dios respondió' : ''}</p>
+      <p class="suave m0">${esc(fecha(p.fecha))}${p.contestada ? ' · Dios respondió' : ''}</p>
       <button type="button" class="btn sec chico" data-mocont="${esc(p.id)}">${p.contestada ? 'Quitar «contestada»' : '🎉 Marcar como contestada'}</button>
-      <button type="button" class="btn sec chico" data-model="${esc(p.id)}">🗑️ Borrar</button>
+      <button type="button" class="btn sec chico" data-model="${esc(p.id)}">${svg('papelera', 16)} Borrar</button>
       ${p.contestada ? `<div class="respuesta"><label for="mor_${esc(p.id)}"><b>🎉 Cómo respondió Dios</b></label><textarea id="mor_${esc(p.id)}" rows="2" maxlength="400" placeholder="Si quieres, escribe cómo viste la respuesta.">${esc(p.respuesta || '')}</textarea><button type="button" class="btn sec chico" data-mogr="${esc(p.id)}">Guardar</button></div>` : ''}</div>`).join('');
     const cambiar = (id, f) => { const todas = lista(K_MIORACION); const it = todas.find((x) => x.id === id); if (it) { f(it); guardar(K_MIORACION, todas); } };
-    caja.querySelectorAll('[data-mocont]').forEach((b) => b.addEventListener('click', () => { cambiar(b.dataset.mocont, (it) => { it.contestada = !it.contestada; }); msg(''); miOracionPintar(); }));
+    caja.querySelectorAll('[data-mocont]').forEach((b) => b.addEventListener('click', () => { cambiar(b.dataset.mocont, (it) => { it.contestada = !it.contestada; }); msg(''); miOracionPintar(); if (lista(K_MIORACION).find((x) => x.id === b.dataset.mocont && x.contestada)) { const nb = document.querySelector('[data-mocont="' + b.dataset.mocont + '"]'); confeti(nb); } }));
     caja.querySelectorAll('[data-mogr]').forEach((b) => b.addEventListener('click', () => { const t = $('#mor_' + b.dataset.mogr); cambiar(b.dataset.mogr, (it) => { it.respuesta = (t ? t.value : '').trim().slice(0, 400); }); msg('Guardado en este teléfono.', true); }));
     caja.querySelectorAll('[data-model]').forEach((b) => b.addEventListener('click', () => {
       if (!confirm('¿Borrar esta petición de tu diario?')) return;
@@ -1418,10 +1583,102 @@
   }
 
 
+
+  // ---------- F883 · Mi Biblia, planes de lectura, logros ----------
+  const hoyTxt = () => diaTxt(new Date());
+  function leidoMarcar(cod, cap) { const l = leer(K_LEIDOS) || {}; if (l[cod + '.' + cap] === hoyTxt()) return; l[cod + '.' + cap] = hoyTxt(); guardar(K_LEIDOS, l); }
+  const nLeidos = () => Object.keys(leer(K_LEIDOS) || {}).length;
+  const leidosHoy = () => Object.values(leer(K_LEIDOS) || {}).filter((d) => d === hoyTxt()).length;
+  const rg = (k) => { const o = leer(k); return o && typeof o === 'object' ? o : {}; };
+  const nResaltes = () => Object.values(rg(K_RES)).reduce((t, a) => t + (Array.isArray(a) ? a.length : 0), 0);
+  const rango = (cod, a, b) => { const r = []; for (let i = a; i <= b; i++) r.push([cod, i]); return r; };
+  const PLANES = [
+    { id: 'calma', n: 'Salmos para la calma', d: '7 días para respirar y confiar', dias: [23, 27, 46, 91, 121, 139, 63].map((c) => [['PSA', c]]) },
+    { id: 'sermon', n: 'El Sermón del Monte', d: '3 días con las palabras de Jesús', dias: rango('MAT', 5, 7).map((x) => [x]) },
+    { id: 'animo', n: 'Cartas de ánimo', d: '9 días: Filipenses y Santiago', dias: rango('PHP', 1, 4).concat(rango('JAS', 1, 5)).map((x) => [x]) },
+    { id: 'juan', n: 'El Evangelio de Juan', d: '21 días conociendo a Jesús', dias: rango('JHN', 1, 21).map((x) => [x]) },
+    { id: 'prov', n: 'Sabiduría de Proverbios', d: '31 días, un capítulo por día', dias: rango('PRO', 1, 31).map((x) => [x]) }
+  ];
+  const planEstado = (id) => { const e = rg(K_PLANES)[id]; return e && Array.isArray(e.h) ? e : null; };
+  const planTxt = (pl, i) => pl.dias[i].map((x) => libroInfo(x[0])[1] + ' ' + x[1]).join(' y ');
+  function planAuto(cod, cap) {
+    try {
+      const pls = rg(K_PLANES); let cambio = null;
+      PLANES.forEach((pl) => { const e = pls[pl.id]; if (!e || !Array.isArray(e.h)) return; const i = pl.dias.findIndex((d, j) => e.h.indexOf(j) < 0 && d.some((x) => x[0] === cod && x[1] === cap)); if (i >= 0) { e.h.push(i); cambio = [pl, i, e.h.length === pl.dias.length]; } });
+      if (cambio) { guardar(K_PLANES, pls); toastBib(cambio[2] ? '¡Plan completado: ' + cambio[0].n + '!' : 'Día ' + (cambio[1] + 1) + ' de «' + cambio[0].n + '» listo'); }
+    } catch (e) { /* sin planes */ }
+  }
+  function vistaPlanes() {
+    const pls = rg(K_PLANES);
+    $('#pantalla').innerHTML = `${cabecera('Planes de lectura', 'Palabra')}<p class="suave">Un poquito cada día. Si lees el capítulo del plan en la Biblia, se marca solo.</p>
+      <div class="grid">${PLANES.map((pl) => { const e = planEstado(pl.id), n = e ? e.h.length : 0, tot = pl.dias.length; return `<button type="button" class="card plan-card" data-plan="${pl.id}"><div class="t"><span aria-hidden="true">${svg('calendario')}</span>${esc(pl.n)}<span class="flecha" aria-hidden="true">›</span></div><p class="suave m0t">${esc(pl.d)}</p>${e ? `<div class="barra-av" role="progressbar" aria-valuemin="0" aria-valuemax="${tot}" aria-valuenow="${n}"><i class="av-${Math.round((n / tot) * 20) * 5}"></i></div><p class="suave m0t">${n === tot ? '¡Completado!' : n + ' de ' + tot + ' días'}</p>` : '<p class="suave m0t">Toca para empezar</p>'}</button>`; }).join('')}</div>`;
+    volverA('Palabra', vistaPalabra);
+    document.querySelectorAll('[data-plan]').forEach((b) => b.addEventListener('click', () => vistaPlan(b.dataset.plan)));
+  }
+  function vistaPlan(id) {
+    const pl = PLANES.find((x) => x.id === id); if (!pl) return vistaPlanes();
+    const e = planEstado(id), hechos = new Set(e ? e.h : []), sig = pl.dias.findIndex((d, j) => !hechos.has(j));
+    $('#pantalla').innerHTML = `${cabecera(pl.n, 'Planes')}<p class="suave">${esc(pl.d)}</p>
+      ${!e ? '<button type="button" class="btn" id="plEmpezar">Empezar este plan</button>' : sig < 0 ? '<div class="card plan-fin"><b>¡Terminaste este plan!</b><p class="suave m0t">Qué hermoso constancia. Puedes volver a leerlo cuando quieras.</p></div>' : `<button type="button" class="btn" id="plHoy">Leer hoy: ${esc(planTxt(pl, sig))}</button>`}
+      <div class="lista sep">${pl.dias.map((d, j) => `<div class="plan-dia${hechos.has(j) ? ' hecho' : ''}"><button type="button" class="plan-leer" data-leer="${j}"><span class="plan-n">${hechos.has(j) ? svg('check', 16) : j + 1}</span><span>Día ${j + 1} · ${esc(planTxt(pl, j))}</span></button>${e ? `<button type="button" class="plan-ok" data-ok="${j}" aria-pressed="${hechos.has(j)}" aria-label="${hechos.has(j) ? 'Quitar la marca' : 'Marcar como leído'}">${svg('check', 18)}</button>` : ''}</div>`).join('')}</div>
+      ${e ? '<button type="button" class="btn sec sep" id="plQuitar">Dejar este plan</button>' : ''}`;
+    volverA('Planes', vistaPlanes);
+    const em = $('#plEmpezar'); if (em) em.onclick = () => { const q = rg(K_PLANES); q[id] = { ini: new Date().toISOString(), h: [] }; guardar(K_PLANES, q); confeti(em); vistaPlan(id); };
+    const hh = $('#plHoy'); if (hh) hh.onclick = () => { const d = pl.dias[sig][0]; vistaCapitulo(d[0], d[1]); };
+    document.querySelectorAll('[data-leer]').forEach((b) => b.addEventListener('click', () => { const d = pl.dias[Number(b.dataset.leer)][0]; vistaCapitulo(d[0], d[1]); }));
+    document.querySelectorAll('[data-ok]').forEach((b) => b.addEventListener('click', () => {
+      const q = rg(K_PLANES), r = q[id]; if (!r) return; const j = Number(b.dataset.ok), k = r.h.indexOf(j);
+      if (k >= 0) r.h.splice(k, 1); else r.h.push(j); guardar(K_PLANES, q); vibra(); vistaPlan(id);
+      if (k < 0) { const nb = document.querySelector('[data-ok="' + j + '"]'); confeti(nb); if (r.h.length === pl.dias.length) toastBib('¡Plan completado!'); }
+    }));
+    const qb = $('#plQuitar'); if (qb) qb.onclick = () => { if (!confirm('¿Dejar este plan? Se borra tu avance en él.')) return; const q = rg(K_PLANES); delete q[id]; guardar(K_PLANES, q); vistaPlanes(); };
+  }
+  let miBibTab = 'res';
+  async function vistaMiBiblia() {
+    const res = rg(K_RES), cols = rg(K_RESCOL), notas = rg(K_NOTAS), marc = lista(K_MARC);
+    const items = []; Object.keys(res).forEach((ck) => (res[ck] || []).forEach((v) => items.push({ k: ck + '.' + v, cod: ck.split('.')[0], cap: Number(ck.split('.')[1]), v, c: Number(cols[ck + '.' + v]) || 0 })));
+    const tabs3 = [['res', 'Resaltados', items.length], ['notas', 'Notas', Object.keys(notas).length], ['marc', 'Guardados', marc.length]];
+    const vacio = { res: 'Aún no has resaltado nada. En la Biblia toca un versículo y elige un color.', notas: 'Aún no tienes notas. Toca un versículo y elige «Nota».', marc: 'Aún no has guardado versículos. Toca uno y elige «Guardar».' };
+    const cuerpoNotas = Object.keys(notas).sort((a, b) => String(notas[b].f).localeCompare(String(notas[a].f))).map((k) => `<button type="button" class="card item mb-fila" data-mb="${esc(k)}"><b>${esc(notas[k].c)}</b><p class="m0t">${esc(notas[k].t)}</p><p class="suave m0t">${esc(fecha(notas[k].f))}</p></button>`).join('');
+    const cuerpoMarc = marc.slice().reverse().map((x) => `<button type="button" class="card item mb-fila" data-mb="${esc(x.k)}"><b>${svg('marcador', 15)} ${esc(x.c)}</b><p class="m0t">«${esc(x.t)}»</p></button>`).join('');
+    $('#pantalla').innerHTML = `${cabecera('Mi Biblia', 'Palabra')}
+      <div class="chips" role="group" aria-label="Sección">${tabs3.map((t) => `<button type="button" class="chip${miBibTab === t[0] ? ' on' : ''}" data-mbt="${t[0]}" aria-pressed="${miBibTab === t[0]}">${t[1]} · ${t[2]}</button>`).join('')}</div>
+      <div id="mbCuerpo">${miBibTab === 'notas' ? (cuerpoNotas || `<p class="suave sep">${vacio.notas}</p>`) : miBibTab === 'marc' ? (cuerpoMarc || `<p class="suave sep">${vacio.marc}</p>`) : (items.length ? '<p class="suave" id="mbCarga">Cargando…</p>' : `<p class="suave sep">${vacio.res}</p>`)}</div>`;
+    volverA('Palabra', vistaPalabra);
+    document.querySelectorAll('[data-mbt]').forEach((b) => b.addEventListener('click', () => { miBibTab = b.dataset.mbt; vistaMiBiblia(); }));
+    const abrir = () => document.querySelectorAll('[data-mb]').forEach((b) => b.addEventListener('click', () => { const q = b.dataset.mb.split('.'); vistaCapitulo(q[0], Number(q[1])); }));
+    abrir();
+    if (miBibTab !== 'res' || !items.length) return;
+    const orden = items.slice().sort((a, b) => (LIBROS.findIndex((l) => l[0] === a.cod) - LIBROS.findIndex((l) => l[0] === b.cod)) || a.cap - b.cap || a.v - b.v).slice(0, 80), html = [];
+    for (const it of orden) {
+      let t = ''; try { t = ((await libroCargar(it.cod))[it.cap - 1] || [])[it.v - 1] || ''; } catch (e) { t = ''; }
+      html.push(`<button type="button" class="card item mb-fila mb-c${it.c}" data-mb="${esc(it.cod + '.' + it.cap)}"><b>${esc(libroInfo(it.cod)[1] + ' ' + it.cap + ':' + it.v)}</b><p class="m0t">${t ? '«' + esc(t) + '»' : ''}</p></button>`);
+      if (!$('#mbCuerpo')) return;
+    }
+    const cu = $('#mbCuerpo'); if (cu && miBibTab === 'res') { cu.innerHTML = html.join(''); abrir(); }
+  }
+
+  // ----- Logros (insignias): se calculan con lo que ya hay en el teléfono; nada que subir -----
+  const LOGROS = [
+    ['primero', 'Primer paso', 'Leíste tu primer capítulo', 'libro', () => nLeidos() >= 1],
+    ['diez', 'Lector constante', '10 capítulos leídos', 'libro', () => nLeidos() >= 10],
+    ['cincuenta', 'Caminante', '50 capítulos leídos', 'rollo', () => nLeidos() >= 50],
+    ['racha3', 'Tres días', '3 días seguidos', 'llama', () => rachaActual() >= 3],
+    ['racha7', 'Semana fiel', '7 días seguidos', 'llama', () => rachaActual() >= 7],
+    ['racha30', 'Un mes con Dios', '30 días seguidos', 'sol', () => rachaActual() >= 30],
+    ['resalte', 'Subrayador', '5 versículos resaltados', 'chispas', () => nResaltes() >= 5],
+    ['nota', 'Pensador', 'Escribiste una nota', 'pluma', () => Object.keys(rg(K_NOTAS)).length >= 1],
+    ['guardado', 'Guardián', 'Guardaste un versículo', 'marcador', () => lista(K_MARC).length >= 1],
+    ['plan', 'Plan completo', 'Terminaste un plan de lectura', 'trofeo', () => PLANES.some((pl) => { const e = planEstado(pl.id); return e && e.h.length >= pl.dias.length; })],
+    ['oracion', 'Orante', 'Escribiste en Mi oración', 'corazon', () => lista(K_MIORACION).length >= 1],
+    ['cancion', 'Cantor', 'Marcaste una canción favorita', 'nota', () => lista(K_CFAV).length >= 1]
+  ];
+  const logrosHTML = () => `<div class="logros">${LOGROS.map((l) => { const on = l[4](); return `<div class="logro${on ? ' on' : ''}" title="${esc(l[2])}"><span class="logro-ic">${svg(on ? l[3] : 'candado', 22)}</span><b>${esc(l[1])}</b><small>${esc(l[2])}</small></div>`; }).join('')}</div>`;
+
   // ---------- F875 · Perfil, Ministerios y efectos ----------
   const K_PERFIL = 'tb_movil_perfil';
-  const AVATARES = ['🌿', '🕊️', '🌻', '⭐', '🔥', '🌊', '📖', '🦋'];
-  const perfilLeer = () => { const p = leer(K_PERFIL) || {}; return { g: Number.isInteger(p.g) && p.g >= 0 && p.g < 8 ? p.g : 0, e: AVATARES.indexOf(p.e) >= 0 ? p.e : '', t: typeof p.t === 'string' ? p.t : 'auto' }; };
+  const AVATARES = ['🌿', '🕊️', '🌻', '⭐', '🔥', '🌊', '📖', '🦋', '🌸', '🌙', '☀️', '🍃', '🦁', '🐑', '🌈', '💎'];
+  const perfilLeer = () => { const p = leer(K_PERFIL) || {}; return { g: Number.isInteger(p.g) && p.g >= 0 && p.g < 8 ? p.g : 0, e: AVATARES.indexOf(p.e) >= 0 ? p.e : '', t: typeof p.t === 'string' ? p.t : 'auto', n: typeof p.n === 'string' ? p.n.slice(0, 30) : '', b: typeof p.b === 'string' ? p.b.slice(0, 140) : '', f: p.f === 'sans' ? 'sans' : 'serif', m: p.m === 'off' ? 'off' : 'on', meta: [1, 2, 3, 5].indexOf(p.meta) >= 0 ? p.meta : 1 }; };
   const iniciales = (n) => (String(n || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0]).join('') || '?').toUpperCase();
   const avatarHTML = (nombre, p, grande) => `<span class="avatar g${p.g}${grande ? ' grande' : ''}" aria-hidden="true">${p.e ? esc(p.e) : esc(iniciales(nombre))}</span>`;
   const saludoHora = () => { const h = new Date().getHours(); return h < 6 ? 'Buenas noches' : h < 13 ? 'Buenos días' : h < 20 ? 'Buenas tardes' : 'Buenas noches'; };
@@ -1446,14 +1703,28 @@
 
   function vistaPerfil() {
     const id = leer(K_ID), cu = leer(K_CUENTA), ig = leer(K_IG), p = perfilLeer();
-    const nombre = (id && id.nombre) || (cu && cu.correo && cu.correo.split('@')[0]) || 'Invitado';
+    const nombre = p.n || (id && id.nombre) || (cu && cu.correo && cu.correo.split('@')[0]) || 'Invitado';
     const desde = id && id.creadoEn ? mesAnio(id.creadoEn) : '';
     $('#pantalla').innerHTML = `
       <section class="perfil-hero"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML(nombre, p, true)}
         <h1>${esc(nombre)}</h1>
         <p class="suave m0">${ig && ig.nombre ? '⛪ ' + esc(ig.nombre) : 'Aún sin iglesia'}${desde ? ' · desde ' + esc(desde) : ''}</p>
         ${cu ? `<p class="suave m0">✉️ ${esc(cu.correo)}</p>` : ''}
+        ${p.b ? `<p class="perfil-lema">«${esc(p.b)}»</p>` : ''}
         <div class="chips-min" id="perfMin"></div></section>
+      <div class="stats" aria-label="Tu camino">
+        <div class="stat"><span class="stat-ic">${svg('llama', 22)}</span><b>${rachaActual()}</b><small>días seguidos</small></div>
+        <div class="stat"><span class="stat-ic">${svg('libro', 22)}</span><b>${nLeidos()}</b><small>capítulos</small></div>
+        <div class="stat"><span class="stat-ic">${svg('chispas', 22)}</span><b>${nResaltes()}</b><small>resaltados</small></div>
+        <div class="stat"><span class="stat-ic">${svg('pluma', 22)}</span><b>${Object.keys(rg(K_NOTAS)).length}</b><small>notas</small></div></div>
+      <div class="card meta-hoy"><div class="anillo" role="img" aria-label="Meta de hoy: ${Math.min(leidosHoy(), p.meta)} de ${p.meta}"><svg viewBox="0 0 36 36" width="64" height="64" aria-hidden="true"><circle cx="18" cy="18" r="15.9" fill="none" stroke="currentColor" stroke-opacity=".15" stroke-width="3.4" pathLength="100"/><circle class="anillo-v" cx="18" cy="18" r="15.9" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" pathLength="100" stroke-dasharray="${Math.round(Math.min(1, leidosHoy() / p.meta) * 100)} 100" transform="rotate(-90 18 18)"/></svg><b>${Math.min(leidosHoy(), p.meta)}/${p.meta}</b></div>
+        <div><div class="t">Meta de hoy</div><p class="suave m0t">${leidosHoy() >= p.meta ? '¡Meta cumplida! Gracias por dedicarle tiempo a la Palabra.' : 'Lee ' + p.meta + (p.meta === 1 ? ' capítulo' : ' capítulos') + ' hoy.'}</p>
+        <div class="chips chips-meta" role="group" aria-label="Capítulos por día">${[1, 2, 3, 5].map((x) => `<button type="button" class="chip${p.meta === x ? ' on' : ''}" data-meta="${x}" aria-pressed="${p.meta === x}">${x}</button>`).join('')}</div></div></div>
+      <h2 class="sep">Mis logros</h2>${logrosHTML()}
+      <h2 class="sep">Sobre mí</h2>
+      <div class="card"><label for="pfn">Cómo quieres que te llame</label><input id="pfn" type="text" maxlength="30" value="${esc(p.n)}" placeholder="${esc((id && id.nombre) || 'Tu nombre')}" autocomplete="given-name">
+        <label for="pfb">Mi versículo o lema favorito</label><textarea id="pfb" rows="2" maxlength="140" placeholder="Ej. Todo lo puedo en Cristo que me fortalece">${esc(p.b)}</textarea>
+        <button type="button" class="btn" id="pfok">Guardar perfil</button></div>
       <h2 class="sep">Tu avatar</h2>
       <div class="card"><div class="av-sel" role="group" aria-label="Color del avatar">${[0, 1, 2, 3, 4, 5, 6, 7].map((i) => `<button type="button" class="avatar g${i}${p.g === i ? ' sel' : ''}" data-g="${i}" aria-label="Color ${i + 1}" aria-pressed="${p.g === i}"></button>`).join('')}</div>
         <div class="av-sel emo" role="group" aria-label="Símbolo">${['']. concat(AVATARES).map((e) => `<button type="button" class="av-emo${p.e === e ? ' sel' : ''}" data-e="${e}" aria-pressed="${p.e === e}">${e || 'Aa'}</button>`).join('')}</div></div>
@@ -1465,8 +1736,10 @@
       ${cu ? '<p class="suave sinc-p" id="sincEstado"></p>' : ''}
       ${bloqueInstalar()}`;
     pintarInstalar($('[data-instalar-box]')); syncPintar();
-    document.querySelectorAll('[data-g]').forEach((b) => b.addEventListener('click', () => { const q = perfilLeer(); guardar(K_PERFIL, { g: Number(b.dataset.g), e: q.e, t: q.t }); vibra(); vistaPerfil(); }));
-    document.querySelectorAll('[data-e]').forEach((b) => b.addEventListener('click', () => { const q = perfilLeer(); guardar(K_PERFIL, { g: q.g, e: b.dataset.e, t: q.t }); vibra(); vistaPerfil(); }));
+    document.querySelectorAll('[data-meta]').forEach((b) => b.addEventListener('click', () => { perfilGuardar({ meta: Number(b.dataset.meta) }); vibra(); vistaPerfil(); }));
+    const pok = $('#pfok'); if (pok) pok.onclick = () => { perfilGuardar({ n: $('#pfn').value.trim().slice(0, 30), b: $('#pfb').value.trim().slice(0, 140) }); toastBib('Perfil guardado'); confeti(pok); vistaPerfil(); };
+    document.querySelectorAll('[data-g]').forEach((b) => b.addEventListener('click', () => { const q = perfilLeer(); perfilGuardar({ g: Number(b.dataset.g) }); vibra(); vistaPerfil(); }));
+    document.querySelectorAll('[data-e]').forEach((b) => b.addEventListener('click', () => { const q = perfilLeer(); perfilGuardar({ e: b.dataset.e }); vibra(); vistaPerfil(); }));
     document.querySelectorAll('[data-pf]').forEach((b) => b.addEventListener('click', () => ({
       min: () => vistaMinisterios(id), ora: () => vistaOracion(id), priv: () => vistaPrivacidad(id), ayu: () => vistaAyuda(id),
       temas: vistaTemas, pastor: () => (pastorLeer() ? ir('pastor') : vistaPastorEntrar()), unir: vistaCodigo, cuenta: () => vistaCuenta('entrar'), nada: () => {},
@@ -1491,7 +1764,7 @@
 
 
   // ---------- F876 · Temas, Fábula del mes, Agenda/Avisos y MODO PASTOR ----------
-  const TEMAS = [['auto', 'Automático', 'Sigue a tu teléfono', '#8a7d68'], ['amanecer', 'Amanecer', 'Dorado cálido', '#b8893a'], ['pergamino', 'Pergamino', 'Papel para leer', '#a83e2c'], ['bosque', 'Bosque', 'Verde sereno', '#2e8b57'], ['oceano', 'Océano', 'Azul profundo', '#2f6fa8'], ['atardecer', 'Atardecer', 'Naranja y rosa', '#d1603d'], ['vigilia', 'Vigilia', 'Violeta nocturno', '#8c7bff'], ['aurora', 'Aurora', 'Halos de color', '#c25bd6']];
+  const TEMAS = [['auto', 'Automático', 'Sigue a tu teléfono', '#8a7d68'], ['amanecer', 'Amanecer', 'Dorado cálido', '#b8893a'], ['pergamino', 'Pergamino', 'Papel para leer', '#a83e2c'], ['bosque', 'Bosque', 'Verde sereno', '#2e8b57'], ['oceano', 'Océano', 'Azul profundo', '#2f6fa8'], ['atardecer', 'Atardecer', 'Naranja y rosa', '#d1603d'], ['vigilia', 'Vigilia', 'Violeta nocturno', '#8c7bff'], ['medianoche', 'Medianoche', 'Negro puro, ahorra batería', '#222222'], ['nieve', 'Nieve', 'Blanco limpio y azul', '#3b82c4'], ['lavanda', 'Lavanda', 'Violeta suave', '#8b6fd1'], ['menta', 'Menta', 'Verde fresco', '#2fa37a'], ['sakura', 'Sakura', 'Rosa tierno', '#d9628f'], ['cielo', 'Cielo', 'Azul de mañana', '#2f8fd8'], ['desierto', 'Desierto', 'Arena y cobre', '#c4783a'], ['esmeralda', 'Esmeralda', 'Verde con oro', '#1f8f6a'], ['carbon', 'Carbón', 'Gris y naranja', '#f08a3c'], ['aurora', 'Aurora', 'Halos de color', '#c25bd6']];
   const temaAplicar = (t) => {
     if (!document.documentElement || !document.documentElement.setAttribute) return;
     const ok = TEMAS.some((x) => x[0] === t && t !== 'auto');
@@ -1499,7 +1772,9 @@
     try { const mc = getComputedStyle(document.documentElement).getPropertyValue('--papel').trim(); document.querySelectorAll('meta[name=theme-color]').forEach((m) => { m.removeAttribute('media'); if (mc) m.setAttribute('content', mc); }); } catch (e) { /* nada */ }
   };
   temaAplicar(perfilLeer().t);
-  const perfilGuardar = (cambio) => { const q = perfilLeer(); return guardar(K_PERFIL, Object.assign({ g: q.g, e: q.e, t: q.t }, cambio)); };
+  const ajusteAplicar = () => { try { const q = perfilLeer(), h = document.documentElement; h.setAttribute('data-fuente', q.f); h.setAttribute('data-anim', q.m); } catch (e) { /* nada */ } };
+  ajusteAplicar();
+  const perfilGuardar = (cambio) => guardar(K_PERFIL, Object.assign({}, perfilLeer(), cambio));
 
   // ----- Fábula del mes (versión móvil de la del escritorio: escena ilustrada + capítulos que se abren uno a uno) -----
   const ROM = ['I', 'II', 'III', 'IV', 'V', 'VI'];
@@ -1553,8 +1828,12 @@
   function vistaTemas() {
     const t = perfilLeer().t;
     $('#pantalla').innerHTML = `${cabecera('Temas', 'Perfil')}<p class="suave">Elige cómo se ve tu app. Se guarda en tu cuenta.</p>
-      <div class="temas">${TEMAS.map((x) => `<button type="button" class="tema${t === x[0] ? ' sel' : ''}" data-t="${x[0]}" aria-pressed="${t === x[0]}"><span class="tema-bola" data-mc="${x[3]}"></span><b>${esc(x[1])}</b><small>${esc(x[2])}</small></button>`).join('')}</div>`;
+      <h2 class="sep">Colores</h2><div class="temas">${TEMAS.map((x) => `<button type="button" class="tema${t === x[0] ? ' sel' : ''}" data-t="${x[0]}" aria-pressed="${t === x[0]}"><span class="tema-bola" data-mc="${x[3]}"></span><b>${esc(x[1])}</b><small>${esc(x[2])}</small></button>`).join('')}</div>
+      <h2 class="sep">Letra para leer</h2><div class="chips" role="group" aria-label="Tipo de letra"><button type="button" class="chip${perfilLeer().f === 'serif' ? ' on' : ''}" data-fu="serif" aria-pressed="${perfilLeer().f === 'serif'}">Con serifa (libro)</button><button type="button" class="chip${perfilLeer().f === 'sans' ? ' on' : ''}" data-fu="sans" aria-pressed="${perfilLeer().f === 'sans'}">Clara (sin serifa)</button></div>
+      <h2 class="sep">Animaciones</h2><div class="chips" role="group" aria-label="Animaciones"><button type="button" class="chip${perfilLeer().m === 'on' ? ' on' : ''}" data-an="on" aria-pressed="${perfilLeer().m === 'on'}">Activadas</button><button type="button" class="chip${perfilLeer().m === 'off' ? ' on' : ''}" data-an="off" aria-pressed="${perfilLeer().m === 'off'}">Más tranquilo</button></div>`;
     volverA('Perfil', vistaPerfil); pintaColores();
+    document.querySelectorAll('[data-fu]').forEach((b) => b.addEventListener('click', () => { perfilGuardar({ f: b.dataset.fu }); ajusteAplicar(); vibra(); vistaTemas(); }));
+    document.querySelectorAll('[data-an]').forEach((b) => b.addEventListener('click', () => { perfilGuardar({ m: b.dataset.an }); ajusteAplicar(); vibra(); vistaTemas(); }));
     document.querySelectorAll('[data-t]').forEach((b) => b.addEventListener('click', () => { perfilGuardar({ t: b.dataset.t }); temaAplicar(b.dataset.t); vibra(); vistaTemas(); }));
   }
 

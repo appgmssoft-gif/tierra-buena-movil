@@ -1,0 +1,41 @@
+{
+ "_nota": "Letras ORIGINALES de ejemplo, escritas para esta app (sin derechos de terceros). Reemplázalas por las canciones de tu iglesia (revisa la licencia, ej. CCLI).",
+ "biblioteca": [
+  {
+   "id": "ejemplo_1",
+   "titulo": "Ejemplo 1 — Todo lo creado canta",
+   "letra": "Verso 1\nLa mañana abre sus ojos de luz,\nlos montes responden al viento y al sol;\ntodo lo que respira te nombra, Señor,\ny el cielo se llena de una sola canción.\n\nCoro\nTodo lo creado canta,\ntodo lo creado dice: «¡Santo eres!»\nCon mi voz y con mi vida\nse suma mi canto al coro de la tierra.\n\nVerso 2\nEl río recuerda de dónde nació,\nel mar lo recibe sin preguntar;\nasí vuelvo a Ti, cansado y en paz,\ny encuentro en tu casa un lugar donde estar.\n\nCoro\nTodo lo creado canta,\ntodo lo creado dice: «¡Santo eres!»\nCon mi voz y con mi vida\nse suma mi canto al coro de la tierra.\n\nPuente\nSi callan los hombres, hablan las piedras;\nsi callo yo, que hable mi vida.",
+   "ejemplo": true
+  },
+  {
+   "id": "ejemplo_2",
+   "titulo": "Ejemplo 2 — Vuelve a encender",
+   "letra": "Verso 1\nHabía una llama pequeña en mi pecho,\nla apagaron el ruido y la prisa;\nhoy me acerco con las manos abiertas\ny te pido que vuelvas a encenderla.\n\nPre-coro\nNo vengo con prisa, vengo con sed,\nno traigo respuestas, te traigo mi fe.\n\nCoro\nVuelve a encender, vuelve a encender,\nel fuego de amor que me hizo nacer.\nQue arda en mi casa, que arda en mi voz,\nque todo lo mío te hable de Dios.\n\nVerso 2\nQue el fuego no queme, que limpie y que cure,\nque abrigue al que viene cansado del frío;\nque mi vida sea una antorcha pequeña\nque guíe a otros de vuelta al camino.\n\nCoro\nVuelve a encender, vuelve a encender,\nel fuego de amor que me hizo nacer.\nQue arda en mi casa, que arda en mi voz,\nque todo lo mío te hable de Dios.",
+   "ejemplo": true
+  },
+  {
+   "id": "ejemplo_3",
+   "titulo": "Ejemplo 3 — Tu palabra responde",
+   "letra": "Verso 1\nCuando la duda me habla más fuerte,\ncuando la noche parece no acabar,\nabro tu Palabra y encuentro un camino:\nno estoy solo, Tú vas a mi lado.\n\nCoro\nTu Palabra responde, Tu Palabra sostiene,\ncada promesa es un puente que se abre.\nDonde yo no veo, Tú ya has pasado;\ntu fidelidad no se cansa jamás.\n\nVerso 2\nMis preguntas no te asustan, Señor,\nlas recibes como quien guarda un tesoro;\ny poco a poco la paz se hace casa\nen medio del ruido de mi corazón.\n\nCoro\nTu Palabra responde, Tu Palabra sostiene,\ncada promesa es un puente que se abre.\nDonde yo no veo, Tú ya has pasado;\ntu fidelidad no se cansa jamás.",
+   "ejemplo": true
+  },
+  {
+   "id": "ejemplo_4",
+   "titulo": "Ejemplo 4 — Nada me separa",
+   "letra": "Verso 1\nNo hay distancia que Tú no recorras,\nno hay silencio que Tú no entiendas;\nsi me alejo, tu amor me busca,\nsi regreso, me encuentras de pie.\n\nCoro\nNada me separa de tu amor,\nni lo alto, ni lo hondo, ni el temor.\nCon mi historia entera en tus manos\nme quedo aquí, me quedo en tu amor.\n\nVerso 2\nTodo lo que fui, lo que perdí,\nlo pongo en la mesa y lo miras con paz;\nme das un nombre que no se desgasta\ny un lugar donde puedo ser.\n\nCoro\nNada me separa de tu amor,\nni lo alto, ni lo hondo, ni el temor.\nCon mi historia entera en tus manos\nme quedo aquí, me quedo en tu amor.",
+   "ejemplo": true
+  },
+  {
+   "id": "ejemplo_5",
+   "titulo": "Ejemplo 5 — Un lugar junto a Ti",
+   "letra": "Verso 1\nQué hermosa es la casa donde habitas,\ncada rincón respira tu paz;\nhasta el gorrión encuentra su nido\ny la golondrina un lugar para volver.\n\nCoro\nUn día en tu casa vale más que mil,\nun lugar junto a Ti es mi hogar.\nBendito el que confía y camina,\nbendito el que en Ti puede descansar.\n\nVerso 2\nAunque el valle sea largo y seco,\nTú lo conviertes en manantial;\nvoy de fuerza en fuerza, de gracia en gracia,\nhasta llegar donde Tú estás.\n\nCoro\nUn día en tu casa vale más que mil,\nun lugar junto a Ti es mi hogar.\nBendito el que confía y camina,\nbendito el que en Ti puede descansar.",
+   "ejemplo": true
+  },
+  {
+   "id": "ejemplo_6",
+   "titulo": "Ejemplo 6 — Una luz en mi casa",
+   "letra": "Verso 1\nHay una vela pequeña en mi ventana,\nno alumbra el mundo, pero alumbra el hogar;\nsi cada uno enciende la suya,\nla noche empieza a retroceder.\n\nCoro\nEnciende una luz, enciende una luz,\nque nadie camine sin ver.\nUn gesto, un abrazo, una puerta abierta,\ntu luz en la mía puede crecer.\n\nVerso 2\nNo hace falta ser grande ni fuerte,\nsolo decir «aquí estoy, cuenta conmigo»;\nlo pequeño en tus manos se multiplica\ny el barrio entero amanece distinto.\n\nCoro\nEnciende una luz, enciende una luz,\nque nadie camine sin ver.\nUn gesto, un abrazo, una puerta abierta,\ntu luz en la mía puede crecer.",
+   "ejemplo": true
+  }
+ ]
+}

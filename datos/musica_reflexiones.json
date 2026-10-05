@@ -1,0 +1,83 @@
+{
+  "revisado": "2026-09-21",
+  "tarjetas": [
+    {
+      "id": "que-hace",
+      "icono": "🎸",
+      "titulo": "¿Qué hace realmente un músico en el culto?",
+      "resumen": "No solo toca canciones: ayuda a la congregación a fijar el corazón en Dios sin que el instrumento se note más que el mensaje.",
+      "puntos": [
+        "Prepara con tiempo (letra, acordes, orden) para poder concentrarse en la gente y no solo en no equivocarse.",
+        "Sirve al momento del culto, no al revés: acompaña la oración, la prédica y el silencio, no solo «su» parte.",
+        "Cuida el volumen y el protagonismo: la meta es que se escuche a la congregación cantar, no ahogarla.",
+        "Llega a tiempo y ensaya con el equipo: la excelencia también es orden y puntualidad, no solo talento."
+      ],
+      "paraPensar": "Esta semana, ¿preparaste tu parte pensando en servir a la gente o en sonar bien tú?"
+    },
+    {
+      "id": "fama-o-conectar",
+      "icono": "❤️",
+      "titulo": "¿Qué define a un gran músico: la fama o conectar con la gente?",
+      "resumen": "El talento abre una puerta, pero lo que se recuerda de un músico de iglesia es si ayudó a alguien a encontrarse con Dios.",
+      "puntos": [
+        "Un solista impecable que nadie recuerda por su corazón no cumplió el propósito, aunque toque perfecto.",
+        "Conectar es notar a la congregación: mirar, dejar espacio para que canten, ajustar el ritmo si la gente está cansada o gozosa.",
+        "La fama busca aplausos; el servicio busca que la gente salga habiendo adorado, aunque nadie recuerde tu nombre.",
+        "Ser reconocido no es malo, pero no puede ser la razón por la que subes a tocar."
+      ],
+      "paraPensar": "Si nadie te felicitara después del culto, ¿igual habría valido la pena tocar hoy?"
+    },
+    {
+      "id": "proposito",
+      "icono": "🙏",
+      "titulo": "El propósito de la música en la adoración",
+      "resumen": "La música no es el centro del culto: es un vehículo para que el corazón de la gente llegue a Dios.",
+      "puntos": [
+        "Las canciones ponen en palabras y melodía lo que a veces cuesta decir solo hablando: gratitud, dolor, entrega, esperanza.",
+        "Un buen set no es el que más emociona, sino el que ayuda a la congregación a enfocarse en quién es Dios.",
+        "La música también enseña: la letra que cantamos repetidamente moldea lo que creemos, así que importa lo que se canta.",
+        "Sin gente cantando de corazón, la mejor producción musical se queda vacía."
+      ],
+      "paraPensar": "¿Qué verdad sobre Dios recuerda tu congregación gracias a una canción que cantan seguido?"
+    },
+    {
+      "id": "excelencia-sin-perfeccionismo",
+      "icono": "🎯",
+      "titulo": "Servir con excelencia, sin caer en el perfeccionismo",
+      "resumen": "Dar lo mejor que tienes es honrar a Dios; exigirte perfección hasta perder la paz no lo es.",
+      "puntos": [
+        "Excelencia es prepararte, cuidar tu instrumento/voz y ensayar; perfeccionismo es no poder disfrutar si algo salió distinto al plan.",
+        "Un error en vivo no arruina la adoración de nadie si tu actitud sigue siendo de servicio y no de pánico.",
+        "Crecer técnicamente es bueno, pero no reemplaza el corazón: hay músicos técnicos que no conectan y músicos sencillos que sí.",
+        "Aprende de cada culto sin castigarte; la meta es mejorar semana a semana, no ser perfecto hoy."
+      ],
+      "paraPensar": "¿Sales del culto evaluando lo que Dios hizo en la gente, o solo tus propios errores?"
+    },
+    {
+      "id": "corazon-detras-instrumento",
+      "icono": "🕊️",
+      "titulo": "El corazón detrás del instrumento",
+      "resumen": "Lo que traes al escenario un domingo ya estaba en tu corazón el resto de la semana.",
+      "puntos": [
+        "Tu vida de oración y tu tiempo con la Palabra alimentan lo que transmites al tocar, aunque nadie lo vea directamente.",
+        "Los conflictos sin resolver con el equipo o con otros líderes se notan, aunque la técnica esté impecable.",
+        "Adorar en el ensayo, no solo el domingo, cambia la actitud con la que subes al culto.",
+        "Pídele a Dios que tu servicio nazca de gratitud, no de obligación o costumbre."
+      ],
+      "paraPensar": "¿Cómo está tu propia adoración personal esta semana, más allá de lo que preparas para otros?"
+    },
+    {
+      "id": "cuidar-tu-vida",
+      "icono": "🌱",
+      "titulo": "Cuidar tu vida espiritual como músico",
+      "resumen": "Servir seguido en la plataforma puede desgastar tu propia relación con Dios si no la cuidas aparte.",
+      "puntos": [
+        "Es fácil que preparar canciones para otros reemplace tu tiempo devocional personal; son cosas distintas.",
+        "Descansa: decir que no a un culto de vez en cuando no te hace menos comprometido, te cuida.",
+        "Ten a alguien (líder, pastor, otro músico) con quien hablar con honestidad de cómo vas por dentro, no solo de música.",
+        "El desgaste silencioso (cansancio, resentimiento, rutina) es una señal de alerta, no algo que ignorar por «servir igual»."
+      ],
+      "paraPensar": "¿Tienes hoy un espacio, aparte del culto, donde alguien te pregunte cómo estás tú de verdad?"
+    }
+  ]
+}
