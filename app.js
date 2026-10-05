@@ -170,6 +170,7 @@
     luna: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/>',
     sol: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.900 4.900l1.400 1.400M17.700 17.700l1.400 1.400M2 12h2M20 12h2M4.900 19.100l1.400-1.400M17.700 6.300l1.400-1.400"/>'
   };
+  SV.pausa = '<path d="M8 5v14M16 5v14"/>'; SV.audifonos = '<path d="M4 14v-2a8 8 0 0 1 16 0v2"/><path d="M4 14h3v6H5a1 1 0 0 1-1-1zM20 14h-3v6h2a1 1 0 0 0 1-1z"/>'; SV.texto = '<path d="M4 19 9.500 5 15 19M6 14h7M17 12h3M18.500 12v7"/>';
   const EMO = { '📖': 'libro', '✨': 'chispas', '📜': 'rollo', '🌱': 'brote', '🙏': 'corazon', '🕍': 'iglesia', '⛪': 'iglesia', '🔑': 'llave', '✉': 'correo', '🔒': 'candado', '📣': 'altavoz', '📅': 'calendario', '💡': 'foco', '🎓': 'birrete', '🌟': 'estrella', '❓': 'ayuda', '▶': 'play', '📝': 'pluma', '🤝': 'gente', '🧠': 'mente', '🫁': 'viento', '🧱': 'bloques', '🧰': 'llave2', '🕊': 'paloma', '🌿': 'hoja', '🔖': 'marcador', '🗓': 'calendario', '🏆': 'trofeo', '🖼': 'imagen', '🎵': 'nota', '🎶': 'nota', '🎉': 'chispas', '🗑': 'papelera', '✓': 'check' };
   const svg = (k, tam) => `<svg class="ic" viewBox="0 0 24 24" width="${tam || 24}" height="${tam || 24}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${SV[k] || ''}</svg>`;
   const icono = (e, tam) => { const k = EMO[String(e).replace(/\uFE0F/g, '')]; return k ? svg(k, tam) : e; };
@@ -481,7 +482,7 @@
   let codigoPrevio = '';
   const icoCodigoHTML = () => `<button type="button" class="ico-cod" id="icoCodigo" aria-label="Tengo el código de mi iglesia"><span class="ico-cod-in">${svg('iglesia', 22)}</span><span class="ico-cod-t">Mi código</span></button>`;
   const ligaCodigo = () => { const b = $('#icoCodigo'); if (b) b.onclick = () => { vibra(); codigoHoja(); }; };
-  function irACodigo(cod) { try { clearTimeout(onbT); entrandoPon(false); } catch (e) { /* nada */ } codigoPrevio = /^[A-Z0-9]{6}$/.test(cod || '') ? cod : ''; vistaCodigo(); }
+  function irACodigo(cod) { try { onbParar(); entrandoPon(false); } catch (e) { /* nada */ } codigoPrevio = /^[A-Z0-9]{6}$/.test(cod || '') ? cod : ''; vistaCodigo(); }
   function codigoHoja() {                                  // hoja inferior: se escribe el código y se sigue al paso normal de unirse
     const h = nuevoEl(`<div class="hoja" id="hojaCodigo" role="dialog" aria-modal="true" aria-label="Código de mi iglesia"><div class="hoja-in hoja-cod"><div class="hoja-asa" aria-hidden="true"></div><div class="hoja-cod-ic" aria-hidden="true">${svg('iglesia', 30)}</div><h3>El código de tu iglesia</h3><p class="suave">Tu pastor te lo da. Son 6 letras o números.</p><input id="codHoja" class="cod-in" type="text" maxlength="6" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" placeholder="AB12CD" aria-label="Código de 6 letras o números"><div class="cod-pts" id="codPts" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div><p id="codErr" class="error" role="alert" hidden></p><div class="hoja-bt"><button type="button" class="btn" id="codSig">Buscar mi iglesia</button><button type="button" class="btn sec" id="codX">Ahora no</button></div></div></div>`);
     if (!h) return irACodigo('');                          // si la hoja no se puede mostrar, va directo a la pantalla del código
@@ -1210,6 +1211,73 @@
     }, { passive: true });
     try { new MutationObserver(() => { if (!$('#lectura')) { lec = null; const p = $('#lecAcc'); if (p) p.classList.remove('on'); } }).observe($('#pantalla'), { childList: true }); } catch (e) { /* sin observador */ }
   }
+  // ---------- F890 · Apariencia simple y escuchar la Biblia (lo mejor de Bible Patch y La Biblia) ----------
+  // Apariencia: una sola hoja con tres cosas (tema, letra, tamaño). Se ofrece sola la primera vez que se abre un capítulo.
+  // Escuchar: la voz del teléfono lee el capítulo; un mini reproductor queda abajo y sigue aunque cambies de pestaña.
+  const K_APAR = 'tb_movil_lector_apar';
+  const APAR_T = [['nieve', 'Claro'], ['pergamino', 'Papel'], ['medianoche', 'Oscuro']];
+  function aparienciaHoja(primera) {
+    const q = perfilLeer(), tam = () => Math.min(30, Math.max(16, Number(leer(K_BIBTAM)) || 18));
+    const h = nuevoEl(`<div class="hoja" id="hojaApar" role="dialog" aria-modal="true" aria-label="Cómo te gusta leer"><div class="hoja-in hoja-apar"><div class="hoja-asa" aria-hidden="true"></div>
+      <h3>${primera ? '¿Cómo te gusta leer?' : 'Apariencia'}</h3><p class="suave">${primera ? 'Elige lo más cómodo. Lo puedes cambiar cuando quieras desde «Aa».' : 'Se ve al instante.'}</p>
+      <h4 class="apar-t">Fondo</h4><div class="apar-fila" role="group" aria-label="Fondo">${APAR_T.map((t) => `<button type="button" class="apar-op apar-t-${t[0]}${q.t === t[0] ? ' on' : ''}" data-aparT="${t[0]}" aria-pressed="${q.t === t[0]}">${t[1]}</button>`).join('')}</div>
+      <h4 class="apar-t">Letra</h4><div class="apar-fila" role="group" aria-label="Letra"><button type="button" class="apar-op apar-serif${q.f !== 'sans' ? ' on' : ''}" data-aparF="serif" aria-pressed="${q.f !== 'sans'}">Clásica</button><button type="button" class="apar-op apar-sans${q.f === 'sans' ? ' on' : ''}" data-aparF="sans" aria-pressed="${q.f === 'sans'}">Clara</button></div>
+      <h4 class="apar-t">Tamaño</h4><div class="apar-tam"><button type="button" class="btn sec chico" id="aparMenos" aria-label="Letra más chica">A−</button><p class="apar-muestra lectura" id="aparMuestra">En el principio creó Dios los cielos y la tierra.</p><button type="button" class="btn sec chico" id="aparMas" aria-label="Letra más grande">A+</button></div>
+      <button type="button" class="btn" id="aparOk">Listo</button></div></div>`);
+    if (!h) return; document.body.appendChild(h);
+    const muestra = () => { try { $('#aparMuestra').style.fontSize = tam() + 'px'; const l = $('#lectura'); if (l) l.style.fontSize = tam() + 'px'; } catch (e) { /* sin muestra */ } };
+    muestra();
+    h.querySelectorAll('[data-aparT]').forEach((b) => b.addEventListener('click', () => { vibra(); perfilGuardar({ t: b.dataset.aparT }); temaAplicar(b.dataset.aparT); h.querySelectorAll('[data-aparT]').forEach((x) => { clase(x, 'on', x === b); x.setAttribute('aria-pressed', String(x === b)); }); }));
+    h.querySelectorAll('[data-aparF]').forEach((b) => b.addEventListener('click', () => { vibra(); perfilGuardar({ f: b.dataset.aparF }); ajusteAplicar(); h.querySelectorAll('[data-aparF]').forEach((x) => { clase(x, 'on', x === b); x.setAttribute('aria-pressed', String(x === b)); }); }));
+    $('#aparMenos').onclick = () => { guardar(K_BIBTAM, Math.max(16, tam() - 2)); muestra(); };
+    $('#aparMas').onclick = () => { guardar(K_BIBTAM, Math.min(30, tam() + 2)); muestra(); };
+    const cerrar = () => { try { h.remove(); } catch (e) { /* nada */ } };
+    $('#aparOk').onclick = cerrar; h.addEventListener('click', (e) => { if (e && e.target === h) cerrar(); });
+  }
+  const aud = { on: false, pausa: false, cod: '', cap: 0, i: 0, vel: 1, libro: null };
+  const audOk = () => { try { return !!(window.speechSynthesis && window.SpeechSynthesisUtterance); } catch (e) { return false; } };
+  function audMini() {                                    // el mini reproductor vive en el cuerpo de la página: no se borra al cambiar de pestaña
+    let m = $('#audMini');
+    if (!aud.on) { if (m) m.remove(); return; }
+    if (!m) { m = nuevoEl('<div class="aud-mini" id="audMini" role="region" aria-label="Escuchando la Biblia"></div>'); if (!m) return; document.body.appendChild(m); }
+    const inf = libroInfo(aud.cod);
+    m.innerHTML = `<button type="button" class="aud-tit" id="audIr" aria-label="Abrir el capítulo"><small>Escuchando</small><b>${esc(inf ? inf[1] : '')} ${aud.cap}</b></button>
+      <button type="button" class="aud-b" id="audPP" aria-label="${aud.pausa ? 'Seguir' : 'Pausar'}">${svg(aud.pausa ? 'play' : 'pausa', 22)}</button>
+      <button type="button" class="aud-b aud-vel" id="audVel" aria-label="Velocidad">${aud.vel === 1 ? '1×' : String(aud.vel).replace('.', ',') + '×'}</button>
+      <button type="button" class="aud-b" id="audX" aria-label="Dejar de escuchar">${svg('x', 20)}</button>`;
+    $('#audIr').onclick = () => vistaCapitulo(aud.cod, aud.cap);
+    $('#audPP').onclick = () => { vibra(); if (aud.pausa) { aud.pausa = false; try { speechSynthesis.resume(); if (!speechSynthesis.speaking) audDecir(); } catch (e) { /* nada */ } } else { aud.pausa = true; try { speechSynthesis.pause(); } catch (e) { /* nada */ } } audMini(); };
+    $('#audVel').onclick = () => { aud.vel = aud.vel === 1 ? 1.2 : aud.vel === 1.2 ? 0.85 : 1; try { speechSynthesis.cancel(); } catch (e) { /* nada */ } audDecir(); audMini(); };
+    $('#audX').onclick = audParar;
+  }
+  function audMarca() { try { document.querySelectorAll('.vers').forEach((p) => clase(p, 'oyendo', aud.on && lec && lec.cod === aud.cod && lec.cap === aud.cap && Number(p.dataset.v) === aud.i + 1)); const o = document.querySelector('.vers.oyendo'); if (o && o.scrollIntoView) o.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) { /* sin resaltado */ } }
+  function audParar() { aud.on = false; aud.pausa = false; try { speechSynthesis.cancel(); } catch (e) { /* nada */ } audMini(); audMarca(); const b = $('#audBtn'); if (b) clase(b, 'on', false); }
+  function audDecir() {
+    if (!aud.on || !aud.libro) return;
+    const versos = aud.libro[aud.cap - 1];
+    if (!versos || aud.i >= versos.length) return audSiguiente();
+    const u = new SpeechSynthesisUtterance(String(versos[aud.i])); u.lang = 'es-ES'; u.rate = aud.vel;
+    try { const v = (speechSynthesis.getVoices() || []).find((x) => /^es/i.test(x.lang)); if (v) u.voice = v; } catch (e) { /* voz por defecto */ }
+    const i = aud.i;
+    u.onend = () => { if (aud.on && !aud.pausa && aud.i === i) { aud.i++; audDecir(); } };
+    u.onerror = (e) => { if (e && (e.error === 'canceled' || e.error === 'interrupted')) return; audParar(); toastBib('No se pudo reproducir el audio'); };
+    try { speechSynthesis.speak(u); } catch (e) { audParar(); }
+    audMarca();
+  }
+  async function audSiguiente() {                         // al terminar el capítulo sigue con el que viene (como un audiolibro)
+    const idx = LIBROS.findIndex((l) => l[0] === aud.cod), inf = libroInfo(aud.cod);
+    let cod = aud.cod, cap = aud.cap + 1;
+    if (cap > inf[2]) { if (idx >= LIBROS.length - 1) return audParar(); cod = LIBROS[idx + 1][0]; cap = 1; }
+    await audEmpezar(cod, cap, 0, true);
+  }
+  async function audEmpezar(cod, cap, desde, seguido) {
+    if (!audOk()) { toastBib('Tu teléfono no tiene voz para leer en voz alta'); return; }
+    try { speechSynthesis.cancel(); } catch (e) { /* nada */ }
+    try { aud.libro = await libroCargar(cod); } catch (e) { toastBib(SIN_LIBRO); return; }
+    aud.on = true; aud.pausa = false; aud.cod = cod; aud.cap = cap; aud.i = desde || 0;
+    audMini(); audDecir();
+    const b = $('#audBtn'); if (b) clase(b, 'on', true);
+  }
   async function vistaCapitulo(cod, cap, dir) {
     const inf = libroInfo(cod); if (!inf) return vistaBiblia();
     cap = Math.min(Math.max(1, Number(cap) || 1), inf[2]);
@@ -1224,7 +1292,7 @@
     const sig = cap < inf[2] ? [cod, cap + 1] : (idx < LIBROS.length - 1 ? [LIBROS[idx + 1][0], 1] : null);
     const nombre = (x) => libroInfo(x[0])[1] + ' ' + x[1];
     $('#pantalla').innerHTML = `<i class="lec-prog" id="lecProg" aria-hidden="true"></i><button type="button" class="volver" id="volver">‹ ${esc(inf[1])}</button><h1>${esc(inf[1])} ${cap}</h1><div class="filete"></div>
-      <div class="tamano" role="group" aria-label="Tamaño de la letra"><button type="button" class="btn sec chico" id="menos" aria-label="Letra más chica">A−</button><button type="button" class="btn sec chico" id="mas" aria-label="Letra más grande">A+</button></div>
+      <div class="tamano" role="group" aria-label="Tamaño de la letra"><button type="button" class="btn sec chico" id="menos" aria-label="Letra más chica">A−</button><button type="button" class="btn sec chico" id="mas" aria-label="Letra más grande">A+</button><button type="button" class="btn sec chico" id="aparBtn" aria-label="Apariencia de la lectura">${svg('texto', 20)} Aa</button><button type="button" class="btn sec chico${aud.on && aud.cod === cod && aud.cap === cap ? ' on' : ''}" id="audBtn" aria-label="Escuchar este capítulo">${svg('audifonos', 20)} Escuchar</button></div>
       <p class="lec-pista suave">Toca un versículo: resáltalo con color, escribe una nota, guárdalo o hazle una imagen.</p>
       <div class="lectura ${dir ? 'desde-' + dir : ''}" id="lectura">${versos.map((t, i) => `<p class="vers" data-v="${i + 1}" role="button" tabindex="0" aria-pressed="false"><sup>${i + 1}</sup> ${esc(t)}</p>`).join('')}</div>
       <div class="navcap">${ant ? `<button type="button" class="btn sec chico" id="ant">‹ ${esc(nombre(ant))}</button>` : '<span></span>'}${sig ? `<button type="button" class="btn chico" id="sig">${esc(nombre(sig))} ›</button>` : ''}</div>`;
@@ -1233,6 +1301,10 @@
     try { $('#lectura').style.fontSize = tam + 'px'; } catch (e) { /* sin estilo */ }
     const cambiarTam = (d) => { const n = Math.min(30, Math.max(16, (Number(leer(K_BIBTAM)) || 18) + d)); guardar(K_BIBTAM, n); $('#lectura').style.fontSize = n + 'px'; };
     $('#menos').onclick = () => cambiarTam(-2); $('#mas').onclick = () => cambiarTam(2);
+    $('#aparBtn').onclick = () => aparienciaHoja(false);
+    $('#audBtn').onclick = () => { vibra(); if (aud.on && aud.cod === cod && aud.cap === cap) audParar(); else audEmpezar(cod, cap, 0); };
+    if (!leer(K_APAR)) { guardar(K_APAR, 1); setTimeout(() => aparienciaHoja(true), 500); }   // primera vez en la Biblia: ofrece elegir fondo, letra y tamaño
+    audMarca();
     const ir = (x, d) => { vibra(); vistaCapitulo(x[0], x[1], d); };
     if (ant) $('#ant').onclick = () => ir(ant, 'izq'); if (sig) $('#sig').onclick = () => ir(sig, 'der');
     try {
@@ -2139,34 +2211,46 @@
   const entrandoPon = (on) => { try { if (document.body && document.body.classList) document.body.classList.toggle('entrando', !!on); } catch (e) { /* nada */ } };
   const clase = (e, c, on) => { try { e.classList.toggle(c, on); } catch (x) { /* nada */ } };
   const ONB_P = [
+    { id: 'nombre', texto: true, t: '¿Cómo te llamas?', a: 'Así te saludamos cada día.', ph: 'Tu nombre' },
     { id: 'busca', multi: true, max: 3, t: '¿Qué te trae a Tierra Buena?', a: 'Elige hasta tres.', o: [['leer', 'libro', 'Leer la Biblia cada día'], ['orar', 'corazon', 'Orar y encontrar paz'], ['conocer', 'chispas', 'Conocer más a Dios'], ['iglesia', 'iglesia', 'Crecer con mi iglesia'], ['descansar', 'luna', 'Descansar en calma'], ['retos', 'estrella', 'Retos que me animen']] },
+    { id: 'info1', info: true, ic: 'gente', t: (r) => (r.nombre ? r.nombre + ', no vas solo' : 'No vas solo'), a: 'Tierra Buena te acompaña con la Palabra, la oración y tu iglesia. Cada día un paso pequeño.' },
     { id: 'exp', t: '¿Cómo es tu camino con la Biblia?', a: 'No hay respuesta mala.', o: [['nuevo', 'brote', 'Estoy empezando'], ['a_veces', 'libro', 'La leo de vez en cuando'], ['seguido', 'llama', 'La leo seguido'], ['profundo', 'rollo', 'Quiero profundizar']] },
+    { id: 'animo', t: '¿Cómo está tu corazón hoy?', a: 'Lo usamos para elegir tu primera lectura.', o: [['paz', 'paloma', 'En paz'], ['cansado', 'luna', 'Cansado'], ['ansioso', 'viento', 'Con preocupación'], ['agradecido', 'corazon', 'Agradecido'], ['dudas', 'ayuda', 'Con dudas']] },
+    { id: 'area', t: '¿En qué quieres crecer?', a: 'Elige lo que más necesitas ahora.', o: [['fe', 'llama', 'Mi fe'], ['paz', 'paloma', 'Mi paz interior'], ['familia', 'gente', 'Mi familia'], ['proposito', 'estrella', 'Mi propósito'], ['sabiduria', 'foco', 'Sabiduría para decidir']] },
     { id: 'mom', t: '¿Cuándo te gusta leer?', a: 'Con eso armamos tu horario.', o: [['manana', 'sol', 'Por la mañana'], ['mediodia', 'sol', 'Al mediodía'], ['tarde', 'sol', 'Por la tarde'], ['noche', 'luna', 'De noche'], ['libre', 'calendario', 'Cuando pueda']] },
-    { id: 'meta', num: true, t: '¿Cuánto quieres leer al día?', a: 'Puedes cambiarlo cuando quieras.', o: [['1', 'brote', 'Un capítulo · unos 4 minutos'], ['2', 'libro', 'Dos capítulos · unos 8 minutos'], ['3', 'llama', 'Tres capítulos'], ['5', 'trofeo', 'Cinco capítulos']] }
+    { id: 'meta', num: true, t: '¿Cuánto quieres leer al día?', a: 'Puedes cambiarlo cuando quieras.', o: [['1', 'brote', 'Un capítulo · unos 4 minutos'], ['2', 'libro', 'Dos capítulos · unos 8 minutos'], ['3', 'llama', 'Tres capítulos'], ['5', 'trofeo', 'Cinco capítulos']] },
+    { id: 'info2', info: true, ic: 'trofeo', t: (r) => 'A tu ritmo, ' + onbRitmo(r.meta || 1), a: 'Es el tiempo que tardarías en leer toda la Biblia con tu meta. Sin prisa, pero sin parar.' }
   ];
+  const ONB_NQ = ONB_P.filter((x) => !x.info).length;
   const ONB_MOM = { manana: ['Por la mañana', '07:00'], mediodia: ['Al mediodía', '12:30'], tarde: ['Por la tarde', '17:30'], noche: ['De noche', '21:30'], libre: ['Cuando puedas', ''] };
-  const onbEstado = { r: { busca: [], exp: '', mom: '', meta: 0 }, plan: true };
-  let onbT = 0;
+  const ONB_VERS = { ansioso: 'PHP.4.6', cansado: 'MAT.11.28', paz: 'JHN.14.27', agradecido: 'PSA.100.4', dudas: 'JAS.1.5' };
+  const onbEstado = { r: { nombre: '', busca: [], exp: '', animo: '', area: '', mom: '', meta: 0 }, plan: true };
+  let onbT = 0, onbI = 0;
+  const onbParar = () => { clearTimeout(onbT); clearInterval(onbI); };
+  function onbRitmo(meta) {                                // la Biblia tiene 1189 capítulos: cuánto tardarías con tu meta
+    const dias = Math.ceil(1189 / (meta || 1)), m = Math.round(dias / 30);
+    return dias >= 700 ? 'unos ' + (Math.round(dias / 365 * 10) / 10).toString().replace('.', ',') + ' años' : 'unos ' + m + ' meses';
+  }
   function onbCalcular(r) {
     const b = r.busca || [];
-    const calma = b.indexOf('descansar') >= 0 || (b.indexOf('orar') >= 0 && (!r.exp || r.exp === 'nuevo' || r.exp === 'a_veces'));
+    const calma = b.indexOf('descansar') >= 0 || r.animo === 'ansioso' || r.animo === 'cansado' || (b.indexOf('orar') >= 0 && (!r.exp || r.exp === 'nuevo' || r.exp === 'a_veces'));
     const plan = calma ? 'calma' : ({ nuevo: 'juan', a_veces: 'animo', seguido: 'sermon', profundo: 'prov' }[r.exp] || 'juan');
     const tema = { manana: 'amanecer', mediodia: 'cielo', tarde: 'atardecer', noche: 'medianoche' }[r.mom] || (b.indexOf('descansar') >= 0 ? 'medianoche' : 'bosque');
     return { plan, tema, hora: (ONB_MOM[r.mom] || ['', ''])[1], meta: [1, 2, 3, 5].indexOf(r.meta) >= 0 ? r.meta : 1 };
   }
   function onbGuardar(omitido) {                          // guarda las respuestas, aplica ambiente y meta, y empieza el plan si la persona lo dejó marcado
     const r = onbEstado.r, c = onbCalcular(r);
-    guardar(K_ONB, Object.assign({ v: 1, hecho: true, ts: Date.now() }, omitido ? { omitido: true } : { busca: r.busca.slice(), exp: r.exp, mom: r.mom, meta: c.meta, hora: c.hora, plan: c.plan, tema: c.tema }));
+    guardar(K_ONB, Object.assign({ v: 2, hecho: true, ts: Date.now() }, omitido ? { omitido: true } : { nombre: r.nombre, busca: r.busca.slice(), exp: r.exp, animo: r.animo, area: r.area, mom: r.mom, meta: c.meta, hora: c.hora, plan: c.plan, tema: c.tema }));
     if (omitido) return;
-    perfilGuardar({ meta: c.meta, t: c.tema }); temaAplicar(c.tema);
+    perfilGuardar(Object.assign({ meta: c.meta, t: c.tema }, r.nombre ? { n: r.nombre.slice(0, 30) } : {})); temaAplicar(c.tema);
     if (onbEstado.plan) { const q = rg(K_PLANES); if (!q[c.plan]) { q[c.plan] = { ini: new Date().toISOString(), h: [] }; guardar(K_PLANES, q); } }
   }
   function onbIr() { entrandoPon(false); ir('palabra'); toastBib('Tu espacio está listo'); }
   // El inicio de sesión es el de siempre (vistaCuenta, sin cambios): aquí solo se abre. REGLA: no modificarlo sin que el usuario lo pida.
-  function onbCuentaIr(modo) { clearTimeout(onbT); entrandoPon(false); vistaCuenta(modo); }
-  const onbBrote = (n) => `<div class="ent-prog" data-paso="${n}" role="img" aria-label="Pregunta ${n} de ${ONB_P.length}"><span class="ent-brote">${svg('brote', 26)}</span><span class="ent-barra">${ONB_P.map((x, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</span></div>`;
+  function onbCuentaIr(modo) { onbParar(); entrandoPon(false); vistaCuenta(modo); }
+  const onbBrote = (n) => `<div class="ent-prog" data-paso="${n}" role="img" aria-label="Pregunta ${n} de ${ONB_NQ}"><span class="ent-brote">${svg('brote', 26)}</span><span class="ent-barra">${ONB_P.filter((x) => !x.info).map((x, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</span></div>`;
   function onbSplash() {
-    clearTimeout(onbT); entrandoPon(true);
+    onbParar(); entrandoPon(true);
     $('#pantalla').innerHTML = `<section class="ent ent-splash">
       ${icoCodigoHTML()}
       <div class="ent-logo" aria-hidden="true"><i class="ent-aro"></i><i class="ent-aro a2"></i><span class="ent-hoja">${svg('hoja', 64)}</span></div>
@@ -2176,15 +2260,33 @@
     $('#onbEmpezar').onclick = () => onbPregunta(0);
   }
   function onbPregunta(i) {
-    clearTimeout(onbT); entrandoPon(true);
-    const q = ONB_P[i], r = onbEstado.r, cur = (q.multi ? r.busca : [r[q.id]]).map(String);
-    $('#pantalla').innerHTML = `<section class="ent ent-preg">
-      <div class="ent-cab"><button type="button" class="volver" id="onbAtras" aria-label="Atrás">‹</button>${onbBrote(i + 1)}<button type="button" class="enlace" id="onbSaltar">Saltar</button></div>
+    onbParar(); entrandoPon(true);
+    const q = ONB_P[i], r = onbEstado.r, nq = ONB_P.slice(0, i + 1).filter((x) => !x.info).length;
+    const sig = () => (i < ONB_P.length - 1 ? onbPregunta(i + 1) : onbArmando());
+    const cab = `<div class="ent-cab"><button type="button" class="volver" id="onbAtras" aria-label="Atrás">‹</button>${onbBrote(nq)}<button type="button" class="enlace" id="onbSaltar">Saltar</button></div>`;
+    const atras = () => (i ? onbPregunta(i - 1) : onbSplash());
+    if (q.info) {                                          // pantalla de ánimo entre preguntas (como Bible Chat): un mensaje y seguir
+      $('#pantalla').innerHTML = `<section class="ent ent-preg ent-info">${cab}<div class="ent-info-c"><div class="ent-info-ic" aria-hidden="true"><i></i>${svg(q.ic, 44)}</div><h1 class="ent-t">${esc(q.t(r))}</h1><p class="suave">${esc(q.a)}</p></div><button type="button" class="btn" id="onbSig">Continuar</button></section>`;
+      $('#onbAtras').onclick = atras; $('#onbSaltar').onclick = sig; $('#onbSig').onclick = sig;
+      return;
+    }
+    if (q.texto) {
+      $('#pantalla').innerHTML = `<section class="ent ent-preg">${cab}<h1 class="ent-t">${esc(q.t)}</h1><p class="suave">${esc(q.a)}</p>
+        <input id="onbNombre" class="ent-nombre" type="text" maxlength="30" autocomplete="given-name" enterkeyhint="done" placeholder="${esc(q.ph)}" value="${esc(r.nombre)}" aria-label="${esc(q.t)}">
+        <button type="button" class="btn" id="onbSig">Continuar</button></section>`;
+      const guardaNombre = () => { r.nombre = String(($('#onbNombre') || {}).value || '').replace(/[<>]/g, '').trim().slice(0, 30); };
+      $('#onbAtras').onclick = () => { guardaNombre(); atras(); }; $('#onbSaltar').onclick = () => { r.nombre = ''; sig(); };
+      $('#onbSig').onclick = () => { guardaNombre(); sig(); };
+      $('#onbNombre').addEventListener('keydown', (e) => { if (e && e.key === 'Enter') { guardaNombre(); sig(); } });
+      try { setTimeout(() => $('#onbNombre').focus(), 250); } catch (e) { /* sin foco */ }
+      return;
+    }
+    const cur = (q.multi ? r.busca : [r[q.id]]).map(String);
+    $('#pantalla').innerHTML = `<section class="ent ent-preg">${cab}
       <h1 class="ent-t">${esc(q.t)}</h1><p class="suave">${esc(q.a)}</p>
       <div class="ent-ops" role="group" aria-label="${esc(q.t)}">${q.o.map((o) => { const on = cur.indexOf(o[0]) >= 0; return `<button type="button" class="ent-op${on ? ' on' : ''}" data-v="${o[0]}" aria-pressed="${on}"><span class="ent-op-ic">${svg(o[1], 24)}</span><span class="ent-op-t">${esc(o[2])}</span><span class="ent-op-ok">${svg('check', 18)}</span></button>`; }).join('')}</div>
       ${q.multi ? '<button type="button" class="btn" id="onbSig">Continuar</button>' : ''}</section>`;
-    const sig = () => (i < ONB_P.length - 1 ? onbPregunta(i + 1) : onbResultado());
-    $('#onbAtras').onclick = () => (i ? onbPregunta(i - 1) : onbSplash());
+    $('#onbAtras').onclick = atras;
     $('#onbSaltar').onclick = sig;
     document.querySelectorAll('[data-v]').forEach((b) => b.addEventListener('click', () => {
       vibra();
@@ -2199,24 +2301,48 @@
     }));
     const s = $('#onbSig'); if (s) s.onclick = sig;
   }
+  // Animación «Armando tu plan» (como Bible Chat): un aro que se llena y una lista que se va marcando con lo que la persona contó.
+  function onbArmando() {
+    onbParar(); entrandoPon(true);
+    const r = onbEstado.r, c = onbCalcular(r), pl = PLANES.find((x) => x.id === c.plan) || PLANES[0], tm = TEMAS.find((x) => x[0] === c.tema) || TEMAS[0];
+    const pasos = ['Eligiendo tu plan: ' + pl.n, 'Preparando tu ambiente: ' + tm[1], c.hora ? 'Ajustando tu horario: ' + c.hora : 'Dejando tu horario libre', 'Armando tu meta: ' + c.meta + (c.meta === 1 ? ' capítulo' : ' capítulos') + ' al día'];
+    $('#pantalla').innerHTML = `<section class="ent ent-carga" role="status" aria-live="polite">
+      <h1 class="ent-t">${r.nombre ? esc(r.nombre) + ', estamos' : 'Estamos'} armando tu espacio</h1>
+      <div class="ent-aro-c" aria-hidden="true"><svg viewBox="0 0 120 120" width="150" height="150"><circle class="aro-f" cx="60" cy="60" r="52"/><circle class="aro-v" cx="60" cy="60" r="52"/></svg><b id="onbPct">0%</b></div>
+      <ul class="ent-pasos">${pasos.map((p, k) => `<li data-p="${k}"><span class="ent-paso-ok">${svg('check', 16)}</span>${esc(p)}</li>`).join('')}</ul></section>`;
+    const calma = (() => { try { return document.documentElement.getAttribute('data-anim') === 'off' || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } })();
+    const total = calma ? 900 : 4200, t0 = Date.now(), lis = Array.from(document.querySelectorAll('.ent-pasos li'));
+    const aro = $('.aro-v'); if (aro && !calma) clase(aro, 'llena', true);
+    onbI = setInterval(() => {
+      const f = Math.min(1, (Date.now() - t0) / total), pct = $('#onbPct');
+      if (pct) pct.textContent = Math.round(f * 100) + '%';
+      lis.forEach((li, k) => { if (f >= (k + 1) / (pasos.length + 0.3)) clase(li, 'ok', true); });
+      if (f >= 1) { clearInterval(onbI); lis.forEach((li) => clase(li, 'ok', true)); if (aro) clase(aro, 'fin', true); onbT = setTimeout(onbResultado, 450); }
+    }, 60);
+  }
   function onbResultado() {
-    clearTimeout(onbT); entrandoPon(true);
+    onbParar(); entrandoPon(true);
     const r = onbEstado.r, c = onbCalcular(r), pl = PLANES.find((x) => x.id === c.plan) || PLANES[0], tm = TEMAS.find((x) => x[0] === c.tema) || TEMAS[0], mom = ONB_MOM[r.mom];
     temaAplicar(c.tema);                                   // la persona ya ve su ambiente en esta pantalla
+    const vref = ONB_VERS[r.animo] || 'JER.29.11', vp = vref.split('.');
     $('#pantalla').innerHTML = `<section class="ent ent-res">
       <div class="ent-cab"><button type="button" class="volver" id="onbAtras" aria-label="Atrás">‹</button></div>
-      <h1 class="ent-t">Tu espacio está listo</h1><p class="suave">Lo armamos con lo que nos contaste. Todo se puede cambiar después.</p>
+      <h1 class="ent-t">${r.nombre ? esc(r.nombre) + ', tu' : 'Tu'} espacio está listo</h1><p class="suave">Lo armamos con lo que nos contaste. Todo se puede cambiar después.</p>
+      <div class="ent-vers card" id="onbVers"><small>Una palabra para ti hoy</small><p class="ent-vers-t" id="onbVersT">…</p><span class="suave" id="onbVersR"></span></div>
       <div class="ent-filas">
         <div class="ent-fila"><span class="ent-fila-ic">${svg('calendario', 24)}</span><div><small>Tu primer plan</small><b>${esc(pl.n)}</b><span class="suave">${esc(pl.d)}</span></div></div>
         <div class="ent-fila"><span class="ent-fila-ic">${svg('chispas', 24)}</span><div><small>Tu ambiente</small><b>${esc(tm[1])}</b><span class="suave">${esc(tm[2])}</span></div></div>
         <div class="ent-fila"><span class="ent-fila-ic">${svg(r.mom === 'noche' ? 'luna' : 'sol', 24)}</span><div><small>Tu momento</small><b>${esc(mom ? mom[0] : 'Cuando puedas')}</b><span class="suave">${c.hora ? 'Te sugeriremos las ' + c.hora + '.' : 'Sin horario fijo.'}</span></div></div>
-        <div class="ent-fila"><span class="ent-fila-ic">${svg('llama', 24)}</span><div><small>Tu meta</small><b>${c.meta} ${c.meta === 1 ? 'capítulo' : 'capítulos'} al día</b><span class="suave">Con pausa y sin prisa.</span></div></div>
+        <div class="ent-fila"><span class="ent-fila-ic">${svg('llama', 24)}</span><div><small>Tu meta</small><b>${c.meta} ${c.meta === 1 ? 'capítulo' : 'capítulos'} al día</b><span class="suave">Toda la Biblia en ${esc(onbRitmo(c.meta))}.</span></div></div>
       </div>
       <label class="chk"><input type="checkbox" id="onbPlan"${onbEstado.plan ? ' checked' : ''}><span>Empezar «${esc(pl.n)}» al entrar</span></label>
       <button type="button" class="btn" id="onbSig">Crear mi cuenta</button>
       <button type="button" class="btn sec" id="onbCambiar">Cambiar mis respuestas</button>
       <p class="ent-links"><button type="button" class="enlace" id="onbYa">Ya tengo cuenta</button></p>
       <p class="ent-links"><button type="button" class="enlace" id="onbLuego">Ahora no, solo quiero leer</button></p></section>`;
+    (async () => {                                         // el versículo sale de la Biblia que ya está en el teléfono
+      try { const l = await libroCargar(vp[0]), t = l[Number(vp[1]) - 1][Number(vp[2]) - 1], a = $('#onbVersT'), b = $('#onbVersR'); if (a && t) { a.textContent = '«' + t + '»'; b.textContent = libroInfo(vp[0])[1] + ' ' + vp[1] + ':' + vp[2]; } else if ($('#onbVers')) $('#onbVers').hidden = true; } catch (e) { const v = $('#onbVers'); if (v) v.hidden = true; }
+    })();
     try { setTimeout(() => { const b = $('#onbSig'); if (b) confeti(b); }, 450); } catch (e) { /* sin celebración */ }
     $('#onbAtras').onclick = () => onbPregunta(ONB_P.length - 1);
     $('#onbCambiar').onclick = () => onbPregunta(0);

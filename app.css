@@ -775,3 +775,62 @@ html[data-anim=off] .rv{opacity:1;transform:none}
 /* F888 · los campos de teléfono se ven igual que los de texto y correo */
 input[type=tel]{width:100%;min-height:48px;font:inherit;font-size:16px;color:var(--tinta);background:var(--tarjeta);border:2px solid var(--linea);border-radius:16px;padding:10px 12px;transition:border-color .15s,box-shadow .15s}
 input[type=tel]:focus{outline:0;border-color:var(--verde);box-shadow:0 0 0 4px color-mix(in srgb,var(--verde) 20%,transparent)}
+
+/* ===== F890 · Primera vez al estilo Bible Chat: nombre, pantallas de ánimo, «armando tu espacio», versículo ===== */
+.ent-prog[data-paso="5"] .ent-brote{transform:scale(1.15)}.ent-prog[data-paso="6"] .ent-brote{transform:scale(1.22)}
+.ent-prog[data-paso="7"] .ent-brote{transform:scale(1.3)}.ent-prog[data-paso="8"] .ent-brote{transform:scale(1.4)}
+.ent-barra i{min-width:4px}
+.ent-nombre{width:100%;margin:18px 0 14px;padding:16px 18px;font:inherit;font-size:1.35rem;font-weight:600;color:var(--tinta);background:var(--tarjeta);border:2px solid var(--linea);border-radius:18px;text-align:center}
+.ent-nombre:focus{outline:none;border-color:var(--verde);box-shadow:0 0 0 4px color-mix(in srgb,var(--verde) 22%,transparent)}
+.ent-info{display:flex;flex-direction:column;min-height:calc(100dvh - 40px)}
+.ent-info-c{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;padding:0 6px 24px}
+.ent-info-c .ent-t{margin:18px 0 6px}
+.ent-info-ic{position:relative;width:104px;height:104px;border-radius:50%;display:grid;place-items:center;color:#fff;background:linear-gradient(155deg,#5b7f52,#3f5d3a);box-shadow:0 14px 34px color-mix(in srgb,var(--verde) 40%,transparent)}
+.ent-info-ic i{position:absolute;inset:-12px;border-radius:50%;border:2px solid color-mix(in srgb,var(--verde) 45%,transparent)}
+.ent-carga{display:flex;flex-direction:column;align-items:center;text-align:center;min-height:calc(100dvh - 40px);justify-content:center;gap:10px}
+.ent-aro-c{position:relative;width:150px;height:150px;margin:14px 0 8px;display:grid;place-items:center}
+.ent-aro-c svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.ent-aro-c b{font-family:"TB Titulo",Georgia,serif;font-size:2rem;color:var(--tinta)}
+.aro-f,.aro-v{fill:none;stroke-width:8}
+.aro-f{stroke:color-mix(in srgb,var(--verde) 16%,var(--linea))}
+.aro-v{stroke:var(--verde);stroke-linecap:round;stroke-dasharray:327;stroke-dashoffset:327}
+.aro-v.fin{stroke-dashoffset:0}
+.ent-pasos{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:10px;width:100%;max-width:420px;text-align:left}
+.ent-pasos li{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:16px;background:var(--tarjeta);border:1px solid var(--linea);font-weight:600;opacity:.45}
+.ent-pasos li.ok{opacity:1;border-color:var(--verde)}
+.ent-paso-ok{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;color:#fff;background:var(--verde);opacity:0;transform:scale(.4)}
+.ent-pasos li.ok .ent-paso-ok{opacity:1;transform:scale(1)}
+.ent-vers{margin:14px 0 4px;text-align:center}
+.ent-vers small{display:block;color:var(--suave);font-weight:600;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em}
+.ent-vers-t{font-family:"TB Lectura",Georgia,serif;font-size:1.2rem;line-height:1.45;margin:10px 0 6px}
+@media (prefers-reduced-motion:no-preference){
+  html:not([data-anim=off]) .aro-v.llena{animation:onbAro 4.2s linear forwards}
+  html:not([data-anim=off]) .ent-info-ic i{animation:onbPulso 2.4s ease-out infinite}
+  html:not([data-anim=off]) .ent-pasos li{transition:opacity .4s,border-color .4s,transform .4s}
+  html:not([data-anim=off]) .ent-pasos li.ok{animation:onbPaso .45s cubic-bezier(.3,1.4,.5,1)}
+  html:not([data-anim=off]) .ent-paso-ok{transition:opacity .25s,transform .4s cubic-bezier(.3,1.6,.5,1)}
+  html:not([data-anim=off]) .ent-info-ic{animation:onbEntra .6s cubic-bezier(.3,1.4,.5,1)}
+  @keyframes onbAro{to{stroke-dashoffset:0}}
+  @keyframes onbPulso{from{transform:scale(.9);opacity:.9}to{transform:scale(1.3);opacity:0}}
+  @keyframes onbPaso{from{transform:translateY(8px) scale(.97)}to{transform:none}}
+  @keyframes onbEntra{from{transform:scale(.5);opacity:0}to{transform:none;opacity:1}}
+}
+
+/* ===== F890 · Apariencia simple y reproductor de audio ===== */
+.tamano{flex-wrap:wrap}.tamano #aparBtn,.tamano #audBtn{display:inline-flex;align-items:center;gap:6px}
+.tamano #audBtn.on{background:var(--verde);color:#fff;border-color:var(--verde)}
+.hoja-apar .apar-t{margin:14px 0 8px;font-size:.85rem;text-transform:uppercase;letter-spacing:.06em;color:var(--suave)}
+.apar-fila{display:flex;gap:8px}
+.apar-op{flex:1;min-height:52px;font:inherit;font-weight:700;border-radius:16px;border:2px solid var(--linea);background:var(--tarjeta);color:var(--tinta)}
+.apar-op.on{border-color:var(--verde);box-shadow:0 0 0 3px color-mix(in srgb,var(--verde) 22%,transparent)}
+.apar-t-nieve{background:#ffffff;color:#1c1b18}.apar-t-pergamino{background:#f1e4c3;color:#3b2f1e}.apar-t-medianoche{background:#0b0b0b;color:#eee}
+.apar-serif{font-family:var(--f-lectura)}.apar-sans{font-family:var(--f-texto)}
+.apar-tam{display:flex;align-items:center;gap:10px}.apar-tam .btn.chico{margin-top:0;min-width:56px}
+.apar-muestra{flex:1;margin:0;text-align:center;line-height:1.4}
+.hoja-apar #aparOk{margin-top:16px}
+.vers.oyendo{background:color-mix(in srgb,var(--oro) 22%,transparent);border-radius:10px}
+.aud-mini{position:fixed;left:12px;right:12px;bottom:calc(86px + var(--sa-b));z-index:12;display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:20px;background:var(--tarjeta);border:1px solid var(--verde);box-shadow:0 12px 30px -10px rgba(0,0,0,.45);max-width:640px;margin:0 auto}
+.aud-tit{flex:1;text-align:left;background:none;border:0;font:inherit;color:var(--tinta);padding:4px 6px;min-height:44px}
+.aud-tit small{display:block;color:var(--suave);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em}
+.aud-b{flex:none;width:44px;height:44px;border-radius:50%;border:0;display:grid;place-items:center;background:color-mix(in srgb,var(--verde) 14%,transparent);color:var(--verde);font:inherit;font-weight:700}
+.aud-vel{font-size:.85rem}
