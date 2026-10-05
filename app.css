@@ -848,3 +848,50 @@ input[type=tel]:focus{outline:0;border-color:var(--verde);box-shadow:0 0 0 4px c
 .hac-lector{margin:20px 0 4px;text-align:center;border:1px solid var(--verde)}
 .hac-perfil{display:flex;align-items:center;gap:14px;width:100%;text-align:left;margin:12px 0}
 .hac-perfil-n{flex:none;width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-family:var(--f-titulo);font-size:1.5rem;font-weight:700;color:#fff;background:linear-gradient(155deg,#5b7f52,#3f5d3a)}
+
+/* ===== F892 — portada con pantallas que cambian (idea de Bible Chat) + cierre «de parte de Tierra Buena» ===== */
+.ent-port{justify-content:flex-start;align-items:stretch;padding-bottom:max(14px,var(--sa-b))}
+.pt-vista{flex:1;min-height:0;overflow:hidden;position:relative;margin:0 -16px}
+.pt-pista{display:flex;height:100%;transition:transform .6s cubic-bezier(.3,.9,.3,1)}
+.pt-sl{flex:0 0 100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:64px 28px 8px;opacity:.35;transition:opacity .5s}
+.pt-sl.on{opacity:1}
+.ent-port[data-i="1"] .pt-pista{transform:translateX(-100%)}
+.ent-port[data-i="2"] .pt-pista{transform:translateX(-200%)}
+.ent-port[data-i="3"] .pt-pista{transform:translateX(-300%)}
+.ent-port[data-i="4"] .pt-pista{transform:translateX(-400%)}
+.ent-port[data-i="5"] .pt-pista{transform:translateX(-500%)}
+.pt-esc{position:relative;width:210px;height:210px;margin:0 auto 22px;display:grid;place-items:center}
+.pt-ic{position:relative;z-index:1;width:112px;height:112px;border-radius:34%;display:grid;place-items:center;color:#fff;background:linear-gradient(155deg,#6d9462,#3f5d3a 60%,#2c4429);box-shadow:0 18px 40px -16px rgba(44,68,41,.7),inset 0 0 0 1px rgba(255,255,255,.18)}
+.pt-aro{position:absolute;left:49px;top:49px;width:112px;height:112px;border-radius:34%;border:2px solid color-mix(in srgb,var(--verde) 45%,transparent);opacity:0}
+.pt-chip{position:absolute;z-index:2;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:var(--tinta);background:color-mix(in srgb,var(--oro) 22%,var(--papel));border:1px solid color-mix(in srgb,var(--tinta) 14%,transparent);box-shadow:0 8px 18px -10px rgba(0,0,0,.45)}
+.pt-chip.c1{left:2px;top:30px}.pt-chip.c2{right:0;top:58px}.pt-chip.c3{left:34px;bottom:2px}
+.pt-t{font-family:"TB Titulo",Georgia,serif;font-size:1.75rem;line-height:1.15;margin:0 0 10px}
+.pt-a{color:var(--suave);font-size:1.05rem;line-height:1.45;margin:0;max-width:30ch}
+.pt-fin .ent-logo{margin-top:0}
+.pt-fin .pt-a{margin-top:14px}
+.pt-pie{padding-top:8px;display:flex;flex-direction:column;gap:2px}
+.pt-pts{display:flex;justify-content:center;margin-bottom:10px}
+.pt-pt{width:26px;height:26px;border:0;background:none;padding:0;display:grid;place-items:center;cursor:pointer}
+.pt-pt::before{content:"";width:8px;height:8px;border-radius:99px;background:color-mix(in srgb,var(--tinta) 22%,transparent);transition:width .35s,background .35s}
+.pt-pt.on::before{width:24px;background:var(--verde)}
+@media (prefers-reduced-motion:reduce){.pt-pista,.pt-sl,.pt-pt::before{transition:none}}
+@media (prefers-reduced-motion:no-preference){
+  html:not([data-anim=off]) .pt-sl.on .pt-ic{animation:ent-brota .8s cubic-bezier(.3,1.4,.5,1) both}
+  html:not([data-anim=off]) .pt-sl.on .pt-aro{animation:ent-onda 2.6s .5s ease-out infinite}
+  html:not([data-anim=off]) .pt-sl.on .pt-aro.a2{animation-delay:1.6s}
+  html:not([data-anim=off]) .pt-sl.on .pt-chip{animation:pt-flota 3.4s ease-in-out infinite,ent-crece .6s .3s cubic-bezier(.3,1.4,.5,1) backwards}
+  html:not([data-anim=off]) .pt-sl.on .pt-chip.c2{animation-delay:.5s,.45s}
+  html:not([data-anim=off]) .pt-sl.on .pt-chip.c3{animation-delay:1s,.6s}
+  html:not([data-anim=off]) .pt-sl.on .pt-t{animation:ent-sube .6s .15s ease-out both}
+  html:not([data-anim=off]) .pt-sl.on .pt-a{animation:ent-sube .6s .35s ease-out both}
+  /* el cierre de Tierra Buena repite su brote cada vez que aparece (las reglas viejas de .ent-splash corrían una sola vez, al abrir) */
+  html:not([data-anim=off]) .ent-splash.ent-port .pt-sl .ent-hoja,html:not([data-anim=off]) .ent-splash.ent-port .pt-sl .ent-hoja svg,html:not([data-anim=off]) .ent-splash.ent-port .pt-sl .ent-aro,html:not([data-anim=off]) .ent-splash.ent-port .pt-sl .ent-marca,html:not([data-anim=off]) .ent-splash.ent-port .pt-sl .ent-lema{animation:none}
+  html:not([data-anim=off]) .ent-splash.ent-port .pt-sl.on .ent-hoja{animation:ent-brota .9s cubic-bezier(.3,1.4,.5,1) both}
+  html:not([data-anim=off]) .ent-splash.ent-port .pt-sl.on .ent-hoja svg{transform-origin:50% 100%;animation:ent-crece 1.1s .4s cubic-bezier(.3,1.4,.5,1) both}
+  html:not([data-anim=off]) .ent-splash.ent-port .pt-sl.on .ent-aro{animation:ent-onda 2.6s .6s ease-out infinite}
+  html:not([data-anim=off]) .ent-splash.ent-port .pt-sl.on .ent-aro.a2{animation-delay:1.5s}
+  html:not([data-anim=off]) .ent-splash.ent-port .pt-sl.on .ent-marca{animation:ent-sube .8s .8s ease-out both}
+  html:not([data-anim=off]) .ent-splash.ent-port .pt-sl.on .ent-lema{animation:ent-sube .8s 1.1s ease-out both}
+  html:not([data-anim=off]) .ent-splash.ent-port .pt-sl.on .pt-a{animation:ent-sube .8s 1.4s ease-out both}
+  @keyframes pt-flota{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+}

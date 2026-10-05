@@ -2309,15 +2309,47 @@
   // El inicio de sesión es el de siempre (vistaCuenta, sin cambios): aquí solo se abre. REGLA: no modificarlo sin que el usuario lo pida.
   function onbCuentaIr(modo) { onbParar(); entrandoPon(false); vistaCuenta(modo); }
   const onbBrote = (n) => `<div class="ent-prog" data-paso="${n}" role="img" aria-label="Pregunta ${n} de ${ONB_NQ}"><span class="ent-brote">${svg('brote', 26)}</span><span class="ent-barra">${ONB_P.filter((x) => !x.info).map((x, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</span></div>`;
+  // ---------- F892 · Portada con pantallas que cambian (idea de Bible Chat): se ve cada vez que se abre la app sin cuenta ----------
+  // 5 pantallas cortas que muestran de qué trata la app + un cierre «de parte de Tierra Buena», y recién después se abre el lugar para entrar.
+  // Se mueve sola (se detiene si la persona toca o desliza, y no se mueve con «reducir movimiento»). El inicio de sesión NO se toca: solo se abre.
+  const PORT = [
+    { ic: 'brote', t: 'Aquí la Palabra se vive', a: 'Aprender es hermoso. Vivirlo, todavía más.', c: ['libro', 'corazon', 'gente'] },
+    { ic: 'libro', t: 'Lee y escucha a tu ritmo', a: 'La Biblia en tu teléfono, con la letra que te guste. También puedes escucharla.', c: ['altavoz', 'marcador', 'pluma'] },
+    { ic: 'check', t: 'Un paso pequeño cada día', a: 'Elige algo para hacer hoy. Si lo intentas, también cuenta.', c: ['estrella', 'llama', 'trofeo'] },
+    { ic: 'iglesia', t: 'Camina con tu iglesia', a: 'Pide oración, recibe avisos y súmate a lo que hace tu comunidad.', c: ['paloma', 'calendario', 'gente'] },
+    { ic: 'gente', t: 'Juntos hacemos el bien', a: 'Cada mes elegimos entre todos una acción para mejorar nuestro entorno. Venga de la iglesia que venga: lo que nos une es ayudar.', c: ['corazon', 'hoja', 'sol'] }
+  ];
+  const portMov = () => { try { const h = document.documentElement; return !(h && h.getAttribute && h.getAttribute('data-anim') === 'off') && !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
   function onbSplash() {
     onbParar(); entrandoPon(true);
-    $('#pantalla').innerHTML = `<section class="ent ent-splash">
-      ${icoCodigoHTML()}
-      <div class="ent-logo" aria-hidden="true"><i class="ent-aro"></i><i class="ent-aro a2"></i><span class="ent-hoja">${svg('hoja', 64)}</span></div>
-      <h1 class="ent-marca">Tierra Buena</h1><p class="ent-lema">Donde la Palabra echa raíz</p>
-      <div class="ent-pie"><button type="button" class="btn" id="onbEmpezar">Empezar</button></div></section>`;   // F888: la portada solo ofrece «Empezar»; «Ya tengo cuenta» aparece al final de las preguntas
+    const ya = !!onbLeer(), n = PORT.length + 1;
+    const sl = PORT.map((x, i) => `<div class="pt-sl" id="ptS${i}" role="group" aria-label="${i + 1} de ${n}"><div class="pt-esc" aria-hidden="true"><i class="pt-aro"></i><i class="pt-aro a2"></i><span class="pt-ic">${svg(x.ic, 52)}</span>${x.c.map((k, j) => `<span class="pt-chip c${j + 1}">${svg(k, 20)}</span>`).join('')}</div><h1 class="pt-t">${esc(x.t)}</h1><p class="pt-a">${esc(x.a)}</p></div>`).join('');
+    const fin = `<div class="pt-sl pt-fin" id="ptS${PORT.length}" role="group" aria-label="${n} de ${n}"><div class="ent-logo" aria-hidden="true"><i class="ent-aro"></i><i class="ent-aro a2"></i><span class="ent-hoja">${svg('hoja', 64)}</span></div><h1 class="ent-marca">Tierra Buena</h1><p class="ent-lema">Donde la Palabra echa raíz</p><p class="pt-a">Hecho con cariño para que el bien eche raíz en ti, en los tuyos y en tu lugar.</p></div>`;
+    const pts = Array.from({ length: n }, (_, i) => `<button type="button" class="pt-pt" data-pt="${i}" aria-label="Pantalla ${i + 1} de ${n}"></button>`).join('');
+    const botones = ya
+      ? `<button type="button" class="btn" id="onbEmpezar">Entrar a mi cuenta</button><p class="ent-links"><button type="button" class="enlace" id="onbCrear">Crear una cuenta nueva</button></p><p class="ent-links"><button type="button" class="enlace" id="onbLeer">Solo quiero leer</button></p>`
+      : `<button type="button" class="btn" id="onbEmpezar">Empezar</button>`;   // F888: la primera vez solo ofrece «Empezar»; «Ya tengo cuenta» aparece al final de las preguntas
+    $('#pantalla').innerHTML = `<section class="ent ent-splash ent-port" data-i="0">${icoCodigoHTML()}<div class="pt-vista" id="ptVista"><div class="pt-pista">${sl}${fin}</div></div><div class="pt-pie"><div class="pt-pts">${pts}</div>${botones}</div></section>`;
     ligaCodigo();
-    $('#onbEmpezar').onclick = () => onbPregunta(0);
+    const sec = $('.ent-port'); let i = 0;
+    const puntos = () => { try { return Array.from(document.querySelectorAll('.pt-pt')); } catch (e) { return []; } };
+    const ver = (k) => {
+      i = Math.max(0, Math.min(n - 1, k));
+      try { sec.setAttribute('data-i', String(i)); } catch (e) { /* nada */ }
+      for (let j = 0; j < n; j++) { const e = $('#ptS' + j); if (e) { clase(e, 'on', j === i); try { e.setAttribute('aria-hidden', j === i ? 'false' : 'true'); } catch (x) { /* nada */ } } }
+      puntos().forEach((d, j) => { clase(d, 'on', j === i); try { if (j === i) d.setAttribute('aria-current', 'true'); else d.removeAttribute('aria-current'); } catch (x) { /* nada */ } });
+    };
+    const quieta = () => clearInterval(onbI);
+    ver(0);
+    if (portMov()) onbI = setInterval(() => { if (i >= n - 1) quieta(); else ver(i + 1); }, 4200);   // pasa sola; en el cierre de Tierra Buena se queda
+    puntos().forEach((d) => { d.onclick = () => { quieta(); ver(Number(d.getAttribute('data-pt'))); }; });
+    const vi = $('#ptVista'); let x0 = null;               // deslizar con el dedo
+    if (vi && vi.addEventListener) {
+      vi.addEventListener('touchstart', (e) => { x0 = e.touches && e.touches[0] ? e.touches[0].clientX : null; }, { passive: true });
+      vi.addEventListener('touchend', (e) => { const t = e.changedTouches && e.changedTouches[0]; if (x0 === null || !t) return; const d = t.clientX - x0; x0 = null; if (Math.abs(d) > 40) { quieta(); ver(i + (d < 0 ? 1 : -1)); } }, { passive: true });
+    }
+    $('#onbEmpezar').onclick = () => { quieta(); if (ya) onbCuentaIr('entrar'); else onbPregunta(0); };
+    if (ya) { $('#onbCrear').onclick = () => onbCuentaIr('crear'); $('#onbLeer').onclick = () => { onbParar(); entrandoPon(false); ir('palabra'); }; }
   }
   function onbPregunta(i) {
     onbParar(); entrandoPon(true);
@@ -2484,6 +2516,8 @@
       if (window.history && history.replaceState) history.replaceState(null, '', window.location.pathname);
     }
   } catch (e) { /* sin modo prueba */ }
-  if (!hayOnb() && !codigoDeEnlace()) onbSplash(); else ir('iglesia');   // F884: solo la primera vez pasa por la entrada guiada
+  // F892: sin cuenta, ni iglesia, ni solicitud (primera vez o quien dijo «solo quiero leer») se abre la portada animada cada vez; con cuenta o iglesia, directo a la app
+  const portadaYaVista = () => { try { if (sessionStorage.getItem('tb_movil_portada') === '1') return true; sessionStorage.setItem('tb_movil_portada', '1'); return false; } catch (e) { return true; } };   // una vez por apertura (no en cada recarga); si no hay dónde anotarlo, no molesta
+  if (!codigoDeEnlace() && (!hayOnb() || (!leer(K_ID) && !leer(K_SOL) && !leer(K_CUENTA) && !portadaYaVista()))) onbSplash(); else ir('iglesia');
   syncInicio();
 })();
