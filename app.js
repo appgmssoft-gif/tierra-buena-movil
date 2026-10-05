@@ -313,7 +313,14 @@
       if (!crear && !clave) return error('Escribe tu contraseña para entrar.');
       if (crear && clave !== $('#ccl2').value) return error(MOTIVOS['claves-distintas']);
       const b = $('#ccgo'); b.disabled = true; b.textContent = crear ? 'Creando…' : 'Entrando…';
-      const r = crear ? await cuentaCrear(correo, clave) : await cuentaEntrar(correo, clave);
+      let r = crear ? await cuentaCrear(correo, clave) : await cuentaEntrar(correo, clave);
+      // F878: cuenta unica. Si la cuenta nunca llego a la nube (se creo solo en el escritorio), se activa aqui con el mismo correo y clave.
+      // Si el correo ya existe con otra clave, Supabase lo avisa ('ya-existe') y se muestra «contrasena incorrecta».
+      if (!crear && !r.ok && r.motivo === 'credenciales' && typeof confirm === 'function' &&
+          confirm('No encontramos esa cuenta en la nube. Si ya la usas en el computador, podemos activarla aqui con el mismo correo y contrasena. ¿Activarla ahora?')) {
+        const r2 = await cuentaCrear(correo, clave);
+        if (r2.ok) r = r2; else if (r2.motivo !== 'ya-existe') r = r2;
+      }
       b.disabled = false; b.textContent = crear ? 'Crear mi cuenta' : 'Entrar';
       if (!r.ok) {
         error(MOTIVOS[r.motivo] || 'No pudimos entrar. Revisa tus datos e inténtalo otra vez.');
