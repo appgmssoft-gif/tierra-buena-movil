@@ -1124,16 +1124,17 @@
   }
   function vistaPalabra() {
     const ult = leer(K_BIB), inf = ult && libroInfo(ult.cod);
+    let planAct = null; try { for (const pl of PLANES) { const e = planEstado(pl.id); if (e && e.h.length < pl.dias.length) { planAct = { pl, n: e.h.length }; break; } } } catch (e) { planAct = null; }   // F915: plan en curso (si hay)
     const hora = new Date().getHours(), fase = faseDelDia(hora), saludo = hora < 12 ? 'Buenos días' : hora < 19 ? 'Buenas tardes' : 'Buenas noches';
     const id = leer(K_ID), nom = perfilLeer().n ? perfilLeer().n.split(/\s+/)[0] : (id && id.nombre ? String(id.nombre).trim().split(/\s+/)[0] : ''), racha = rachaActual();
     $('#pantalla').innerHTML = `<div class="hoy fase-${fase}">${escenaHoy(fase)}<p class="hoy-saludo">${esc(saludo)}${nom ? ', ' + esc(nom) : ''}</p>
       <h1>Hoy</h1><div class="hoy-verso" id="hoyVerso"><span class="esqueleto"></span><span class="esqueleto corto"></span></div>
       ${racha ? `<p class="hoy-racha">${svg('llama', 18)}<span>${racha === 1 ? '1 día leyendo la Palabra' : racha + ' días seguidos leyendo la Palabra'}</span></p>` : ''}${fechaCercanaChip()}${instalarChip()}</div>
       <h2 class="sep">Tu Palabra</h2>
-      <div class="grid">${activa('✨', 'Hoy lo hago', 'Leer es el principio: da un paso hoy.', 'hacer')}${inf ? activa('▶️', 'Seguir leyendo', esc(inf[1]) + ' ' + Number(ult.cap) + ' · donde te quedaste', 'seguir') : ''}${activa('📖', 'Leer la Biblia', 'Biblia en español: elige tu versión. Los libros que lees quedan para leer sin internet.', 'biblia')}${activa('🔖', 'Mi Biblia', 'Tus resaltes, notas y versículos guardados.', 'mibiblia')}${activa('🗓', 'Planes de lectura', 'Un poquito cada día, con tu avance.', 'planes')}${activa('✨', 'Versículo de hoy', 'Una frase para empezar el día.', 'versiculo')}${activa('📜', 'Fábula del mes', 'Un relato corto para practicar, capítulo a capítulo.', 'fabula')}</div>`;
+      <div class="grid">${activa('✨', 'Hoy lo hago', 'Leer es el principio: da un paso hoy.', 'hacer')}${inf ? activa('▶️', 'Seguir leyendo', esc(inf[1]) + ' ' + Number(ult.cap) + ' · donde te quedaste', 'seguir') : ''}${activa('📖', 'Leer la Biblia', 'Biblia en español: elige tu versión. Los libros que lees quedan para leer sin internet.', 'biblia')}${activa('🔖', 'Mi Biblia', 'Tus resaltes, notas y versículos guardados.', 'mibiblia')}${activa('✨', 'Versículo de hoy', 'Una frase para empezar el día.', 'versiculo')}${planAct ? activa('🗓', 'Mi plan: ' + esc(planAct.pl.n || 'lectura'), 'Día ' + (planAct.n + 1) + ' de ' + planAct.pl.dias.length + ' · sigue donde ibas.', 'plan') : activa('🗓', 'Plan de lectura', 'Elige uno y lee un poquito cada día, con tu avance.', 'planes')}</div>`;
     document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => {
       const k = b.dataset.ir;
-      if (k === 'hacer') vistaHacer(); else if (k === 'biblia') vistaBiblia(); else if (k === 'versiculo') vistaVersiculo(); else if (k === 'fabula') vistaFabula(); else if (k === 'mibiblia') vistaMiBiblia(); else if (k === 'planes') vistaPlanes(); else if (k === 'cal') vistaCalendario(); else if (k === 'inst') instalarUnToque(); else if (k === 'instno') { try { localStorage.setItem('tb_movil_inst_no', String(new Date().getMonth())); } catch (e) { /* nada */ } b.closest('.hoy-inst').remove(); } else if (k === 'seguir' && inf) vistaCapitulo(ult.cod, Number(ult.cap));
+      if (k === 'hacer') vistaHacer(); else if (k === 'biblia') vistaBiblia(); else if (k === 'versiculo') vistaVersiculo(); else if (k === 'fabula') vistaFabula(); else if (k === 'mibiblia') vistaMiBiblia(); else if (k === 'planes') vistaPlanes(); else if (k === 'plan' && planAct) vistaPlan(planAct.pl.id); else if (k === 'cal') vistaCalendario(); else if (k === 'inst') instalarUnToque(); else if (k === 'instno') { try { localStorage.setItem('tb_movil_inst_no', String(new Date().getMonth())); } catch (e) { /* nada */ } b.closest('.hoy-inst').remove(); } else if (k === 'seguir' && inf) vistaCapitulo(ult.cod, Number(ult.cap));
     }));
     // F871: el versículo del día aparece arriba, en «Hoy» (si no hay internet ni copia guardada, la zona se oculta sola).
     (async () => {
@@ -1924,10 +1925,10 @@
 
   // ---------- F875 · Perfil, Ministerios y efectos ----------
   const K_PERFIL = 'tb_movil_perfil';
-  const AVATARES = ['🌿', '🕊️', '🌻', '⭐', '🔥', '🌊', '📖', '🦋', '🌸', '🌙', '☀️', '🍃', '🦁', '🐑', '🌈', '💎'];
+  const AVATARES = ['svg:brote', 'svg:hoja', 'svg:paloma', 'svg:llama', 'svg:corazon', 'svg:estrella', 'svg:iglesia', 'svg:libro', 'svg:viento', 'svg:gente', '🌿', '🕊️', '🌻', '⭐', '🔥', '🌊', '📖', '🦋', '🌸', '🌙', '☀️', '🍃', '🦁', '🐑', '🌈', '💎'];
   const perfilLeer = () => { const p = leer(K_PERFIL) || {}; return { g: Number.isInteger(p.g) && p.g >= 0 && p.g < 8 ? p.g : 0, e: AVATARES.indexOf(p.e) >= 0 ? p.e : '', t: typeof p.t === 'string' ? p.t : 'auto', n: typeof p.n === 'string' ? p.n.slice(0, 30) : '', b: typeof p.b === 'string' ? p.b.slice(0, 140) : '', f: p.f === 'sans' ? 'sans' : 'serif', m: p.m === 'off' ? 'off' : 'on', meta: [1, 2, 3, 5].indexOf(p.meta) >= 0 ? p.meta : 1 }; };
   const iniciales = (n) => (String(n || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0]).join('') || '?').toUpperCase();
-  const avatarHTML = (nombre, p, grande) => `<span class="avatar g${p.g}${grande ? ' grande' : ''}" aria-hidden="true">${p.e ? esc(p.e) : esc(iniciales(nombre))}</span>`;
+  const avatarHTML = (nombre, p, grande) => `<span class="avatar g${p.g}${grande ? ' grande' : ''}" aria-hidden="true">${p.e ? (/^svg:[a-z]+$/.test(p.e) ? svg(p.e.slice(4), grande ? 40 : 22) : esc(p.e)) : esc(iniciales(nombre))}</span>`;
   const saludoHora = () => { const h = new Date().getHours(); return h < 6 ? 'Buenas noches' : h < 13 ? 'Buenos días' : h < 20 ? 'Buenas tardes' : 'Buenas noches'; };
   const mesAnio = (iso) => { try { return new Date(iso).toLocaleDateString('es-CL', { month: 'long', year: 'numeric' }); } catch (e) { return ''; } };
   const pintaColores = () => document.querySelectorAll('[data-mc]').forEach((e) => { if (/^#[0-9a-fA-F]{6}$/.test(e.dataset.mc || '')) e.style.setProperty('--mc', e.dataset.mc); });
@@ -1976,6 +1977,9 @@
         <div class="chips chips-meta" role="group" aria-label="Capítulos por día">${[1, 2, 3, 5].map((x) => `<button type="button" class="chip${p.meta === x ? ' on' : ''}" data-meta="${x}" aria-pressed="${p.meta === x}">${x}</button>`).join('')}</div></div></div>
       <button type="button" class="card hac-perfil" data-pf="hacer"><span class="hac-perfil-n">${nHechas()}</span><span class="invita-txt"><b>Pasos de acción</b><small>${nHechas() ? 'Lo que has hecho por ti, por otros y por tu comunidad' : 'Empieza hoy: un paso pequeño cuenta'}</small></span><span class="flecha" aria-hidden="true">›</span></button>
       <button type="button" class="card invita" data-pf="invitar"><span class="invita-ic" aria-hidden="true">${svg('compartir', 26)}</span><span class="invita-txt"><b>Invita a un amigo</b><small>Regálale un momento de paz con la Palabra</small></span><span class="flecha" aria-hidden="true">›</span></button>
+      ${id ? '' : `<h2 class="sep">Empieza</h2><div class="lista">${fila('t1', '⛪', 'Unirme a mi iglesia', 'Con el código de tu pastor', 'unir')}${fila('t2', '🔑', 'Recuperar mi iglesia', 'Con la llave de otro teléfono', 'llave')}</div>`}
+      <h2 class="sep">Mi plan</h2><div class="lista">${fila('t2', '🧭', 'Cambiar mi plan', esc(planResumen()), 'plan')}</div>
+      <h2 class="sep">Apariencia</h2>
       <details class="perfil-det"><summary><span aria-hidden="true">✏️</span> Editar mi perfil <i class="flecha" aria-hidden="true">›</i></summary>
       <h2 class="sep">Sobre mí</h2>
       <div class="card"><label for="pfn">Cómo quieres que te llame</label><input id="pfn" type="text" maxlength="30" value="${esc(p.n)}" placeholder="${esc((id && id.nombre) || 'Tu nombre')}" autocomplete="given-name">
@@ -1983,11 +1987,9 @@
         <button type="button" class="btn" id="pfok">Guardar perfil</button></div>
       <h2 class="sep">Tu avatar</h2>
       <div class="card"><div class="av-sel" role="group" aria-label="Color del avatar">${[0, 1, 2, 3, 4, 5, 6, 7].map((i) => `<button type="button" class="avatar g${i}${p.g === i ? ' sel' : ''}" data-g="${i}" aria-label="Color ${i + 1}" aria-pressed="${p.g === i}"></button>`).join('')}</div>
-        <div class="av-sel emo" role="group" aria-label="Símbolo">${['']. concat(AVATARES).map((e) => `<button type="button" class="av-emo${p.e === e ? ' sel' : ''}" data-e="${e}" aria-pressed="${p.e === e}">${e || 'Aa'}</button>`).join('')}</div></div></details>
-      ${id ? `<h2 class="sep">Mi iglesia</h2><div class="lista">${fila('t1', '🕍', 'Mis ministerios', 'Dónde sirves', 'min')}${fila('t2', '🙏', 'Pedir oración', 'Tu pastor la recibe', 'ora')}${fila('t3', '🔒', 'Mi privacidad', 'Qué ve cada persona', 'priv')}${fila('t4', '❓', 'Ayuda', 'Respuestas cortas', 'ayu')}</div>` : `<h2 class="sep">Empieza</h2><div class="lista">${fila('t1', '⛪', 'Unirme a mi iglesia', 'Con el código de tu pastor', 'unir')}${fila('t2', '🔑', 'Recuperar mi iglesia', 'Con la llave de otro teléfono', 'llave')}</div>`}
-      <h2 class="sep">Mi plan</h2><div class="lista">${fila('t2', '🧭', 'Mi plan', esc(planResumen()), 'plan')}${fila('t1', '🔄', 'Cambiar mi plan', 'Contesta de nuevo y la app se adapta', 'plan')}</div>
-      <h2 class="sep">Apariencia</h2><div class="lista">${fila('t3', '🎨', 'Temas', (TEMAS.find((x) => x[0] === p.t) || TEMAS[0])[1], 'temas')}${fila('t2', '🎚️', 'Efectos y sonido', 'Sonidos, animaciones y cuidar el teléfono', 'rapido')}</div>
-      <h2 class="sep">Administración</h2><div class="lista">${pastorLeer() ? fila('t1', '🛡️', 'Panel del pastor', 'Administra tu iglesia', 'pastor') : fila('t1', '🛡️', 'Entrar como pastor', 'Con tu código de pastor', 'pastor')}</div>
+        <div class="av-sel emo" role="group" aria-label="Símbolo">${['']. concat(AVATARES).map((e) => `<button type="button" class="av-emo${p.e === e ? ' sel' : ''}" data-e="${e}" aria-label="${e ? 'Símbolo ' + e.replace('svg:', '') : 'Mis iniciales'}" aria-pressed="${p.e === e}">${e ? (/^svg:/.test(e) ? svg(e.slice(4), 22) : e) : 'Aa'}</button>`).join('')}</div></div></details>
+      <div class="temas-c" role="group" aria-label="Tema de color">${TEMAS.map((x) => `<button type="button" class="tema-c${p.t === x[0] ? ' sel' : ''}" data-tc="${x[0]}" data-mc="${x[3]}" aria-label="${esc(x[1])}" aria-pressed="${p.t === x[0]}"></button>`).join('')}<button type="button" class="tema-c mas" data-pf="temas" aria-label="Más opciones de apariencia">⋯</button></div>
+      <div class="lista">${fila('t2', '🎚️', 'Efectos y sonido', 'Sonidos, animaciones y cuidar el teléfono', 'rapido')}</div>
       <h2 class="sep">Cuenta</h2>
       <div class="lista">${cu ? fila('t2', '☁️', 'Sesión iniciada', esc(cu.correo), 'nada') + fila('t4', '↩️', 'Cerrar sesión', '', 'salir') : fila('t2', '✉️', 'Entrar o crear cuenta', 'Tu iglesia te sigue a cualquier teléfono', 'cuenta')}</div>
       ${cu ? '<p class="suave sinc-p" id="sincEstado"></p>' : ''}
@@ -1995,6 +1997,8 @@
     pintarInstalar($('[data-instalar-box]')); syncPintar();
     document.querySelectorAll('[data-meta]').forEach((b) => b.addEventListener('click', () => { perfilGuardar({ meta: Number(b.dataset.meta) }); vibra(); vistaPerfil(); }));
     const pok = $('#pfok'); if (pok) pok.onclick = () => { perfilGuardar({ n: $('#pfn').value.trim().slice(0, 30), b: $('#pfb').value.trim().slice(0, 140) }); toastBib('Perfil guardado'); confeti(pok); vistaPerfil(); };
+    document.querySelectorAll('[data-tc]').forEach((b) => b.addEventListener('click', () => { vibra(); perfilGuardar({ t: b.dataset.tc }); temaAplicar(b.dataset.tc); document.querySelectorAll('[data-tc]').forEach((x) => { const on = x === b; x.classList.toggle('sel', on); x.setAttribute('aria-pressed', String(on)); }); }));
+    try { pintaColores(); } catch (e) { /* sin colores */ }
     document.querySelectorAll('[data-g]').forEach((b) => b.addEventListener('click', () => { const q = perfilLeer(); perfilGuardar({ g: Number(b.dataset.g) }); vibra(); vistaPerfil(); }));
     document.querySelectorAll('[data-e]').forEach((b) => b.addEventListener('click', () => { const q = perfilLeer(); perfilGuardar({ e: b.dataset.e }); vibra(); vistaPerfil(); }));
     document.querySelectorAll('[data-pf]').forEach((b) => b.addEventListener('click', () => ({
@@ -2815,8 +2819,9 @@
     const FRASES = ['Hoy basta con dar un buen paso.', 'Lo pequeño, hecho con cariño, cuenta.', 'Respira. Vas bien.', 'Una palabra amable también es una semilla.', 'No tienes que poder con todo hoy.', 'Lo que siembras con paciencia, crece.', 'Haz una cosa buena y déjala ir.', 'Pregunta cómo está alguien. En serio.', 'La calma también se practica.', 'Hay buena tierra donde estás parado.', 'Descansar es parte del trabajo.', 'Sé el aviso bueno de alguien hoy.'];
     const hoy = new Date(), h0 = hoy.getHours(), saludo = h0 < 6 ? 'Qué bueno verte despierto' : h0 < 12 ? 'Buenos días' : h0 < 19 ? 'Buenas tardes' : 'Buenas noches';
     let k = (hoy.getFullYear() * 366 + hoy.getMonth() * 31 + hoy.getDate()) % FRASES.length;
-    $('#pantalla').innerHTML = `<section class="inicio-limpio" id="inicioLimpio" aria-label="Inicio"><p class="il-sal">${saludo}${n ? ', ' + esc(n) : ''}</p><p class="il-frase" id="ilFrase" aria-live="off"></p></section>`;
+    $('#pantalla').innerHTML = `<section class="inicio-limpio" id="inicioLimpio" aria-label="Inicio"><button type="button" class="il-juntos" id="ilJuntos" aria-label="Juntos hacemos el bien" title="Juntos hacemos el bien">${svg('gente', 22)}</button><p class="il-sal">${saludo}${n ? ', ' + esc(n) : ''}</p><p class="il-frase" id="ilFrase" aria-live="off"></p></section>`;
     const sec = $('#inicioLimpio'), fr = $('#ilFrase');
+    const bj = $('#ilJuntos'); if (bj) bj.onclick = () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) { /* sin vibración */ } abrirJuntos(); };
     const quieto = () => document.documentElement.getAttribute('data-anim') === 'off' || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
     fr.textContent = FRASES[k]; calmaResp.push(setTimeout(() => { if (fr.isConnected) fr.classList.add('on'); }, 120));
     let visible = true;
@@ -2829,21 +2834,18 @@
     }, 11000);
   }
   // F914: la 1.ª pestaña ofrece 2 caminos en el mismo lugar: Iglesia (miembro) y Pastor (panel). Nada se elimina: cada uno abre su vista de siempre.
-  function vistaEspacioIglesia() {
-    if (!(leer(K_CUENTA) || leer(K_ID) || leer(K_SOL) || pastorLeer()) || (codigoDeEnlace() && !leer(K_ID))) return vistaIglesia();   // sin cuenta (portada de entrada) o con enlace de código: igual que siempre
-    const ig = leer(K_IG), enIgl = !!(leer(K_ID) || leer(K_SOL)), pas = pastorLeer();
-    const op = (cls, ico, tit, sub, id) => `<button type="button" class="fila fila-ip" id="${id}"><span class="fila-ico ${cls}" aria-hidden="true">${ico}</span><span class="fila-txt">${tit}<small>${sub}</small></span><span class="flecha" aria-hidden="true">›</span></button>`;
-    $('#pantalla').innerHTML = `<h1>Mi iglesia</h1><div class="filete"></div>
-      <div class="lista">${op('t1', '⛪', 'Iglesia', enIgl ? (ig && ig.nombre ? esc(ig.nombre) : 'Tu iglesia') : 'Únete con el código de tu pastor', 'ipIgl')}${op('t2', '🛡️', 'Pastor', pas ? 'Tu panel para atender a la iglesia' : 'Entra con tu llave de pastor', 'ipPas')}</div>`;
-    $('#ipIgl').onclick = () => { try { window.TBSonido.abre(); } catch (e) { /* sin sonido */ } vistaIglesia(); window.scrollTo(0, 0); };
-    $('#ipPas').onclick = () => { try { window.TBSonido.abre(); } catch (e) { /* sin sonido */ } if (pastorLeer()) vistaPastor(); else vistaPastorEntrar(); window.scrollTo(0, 0); };
+  function vistaEspacioIglesia() {   // F915: sin menú intermedio. Si entró como pastor, su panel vive en este mismo lugar; si no, Mi iglesia de siempre («Soy pastor» y «Mi código» ya existen ahí)
+    if (pastorLeer() && !codigoDeEnlace()) return vistaPastor();
+    return vistaIglesia();
   }
   const VISTAS = { inicio: vistaInicio, iglesia: vistaEspacioIglesia, palabra: vistaPalabra, vida: vistaVida, perfil: vistaPerfil, pastor: vistaPastor };
   const ORDEN_TAB = ['iglesia', 'palabra', 'inicio', 'vida', 'perfil', 'pastor']; let tabPrev = '';
   function pantEntra(sentido) {                             // F885: la pantalla nueva entra deslizando (se apaga con «reducir movimiento» o Animaciones: más tranquilo)
     try {
       const p = $('#pantalla'); if (!p || !p.animate || document.documentElement.getAttribute('data-anim') === 'off' || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
-      p.animate([{ opacity: 0, transform: 'translateX(' + (sentido === 'atras' ? -22 : 22) + 'px)' }, { opacity: 1, transform: 'none' }], { duration: 300, easing: 'cubic-bezier(.32,.72,0,1)' });
+      const H = document.documentElement; H.classList.add('tb-cambia');                 // F915: efectos en pausa mientras entra la pantalla
+      const an = p.animate([{ opacity: 0, transform: 'translateX(' + (sentido === 'atras' ? -22 : 22) + 'px)' }, { opacity: 1, transform: 'none' }], { duration: 300, easing: 'cubic-bezier(.32,.72,0,1)' });
+      const fin = () => H.classList.remove('tb-cambia'); an.onfinish = fin; an.oncancel = fin; setTimeout(fin, 450);
     } catch (e) { /* sin animación */ }
   }
   function ir(tab, directo) {

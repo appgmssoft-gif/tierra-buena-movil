@@ -55,3 +55,16 @@ html{--vidrio:color-mix(in srgb,var(--tarjeta) 84%,transparent)}
 .il-frase.on{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){.il-frase{transition:none;transform:none}}
 html[data-anim=off] .il-frase{transition:none;transform:none}
+
+/* F915: ícono sutil de «Juntos hacemos el bien» en Inicio */
+.inicio-limpio{position:relative}
+.il-juntos{position:absolute;top:4px;right:16px;width:42px;height:42px;border-radius:50%;border:1px solid color-mix(in srgb,var(--suave) 28%,transparent);background:color-mix(in srgb,var(--vidrio,transparent) 60%,transparent);color:var(--suave);display:flex;align-items:center;justify-content:center;opacity:.72;cursor:pointer;transition:opacity .25s,transform .25s}
+.il-juntos:hover,.il-juntos:focus-visible{opacity:1}
+.il-juntos:active{transform:scale(.92)}
+
+/* F915 fluidez: cada efecto grande vive en su propia capa (la tarjeta de video lo anima sin repintar el resto) y no empuja el diseño de la página */
+.ambiente{contain:layout paint style}
+html:not([data-anim=off]) .ambiente::before,html:not([data-anim=off]) .ambiente::after,html:not([data-anim=off]) .avatar.grande::before{will-change:transform}
+html:not([data-anim=off]) #pantalla{backface-visibility:hidden}
+/* mientras la pantalla se desliza al cambiar de pestaña, nada más se mueve (menos trabajo en esos 0,3 s) */
+html.tb-cambia .tb-anima,html.tb-cambia .tb-anima::before,html.tb-cambia .tb-anima::after{animation-play-state:paused!important}

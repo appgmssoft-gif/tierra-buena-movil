@@ -14,7 +14,7 @@
     try {
       const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
       ctx = new AC();
-      maestro = ctx.createGain(); maestro.gain.value = 0.55;
+      maestro = ctx.createGain(); maestro.gain.value = 0.5;
       const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -18; comp.ratio.value = 3; comp.attack.value = 0.005; comp.release.value = 0.25;
       maestro.connect(comp); comp.connect(ctx.destination);
       // eco suave (sala pequeña): ruido que se apaga solo
@@ -74,7 +74,7 @@
     toque: ok(function () { nota(NOTAS.D6, 0, 0.11, 0.06, { eco: 0.1, brillo: 0.05, ataque: 0.004 }); }),
     suave: ok(function () { nota(NOTAS.A5, 0, 0.16, 0.05, { eco: 0.2, brillo: 0.05, ataque: 0.006 }); }),
     tab(i) { ok(function () { const e = [NOTAS.G4, NOTAS.A4, NOTAS.B4, NOTAS.D5, NOTAS.E5][Number(i) % 5]; nota(e, 0, 0.32, 0.12, { eco: 0.35 }); nota(e * 2, 0.03, 0.2, 0.04, { eco: 0.3, brillo: 0 }); })(); },
-    abre: ok(function () { soplo(0, 0.28, 0.05, 500, 2400); nota(NOTAS.D5, 0.02, 0.3, 0.05, { eco: 0.4 }); }),
+    abre: ok(function () { soplo(0, 0.26, 0.04, 500, 2400); }),   // F915: solo el soplo (antes sumaba una nota que chocaba con el sonido de la pestaña)
     vuelve: ok(function () { soplo(0, 0.24, 0.04, 2200, 500); }),
     exito: ok(function () { nota(NOTAS.G5, 0, 0.5, 0.13, { eco: 0.6 }); nota(NOTAS.D6, 0.12, 0.9, 0.12, { eco: 0.8, brillo: 0.22 }); }),
     logro: ok(function () { [NOTAS.G4, NOTAS.B4, NOTAS.D5, NOTAS.G5, NOTAS.D6].forEach((f, i) => nota(f, i * 0.09, 1.1, 0.12, { eco: 0.8 })); soplo(0.1, 0.9, 0.04, 800, 4200); }),
@@ -98,6 +98,14 @@
   };
   // F903: ahorro de batería: con la app en segundo plano el audio se duerme del todo y se despierta al volver
   document.addEventListener('visibilitychange', () => { try { if (!ctx) return; if (document.hidden) { if (ctx.state === 'running') ctx.suspend(); } else if (activo() && ctx.state === 'suspended' && API._sono) ctx.resume(); } catch (e) { /* sin audio */ } });
+  // F915: SIN SONIDOS DOBLES. Si otro sonido DISTINTO sonó hace menos de 0,3 s, los sonidos «suaves» (toque, abre, vuelve, suave, tab) se callan:
+  // suena uno solo, el primero. Los momentos importantes (firma, logro, éxito, aviso, error, campana, juntos, semilla, calma, respira) y las teclas siempre suenan.
+  const FUERTES = ['firma', 'exito', 'logro', 'aviso', 'error', 'campana', 'juntos', 'semilla', 'calma', 'respira', 'suerte', 'tecla'];
+  let ultNom = '', ultMs = 0;
+  Object.keys(API).forEach((k) => {
+    const f = API[k]; if (typeof f !== 'function' || k === 'activo' || k === 'poner') return;
+    API[k] = function () { const ahora = Date.now(); if (k !== ultNom && ahora - ultMs < 300 && FUERTES.indexOf(k) < 0) return; ultNom = k; ultMs = ahora; return f.apply(API, arguments); };
+  });
   window.TBSonido = API;
 
   // --- conexión automática con toda la app (sin tocar el resto del código) ---
