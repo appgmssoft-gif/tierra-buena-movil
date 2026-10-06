@@ -71,7 +71,19 @@
     logro: ok(function () { [NOTAS.G4, NOTAS.B4, NOTAS.D5, NOTAS.G5, NOTAS.D6].forEach((f, i) => nota(f, i * 0.09, 1.1, 0.12, { eco: 0.8 })); soplo(0.1, 0.9, 0.04, 800, 4200); }),
     suerte: ok(function () { nota(NOTAS.E5, 0, 0.3, 0.1, { eco: 0.4 }); nota(NOTAS.G5, 0.1, 0.5, 0.1, { eco: 0.5 }); }),
     aviso: ok(function () { nota(NOTAS.B5, 0, 0.35, 0.09, { eco: 0.5 }); nota(NOTAS.G5, 0.16, 0.5, 0.08, { eco: 0.5 }); }),
-    error: ok(function () { nota(NOTAS.D4, 0, 0.28, 0.1, { eco: 0.2, corte: 1400 }); nota(NOTAS.G3, 0.12, 0.4, 0.09, { eco: 0.2, corte: 900 }); })
+    error: ok(function () { nota(NOTAS.D4, 0, 0.28, 0.1, { eco: 0.2, corte: 1400 }); nota(NOTAS.G3, 0.12, 0.4, 0.09, { eco: 0.2, corte: 900 }); }),
+    // F901 · voces nuevas de la familia (misma escala y mismo timbre cálido)
+    campana: ok(function () {                    // campana de iglesia suave: entrar como pastor, momentos solemnes
+      [[1, 0.16], [2.0, 0.07], [2.76, 0.05], [5.4, 0.018]].forEach((p) => nota(NOTAS.G4 * p[0], 0, 3.2 / p[0] + 0.8, p[1], { eco: 0.9, brillo: 0, corte: 5200, ataque: 0.004 }));
+      nota(NOTAS.G3, 0.02, 2.6, 0.08, { eco: 0.5, corte: 700 });
+    }),
+    tecla(i) { ok(function () { const e = [NOTAS.G4, NOTAS.A4, NOTAS.B4, NOTAS.D5, NOTAS.E5, NOTAS.G5][Math.max(0, Math.min(5, Number(i) || 0))]; nota(e, 0, 0.18, 0.07, { eco: 0.25, brillo: 0.08, ataque: 0.004 }); })(); },   // al escribir cada letra del código sube una nota
+    juntos(n) { ok(function () {                 // voces que se van sumando: «juntos». Cuantas más personas, más voces.
+      const v = [NOTAS.G4, NOTAS.D5, NOTAS.B4, NOTAS.G5, NOTAS.E5, NOTAS.B5], c = Math.max(2, Math.min(v.length, Number(n) + 1 || 3));
+      for (let i = 0; i < c; i++) nota(v[i], i * 0.11, 1.5 + i * 0.1, 0.1 - i * 0.008, { eco: 0.8, brillo: 0.18 });
+      nota(NOTAS.G3, 0, 1.8, 0.08, { eco: 0.4, corte: 800 }); soplo(0.05, 0.7, 0.03, 600, 3400);
+    })(); },
+    semilla: ok(function () { nota(NOTAS.D4, 0, 0.22, 0.09, { eco: 0.3, corte: 1100 }); nota(NOTAS.A4, 0.12, 0.35, 0.08, { eco: 0.5 }); nota(NOTAS.E5, 0.24, 0.6, 0.07, { eco: 0.7, brillo: 0.2 }); })   // algo que cae en la tierra y brota
   };
   window.TBSonido = API;
 
@@ -85,10 +97,13 @@
       const tab = t.closest('.tab');
       if (tab) { const i = Array.prototype.indexOf.call(document.querySelectorAll('.tab'), tab); API.tab(i < 0 ? 0 : i); return; }
       if (t.closest('.volver')) return API.vuelve();
+      if (t.closest('summary')) return API.suave();
       if (t.closest('.btn:not(.sec), .card, [data-ir], .tbcar-ir')) return API.abre();
       if (t.closest('button, [role=button], a')) API.toque();
     } catch (e) { /* sin sonido */ }
   }, true);
+  // F901: al escribir el código (de iglesia o de pastor) cada letra suena una nota que sube
+  document.addEventListener('input', (ev) => { try { const t = por(ev && ev.target); if (!t || !t.id) return; if (t.id === 'codHoja' || t.id === 'cod') API.tecla(Math.min(5, String(t.value || '').length - 1)); else if (t.id === 'pkHoja') API.tecla(Math.floor((String(t.value || '').length % 6))); } catch (e) { /* sin sonido */ } }, true);
   // la primera vez que el teléfono deja sonar (exige un toque), si la apertura aún está a la vista suena la firma
   let intento = false;
   document.addEventListener('pointerdown', () => { if (intento) return; intento = true; if (Date.now() - t0 < 4200 && !API._sono) { API._sono = true; API.firma(); } }, { once: true, capture: true });

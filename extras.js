@@ -51,7 +51,7 @@
       <rect width="400" height="800" fill="url(#fvNc)"/>${e}<circle class="fv-luna-h" cx="90" cy="140" r="64"/><path class="fv-luna" transform="translate(70 120) scale(1.7)" d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/>
       <path class="fv-fugaz" d="M0 0L-70 36"/><path class="fv-col fv-mon1" d="M0 600 L70 520 L130 580 L210 480 L290 570 L340 530 L400 590 V800 H0z"/><path class="fv-col fv-mon2" d="M0 690 L90 620 L170 680 L260 610 L400 690 V800 H0z"/></svg>`;
   }
-  const LUGAR = { palabra: 'palabra', vida: 'vida', iglesia: 'iglesia', perfil: 'perfil', pastor: 'perfil' };
+  const LUGAR = { palabra: 'palabra', vida: 'vida', iglesia: 'iglesia', perfil: 'perfil', pastor: 'iglesia' };
   function fondo() {
     let f = $('#fondoVivo');
     if (!f) { f = document.createElement('div'); f.id = 'fondoVivo'; f.setAttribute('aria-hidden', 'true'); f.innerHTML = escenaPalabra() + escenaVida() + escenaIglesia() + escenaPerfil(); document.body.insertBefore(f, document.body.firstChild); }
@@ -75,47 +75,66 @@
     escudo: () => '<path class="fl" d="M60 12l36 14v30c0 24-16 40-36 48-20-8-36-24-36-48V26z"/><path class="ch" d="M60 38v28M46 52h28"/>'
   };
   const arte = (k, grande) => `<svg class="tbcar-art${grande ? ' grande' : ''}" viewBox="0 0 120 120" aria-hidden="true" focusable="false"><circle class="halo" cx="60" cy="60" r="54"/><g class="trazo">${(ico[k] || ico.estrella)()}</g></svg>`;
+  // F901: cada punto de «¿Qué puedo hacer aquí?» es un botón que lleva EXACTAMENTE a lo que promete.
+  //   p = [texto, destino, pestaña?]  ·  destino: RegExp = botón o fila con ese texto · '.clase' = bajar hasta ese bloque · { h: RegExp } = bajar hasta ese título
   const SLIDES = {
     palabra: [
-      { k: 'sol', c: 'c1', t: 'Hoy lo hago', d: 'Convierte lo que lees en un paso real, pequeño y fácil.', p: ['Elegir una acción de pocos minutos', 'Marcarla como hecha y ver tu avance', 'Llevarlo a tu casa, tu barrio o tu iglesia'], bus: /Hoy lo hago/i },
-      { k: 'libro', c: 'c2', t: 'La Biblia en español', d: 'Elige tu versión y lee, incluso sin internet.', p: ['Cambiar de versión cuando quieras', 'Resaltar, anotar y guardar versículos', 'Seguir leyendo donde te quedaste'], bus: /Leer la Biblia/i },
-      { k: 'audio', c: 'c3', t: 'Escúchala', d: 'El audio lee la versión que elegiste.', p: ['Escuchar el capítulo mientras caminas', 'Cambiar la velocidad de la voz', 'Pasar solo al capítulo siguiente'], bus: /Leer la Biblia/i, b: 'Abrir la Biblia' },
-      { k: 'pergamino', c: 'c4', t: 'Fábula del mes', d: 'Un relato corto para practicar, capítulo a capítulo.', p: ['Abrir un capítulo a la vez', 'Marcar tu práctica de la semana', 'Conversarla con tu familia'], bus: /F[áa]bula del mes/i },
-      { k: 'estrella', c: 'c5', t: 'Versículo de hoy', d: 'Una frase para empezar el día con calma.', p: ['Leerlo en voz alta', 'Guardarlo en Mi Biblia', 'Hacerle una imagen para compartir'], bus: /Vers[íi]culo de hoy/i }
+      { k: 'sol', c: 'c1', t: 'Hoy lo hago', d: 'Convierte lo que lees en un paso real, pequeño y fácil.', p: [['Elegir una acción de pocos minutos', /Hoy lo hago/], ['Marcarla como hecha y ver tu avance', /Hoy lo hago/], ['Llevarlo a tu casa, tu barrio o tu iglesia', /Juntos hacemos/, 'vida']], b: 'Abrir «Hoy lo hago»' },
+      { k: 'libro', c: 'c2', t: 'La Biblia en español', d: 'Elige tu versión y lee, incluso sin internet.', p: [['Cambiar de versión cuando quieras', /Leer la Biblia/], ['Resaltar, anotar y guardar versículos', /Mi Biblia/], ['Seguir leyendo donde te quedaste', /Leer la Biblia/]], b: 'Abrir la Biblia' },
+      { k: 'audio', c: 'c3', t: 'Escúchala', d: 'El audio lee la versión que elegiste.', p: [['Escuchar el capítulo mientras caminas', /Leer la Biblia/], ['Cambiar la velocidad de la voz', /Leer la Biblia/], ['Pasar solo al capítulo siguiente', /Leer la Biblia/]], b: 'Abrir la Biblia' },
+      { k: 'pergamino', c: 'c4', t: 'Fábula del mes', d: 'Un relato corto para practicar, capítulo a capítulo.', p: [['Abrir un capítulo a la vez', /F[áa]bula del mes/], ['Marcar tu práctica de la semana', /F[áa]bula del mes/], ['Conversarla con tu familia', /F[áa]bula del mes/]], b: 'Leer la fábula' },
+      { k: 'estrella', c: 'c5', t: 'Versículo de hoy', d: 'Una frase para empezar el día con calma.', p: [['Leerlo en voz alta', /Vers[íi]culo de hoy/], ['Guardarlo en Mi Biblia', /Mi Biblia/], ['Hacerle una imagen para compartir', /Vers[íi]culo de hoy/]], b: 'Ver el versículo' }
     ],
     vida: [
-      { k: 'sol', c: 'c1', t: 'Hoy lo hago', d: 'Un paso pequeño hoy. Intentarlo ya cuenta.', p: ['Elegir una acción sencilla', 'Hacerla y marcarla', 'Sumar tus días de práctica'], bus: /Hoy lo hago/i },
-      { k: 'corazon', c: 'c4', t: 'Mi oración', d: 'Tu diario de peticiones, solo para ti.', p: ['Escribir tus peticiones', 'Ver cuáles ya fueron respondidas', 'Mantener todo privado'], bus: /Mi oraci[óo]n/i },
-      { k: 'nota', c: 'c5', t: 'Música', d: 'Letras para cantar y para leer en el culto.', p: ['Buscar una canción', 'Leer la letra grande', 'Cantar en familia'], bus: /M[úu]sica/i },
-      { k: 'brote', c: 'c2', t: 'Mi crecimiento', d: 'Pequeños pasos de cada semana.', p: ['Elegir un hábito', 'Ver cómo crece tu avance', 'Celebrar cada logro'], bus: /Mi crecimiento/i },
-      { k: 'gente', c: 'c3', t: 'Servir a otros', d: 'Ideas y proyectos listos para tu comunidad.', p: ['Encontrar una idea cerca de ti', 'Ver lugar, presupuesto y personas', 'Invitar a otros a sumarse'], bus: /Ideas y proyectos|Proyectos listos/i }
+      { k: 'sol', c: 'c1', t: 'Hoy lo hago', d: 'Un paso pequeño hoy. Intentarlo ya cuenta.', p: [['Elegir una acción sencilla', /Hoy lo hago/], ['Hacerla y marcarla', /Hoy lo hago/], ['Sumar tus días de práctica', /Hoy lo hago/]], b: 'Abrir «Hoy lo hago»' },
+      { k: 'gente', c: 'c3', t: 'Juntos hacemos el bien', d: 'Movimientos para mejorar tu barrio, tu ciudad y tu país.', p: [['Sumarte a un movimiento en marcha', /Juntos hacemos/], ['Iniciar el tuyo en 5 preguntas', /Juntos hacemos/], ['Invitar a tu familia y vecinos', /Juntos hacemos/]], b: 'Entrar a Juntos' },
+      { k: 'corazon', c: 'c4', t: 'Mi oración', d: 'Tu diario de peticiones, solo para ti.', p: [['Escribir tus peticiones', /Mi oraci[óo]n/], ['Ver cuáles ya fueron respondidas', /Mi oraci[óo]n/], ['Mantener todo privado', /Mi oraci[óo]n/]], b: 'Abrir Mi oración' },
+      { k: 'nota', c: 'c5', t: 'Música', d: 'Letras para cantar y para leer en el culto.', p: [['Buscar una canción', /M[úu]sica/], ['Leer la letra grande', /M[úu]sica/], ['Cantar en familia', /M[úu]sica/]], b: 'Abrir Música' },
+      { k: 'brote', c: 'c2', t: 'Mi crecimiento', d: 'Pequeños pasos de cada semana.', p: [['Elegir un hábito', /Mi crecimiento/], ['Ver cómo crece tu avance', /Mi crecimiento/], ['Celebrar cada logro', /Mi crecimiento/]], b: 'Abrir Mi crecimiento' },
+      { k: 'gente', c: 'c3', t: 'Servir a otros', d: 'Ideas y proyectos listos para tu comunidad.', p: [['Encontrar una idea cerca de ti', /Ideas y proyectos/], ['Ver lugar, presupuesto y personas', /Proyectos listos/], ['Invitar a otros a sumarse', /Juntos hacemos/]], b: 'Ver ideas y proyectos' }
     ],
     iglesia: [
-      { k: 'casa', c: 'c2', t: 'Tu iglesia', d: 'Todo lo que se vive en comunidad, en un solo lugar.', p: ['Unirte con el código de tu iglesia', 'Ver avisos y agenda', 'Conocer a quienes sirven'], bus: /c[óo]digo|Agenda|Avisos/i },
-      { k: 'corazon', c: 'c4', t: 'Pedir oración', d: 'Que otros oren contigo, con la privacidad que elijas.', p: ['Elegir quién puede verlo', 'Ocultar tu nombre si quieres', 'Ver tus peticiones'], bus: /oraci[óo]n/i },
-      { k: 'gente', c: 'c3', t: 'Pedir una visita', d: 'Tu pastor puede acompañarte donde estés.', p: ['Elegir el tipo de visita', 'Decir tus horarios', 'Ver la respuesta del pastor'], bus: /visita/i },
-      { k: 'estrella', c: 'c5', t: 'Avisos y agenda', d: 'Entérate de lo que viene.', p: ['Ver las próximas actividades', 'Leer los avisos de tu pastor', 'No perderte nada'], bus: /Agenda|Avisos/i }
+      { k: 'casa', c: 'c2', t: 'Tu iglesia', d: 'Todo lo que se vive en comunidad, en un solo lugar.', p: [['Ver los grupos donde sirves', /Mis ministerios/], ['Ver agenda y avisos', /Agenda/], ['Conocer a quienes sirven', /Mis ministerios/]], b: 'Ver mis ministerios' },
+      { k: 'corazon', c: 'c4', t: 'Pedir oración', d: 'Que otros oren contigo, con la privacidad que elijas.', p: [['Elegir quién puede verlo', /Pedir oraci[óo]n/], ['Ocultar tu nombre si quieres', /Pedir oraci[óo]n/], ['Ver tus peticiones', /Pedir oraci[óo]n/]], b: 'Pedir oración' },
+      { k: 'gente', c: 'c3', t: 'Pedir una visita', d: 'Tu pastor puede acompañarte donde estés.', p: [['Elegir el tipo de visita', /Pedir visita/], ['Decir tus horarios', /Pedir visita/], ['Ver la respuesta del pastor', /Pedir visita/]], b: 'Pedir una visita' },
+      { k: 'estrella', c: 'c5', t: 'Avisos y agenda', d: 'Entérate de lo que viene.', p: [['Ver las próximas actividades', /Agenda/], ['Leer los avisos de tu pastor', /Avisos/], ['Orar con las peticiones del Muro', /Muro/]], b: 'Ver la agenda' },
+      { k: 'gente', c: 'c1', t: 'Juntos hacemos el bien', d: 'Tu iglesia y tu barrio, moviéndose juntos.', p: [['Ver la acción del mes', /Acci[óo]n del mes/], ['Sumarte a un movimiento', /Juntos hacemos/, 'vida'], ['Iniciar uno con tu iglesia', /Juntos hacemos/, 'vida']], b: 'Entrar a Juntos' }
+    ],
+    pastor: [
+      { k: 'escudo', c: 'c1', t: 'Para atender hoy', d: 'Lo que más espera tu respuesta.', p: [['Aceptar o rechazar solicitudes', /Solicitudes/], ['Leer las peticiones de oración', /Oraciones/], ['Responder pedidos de visita', /Visitas/]], b: 'Ver solicitudes' },
+      { k: 'casa', c: 'c2', t: 'Tu iglesia', d: 'Personas, grupos y actividades.', p: [['Conocer a tus miembros', /Miembros/], ['Repartir el servicio en ministerios', /Ministerios y l[íi]deres/], ['Cuidar el código y los datos', /Datos y c[óo]digo/]], b: 'Ver miembros' },
+      { k: 'estrella', c: 'c5', t: 'Comunicar bien', d: 'Que lo importante llegue y se lea.', p: [['Publicar la agenda del mes', /Agenda/], ['Escribir un aviso para todos o un grupo', /Avisos/], ['Compartir peticiones en el Muro', /Oraciones/]], b: 'Escribir un aviso' },
+      { k: 'gente', c: 'c3', t: 'Juntos hacemos el bien', d: 'Impulsa un movimiento con tu barrio.', p: [['Iniciar un movimiento con tu iglesia', /Juntos hacemos/], ['Invitar a otras iglesias y vecinos', /Juntos hacemos/], ['Medir y celebrar lo logrado', /Juntos hacemos/]], b: 'Entrar a Juntos' }
     ],
     perfil: [
-      { k: 'brote', c: 'c2', t: 'Tu camino', d: 'Tu racha, tus logros y tu avance.', p: ['Ver tus días seguidos', 'Desbloquear logros', 'Seguir creciendo'], bus: null },
-      { k: 'estrella', c: 'c5', t: 'Tu estilo', d: 'Temas de color y apariencia para leer cómodo.', p: ['Elegir entre muchos temas', 'Cambiar tamaño y fondo', 'Quitar o dejar el movimiento'], bus: /tema|apariencia/i },
-      { k: 'gente', c: 'c3', t: 'Invita a un amigo', d: 'Comparte la app con un mensaje listo.', p: ['Enviar por WhatsApp o correo', 'Editar el mensaje', 'No se guarda ningún contacto'], bus: /Invita/i },
-      { k: 'escudo', c: 'c1', t: 'Tu plan', d: 'La app se adapta a lo que más buscas.', p: ['Contestar pocas preguntas', 'Cambiar tu plan cuando quieras', 'Empezar en tu pestaña favorita'], bus: /plan/i }
+      { k: 'brote', c: 'c2', t: 'Tu camino', d: 'Tu racha, tus logros y tu avance.', p: [['Ver tus días seguidos', '.stats'], ['Desbloquear logros', { h: /Mis logros/ }], ['Seguir creciendo con pasos de acción', /Pasos de acci[óo]n/]], b: 'Ver mis días seguidos' },
+      { k: 'estrella', c: 'c5', t: 'Tu estilo', d: 'Temas de color y apariencia para leer cómodo.', p: [['Elegir entre muchos temas', /Temas/], ['Cambiar tamaño y fondo', /Temas/], ['Quitar o dejar el movimiento y los sonidos', '.tbson']], b: 'Elegir mi tema' },
+      { k: 'gente', c: 'c3', t: 'Invita a un amigo', d: 'Comparte la app con un mensaje listo.', p: [['Enviar por WhatsApp o correo', /Invita a un amigo/], ['Editar el mensaje', /Invita a un amigo/], ['No se guarda ningún contacto', /Invita a un amigo/]], b: 'Invitar a un amigo' },
+      { k: 'escudo', c: 'c1', t: 'Tu plan', d: 'La app se adapta a lo que más buscas.', p: [['Ver tu plan actual', /Mi plan/], ['Cambiar tu plan cuando quieras', /Cambiar mi plan/], ['Empezar en tu pestaña favorita', /Cambiar mi plan/]], b: 'Ver mi plan' }
     ]
   };
-  const buscar = (re) => { if (!re) return null; return $$('#pantalla [data-ir], #pantalla button.card').find((b) => re.test(b.textContent || '')) || null; };
-  function irA(s) {
-    const b = buscar(s.bus);
-    if (b) { b.click(); return; }
-    const x = $('#pantalla .stats, #pantalla .grid, #pantalla .card'); if (x && x.scrollIntoView) x.scrollIntoView({ behavior: calma() ? 'auto' : 'smooth', block: 'center' });
+  const buscar = (re) => { if (!re || !(re instanceof RegExp)) return null; return $$('#pantalla [data-ir], #pantalla [data-pp], #pantalla [data-pf], #pantalla button.card, #pantalla .fila').find((b) => re.test(b.textContent || '')) || null; };
+  const resalta = (x) => { if (!x) return; try { x.scrollIntoView({ behavior: calma() ? 'auto' : 'smooth', block: 'center' }); x.classList.remove('tb-resalta'); void x.offsetWidth; x.classList.add('tb-resalta'); setTimeout(() => { try { x.classList.remove('tb-resalta'); } catch (e) { /* nada */ } }, 2200); } catch (e) { /* nada */ } };
+  function resolver(dest) {                       // true si llegó a lo prometido
+    if (dest instanceof RegExp) { const b = buscar(dest); if (b) { b.click(); return true; } return false; }
+    if (typeof dest === 'string') { const x = $('#pantalla ' + dest); if (x) { resalta(x); return true; } return false; }
+    if (dest && dest.h) { const x = $$('#pantalla h2, #pantalla h3').find((h) => dest.h.test(h.textContent || '')); if (x) { resalta(x); return true; } }
+    return false;
   }
+  function irItem(it) {                           // it = [texto, destino, pestaña?]
+    const tab = it[2];
+    if (tab && tab !== tabActual() && window.TBApp && TBApp.ir) { TBApp.ir(tab); setTimeout(() => { if (!resolver(it[1])) aviso('Todavía no está disponible aquí.'); }, 80); return; }
+    if (!resolver(it[1])) aviso('Esto aparece cuando tu pastor te acepta en su iglesia.');
+  }
+  function aviso(t) { try { const o = $('.tb-aviso'); if (o) o.remove(); const d = document.createElement('div'); d.className = 'tb-aviso'; d.setAttribute('role', 'status'); d.textContent = t; document.body.appendChild(d); setTimeout(() => { try { d.remove(); } catch (e) { /* nada */ } }, 3200); } catch (e) { /* nada */ } }
   function hoja(s) {
     cerrarHoja(); snd('abre');
     const h = document.createElement('div'); h.className = 'tbhoja'; h.id = 'tbHoja'; h.setAttribute('role', 'dialog'); h.setAttribute('aria-modal', 'true'); h.setAttribute('aria-label', s.t);
-    h.innerHTML = `<div class="tbhoja-fondo" data-x="1"></div><div class="tbhoja-caja ${s.c}"><button type="button" class="tbhoja-x" data-x="1" aria-label="Cerrar">✕</button>${arte(s.k, true)}<h2>${esc(s.t)}</h2><p class="tbhoja-d">${esc(s.d)}</p><p class="tbhoja-q">¿Qué puedo hacer aquí?</p><ul>${s.p.map((x) => `<li>${esc(x)}</li>`).join('')}</ul><button type="button" class="tbhoja-ir" id="tbHojaIr">${esc(s.b || 'Entrar ahora')} ›</button></div>`;
+    h.innerHTML = `<div class="tbhoja-fondo" data-x="1"></div><div class="tbhoja-caja ${s.c}"><button type="button" class="tbhoja-x" data-x="1" aria-label="Cerrar">✕</button>${arte(s.k, true)}<h2>${esc(s.t)}</h2><p class="tbhoja-d">${esc(s.d)}</p><p class="tbhoja-q">¿Qué puedo hacer aquí?</p><ul class="tbhoja-ul">${s.p.map((x, i) => `<li><button type="button" class="tbhoja-li" data-i="${i}"><span>${esc(x[0])}</span><i aria-hidden="true">›</i></button></li>`).join('')}</ul><button type="button" class="tbhoja-ir" id="tbHojaIr">${esc(s.b || 'Entrar ahora')} ›</button></div>`;
     document.body.appendChild(h);
     h.addEventListener('click', (e) => { if (e.target && e.target.getAttribute && e.target.getAttribute('data-x')) { snd('vuelve'); cerrarHoja(); } });
-    $('#tbHojaIr', h).onclick = () => { cerrarHoja(); irA(s); };
+    $('#tbHojaIr', h).onclick = () => { cerrarHoja(); irItem(s.p[0]); };
+    $$('.tbhoja-li', h).forEach((b) => { b.onclick = () => { const it = s.p[Number(b.dataset.i)]; cerrarHoja(); setTimeout(() => irItem(it), 30); }; });
     document.addEventListener('keydown', escCierra);
     const x = $('.tbhoja-x', h); if (x && x.focus) x.focus({ preventScroll: true });
   }
@@ -178,9 +197,9 @@
       ponerFondo();
       const pant = $('#pantalla'); if (!pant || $('.tbcar', pant)) return;
       if ($('.volver', pant) || $('#fabCard', pant)) return;                      // solo pantallas raíz (sin botón «volver»)
-      if (!($('.grid .card', pant) || $('.perfil-hero', pant))) return;           // la portada y las preguntas de entrada quedan intactas
+      if (!($('.grid .card', pant) || $('.perfil-hero', pant) || $('.lista .fila[data-pp]', pant))) return;   // la portada, la entrada y las preguntas quedan intactas
       const tab = tabActual(), car = carrusel(tab); if (!car) return;
-      const ancla = $('.hoy', pant) || $('.perfil-hero', pant) || $('.filete', pant);
+      const ancla = $('.hoy', pant) || $('.perfil-hero', pant) || $('.saludo', pant) || $('.filete', pant);
       if (ancla) ancla.after(car); else pant.insertBefore(car, pant.firstChild);
       let tras = car;
       if (tab === 'perfil') { const s = filaSonido(); tras.after(s); tras = s; }

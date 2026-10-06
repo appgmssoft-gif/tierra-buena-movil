@@ -1,0 +1,120 @@
+/* identidad.css - F901. Identidad visual de Tierra Buena: botones de entrada, ejemplos, «Juntos hacemos el bien»,
+   barras con carácter (pestañas, progreso) y avisos. Usa SOLO las variables del tema (--oro, --verde, --tarjeta…) para que todos los temas funcionen.
+   CSP: nada de style="" en el HTML; los anchos llegan por --w con element.style.setProperty. */
+
+/* ---------- Entrada: dos botones arriba (Soy pastor · Mi código) ---------- */
+.ent-top{gap:10px;flex-wrap:wrap;justify-content:space-between}
+.ico-pas .ico-cod-in{background:linear-gradient(150deg,var(--oro),color-mix(in srgb,var(--oro) 55%,#000))}
+.ico-pas{box-shadow:var(--sombra),inset 0 0 0 1px color-mix(in srgb,var(--oro) 45%,var(--linea))}
+.hoja-pas-ic{background:linear-gradient(150deg,var(--oro),color-mix(in srgb,var(--oro) 55%,#000))!important}
+.cod-pas{letter-spacing:0!important;text-transform:none!important;font:600 1rem/1.3 var(--f-texto,inherit)!important;text-align:left!important;padding:14px 16px!important}
+.hoja-pas label{display:block;margin:12px 2px 4px;font-weight:700;font-size:.9rem}
+.hoja-pas input,.hoja-pas textarea{width:100%}
+.hoja-pas .hoja-bt{margin-top:12px}.hoja-pas .hoja-bt .btn{flex:1 1 100%}
+.pas-ok{font-size:3rem;text-align:center;margin:6px 0;animation:tbBrota .7s var(--resorte,ease) both}
+.hoja-in{max-height:92vh;overflow-y:auto}
+
+/* ---------- Ejemplos de la vida real ---------- */
+.tb-ejem-caja{margin:6px 0 4px}
+.tbej{border-radius:24px;padding:14px;background:linear-gradient(160deg,color-mix(in srgb,var(--verde) 10%,var(--tarjeta)),var(--tarjeta) 55%);box-shadow:var(--sombra),inset 0 0 0 1px color-mix(in srgb,var(--oro) 28%,var(--linea));position:relative;overflow:hidden}
+.tbej::before{content:"";position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--oro) 30%,transparent),transparent 70%);pointer-events:none}
+.tbej-cab{display:flex;gap:12px;align-items:center;margin-bottom:12px;position:relative}
+.tbej-cab b{display:block;font-size:1.05rem}.tbej-cab small{display:block;color:var(--suave);line-height:1.3;margin-top:2px}
+.tbej-ic{width:44px;height:44px;flex:0 0 44px;border-radius:14px;display:grid;place-items:center;font-size:1.4rem;background:color-mix(in srgb,var(--oro) 20%,transparent)}
+.tbej-seg{display:flex;gap:4px;padding:4px;border-radius:999px;background:color-mix(in srgb,var(--tinta) 8%,transparent);margin-bottom:12px}
+.tbej-seg button{flex:1;min-height:42px;border:0;border-radius:999px;background:none;color:var(--suave);font:700 .92rem/1 inherit;font-family:inherit;transition:background .3s,color .3s,box-shadow .3s}
+.tbej-seg button[aria-selected=true]{background:linear-gradient(150deg,var(--verde),color-mix(in srgb,var(--verde) 60%,#000));color:var(--papel);box-shadow:0 6px 16px -6px color-mix(in srgb,var(--verde) 70%,#000)}
+.tbej-lista{display:flex;flex-direction:column;gap:8px}
+.tbej-it{border-radius:18px;background:color-mix(in srgb,var(--tarjeta) 82%,var(--papel));box-shadow:inset 0 0 0 1px var(--linea);overflow:hidden;transition:box-shadow .3s}
+.tbej-it[open]{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--oro) 70%,var(--linea)),0 10px 24px -14px rgba(0,0,0,.4)}
+.tbej-it summary{list-style:none;display:flex;align-items:center;gap:12px;padding:12px;min-height:56px;cursor:pointer}
+.tbej-it summary::-webkit-details-marker{display:none}
+.tbej-e{width:40px;height:40px;flex:0 0 40px;border-radius:12px;display:grid;place-items:center;font-size:1.25rem;background:color-mix(in srgb,var(--verde) 16%,transparent)}
+.tbej-s{flex:1;min-width:0}.tbej-s b{display:block;line-height:1.25}.tbej-s small{display:block;color:var(--suave);margin-top:2px}
+.tbej-fl{font-size:1.4rem;color:var(--oro);transition:transform .3s var(--resorte,ease)}.tbej-it[open] .tbej-fl{transform:rotate(90deg)}
+.tbej-cu{padding:2px 14px 14px 14px;position:relative}
+.tbej-esc{margin:0 0 8px;font-style:italic;color:var(--suave);line-height:1.4}
+.tbej-h{margin:8px 0 4px;font-weight:800;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--oro)}
+.tbej-cu ol{margin:0 0 8px;padding-left:22px;line-height:1.4}.tbej-cu li{margin:3px 0}
+.tbej-res{margin:8px 0 12px;padding:10px 12px;border-radius:14px;background:color-mix(in srgb,var(--verde) 14%,transparent);line-height:1.4}
+.tbej-go{min-height:46px;padding:0 18px;border:0;border-radius:14px;font:700 .98rem/1 inherit;font-family:inherit;color:var(--papel);background:linear-gradient(150deg,var(--verde),color-mix(in srgb,var(--verde) 60%,#000));box-shadow:0 8px 18px -8px color-mix(in srgb,var(--verde) 70%,#000)}
+.tbej-fic{float:right;margin-top:12px;font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--suave);opacity:.8}
+
+/* ---------- «¿Qué puedo hacer?»: puntos que son botones ---------- */
+.tbhoja-ul li{padding:0!important;background:none!important}.tbhoja-ul li::before{display:none!important}
+.tbhoja-li{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:50px;padding:10px 14px;border:0;border-radius:16px;text-align:left;font:600 1rem/1.25 inherit;font-family:inherit;color:inherit;background:rgba(255,255,255,.18);box-shadow:inset 0 0 0 1px rgba(255,255,255,.22);transition:transform .25s var(--resorte,ease),background .25s}
+.tbhoja-li i{font-style:normal;font-size:1.4rem;color:#ffe9a8;transition:transform .25s}
+.tbhoja-li:active{transform:scale(.97);background:rgba(255,255,255,.3)}.tbhoja-li:hover i{transform:translateX(3px)}
+
+/* ---------- Avisos cortos y resalte de lo encontrado ---------- */
+.tb-aviso{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:70;max-width:min(92vw,420px);padding:12px 18px;border-radius:16px;background:var(--tinta);color:var(--papel);font-weight:600;font-size:.95rem;text-align:center;box-shadow:0 14px 30px -10px rgba(0,0,0,.5);animation:tbAviso .35s var(--resorte,ease) both}
+@keyframes tbAviso{from{opacity:0;transform:translate(-50%,14px)}}
+.tb-resalta{animation:tbResalta 2.2s ease-out}
+@keyframes tbResalta{0%,60%{box-shadow:0 0 0 3px var(--oro),0 0 26px 4px color-mix(in srgb,var(--oro) 55%,transparent)}100%{box-shadow:0 0 0 0 transparent}}
+
+/* ---------- Juntos hacemos el bien ---------- */
+.tbj-hero{position:relative;overflow:hidden;border-radius:26px;padding:22px 18px 18px;margin:8px 0 6px;color:#fff8e8;background:linear-gradient(155deg,#2f5b3a,#1e3d2b 60%,#7a5a1c);box-shadow:var(--sombra),inset 0 0 0 1px rgba(255,233,168,.25)}
+.tbj-hero.chico{padding:18px}
+.tbj-hero h1{margin:4px 0 6px;color:#ffe9a8;font-size:1.9rem;line-height:1.1;font-family:var(--f-titulo,inherit)}
+.tbj-sello{margin:0;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.tbj-lema{margin:0 0 12px;line-height:1.4;opacity:.95}
+.tbj-h-a,.tbj-h-b{position:absolute;border-radius:50%;pointer-events:none}
+.tbj-h-a{width:180px;height:180px;right:-50px;top:-60px;background:radial-gradient(circle,rgba(255,233,168,.35),transparent 70%);animation:tbRespira 6s ease-in-out infinite}
+.tbj-h-b{width:120px;height:120px;left:-40px;bottom:-50px;background:radial-gradient(circle,rgba(143,180,135,.4),transparent 70%);animation:tbRespira 7.5s ease-in-out infinite reverse}
+@keyframes tbRespira{50%{transform:scale(1.18);opacity:.7}}
+.tbj-huella{display:flex;gap:10px;position:relative}
+.tbj-huella span{flex:1;padding:10px 12px;border-radius:16px;background:rgba(255,255,255,.12);box-shadow:inset 0 0 0 1px rgba(255,233,168,.22)}
+.tbj-huella b{display:block;font-size:1.7rem;line-height:1;color:#ffe9a8}.tbj-huella small{opacity:.85}
+.tbj-ejtag{font-weight:600;color:var(--suave);font-size:.74rem;letter-spacing:.04em;text-transform:uppercase;margin-left:6px}
+.tbj-nuevo{margin:10px 0 0}.tbj-nuevo .btn{width:100%}
+.tbj-lista{display:flex;flex-direction:column;gap:12px}
+.tbj-mov{position:relative;border-radius:22px;padding:14px;background:var(--tarjeta);box-shadow:var(--sombra),inset 0 0 0 1px var(--linea)}
+.tbj-mov.unido{box-shadow:var(--sombra),inset 0 0 0 1.5px color-mix(in srgb,var(--verde) 70%,var(--linea))}
+.tbj-mov.cumplido{box-shadow:var(--sombra),inset 0 0 0 1.5px var(--oro);background:linear-gradient(160deg,color-mix(in srgb,var(--oro) 14%,var(--tarjeta)),var(--tarjeta))}
+.tbj-mov-cab{display:flex;gap:12px;align-items:center}.tbj-mov-cab b{display:block;font-size:1.05rem}.tbj-mov-cab small{display:block;color:var(--suave);line-height:1.3}
+.tbj-mov-ic{width:46px;height:46px;flex:0 0 46px;border-radius:15px;display:grid;place-items:center;font-size:1.5rem;background:color-mix(in srgb,var(--verde) 16%,transparent)}
+.tbj-mov-lema{margin:10px 0 10px;line-height:1.4}
+.tbj-mov-num{margin:6px 0 0;color:var(--suave)}.tbj-mov-num b{color:var(--tinta);font-size:1.15rem}
+.tbj-primer{margin:8px 0 0;line-height:1.35;color:var(--suave)}
+.tbj-bar{height:12px;border-radius:99px;background:color-mix(in srgb,var(--tinta) 10%,transparent);overflow:hidden;position:relative;box-shadow:inset 0 1px 3px rgba(0,0,0,.2)}
+.tbj-bar i{display:block;height:100%;width:var(--w,0%);border-radius:99px;background:linear-gradient(90deg,var(--verde),var(--oro));transition:width 1.1s cubic-bezier(.2,.8,.2,1);position:relative}
+.tbj-bar i::after{content:"";position:absolute;inset:0;border-radius:inherit;background:repeating-linear-gradient(115deg,rgba(255,255,255,.28) 0 6px,transparent 6px 13px);animation:tbRayas 2.2s linear infinite}
+@keyframes tbRayas{to{background-position:26px 0}}
+.tbj-pasos{margin:10px 0 2px}.tbj-pasos summary{cursor:pointer;font-weight:700;color:var(--oro);min-height:36px;display:flex;align-items:center}
+.tbj-pasos ul{margin:4px 0 0;padding-left:20px;line-height:1.4}.tbj-pasos li{margin:4px 0}
+.tbj-acc{display:flex;gap:8px;margin-top:12px;position:relative;flex-wrap:wrap}.tbj-acc .btn{flex:1;min-width:120px}.tbj-acc .tbj-bor{flex:0 0 52px;min-width:52px}
+.tbj-vacio{text-align:center}.tbj-vacio p:first-child{font-size:2rem}
+.tbj-receta{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;position:relative}
+.tbj-receta::before{content:"";position:absolute;left:27px;top:20px;bottom:20px;width:3px;border-radius:3px;background:linear-gradient(var(--verde),var(--oro));opacity:.55}
+.tbj-receta li{display:flex;gap:12px;align-items:center;position:relative}
+.tbj-receta .tbj-n{width:54px;height:54px;flex:0 0 54px;border-radius:50%;display:grid;place-items:center;font-size:1.4rem;background:var(--tarjeta);box-shadow:var(--sombra),inset 0 0 0 2px var(--oro)}
+.tbj-receta b{display:block}.tbj-receta small{display:block;color:var(--suave);line-height:1.35}
+.tbj-reglas ul{margin:6px 0 0;padding-left:20px;line-height:1.45}.tbj-reglas li{margin:5px 0}
+.tbj-fila{display:flex;gap:8px}.tbj-fila input:first-child{flex:0 0 36%}
+.tbj-cf{position:absolute;left:50%;top:50%;width:8px;height:12px;border-radius:2px;background:var(--oro);pointer-events:none;animation:tbCf 1.1s ease-out var(--d,0s) forwards}
+.tbj-cf:nth-child(3n){background:var(--verde)}.tbj-cf:nth-child(3n+1){background:#e48a78}
+@keyframes tbCf{to{transform:translate(var(--dx),var(--dy)) rotate(var(--r));opacity:0}}
+
+/* ---------- Barras con carácter (antes planas) ---------- */
+.barra{position:fixed}
+.barra::before{content:"";position:absolute;left:26px;right:26px;top:-1px;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,var(--oro),var(--verde),var(--oro),transparent);background-size:200% 100%;opacity:.85;animation:tbHilo 7s linear infinite;pointer-events:none}
+.barra::after{content:"";position:absolute;left:50%;top:-7px;width:14px;height:14px;margin-left:-7px;pointer-events:none;background:linear-gradient(135deg,var(--verde),var(--oro));-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 22C5 18 3 11 4 3c8 0 16 3 16 11 0 4-3 7-8 8z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 22C5 18 3 11 4 3c8 0 16 3 16 11 0 4-3 7-8 8z'/%3E%3C/svg%3E") center/contain no-repeat;animation:tbHoja 5s ease-in-out infinite}
+@keyframes tbHilo{to{background-position:200% 0}}
+@keyframes tbHoja{50%{transform:rotate(14deg) translateY(-1px)}}
+.pildora{background:linear-gradient(160deg,color-mix(in srgb,var(--verde) 26%,transparent),color-mix(in srgb,var(--oro) 18%,transparent))!important;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--oro) 40%,transparent),0 6px 16px -8px color-mix(in srgb,var(--oro) 80%,transparent)}
+.tab[aria-current=page]{text-shadow:0 0 14px color-mix(in srgb,var(--oro) 45%,transparent)}
+.barra-av{position:relative;height:10px!important;box-shadow:inset 0 1px 3px rgba(0,0,0,.2)}
+.barra-av::after{content:"";position:absolute;inset:0;border-radius:inherit;background:repeating-linear-gradient(115deg,rgba(255,255,255,.2) 0 6px,transparent 6px 13px);animation:tbRayas 2.4s linear infinite;pointer-events:none}
+.stats .stat,.meta-hoy,.lista .fila{position:relative}
+.lista{border-radius:22px;box-shadow:var(--sombra),inset 0 0 0 1px color-mix(in srgb,var(--oro) 22%,var(--linea));overflow:hidden}
+.fila+.fila::before{background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--oro) 45%,var(--linea)),transparent)!important;height:1px}
+.hero-viva{background-image:radial-gradient(circle at 85% 0,color-mix(in srgb,var(--oro) 22%,transparent),transparent 55%),radial-gradient(circle at 0 100%,color-mix(in srgb,var(--verde) 22%,transparent),transparent 55%)}
+.hero-viva h1{background:linear-gradient(90deg,var(--tinta),var(--oro),var(--tinta));background-size:200% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:tbBrillo 6s linear infinite}
+@keyframes tbBrillo{to{background-position:200% 0}}
+@keyframes tbBrota{from{transform:scale(.4) rotate(-12deg);opacity:0}}
+h2.sep{position:relative;padding-left:14px}
+h2.sep::before{content:"";position:absolute;left:0;top:50%;width:6px;height:1.05em;margin-top:-.52em;border-radius:6px;background:linear-gradient(var(--oro),var(--verde))}
+
+/* quien prefiere calma: todo queda quieto */
+html[data-anim=off] .barra::before,html[data-anim=off] .barra::after,html[data-anim=off] .tbj-bar i::after,html[data-anim=off] .barra-av::after,html[data-anim=off] .hero-viva h1,html[data-anim=off] .tbj-h-a,html[data-anim=off] .tbj-h-b{animation:none}
+@media (prefers-reduced-motion:reduce){.barra::before,.barra::after,.tbj-bar i::after,.barra-av::after,.hero-viva h1,.tbj-h-a,.tbj-h-b,.tb-resalta,.pas-ok{animation:none!important}.tbj-bar i{transition:none}}
