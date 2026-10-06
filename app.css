@@ -945,3 +945,38 @@ body{overscroll-behavior-y:none;min-height:100%}
 main{padding-bottom:calc(104px + env(safe-area-inset-bottom,0px))}
 .hoy-inst{display:inline-flex;align-items:center;gap:4px;margin:10px 0 0 6px;vertical-align:top}.hoy-inst .hoy-fecha{margin:0}
 .hoy-inst-x{border:0;background:transparent;color:var(--suave);width:36px;height:36px;border-radius:50%;display:inline-grid;place-items:center;cursor:pointer}
+
+/* F899 · selector de versión de la Biblia */
+.ver-chip{display:flex;align-items:center;gap:10px;width:100%;margin:6px 0 12px;padding:10px 14px;border-radius:16px;border:1px solid var(--linea);background:var(--tarjeta);color:var(--tinta);font:inherit;font-size:.95rem;cursor:pointer;min-height:44px;text-align:left}
+.ver-chip svg{color:var(--oro);flex:none}.ver-chip span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ver-chip i{font-style:normal;color:var(--oro);font-weight:700;font-size:.85rem}
+.ver-lista{display:grid;gap:10px;margin-top:12px}
+.ver-op{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:18px;border:1.5px solid var(--linea);background:var(--tarjeta);color:var(--tinta);font:inherit;text-align:left;cursor:pointer;min-height:64px}
+.ver-op b{font-family:"TB Titulo",Georgia,serif;font-size:1.15rem;min-width:64px;color:var(--oro)}.ver-op span{display:flex;flex-direction:column;gap:2px}.ver-op small{color:var(--suave)}
+.ver-op.on{border-color:var(--oro);background:color-mix(in srgb,var(--oro) 12%,var(--tarjeta));box-shadow:0 8px 22px -14px var(--oro)}
+
+/* F899 · pantalla de apertura */
+.arranque{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:radial-gradient(90% 60% at 50% 38%,color-mix(in srgb,var(--oro) 26%,var(--papel)),var(--papel) 70%);pointer-events:none;animation:arr-sale .55s ease 1.55s forwards}
+.arr-halo{position:absolute;width:62vmin;height:62vmin;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--oro) 45%,transparent),transparent 66%);filter:blur(8px);animation:arr-late 2.4s ease-in-out infinite}
+.arr-logo{position:relative;width:104px;height:104px;border-radius:26px;box-shadow:0 18px 44px -14px color-mix(in srgb,var(--oro) 80%,transparent);animation:arr-entra .8s cubic-bezier(.2,.9,.3,1.2) both}
+.arr-nombre{position:relative;margin:14px 0 0;font:700 1.9rem/1.1 "TB Titulo",Georgia,serif;color:var(--tinta);animation:arr-sube .7s ease .25s both}
+.arr-frase{position:relative;margin:0;color:var(--suave);letter-spacing:.06em;animation:arr-sube .7s ease .45s both}
+@keyframes arr-entra{from{opacity:0;transform:scale(.6) rotate(-6deg)}to{opacity:1;transform:none}}
+@keyframes arr-sube{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes arr-late{50%{transform:scale(1.12);opacity:.8}}
+@keyframes arr-sale{to{opacity:0;visibility:hidden}}
+@media (prefers-reduced-motion:reduce){.arranque{animation-delay:.5s}.arr-logo,.arr-nombre,.arr-frase,.arr-halo{animation:none}}
+html[data-anim=off] .arr-logo,html[data-anim=off] .arr-nombre,html[data-anim=off] .arr-frase,html[data-anim=off] .arr-halo{animation:none}
+/* F899 · ritmo de espacios y tono de lectura (como Palabra y las fábulas) */
+main{max-width:720px;margin-left:auto;margin-right:auto}
+main h1{margin:0 0 4px}.filete{margin:10px 0 18px}
+main h2.sep{margin:30px 2px 12px}.grid{gap:14px}
+.card{border-radius:24px;padding:18px 18px}.card p{font-family:var(--f-lectura,Georgia,serif);line-height:1.65}
+.card p.suave,.card small{font-family:var(--f-texto,system-ui,sans-serif)}
+.fila{padding:14px 16px}.lista{display:grid;gap:10px}
+.pf-grupo{margin:12px 0;border:1px solid var(--linea);border-radius:22px;background:var(--tarjeta);overflow:hidden}
+.pf-grupo>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 18px;font:700 1.12rem/1.2 "TB Titulo",Georgia,serif;color:var(--tinta);cursor:pointer;min-height:56px}
+.pf-grupo>summary::-webkit-details-marker{display:none}
+.pf-grupo>summary::after{content:"";width:9px;height:9px;border-right:2.5px solid var(--oro);border-bottom:2.5px solid var(--oro);transform:rotate(45deg);transition:transform .25s;margin-right:4px}
+.pf-grupo[open]>summary::after{transform:rotate(-135deg)}
+.pf-grupo[open]>summary{border-bottom:1px solid var(--linea)}
+.pf-grupo>:not(summary){margin-left:14px;margin-right:14px}.pf-grupo>:nth-child(2){margin-top:14px}.pf-grupo>:last-child{margin-bottom:16px}

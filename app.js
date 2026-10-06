@@ -1021,11 +1021,58 @@
   const K_BIB = 'tb_movil_biblia_ultimo', K_BIBTAM = 'tb_movil_biblia_tam';
   const libroInfo = (cod) => LIBROS.find((l) => l[0] === cod);
   const bibCache = {};
-  async function libroCargar(cod) {
+  async function libroCargar(cod, ver) {                    // F899: sin «ver» siempre es la Reina-Valera 1909 (versículo del día, notas, etc. no cambian); el lector pasa la versión elegida
+    if (ver && ver !== 'rv') return libroExtra(cod, ver);
     if (bibCache[cod]) return bibCache[cod];
     const r = await fetch('biblia/' + cod + '.json'); if (!r.ok) throw new Error('http ' + r.status);
     const d = await r.json(); if (!Array.isArray(d)) throw new Error('formato'); return (bibCache[cod] = d);
   }
+  // ---------- F899 · Más versiones de la Biblia (Free Use Bible API de AO Lab: textos libres, sin llaves). Se bajan por libro y quedan guardadas para leer sin internet ----------
+  const HAO = 'https://bible.helloao.org/api/', K_VER = 'tb_movil_biblia_ver';
+  const VERSIONES = [
+    { id: 'rv', c: 'RV1909', n: 'Reina-Valera 1909', l: 'es', lic: 'Dominio público' },
+    { id: 'vbl', c: 'VBL', n: 'Versión Biblia Libre', l: 'es', lic: 'Texto libre', cand: ['spa_vbl', 'spaVBL', 'SPAVBL'], re: /biblia libre|free bible/i, len: 'spa' },
+    { id: 'bsb', c: 'BSB', n: 'Berean Standard Bible', l: 'en', lic: 'Uso libre', api: 'BSB' },
+    { id: 'web', c: 'WEB', n: 'World English Bible', l: 'en', lic: 'Dominio público', api: 'ENGWEBP' },
+    { id: 'kjv', c: 'KJV', n: 'King James Version', l: 'en', lic: 'Dominio público', cand: ['eng_kjv', 'KJV', 'ENGKJV'], re: /king james/i, len: 'eng' }
+  ];
+  const verDe = (id) => VERSIONES.find((x) => x.id === id) || VERSIONES[0];
+  const verActual = () => { try { const v = localStorage.getItem(K_VER); return VERSIONES.some((x) => x.id === v) ? v : 'rv'; } catch (e) { return 'rv'; } };
+  const verLista = (d) => (Array.isArray(d) ? d : (d && d.books) || []);
+  async function verApiId(v) {
+    if (v.api) return v.api;
+    const k = 'tb_movil_apiid_' + v.id; try { const g = localStorage.getItem(k); if (g) return g; } catch (e) { /* sin guardado */ }
+    const guarda = (id) => { try { localStorage.setItem(k, id); } catch (e) { /* nada */ } return id; };
+    for (const id of v.cand || []) { try { const r = await fetch(HAO + id + '/books.json'); if (r.ok && verLista(await r.json()).length >= 66) return guarda(id); } catch (e) { /* siguiente */ } }
+    const d = await (await fetch(HAO + 'available_translations.json')).json();
+    const t = (d.translations || []).find((x) => x.language === v.len && v.re.test((x.englishName || '') + ' ' + (x.name || '')) && x.numberOfBooks === 66);
+    if (!t) throw new Error('sin-version'); return guarda(t.id);
+  }
+  const extraMem = {};
+  async function libroExtra(cod, verId) {
+    const k = verId + ':' + cod; if (extraMem[k]) return extraMem[k];
+    const api = await verApiId(verDe(verId)), clave = new Request('https://tb.local/biblia/' + api + '/' + cod + '.json');
+    let c = null; try { c = await caches.open('tb-biblias'); const h = await c.match(clave); if (h) return (extraMem[k] = await h.json()); } catch (e) { c = null; }
+    const i = LIBROS.findIndex((l) => l[0] === cod), b = verLista(await (await fetch(HAO + api + '/books.json')).json())[i];
+    if (i < 0 || !b) throw new Error('sin-libro');
+    const n = LIBROS[i][2], out = new Array(n); let sig = 0;
+    const trabajo = async () => { while (sig < n) { const ch = ++sig, r = await fetch(HAO + api + '/' + b.id + '/' + ch + '.simple.json'); if (!r.ok) throw new Error('http ' + r.status); const d = await r.json(), vs = []; ((d.chapter && d.chapter.content) || []).forEach((it) => { if (it && it.type === 'verse') vs[Number(it.number) - 1] = String(it.text || '').trim(); }); out[ch - 1] = Array.from(vs, (x) => x || ''); } };
+    await Promise.all([1, 2, 3, 4, 5, 6].map(trabajo));
+    try { if (c) await c.put(clave, new Response(JSON.stringify(out), { headers: { 'Content-Type': 'application/json' } })); } catch (e) { /* sin copia */ }
+    return (extraMem[k] = out);
+  }
+  const verChip = () => { const v = verDe(verActual()); return `<button type="button" class="ver-chip" id="verChip" aria-label="Cambiar la versión de la Biblia">${svg('hoja', 16)}<span><b>${esc(v.c)}</b> · ${esc(v.n)}</span><i>Cambiar</i></button>`; };
+  const verCredito = () => { const v = verDe(verActual()); return `<p class="suave sep">${esc(v.n)} · ${esc(v.lic)}${v.id === 'rv' ? '' : ' · Fuente: Free Use Bible API (AO Lab)'}</p>`; };
+  function verElegir(volver) {
+    const a = verActual();
+    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ Biblia</button><h1>Versión de la Biblia</h1><div class="filete"></div>
+      <p class="suave">Elige cómo quieres leer. Las demás versiones se bajan al abrir cada libro, solo la primera vez, y luego se leen sin internet.</p>
+      <div class="ver-lista">${VERSIONES.map((v) => `<button type="button" class="ver-op${v.id === a ? ' on' : ''}" data-ver="${v.id}"><b>${esc(v.c)}</b><span>${esc(v.n)}<small>${v.l === 'es' ? 'Español' : 'Inglés'} · ${esc(v.lic)}</small></span></button>`).join('')}</div>`;
+    volverA('Biblia', volver);
+    document.querySelectorAll('[data-ver]').forEach((b) => b.addEventListener('click', () => { try { localStorage.setItem(K_VER, b.dataset.ver); } catch (e) { /* nada */ } volver(); }));
+    window.scrollTo(0, 0);
+  }
+  const verChipBind = (volver) => { const b = $('#verChip'); if (b) b.onclick = () => verElegir(volver); };
   const SIN_LIBRO = 'No pudimos abrir este libro. Revisa tu internet: lo que ya leíste antes se abre sin conexión.';
   // F881: racha de lectura (días seguidos en que abriste un capítulo). Solo vive en el teléfono.
   const K_RACHA = 'tb_movil_racha';
@@ -1088,12 +1135,12 @@
   const volverA = (txt, fn) => { const b = $('#volver'); if (b) { b.textContent = '‹ ' + txt; b.onclick = fn; } };
   function vistaBiblia() {
     const fila = (l) => `<button type="button" class="libro" data-libro="${l[0]}">${esc(l[1])}</button>`;
-    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ Palabra</button><h1>Biblia</h1><div class="filete"></div>
+    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ Palabra</button><h1>Biblia</h1><div class="filete"></div>${verChip()}
       <input type="text" id="buscaLibro" class="busca-libro" placeholder="Buscar un libro…" aria-label="Buscar un libro" autocomplete="off" enterkeyhint="search">
       <h2>Antiguo Testamento</h2><div class="libros">${LIBROS.slice(0, 39).map(fila).join('')}</div>
       <h2 class="sep">Nuevo Testamento</h2><div class="libros">${LIBROS.slice(39).map(fila).join('')}</div>
-      <p class="suave sep">Reina-Valera 1909 · Dominio público</p>`;
-    volverA('Palabra', vistaPalabra);
+      ${verCredito()}`;
+    volverA('Palabra', vistaPalabra); verChipBind(vistaBiblia);
     document.querySelectorAll('[data-libro]').forEach((b) => b.addEventListener('click', () => vistaLibro(b.dataset.libro)));
     try {
       const norm = (t) => String(t).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
@@ -1299,7 +1346,8 @@
     cap = Math.min(Math.max(1, Number(cap) || 1), inf[2]);
     $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ ${esc(inf[1])}</button><h1>${esc(inf[1])} ${cap}</h1><div class="filete"></div><p class="suave" id="bibmsg"><span class="esq-claro"></span><span class="esq-claro"></span><span class="esq-claro corto"></span><span class="esq-claro"></span><span class="esq-claro corto"></span></p>`;
     volverA(inf[1], () => vistaLibro(cod));
-    let libro; try { libro = await libroCargar(cod); } catch (e) { const m = $('#bibmsg'); if (m) m.textContent = SIN_LIBRO; return; }
+    const va = verActual(), m0 = $('#bibmsg'); if (m0 && va !== 'rv') m0.textContent = 'Bajando ' + verDe(va).c + '… (solo la primera vez)';
+    let libro; try { libro = await libroCargar(cod, va); } catch (e) { const m = $('#bibmsg'); if (m) m.textContent = SIN_LIBRO; return; }
     const versos = libro[cap - 1]; const m = $('#bibmsg'); if (!versos || !m) return;
     guardar(K_BIB, { cod, cap }); rachaMarcar(); leidoMarcar(cod, cap); planAuto(cod, cap);
     const tam = Math.min(30, Math.max(16, Number(leer(K_BIBTAM)) || 18));
@@ -1307,13 +1355,13 @@
     const ant = cap > 1 ? [cod, cap - 1] : (idx > 0 ? [LIBROS[idx - 1][0], LIBROS[idx - 1][2]] : null);
     const sig = cap < inf[2] ? [cod, cap + 1] : (idx < LIBROS.length - 1 ? [LIBROS[idx + 1][0], 1] : null);
     const nombre = (x) => libroInfo(x[0])[1] + ' ' + x[1];
-    $('#pantalla').innerHTML = `<i class="lec-prog" id="lecProg" aria-hidden="true"></i><button type="button" class="volver" id="volver">‹ ${esc(inf[1])}</button><h1>${esc(inf[1])} ${cap}</h1><div class="filete"></div>
+    $('#pantalla').innerHTML = `<i class="lec-prog" id="lecProg" aria-hidden="true"></i><button type="button" class="volver" id="volver">‹ ${esc(inf[1])}</button><h1>${esc(inf[1])} ${cap}</h1><div class="filete"></div>${verChip()}
       <div class="tamano" role="group" aria-label="Tamaño de la letra"><button type="button" class="btn sec chico" id="menos" aria-label="Letra más chica">A−</button><button type="button" class="btn sec chico" id="mas" aria-label="Letra más grande">A+</button><button type="button" class="btn sec chico" id="aparBtn" aria-label="Apariencia de la lectura">${svg('texto', 20)} Aa</button><button type="button" class="btn sec chico${aud.on && aud.cod === cod && aud.cap === cap ? ' on' : ''}" id="audBtn" aria-label="Escuchar este capítulo">${svg('audifonos', 20)} Escuchar</button></div>
       <p class="lec-pista suave">Toca un versículo: resáltalo con color, escribe una nota, guárdalo o hazle una imagen.</p>
       <div class="lectura ${dir ? 'desde-' + dir : ''}" id="lectura">${versos.map((t, i) => `<p class="vers" data-v="${i + 1}" role="button" tabindex="0" aria-pressed="false"><sup>${i + 1}</sup> ${esc(t)}</p>`).join('')}</div>
       <div class="card hac-lector"><b>¿Qué harás con lo que leíste?</b><p class="suave m0t">Leer es el principio. Llévalo a una acción pequeña.</p><button type="button" class="btn chico" id="hacerBtn">${svg('chispas', 18)} Llevarlo a la acción</button></div>
       <div class="navcap">${ant ? `<button type="button" class="btn sec chico" id="ant">‹ ${esc(nombre(ant))}</button>` : '<span></span>'}${sig ? `<button type="button" class="btn chico" id="sig">${esc(nombre(sig))} ›</button>` : ''}</div>`;
-    volverA(inf[1], () => vistaLibro(cod));
+    volverA(inf[1], () => vistaLibro(cod)); verChipBind(() => vistaCapitulo(cod, cap));
     lec = { cod, cap, versos, sel: new Set() };
     try { $('#lectura').style.fontSize = tam + 'px'; } catch (e) { /* sin estilo */ }
     const cambiarTam = (d) => { const n = Math.min(30, Math.max(16, (Number(leer(K_BIBTAM)) || 18) + d)); guardar(K_BIBTAM, n); $('#lectura').style.fontSize = n + 'px'; };
@@ -2668,6 +2716,29 @@
         } catch (e) { /* nada */ }
       }).observe(pan, { childList: true });
     } catch (e) { /* sin capa premium: la app funciona igual */ }
+  })();
+  // ---------- F899 · Perfil ordenado (secciones que se abren y cierran) + pantalla de apertura ----------
+  const pfAbierto = new Set(['Mis logros', 'Empieza']);
+  function pfOrdenar() {                                    // agrupa cada título del Perfil con su contenido; mueve los elementos (no los recrea), así los botones siguen funcionando
+    try {
+      const p = $('#pantalla'); if (!p || !p.querySelector('.hac-perfil') || p.querySelector('.pf-grupo')) return;
+      Array.from(p.querySelectorAll(':scope > h2.sep')).forEach((h) => {
+        const nombre = h.textContent.trim(), d = document.createElement('details'), sm = document.createElement('summary');
+        d.className = 'pf-grupo'; d.open = pfAbierto.has(nombre); sm.textContent = nombre; d.appendChild(sm);
+        h.parentNode.insertBefore(d, h);
+        let x = h.nextSibling; while (x && !(x.nodeType === 1 && x.matches && x.matches('h2.sep'))) { const nx = x.nextSibling; d.appendChild(x); x = nx; }
+        h.remove(); d.addEventListener('toggle', () => { if (d.open) pfAbierto.add(nombre); else pfAbierto.delete(nombre); });
+      });
+    } catch (e) { /* sin orden: el Perfil se ve como antes */ }
+  }
+  try { if (window.MutationObserver && $('#pantalla')) new MutationObserver(pfOrdenar).observe($('#pantalla'), { childList: true }); } catch (e) { /* nada */ }
+  (function arranque() {                                    // la pantalla de apertura (HTML + CSS) se quita sola; la 2.ª vez en la misma sesión ni se ve
+    try {
+      const el = $('#arranque'); if (!el) return;
+      let visto = false; try { visto = sessionStorage.getItem('tb_movil_arr') === '1'; sessionStorage.setItem('tb_movil_arr', '1'); } catch (e) { /* nada */ }
+      if (visto) { el.remove(); return; }
+      setTimeout(() => { try { el.remove(); } catch (e) { /* nada */ } }, 2300);
+    } catch (e) { /* nada */ }
   })();
   try {   // F888 · modo prueba: abrir la app con ?reiniciar=1 borra lo guardado en este dispositivo y vuelve a la primera vez
     if (/[?&]reiniciar=1/.test(String((window.location && window.location.search) || ''))) {
