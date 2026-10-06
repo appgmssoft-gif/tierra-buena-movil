@@ -1032,10 +1032,22 @@
   const VERSIONES = [
     { id: 'rv', c: 'RV1909', n: 'Reina-Valera 1909', l: 'es', lic: 'Dominio público' },
     { id: 'vbl', c: 'VBL', n: 'Versión Biblia Libre', l: 'es', lic: 'Texto libre', cand: ['spa_vbl', 'spaVBL', 'SPAVBL'], re: /biblia libre|free bible/i, len: 'spa' },
-    { id: 'bsb', c: 'BSB', n: 'Berean Standard Bible', l: 'en', lic: 'Uso libre', api: 'BSB' },
-    { id: 'web', c: 'WEB', n: 'World English Bible', l: 'en', lic: 'Dominio público', api: 'ENGWEBP' },
-    { id: 'kjv', c: 'KJV', n: 'King James Version', l: 'en', lic: 'Dominio público', cand: ['eng_kjv', 'KJV', 'ENGKJV'], re: /king james/i, len: 'eng' }
-  ];
+  ];   // F900: la Biblia de Tierra Buena es solo en español (se quitaron las versiones en inglés); las demás versiones en español se descubren solas (verEspanolDescubrir)
+  const K_VERES = 'tb_movil_ver_es';
+  (function verEspanolCache() {                              // F900: versiones en español ya descubiertas (quedan guardadas en el teléfono)
+    try { (JSON.parse(localStorage.getItem(K_VERES) || '[]') || []).forEach((t) => { if (t && t.id && !VERSIONES.some((x) => x.api === t.id)) VERSIONES.push({ id: 'es_' + t.id, c: String(t.c || t.id).slice(0, 12), n: String(t.n || t.id), l: 'es', lic: String(t.lic || 'Texto libre'), api: t.id }); });
+    } catch (e) { /* sin copia */ }
+    try { caches.open('tb-biblias').then((c) => c.keys().then((ks) => ks.forEach((k) => { if (/\/biblia\/(BSB|ENGWEBP|ENGKJV|KJV|eng_[^/]*)\//.test(k.url)) c.delete(k); }))).catch(() => { /* nada */ }); } catch (e) { /* nada */ }   // limpia lo que se había bajado en inglés
+  })();
+  async function verEspanolDescubrir() {                       // pide la lista de la API y suma toda Biblia COMPLETA en español (66 libros)
+    try {
+      const d = await (await fetch(HAO + 'available_translations.json')).json(), lista = [];
+      (d.translations || []).forEach((t) => { if (t && t.language === 'spa' && t.numberOfBooks === 66 && t.id && !VERSIONES.some((x) => x.api === t.id || x.cand && x.cand.indexOf(t.id) >= 0) && !/1909|libre/i.test((t.englishName || '') + ' ' + (t.name || '') + ' ' + t.id)) lista.push({ id: t.id, c: String(t.shortName || t.id).slice(0, 12), n: t.name || t.englishName || t.id, lic: t.licenseUrl ? 'Texto libre' : 'Texto libre' }); });
+      localStorage.setItem(K_VERES, JSON.stringify(lista.slice(0, 6)));
+      lista.slice(0, 6).forEach((t) => { if (!VERSIONES.some((x) => x.api === t.id)) VERSIONES.push({ id: 'es_' + t.id, c: t.c, n: String(t.n), l: 'es', lic: t.lic, api: t.id }); });
+      return true;
+    } catch (e) { return false; }
+  }
   const verDe = (id) => VERSIONES.find((x) => x.id === id) || VERSIONES[0];
   const verActual = () => { try { const v = localStorage.getItem(K_VER); return VERSIONES.some((x) => x.id === v) ? v : 'rv'; } catch (e) { return 'rv'; } };
   const verLista = (d) => (Array.isArray(d) ? d : (d && d.books) || []);
@@ -1066,10 +1078,12 @@
   function verElegir(volver) {
     const a = verActual();
     $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ Biblia</button><h1>Versión de la Biblia</h1><div class="filete"></div>
-      <p class="suave">Elige cómo quieres leer. Las demás versiones se bajan al abrir cada libro, solo la primera vez, y luego se leen sin internet.</p>
-      <div class="ver-lista">${VERSIONES.map((v) => `<button type="button" class="ver-op${v.id === a ? ' on' : ''}" data-ver="${v.id}"><b>${esc(v.c)}</b><span>${esc(v.n)}<small>${v.l === 'es' ? 'Español' : 'Inglés'} · ${esc(v.lic)}</small></span></button>`).join('')}</div>`;
+      <p class="suave">Todas las versiones están en español, y el audio lee la que elijas. Las que no son la Reina-Valera se bajan al abrir cada libro, solo la primera vez, y luego se leen sin internet.</p>
+      <div class="ver-lista">${VERSIONES.map((v) => `<button type="button" class="ver-op${v.id === a ? ' on' : ''}" data-ver="${v.id}"><b>${esc(v.c)}</b><span>${esc(v.n)}<small>Español · ${esc(v.lic)}</small></span></button>`).join('')}</div>`;
     volverA('Biblia', volver);
-    document.querySelectorAll('[data-ver]').forEach((b) => b.addEventListener('click', () => { try { localStorage.setItem(K_VER, b.dataset.ver); } catch (e) { /* nada */ } volver(); }));
+    const atar = () => document.querySelectorAll('[data-ver]').forEach((b) => { b.onclick = () => { try { localStorage.setItem(K_VER, b.dataset.ver); } catch (e) { /* nada */ } if (aud.on && aud.ver !== b.dataset.ver) audParar(); try { if (window.TBSonido) TBSonido.toque(); } catch (e) { /* sin sonido */ } volver(); }; });   // F900: si estaba escuchando otra versión, se detiene (el audio siempre lee la versión elegida)
+    atar();
+    verEspanolDescubrir().then((ok) => { const l = document.querySelector('.ver-lista'); if (!ok || !l) return; const a2 = verActual(); l.innerHTML = VERSIONES.map((v) => `<button type="button" class="ver-op${v.id === a2 ? ' on' : ''}" data-ver="${v.id}"><b>${esc(v.c)}</b><span>${esc(v.n)}<small>Español · ${esc(v.lic)}</small></span></button>`).join(''); atar(); });
     window.scrollTo(0, 0);
   }
   const verChipBind = (volver) => { const b = $('#verChip'); if (b) b.onclick = () => verElegir(volver); };
@@ -1113,7 +1127,7 @@
       <h1>Hoy</h1><div class="hoy-verso" id="hoyVerso"><span class="esqueleto"></span><span class="esqueleto corto"></span></div>
       ${racha ? `<p class="hoy-racha">${svg('llama', 18)}<span>${racha === 1 ? '1 día leyendo la Palabra' : racha + ' días seguidos leyendo la Palabra'}</span></p>` : ''}${fechaCercanaChip()}${instalarChip()}</div>
       <h2 class="sep">Tu Palabra</h2>
-      <div class="grid">${activa('✨', 'Hoy lo hago', 'Leer es el principio: da un paso hoy.', 'hacer')}${inf ? activa('▶️', 'Seguir leyendo', esc(inf[1]) + ' ' + Number(ult.cap) + ' · donde te quedaste', 'seguir') : ''}${activa('📖', 'Leer la Biblia', 'Reina-Valera 1909. Los libros que lees quedan para leer sin internet.', 'biblia')}${activa('🔖', 'Mi Biblia', 'Tus resaltes, notas y versículos guardados.', 'mibiblia')}${activa('🗓', 'Planes de lectura', 'Un poquito cada día, con tu avance.', 'planes')}${activa('✨', 'Versículo de hoy', 'Una frase para empezar el día.', 'versiculo')}${activa('📜', 'Fábula del mes', 'Un relato corto para practicar, capítulo a capítulo.', 'fabula')}</div>`;
+      <div class="grid">${activa('✨', 'Hoy lo hago', 'Leer es el principio: da un paso hoy.', 'hacer')}${inf ? activa('▶️', 'Seguir leyendo', esc(inf[1]) + ' ' + Number(ult.cap) + ' · donde te quedaste', 'seguir') : ''}${activa('📖', 'Leer la Biblia', 'Biblia en español: elige tu versión. Los libros que lees quedan para leer sin internet.', 'biblia')}${activa('🔖', 'Mi Biblia', 'Tus resaltes, notas y versículos guardados.', 'mibiblia')}${activa('🗓', 'Planes de lectura', 'Un poquito cada día, con tu avance.', 'planes')}${activa('✨', 'Versículo de hoy', 'Una frase para empezar el día.', 'versiculo')}${activa('📜', 'Fábula del mes', 'Un relato corto para practicar, capítulo a capítulo.', 'fabula')}</div>`;
     document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => {
       const k = b.dataset.ir;
       if (k === 'hacer') vistaHacer(); else if (k === 'biblia') vistaBiblia(); else if (k === 'versiculo') vistaVersiculo(); else if (k === 'fabula') vistaFabula(); else if (k === 'mibiblia') vistaMiBiblia(); else if (k === 'planes') vistaPlanes(); else if (k === 'cal') vistaCalendario(); else if (k === 'inst') instalarUnToque(); else if (k === 'instno') { try { localStorage.setItem('tb_movil_inst_no', String(new Date().getMonth())); } catch (e) { /* nada */ } b.closest('.hoy-inst').remove(); } else if (k === 'seguir' && inf) vistaCapitulo(ult.cod, Number(ult.cap));
@@ -1297,7 +1311,7 @@
     const cerrar = () => { try { h.remove(); } catch (e) { /* nada */ } };
     $('#aparOk').onclick = cerrar; h.addEventListener('click', (e) => { if (e && e.target === h) cerrar(); });
   }
-  const aud = { on: false, pausa: false, cod: '', cap: 0, i: 0, vel: 1, libro: null };
+  const aud = { on: false, pausa: false, cod: '', cap: 0, i: 0, vel: 1, libro: null, ver: 'rv' };
   const audOk = () => { try { return !!(window.speechSynthesis && window.SpeechSynthesisUtterance); } catch (e) { return false; } };
   function audMini() {                                    // el mini reproductor vive en el cuerpo de la página: no se borra al cambiar de pestaña
     let m = $('#audMini');
@@ -1320,7 +1334,7 @@
     const versos = aud.libro[aud.cap - 1];
     if (!versos || aud.i >= versos.length) return audSiguiente();
     const u = new SpeechSynthesisUtterance(String(versos[aud.i])); u.lang = 'es-ES'; u.rate = aud.vel;
-    try { const v = (speechSynthesis.getVoices() || []).find((x) => /^es/i.test(x.lang)); if (v) u.voice = v; } catch (e) { /* voz por defecto */ }
+    try { const vs = (speechSynthesis.getVoices() || []).filter((x) => /^es/i.test(x.lang)), v = ['es-CL', 'es-419', 'es-US', 'es-MX', 'es-AR'].map((c) => vs.find((x) => x.lang.replace('_', '-') === c)).find(Boolean) || vs[0]; if (v) { u.voice = v; u.lang = v.lang; } } catch (e) { /* voz por defecto */ }   // F900: voz en español latino si el teléfono la tiene; nunca en inglés
     const i = aud.i;
     u.onend = () => { if (aud.on && !aud.pausa && aud.i === i) { aud.i++; audDecir(); } };
     u.onerror = (e) => { if (e && (e.error === 'canceled' || e.error === 'interrupted')) return; audParar(); toastBib('No se pudo reproducir el audio'); };
@@ -1336,8 +1350,9 @@
   async function audEmpezar(cod, cap, desde, seguido) {
     if (!audOk()) { toastBib('Tu teléfono no tiene voz para leer en voz alta'); return; }
     try { speechSynthesis.cancel(); } catch (e) { /* nada */ }
-    try { aud.libro = await libroCargar(cod); } catch (e) { toastBib(SIN_LIBRO); return; }
-    aud.on = true; aud.pausa = false; aud.cod = cod; aud.cap = cap; aud.i = desde || 0;
+    const vAud = verActual();                                   // F900: el audio lee la MISMA versión que se ve en pantalla
+    try { aud.libro = await libroCargar(cod, vAud); } catch (e) { toastBib(SIN_LIBRO); return; }
+    aud.ver = vAud; aud.on = true; aud.pausa = false; aud.cod = cod; aud.cap = cap; aud.i = desde || 0;
     audMini(); audDecir();
     const b = $('#audBtn'); if (b) clase(b, 'on', true);
   }
@@ -2737,7 +2752,7 @@
       const el = $('#arranque'); if (!el) return;
       let visto = false; try { visto = sessionStorage.getItem('tb_movil_arr') === '1'; sessionStorage.setItem('tb_movil_arr', '1'); } catch (e) { /* nada */ }
       if (visto) { el.remove(); return; }
-      setTimeout(() => { try { el.remove(); } catch (e) { /* nada */ } }, 2300);
+      setTimeout(() => { try { el.remove(); } catch (e) { /* nada */ } }, 3700);
     } catch (e) { /* nada */ }
   })();
   try {   // F888 · modo prueba: abrir la app con ?reiniciar=1 borra lo guardado en este dispositivo y vuelve a la primera vez
