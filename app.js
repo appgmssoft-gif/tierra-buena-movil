@@ -37,8 +37,11 @@
   const $ = (s, r) => (r || document).querySelector(s);
   const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const leer = (k) => { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } };
-  const guardar = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { return false; } syncMarcar(k); return true; };
-  const borrar = (k) => { try { localStorage.removeItem(k); } catch (e) { /* nada */ } };
+  const guardar = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { return false; } syncMarcar(k); if (k === 'tb_movil_cuenta' || k === 'tb_movil_identidad' || k === 'tb_movil_pastor') marcaDentro(); return true; };
+  const borrar = (k) => { try { localStorage.removeItem(k); } catch (e) { /* nada */ } if (k === 'tb_movil_cuenta' || k === 'tb_movil_identidad' || k === 'tb_movil_pastor') marcaDentro(); };
+  // F903: «Mi código» y el botón de efectos solo aparecen después del primer ingreso (con cuenta); en el inicio de sesión no estorban.
+  const marcaDentro = () => { try { document.documentElement.setAttribute('data-dentro', (leer('tb_movil_cuenta') || leer('tb_movil_identidad') || leer('tb_movil_pastor')) ? '1' : '0'); } catch (e) { /* nada */ } };
+  marcaDentro();
 
   async function rpc(fn, args) {
     if (!SB) return { ok: false, motivo: 'sin-internet' };
@@ -274,7 +277,7 @@
     return { ok: true };
   }
   async function despuesDeCuenta(user) {
-    guardar(K_CUENTA, { correo: user.email || '' });
+    guardar(K_CUENTA, { correo: user.email || '' }); marcaDentro();
     try { if (hayAuth() && SB.rpc) await SB.rpc('cuenta_registrar', { p_plataforma: 'movil' }); } catch (e) { /* F879: el registro es un extra; no frena la entrada */ }
     await syncBajar(user);                          // F872: trae los avances de la cuenta (y sube los de este teléfono si la cuenta está vacía)
     const local = leer(K_ID), enCuenta = iglesiaDeCuenta(user);
@@ -291,7 +294,7 @@
   async function cerrarSesionCuenta() {
     await syncCerrar();                             // F872: lo pendiente viaja a la cuenta antes de salir
     try { if (hayAuth()) await SB.auth.signOut(); } catch (e) { /* sin red: igual se cierra aquí */ }
-    borrar(K_CUENTA); borrar(K_ID); borrar(K_SOL); borrar(K_IG);
+    borrar(K_CUENTA); borrar(K_ID); borrar(K_SOL); borrar(K_IG); marcaDentro();
     try { history.replaceState(null, '', location.pathname); } catch (e) { /* nada */ }
     vistaUnirse();
   }
@@ -525,7 +528,6 @@
       ${cuentaBarra()}
       <div id="tbEjem" class="tb-ejem-caja"></div>
       ${bloqueInstalar()}` : `
-      <div class="ent-top">${icoPastorHTML()}${icoCodigoHTML()}</div>
       <div class="hero hero-viva"><span class="hv-caja" aria-hidden="true"><i></i><i></i><i></i><i></i></span><div class="hero-ico" aria-hidden="true">${svg("hoja", 38)}</div><h1>Bienvenido a Tierra Buena</h1>
       <p>Tu iglesia, la Palabra y tu crecimiento, en tu bolsillo.</p></div>
       <h2 class="sep">Elige cómo entrar</h2>
@@ -533,7 +535,6 @@
         ${activa('✉️', 'Entrar con mi correo y contraseña', 'La misma cuenta del computador. Si no tienes, la creas aquí.', 'cuenta')}
         ${activa('📖', 'Solo quiero leer y orar', 'Biblia, versículo del día y Vida y servicio, sin unirte.', 'solo')}
       </div>
-      <p class="suave pista-cod">¿Tu pastor te dio un código? Toca <b>Mi código</b>. ¿Eres pastor? Toca <b>Soy pastor</b>. Los dos están arriba.</p>
       ${bloqueInstalar()}`;
     ligaCodigo(); pantEntra('adelante');
     try { if (window.TBEjemplos && $('#tbEjem')) window.TBEjemplos.pintar($('#tbEjem'), 'ambos'); } catch (e) { /* sin ejemplos */ }
@@ -2240,6 +2241,25 @@
     const err = (m) => { const e = $('#pasErr'); if (e) { e.textContent = m || ''; e.hidden = !m; } };
     const sono = (n) => { try { if (window.TBSonido) window.TBSonido[n](); } catch (e) { /* sin sonido */ } };
     const TXT_COD = { 'codigo-invalido': 'No encontramos ese código. Revisa que tenga 8 letras o números, tal como llegó a tu correo.', 'codigo-revocado': 'Ese código fue cancelado. Escríbenos a softappgms@outlook.com y lo revisamos contigo.', 'codigo-otro-correo': 'Ese código es de otro correo. Escribe el mismo correo con el que pediste tu acceso.', 'codigo-vencido': 'Ese código venció por falta de uso. Pídenos que lo reactiven escribiendo a softappgms@outlook.com.', 'demasiados-intentos': 'Hubo varios intentos seguidos. Espera una hora e inténtalo de nuevo, para cuidar tu cuenta.' };
+    // F903: si quien mira es administrador (sesión en admins_pulpito), aparece un botón para generar al instante un código de pastor de prueba.
+    const adminPrueba = async () => {
+      try {
+        if (!hayAuth() || !SB.rpc || !leer(K_CUENTA)) return;
+        const r = await SB.rpc('es_admin_pulpito'); const caja = $('#pasCuerpo');
+        if (!caja || r.error || r.data !== true || $('#pasAdm')) return;
+        const d = document.createElement('div'); d.id = 'pasAdm'; d.className = 'pas-adm';
+        d.innerHTML = '<button type="button" class="btn sec" id="pasGen">🔧 Administrador: generar código de prueba</button><p class="suave" id="pasGenMsg" hidden></p>';
+        caja.appendChild(d);
+        $('#pasGen').onclick = async () => {
+          const cor = ($('#pkCor').value || (leer(K_CUENTA) || {}).correo || '').trim(); const m = $('#pasGenMsg'); m.hidden = false;
+          if (!CORREO_RE.test(cor)) { m.textContent = 'Escribe primero el correo con el que vas a probar.'; return; }
+          $('#pasGen').disabled = true; m.textContent = 'Generando…';
+          const g = await SB.rpc('pastor_codigo_prueba', { p_correo: cor, p_iglesia: 'Iglesia de prueba' }); $('#pasGen').disabled = false;
+          if (g.error || !/^[A-Z0-9]{8}$/i.test(String(g.data || ''))) { sono('error'); m.textContent = g.error ? 'Falta correr SQL_F903_SOLICITUD_PASTOR.sql en Supabase.' : 'No se pudo: ' + g.data; return; }
+          $('#pkHoja').value = String(g.data).toUpperCase(); $('#pkCor').value = cor; sono('exito'); m.textContent = 'Listo: código ' + String(g.data).toUpperCase() + ' para ' + cor + '. Ya está escrito arriba: toca «Entrar como pastor».';
+        };
+      } catch (e) { /* sin permiso de administrador: el botón no aparece */ }
+    };
     const pantallaCodigo = () => {
       $('#pasCuerpo').innerHTML = `<h3>Entrar como pastor</h3><p class=\"suave\">Escribe el código de 8 letras que te enviamos por correo, junto con ese mismo correo. Si usas la llave larga del computador, pégala en el primer campo.</p>
         <label for=\"pkHoja\">Tu código de pastor</label>
@@ -2250,6 +2270,7 @@
         <div class=\"hoja-bt\"><button type=\"button\" class=\"btn\" id=\"pasEntrar\">Entrar como pastor</button><button type=\"button\" class=\"btn sec\" id=\"pasPedir\">Aún no tengo mi código: solicitarlo</button><button type=\"button\" class=\"btn sec\" id=\"pasX\">Ahora no</button></div>
         <p class=\"suave pas-nota\">Entregamos el código solo después de confirmar a cada pastor. Así cuidamos a las personas de tu iglesia.</p>`;
       $('#pasX').onclick = cerrar; $('#pasPedir').onclick = pantallaPedir;
+      adminPrueba();
       $('#pkHoja').addEventListener('keydown', (e) => { if (e && e.key === 'Enter') entrar(); });
       $('#pasEntrar').onclick = entrar;
       setTimeout(() => { try { $('#pkHoja').focus(); } catch (e) { /* nada */ } }, 150);
@@ -2326,9 +2347,20 @@
         try { if (Date.now() - Number(localStorage.getItem('tb_sol_pastor') || 0) < 86400000) return err('Ya enviaste una solicitud hoy. La estamos revisando y te escribiremos a tu correo.'); } catch (e) { /* sin almacenamiento */ }
         const msgFinal = ['Cargo: ' + car, 'Teléfono/WhatsApp: ' + tel, 'Enlace o referencia: ' + enl, 'Origen: app del celular'].join(' | ').slice(0, 290);
         err(''); const b = $('#spEnv'); b.disabled = true; b.textContent = 'Enviando…';
-        let ok = false;
-        try { if (SB && SB.from) { const r = await SB.from('solicitudes_pastor').insert({ nombre: nombre.slice(0, 60), correo: correo.slice(0, 120), iglesia: igl.slice(0, 120), mensaje: msgFinal }); ok = !r.error; } } catch (e) { ok = false; }
-        if (!ok) { b.disabled = false; b.textContent = 'Enviar solicitud'; sono('error'); return err('No pudimos enviarla. Revisa tu internet e inténtalo otra vez.'); }
+        let ok = false, detalle = '';
+        try {
+          if (SB && SB.rpc) {                                          // 1.º la función segura (siempre llega al panel)
+            const r1 = await SB.rpc('pastor_solicitar', { p_nombre: nombre, p_correo: correo, p_iglesia: igl, p_cargo: car, p_telefono: tel, p_enlace: enl, p_origen: 'celular' });
+            if (!r1.error) { ok = (r1.data === 'ok' || r1.data === 'repetida'); if (!ok) detalle = String(r1.data || ''); }
+            else detalle = (r1.error.code || '') + ' ' + (r1.error.message || '');
+          }
+          if (!ok && SB && SB.from && (!detalle || /PGRST202|could not find|function/i.test(detalle))) {   // 2.º, si el SQL nuevo aún no se corrió: la forma de siempre
+            const r2 = await SB.from('solicitudes_pastor').insert({ nombre: nombre.slice(0, 60), correo: correo.slice(0, 120), iglesia: igl.slice(0, 120), mensaje: msgFinal });
+            ok = !r2.error; if (r2.error) detalle = (r2.error.code || '') + ' ' + (r2.error.message || '');
+          }
+        } catch (e) { ok = false; detalle = 'red: ' + (e && e.message ? e.message : e); }
+        if (!ok) { try { console.warn('solicitud pastor:', detalle); window.tbUltimoError = detalle; } catch (e2) { /* nada */ } }
+        if (!ok) { b.disabled = false; b.textContent = 'Enviar solicitud'; sono('error'); return err(/42501|row-level|permission/i.test(detalle) ? 'No pudimos enviarla: falta activar un permiso en el servidor. Avisa a quien administra la app (código 42501).' : /fetch|network|red:/i.test(detalle) ? 'No pudimos enviarla. Revisa tu internet e inténtalo otra vez.' : 'No pudimos enviarla (' + (detalle.trim().slice(0, 60) || 'sin detalle') + '). Avisa a quien administra la app.'); }
         sono('exito'); try { localStorage.setItem('tb_sol_pastor', String(Date.now())); } catch (e) { /* sin almacenamiento */ }
         $('#pasCuerpo').innerHTML = `<div class="pas-ok" aria-hidden="true">✉️</div><h3>¡Solicitud enviada!</h3><p class="suave">Revisaremos tu solicitud y te escribiremos a <b>${esc(correo)}</b> con tu código de pastor. Cuando lo tengas, vuelve a tocar <b>Soy pastor</b> y pégalo.</p><div class="hoja-bt"><button type="button" class="btn" id="spListo">Listo</button></div>`;
         $('#spListo').onclick = cerrar;
@@ -2649,7 +2681,7 @@
       : ya
       ? `<button type="button" class="btn" id="onbEmpezar">Entrar a mi cuenta</button><p class="ent-links"><button type="button" class="enlace" id="onbCrear">Crear una cuenta nueva</button></p><p class="ent-links"><button type="button" class="enlace" id="onbLeer">Solo quiero leer</button></p>`
       : `<button type="button" class="btn" id="onbEmpezar">Empezar</button><p class="ent-links"><button type="button" class="enlace" id="onbYaTengo">Ya tengo cuenta</button></p>`;   // F888: la primera vez solo ofrece «Empezar»; «Ya tengo cuenta» aparece al final de las preguntas
-    $('#pantalla').innerHTML = `<section class="ent ent-splash ent-port" data-i="0">${icoCodigoHTML()}<div class="pt-vista" id="ptVista"><div class="pt-pista">${sl}${fin}</div></div><div class="pt-pie"><div class="pt-pts">${pts}</div>${botones}</div></section>`;
+    $('#pantalla').innerHTML = `<section class="ent ent-splash ent-port" data-i="0"><div class="pt-vista" id="ptVista"><div class="pt-pista">${sl}${fin}</div></div><div class="pt-pie"><div class="pt-pts">${pts}</div>${botones}</div></section>`;
     ligaCodigo();
     const sec = $('.ent-port'); let i = 0;
     const puntos = () => { try { return Array.from(document.querySelectorAll('.pt-pt')); } catch (e) { return []; } };

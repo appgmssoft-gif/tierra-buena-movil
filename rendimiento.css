@@ -26,3 +26,8 @@ html[data-eco="2"] *{text-shadow:none!important}
 .tb-niv button{flex:1;min-height:40px;border:0;border-radius:999px;background:none;color:var(--suave);font:700 .82rem/1 inherit;font-family:inherit;padding:0 6px}
 .tb-niv button[aria-pressed=true]{background:var(--verde);color:var(--papel)}
 .tb-cerrar{width:100%;min-height:50px;margin-top:6px;border:0;border-radius:16px;font:800 1rem/1 inherit;font-family:inherit;background:linear-gradient(150deg,var(--verde),color-mix(in srgb,var(--verde) 60%,#000));color:var(--papel)}
+
+/* F903: el botón de efectos y el de código solo se ven después del primer ingreso; el de efectos ya no tapa al de código */
+html:not([data-dentro="1"]) .tb-rapido{display:none}
+html[data-dentro="1"] .ent-top{padding-right:62px}
+html[data-dentro="1"] .ent-splash>.ico-cod{right:70px}

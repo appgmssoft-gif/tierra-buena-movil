@@ -179,3 +179,6 @@ html[data-anim=off] .barra::before,html[data-anim=off] .barra::after,html[data-a
 ::selection{background:color-mix(in srgb,var(--oro) 45%,transparent)}
 button,.card,.fila,.chip{-webkit-tap-highlight-color:transparent}
 .tab[aria-current=page] .ico{filter:drop-shadow(0 2px 6px color-mix(in srgb,var(--oro) 55%,transparent))}
+
+/* F903 */
+.pas-adm{margin-top:14px;padding-top:12px;border-top:1px dashed color-mix(in srgb,var(--oro) 60%,transparent)}

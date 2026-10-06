@@ -101,6 +101,12 @@
     ]
   };
 
+  // F903: NIVEL DE ACCESO. Quien aún no entra a una iglesia solo ve ejemplos «abiertos» (agenda, Biblia, planes, ministerios, avisos, acción del mes, Juntos...).
+  // Los que hablan de personas, oración, visitas, miembros o salud se muestran solo cuando ya entró a su iglesia (miembro o pastor).
+  const dentroDeIglesia = () => !!(leer('tb_movil_identidad', null) || leer('tb_movil_pastor', null));
+  const esPrivado = (e) => ['oracion', 'visita', 'muro', 'salud'].indexOf(e.di) >= 0 || ['sol', 'ora', 'vis', 'mie', 'dat'].indexOf(e.dp) >= 0;
+  const visibles = (rol) => { const d = dentroDeIglesia(); return EJ[rol].filter((e) => d || !esPrivado(e)); };
+
   // Carrusel de tarjetas (F902): se desliza con el dedo, tiene flechas, puntos y pausa. Sin animación continua: solo avanza una tarjeta cada 14 s mientras se ve en pantalla.
   function pintarEjemplos(caja, rol) {
     if (!caja) return;
@@ -109,9 +115,9 @@
     const parar = () => { if (reloj) { clearInterval(reloj); reloj = 0; } };
     const dibuja = () => {
       parar(); if (obs) { try { obs.disconnect(); } catch (e) { /* sin observador */ } obs = null; }
-      const L = EJ[actual]; let idx = 0, auto = !calma();
+      const L = visibles(actual); let idx = 0, auto = !calma();
       caja.innerHTML = `<div class="tbej" data-rol="${actual}">
-        <div class="tbej-cab"><span class="tbej-ic" aria-hidden="true">${actual === 'pastor' ? '🛡️' : '🌱'}</span><div><b>${actual === 'pastor' ? 'Cómo cuida mejor a su iglesia un pastor' : 'Cómo aprovecha la app un miembro'}</b><small>Historias de ejemplo, inventadas pero muy reales. Desliza para verlas y toca una para probarla.</small></div></div>
+        <div class="tbej-cab"><span class="tbej-ic" aria-hidden="true">${actual === 'pastor' ? '🛡️' : '🌱'}</span><div><b>${dentroDeIglesia() ? (actual === 'pastor' ? 'Cómo cuida mejor a su iglesia un pastor' : 'Cómo aprovecha la app un miembro') : (actual === 'pastor' ? 'Ideas para organizar una iglesia' : 'Ideas para empezar hoy')}</b><small>${dentroDeIglesia() ? 'Historias de ejemplo, inventadas pero muy reales. Desliza para verlas y toca una para probarla.' : 'Ejemplos inventados para inspirarte. Desliza y toca uno para probarlo.'}</small></div></div>
         ${rol === 'ambos' ? `<div class="tbej-seg" role="tablist" aria-label="Ver ejemplos para"><button type="button" role="tab" data-r="miembro" aria-selected="${actual === 'miembro'}">Soy miembro</button><button type="button" role="tab" data-r="pastor" aria-selected="${actual === 'pastor'}">Soy pastor</button></div>` : ''}
         <div class="tbej-car" role="region" aria-roledescription="carrusel" aria-label="Ejemplos de la vida real" tabindex="0">${L.map((e, i) => `<article class="tbej-card" data-i="${i}" data-hu="${(i * 37) % 360}" aria-label="${i + 1} de ${L.length}">
           <div class="tbej-arte" aria-hidden="true"><span class="tbej-big">${e.ic}</span><i class="tbej-hoja a"></i><i class="tbej-hoja b"></i></div>
@@ -145,7 +151,7 @@
     ap.ir(e.tab);
     setTimeout(() => { if (!clic()) aviso(e.tab === 'iglesia' ? 'Esto se abre cuando tu pastor te acepta en su iglesia: toca «Mi código».' : 'Aún no se puede abrir desde aquí.'); }, 60);
   }
-  window.TBEjemplos = { pintar: pintarEjemplos, datos: EJ };
+  window.TBEjemplos = { pintar: pintarEjemplos, datos: EJ, visibles, dentro: dentroDeIglesia };
 
   // =====================================================================================================
   // 2) JUNTOS HACEMOS EL BIEN  — movimientos sociales

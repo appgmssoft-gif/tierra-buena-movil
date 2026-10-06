@@ -18,7 +18,7 @@
       const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -18; comp.ratio.value = 3; comp.attack.value = 0.005; comp.release.value = 0.25;
       maestro.connect(comp); comp.connect(ctx.destination);
       // eco suave (sala pequeña): ruido que se apaga solo
-      const largo = Math.floor(ctx.sampleRate * 1.6), buf = ctx.createBuffer(2, largo, ctx.sampleRate);
+      const largo = Math.floor(ctx.sampleRate * 1.2), buf = ctx.createBuffer(2, largo, ctx.sampleRate);
       for (let c = 0; c < 2; c++) { const d = buf.getChannelData(c); for (let i = 0; i < largo; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / largo, 3.2); }
       const conv = ctx.createConvolver(); conv.buffer = buf; const sal = ctx.createGain(); sal.gain.value = 0.32;
       conv.connect(sal); sal.connect(maestro); eco = conv;
@@ -32,10 +32,12 @@
   function nota(f, cuando, dur, vol, opc) {
     if (!ctx || !listo) return;
     opc = opc || {};
+    f = f * 2;                                                   // F903: todo una octava más arriba (antes sonaba grave y opaco en el celular)
     const t = ctx.currentTime + (cuando || 0), g = ctx.createGain(), o1 = ctx.createOscillator(), o2 = ctx.createOscillator(), fl = ctx.createBiquadFilter();
     o1.type = 'sine'; o2.type = 'triangle'; o1.frequency.value = f; o2.frequency.value = f * 2.005; o2.detune.value = 3;
-    const g2 = ctx.createGain(); g2.gain.value = opc.brillo == null ? 0.16 : opc.brillo;
-    fl.type = 'lowpass'; fl.frequency.value = opc.corte || 4200; fl.Q.value = 0.4;
+    const g2 = ctx.createGain(); g2.gain.value = (opc.brillo == null ? 0.16 : opc.brillo) * 1.5;   // más armónicos = timbre de campanita, no de zumbido
+    vol = f > 1800 ? vol * 0.8 : vol;                            // en lo agudo el oído oye más fuerte: se baja un poco
+    fl.type = 'lowpass'; fl.frequency.value = Math.min(9000, Math.max(opc.corte || 4200, f * 2.4)) + 1200; fl.Q.value = 0.4;
     g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(vol, t + (opc.ataque || 0.012)); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
     o1.connect(g); o2.connect(g2); g2.connect(g); g.connect(fl); fl.connect(maestro);
     if (!opc.sinCoro) { const o3 = ctx.createOscillator(), g3 = ctx.createGain(); o3.type = 'sine'; o3.frequency.value = f; o3.detune.value = -7; g3.gain.value = 0.45; o3.connect(g3); g3.connect(g); o3.start(t); o3.stop(t + dur + 0.05); }   // F902: coro suave = más cuerpo, más agradable
@@ -58,7 +60,7 @@
     activo,
     poner(v) { try { localStorage.setItem(K, v ? '1' : '0'); } catch (e) { /* nada */ } if (v) API.exito(); },
     firma: ok(function () {                       // F902: MELODÍA DE APERTURA (~5 s): la tierra (G3+D4) · la semilla sube · brota · y se abre al cielo con un acorde
-      nota(NOTAS.G3, 0.00, 4.8, 0.10, { eco: 0.5, corte: 900, ataque: 0.7, sinCoro: true }); nota(NOTAS.D4, 0.35, 4.4, 0.06, { eco: 0.6, corte: 1200, ataque: 0.9, sinCoro: true });   // el «suelo»
+      nota(NOTAS.G3, 0.00, 4.8, 0.07, { eco: 0.5, corte: 1400, ataque: 0.7, sinCoro: true }); nota(NOTAS.D4, 0.35, 4.4, 0.045, { eco: 0.6, corte: 1600, ataque: 0.9, sinCoro: true });   // el «suelo»
       const M = [['G4', 0.00, 1.0, 0.17], ['A4', 0.30, 0.9, 0.15], ['D5', 0.62, 1.1, 0.16], ['B4', 1.00, 0.9, 0.12], ['E5', 1.34, 1.0, 0.15], ['D5', 1.76, 0.9, 0.12], ['G5', 2.20, 1.5, 0.15]];
       M.forEach((n) => nota(NOTAS[n[0]], n[1], n[2], n[3], { eco: 0.7 }));
       nota(NOTAS.B5, 2.70, 2.6, 0.13, { eco: 0.9, brillo: 0.24 }); nota(NOTAS.D5, 2.70, 2.4, 0.09, { eco: 0.8 }); nota(NOTAS.G4, 2.70, 2.6, 0.10, { eco: 0.7 });   // el acorde final: ya brotó
@@ -88,6 +90,8 @@
     })(); },
     semilla: ok(function () { nota(NOTAS.D4, 0, 0.22, 0.09, { eco: 0.3, corte: 1100 }); nota(NOTAS.A4, 0.12, 0.35, 0.08, { eco: 0.5 }); nota(NOTAS.E5, 0.24, 0.6, 0.07, { eco: 0.7, brillo: 0.2 }); })   // algo que cae en la tierra y brota
   };
+  // F903: ahorro de batería: con la app en segundo plano el audio se duerme del todo y se despierta al volver
+  document.addEventListener('visibilitychange', () => { try { if (!ctx) return; if (document.hidden) { if (ctx.state === 'running') ctx.suspend(); } else if (activo() && ctx.state === 'suspended' && API._sono) ctx.resume(); } catch (e) { /* sin audio */ } });
   window.TBSonido = API;
 
   // --- conexión automática con toda la app (sin tocar el resto del código) ---
@@ -107,9 +111,16 @@
   }, true);
   // F901: al escribir el código (de iglesia o de pastor) cada letra suena una nota que sube
   document.addEventListener('input', (ev) => { try { const t = por(ev && ev.target); if (!t || !t.id) return; if (t.id === 'codHoja' || t.id === 'cod') API.tecla(Math.min(5, String(t.value || '').length - 1)); else if (t.id === 'pkHoja') API.tecla(Math.floor((String(t.value || '').length % 6))); } catch (e) { /* sin sonido */ } }, true);
-  // la primera vez que el teléfono deja sonar (exige un toque), si la apertura aún está a la vista suena la firma
-  let intento = false;
-  document.addEventListener('pointerdown', () => { if (intento) return; intento = true; if (Date.now() - t0 < 4200 && !API._sono) { API._sono = true; API.firma(); } }, { once: true, capture: true });
+  // F903: el teléfono solo deja sonar después de un toque. La firma suena en el PRIMER toque de la sesión (antes solo si llegaba en los primeros 4 s, por eso casi nunca sonaba).
+  const primerToque = () => {
+    try {
+      if (API._sono || !activo()) return; API._sono = true;
+      iniciar(); if (!ctx) return;
+      const sonar = () => { try { API.firma(); } catch (e) { /* sin sonido */ } };
+      if (ctx.state === 'suspended' && ctx.resume) ctx.resume().then(sonar, sonar); else sonar();
+    } catch (e) { /* sin sonido */ }
+  };
+  ['pointerdown', 'touchend', 'click', 'keydown'].forEach((n) => document.addEventListener(n, function f() { primerToque(); ['pointerdown', 'touchend', 'click', 'keydown'].forEach((m) => document.removeEventListener(m, f, true)); }, true));
   // éxito automático en los momentos de logro de la app (confeti, «hecho»)
   try {
     new MutationObserver((ms) => { for (const m of ms) for (const n of m.addedNodes) { if (n && n.classList && (n.classList.contains('cf-pt') || n.classList.contains('fb-spark') || n.classList.contains('toast-ok'))) { if (!API._ult || Date.now() - API._ult > 900) { API._ult = Date.now(); API.logro(); } return; } } }).observe(document.body || document.documentElement, { childList: true, subtree: true });
