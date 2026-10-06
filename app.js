@@ -1,5 +1,5 @@
 // app.js — F856 (MOV2a): esqueleto de la versión móvil/tablet de Tierra Buena.
-// Reutiliza lo que el escritorio ya decidió para el miembro (docs/PLAN_MI_IGLESIA_MIEMBRO.md):
+// Reutiliza lo que ya se decidió para el miembro (plan archivado en compartido/archivo_NO_LEER.zip):
 // identidad liviana con llave en el dispositivo, solicitud que aprueba el pastor, mismas funciones de Supabase.
 // No usa nada de Electron. F868-F869: se puede entrar con correo y contraseña (Supabase Auth, igual que el escritorio); sin cuenta sigue valiendo el código + llave.
 (function () {
@@ -2327,7 +2327,7 @@
         <label for="spNom">Tu nombre</label><input id="spNom" type="text" maxlength="60" autocomplete="name">
         <label for="spCor">Tu correo</label><input id="spCor" type="email" maxlength="120" autocomplete="email" inputmode="email" value="${esc(cu && cu.correo ? cu.correo : '')}">
         <label for="spIgl">Nombre de tu iglesia y ciudad</label><input id="spIgl" type="text" maxlength="120" autocomplete="off" placeholder="Ej. Iglesia Camino Nuevo, Calama">
-        <label for="spCar">Tu cargo</label><input id="spCar" type="text" maxlength="60" autocomplete="off" placeholder="Ej. pastor principal">
+        <label for="spCar">Tu cargo</label><input id="spCar" type="text" maxlength="60" autocomplete="off" placeholder="Ej. pastor">
         <label for="spTel">Tu teléfono o WhatsApp</label><input id="spTel" type="tel" maxlength="30" autocomplete="tel" placeholder="Solo para confirmar que eres tú">
         <label for="spEnl">Enlace público de tu iglesia o datos de otro pastor que te conozca</label><input id="spEnl" type="text" maxlength="140" autocomplete="off" placeholder="https://… o nombre y teléfono">
         <label class="chk"><input id="spAc" type="checkbox"><span>Sirvo como pastor o líder y permito que confirmen mis datos con ese enlace o esa persona.</span></label>
@@ -2340,7 +2340,7 @@
         if (!CORREO_RE.test(correo)) return err('Revisa tu correo: parece incompleto.');
         if (igl.length < 3) return err('Escribe el nombre de tu iglesia.');
         const car = $('#spCar').value.trim(), tel = $('#spTel').value.trim(), enl = $('#spEnl').value.trim();
-        if (car.length < 3) return err('Cuéntanos tu cargo (por ejemplo: pastor principal).');
+        if (car.length < 3) return err('Cuéntanos tu cargo (por ejemplo: pastor).');
         if (tel.replace(/\D/g, '').length < 8) return err('Escribe un teléfono o WhatsApp con el código de tu ciudad.');
         if (enl.length < 8) return err('Para confirmarlo, escribe el enlace público de tu iglesia o los datos de otro pastor o líder que te conozca.');
         if (!$('#spAc').checked) return err('Marca la casilla para poder enviar tu solicitud.');
@@ -2808,68 +2808,24 @@
     calmaResp.forEach(clearTimeout); calmaResp = [];
     if (calmaVela) { try { calmaVela.release(); } catch (e) { /* nada */ } calmaVela = null; }
   }
-  function vistaInicio() {                                  // F906: INICIO = lugar de descanso. Sutil e interactivo: toca el prado y cae una semilla (onda + nota suave); respira con el orbe; tras un rato se atenúa para dejarla abierta sin molestar.
+  function vistaInicio() {                                  // F909: INICIO LIMPIO = solo el fondo vivo + frases pequeñas que pasan despacio. Se animan solo con opacity/transform y se pausan si Inicio no se ve.
     calmaSoltar();
     const p = perfilLeer(), o = (() => { try { return onbLeer(); } catch (e) { return null; } })(), n = (p.n || (o && o.nombre) || '').split(' ')[0];
-    const FRASES = ['Descansa. Aquí no hay nada que hacer.', 'Respira hondo. Estás en buena tierra.', 'Todo lo que necesitas hoy ya viene en camino.', 'Quédate un momento. La paz también es un lugar.', 'Lo sembrado con paciencia siempre da fruto.', 'No corras. Hoy basta con estar.'];
-    const hoy = new Date(), frase = FRASES[(hoy.getFullYear() * 366 + hoy.getMonth() * 31 + hoy.getDate()) % FRASES.length];
-    const h0 = hoy.getHours(), m = h0 < 6 ? ['noche', 'Qué bueno verte despierto'] : h0 < 12 ? ['alba', 'Buenos días'] : h0 < 19 ? ['dia', 'Buenas tardes'] : ['noche', 'Buenas noches'];
-    const hayVela = !!(navigator.wakeLock && navigator.wakeLock.request);
-    $('#pantalla').innerHTML = `<section class="calma calma-${m[0]}" id="calma" aria-label="Espacio de calma"><i class="calma-sol" aria-hidden="true"></i><i class="calma-colina c1" aria-hidden="true"></i><i class="calma-colina c2" aria-hidden="true"></i><i class="calma-colina c3" aria-hidden="true"></i><i class="calma-luz l1" aria-hidden="true"></i><i class="calma-luz l2" aria-hidden="true"></i><i class="calma-luz l3" aria-hidden="true"></i>
-      <div class="calma-cuerpo" id="calmaCuerpo"><p class="calma-sal">${m[1]}${n ? ', ' + esc(n) : ''}</p><p class="calma-hora" id="calmaHora" aria-live="off"></p><p class="calma-fecha" id="calmaFecha"></p><p class="calma-frase">${esc(frase)}</p>
-        <button type="button" class="calma-orbe" id="calmaOrbe" aria-label="Respirar un momento"><i class="calma-orbe-i" aria-hidden="true"></i><span id="calmaOrbeT">Toca para respirar</span></button>
-        <p class="calma-pista">Toca el prado para sembrar una luz</p></div>
-      ${hayVela ? '<button type="button" class="calma-vela" id="calmaVela" aria-pressed="false">☾ Mantener la pantalla encendida</button>' : ''}</section>`;
-    const sec = $('#calma'), snd = (f, a) => { try { if (window.TBSonido && window.TBSonido[f]) window.TBSonido[f](a); } catch (e) { /* sin sonido */ } };
+    const FRASES = ['Hoy basta con dar un buen paso.', 'Lo pequeño, hecho con cariño, cuenta.', 'Respira. Vas bien.', 'Una palabra amable también es una semilla.', 'No tienes que poder con todo hoy.', 'Lo que siembras con paciencia, crece.', 'Haz una cosa buena y déjala ir.', 'Pregunta cómo está alguien. En serio.', 'La calma también se practica.', 'Hay buena tierra donde estás parado.', 'Descansar es parte del trabajo.', 'Sé el aviso bueno de alguien hoy.'];
+    const hoy = new Date(), h0 = hoy.getHours(), saludo = h0 < 6 ? 'Qué bueno verte despierto' : h0 < 12 ? 'Buenos días' : h0 < 19 ? 'Buenas tardes' : 'Buenas noches';
+    let k = (hoy.getFullYear() * 366 + hoy.getMonth() * 31 + hoy.getDate()) % FRASES.length;
+    $('#pantalla').innerHTML = `<section class="inicio-limpio" id="inicioLimpio" aria-label="Inicio"><p class="il-sal">${saludo}${n ? ', ' + esc(n) : ''}</p><p class="il-frase" id="ilFrase" aria-live="off"></p></section>`;
+    const sec = $('#inicioLimpio'), fr = $('#ilFrase');
     const quieto = () => document.documentElement.getAttribute('data-anim') === 'off' || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-    // --- hora y fecha; el texto se desplaza unos píxeles cada minuto (cuida pantallas OLED) ---
-    let deriva = 0;
-    const pinta = () => {
-      const h = $('#calmaHora'); if (!h) return calmaSoltar();
-      const d = new Date(); h.textContent = d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', hour12: false });
-      const f = $('#calmaFecha'); if (f) f.textContent = d.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' });
-      if (++deriva % 4 === 0) { const c = $('#calmaCuerpo'); if (c) { c.style.setProperty('--dx', (Math.round(Math.random() * 20) - 10) + 'px'); c.style.setProperty('--dy', (Math.round(Math.random() * 16) - 8) + 'px'); } }
-    };
-    pinta(); relojInicio = setInterval(pinta, 15000);
-    // --- quietud: tras 90 s sin tocar, la escena se atenúa; al tocar, vuelve ---
-    const despierta = () => { if (!sec.isConnected) return calmaSoltar(); sec.classList.remove('quieta'); if (calmaIdle) clearTimeout(calmaIdle); calmaIdle = setTimeout(() => { try { sec.classList.add('quieta'); } catch (e) { /* nada */ } }, 90000); };
-    despierta();
-    // --- sembrar una luz: onda + nota de la escala de Tierra Buena + una luciérnaga que sube ---
-    let escala = 0;
-    sec.addEventListener('pointerdown', (ev) => {
-      despierta();
-      const t = ev.target; if (t && t.closest && t.closest('#calmaOrbe, #calmaVela')) return;
-      if (quieto() || sec.querySelectorAll('.calma-onda').length > 5) { snd('calma', escala++ % 6); return; }
-      const r = sec.getBoundingClientRect(), x = ev.clientX - r.left, y = ev.clientY - r.top;
-      const onda = document.createElement('i'), luz = document.createElement('i');
-      onda.className = 'calma-onda'; luz.className = 'calma-semilla';
-      [onda, luz].forEach((e) => { e.style.left = x + 'px'; e.style.top = y + 'px'; sec.appendChild(e); });
-      setTimeout(() => { try { onda.remove(); luz.remove(); } catch (e) { /* nada */ } }, 3200);
-      snd('calma', Math.min(5, Math.max(0, Math.floor(x / Math.max(1, r.width) * 6)))); escala++;
-    }, { passive: true });
-    // --- respirar: 4 vueltas (inhala 4 s · sostén 2 s · exhala 6 s), con notas suaves ---
-    let resp = false;
-    $('#calmaOrbe').onclick = () => {
-      const orbe = $('#calmaOrbe'), tx = $('#calmaOrbeT'); if (resp) return; resp = true; orbe.classList.add('on');
-      const paso = (k) => {
-        if (!$('#calmaOrbe')) return;
-        if (k >= 12) { orbe.classList.remove('on', 'inh', 'exh'); tx.textContent = 'Gracias por quedarte'; resp = false; calmaResp.push(setTimeout(() => { const t2 = $('#calmaOrbeT'); if (t2) t2.textContent = 'Toca para respirar'; }, 3500)); return; }
-        const f = k % 3;
-        if (f === 0) { orbe.classList.remove('exh'); orbe.classList.add('inh'); tx.textContent = 'Inhala…'; snd('respira', 1); calmaResp.push(setTimeout(() => paso(k + 1), 4000)); }
-        else if (f === 1) { tx.textContent = 'Sostén'; calmaResp.push(setTimeout(() => paso(k + 1), 2000)); }
-        else { orbe.classList.remove('inh'); orbe.classList.add('exh'); tx.textContent = 'Exhala…'; snd('respira', 0); calmaResp.push(setTimeout(() => paso(k + 1), 6000)); }
-      };
-      paso(0);
-    };
-    // --- pantalla encendida (opcional, para dejar la app abierta como reloj de descanso) ---
-    const vb = $('#calmaVela');
-    if (vb) vb.onclick = async () => {
-      try {
-        if (calmaVela) { await calmaVela.release(); calmaVela = null; vb.setAttribute('aria-pressed', 'false'); vb.textContent = '☾ Mantener la pantalla encendida'; return; }
-        calmaVela = await navigator.wakeLock.request('screen'); vb.setAttribute('aria-pressed', 'true'); vb.textContent = '☀ Pantalla encendida (toca para soltar)';
-        calmaVela.addEventListener('release', () => { if (calmaVela && calmaVela.released) { calmaVela = null; const b2 = $('#calmaVela'); if (b2) { b2.setAttribute('aria-pressed', 'false'); b2.textContent = '☾ Mantener la pantalla encendida'; } } });
-      } catch (e) { vb.textContent = 'Tu teléfono no lo permite ahora'; }
-    };
+    fr.textContent = FRASES[k]; calmaResp.push(setTimeout(() => { if (fr.isConnected) fr.classList.add('on'); }, 120));
+    let visible = true;
+    const io = typeof IntersectionObserver === 'function' ? new IntersectionObserver((es) => { visible = es[es.length - 1].isIntersecting; }) : null; if (io) io.observe(sec);
+    relojInicio = setInterval(() => {                         // una frase cada 11 s; si no se ve, no hace nada
+      if (!sec.isConnected) { if (io) io.disconnect(); return calmaSoltar(); }
+      if (document.hidden || !visible || quieto()) return;
+      fr.classList.remove('on');
+      calmaResp.push(setTimeout(() => { if (!fr.isConnected) return; k = (k + 1) % FRASES.length; fr.textContent = FRASES[k]; fr.classList.add('on'); }, 1500));
+    }, 11000);
   }
   const VISTAS = { inicio: vistaInicio, iglesia: vistaIglesia, palabra: vistaPalabra, vida: vistaVida, perfil: vistaPerfil, pastor: vistaPastor };
   const ORDEN_TAB = ['iglesia', 'palabra', 'inicio', 'vida', 'perfil', 'pastor']; let tabPrev = '';
@@ -2908,7 +2864,7 @@
       let raf = 0;
       if (window.addEventListener) window.addEventListener('scroll', () => {                // paralaje suave del fondo y de los íconos grandes
         if (raf || calma() || typeof requestAnimationFrame !== 'function') return;
-        raf = requestAnimationFrame(() => { raf = 0; try { document.documentElement.style.setProperty('--par', String(Math.min(window.scrollY || 0, 400))); } catch (e) { /* nada */ } });
+        raf = requestAnimationFrame(() => { raf = 0; try { const amb = document.querySelector('.ambiente'); if (amb) amb.style.setProperty('--par', String(Math.min(window.scrollY || 0, 400))); } catch (e) { /* nada */ } });
       }, { passive: true });
       const pan = document.querySelector('#pantalla');
       if (!pan || typeof MutationObserver !== 'function') return;

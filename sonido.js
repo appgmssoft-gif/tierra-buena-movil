@@ -1,7 +1,7 @@
 // sonido.js - F902 (melodía de apertura + coro suave en cada nota). F900. Identidad sonora de Tierra Buena. Todo se genera en el teléfono (WebAudio): no hay archivos, no hay derechos de autor, pesa casi nada.
 // FIRMA SONORA: tres notas que suben (tierra → brote → cielo): Sol4 · Re5 · Si5, con cola larga y un destello. Es lo primero que se oye y vuelve en los logros.
 // Familia: todos los sonidos usan la misma escala (pentatónica de Sol) y el mismo «timbre cálido» (seno + triángulo suave, ataque redondo, algo de eco), para que suenen a UNA sola app.
-// Regla del usuario: en CADA sesión de trabajo se mejora el sonido (ver compartido/docs/SIGUIENTE_SESION.md → «SONIDO»).
+// Regla del usuario: en CADA sesión de trabajo se mejora el sonido (ver compartido/docs/TAREAS.md).
 'use strict';
 (function () {
   const K = 'tb_movil_sonido';

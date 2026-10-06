@@ -36,11 +36,18 @@
     if (!sels.length) return;
     sels.forEach((q) => { let l; try { l = document.querySelectorAll(q); } catch (e) { return; } Array.prototype.forEach.call(l, (el) => { if (el.classList.contains('tb-anima')) return; el.classList.add('tb-anima'); if (io) io.observe(el); }); });
   }
-  let deb = 0; const luego = () => { if (deb) return; deb = setTimeout(() => { deb = 0; marcar(); }, 350); };
+  // Destello «de evento»: tarjetas y botones brillan una sola vez, cuando entran en pantalla (nada corre para siempre).
+  let ioNueva = null;
+  function revelar() {
+    if (typeof IntersectionObserver !== 'function') return;
+    if (!ioNueva) ioNueva = new IntersectionObserver((en) => { en.forEach((e) => { if (!e.isIntersecting) return; ioNueva.unobserve(e.target); const t = e.target; setTimeout(() => { t.classList.add('tb-nueva'); }, Math.min(900, (t.getBoundingClientRect().top / 2) | 0)); }); }, { threshold: 0.35 });
+    Array.prototype.forEach.call(document.querySelectorAll('.card:not(.tb-v),.btn:not(.sec):not(.tb-v)'), (el) => { el.classList.add('tb-v'); ioNueva.observe(el); });
+  }
+  let deb = 0; const luego = () => { if (deb) return; deb = setTimeout(() => { deb = 0; marcar(); revelar(); }, 350); };
   function iniciarPausas() {
     sels = buscarAnimadas();
     if (typeof IntersectionObserver === 'function') io = new IntersectionObserver((en) => { en.forEach((e) => e.target.classList.toggle('tb-fuera', !e.isIntersecting)); }, { rootMargin: '60px' });
-    marcar();
+    marcar(); revelar();
     try { new MutationObserver(luego).observe(document.body, { childList: true, subtree: true }); } catch (e) { /* sin observador */ }
     document.addEventListener('visibilitychange', () => { H.classList.toggle('tb-pausa', document.hidden); });
     let t = 0; window.addEventListener('scroll', () => { if (!H.classList.contains('tb-scroll')) H.classList.add('tb-scroll'); clearTimeout(t); t = setTimeout(() => H.classList.remove('tb-scroll'), 160); }, { passive: true });

@@ -31,3 +31,27 @@ html[data-eco="2"] *{text-shadow:none!important}
 html:not([data-dentro="1"]) .tb-rapido{display:none}
 html[data-dentro="1"] .ent-top{padding-right:62px}
 html[data-dentro="1"] .ent-splash>.ico-cod{right:70px}
+
+/* F907 «Cristal de bolsillo»: el desenfoque real se paga en cada fotograma. Solo el dock lo conserva (pequeño y siempre a la vista, el que da el asombro);
+   el resto usa cristal «horneado»: color casi opaco + brillo fino arriba. Se ve igual de limpio y casi no cuesta. */
+.barra{-webkit-backdrop-filter:saturate(1.4) blur(12px);backdrop-filter:saturate(1.4) blur(12px)}
+.barra-top,.can-barra,.lec-acc,.btn-menu,.tb-rapido,.hero-ico,.hoy-verso,.tbcar-ir{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+.barra-top,.can-barra,.lec-acc,.btn-menu{background:color-mix(in srgb,var(--tarjeta) 94%,transparent)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 6px 18px -10px rgba(0,0,0,.35)}
+.hoy-verso{background:rgba(8,12,28,.46);box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
+.hero-ico{background:rgba(255,255,255,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+/* Destellos «de evento»: tarjetas y botones brillan UNA vez al aparecer (clase tb-nueva) o al tocarlos, en vez de animarse para siempre. */
+
+/* F909 «Fondos que dejan ver»: las superficies (tarjetas, opciones, cifras, etiquetas) eran sólidas y tapaban el fondo vivo en Mi oración, Música,
+   Crecimiento, Salud mental y todas las demás. Se cambia AQUÍ, en un solo lugar: casi opacas (el texto se lee igual), sin desenfoque. */
+html{--vidrio:color-mix(in srgb,var(--tarjeta) 84%,transparent)}
+.card,.opcion,.stat,.chip:not(.on){background-color:var(--vidrio)}
+.card.versiculo{background:linear-gradient(160deg,color-mix(in srgb,var(--oro) 16%,var(--vidrio)),var(--vidrio))}
+.stat{background:linear-gradient(160deg,color-mix(in srgb,var(--oro) 9%,var(--vidrio)),var(--vidrio) 60%)}
+
+/* F909 Inicio limpio: sin escena propia (queda el fondo vivo); frases pequeñas que entran y salen con opacity + transform (compositor, sin repintar). */
+.inicio-limpio{min-height:calc(100dvh - 190px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:0 22px;text-align:center}
+.il-sal{margin:0;font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--suave)}
+.il-frase{margin:0;max-width:20em;min-height:3.2em;font:italic 500 1.12rem/1.45 Fraunces,Georgia,serif;color:var(--tinta);text-shadow:0 1px 14px color-mix(in srgb,var(--papel) 90%,transparent);opacity:0;transform:translateY(10px);transition:opacity 1.5s ease,transform 1.5s ease}
+.il-frase.on{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.il-frase{transition:none;transform:none}}
+html[data-anim=off] .il-frase{transition:none;transform:none}

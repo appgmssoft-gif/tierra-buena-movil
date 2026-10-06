@@ -21,83 +21,35 @@
   // =====================================================================================================
   const EJ = {
     miembro: [
-      { ic: '🙏', t: 'Pedir oración con discreción', quien: 'Marcela, 34 años, madre soltera', escena: 'Hace dos semanas le recortaron las horas en el trabajo. Prefirió no contarlo en el grupo y quiso compartirlo solo con su pastor, con confianza y en privado.',
-        pasos: ['Abrió «Pedir oración» y eligió «Solo mi pastor».', 'Marcó «Ocultar mi nombre» para cuidar su privacidad y escribió la petición con sus palabras.', 'Volvió a ver «Mis peticiones» para saber si ya la habían leído.'],
-        res: 'Su pastor oró por ella y le escribió esa misma semana. Su nombre se mantuvo en reserva.', tab: 'iglesia', di: 'oracion', btn: 'Pedir oración' },
-      { ic: '🤝', t: 'Pedir una visita cuando cuesta salir', quien: 'Don Hernán, 78 años', escena: 'Después de la operación de cadera ya no puede ir a la iglesia. Su nieta le configuró la app.',
-        pasos: ['Su nieta abrió «Pedir visita» y eligió «Acompañamiento».', 'Puso dos horarios que le acomodan y marcó urgencia «Esta semana».', 'La dirección solo la ve el pastor cuando acepta la visita.'],
-        res: 'El pastor aceptó, llegó el jueves con dos hermanos de la iglesia y le llevaron la comunión.', tab: 'iglesia', di: 'visita', btn: 'Pedir una visita' },
-      { ic: '📅', t: 'No perderse nada de la semana', quien: 'Camila, 19 años, universitaria', escena: 'Siempre se enteraba tarde de los ensayos del grupo de alabanza.',
-        pasos: ['Abrió «Agenda» y miró «Mis grupos».', 'Vio que el ensayo cambió de horario (el aviso del líder estaba en «Avisos»).', 'Pasó la fecha a su calendario del teléfono.'],
-        res: 'Dejó de llegar tarde y pasó de «invitada» a segunda voz del grupo.', tab: 'iglesia', di: 'agenda', btn: 'Ver la agenda' },
-      { ic: '🕍', t: 'Saber con quién hablar', quien: 'Rodrigo, 41 años, recién llegado', escena: 'Quería servir pero no sabía a quién preguntar ni qué grupos existían.',
-        pasos: ['Abrió «Mis ministerios» y leyó quién lidera cada grupo.', 'Eligió el de jóvenes porque el líder tenía horario de sábado.', 'Le escribió al líder con un mensaje corto ya pensado.'],
-        res: 'En un mes ya estaba a cargo de la música de la reunión de jóvenes.', tab: 'iglesia', di: 'ministerios', btn: 'Ver mis ministerios' },
-      { ic: '🧱', t: 'Orar juntos por una petición real', quien: 'Familia Soto', escena: 'Cada noche leen una petición del Muro antes de dormir.',
-        pasos: ['Abren el «Muro» con los niños.', 'Leen la petición que el pastor compartió (sin nombres si así se pidió).', 'Oran un minuto y la marcan como acompañada.'],
-        res: 'Los niños aprendieron a orar por otros y una de las peticiones se respondió: la celebraron juntos.', tab: 'iglesia', di: 'muro', btn: 'Abrir el Muro' },
-      { ic: '✨', t: 'Convertir la lectura en un paso', quien: 'Ignacio, 27 años', escena: 'Leía con constancia, pero quería que la lectura se notara en su día a día.',
-        pasos: ['Terminó un capítulo y tocó «Hoy lo hago».', 'Eligió un paso de 5 minutos: llamar a su hermano con quien estaba distanciado.', 'Lo marcó «Lo intenté» (también cuenta).'],
-        res: 'La llamada duró 20 minutos. A los 14 días tenía una racha y ya no se perdía la lectura.', tab: 'vida', di: 'hacer', btn: 'Probar «Hoy lo hago»' },
-      { ic: '📖', t: 'Leer sin internet, de camino al trabajo', quien: 'Paulina, 52 años, viaja 2 horas al día', escena: 'En el metro casi no hay señal.',
-        pasos: ['Abrió la Biblia una vez con internet en casa.', 'Los libros que lee quedan guardados para leer sin conexión.', 'Eligió un plan de lectura de 10 minutos y activó «Escuchar» para seguir con los ojos cerrados.'],
-        res: 'Terminó el Evangelio de Marcos en tres semanas, todo en el metro.', tab: 'palabra', di: 'biblia', btn: 'Abrir la Biblia' },
-      { ic: '🗓', t: 'Un plan que de verdad se cumple', quien: 'Matías, 30 años', escena: 'Había comenzado tres planes anuales y no logró sostenerlos más de dos semanas.',
-        pasos: ['Cambió a un plan corto de 7 minutos diarios.', 'Eligió la hora de «después del café».', 'Miró su avance cada domingo.'],
-        res: '90 días seguidos. «Lo pequeño que se repite le gana a lo grande que se abandona», dice.', tab: 'palabra', di: 'planes', btn: 'Ver los planes' },
-      { ic: '📜', t: 'La fábula del mes en familia', quien: 'Los Ríos (papá, mamá y dos niños)', escena: 'Querían un momento sin pantallas los domingos.',
-        pasos: ['Abren un capítulo de la «Fábula del mes» cada domingo.', 'Cada uno cuenta qué personaje le pareció más valiente.', 'Marcan la práctica de la semana (ej. «dar las gracias en voz alta»).'],
-        res: 'Se volvió el rato favorito de la semana: hasta la abuela se conecta por videollamada.', tab: 'palabra', di: 'fabula', btn: 'Leer la fábula' },
-      { ic: '🧠', t: 'Una pausa cuando todo pesa', quien: 'Daniela, 23 años', escena: 'La semana de exámenes no podía dormir y la cabeza no paraba.',
-        pasos: ['Abrió «Salud mental» y probó la respiración guiada de 2 minutos.', 'Hizo el chequeo corto para ponerle nombre a lo que sentía.', 'Leyó «dónde pedir ayuda» y anotó el número de la línea de apoyo de su ciudad.'],
-        res: 'Durmió esa noche. Al día siguiente le contó a su mamá cómo se sentía.', tab: 'vida', di: 'salud', btn: 'Abrir Salud mental' },
-      { ic: '🎓', t: 'Aprender para servir mejor', quien: 'Berta, 46 años, ayudante en la olla común', escena: 'Quería aprender a manipular alimentos de forma segura para repartir comida.',
-        pasos: ['Abrió «Aprender» y buscó un curso gratuito.', 'Fue marcando su avance clase por clase.', 'Compartió lo aprendido con el equipo de la olla.'],
-        res: 'El equipo ahora tiene un protocolo de higiene sencillo, hecho por ellos mismos.', tab: 'vida', di: 'aprender', btn: 'Ver los cursos' },
-      { ic: '💡', t: 'Del «¿y si…?» a un proyecto listo', quien: 'Jóvenes del sector Norte', escena: 'Querían ayudar a un asilo cercano pero no sabían por dónde empezar ni cuánto costaba.',
-        pasos: ['Abrieron «Proyectos listos» y eligieron uno parecido.', 'Copiaron lugar, presupuesto y personas necesarias.', 'Lo adaptaron y lo presentaron a su pastor.'],
-        res: 'Primera visita al mes siguiente: 12 jóvenes, onces y música para 30 personas mayores.', tab: 'vida', di: 'proyectos', btn: 'Ver proyectos listos' },
-      { ic: '🌟', t: 'Vivir la acción del mes', quien: 'Sra. Gloria, 60 años', escena: 'El tema del mes era «Gratitud» y no sabía cómo vivirlo.',
-        pasos: ['Abrió «Acción del mes» y leyó las formas de vivirla.', 'Agregó su propia acción: «Escribir una nota de gracias a alguien por semana».', 'Anotó cómo le fue al final del mes.'],
-        res: 'Escribió cuatro notas. Una de ellas llegó a una vecina que estaba por mudarse.', tab: 'iglesia', di: 'accion', btn: 'Ver la acción del mes' },
-      { ic: '🌍', t: 'Sumarse a un movimiento del barrio', quien: 'Felipe, 35 años', escena: 'Vio una publicación de «Abrigo para el invierno» y quiso aportar con lo que tenía.',
-        pasos: ['Abrió «Juntos hacemos el bien» y tocó «Me sumo».', 'Reunió 3 abrigos de su familia y marcó «Hice mi parte».', 'Invitó a su equipo de fútbol con el mensaje listo.'],
-        res: 'El equipo juntó 21 abrigos. Se sumaron sin pertenecer a ninguna iglesia.', tab: 'inicio', di: 'juntos', btn: 'Ver los movimientos' }
+      { ic: '🙏', t: 'Pedir oración con discreción', quien: 'Marcela', escena: 'Pasa por un momento difícil y prefiere no contarlo en el grupo.',
+        pasos: ['Abre «Pedir oración» y elige «Solo mi pastor».', 'Marca «Ocultar mi nombre» y escribe con sus palabras.', 'Vuelve a «Mis peticiones» para ver si ya la leyeron.'],
+        res: 'Su pastor ora por ella. Su nombre queda en reserva.', tab: 'iglesia', di: 'oracion', btn: 'Pedir oración' },
+      { ic: '🤝', t: 'Pedir una visita cuando cuesta salir', quien: 'Don Hernán', escena: 'Ya no puede ir a la iglesia. Su nieta le dejó la app lista.',
+        pasos: ['Abre «Pedir visita» y elige «Acompañamiento».', 'Pone los horarios que le acomodan.', 'La dirección solo la ve el pastor, cuando acepta.'],
+        res: 'Alguien de la iglesia llega a su casa, a la hora acordada.', tab: 'iglesia', di: 'visita', btn: 'Pedir una visita' },
+      { ic: '📅', t: 'No perderse lo de la semana', quien: 'Camila', escena: 'Siempre se enteraba tarde de los cambios del grupo.',
+        pasos: ['Abre «Agenda» y mira «Mis grupos».', 'Revisa «Avisos» por si cambió la hora.', 'Pasa la fecha a su calendario.'],
+        res: 'Llega a tiempo y sin apuro.', tab: 'iglesia', di: 'agenda', btn: 'Ver la agenda' },
+      { ic: '🧱', t: 'Orar juntos por una petición', quien: 'Una familia', escena: 'Antes de dormir leen una petición del Muro.',
+        pasos: ['Abren el «Muro» juntos.', 'Leen una petición compartida (sin nombres si así se pidió).', 'Oran un momento y la marcan como acompañada.'],
+        res: 'Aprenden a orar por otros, de a poco y con cuidado.', tab: 'iglesia', di: 'muro', btn: 'Abrir el Muro' },
+      { ic: '🌍', t: 'Sumarse a algo bueno del barrio', quien: 'Felipe', escena: 'Vio «Abrigo para el invierno» y quiso aportar con lo que tenía.',
+        pasos: ['Abre «Juntos hacemos el bien» y toca «Me sumo».', 'Junta lo que puede y marca «Hice mi parte».', 'Invita a alguien con el mensaje ya listo.'],
+        res: 'Se suma sin tener que pertenecer a ninguna iglesia.', tab: 'inicio', di: 'juntos', btn: 'Ver los movimientos' }
     ],
     pastor: [
-      { ic: '👋', t: 'Recibir a quien llega, el mismo día', quien: 'Pastor Andrés, iglesia de 90 miembros', escena: 'Antes se enteraba de las visitas nuevas semanas después, por casualidad.',
-        pasos: ['Abre «Solicitudes» cada mañana (la insignia le avisa cuántas hay).', 'Mira el nombre y la nota que dejó la persona.', 'Acepta, y le responde con un saludo personal.'],
-        res: 'Pasó de un 20% a un 70% de personas nuevas que vuelven la semana siguiente.', tab: 'pastor', dp: 'sol', btn: 'Ver solicitudes' },
-      { ic: '🙏', t: 'Orar por lo que realmente pasa', quien: 'Pastora Lorena', escena: 'Las peticiones se perdían en mensajes de WhatsApp sueltos.',
-        pasos: ['Entra a «Oraciones» y las lee por tipo.', 'Responde a las más delicadas en privado.', 'Comparte en el Muro solo las que la persona autorizó.'],
-        res: 'Cada petición tiene respuesta. La congregación ora más y comparte con más cuidado.', tab: 'pastor', dp: 'ora', btn: 'Ver oraciones' },
-      { ic: '🤝', t: 'Organizar las visitas de la semana', quien: 'Pastor Elías', escena: 'Tenía 6 pedidos de visita y solo dos tardes libres.',
-        pasos: ['En «Visitas» ordenó por urgencia.', 'Aceptó las urgentes y delegó dos a un líder de ministerio.', 'Dejó un mensaje breve a cada persona con el día acordado.'],
-        res: 'Nadie esperó más de 4 días y su semana quedó ordenada.', tab: 'pastor', dp: 'vis', btn: 'Ver visitas' },
-      { ic: '👥', t: 'Conocer a su gente de verdad', quien: 'Pastor Joaquín', escena: 'No lograba recordar quién llevaba un mes sin venir.',
-        pasos: ['Abrió «Miembros» y revisó quiénes se unieron hace poco.', 'Marcó a quién llamar el sábado.', 'Anotó cómo se sentía cada persona para orar mejor.'],
-        res: 'Recuperó el contacto con 5 familias en un mes.', tab: 'pastor', dp: 'mie', btn: 'Ver miembros' },
-      { ic: '🕍', t: 'Repartir el servicio, no cargarlo solo', quien: 'Pastora Rosa', escena: 'Hacía todo ella y estaba agotada.',
-        pasos: ['Creó los ministerios en «Ministerios y líderes».', 'Nombró un líder por grupo y le dio un integrante de apoyo.', 'Pidió a cada líder un aviso mensual para su grupo.'],
-        res: 'Ahora el 40% de la iglesia sirve en algo. Ella volvió a predicar con calma.', tab: 'pastor', dp: 'min', btn: 'Ver ministerios' },
-      { ic: '📅', t: 'Una agenda que todos ven', quien: 'Pastor Samuel', escena: 'Las reuniones se cruzaban y cada grupo tenía su propio chat.',
-        pasos: ['Cargó todas las actividades del mes en «Agenda».', 'Marcó cuáles son para todos y cuáles para un grupo.', 'Revisó cruces antes de publicar.'],
-        res: 'Se acabaron los «¿a qué hora era?» de los domingos.', tab: 'pastor', dp: 'age', btn: 'Abrir la agenda' },
-      { ic: '📣', t: 'Un aviso que sí se lee', quien: 'Pastor Tomás', escena: 'Sus avisos de 12 líneas por chat nadie los leía.',
-        pasos: ['Escribió el aviso en 3 líneas con un solo pedido.', 'Lo envió solo al ministerio de jóvenes.', 'Puso la fecha y el lugar al comienzo.'],
-        res: 'Subió la asistencia a la actividad de 8 a 31 personas.', tab: 'pastor', dp: 'avi', btn: 'Escribir un aviso' },
-      { ic: '⚙️', t: 'El código de tu iglesia, bien cuidado', quien: 'Pastora Carolina', escena: 'Alguien externo se enteró del código y pidió unirse.',
-        pasos: ['Revisó «Solicitudes» y no aceptó a quien no conocía.', 'Fue a «Datos y código» a revisar el nombre y eslogan de la iglesia.', 'Compartió el código solo en el culto y por mensaje directo.'],
-        res: 'Aprendió que aceptar es una decisión suya: el código solo abre la puerta, no entra nadie sin su permiso.', tab: 'pastor', dp: 'dat', btn: 'Ver datos y código' },
-      { ic: '🌟', t: 'Vivir juntos la acción del mes', quien: 'Pastor Mario', escena: 'Quería que toda la congregación hiciera algo concreto cada mes.',
-        pasos: ['Leyó el tema del mes y lo anunció el domingo.', 'Pidió que cada hogar escogiera una de las «formas de vivirla».', 'El domingo siguiente pidió a dos personas contar cómo les fue.'],
-        res: 'La predicación y la vida de la semana empezaron a hablar del mismo tema.', tab: 'iglesia', di: 'accion', btn: 'Ver la acción del mes' },
-      { ic: '🌍', t: 'Liderar un movimiento con el barrio', quien: 'Pastor Daniel', escena: 'Su iglesia está rodeada de vecinos que nunca han entrado.',
-        pasos: ['Abrió «Juntos hacemos el bien» y creó «Una olla, un barrio».', 'Invitó a otras dos iglesias y a la junta de vecinos con el mensaje listo.', 'Midió cuántos platos se entregaron cada sábado.'],
-        res: 'En tres meses: 340 platos y 4 familias nuevas pidieron visita por confianza, no por promoción.', tab: 'inicio', di: 'juntos', btn: 'Iniciar un movimiento' },
-      { ic: '🛡️', t: 'Cuidar la privacidad de su gente', quien: 'Pastor Ricardo', escena: 'Una familia le pidió que su situación no se supiera.',
-        pasos: ['Respondió la petición en privado, sin compartirla en el Muro.', 'Explicó a quienes preguntan qué ve el pastor y qué no (está en «Mi privacidad»).', 'Nunca puso nombres completos en un aviso.'],
-        res: 'La confianza subió: la gente pide más porque sabe que se cuida lo que cuenta.', tab: 'pastor', dp: 'ora', btn: 'Ver oraciones' }
+      { ic: '👋', t: 'Recibir a quien llega', quien: 'Un pastor', escena: 'Antes se enteraba de las personas nuevas tarde y por casualidad.',
+        pasos: ['Abre «Solicitudes».', 'Lee el nombre y la nota que dejó la persona.', 'Acepta y responde con un saludo propio.'],
+        res: 'La persona se siente esperada desde el primer día.', tab: 'pastor', dp: 'sol', btn: 'Ver solicitudes' },
+      { ic: '🙏', t: 'Orar por lo que de verdad pasa', quien: 'Una pastora', escena: 'Las peticiones llegaban sueltas, por mensajes.',
+        pasos: ['Entra a «Oraciones» y las lee con calma.', 'Responde las delicadas en privado.', 'En el Muro comparte solo lo que la persona autorizó.'],
+        res: 'Cada petición recibe respuesta y se cuida lo que se confía.', tab: 'pastor', dp: 'ora', btn: 'Ver oraciones' },
+      { ic: '📣', t: 'Un aviso que sí se lee', quien: 'Un pastor', escena: 'Sus avisos largos casi nadie los terminaba.',
+        pasos: ['Escribe el aviso corto, con un solo pedido.', 'Pone el día y el lugar al comienzo.', 'Lo envía solo al grupo que corresponde.'],
+        res: 'El aviso se entiende de una mirada.', tab: 'pastor', dp: 'avi', btn: 'Escribir un aviso' },
+      { ic: '⚙️', t: 'Cuidar la puerta de la iglesia', quien: 'Una pastora', escena: 'Alguien que no conocía pidió unirse con el código.',
+        pasos: ['Revisa «Solicitudes» y no acepta a quien no reconoce.', 'En «Datos y código» confirma el nombre de la iglesia.', 'Comparte el código en persona o por mensaje directo.'],
+        res: 'Aceptar es siempre decisión suya: el código solo abre la puerta.', tab: 'pastor', dp: 'dat', btn: 'Ver datos y código' }
     ]
   };
 
@@ -119,11 +71,11 @@
       parar(); if (obs) { try { obs.disconnect(); } catch (e) { /* sin observador */ } obs = null; }
       const L = visibles(actual); let idx = 0, auto = !calma();
       caja.innerHTML = `<div class="tbej" data-rol="${actual}">
-        <div class="tbej-cab"><span class="tbej-ic" aria-hidden="true">${actual === 'pastor' ? '🛡️' : '🌱'}</span><div><b>${dentroDeIglesia() ? (actual === 'pastor' ? 'Cómo cuida mejor a su iglesia un pastor' : 'Cómo aprovecha la app un miembro') : (actual === 'pastor' ? 'Ideas para organizar una iglesia' : 'Ideas para empezar hoy')}</b><small>${dentroDeIglesia() ? 'Historias de ejemplo, inventadas pero muy reales. Desliza para verlas y toca una para probarla.' : 'Ejemplos inventados para inspirarte. Desliza y toca uno para probarlo.'}</small></div></div>
+        <div class="tbej-cab"><span class="tbej-ic" aria-hidden="true">${actual === 'pastor' ? '🛡️' : '🌱'}</span><div><b>${dentroDeIglesia() ? (actual === 'pastor' ? 'Cómo cuida mejor a su iglesia un pastor' : 'Cómo aprovecha la app un miembro') : (actual === 'pastor' ? 'Ideas para organizar una iglesia' : 'Ideas para empezar hoy')}</b><small>${dentroDeIglesia() ? 'Historias inventadas, pensadas para inspirar. Desliza y toca una para probarla.' : 'Ejemplos inventados para inspirarte. Desliza y toca uno para probarlo.'}</small></div></div>
         ${rol === 'ambos' ? `<div class="tbej-seg" role="tablist" aria-label="Ver ejemplos para"><button type="button" role="tab" data-r="miembro" aria-selected="${actual === 'miembro'}">Soy miembro</button><button type="button" role="tab" data-r="pastor" aria-selected="${actual === 'pastor'}">Soy pastor</button></div>` : ''}
         <div class="tbej-car" role="region" aria-roledescription="carrusel" aria-label="Ejemplos de la vida real" tabindex="0">${L.map((e, i) => `<article class="tbej-card" data-i="${i}" data-hu="${(i * 37) % 360}" aria-label="${i + 1} de ${L.length}">
           <div class="tbej-arte" aria-hidden="true"><span class="tbej-big">${e.ic}</span><i class="tbej-hoja a"></i><i class="tbej-hoja b"></i></div>
-          <div class="tbej-txt"><span class="tbej-fic">Ejemplo ficticio</span><h3>${esc(e.t)}</h3><p class="tbej-q">${esc(e.quien)}</p><p class="tbej-esc">${esc(e.escena)}</p><p class="tbej-h">Qué hizo en la app</p><ol>${e.pasos.map((p) => `<li>${esc(p)}</li>`).join('')}</ol><p class="tbej-res"><b>Resultado:</b> ${esc(e.res)}</p><button type="button" class="tbej-go" data-i="${i}">${esc(e.btn)} ›</button></div></article>`).join('')}</div>
+          <div class="tbej-txt"><span class="tbej-fic">Ejemplo ficticio</span><h3>${esc(e.t)}</h3><p class="tbej-q">${esc(e.quien)}</p><p class="tbej-esc">${esc(e.escena)}</p><details class="tbej-mas"><summary>Ver cómo se hace</summary><ol>${e.pasos.map((p) => `<li>${esc(p)}</li>`).join('')}</ol><p class="tbej-res">${esc(e.res)}</p></details><button type="button" class="tbej-go" data-i="${i}">${esc(e.btn)} ›</button></div></article>`).join('')}</div>
         <div class="tbej-ctl"><button type="button" class="tbej-fl2" data-d="-1" aria-label="Ejemplo anterior">‹</button><span class="tbej-pt" aria-live="polite"></span><button type="button" class="tbej-pa" aria-label="Pausar o seguir pasando solas">${auto ? '⏸' : '▶'}</button><button type="button" class="tbej-fl2" data-d="1" aria-label="Ejemplo siguiente">›</button></div></div>`;
       const car = $('.tbej-car', caja), pt = $('.tbej-pt', caja), pa = $('.tbej-pa', caja);
       $$('.tbej-card', car).forEach((c) => c.style.setProperty('--hu', c.dataset.hu));   // CSP: sin style en el HTML
