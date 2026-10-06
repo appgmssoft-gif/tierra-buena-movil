@@ -105,7 +105,9 @@
   // Los que hablan de personas, oración, visitas, miembros o salud se muestran solo cuando ya entró a su iglesia (miembro o pastor).
   const dentroDeIglesia = () => !!(leer('tb_movil_identidad', null) || leer('tb_movil_pastor', null));
   const esPrivado = (e) => ['oracion', 'visita', 'muro', 'salud'].indexOf(e.di) >= 0 || ['sol', 'ora', 'vis', 'mie', 'dat'].indexOf(e.dp) >= 0;
-  const visibles = (rol) => { const d = dentroDeIglesia(); return EJ[rol].filter((e) => d || !esPrivado(e)); };
+  const esPastorYa = () => !!leer('tb_movil_pastor', null);
+  // F904: filtro más fino: sin iglesia solo ejemplos abiertos; dentro de una iglesia, quien NO es pastor no ve ejemplos que dependen del panel del pastor (no los podría abrir)
+  const visibles = (rol) => { const d = dentroDeIglesia(), p = esPastorYa(); return EJ[rol].filter((e) => (d || !esPrivado(e)) && (e.tab !== 'pastor' || p || !d || rol === 'pastor')); };
 
   // Carrusel de tarjetas (F902): se desliza con el dedo, tiene flechas, puntos y pausa. Sin animación continua: solo avanza una tarjeta cada 14 s mientras se ve en pantalla.
   function pintarEjemplos(caja, rol) {
@@ -191,6 +193,51 @@
   }
   const confeti = (el) => { if (calma() || !el) return; for (let i = 0; i < 14; i++) { const p = document.createElement('i'); p.className = 'tbj-cf'; p.style.setProperty('--dx', (Math.random() * 160 - 80).toFixed(0) + 'px'); p.style.setProperty('--dy', (-(40 + Math.random() * 90)).toFixed(0) + 'px'); p.style.setProperty('--r', (Math.random() * 360).toFixed(0) + 'deg'); p.style.setProperty('--d', (Math.random() * 0.2).toFixed(2) + 's'); el.appendChild(p); setTimeout(() => { try { p.remove(); } catch (e) { /* nada */ } }, 1200); } };
 
+
+  // F904 · ENCUESTA DEL MES y MURO DE AVANCES. Hoy viven en el teléfono (clave tb_movil_juntos2); al correr SQL_F898_ACCION_JUNTOS.sql se conectan a Supabase para verse entre teléfonos.
+  // Regla de diseño: sin comentarios abiertos ni rankings entre iglesias; solo avances, ánimo («Animar») y una votación al mes.
+  const K_J2 = 'tb_movil_juntos2';
+  const mesClave = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); };
+  const est2 = () => { const e = leer(K_J2, null); return e && typeof e === 'object' ? { votos: e.votos || {}, muro: Array.isArray(e.muro) ? e.muro : [] } : { votos: {}, muro: [] }; };
+  function opcionesDelMes() { const n = new Date().getMonth(); return [0, 1, 2, 3].map((k) => MOV[(n * 2 + k * 3) % MOV.length]).filter((m, i, v) => v.indexOf(m) === i); }
+  // F904b: si hay sesión y la persona que administra ya activó las opciones del mes en Supabase, la encuesta es REAL (1 persona = 1 voto, cuenta personas, nunca iglesias). Si no, queda la versión de ejemplo del teléfono.
+  async function votoReal() {
+    try { const sb = A().sb; if (!sb || !sb.rpc) return null; const r = await sb.rpc('movimiento_resultados', {}); if (r.error || !Array.isArray(r.data) || !r.data.length) return null; return r.data; } catch (e) { return null; }
+  }
+  async function pintarVoto() {
+    const caja = $('#tbjVoto'); if (!caja) return;
+    const real = await votoReal();
+    if (real) {
+      const tot = real.reduce((s, o) => s + Number(o.votos || 0), 0), voto = real.some((o) => o.mi_voto);
+      caja.innerHTML = `<div class="card tbj-voto"><p class="tbj-vq"><b>¿Qué hacemos entre todos este mes?</b><small>Un voto por persona, de todas las personas de la app. La opción con más votos es el movimiento del mes. Puedes cambiar tu voto mientras dure el mes.</small></p>
+        ${real.map((o) => `<button type="button" class="tbj-op${o.mi_voto ? ' on' : ''}" data-r="${esc(o.opcion_id)}"><span class="tbj-op-ic" aria-hidden="true">🌱</span><span class="tbj-op-tx"><b>${esc(o.titulo)}</b><small>${esc(o.descripcion || '')}</small>${o.paso ? `<small>Tu gesto: ${esc(o.paso)}</small>` : ''}${voto ? barra(Number(o.votos), Math.max(1, tot), '') : ''}</span>${voto ? `<em>${pct(Number(o.votos), tot)}%</em>` : ''}</button>`).join('')}
+        <button type="button" class="btn sec chico" id="tbjSug">💡 Proponer una idea para el próximo mes</button><p class="suave tbj-vnota" id="tbjVmsg">${voto ? 'Gracias por votar.' : 'Elige una.'}</p></div>`;
+      $$('.tbj-op', caja).forEach((b) => { b.onclick = async () => { snd('juntos', 3); try { await A().sb.rpc('movimiento_votar', { p_opcion: b.dataset.r }); } catch (e) { /* sin red */ } pintarVoto(); }; });
+      $('#tbjSug').onclick = async () => { const t = (prompt('¿Qué bien podríamos hacer juntos? (una frase corta)') || '').trim(); if (t.length < 3) return; let m = 'No se pudo enviar. Inténtalo más tarde.'; try { const r = await A().sb.rpc('movimiento_sugerir', { p_titulo: t.slice(0, 80) }); if (r && !r.error) { m = 'Gracias: quien administra revisará tu idea.'; snd('exito'); } } catch (e) { /* sin red */ } const x = $('#tbjVmsg'); if (x) x.textContent = m; };
+      aplicarAnchos(caja); return;
+    }
+    const e = est2(), mes = mesClave(), voto = e.votos[mes], ops = opcionesDelMes();
+    const base = (m, i) => 10 + ((m.base || 20) % 17) + i * 3;   // votos de ejemplo (hasta conectar la nube)
+    const tot = ops.reduce((s, m, i) => s + base(m, i) + (voto === m.id ? 1 : 0), 0);
+    caja.innerHTML = `<div class="card tbj-voto"><p class="tbj-vq"><b>¿Qué hacemos entre todos este mes?</b><small>Un voto por persona. La opción más votada se vuelve el movimiento del mes en la app.</small></p>
+      ${ops.map((m, i) => { const v = base(m, i) + (voto === m.id ? 1 : 0); return `<button type="button" class="tbj-op${voto === m.id ? ' on' : ''}" data-v="${m.id}" ${voto ? 'disabled' : ''}><span class="tbj-op-ic" aria-hidden="true">${m.ic}</span><span class="tbj-op-tx"><b>${esc(m.t)}</b><small>${esc(m.lema)}</small>${voto ? barra(v, tot, '') : ''}</span>${voto ? `<em>${pct(v, tot)}%</em>` : ''}</button>`; }).join('')}
+      <p class="suave tbj-vnota">${voto ? 'Gracias por votar. Vuelve el próximo mes: habrá nuevas opciones.' : 'Elige una. No hay respuestas malas: todas hacen bien.'} <span class="tbj-ejtag">Cifras de ejemplo: con tu cuenta y la votación activa se vuelve real</span></p></div>`;
+    $$('.tbj-op', caja).forEach((b) => { b.onclick = () => { if (b.disabled) return; snd('juntos', 3); const x = est2(); x.votos[mesClave()] = b.dataset.v; guardar(K_J2, x); pintarVoto(); confeti(caja); }; });
+    aplicarAnchos(caja);
+  }
+  function pintarMuro() {
+    const caja = $('#tbjMuro'); if (!caja) return;
+    const e = est2();
+    const base = [{ q: 'Una familia del Sector Norte', t: 'Este sábado repartimos 40 platos de comida. Llegaron 9 vecinos nuevos a ayudar.', a: 14, ej: true }, { q: 'Un grupo de jóvenes', t: 'Limpiamos la plaza y plantamos 12 arbolitos. El próximo mes seguimos con la otra cuadra.', a: 22, ej: true }];
+    const L = e.muro.concat(base);
+    caja.innerHTML = `<div class="card tbj-muro-nuevo"><label for="tbjTxt" class="tbj-vq"><b>Cuenta un avance</b><small>Algo bueno que hiciste o viste. Sin nombres ni fotos de otras personas.</small></label>
+      <textarea id="tbjTxt" maxlength="220" rows="3" placeholder="Hoy ayudamos a…"></textarea><div class="tbj-muro-fila"><small id="tbjCnt">0 / 220</small><button type="button" class="btn chico" id="tbjPub">Compartir avance</button></div></div>
+      <div class="tbj-muro">${L.map((m, i) => `<article class="card tbj-post"><p class="tbj-post-q">${esc(m.q || 'Yo')}${m.ej ? ' <span class="tbj-ejtag">ejemplo</span>' : ''}</p><p>${esc(m.t)}</p><button type="button" class="tbj-an${m.yo ? ' on' : ''}" data-i="${i}" aria-pressed="${!!m.yo}">👏 Animar · <b>${m.a || 0}</b></button></article>`).join('')}</div>`;
+    const t = $('#tbjTxt'); t.oninput = () => { $('#tbjCnt').textContent = t.value.length + ' / 220'; };
+    $('#tbjPub').onclick = () => { const v = t.value.trim(); if (v.length < 8) { snd('error'); t.focus(); return; } const x = est2(); x.muro.unshift({ q: 'Yo', t: v.slice(0, 220), a: 0, f: Date.now() }); x.muro = x.muro.slice(0, 40); guardar(K_J2, x); snd('exito'); pintarMuro(); };
+    $$('.tbj-an', caja).forEach((b) => { b.onclick = () => { const i = Number(b.dataset.i), x = est2(); if (i >= x.muro.length) { snd('toque'); b.classList.toggle('on'); const n = $('b', b); n.textContent = String(Number(n.textContent) + (b.classList.contains('on') ? 1 : -1)); return; } const m = x.muro[i]; m.yo = !m.yo; m.a = Math.max(0, (m.a || 0) + (m.yo ? 1 : -1)); guardar(K_J2, x); snd('toque'); pintarMuro(); }; });
+  }
+
   function abrir() {
     const ap = A(), pant = $('#pantalla'); if (!pant) return;
     const e = est();
@@ -207,8 +254,8 @@
       <h2 class="sep">La receta de un movimiento</h2>
       <ol class="tbj-receta">${RECETA.map((r, i) => `<li><span class="tbj-n" aria-hidden="true">${r[0]}</span><span><b>${i + 1}. ${r[1]}</b><small>${r[2]}</small></span></li>`).join('')}</ol>
       <div class="card tbj-reglas"><div class="t"><span aria-hidden="true">🛡️</span>Reglas del bien</div><ul>${REGLAS.map((r) => `<li>${esc(r)}</li>`).join('')}</ul></div>`;
-    $('#tbjVolver').onclick = () => { snd('vuelve'); if (ap.ir) ap.ir('inicio'); };
-    pintarMios(); pintarLista(); aplicarAnchos(pant);
+    $('#tbjVolver').onclick = () => { snd('vuelve'); if (ap.ir) ap.ir('vida'); };
+    pintarMios(); pintarLista(); pintarVoto(); pintarMuro(); aplicarAnchos(pant);
     $('#tbjNuevo').onclick = () => { snd('abre'); formulario(); };
     try { window.scrollTo(0, 0); } catch (x) { /* nada */ }
   }

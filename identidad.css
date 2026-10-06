@@ -182,3 +182,37 @@ button,.card,.fila,.chip{-webkit-tap-highlight-color:transparent}
 
 /* F903 */
 .pas-adm{margin-top:14px;padding-top:12px;border-top:1px dashed color-mix(in srgb,var(--oro) 60%,transparent)}
+
+/* F904 · INICIO = espacio de calma (sin atajos). Paisaje que cambia con la hora, reloj grande y una frase. */
+.calma{position:relative;min-height:calc(100dvh - 150px);margin:-8px -4px 0;border-radius:28px;overflow:hidden;display:flex;align-items:flex-start;justify-content:center;background:linear-gradient(180deg,color-mix(in srgb,var(--oro) 26%,var(--papel)),color-mix(in srgb,var(--verde) 18%,var(--papel)) 70%,var(--papel))}
+.calma-noche{background:linear-gradient(180deg,#0f1b2e,#1c2f45 60%,#24402f)}
+.calma-noche .calma-cuerpo{color:#f3ead2}.calma-noche .calma-sal,.calma-noche .calma-fecha,.calma-noche .calma-frase{color:#d9cfb4}
+.calma-sol{position:absolute;left:50%;top:30%;width:34vmin;height:34vmin;margin:-17vmin 0 0 -17vmin;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--oro) 70%,#fff),transparent 68%);filter:blur(6px);opacity:.75}
+.calma-noche .calma-sol{background:radial-gradient(circle,#f5ecc8 0 16%,rgba(245,236,200,.25) 38%,transparent 68%);width:18vmin;height:18vmin;margin:-9vmin 0 0 -9vmin}
+.calma-colina{position:absolute;left:-10%;right:-10%;border-radius:50% 50% 0 0/100% 100% 0 0}
+.calma-colina.c1{bottom:-6%;height:34%;background:color-mix(in srgb,var(--verde) 55%,var(--papel))}
+.calma-colina.c2{bottom:-10%;height:27%;background:color-mix(in srgb,var(--verde) 72%,#1f3a26);left:-30%;right:25%}
+.calma-colina.c3{bottom:-12%;height:22%;background:color-mix(in srgb,var(--verde) 85%,#10241a);left:30%;right:-25%}
+.calma-luz{position:absolute;width:7px;height:7px;border-radius:50%;background:color-mix(in srgb,var(--oro) 80%,#fff);box-shadow:0 0 14px 4px color-mix(in srgb,var(--oro) 60%,transparent);opacity:.8}
+.calma-luz.l1{left:22%;bottom:30%}.calma-luz.l2{left:68%;bottom:36%;width:5px;height:5px}.calma-luz.l3{left:46%;bottom:24%;width:5px;height:5px}
+.calma-cuerpo{position:relative;z-index:1;text-align:center;padding:calc(10vh + var(--sa-t,0px)) 20px 0;color:var(--tinta)}
+.calma-sal{margin:0;color:var(--suave);font-weight:700;letter-spacing:.03em}
+.calma-hora{margin:6px 0 0;font:300 clamp(4.4rem,22vw,6.6rem)/1 "TB Titulo",Georgia,serif;letter-spacing:.02em;font-variant-numeric:tabular-nums}
+.calma-fecha{margin:4px 0 0;color:var(--suave);text-transform:capitalize}
+.calma-frase{margin:22px auto 0;max-width:19em;font:italic 1.12rem/1.5 "TB Titulo",Georgia,serif;color:var(--suave)}
+@media (prefers-reduced-motion:no-preference){html:not([data-anim=off]) .calma-sol{animation:calma-resp 9s ease-in-out infinite}html:not([data-anim=off]) .calma-luz{animation:calma-luz 6s ease-in-out infinite}html:not([data-anim=off]) .calma-luz.l2{animation-delay:-2s}html:not([data-anim=off]) .calma-luz.l3{animation-delay:-4s}}
+@keyframes calma-resp{50%{transform:scale(1.12);opacity:.95}}@keyframes calma-luz{0%,100%{transform:translateY(0);opacity:.35}50%{transform:translateY(-16px);opacity:.95}}
+
+/* F904 · Juntos: encuesta del mes y muro */
+.tbj-voto,.tbj-muro-nuevo{display:flex;flex-direction:column;gap:10px}
+.tbj-vq{margin:0}.tbj-vq b{display:block}.tbj-vq small{display:block;color:var(--suave);margin-top:2px}
+.tbj-op{display:flex;align-items:center;gap:12px;text-align:left;padding:12px;border-radius:16px;border:1.5px solid color-mix(in srgb,var(--tinta) 14%,transparent);background:color-mix(in srgb,var(--papel) 88%,#fff);min-height:64px}
+.tbj-op.on{border-color:var(--oro);background:color-mix(in srgb,var(--oro) 14%,var(--papel))}
+.tbj-op-ic{font-size:1.6rem}.tbj-op-tx{flex:1;min-width:0}.tbj-op-tx b{display:block}.tbj-op-tx small{display:block;color:var(--suave)}.tbj-op em{font-style:normal;font-weight:800}
+.tbj-vnota{margin:0;font-size:.88rem}
+.tbj-muro-nuevo textarea{width:100%;border-radius:14px;border:1.5px solid color-mix(in srgb,var(--tinta) 16%,transparent);padding:12px;font:inherit;background:var(--papel);color:var(--tinta);resize:vertical}
+.tbj-muro-fila{display:flex;justify-content:space-between;align-items:center}
+.tbj-muro{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.tbj-post p{margin:0 0 8px}.tbj-post-q{font-weight:700;color:var(--suave)}
+.tbj-an{padding:8px 14px;border-radius:99px;border:1.5px solid color-mix(in srgb,var(--oro) 50%,transparent);background:transparent;color:var(--tinta);font-weight:600}
+.tbj-an.on{background:color-mix(in srgb,var(--oro) 22%,var(--papel))}

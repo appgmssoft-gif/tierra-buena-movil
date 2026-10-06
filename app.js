@@ -1295,14 +1295,14 @@
   // Apariencia: una sola hoja con tres cosas (tema, letra, tamaño). Se ofrece sola la primera vez que se abre un capítulo.
   // Escuchar: la voz del teléfono lee el capítulo; un mini reproductor queda abajo y sigue aunque cambies de pestaña.
   const K_APAR = 'tb_movil_lector_apar';
-  const APAR_T = [['nieve', 'Claro'], ['pergamino', 'Papel'], ['medianoche', 'Oscuro']];
+  const APAR_T = [['nieve', '🌅 Amanecer'], ['pergamino', '🌾 Tierra buena'], ['medianoche', '🌙 Noche en calma']];   // F904: nombres propios de Tierra Buena
   function aparienciaHoja(primera) {
     const q = perfilLeer(), tam = () => Math.min(30, Math.max(16, Number(leer(K_BIBTAM)) || 18));
     const h = nuevoEl(`<div class="hoja" id="hojaApar" role="dialog" aria-modal="true" aria-label="Cómo te gusta leer"><div class="hoja-in hoja-apar"><div class="hoja-asa" aria-hidden="true"></div>
-      <h3>${primera ? '¿Cómo te gusta leer?' : 'Apariencia'}</h3><p class="suave">${primera ? 'Elige lo más cómodo. Lo puedes cambiar cuando quieras desde «Aa».' : 'Se ve al instante.'}</p>
-      <h4 class="apar-t">Fondo</h4><div class="apar-fila" role="group" aria-label="Fondo">${APAR_T.map((t) => `<button type="button" class="apar-op apar-t-${t[0]}${q.t === t[0] ? ' on' : ''}" data-aparT="${t[0]}" aria-pressed="${q.t === t[0]}">${t[1]}</button>`).join('')}</div>
-      <h4 class="apar-t">Letra</h4><div class="apar-fila" role="group" aria-label="Letra"><button type="button" class="apar-op apar-serif${q.f !== 'sans' ? ' on' : ''}" data-aparF="serif" aria-pressed="${q.f !== 'sans'}">Clásica</button><button type="button" class="apar-op apar-sans${q.f === 'sans' ? ' on' : ''}" data-aparF="sans" aria-pressed="${q.f === 'sans'}">Clara</button></div>
-      <h4 class="apar-t">Tamaño</h4><div class="apar-tam"><button type="button" class="btn sec chico" id="aparMenos" aria-label="Letra más chica">A−</button><p class="apar-muestra lectura" id="aparMuestra">En el principio creó Dios los cielos y la tierra.</p><button type="button" class="btn sec chico" id="aparMas" aria-label="Letra más grande">A+</button></div>
+      <h3>${primera ? 'Prepara tu rincón de lectura' : 'Tu rincón de lectura'}</h3><p class="suave">${primera ? 'Como quien elige su lugar bajo un árbol. Lo puedes cambiar cuando quieras desde «Aa».' : 'Se ve al instante.'}</p>
+      <h4 class="apar-t">La hora de tu lectura</h4><div class="apar-fila" role="group" aria-label="La hora de tu lectura">${APAR_T.map((t) => `<button type="button" class="apar-op apar-t-${t[0]}${q.t === t[0] ? ' on' : ''}" data-aparT="${t[0]}" aria-pressed="${q.t === t[0]}">${t[1]}</button>`).join('')}</div>
+      <h4 class="apar-t">La voz de la página</h4><div class="apar-fila" role="group" aria-label="La voz de la página"><button type="button" class="apar-op apar-serif${q.f !== 'sans' ? ' on' : ''}" data-aparF="serif" aria-pressed="${q.f !== 'sans'}">Como una carta</button><button type="button" class="apar-op apar-sans${q.f === 'sans' ? ' on' : ''}" data-aparF="sans" aria-pressed="${q.f === 'sans'}">Como un camino</button></div>
+      <h4 class="apar-t">Qué tan cerca la quieres</h4><div class="apar-tam"><button type="button" class="btn sec chico" id="aparMenos" aria-label="Letra más chica">A−</button><p class="apar-muestra lectura" id="aparMuestra">En el principio creó Dios los cielos y la tierra.</p><button type="button" class="btn sec chico" id="aparMas" aria-label="Letra más grande">A+</button></div>
       <button type="button" class="btn" id="aparOk">Listo</button></div></div>`);
     if (!h) return; document.body.appendChild(h);
     const muestra = () => { try { $('#aparMuestra').style.fontSize = tam() + 'px'; const l = $('#lectura'); if (l) l.style.fontSize = tam() + 'px'; } catch (e) { /* sin muestra */ } };
@@ -2344,7 +2344,7 @@
         if (tel.replace(/\D/g, '').length < 8) return err('Escribe un teléfono o WhatsApp con el código de tu ciudad.');
         if (enl.length < 8) return err('Para confirmarlo, escribe el enlace público de tu iglesia o los datos de otro pastor o líder que te conozca.');
         if (!$('#spAc').checked) return err('Marca la casilla para poder enviar tu solicitud.');
-        try { if (Date.now() - Number(localStorage.getItem('tb_sol_pastor') || 0) < 86400000) return err('Ya enviaste una solicitud hoy. La estamos revisando y te escribiremos a tu correo.'); } catch (e) { /* sin almacenamiento */ }
+        try { const reg = JSON.parse(localStorage.getItem('tb_sol_pastor_reg') || '[]').filter((t) => Date.now() - t < 86400000); if (reg.length >= 8) return err('Ya enviaste varias solicitudes hoy desde este teléfono. Espera un poco o escríbenos a softappgms@outlook.com.'); } catch (e) { /* sin almacenamiento */ }   // F904: hasta 8 por día y por teléfono (antes 1)
         const msgFinal = ['Cargo: ' + car, 'Teléfono/WhatsApp: ' + tel, 'Enlace o referencia: ' + enl, 'Origen: app del celular'].join(' | ').slice(0, 290);
         err(''); const b = $('#spEnv'); b.disabled = true; b.textContent = 'Enviando…';
         let ok = false, detalle = '';
@@ -2361,7 +2361,7 @@
         } catch (e) { ok = false; detalle = 'red: ' + (e && e.message ? e.message : e); }
         if (!ok) { try { console.warn('solicitud pastor:', detalle); window.tbUltimoError = detalle; } catch (e2) { /* nada */ } }
         if (!ok) { b.disabled = false; b.textContent = 'Enviar solicitud'; sono('error'); return err(/42501|row-level|permission/i.test(detalle) ? 'No pudimos enviarla: falta activar un permiso en el servidor. Avisa a quien administra la app (código 42501).' : /fetch|network|red:/i.test(detalle) ? 'No pudimos enviarla. Revisa tu internet e inténtalo otra vez.' : 'No pudimos enviarla (' + (detalle.trim().slice(0, 60) || 'sin detalle') + '). Avisa a quien administra la app.'); }
-        sono('exito'); try { localStorage.setItem('tb_sol_pastor', String(Date.now())); } catch (e) { /* sin almacenamiento */ }
+        sono('exito'); try { const reg2 = JSON.parse(localStorage.getItem('tb_sol_pastor_reg') || '[]').filter((t) => Date.now() - t < 86400000); reg2.push(Date.now()); localStorage.setItem('tb_sol_pastor_reg', JSON.stringify(reg2)); } catch (e) { /* sin almacenamiento */ }
         $('#pasCuerpo').innerHTML = `<div class="pas-ok" aria-hidden="true">✉️</div><h3>¡Solicitud enviada!</h3><p class="suave">Revisaremos tu solicitud y te escribiremos a <b>${esc(correo)}</b> con tu código de pastor. Cuando lo tengas, vuelve a tocar <b>Soy pastor</b> y pégalo.</p><div class="hoja-bt"><button type="button" class="btn" id="spListo">Listo</button></div>`;
         $('#spListo').onclick = cerrar;
       };
@@ -2624,6 +2624,7 @@
       <div class="cj-cab">${avatarHTML(nombre, p, true)}<div><b>${esc(nombre)}</b><small>${esc(planResumen())}</small></div><button type="button" class="cj-x" id="cjX" aria-label="Cerrar">${svg('x', 20)}</button></div>
       <div class="cj-lista">
         ${yaInstalada() ? '' : it('inst', 'compartir', 'Instalar la app', 'Un toque y queda en tu pantalla')}
+        ${it('jun', 'brote', 'Juntos hacemos el bien', 'Muro, encuesta del mes y movimientos')}
         ${it('plan', 'brote', 'Planes de trabajo', 'Contesta de nuevo y la app se adapta')}
         ${it('info', 'ayuda', 'Información', 'Qué es y cómo usarla')}
         ${it('cal', 'calendario', 'Calendario santo', 'Fechas para vivir juntos')}
@@ -2635,7 +2636,7 @@
       </div></nav></div>`);
     if (!h) return ir('perfil');
     document.body.appendChild(h);
-    const va = { inst: instalarUnToque, plan: planRehacer, info: vistaInfo, cal: vistaCalendario, comp: invitarHoja, wid: vistaWidgets, conf: () => ir('perfil'), sus: vistaSuscripcion, hist: vistaHistoria };
+    const va = { inst: instalarUnToque, jun: abrirJuntos, plan: planRehacer, info: vistaInfo, cal: vistaCalendario, comp: invitarHoja, wid: vistaWidgets, conf: () => ir('perfil'), sus: vistaSuscripcion, hist: vistaHistoria };
     h.querySelectorAll('.cj-it').forEach((b) => b.addEventListener('click', () => { vibra(); menuCerrar(); entrandoPon(false); (va[b.dataset.cj] || (() => {}))(); }));
     $('#cjX').onclick = menuCerrar; h.addEventListener('click', (e) => { if (e && e.target === h) menuCerrar(); });
   }
@@ -2800,18 +2801,17 @@
   }
   // ---------- Navegación ----------
     // F902 · INICIO: el 5.º menú, al centro. Más aire y menos cosas. Aquí vive «Juntos hacemos el bien» (ya no está dentro de Vida).
-  function vistaInicio() {
+  let relojInicio = 0;
+  function vistaInicio() {                                  // F904: INICIO = espacio de calma, como el lugar de descanso de un juego. Sin atajos, sin códigos, sin ejemplos: las opciones viven abajo.
     const p = perfilLeer(), o = (() => { try { return onbLeer(); } catch (e) { return null; } })(), n = (p.n || (o && o.nombre) || '').split(' ')[0];
-    const h = new Date().getHours(), sal = h < 6 ? 'Qué bueno verte' : h < 12 ? 'Buenos días' : h < 19 ? 'Buenas tardes' : 'Buenas noches';
-    const rol = pastorLeer() ? 'pastor' : (leer(K_IG) ? 'miembro' : 'ambos');
-    $('#pantalla').innerHTML = `<section class="inicio"><p class="inicio-sal">${sal}${n ? ', ' + esc(n) : ''}</p><h1 class="inicio-t">Aquí la Palabra se vive</h1><div class="filete"></div>
-      ${(!leer(K_ID) && !pastorLeer()) ? `<div class="ent-top inicio-ent">${icoPastorHTML()}${icoCodigoHTML()}</div>` : ''}
-      <button type="button" class="card inicio-juntos" data-ir="juntos"><span class="inicio-ic" aria-hidden="true">🌍</span><span class="inicio-tx"><b>Juntos hacemos el bien</b><small>Movimientos para mejorar tu barrio y tu país. Súmate o inicia uno.</small></span><span class="flecha" aria-hidden="true">›</span></button>
-      <div class="grid">${activa('✨', 'Hoy lo hago', 'Un paso pequeño hoy. Intentarlo ya cuenta.', 'hacer')}${activa('📖', 'Leer la Biblia', 'Sigue donde ibas.', 'palabra')}</div>
-      <h2 class="sep">Para empezar</h2><div id="tbEjem"></div></section>`;
-    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ juntos: abrirJuntos, hacer: () => vistaHacer(null, vistaInicio), palabra: () => ir('palabra') }[b.dataset.ir] || (() => {}))()));
-    try { ligaCodigo(); } catch (e) { /* sin códigos */ }
-    try { if (window.TBEjemplos && $('#tbEjem')) window.TBEjemplos.pintar($('#tbEjem'), rol); } catch (e) { /* sin ejemplos */ }
+    const FRASES = ['Descansa. Aquí no hay nada que hacer.', 'Respira hondo. Estás en buena tierra.', 'Todo lo que necesitas hoy ya viene en camino.', 'Quédate un momento. La paz también es un lugar.', 'Lo sembrado con paciencia siempre da fruto.', 'No corras. Hoy basta con estar.'];
+    const hoy = new Date(), frase = FRASES[(hoy.getFullYear() * 366 + hoy.getMonth() * 31 + hoy.getDate()) % FRASES.length];
+    const momento = () => { const h = new Date().getHours(); return h < 6 ? ['noche', 'Qué bueno verte despierto'] : h < 12 ? ['alba', 'Buenos días'] : h < 19 ? ['dia', 'Buenas tardes'] : ['noche', 'Buenas noches']; };
+    const m = momento();
+    $('#pantalla').innerHTML = `<section class="calma calma-${m[0]}" aria-label="Espacio de calma"><i class="calma-sol" aria-hidden="true"></i><i class="calma-colina c1" aria-hidden="true"></i><i class="calma-colina c2" aria-hidden="true"></i><i class="calma-colina c3" aria-hidden="true"></i><i class="calma-luz l1" aria-hidden="true"></i><i class="calma-luz l2" aria-hidden="true"></i><i class="calma-luz l3" aria-hidden="true"></i>
+      <div class="calma-cuerpo"><p class="calma-sal" id="calmaSal">${m[1]}${n ? ', ' + esc(n) : ''}</p><p class="calma-hora" id="calmaHora" aria-live="off"></p><p class="calma-fecha" id="calmaFecha"></p><p class="calma-frase">${esc(frase)}</p></div></section>`;
+    const pinta = () => { try { const d = new Date(), h = $('#calmaHora'); if (!h) { clearInterval(relojInicio); relojInicio = 0; return; } h.textContent = d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', hour12: false }); const f = $('#calmaFecha'); if (f) f.textContent = d.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' }); } catch (e) { /* sin hora */ } };
+    pinta(); if (relojInicio) clearInterval(relojInicio); relojInicio = setInterval(pinta, 15000);
   }
   const VISTAS = { inicio: vistaInicio, iglesia: vistaIglesia, palabra: vistaPalabra, vida: vistaVida, perfil: vistaPerfil, pastor: vistaPastor };
   const ORDEN_TAB = ['iglesia', 'palabra', 'inicio', 'vida', 'perfil', 'pastor']; let tabPrev = '';
@@ -2898,7 +2898,24 @@
       const el = $('#arranque'); if (!el) return;
       let visto = false; try { visto = sessionStorage.getItem('tb_movil_arr') === '1'; sessionStorage.setItem('tb_movil_arr', '1'); } catch (e) { /* nada */ }
       if (visto) { el.remove(); return; }
-      setTimeout(() => { try { el.remove(); } catch (e) { /* nada */ } }, 3700);
+      // F904: el teléfono no deja sonar hasta el primer toque. Si el audio aún está dormido, la apertura espera un instante («Toca para entrar») y,
+      // al tocar, la animación vuelve a empezar JUNTO con la melodía: el sonido y el movimiento nacen a la vez (antes la melodía llegaba tarde, con la animación ya terminada).
+      let sale = setTimeout(() => { try { el.remove(); } catch (e) { /* nada */ } }, 3700);
+      const S = window.TBSonido;
+      setTimeout(() => {
+        try {
+          if (!S || !S.activo() || S.corriendo() || !document.body.contains(el)) return;
+          clearTimeout(sale);
+          const b = document.createElement('button'); b.type = 'button'; b.className = 'arr-toca'; b.textContent = 'Toca para entrar';
+          el.appendChild(b); el.classList.add('espera');
+          const esperaMax = setTimeout(() => { try { el.remove(); } catch (e) { /* nada */ } }, 25000);
+          b.addEventListener('click', () => {
+            clearTimeout(esperaMax); try { S.primero(); } catch (e) { /* sin sonido */ }
+            try { b.remove(); el.classList.remove('espera'); const lista = Array.from(el.children); lista.forEach((c) => { if (c.style) { c.style.animation = 'none'; void c.offsetWidth; c.style.animation = ''; } }); } catch (e) { /* sin reinicio */ }
+            sale = setTimeout(() => { try { el.remove(); } catch (e) { /* nada */ } }, 4300);
+          });
+        } catch (e) { /* nada */ }
+      }, 700);
     } catch (e) { /* nada */ }
   })();
   try {   // F888 · modo prueba: abrir la app con ?reiniciar=1 borra lo guardado en este dispositivo y vuelve a la primera vez
@@ -2915,6 +2932,6 @@
     const at = { versiculo: vistaVersiculo, biblia: vistaBiblia, calendario: vistaCalendario };
     if (q && at[q] && !codigoDeEnlace()) setTimeout(() => { try { ir('palabra'); at[q](); } catch (e) { /* nada */ } }, 60);
   } catch (e) { /* sin atajo */ }
-  window.TBApp = { leer, guardar, esc, ir, vibra, svg, volverVida: () => ir('inicio'), guardarAjuste: (c) => { perfilGuardar(c); ajusteAplicar(); } };   // F901: lo usan identidad.js (ejemplos y Juntos)
+  window.TBApp = { sb: SB, leer, guardar, esc, ir, vibra, svg, volverVida: () => ir('inicio'), guardarAjuste: (c) => { perfilGuardar(c); ajusteAplicar(); } };   // F901: lo usan identidad.js (ejemplos y Juntos)
   syncInicio();
 })();

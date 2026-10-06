@@ -120,6 +120,7 @@
       if (ctx.state === 'suspended' && ctx.resume) ctx.resume().then(sonar, sonar); else sonar();
     } catch (e) { /* sin sonido */ }
   };
+  API.primero = primerToque; API.corriendo = () => { try { return !!(ctx && ctx.state === 'running'); } catch (e) { return false; } };   // F904: la apertura de app.js los usa
   ['pointerdown', 'touchend', 'click', 'keydown'].forEach((n) => document.addEventListener(n, function f() { primerToque(); ['pointerdown', 'touchend', 'click', 'keydown'].forEach((m) => document.removeEventListener(m, f, true)); }, true));
   // éxito automático en los momentos de logro de la app (confeti, «hecho»)
   try {
