@@ -99,10 +99,10 @@
     const ap = A();
     const clic = () => { const b = e.dp ? $(`[data-pp="${e.dp}"]`) : $(`[data-ir="${e.di}"]`); if (b) { b.click(); return true; } return false; };
     if (clic()) return;                                                       // ya está en esta pantalla
-    const pastor = $('.tab[data-tab="pastor"]'); const hayPastor = pastor && !pastor.hidden;
+    let hayPastor = false; try { hayPastor = !!localStorage.getItem('tb_movil_pastor'); } catch (x) { /* sin almacenamiento */ }
     if (e.tab === 'pastor' && !hayPastor) return aviso('Esto se abre cuando entras como pastor: toca «Soy pastor» arriba.');
     if (!ap.ir) return;
-    ap.ir(e.tab);
+    ap.ir(e.tab, e.tab === 'iglesia' ? 'miembro' : undefined);
     setTimeout(() => { if (!clic()) aviso(e.tab === 'iglesia' ? 'Esto se abre cuando tu pastor te acepta en su iglesia: toca «Mi código».' : 'Aún no se puede abrir desde aquí.'); }, 60);
   }
   window.TBEjemplos = { pintar: pintarEjemplos, datos: EJ, visibles, dentro: dentroDeIglesia };

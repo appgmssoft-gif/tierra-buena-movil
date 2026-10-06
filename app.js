@@ -2223,7 +2223,8 @@
   const prpc = (fn, p, extra) => rpcRaw(fn, Object.assign({ p_codigo: p.codigo, p_secreto: p.secreto }, extra || {}));
   const modoPastor = (p) => ({ pas: p, volverTxt: 'Panel', volverFn: vistaPastor });
   function barraRefrescar(tab) {
-    const pt = $('.tab[data-tab="pastor"]'); if (pt) pt.hidden = !pastorLeer();
+    const pt = $('.tab[data-tab="pastor"]'); if (pt) pt.hidden = true;                // F914: Pastor vive dentro de la 1.ª pestaña (siempre 5 espacios)
+    if (tab === 'pastor') tab = 'iglesia';
     const vis = Array.prototype.slice.call(document.querySelectorAll('.tab')).filter((b) => !b.hidden), bar = $('.barra');
     if (bar && bar.style && bar.style.setProperty) { bar.style.setProperty('--n', String(vis.length)); bar.style.setProperty('--i', String(Math.max(0, vis.findIndex((b) => b.dataset.tab === tab)))); }
   }
@@ -2827,7 +2828,17 @@
       calmaResp.push(setTimeout(() => { if (!fr.isConnected) return; k = (k + 1) % FRASES.length; fr.textContent = FRASES[k]; fr.classList.add('on'); }, 1500));
     }, 11000);
   }
-  const VISTAS = { inicio: vistaInicio, iglesia: vistaIglesia, palabra: vistaPalabra, vida: vistaVida, perfil: vistaPerfil, pastor: vistaPastor };
+  // F914: la 1.ª pestaña ofrece 2 caminos en el mismo lugar: Iglesia (miembro) y Pastor (panel). Nada se elimina: cada uno abre su vista de siempre.
+  function vistaEspacioIglesia() {
+    if (!(leer(K_CUENTA) || leer(K_ID) || leer(K_SOL) || pastorLeer()) || (codigoDeEnlace() && !leer(K_ID))) return vistaIglesia();   // sin cuenta (portada de entrada) o con enlace de código: igual que siempre
+    const ig = leer(K_IG), enIgl = !!(leer(K_ID) || leer(K_SOL)), pas = pastorLeer();
+    const op = (cls, ico, tit, sub, id) => `<button type="button" class="fila fila-ip" id="${id}"><span class="fila-ico ${cls}" aria-hidden="true">${ico}</span><span class="fila-txt">${tit}<small>${sub}</small></span><span class="flecha" aria-hidden="true">›</span></button>`;
+    $('#pantalla').innerHTML = `<h1>Mi iglesia</h1><div class="filete"></div>
+      <div class="lista">${op('t1', '⛪', 'Iglesia', enIgl ? (ig && ig.nombre ? esc(ig.nombre) : 'Tu iglesia') : 'Únete con el código de tu pastor', 'ipIgl')}${op('t2', '🛡️', 'Pastor', pas ? 'Tu panel para atender a la iglesia' : 'Entra con tu llave de pastor', 'ipPas')}</div>`;
+    $('#ipIgl').onclick = () => { try { window.TBSonido.abre(); } catch (e) { /* sin sonido */ } vistaIglesia(); window.scrollTo(0, 0); };
+    $('#ipPas').onclick = () => { try { window.TBSonido.abre(); } catch (e) { /* sin sonido */ } if (pastorLeer()) vistaPastor(); else vistaPastorEntrar(); window.scrollTo(0, 0); };
+  }
+  const VISTAS = { inicio: vistaInicio, iglesia: vistaEspacioIglesia, palabra: vistaPalabra, vida: vistaVida, perfil: vistaPerfil, pastor: vistaPastor };
   const ORDEN_TAB = ['iglesia', 'palabra', 'inicio', 'vida', 'perfil', 'pastor']; let tabPrev = '';
   function pantEntra(sentido) {                             // F885: la pantalla nueva entra deslizando (se apaga con «reducir movimiento» o Animaciones: más tranquilo)
     try {
@@ -2835,13 +2846,14 @@
       p.animate([{ opacity: 0, transform: 'translateX(' + (sentido === 'atras' ? -22 : 22) + 'px)' }, { opacity: 1, transform: 'none' }], { duration: 300, easing: 'cubic-bezier(.32,.72,0,1)' });
     } catch (e) { /* sin animación */ }
   }
-  function ir(tab) {
+  function ir(tab, directo) {
     const sentido = ORDEN_TAB.indexOf(tab) < ORDEN_TAB.indexOf(tabPrev) ? 'atras' : 'adelante'; tabPrev = tab;
-    document.querySelectorAll('.tab').forEach((b) => { if (b.dataset.tab === tab) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
+    const tabMarca = tab === 'pastor' ? 'iglesia' : tab;
+    document.querySelectorAll('.tab').forEach((b) => { if (b.dataset.tab === tabMarca) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
     barraRefrescar(tab); try { menuBoton(); } catch (e) { /* sin botón */ }
     const tp = $('#barraTop'); if (tp && tp.classList && tp.classList.remove) tp.classList.remove('on');
     if (tab !== 'inicio') { try { calmaSoltar(); } catch (e) { /* nada */ } }
-    VISTAS[tab](); window.scrollTo(0, 0); $('#pantalla').focus({ preventScroll: true }); pantEntra(sentido);
+    (directo === 'miembro' && tab === 'iglesia' ? vistaIglesia : VISTAS[tab])(); window.scrollTo(0, 0); $('#pantalla').focus({ preventScroll: true }); pantEntra(sentido);
   }
   document.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) { /* sin vibración */ } ir(b.dataset.tab); }));
   const red = () => { $('#sinRed').hidden = navigator.onLine; };
