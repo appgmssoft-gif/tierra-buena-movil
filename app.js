@@ -626,8 +626,6 @@
       <div class="grid">${activa('🙏', 'Pedir oración', 'Cuéntale a tu pastor por qué orar.', 'oracion')}${activa('🤝', 'Pedir visita', 'Pide que tu pastor te visite.', 'visita')}</div>
       <h2 class="sep">Vivir con mi iglesia</h2>
       <div class="grid">${activa('📅', 'Agenda', 'Actividades de tu iglesia y de tus grupos.', 'agenda')}${activa('📣', 'Avisos', 'Mensajes de tu pastor y de los líderes.', 'avisos')}${activa('🕍', 'Mis ministerios', 'Los grupos donde sirves y quién los lidera.', 'ministerios')}${activa('🧱', 'Muro', 'Peticiones que tu pastor compartió, para orar juntos.', 'muro')}${activa('🌟', 'Acción del mes', 'Lo que viviremos juntos este mes.', 'accion')}</div>
-      <h2 class="sep">Juntos por el bien</h2>
-      <div class="grid">${activa('🌍', 'Juntos hacemos el bien', 'Movimientos para mejorar tu barrio y tu país. Súmate o inicia uno.', 'juntos')}</div>
       <h2 class="sep">Aprende a sacarle el jugo</h2>
       <div id="tbEjem" class="tb-ejem-caja"></div>
       <h2 class="sep">Mis cosas</h2>
@@ -1448,7 +1446,7 @@
   };
   function vistaVida() {
     $('#pantalla').innerHTML = `<h1>Vivir lo que aprendemos</h1><div class="filete"></div>
-      <div class="grid">${activa('✨', 'Hoy lo hago', 'Un paso pequeño hoy. Intentarlo ya cuenta.', 'hacer')}${activa('🌍', 'Juntos hacemos el bien', 'Movimientos para mejorar tu barrio y tu país. Súmate o inicia uno.', 'juntos')}</div>
+      <div class="grid">${activa('✨', 'Hoy lo hago', 'Un paso pequeño hoy. Intentarlo ya cuenta.', 'hacer')}</div>
       <h2 class="sep">Con Dios y conmigo</h2><div class="grid">${activa('🕊️', 'Mi oración', 'Tu diario de peticiones, solo para ti.', 'mioracion')}${activa('🎵', 'Música', 'Letras para cantar y para leer en el culto.', 'musica')}${activa('🌱', 'Mi crecimiento', 'Pequeños pasos de cada semana.', 'crecimiento')}${activa('🧠', 'Salud mental', 'Respirar, un chequeo y dónde pedir ayuda.', 'salud')}</div>
       <h2 class="sep">Con los demás</h2><div class="grid">${activa('💡', 'Ideas y proyectos', 'Ideas para servir a tu comunidad.', 'ideas')}${activa('🧰', 'Proyectos listos', 'Ya pensados: lugar, presupuesto y personas.', 'proyectos')}</div>
       <h2 class="sep">Para aprender</h2><div class="grid">${activa('🎓', 'Aprender', 'Cursos gratuitos en internet para servir mejor, con tu avance.', 'aprender')}</div>`;
@@ -1949,6 +1947,12 @@
     pintaColores();
   }
 
+  function logrosAbrir() {                                   // F902: «Mis logros» vive en un ícono bajo el perfil y se abre en una hoja
+    if ($('#tbLogros')) return;
+    const c = nuevoEl('<div class="tb-hoja-r" id="tbLogros" role="dialog" aria-modal="true" aria-label="Mis logros"><div><h2>Mis logros</h2>' + logrosHTML() + '<button type="button" class="tb-cerrar" id="lgOk">Cerrar</button></div></div>'); if (!c) return;
+    document.body.appendChild(c); const cerrar = () => { try { c.remove(); } catch (e) { /* ya cerrada */ } };
+    c.addEventListener('click', (ev) => { if (ev.target === c) cerrar(); }); const ok = $('#lgOk'); if (ok) { ok.onclick = cerrar; ok.focus(); }
+  }
   function vistaPerfil() {
     const id = leer(K_ID), cu = leer(K_CUENTA), ig = leer(K_IG), p = perfilLeer();
     const nombre = p.n || (id && id.nombre) || (cu && cu.correo && cu.correo.split('@')[0]) || 'Invitado';
@@ -1959,7 +1963,8 @@
         <p class="suave m0">${ig && ig.nombre ? '⛪ ' + esc(ig.nombre) : 'Aún sin iglesia'}${desde ? ' · desde ' + esc(desde) : ''}</p>
         ${cu ? `<p class="suave m0">✉️ ${esc(cu.correo)}</p>` : ''}
         ${p.b ? `<p class="perfil-lema">«${esc(p.b)}»</p>` : ''}
-        <div class="chips-min" id="perfMin"></div></section>
+        <div class="chips-min" id="perfMin"></div>
+        <div class="perfil-acc"><button type="button" class="perfil-ic" data-pf="logros" aria-label="Mis logros"><span aria-hidden="true">🏆</span><small>Mis logros</small></button></div></section>
       <div class="stats" aria-label="Tu camino">
         <div class="stat"><span class="stat-ic">${svg('llama', 22)}</span><b>${rachaActual()}</b><small>días seguidos</small></div>
         <div class="stat"><span class="stat-ic">${svg('libro', 22)}</span><b>${nLeidos()}</b><small>capítulos</small></div>
@@ -1970,17 +1975,17 @@
         <div class="chips chips-meta" role="group" aria-label="Capítulos por día">${[1, 2, 3, 5].map((x) => `<button type="button" class="chip${p.meta === x ? ' on' : ''}" data-meta="${x}" aria-pressed="${p.meta === x}">${x}</button>`).join('')}</div></div></div>
       <button type="button" class="card hac-perfil" data-pf="hacer"><span class="hac-perfil-n">${nHechas()}</span><span class="invita-txt"><b>Pasos de acción</b><small>${nHechas() ? 'Lo que has hecho por ti, por otros y por tu comunidad' : 'Empieza hoy: un paso pequeño cuenta'}</small></span><span class="flecha" aria-hidden="true">›</span></button>
       <button type="button" class="card invita" data-pf="invitar"><span class="invita-ic" aria-hidden="true">${svg('compartir', 26)}</span><span class="invita-txt"><b>Invita a un amigo</b><small>Regálale un momento de paz con la Palabra</small></span><span class="flecha" aria-hidden="true">›</span></button>
-      <h2 class="sep">Mis logros</h2>${logrosHTML()}
+      <details class="perfil-det"><summary><span aria-hidden="true">✏️</span> Editar mi perfil <i class="flecha" aria-hidden="true">›</i></summary>
       <h2 class="sep">Sobre mí</h2>
       <div class="card"><label for="pfn">Cómo quieres que te llame</label><input id="pfn" type="text" maxlength="30" value="${esc(p.n)}" placeholder="${esc((id && id.nombre) || 'Tu nombre')}" autocomplete="given-name">
         <label for="pfb">Mi versículo o lema favorito</label><textarea id="pfb" rows="2" maxlength="140" placeholder="Ej. Todo lo puedo en Cristo que me fortalece">${esc(p.b)}</textarea>
         <button type="button" class="btn" id="pfok">Guardar perfil</button></div>
       <h2 class="sep">Tu avatar</h2>
       <div class="card"><div class="av-sel" role="group" aria-label="Color del avatar">${[0, 1, 2, 3, 4, 5, 6, 7].map((i) => `<button type="button" class="avatar g${i}${p.g === i ? ' sel' : ''}" data-g="${i}" aria-label="Color ${i + 1}" aria-pressed="${p.g === i}"></button>`).join('')}</div>
-        <div class="av-sel emo" role="group" aria-label="Símbolo">${['']. concat(AVATARES).map((e) => `<button type="button" class="av-emo${p.e === e ? ' sel' : ''}" data-e="${e}" aria-pressed="${p.e === e}">${e || 'Aa'}</button>`).join('')}</div></div>
+        <div class="av-sel emo" role="group" aria-label="Símbolo">${['']. concat(AVATARES).map((e) => `<button type="button" class="av-emo${p.e === e ? ' sel' : ''}" data-e="${e}" aria-pressed="${p.e === e}">${e || 'Aa'}</button>`).join('')}</div></div></details>
       ${id ? `<h2 class="sep">Mi iglesia</h2><div class="lista">${fila('t1', '🕍', 'Mis ministerios', 'Dónde sirves', 'min')}${fila('t2', '🙏', 'Pedir oración', 'Tu pastor la recibe', 'ora')}${fila('t3', '🔒', 'Mi privacidad', 'Qué ve cada persona', 'priv')}${fila('t4', '❓', 'Ayuda', 'Respuestas cortas', 'ayu')}</div>` : `<h2 class="sep">Empieza</h2><div class="lista">${fila('t1', '⛪', 'Unirme a mi iglesia', 'Con el código de tu pastor', 'unir')}${fila('t2', '🔑', 'Recuperar mi iglesia', 'Con la llave de otro teléfono', 'llave')}</div>`}
       <h2 class="sep">Mi plan</h2><div class="lista">${fila('t2', '🧭', 'Mi plan', esc(planResumen()), 'plan')}${fila('t1', '🔄', 'Cambiar mi plan', 'Contesta de nuevo y la app se adapta', 'plan')}</div>
-      <h2 class="sep">Apariencia</h2><div class="lista">${fila('t3', '🎨', 'Temas', (TEMAS.find((x) => x[0] === p.t) || TEMAS[0])[1], 'temas')}</div>
+      <h2 class="sep">Apariencia</h2><div class="lista">${fila('t3', '🎨', 'Temas', (TEMAS.find((x) => x[0] === p.t) || TEMAS[0])[1], 'temas')}${fila('t2', '🎚️', 'Efectos y sonido', 'Sonidos, animaciones y cuidar el teléfono', 'rapido')}</div>
       <h2 class="sep">Administración</h2><div class="lista">${pastorLeer() ? fila('t1', '🛡️', 'Panel del pastor', 'Administra tu iglesia', 'pastor') : fila('t1', '🛡️', 'Entrar como pastor', 'Con tu código de pastor', 'pastor')}</div>
       <h2 class="sep">Cuenta</h2>
       <div class="lista">${cu ? fila('t2', '☁️', 'Sesión iniciada', esc(cu.correo), 'nada') + fila('t4', '↩️', 'Cerrar sesión', '', 'salir') : fila('t2', '✉️', 'Entrar o crear cuenta', 'Tu iglesia te sigue a cualquier teléfono', 'cuenta')}</div>
@@ -1992,7 +1997,7 @@
     document.querySelectorAll('[data-g]').forEach((b) => b.addEventListener('click', () => { const q = perfilLeer(); perfilGuardar({ g: Number(b.dataset.g) }); vibra(); vistaPerfil(); }));
     document.querySelectorAll('[data-e]').forEach((b) => b.addEventListener('click', () => { const q = perfilLeer(); perfilGuardar({ e: b.dataset.e }); vibra(); vistaPerfil(); }));
     document.querySelectorAll('[data-pf]').forEach((b) => b.addEventListener('click', () => ({
-      min: () => vistaMinisterios(id), ora: () => vistaOracion(id), priv: () => vistaPrivacidad(id), ayu: () => vistaAyuda(id),
+      min: () => vistaMinisterios(id), ora: () => vistaOracion(id), priv: () => vistaPrivacidad(id), ayu: () => vistaAyuda(id), logros: logrosAbrir, rapido: () => { if (window.TBRendimiento) window.TBRendimiento.abrir(); },
       hacer: () => vistaHacer(null, vistaPerfil), plan: planRehacer, invitar: invitarHoja, temas: vistaTemas, pastor: () => (pastorLeer() ? ir('pastor') : vistaPastorEntrar()), unir: () => codigoHoja(), llave: vistaLlave, cuenta: () => vistaCuenta('entrar'), nada: () => {},
       salir: () => { if (confirm('¿Cerrar sesión? Tus notas personales quedan guardadas en tu cuenta y vuelven cuando entres.')) cerrarSesionCuenta(); }
     }[b.dataset.pf] || (() => {}))()));
@@ -2234,48 +2239,97 @@
     const cerrar = () => { try { h.remove(); } catch (e) { /* nada */ } };
     const err = (m) => { const e = $('#pasErr'); if (e) { e.textContent = m || ''; e.hidden = !m; } };
     const sono = (n) => { try { if (window.TBSonido) window.TBSonido[n](); } catch (e) { /* sin sonido */ } };
+    const TXT_COD = { 'codigo-invalido': 'No encontramos ese código. Revisa que tenga 8 letras o números, tal como llegó a tu correo.', 'codigo-revocado': 'Ese código fue cancelado. Escríbenos a softappgms@outlook.com y lo revisamos contigo.', 'codigo-otro-correo': 'Ese código es de otro correo. Escribe el mismo correo con el que pediste tu acceso.', 'codigo-vencido': 'Ese código venció por falta de uso. Pídenos que lo reactiven escribiendo a softappgms@outlook.com.', 'demasiados-intentos': 'Hubo varios intentos seguidos. Espera una hora e inténtalo de nuevo, para cuidar tu cuenta.' };
     const pantallaCodigo = () => {
-      $('#pasCuerpo').innerHTML = `<h3>Entrar como pastor</h3><p class="suave">Escribe o pega tu código de pastor. Si aún no lo tienes, pídelo aquí abajo.</p>
-        <input id="pkHoja" class="cod-in cod-pas" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Tu código de pastor" aria-label="Código de pastor">
-        <p id="pasErr" class="error" role="alert" hidden></p>
-        <div class="hoja-bt"><button type="button" class="btn" id="pasEntrar">Entrar como pastor</button><button type="button" class="btn sec" id="pasPedir">Solicitar mi código de pastor</button><button type="button" class="btn sec" id="pasX">Ahora no</button></div>`;
+      $('#pasCuerpo').innerHTML = `<h3>Entrar como pastor</h3><p class=\"suave\">Escribe el código de 8 letras que te enviamos por correo, junto con ese mismo correo. Si usas la llave larga del computador, pégala en el primer campo.</p>
+        <label for=\"pkHoja\">Tu código de pastor</label>
+        <input id=\"pkHoja\" class=\"cod-in cod-pas\" type=\"text\" autocomplete=\"off\" autocapitalize=\"characters\" spellcheck=\"false\" placeholder=\"Ej. A1B2C3D4\" aria-label=\"Código de pastor\">
+        <label for=\"pkCor\">Tu correo <small class=\"suave\">(no hace falta con la llave larga)</small></label>
+        <input id=\"pkCor\" type=\"email\" maxlength=\"120\" autocomplete=\"email\" inputmode=\"email\" value=\"${esc((leer(K_CUENTA) || {}).correo || '')}\">
+        <p id=\"pasErr\" class=\"error\" role=\"alert\" hidden></p>
+        <div class=\"hoja-bt\"><button type=\"button\" class=\"btn\" id=\"pasEntrar\">Entrar como pastor</button><button type=\"button\" class=\"btn sec\" id=\"pasPedir\">Aún no tengo mi código: solicitarlo</button><button type=\"button\" class=\"btn sec\" id=\"pasX\">Ahora no</button></div>
+        <p class=\"suave pas-nota\">Entregamos el código solo después de confirmar a cada pastor. Así cuidamos a las personas de tu iglesia.</p>`;
       $('#pasX').onclick = cerrar; $('#pasPedir').onclick = pantallaPedir;
       $('#pkHoja').addEventListener('keydown', (e) => { if (e && e.key === 'Enter') entrar(); });
       $('#pasEntrar').onclick = entrar;
       setTimeout(() => { try { $('#pkHoja').focus(); } catch (e) { /* nada */ } }, 150);
     };
-    const entrar = async () => {
-      const txt = ($('#pkHoja').value || '').trim(); err('');
-      if (!txt) return err('Escribe o pega tu código de pastor.');
-      const p = llaveDePastor(txt);
-      if (!p) return err(/^[A-Za-z0-9]{8}$/.test(txt.replace(/\s+/g, '')) ? 'Ese código corto sirve para crear tu cuenta en el computador. Aquí pega el código largo de pastor (en el computador: Congregación → Código de tu iglesia → «Copiar llave de pastor»).' : 'Ese código no parece completo. Cópialo otra vez, completo.');
+    const entrarConLlave = async (p) => {
       const b = $('#pasEntrar'); b.disabled = true; b.textContent = 'Comprobando…';
       const r = await rpcRaw('solicitud_pastor_resolver', { p_codigo: p.codigo, p_secreto: p.secreto, p_id: crypto.randomUUID(), p_aprobar: false, p_mensaje: null });
       b.disabled = false; b.textContent = 'Entrar como pastor';
       if (!r.ok) { sono('error'); return err(r.falta ? 'Las funciones de pastor aún no están activadas. Avisa a quien administra la app.' : MOTIVOS['sin-internet']); }
-      if (r.data === 'sin-permiso') { sono('error'); return err('Ese código no corresponde a ninguna iglesia. Revisa que sea el último que copiaste.'); }
+      if (r.data === 'sin-permiso') { sono('error'); return err('Esa llave no corresponde a ninguna iglesia. Revisa que sea la última que copiaste.'); }
       guardar(K_PASTOR, p); cerrar(); sono('campana'); barraRefrescar('pastor'); ir('pastor');
+    };
+    const llaveTexto = (p) => 'PULPITO-PASTOR-' + btoa(JSON.stringify({ c: p.codigo, s: p.secreto }));
+    const pantallaIglesia = (nombre, correo) => {
+      $('#pasCuerpo').innerHTML = `<div class=\"pas-ok\" aria-hidden=\"true\">✅</div><h3>Código verificado</h3><p class=\"suave\">Bienvenido${nombre ? ', pastor de <b>' + esc(nombre) + '</b>' : ''}. ¿Cómo quieres seguir?</p>
+        <p id=\"pasErr\" class=\"error\" role=\"alert\" hidden></p>
+        <div class=\"hoja-bt\"><button type=\"button\" class=\"btn\" id=\"pasCrear\">Crear mi iglesia en Tierra Buena</button><button type=\"button\" class=\"btn sec\" id=\"pasYa\">Ya la tengo en el computador (pegar mi llave)</button></div>
+        <p class=\"suave pas-nota\">Al crearla recibirás un código de 6 letras para compartir con tus miembros. Tú decides a quién aceptas.</p>`;
+      $('#pasYa').onclick = pantallaCodigo;
+      $('#pasCrear').onclick = async () => {
+        const b = $('#pasCrear'); b.disabled = true; b.textContent = 'Creando…'; err('');
+        const bytes = new Uint8Array(32); crypto.getRandomValues(bytes); const secreto = Array.prototype.map.call(bytes, (x) => ('0' + x.toString(16)).slice(-2)).join('');
+        const r = await rpcRaw('iglesia_crear', { p_nombre: (nombre || 'Mi iglesia').slice(0, 80), p_eslogan: null, p_secreto: secreto });
+        const f = r.ok ? primera(r.data) : null;
+        if (!f || !f.ok) { b.disabled = false; b.textContent = 'Crear mi iglesia en Tierra Buena'; sono('error'); return err(r.falta ? 'Esta parte aún no está activada. Avisa a quien administra la app.' : !r.ok ? MOTIVOS['sin-internet'] : 'No pudimos crearla ahora. Inténtalo de nuevo en un momento.'); }
+        const p = { codigo: f.codigo_nuevo, secreto }; guardar(K_PASTOR, p); sono('campana');
+        $('#pasCuerpo').innerHTML = `<div class=\"pas-ok\" aria-hidden=\"true\">🎉</div><h3>¡Tu iglesia está lista!</h3><p class=\"suave\">Comparte este código con tus miembros:</p><p class=\"pas-cod\"><b>${esc(p.codigo)}</b></p>
+          <p class=\"suave\">Guarda tu llave de respaldo: te sirve si cambias de teléfono. No la compartas con nadie.</p>
+          <div class=\"hoja-bt\"><button type=\"button\" class=\"btn sec\" id=\"pasCopia\">Copiar mi llave de respaldo</button><button type=\"button\" class=\"btn\" id=\"pasIr\">Ir a mi panel</button></div>`;
+        $('#pasCopia').onclick = async () => { try { await navigator.clipboard.writeText(llaveTexto(p)); $('#pasCopia').textContent = 'Llave copiada ✓'; } catch (e) { $('#pasCopia').textContent = 'No se pudo copiar'; } };
+        $('#pasIr').onclick = () => { cerrar(); barraRefrescar('pastor'); ir('pastor'); };
+      };
+    };
+    const entrar = async () => {
+      const txt = ($('#pkHoja').value || '').trim(), correo = ($('#pkCor').value || '').trim(); err('');
+      if (!txt) return err('Escribe o pega tu código de pastor.');
+      const p = llaveDePastor(txt);
+      if (p) return entrarConLlave(p);
+      const cod = txt.replace(/[\s-]+/g, '').toUpperCase();
+      if (!/^[A-Z0-9]{8}$/.test(cod)) return err('El código tiene 8 letras o números. Si es una llave larga, cópiala otra vez completa.');
+      if (!CORREO_RE.test(correo)) return err('Escribe el mismo correo con el que pediste tu acceso.');
+      const b = $('#pasEntrar'); b.disabled = true; b.textContent = 'Comprobando…';
+      let r = await rpcRaw('pastor_movil_entrar', { p_codigo: cod, p_correo: correo });
+      if (!r.ok && r.falta) r = await rpcRaw('pastor_validar_codigo_v2', { p_codigo: cod, p_correo: correo });   // si aún no se corrió el SQL nuevo, usa el de siempre
+      b.disabled = false; b.textContent = 'Entrar como pastor';
+      if (!r.ok) { sono('error'); return err(r.falta ? 'Esta parte aún no está activada. Avisa a quien administra la app.' : MOTIVOS['sin-internet']); }
+      const f = primera(r.data) || {};
+      if (!f.ok) { sono('error'); return err(TXT_COD[f.mensaje] || TXT_COD['codigo-invalido']); }
+      sono('exito'); pantallaIglesia(f.iglesia, correo);
     };
     const pantallaPedir = () => {
       const cu = leer(K_CUENTA);
-      $('#pasCuerpo').innerHTML = `<h3>Solicitar mi código de pastor</h3><p class="suave">Cuéntanos quién eres y de qué iglesia. Lo revisamos y te enviamos el código a tu correo.</p>
+      $('#pasCuerpo').innerHTML = `<h3>Solicitar mi código de pastor</h3><p class="suave">Cuéntanos quién eres y de qué iglesia. Confirmamos a cada pastor para cuidar a la gente de su iglesia; tus datos se usan solo para eso. Te enviamos el código a tu correo.</p>
         <label for="spNom">Tu nombre</label><input id="spNom" type="text" maxlength="60" autocomplete="name">
         <label for="spCor">Tu correo</label><input id="spCor" type="email" maxlength="120" autocomplete="email" inputmode="email" value="${esc(cu && cu.correo ? cu.correo : '')}">
         <label for="spIgl">Nombre de tu iglesia y ciudad</label><input id="spIgl" type="text" maxlength="120" autocomplete="off" placeholder="Ej. Iglesia Camino Nuevo, Calama">
-        <label for="spMsg">¿Quieres contarnos algo? (opcional)</label><textarea id="spMsg" rows="2" maxlength="300"></textarea>
+        <label for="spCar">Tu cargo</label><input id="spCar" type="text" maxlength="60" autocomplete="off" placeholder="Ej. pastor principal">
+        <label for="spTel">Tu teléfono o WhatsApp</label><input id="spTel" type="tel" maxlength="30" autocomplete="tel" placeholder="Solo para confirmar que eres tú">
+        <label for="spEnl">Enlace público de tu iglesia o datos de otro pastor que te conozca</label><input id="spEnl" type="text" maxlength="140" autocomplete="off" placeholder="https://… o nombre y teléfono">
+        <label class="chk"><input id="spAc" type="checkbox"><span>Sirvo como pastor o líder y permito que confirmen mis datos con ese enlace o esa persona.</span></label>
         <p id="pasErr" class="error" role="alert" hidden></p>
         <div class="hoja-bt"><button type="button" class="btn" id="spEnv">Enviar solicitud</button><button type="button" class="btn sec" id="spAtras">‹ Ya tengo mi código</button></div>`;
       $('#spAtras').onclick = pantallaCodigo;
       $('#spEnv').onclick = async () => {
-        const nombre = $('#spNom').value.trim().replace(/\s+/g, ' '), correo = $('#spCor').value.trim(), igl = $('#spIgl').value.trim().replace(/\s+/g, ' '), msg = $('#spMsg').value.trim();
+        const nombre = $('#spNom').value.trim().replace(/\s+/g, ' '), correo = $('#spCor').value.trim(), igl = $('#spIgl').value.trim().replace(/\s+/g, ' ');
         if (nombre.length < 2) return err('Escribe tu nombre.');
         if (!CORREO_RE.test(correo)) return err('Revisa tu correo: parece incompleto.');
         if (igl.length < 3) return err('Escribe el nombre de tu iglesia.');
+        const car = $('#spCar').value.trim(), tel = $('#spTel').value.trim(), enl = $('#spEnl').value.trim();
+        if (car.length < 3) return err('Cuéntanos tu cargo (por ejemplo: pastor principal).');
+        if (tel.replace(/\D/g, '').length < 8) return err('Escribe un teléfono o WhatsApp con el código de tu ciudad.');
+        if (enl.length < 8) return err('Para confirmarlo, escribe el enlace público de tu iglesia o los datos de otro pastor o líder que te conozca.');
+        if (!$('#spAc').checked) return err('Marca la casilla para poder enviar tu solicitud.');
+        try { if (Date.now() - Number(localStorage.getItem('tb_sol_pastor') || 0) < 86400000) return err('Ya enviaste una solicitud hoy. La estamos revisando y te escribiremos a tu correo.'); } catch (e) { /* sin almacenamiento */ }
+        const msgFinal = ['Cargo: ' + car, 'Teléfono/WhatsApp: ' + tel, 'Enlace o referencia: ' + enl, 'Origen: app del celular'].join(' | ').slice(0, 290);
         err(''); const b = $('#spEnv'); b.disabled = true; b.textContent = 'Enviando…';
         let ok = false;
-        try { if (SB && SB.from) { const r = await SB.from('solicitudes_pastor').insert({ nombre: nombre.slice(0, 60), correo: correo.slice(0, 120), iglesia: igl.slice(0, 120), mensaje: msg ? msg.slice(0, 300) : null }); ok = !r.error; } } catch (e) { ok = false; }
+        try { if (SB && SB.from) { const r = await SB.from('solicitudes_pastor').insert({ nombre: nombre.slice(0, 60), correo: correo.slice(0, 120), iglesia: igl.slice(0, 120), mensaje: msgFinal }); ok = !r.error; } } catch (e) { ok = false; }
         if (!ok) { b.disabled = false; b.textContent = 'Enviar solicitud'; sono('error'); return err('No pudimos enviarla. Revisa tu internet e inténtalo otra vez.'); }
-        sono('exito');
+        sono('exito'); try { localStorage.setItem('tb_sol_pastor', String(Date.now())); } catch (e) { /* sin almacenamiento */ }
         $('#pasCuerpo').innerHTML = `<div class="pas-ok" aria-hidden="true">✉️</div><h3>¡Solicitud enviada!</h3><p class="suave">Revisaremos tu solicitud y te escribiremos a <b>${esc(correo)}</b> con tu código de pastor. Cuando lo tengas, vuelve a tocar <b>Soy pastor</b> y pégalo.</p><div class="hoja-bt"><button type="button" class="btn" id="spListo">Listo</button></div>`;
         $('#spListo').onclick = cerrar;
       };
@@ -2291,7 +2345,6 @@
     $('#pantalla').innerHTML = `<section class="saludo"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML('P', { g: perfilLeer().g, e: '🛡️' }, false)}<div><p class="suave m0">Modo pastor</p><h1 id="pIgl">Mi iglesia</h1><p class="suave m0">Código <b>${esc(p.codigo)}</b></p></div></section>
       <h2 class="sep">Para atender hoy</h2><div class="lista">${fil('t1', '👋', 'Solicitudes', 'Quién quiere unirse', 'sol')}${fil('t2', '🙏', 'Oraciones', 'Peticiones recibidas', 'ora')}${fil('t3', '🤝', 'Visitas', 'Quién pide que lo visites', 'vis')}</div>
       <h2 class="sep">Mi iglesia</h2><div class="lista">${fil('t4', '👥', 'Miembros', 'Quiénes forman tu iglesia', 'mie')}${fil('t1', '🕍', 'Ministerios y líderes', 'Grupos, personas y líderes', 'min')}${fil('t2', '📅', 'Agenda', 'Actividades y reuniones', 'age')}${fil('t3', '📣', 'Avisos', 'Mensajes para todos o un grupo', 'avi')}${fil('t4', '⚙️', 'Datos y código', 'Nombre, eslogan y código', 'dat')}</div>
-      <h2 class="sep">Juntos por el bien</h2><div class="grid">${activa('🌍', 'Juntos hacemos el bien', 'Impulsa un movimiento con tu iglesia y tu barrio.', 'juntos')}</div>
       <h2 class="sep">Aprende a sacarle el jugo</h2><div id="tbEjem" class="tb-ejem-caja"></div>
       <p class="suave sep16">💻 Las finanzas se administran solo desde el computador.</p>
       <button type="button" class="btn sec sep16" id="pSalir">Salir del modo pastor</button>`;
@@ -2714,8 +2767,22 @@
     if (!onbEstado.cambiar) $('#onbLuego').onclick = () => { onbGuardar(false); onbIr(); };
   }
   // ---------- Navegación ----------
-  const VISTAS = { iglesia: vistaIglesia, palabra: vistaPalabra, vida: vistaVida, perfil: vistaPerfil, pastor: vistaPastor };
-  const ORDEN_TAB = ['iglesia', 'palabra', 'vida', 'perfil', 'pastor']; let tabPrev = '';
+    // F902 · INICIO: el 5.º menú, al centro. Más aire y menos cosas. Aquí vive «Juntos hacemos el bien» (ya no está dentro de Vida).
+  function vistaInicio() {
+    const p = perfilLeer(), o = (() => { try { return onbLeer(); } catch (e) { return null; } })(), n = (p.n || (o && o.nombre) || '').split(' ')[0];
+    const h = new Date().getHours(), sal = h < 6 ? 'Qué bueno verte' : h < 12 ? 'Buenos días' : h < 19 ? 'Buenas tardes' : 'Buenas noches';
+    const rol = pastorLeer() ? 'pastor' : (leer(K_IG) ? 'miembro' : 'ambos');
+    $('#pantalla').innerHTML = `<section class="inicio"><p class="inicio-sal">${sal}${n ? ', ' + esc(n) : ''}</p><h1 class="inicio-t">Aquí la Palabra se vive</h1><div class="filete"></div>
+      ${(!leer(K_ID) && !pastorLeer()) ? `<div class="ent-top inicio-ent">${icoPastorHTML()}${icoCodigoHTML()}</div>` : ''}
+      <button type="button" class="card inicio-juntos" data-ir="juntos"><span class="inicio-ic" aria-hidden="true">🌍</span><span class="inicio-tx"><b>Juntos hacemos el bien</b><small>Movimientos para mejorar tu barrio y tu país. Súmate o inicia uno.</small></span><span class="flecha" aria-hidden="true">›</span></button>
+      <div class="grid">${activa('✨', 'Hoy lo hago', 'Un paso pequeño hoy. Intentarlo ya cuenta.', 'hacer')}${activa('📖', 'Leer la Biblia', 'Sigue donde ibas.', 'palabra')}</div>
+      <h2 class="sep">Para empezar</h2><div id="tbEjem"></div></section>`;
+    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ juntos: abrirJuntos, hacer: () => vistaHacer(null, vistaInicio), palabra: () => ir('palabra') }[b.dataset.ir] || (() => {}))()));
+    try { ligaCodigo(); } catch (e) { /* sin códigos */ }
+    try { if (window.TBEjemplos && $('#tbEjem')) window.TBEjemplos.pintar($('#tbEjem'), rol); } catch (e) { /* sin ejemplos */ }
+  }
+  const VISTAS = { inicio: vistaInicio, iglesia: vistaIglesia, palabra: vistaPalabra, vida: vistaVida, perfil: vistaPerfil, pastor: vistaPastor };
+  const ORDEN_TAB = ['iglesia', 'palabra', 'inicio', 'vida', 'perfil', 'pastor']; let tabPrev = '';
   function pantEntra(sentido) {                             // F885: la pantalla nueva entra deslizando (se apaga con «reducir movimiento» o Animaciones: más tranquilo)
     try {
       const p = $('#pantalla'); if (!p || !p.animate || document.documentElement.getAttribute('data-anim') === 'off' || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
@@ -2816,6 +2883,6 @@
     const at = { versiculo: vistaVersiculo, biblia: vistaBiblia, calendario: vistaCalendario };
     if (q && at[q] && !codigoDeEnlace()) setTimeout(() => { try { ir('palabra'); at[q](); } catch (e) { /* nada */ } }, 60);
   } catch (e) { /* sin atajo */ }
-  window.TBApp = { leer, guardar, esc, ir, vibra, svg, volverVida: () => ir('vida') };   // F901: lo usan identidad.js (ejemplos y Juntos)
+  window.TBApp = { leer, guardar, esc, ir, vibra, svg, volverVida: () => ir('inicio'), guardarAjuste: (c) => { perfilGuardar(c); ajusteAplicar(); } };   // F901: lo usan identidad.js (ejemplos y Juntos)
   syncInicio();
 })();

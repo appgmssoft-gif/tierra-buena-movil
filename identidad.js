@@ -1,5 +1,5 @@
 // identidad.js - F901. Dos piezas de la identidad de Tierra Buena:
-//   1) TBEjemplos: historias de la vida real (FICTICIAS, pero creíbles) que enseñan a sacarle el jugo a la app. Hay para miembros y para pastores.
+//   1) TBEjemplos: historias de la vida real (FICTICIAS, pero creíbles) que enseñan a aprovechar bien la app. Hay para miembros y para pastores.
 //   2) TBJuntos: «Juntos hacemos el bien», el lugar para iniciar y sumarse a movimientos sociales.
 // CSP: sin atributo style en el HTML; los anchos de las barras se ponen con element.style.setProperty.
 'use strict';
@@ -21,9 +21,9 @@
   // =====================================================================================================
   const EJ = {
     miembro: [
-      { ic: '🙏', t: 'Pedir oración sin dar la cara', quien: 'Marcela, 34 años, madre soltera', escena: 'Hace dos semanas le recortaron las horas en el trabajo. No quería contarlo en el grupo, le daba vergüenza.',
-        pasos: ['Abrió «Pedir oración» y eligió «Solo mi pastor».', 'Marcó «Ocultar mi nombre» y escribió la petición con sus palabras.', 'Volvió a ver «Mis peticiones» para saber si ya la habían leído.'],
-        res: 'Su pastor oró por ella y le escribió esa misma semana. Nadie más supo quién era.', tab: 'iglesia', di: 'oracion', btn: 'Pedir oración' },
+      { ic: '🙏', t: 'Pedir oración con discreción', quien: 'Marcela, 34 años, madre soltera', escena: 'Hace dos semanas le recortaron las horas en el trabajo. Prefirió no contarlo en el grupo y quiso compartirlo solo con su pastor, con confianza y en privado.',
+        pasos: ['Abrió «Pedir oración» y eligió «Solo mi pastor».', 'Marcó «Ocultar mi nombre» para cuidar su privacidad y escribió la petición con sus palabras.', 'Volvió a ver «Mis peticiones» para saber si ya la habían leído.'],
+        res: 'Su pastor oró por ella y le escribió esa misma semana. Su nombre se mantuvo en reserva.', tab: 'iglesia', di: 'oracion', btn: 'Pedir oración' },
       { ic: '🤝', t: 'Pedir una visita cuando cuesta salir', quien: 'Don Hernán, 78 años', escena: 'Después de la operación de cadera ya no puede ir a la iglesia. Su nieta le configuró la app.',
         pasos: ['Su nieta abrió «Pedir visita» y eligió «Acompañamiento».', 'Puso dos horarios que le acomodan y marcó urgencia «Esta semana».', 'La dirección solo la ve el pastor cuando acepta la visita.'],
         res: 'El pastor aceptó, llegó el jueves con dos hermanos de la iglesia y le llevaron la comunión.', tab: 'iglesia', di: 'visita', btn: 'Pedir una visita' },
@@ -36,13 +36,13 @@
       { ic: '🧱', t: 'Orar juntos por una petición real', quien: 'Familia Soto', escena: 'Cada noche leen una petición del Muro antes de dormir.',
         pasos: ['Abren el «Muro» con los niños.', 'Leen la petición que el pastor compartió (sin nombres si así se pidió).', 'Oran un minuto y la marcan como acompañada.'],
         res: 'Los niños aprendieron a orar por otros y una de las peticiones se respondió: la celebraron juntos.', tab: 'iglesia', di: 'muro', btn: 'Abrir el Muro' },
-      { ic: '✨', t: 'Convertir la lectura en un paso', quien: 'Ignacio, 27 años', escena: 'Leía mucho pero sentía que nada cambiaba en su día a día.',
+      { ic: '✨', t: 'Convertir la lectura en un paso', quien: 'Ignacio, 27 años', escena: 'Leía con constancia, pero quería que la lectura se notara en su día a día.',
         pasos: ['Terminó un capítulo y tocó «Hoy lo hago».', 'Eligió un paso de 5 minutos: llamar a su hermano con quien estaba distanciado.', 'Lo marcó «Lo intenté» (también cuenta).'],
         res: 'La llamada duró 20 minutos. A los 14 días tenía una racha y ya no se perdía la lectura.', tab: 'vida', di: 'hacer', btn: 'Probar «Hoy lo hago»' },
       { ic: '📖', t: 'Leer sin internet, de camino al trabajo', quien: 'Paulina, 52 años, viaja 2 horas al día', escena: 'En el metro casi no hay señal.',
         pasos: ['Abrió la Biblia una vez con internet en casa.', 'Los libros que lee quedan guardados para leer sin conexión.', 'Eligió un plan de lectura de 10 minutos y activó «Escuchar» para seguir con los ojos cerrados.'],
         res: 'Terminó el Evangelio de Marcos en tres semanas, todo en el metro.', tab: 'palabra', di: 'biblia', btn: 'Abrir la Biblia' },
-      { ic: '🗓', t: 'Un plan que de verdad se cumple', quien: 'Matías, 30 años', escena: 'Había empezado tres planes anuales y los dejó a las dos semanas.',
+      { ic: '🗓', t: 'Un plan que de verdad se cumple', quien: 'Matías, 30 años', escena: 'Había comenzado tres planes anuales y no logró sostenerlos más de dos semanas.',
         pasos: ['Cambió a un plan corto de 7 minutos diarios.', 'Eligió la hora de «después del café».', 'Miró su avance cada domingo.'],
         res: '90 días seguidos. «Lo pequeño que se repite le gana a lo grande que se abandona», dice.', tab: 'palabra', di: 'planes', btn: 'Ver los planes' },
       { ic: '📜', t: 'La fábula del mes en familia', quien: 'Los Ríos (papá, mamá y dos niños)', escena: 'Querían un momento sin pantallas los domingos.',
@@ -56,13 +56,13 @@
         res: 'El equipo ahora tiene un protocolo de higiene sencillo, hecho por ellos mismos.', tab: 'vida', di: 'aprender', btn: 'Ver los cursos' },
       { ic: '💡', t: 'Del «¿y si…?» a un proyecto listo', quien: 'Jóvenes del sector Norte', escena: 'Querían ayudar a un asilo cercano pero no sabían por dónde empezar ni cuánto costaba.',
         pasos: ['Abrieron «Proyectos listos» y eligieron uno parecido.', 'Copiaron lugar, presupuesto y personas necesarias.', 'Lo adaptaron y lo presentaron a su pastor.'],
-        res: 'Primera visita al mes siguiente: 12 jóvenes, onces y música para 30 abuelitos.', tab: 'vida', di: 'proyectos', btn: 'Ver proyectos listos' },
+        res: 'Primera visita al mes siguiente: 12 jóvenes, onces y música para 30 personas mayores.', tab: 'vida', di: 'proyectos', btn: 'Ver proyectos listos' },
       { ic: '🌟', t: 'Vivir la acción del mes', quien: 'Sra. Gloria, 60 años', escena: 'El tema del mes era «Gratitud» y no sabía cómo vivirlo.',
         pasos: ['Abrió «Acción del mes» y leyó las formas de vivirla.', 'Agregó su propia acción: «Escribir una nota de gracias a alguien por semana».', 'Anotó cómo le fue al final del mes.'],
         res: 'Escribió cuatro notas. Una de ellas llegó a una vecina que estaba por mudarse.', tab: 'iglesia', di: 'accion', btn: 'Ver la acción del mes' },
       { ic: '🌍', t: 'Sumarse a un movimiento del barrio', quien: 'Felipe, 35 años', escena: 'Vio una publicación de «Abrigo para el invierno» y quiso aportar con lo que tenía.',
         pasos: ['Abrió «Juntos hacemos el bien» y tocó «Me sumo».', 'Reunió 3 abrigos de su familia y marcó «Hice mi parte».', 'Invitó a su equipo de fútbol con el mensaje listo.'],
-        res: 'El equipo juntó 21 abrigos. Se sumaron sin pertenecer a ninguna iglesia.', tab: 'vida', di: 'juntos', btn: 'Ver los movimientos' }
+        res: 'El equipo juntó 21 abrigos. Se sumaron sin pertenecer a ninguna iglesia.', tab: 'inicio', di: 'juntos', btn: 'Ver los movimientos' }
     ],
     pastor: [
       { ic: '👋', t: 'Recibir a quien llega, el mismo día', quien: 'Pastor Andrés, iglesia de 90 miembros', escena: 'Antes se enteraba de las visitas nuevas semanas después, por casualidad.',
@@ -70,7 +70,7 @@
         res: 'Pasó de un 20% a un 70% de personas nuevas que vuelven la semana siguiente.', tab: 'pastor', dp: 'sol', btn: 'Ver solicitudes' },
       { ic: '🙏', t: 'Orar por lo que realmente pasa', quien: 'Pastora Lorena', escena: 'Las peticiones se perdían en mensajes de WhatsApp sueltos.',
         pasos: ['Entra a «Oraciones» y las lee por tipo.', 'Responde a las más delicadas en privado.', 'Comparte en el Muro solo las que la persona autorizó.'],
-        res: 'Cada petición tiene respuesta. La congregación ora más y chismea menos.', tab: 'pastor', dp: 'ora', btn: 'Ver oraciones' },
+        res: 'Cada petición tiene respuesta. La congregación ora más y comparte con más cuidado.', tab: 'pastor', dp: 'ora', btn: 'Ver oraciones' },
       { ic: '🤝', t: 'Organizar las visitas de la semana', quien: 'Pastor Elías', escena: 'Tenía 6 pedidos de visita y solo dos tardes libres.',
         pasos: ['En «Visitas» ordenó por urgencia.', 'Aceptó las urgentes y delegó dos a un líder de ministerio.', 'Dejó un mensaje breve a cada persona con el día acordado.'],
         res: 'Nadie esperó más de 4 días y su semana quedó ordenada.', tab: 'pastor', dp: 'vis', btn: 'Ver visitas' },
@@ -94,26 +94,43 @@
         res: 'La predicación y la vida de la semana empezaron a hablar del mismo tema.', tab: 'iglesia', di: 'accion', btn: 'Ver la acción del mes' },
       { ic: '🌍', t: 'Liderar un movimiento con el barrio', quien: 'Pastor Daniel', escena: 'Su iglesia está rodeada de vecinos que nunca han entrado.',
         pasos: ['Abrió «Juntos hacemos el bien» y creó «Una olla, un barrio».', 'Invitó a otras dos iglesias y a la junta de vecinos con el mensaje listo.', 'Midió cuántos platos se entregaron cada sábado.'],
-        res: 'En tres meses: 340 platos y 4 familias nuevas pidieron visita por confianza, no por promoción.', tab: 'vida', di: 'juntos', btn: 'Iniciar un movimiento' },
+        res: 'En tres meses: 340 platos y 4 familias nuevas pidieron visita por confianza, no por promoción.', tab: 'inicio', di: 'juntos', btn: 'Iniciar un movimiento' },
       { ic: '🛡️', t: 'Cuidar la privacidad de su gente', quien: 'Pastor Ricardo', escena: 'Una familia le pidió que su situación no se supiera.',
         pasos: ['Respondió la petición en privado, sin compartirla en el Muro.', 'Explicó a quienes preguntan qué ve el pastor y qué no (está en «Mi privacidad»).', 'Nunca puso nombres completos en un aviso.'],
         res: 'La confianza subió: la gente pide más porque sabe que se cuida lo que cuenta.', tab: 'pastor', dp: 'ora', btn: 'Ver oraciones' }
     ]
   };
 
+  // Carrusel de tarjetas (F902): se desliza con el dedo, tiene flechas, puntos y pausa. Sin animación continua: solo avanza una tarjeta cada 14 s mientras se ve en pantalla.
   function pintarEjemplos(caja, rol) {
     if (!caja) return;
     let actual = rol === 'pastor' ? 'pastor' : 'miembro';
+    let reloj = 0, obs = null;
+    const parar = () => { if (reloj) { clearInterval(reloj); reloj = 0; } };
     const dibuja = () => {
-      const L = EJ[actual];
+      parar(); if (obs) { try { obs.disconnect(); } catch (e) { /* sin observador */ } obs = null; }
+      const L = EJ[actual]; let idx = 0, auto = !calma();
       caja.innerHTML = `<div class="tbej" data-rol="${actual}">
-        <div class="tbej-cab"><span class="tbej-ic" aria-hidden="true">${actual === 'pastor' ? '🛡️' : '🌱'}</span><div><b>${actual === 'pastor' ? 'Cómo cuida mejor un pastor' : 'Cómo le saca el jugo un miembro'}</b><small>Historias de ejemplo, inventadas pero muy reales. Toca una y mira cómo se usa.</small></div></div>
+        <div class="tbej-cab"><span class="tbej-ic" aria-hidden="true">${actual === 'pastor' ? '🛡️' : '🌱'}</span><div><b>${actual === 'pastor' ? 'Cómo cuida mejor a su iglesia un pastor' : 'Cómo aprovecha la app un miembro'}</b><small>Historias de ejemplo, inventadas pero muy reales. Desliza para verlas y toca una para probarla.</small></div></div>
         ${rol === 'ambos' ? `<div class="tbej-seg" role="tablist" aria-label="Ver ejemplos para"><button type="button" role="tab" data-r="miembro" aria-selected="${actual === 'miembro'}">Soy miembro</button><button type="button" role="tab" data-r="pastor" aria-selected="${actual === 'pastor'}">Soy pastor</button></div>` : ''}
-        <div class="tbej-lista">${L.map((e, i) => `<details class="tbej-it" data-i="${i}"><summary><span class="tbej-e" aria-hidden="true">${e.ic}</span><span class="tbej-s"><b>${esc(e.t)}</b><small>${esc(e.quien)}</small></span><span class="tbej-fl" aria-hidden="true">›</span></summary>
-          <div class="tbej-cu"><p class="tbej-esc">${esc(e.escena)}</p><p class="tbej-h">Qué hizo en la app</p><ol>${e.pasos.map((p) => `<li>${esc(p)}</li>`).join('')}</ol><p class="tbej-res"><b>Resultado:</b> ${esc(e.res)}</p><button type="button" class="tbej-go" data-i="${i}">${esc(e.btn)} ›</button><span class="tbej-fic">Ejemplo ficticio</span></div></details>`).join('')}</div></div>`;
+        <div class="tbej-car" role="region" aria-roledescription="carrusel" aria-label="Ejemplos de la vida real" tabindex="0">${L.map((e, i) => `<article class="tbej-card" data-i="${i}" data-hu="${(i * 37) % 360}" aria-label="${i + 1} de ${L.length}">
+          <div class="tbej-arte" aria-hidden="true"><span class="tbej-big">${e.ic}</span><i class="tbej-hoja a"></i><i class="tbej-hoja b"></i></div>
+          <div class="tbej-txt"><span class="tbej-fic">Ejemplo ficticio</span><h3>${esc(e.t)}</h3><p class="tbej-q">${esc(e.quien)}</p><p class="tbej-esc">${esc(e.escena)}</p><p class="tbej-h">Qué hizo en la app</p><ol>${e.pasos.map((p) => `<li>${esc(p)}</li>`).join('')}</ol><p class="tbej-res"><b>Resultado:</b> ${esc(e.res)}</p><button type="button" class="tbej-go" data-i="${i}">${esc(e.btn)} ›</button></div></article>`).join('')}</div>
+        <div class="tbej-ctl"><button type="button" class="tbej-fl2" data-d="-1" aria-label="Ejemplo anterior">‹</button><span class="tbej-pt" aria-live="polite"></span><button type="button" class="tbej-pa" aria-label="Pausar o seguir pasando solas">${auto ? '⏸' : '▶'}</button><button type="button" class="tbej-fl2" data-d="1" aria-label="Ejemplo siguiente">›</button></div></div>`;
+      const car = $('.tbej-car', caja), pt = $('.tbej-pt', caja), pa = $('.tbej-pa', caja);
+      $$('.tbej-card', car).forEach((c) => c.style.setProperty('--hu', c.dataset.hu));   // CSP: sin style en el HTML
+      const marca = () => { pt.textContent = (idx + 1) + ' de ' + L.length; };
+      const ir = (n, suave) => { idx = (n + L.length) % L.length; const c = car.children[idx]; if (c) { try { car.scrollTo({ left: c.offsetLeft - car.offsetLeft, behavior: suave && !calma() ? 'smooth' : 'auto' }); } catch (e) { car.scrollLeft = c.offsetLeft; } } marca(); };
+      let t = 0; car.addEventListener('scroll', () => { if (t) return; t = setTimeout(() => { t = 0; const w = car.clientWidth || 1; const n = Math.round(car.scrollLeft / (car.children[0] ? car.children[0].offsetWidth + 10 : w)); if (n !== idx && car.children[n]) { idx = n; marca(); } }, 120); }, { passive: true });
+      $$('.tbej-fl2', caja).forEach((b) => { b.onclick = () => { auto = false; pa.textContent = '▶'; snd('tab', 1); ir(idx + Number(b.dataset.d), true); }; });
+      pa.onclick = () => { auto = !auto; pa.textContent = auto ? '⏸' : '▶'; snd('tab', 2); };
+      car.addEventListener('touchstart', () => { auto = false; pa.textContent = '▶'; }, { passive: true });
+      car.addEventListener('keydown', (ev) => { if (ev.key === 'ArrowRight') { ev.preventDefault(); ir(idx + 1, true); } else if (ev.key === 'ArrowLeft') { ev.preventDefault(); ir(idx - 1, true); } });
       $$('.tbej-seg button', caja).forEach((b) => { b.onclick = () => { snd('tab', b.dataset.r === 'pastor' ? 3 : 1); actual = b.dataset.r; dibuja(); }; });
       $$('.tbej-go', caja).forEach((b) => { b.onclick = () => probar(L[Number(b.dataset.i)]); });
-      $$('.tbej-it', caja).forEach((d) => d.addEventListener('toggle', () => { if (d.open) $$('.tbej-it', caja).forEach((o) => { if (o !== d) o.open = false; }); }));
+      marca();
+      const arrancar = () => { if (reloj || calma()) return; reloj = setInterval(() => { if (auto && !document.hidden) ir(idx + 1, true); }, 14000); };
+      if (typeof IntersectionObserver === 'function') { obs = new IntersectionObserver((en) => { if (en[0] && en[0].isIntersecting) arrancar(); else parar(); }, { threshold: 0.4 }); obs.observe(car); } else arrancar();
     };
     dibuja();
   }
@@ -184,7 +201,7 @@
       <h2 class="sep">La receta de un movimiento</h2>
       <ol class="tbj-receta">${RECETA.map((r, i) => `<li><span class="tbj-n" aria-hidden="true">${r[0]}</span><span><b>${i + 1}. ${r[1]}</b><small>${r[2]}</small></span></li>`).join('')}</ol>
       <div class="card tbj-reglas"><div class="t"><span aria-hidden="true">🛡️</span>Reglas del bien</div><ul>${REGLAS.map((r) => `<li>${esc(r)}</li>`).join('')}</ul></div>`;
-    $('#tbjVolver').onclick = () => { snd('vuelve'); if (ap.ir) ap.ir('vida'); };
+    $('#tbjVolver').onclick = () => { snd('vuelve'); if (ap.ir) ap.ir('inicio'); };
     pintarMios(); pintarLista(); aplicarAnchos(pant);
     $('#tbjNuevo').onclick = () => { snd('abre'); formulario(); };
     try { window.scrollTo(0, 0); } catch (x) { /* nada */ }

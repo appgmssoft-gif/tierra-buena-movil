@@ -1,0 +1,28 @@
+/* rendimiento.css - F902. Mantiene TODOS los efectos y la decoración, pero evita que el teléfono los pague cuando no se ven.
+   Las clases las pone rendimiento.js. Nada de esto quita un efecto: solo lo pausa mientras nadie lo está mirando. */
+html.tb-pausa *,html.tb-pausa *::before,html.tb-pausa *::after{animation-play-state:paused!important}
+.tb-fuera,.tb-fuera::before,.tb-fuera::after{animation-play-state:paused!important}
+html.tb-scroll .tb-anima,html.tb-scroll .tb-anima::before,html.tb-scroll .tb-anima::after{animation-play-state:paused!important}
+/* El navegador no pinta lo que está lejos de la pantalla */
+.card,.grid>*{content-visibility:auto;contain-intrinsic-size:auto 140px}
+/* Nivel 1 «equilibrado»: el cristal desenfocado (lo que más calienta) pasa a un cristal liso casi idéntico */
+html[data-eco="1"] *,html[data-eco="1"] *::before,html[data-eco="1"] *::after{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html[data-eco="1"] .barra,html[data-eco="1"] .btn-menu,html[data-eco="1"] .barra-top{background-color:color-mix(in srgb,var(--tarjeta) 94%,transparent)}
+/* Nivel 2 «ahorro»: además, lo que se mueve para siempre se queda quieto (la decoración sigue puesta) */
+html[data-eco="2"] .tb-anima,html[data-eco="2"] .tb-anima::before,html[data-eco="2"] .tb-anima::after{animation-play-state:paused!important}
+html[data-eco="2"] *{text-shadow:none!important}
+/* acceso rápido «Efectos y sonido» */
+.tb-rapido{position:fixed;z-index:10;top:calc(10px + var(--sa-t,0px));right:calc(12px + var(--sa-r,0px));width:48px;height:48px;padding:0;border:0;border-radius:50%;display:grid;place-items:center;font-size:1.25rem;background:var(--cristal,var(--tarjeta));color:var(--tinta);box-shadow:0 6px 18px -8px rgba(0,0,0,.5),0 0 0 1px color-mix(in srgb,var(--oro) 45%,transparent);font-family:inherit}
+.tb-rapido:active{transform:scale(.94)}
+.tb-hoja-r{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.45)}
+.tb-hoja-r>div{width:min(560px,100%);border-radius:26px 26px 0 0;background:var(--papel);padding:18px 18px calc(18px + var(--sa-b,0px));box-shadow:0 -12px 40px -12px rgba(0,0,0,.6)}
+.tb-hoja-r h2{margin:0 0 4px;font-size:1.2rem}.tb-hoja-r p{margin:0 0 12px;color:var(--suave);line-height:1.4}
+.tb-fila{display:flex;align-items:center;gap:12px;min-height:58px;padding:8px 12px;border-radius:16px;background:color-mix(in srgb,var(--tarjeta) 88%,var(--papel));box-shadow:inset 0 0 0 1px var(--linea);margin-bottom:8px}
+.tb-fila b{display:block}.tb-fila small{display:block;color:var(--suave);line-height:1.3}
+.tb-fila .ic{font-size:1.4rem;width:38px;text-align:center}.tb-fila .tx{flex:1}
+.tb-int{min-width:76px;min-height:44px;border:0;border-radius:999px;font:800 .9rem/1 inherit;font-family:inherit;color:var(--tinta);background:color-mix(in srgb,var(--tinta) 10%,transparent)}
+.tb-int[aria-pressed=true]{color:var(--papel);background:linear-gradient(150deg,var(--verde),color-mix(in srgb,var(--verde) 60%,#000))}
+.tb-niv{display:flex;gap:4px;padding:4px;border-radius:999px;background:color-mix(in srgb,var(--tinta) 8%,transparent)}
+.tb-niv button{flex:1;min-height:40px;border:0;border-radius:999px;background:none;color:var(--suave);font:700 .82rem/1 inherit;font-family:inherit;padding:0 6px}
+.tb-niv button[aria-pressed=true]{background:var(--verde);color:var(--papel)}
+.tb-cerrar{width:100%;min-height:50px;margin-top:6px;border:0;border-radius:16px;font:800 1rem/1 inherit;font-family:inherit;background:linear-gradient(150deg,var(--verde),color-mix(in srgb,var(--verde) 60%,#000));color:var(--papel)}

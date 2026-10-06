@@ -51,7 +51,7 @@
       <rect width="400" height="800" fill="url(#fvNc)"/>${e}<circle class="fv-luna-h" cx="90" cy="140" r="64"/><path class="fv-luna" transform="translate(70 120) scale(1.7)" d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/>
       <path class="fv-fugaz" d="M0 0L-70 36"/><path class="fv-col fv-mon1" d="M0 600 L70 520 L130 580 L210 480 L290 570 L340 530 L400 590 V800 H0z"/><path class="fv-col fv-mon2" d="M0 690 L90 620 L170 680 L260 610 L400 690 V800 H0z"/></svg>`;
   }
-  const LUGAR = { palabra: 'palabra', vida: 'vida', iglesia: 'iglesia', perfil: 'perfil', pastor: 'iglesia' };
+  const LUGAR = { inicio: 'palabra', palabra: 'palabra', vida: 'vida', iglesia: 'iglesia', perfil: 'perfil', pastor: 'iglesia' };
   function fondo() {
     let f = $('#fondoVivo');
     if (!f) { f = document.createElement('div'); f.id = 'fondoVivo'; f.setAttribute('aria-hidden', 'true'); f.innerHTML = escenaPalabra() + escenaVida() + escenaIglesia() + escenaPerfil(); document.body.insertBefore(f, document.body.firstChild); }

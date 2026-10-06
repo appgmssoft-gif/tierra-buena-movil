@@ -1,4 +1,4 @@
-// sonido.js - F900. Identidad sonora de Tierra Buena. Todo se genera en el teléfono (WebAudio): no hay archivos, no hay derechos de autor, pesa casi nada.
+// sonido.js - F902 (melodía de apertura + coro suave en cada nota). F900. Identidad sonora de Tierra Buena. Todo se genera en el teléfono (WebAudio): no hay archivos, no hay derechos de autor, pesa casi nada.
 // FIRMA SONORA: tres notas que suben (tierra → brote → cielo): Sol4 · Re5 · Si5, con cola larga y un destello. Es lo primero que se oye y vuelve en los logros.
 // Familia: todos los sonidos usan la misma escala (pentatónica de Sol) y el mismo «timbre cálido» (seno + triángulo suave, ataque redondo, algo de eco), para que suenen a UNA sola app.
 // Regla del usuario: en CADA sesión de trabajo se mejora el sonido (ver compartido/docs/SIGUIENTE_SESION.md → «SONIDO»).
@@ -38,6 +38,7 @@
     fl.type = 'lowpass'; fl.frequency.value = opc.corte || 4200; fl.Q.value = 0.4;
     g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(vol, t + (opc.ataque || 0.012)); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
     o1.connect(g); o2.connect(g2); g2.connect(g); g.connect(fl); fl.connect(maestro);
+    if (!opc.sinCoro) { const o3 = ctx.createOscillator(), g3 = ctx.createGain(); o3.type = 'sine'; o3.frequency.value = f; o3.detune.value = -7; g3.gain.value = 0.45; o3.connect(g3); g3.connect(g); o3.start(t); o3.stop(t + dur + 0.05); }   // F902: coro suave = más cuerpo, más agradable
     if (eco && (opc.eco == null ? 0.5 : opc.eco) > 0) { const e = ctx.createGain(); e.gain.value = opc.eco == null ? 0.5 : opc.eco; fl.connect(e); e.connect(eco); }
     o1.start(t); o2.start(t); o1.stop(t + dur + 0.05); o2.stop(t + dur + 0.05);
   }
@@ -56,11 +57,13 @@
   const API = {
     activo,
     poner(v) { try { localStorage.setItem(K, v ? '1' : '0'); } catch (e) { /* nada */ } if (v) API.exito(); },
-    firma: ok(function () {                       // la firma de Tierra Buena
-      nota(NOTAS.G4, 0.00, 1.6, 0.20, { eco: 0.7 }); nota(NOTAS.D5, 0.22, 1.7, 0.19, { eco: 0.7 }); nota(NOTAS.B5, 0.46, 2.6, 0.17, { eco: 0.9, brillo: 0.24 });
-      nota(NOTAS.G3, 0.00, 2.4, 0.10, { eco: 0.4, corte: 900 });   // el «suelo»: la tierra buena
-      soplo(0.05, 1.1, 0.045, 400, 3200);
-      nota(NOTAS.G6, 0.78, 1.8, 0.05, { eco: 1, brillo: 0 });      // destello final
+    firma: ok(function () {                       // F902: MELODÍA DE APERTURA (~5 s): la tierra (G3+D4) · la semilla sube · brota · y se abre al cielo con un acorde
+      nota(NOTAS.G3, 0.00, 4.8, 0.10, { eco: 0.5, corte: 900, ataque: 0.7, sinCoro: true }); nota(NOTAS.D4, 0.35, 4.4, 0.06, { eco: 0.6, corte: 1200, ataque: 0.9, sinCoro: true });   // el «suelo»
+      const M = [['G4', 0.00, 1.0, 0.17], ['A4', 0.30, 0.9, 0.15], ['D5', 0.62, 1.1, 0.16], ['B4', 1.00, 0.9, 0.12], ['E5', 1.34, 1.0, 0.15], ['D5', 1.76, 0.9, 0.12], ['G5', 2.20, 1.5, 0.15]];
+      M.forEach((n) => nota(NOTAS[n[0]], n[1], n[2], n[3], { eco: 0.7 }));
+      nota(NOTAS.B5, 2.70, 2.6, 0.13, { eco: 0.9, brillo: 0.24 }); nota(NOTAS.D5, 2.70, 2.4, 0.09, { eco: 0.8 }); nota(NOTAS.G4, 2.70, 2.6, 0.10, { eco: 0.7 });   // el acorde final: ya brotó
+      nota(NOTAS.D6, 3.30, 0.7, 0.045, { eco: 0.9, brillo: 0.3 }); nota(NOTAS.G6, 3.55, 1.1, 0.035, { eco: 1, brillo: 0.3 });   // destellos
+      soplo(0.05, 1.4, 0.04, 400, 3000);
     }),
     toque: ok(function () { nota(NOTAS.D6, 0, 0.11, 0.06, { eco: 0.1, brillo: 0.05, ataque: 0.004 }); }),
     suave: ok(function () { nota(NOTAS.A5, 0, 0.16, 0.05, { eco: 0.2, brillo: 0.05, ataque: 0.006 }); }),
