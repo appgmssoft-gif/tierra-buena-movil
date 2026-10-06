@@ -2360,7 +2360,7 @@
           }
         } catch (e) { ok = false; detalle = 'red: ' + (e && e.message ? e.message : e); }
         if (!ok) { try { console.warn('solicitud pastor:', detalle); window.tbUltimoError = detalle; } catch (e2) { /* nada */ } }
-        if (!ok) { b.disabled = false; b.textContent = 'Enviar solicitud'; sono('error'); return err(/42501|row-level|permission/i.test(detalle) ? 'No pudimos enviarla: falta activar un permiso en el servidor. Avisa a quien administra la app (código 42501).' : /fetch|network|red:/i.test(detalle) ? 'No pudimos enviarla. Revisa tu internet e inténtalo otra vez.' : 'No pudimos enviarla (' + (detalle.trim().slice(0, 60) || 'sin detalle') + '). Avisa a quien administra la app.'); }
+        if (!ok) { b.disabled = false; b.textContent = 'Enviar solicitud'; sono('error'); if (detalle === 'demasiadas' || detalle === 'saturado') return err(detalle === 'demasiadas' ? 'Este correo ya pidió varias veces hoy. Escríbenos a softappgms@outlook.com y lo revisamos contigo.' : 'Hay muchas solicitudes en este momento. Inténtalo en una hora.'); return err(/42501|row-level|permission/i.test(detalle) ? 'No pudimos enviarla: falta activar un permiso en el servidor. Avisa a quien administra la app (código 42501).' : /fetch|network|red:/i.test(detalle) ? 'No pudimos enviarla. Revisa tu internet e inténtalo otra vez.' : 'No pudimos enviarla (' + (detalle.trim().slice(0, 60) || 'sin detalle') + '). Avisa a quien administra la app.'); }
         sono('exito'); try { const reg2 = JSON.parse(localStorage.getItem('tb_sol_pastor_reg') || '[]').filter((t) => Date.now() - t < 86400000); reg2.push(Date.now()); localStorage.setItem('tb_sol_pastor_reg', JSON.stringify(reg2)); } catch (e) { /* sin almacenamiento */ }
         $('#pasCuerpo').innerHTML = `<div class="pas-ok" aria-hidden="true">✉️</div><h3>¡Solicitud enviada!</h3><p class="suave">Revisaremos tu solicitud y te escribiremos a <b>${esc(correo)}</b> con tu código de pastor. Cuando lo tengas, vuelve a tocar <b>Soy pastor</b> y pégalo.</p><div class="hoja-bt"><button type="button" class="btn" id="spListo">Listo</button></div>`;
         $('#spListo').onclick = cerrar;
@@ -2801,17 +2801,75 @@
   }
   // ---------- Navegación ----------
     // F902 · INICIO: el 5.º menú, al centro. Más aire y menos cosas. Aquí vive «Juntos hacemos el bien» (ya no está dentro de Vida).
-  let relojInicio = 0;
-  function vistaInicio() {                                  // F904: INICIO = espacio de calma, como el lugar de descanso de un juego. Sin atajos, sin códigos, sin ejemplos: las opciones viven abajo.
+  let relojInicio = 0, calmaIdle = 0, calmaVela = null, calmaResp = [];
+  function calmaSoltar() {                                   // al salir de Inicio se apaga todo: reloj, pausa por quietud, respiración y pantalla encendida
+    if (relojInicio) { clearInterval(relojInicio); relojInicio = 0; }
+    if (calmaIdle) { clearTimeout(calmaIdle); calmaIdle = 0; }
+    calmaResp.forEach(clearTimeout); calmaResp = [];
+    if (calmaVela) { try { calmaVela.release(); } catch (e) { /* nada */ } calmaVela = null; }
+  }
+  function vistaInicio() {                                  // F906: INICIO = lugar de descanso. Sutil e interactivo: toca el prado y cae una semilla (onda + nota suave); respira con el orbe; tras un rato se atenúa para dejarla abierta sin molestar.
+    calmaSoltar();
     const p = perfilLeer(), o = (() => { try { return onbLeer(); } catch (e) { return null; } })(), n = (p.n || (o && o.nombre) || '').split(' ')[0];
     const FRASES = ['Descansa. Aquí no hay nada que hacer.', 'Respira hondo. Estás en buena tierra.', 'Todo lo que necesitas hoy ya viene en camino.', 'Quédate un momento. La paz también es un lugar.', 'Lo sembrado con paciencia siempre da fruto.', 'No corras. Hoy basta con estar.'];
     const hoy = new Date(), frase = FRASES[(hoy.getFullYear() * 366 + hoy.getMonth() * 31 + hoy.getDate()) % FRASES.length];
-    const momento = () => { const h = new Date().getHours(); return h < 6 ? ['noche', 'Qué bueno verte despierto'] : h < 12 ? ['alba', 'Buenos días'] : h < 19 ? ['dia', 'Buenas tardes'] : ['noche', 'Buenas noches']; };
-    const m = momento();
-    $('#pantalla').innerHTML = `<section class="calma calma-${m[0]}" aria-label="Espacio de calma"><i class="calma-sol" aria-hidden="true"></i><i class="calma-colina c1" aria-hidden="true"></i><i class="calma-colina c2" aria-hidden="true"></i><i class="calma-colina c3" aria-hidden="true"></i><i class="calma-luz l1" aria-hidden="true"></i><i class="calma-luz l2" aria-hidden="true"></i><i class="calma-luz l3" aria-hidden="true"></i>
-      <div class="calma-cuerpo"><p class="calma-sal" id="calmaSal">${m[1]}${n ? ', ' + esc(n) : ''}</p><p class="calma-hora" id="calmaHora" aria-live="off"></p><p class="calma-fecha" id="calmaFecha"></p><p class="calma-frase">${esc(frase)}</p></div></section>`;
-    const pinta = () => { try { const d = new Date(), h = $('#calmaHora'); if (!h) { clearInterval(relojInicio); relojInicio = 0; return; } h.textContent = d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', hour12: false }); const f = $('#calmaFecha'); if (f) f.textContent = d.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' }); } catch (e) { /* sin hora */ } };
-    pinta(); if (relojInicio) clearInterval(relojInicio); relojInicio = setInterval(pinta, 15000);
+    const h0 = hoy.getHours(), m = h0 < 6 ? ['noche', 'Qué bueno verte despierto'] : h0 < 12 ? ['alba', 'Buenos días'] : h0 < 19 ? ['dia', 'Buenas tardes'] : ['noche', 'Buenas noches'];
+    const hayVela = !!(navigator.wakeLock && navigator.wakeLock.request);
+    $('#pantalla').innerHTML = `<section class="calma calma-${m[0]}" id="calma" aria-label="Espacio de calma"><i class="calma-sol" aria-hidden="true"></i><i class="calma-colina c1" aria-hidden="true"></i><i class="calma-colina c2" aria-hidden="true"></i><i class="calma-colina c3" aria-hidden="true"></i><i class="calma-luz l1" aria-hidden="true"></i><i class="calma-luz l2" aria-hidden="true"></i><i class="calma-luz l3" aria-hidden="true"></i>
+      <div class="calma-cuerpo" id="calmaCuerpo"><p class="calma-sal">${m[1]}${n ? ', ' + esc(n) : ''}</p><p class="calma-hora" id="calmaHora" aria-live="off"></p><p class="calma-fecha" id="calmaFecha"></p><p class="calma-frase">${esc(frase)}</p>
+        <button type="button" class="calma-orbe" id="calmaOrbe" aria-label="Respirar un momento"><i class="calma-orbe-i" aria-hidden="true"></i><span id="calmaOrbeT">Toca para respirar</span></button>
+        <p class="calma-pista">Toca el prado para sembrar una luz</p></div>
+      ${hayVela ? '<button type="button" class="calma-vela" id="calmaVela" aria-pressed="false">☾ Mantener la pantalla encendida</button>' : ''}</section>`;
+    const sec = $('#calma'), snd = (f, a) => { try { if (window.TBSonido && window.TBSonido[f]) window.TBSonido[f](a); } catch (e) { /* sin sonido */ } };
+    const quieto = () => document.documentElement.getAttribute('data-anim') === 'off' || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    // --- hora y fecha; el texto se desplaza unos píxeles cada minuto (cuida pantallas OLED) ---
+    let deriva = 0;
+    const pinta = () => {
+      const h = $('#calmaHora'); if (!h) return calmaSoltar();
+      const d = new Date(); h.textContent = d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', hour12: false });
+      const f = $('#calmaFecha'); if (f) f.textContent = d.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' });
+      if (++deriva % 4 === 0) { const c = $('#calmaCuerpo'); if (c) { c.style.setProperty('--dx', (Math.round(Math.random() * 20) - 10) + 'px'); c.style.setProperty('--dy', (Math.round(Math.random() * 16) - 8) + 'px'); } }
+    };
+    pinta(); relojInicio = setInterval(pinta, 15000);
+    // --- quietud: tras 90 s sin tocar, la escena se atenúa; al tocar, vuelve ---
+    const despierta = () => { if (!sec.isConnected) return calmaSoltar(); sec.classList.remove('quieta'); if (calmaIdle) clearTimeout(calmaIdle); calmaIdle = setTimeout(() => { try { sec.classList.add('quieta'); } catch (e) { /* nada */ } }, 90000); };
+    despierta();
+    // --- sembrar una luz: onda + nota de la escala de Tierra Buena + una luciérnaga que sube ---
+    let escala = 0;
+    sec.addEventListener('pointerdown', (ev) => {
+      despierta();
+      const t = ev.target; if (t && t.closest && t.closest('#calmaOrbe, #calmaVela')) return;
+      if (quieto() || sec.querySelectorAll('.calma-onda').length > 5) { snd('calma', escala++ % 6); return; }
+      const r = sec.getBoundingClientRect(), x = ev.clientX - r.left, y = ev.clientY - r.top;
+      const onda = document.createElement('i'), luz = document.createElement('i');
+      onda.className = 'calma-onda'; luz.className = 'calma-semilla';
+      [onda, luz].forEach((e) => { e.style.left = x + 'px'; e.style.top = y + 'px'; sec.appendChild(e); });
+      setTimeout(() => { try { onda.remove(); luz.remove(); } catch (e) { /* nada */ } }, 3200);
+      snd('calma', Math.min(5, Math.max(0, Math.floor(x / Math.max(1, r.width) * 6)))); escala++;
+    }, { passive: true });
+    // --- respirar: 4 vueltas (inhala 4 s · sostén 2 s · exhala 6 s), con notas suaves ---
+    let resp = false;
+    $('#calmaOrbe').onclick = () => {
+      const orbe = $('#calmaOrbe'), tx = $('#calmaOrbeT'); if (resp) return; resp = true; orbe.classList.add('on');
+      const paso = (k) => {
+        if (!$('#calmaOrbe')) return;
+        if (k >= 12) { orbe.classList.remove('on', 'inh', 'exh'); tx.textContent = 'Gracias por quedarte'; resp = false; calmaResp.push(setTimeout(() => { const t2 = $('#calmaOrbeT'); if (t2) t2.textContent = 'Toca para respirar'; }, 3500)); return; }
+        const f = k % 3;
+        if (f === 0) { orbe.classList.remove('exh'); orbe.classList.add('inh'); tx.textContent = 'Inhala…'; snd('respira', 1); calmaResp.push(setTimeout(() => paso(k + 1), 4000)); }
+        else if (f === 1) { tx.textContent = 'Sostén'; calmaResp.push(setTimeout(() => paso(k + 1), 2000)); }
+        else { orbe.classList.remove('inh'); orbe.classList.add('exh'); tx.textContent = 'Exhala…'; snd('respira', 0); calmaResp.push(setTimeout(() => paso(k + 1), 6000)); }
+      };
+      paso(0);
+    };
+    // --- pantalla encendida (opcional, para dejar la app abierta como reloj de descanso) ---
+    const vb = $('#calmaVela');
+    if (vb) vb.onclick = async () => {
+      try {
+        if (calmaVela) { await calmaVela.release(); calmaVela = null; vb.setAttribute('aria-pressed', 'false'); vb.textContent = '☾ Mantener la pantalla encendida'; return; }
+        calmaVela = await navigator.wakeLock.request('screen'); vb.setAttribute('aria-pressed', 'true'); vb.textContent = '☀ Pantalla encendida (toca para soltar)';
+        calmaVela.addEventListener('release', () => { if (calmaVela && calmaVela.released) { calmaVela = null; const b2 = $('#calmaVela'); if (b2) { b2.setAttribute('aria-pressed', 'false'); b2.textContent = '☾ Mantener la pantalla encendida'; } } });
+      } catch (e) { vb.textContent = 'Tu teléfono no lo permite ahora'; }
+    };
   }
   const VISTAS = { inicio: vistaInicio, iglesia: vistaIglesia, palabra: vistaPalabra, vida: vistaVida, perfil: vistaPerfil, pastor: vistaPastor };
   const ORDEN_TAB = ['iglesia', 'palabra', 'inicio', 'vida', 'perfil', 'pastor']; let tabPrev = '';
@@ -2826,6 +2884,7 @@
     document.querySelectorAll('.tab').forEach((b) => { if (b.dataset.tab === tab) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
     barraRefrescar(tab); try { menuBoton(); } catch (e) { /* sin botón */ }
     const tp = $('#barraTop'); if (tp && tp.classList && tp.classList.remove) tp.classList.remove('on');
+    if (tab !== 'inicio') { try { calmaSoltar(); } catch (e) { /* nada */ } }
     VISTAS[tab](); window.scrollTo(0, 0); $('#pantalla').focus({ preventScroll: true }); pantEntra(sentido);
   }
   document.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) { /* sin vibración */ } ir(b.dataset.tab); }));

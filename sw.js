@@ -1,6 +1,6 @@
 // sw.js — F856 (MOV2a). Guarda solo la «cáscara» de la app para que abra sin internet.
 // Nunca guarda llamadas a Supabase: lo que viene de la nube siempre se pide en vivo.
-const V = 'tb-movil-f904';
+const V = 'tb-movil-f906';
 const CASCARA = ['./', './index.html', './app.css', './app.js', './extras.css', './extras.js', './identidad.css', './identidad.js', './rendimiento.css', './rendimiento.js', './sonido.js', './vendor/supabase.js', './manifest.webmanifest', './accion_mes.json', './datos/fabulas.json', './datos/canciones_ejemplo.json', './datos/musica_reflexiones.json', './fonts/literata-latin-wght-normal.woff2', './fonts/fraunces-latin-wght-normal.woff2', './fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2', './icon-192.png', './icon-512.png', './icon-maskable-192.png', './icon-maskable-512.png'];
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(V).then((c) => c.addAll(CASCARA)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', (e) => {
@@ -9,6 +9,19 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   const u = new URL(e.request.url);
   if (e.request.method !== 'GET' || u.origin !== location.origin) return;   // Supabase y todo lo externo: directo a internet
-  if (/\/(fonts\/|icon-)/.test(u.pathname)) { e.respondWith(caches.match(e.request, { ignoreSearch: true }).then((r) => r || fetch(e.request).then((x) => { const k = x.clone(); caches.open(V).then((c) => c.put(e.request, k)); return x; }))); return; }   // F897: fuentes e íconos no cambian: salen de la copia (abre más rápido, gasta menos datos)
-  e.respondWith(fetch(e.request).then((r) => { const copia = r.clone(); caches.open(V).then((c) => c.put(e.request, copia)); return r; }).catch(() => caches.match(e.request, { ignoreSearch: true }).then((r) => r || caches.match('./index.html'))));
+  // F906: lo que casi no cambia (fuentes, íconos, Biblia, datos, librería) sale primero de la copia = abre al instante; se refresca en segundo plano
+  if (/\/(fonts\/|icon-|biblia\/|datos\/|vendor\/)/.test(u.pathname)) {
+    e.respondWith(caches.match(e.request, { ignoreSearch: true }).then((r) => {
+      const red = fetch(e.request).then((x) => { if (x && x.ok) { const k = x.clone(); caches.open(V).then((c) => c.put(e.request, k)); } return x; }).catch(() => r);
+      return r || red;
+    }));
+    return;
+  }
+  // El resto (código de la app): internet primero, pero si tarda más de 2,5 s (conexión lenta) se usa la copia guardada
+  e.respondWith(new Promise((res) => {
+    let listo = false;
+    const copia = () => caches.match(e.request, { ignoreSearch: true }).then((r) => { if (r && !listo) { listo = true; res(r); } return r; });
+    const t = setTimeout(copia, 2500);
+    fetch(e.request).then((r) => { clearTimeout(t); if (r && r.ok) { const k = r.clone(); caches.open(V).then((c) => c.put(e.request, k)); } if (!listo) { listo = true; res(r); } }).catch(() => { clearTimeout(t); copia().then((r) => { if (!r && !listo) { listo = true; res(Response.error()); } }); });
+  }));
 });

@@ -32,7 +32,8 @@
   function nota(f, cuando, dur, vol, opc) {
     if (!ctx || !listo) return;
     opc = opc || {};
-    f = f * 2;                                                   // F903: todo una octava más arriba (antes sonaba grave y opaco en el celular)
+    f = f * 2 * (1 + (Math.random() - 0.5) * 0.004);             // F906: variación mínima (±0,2 %): cada toque suena vivo, no a máquina
+    // F903: todo una octava más arriba (antes sonaba grave y opaco en el celular)
     const t = ctx.currentTime + (cuando || 0), g = ctx.createGain(), o1 = ctx.createOscillator(), o2 = ctx.createOscillator(), fl = ctx.createBiquadFilter();
     o1.type = 'sine'; o2.type = 'triangle'; o1.frequency.value = f; o2.frequency.value = f * 2.005; o2.detune.value = 3;
     const g2 = ctx.createGain(); g2.gain.value = (opc.brillo == null ? 0.16 : opc.brillo) * 1.5;   // más armónicos = timbre de campanita, no de zumbido
@@ -45,16 +46,19 @@
     o1.start(t); o2.start(t); o1.stop(t + dur + 0.05); o2.stop(t + dur + 0.05);
   }
   // un soplo de aire (para abrir/cerrar pantallas)
+  const ruidos = {};
   function soplo(cuando, dur, vol, desde, hasta) {
     if (!ctx || !listo) return;
-    const t = ctx.currentTime + (cuando || 0), n = Math.floor(ctx.sampleRate * dur), b = ctx.createBuffer(1, n, ctx.sampleRate), d = b.getChannelData(0);
-    for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
+    const t = ctx.currentTime + (cuando || 0), n = Math.floor(ctx.sampleRate * dur), kb = n; let b = ruidos[kb];   // F906: el ruido se genera una sola vez por duración (menos trabajo en el teléfono)
+    if (!b) { b = ruidos[kb] = ctx.createBuffer(1, n, ctx.sampleRate); const d = b.getChannelData(0); for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1; }
     const s = ctx.createBufferSource(); s.buffer = b;
     const f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 0.9; f.frequency.setValueAtTime(desde, t); f.frequency.exponentialRampToValueAtTime(hasta, t + dur);
     const g = ctx.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(vol, t + dur * 0.35); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
     s.connect(f); f.connect(g); g.connect(maestro); s.start(t); s.stop(t + dur + 0.02);
   }
-  const ok = (fn) => function () { if (!activo()) return; despertar(); if (!listo || !ctx || ctx.state === 'closed') return; try { fn.apply(null, arguments); } catch (e) { /* sin sonido */ } };
+  let ultSon = 0;
+  const ok = (fn) => function () { if (!activo()) return; const ahora = Date.now(); if (ahora - ultSon < 45) return; ultSon = ahora; despertar();   // F906: sin ráfagas (menos nodos de audio a la vez)
+    if (!listo || !ctx || ctx.state === 'closed') return; try { fn.apply(null, arguments); } catch (e) { /* sin sonido */ } };
 
   const API = {
     activo,
@@ -88,6 +92,8 @@
       for (let i = 0; i < c; i++) nota(v[i], i * 0.11, 1.5 + i * 0.1, 0.1 - i * 0.008, { eco: 0.8, brillo: 0.18 });
       nota(NOTAS.G3, 0, 1.8, 0.08, { eco: 0.4, corte: 800 }); soplo(0.05, 0.7, 0.03, 600, 3400);
     })(); },
+    calma(i) { ok(function () { const e = [NOTAS.G4, NOTAS.A4, NOTAS.B4, NOTAS.D5, NOTAS.E5, NOTAS.G5][Math.max(0, Math.min(5, Number(i) || 0))]; nota(e, 0, 2.6, 0.075, { eco: 0.95, brillo: 0.22, ataque: 0.03 }); })(); },   // F906: al sembrar una luz en Inicio: escala pentatónica, larga y suave
+    respira(entra) { ok(function () { if (entra) { nota(NOTAS.G4, 0, 3.8, 0.06, { eco: 0.8, ataque: 0.9, sinCoro: true }); nota(NOTAS.D5, 0.5, 3.4, 0.045, { eco: 0.8, ataque: 0.9, sinCoro: true }); } else { nota(NOTAS.D5, 0, 5.2, 0.05, { eco: 0.9, ataque: 0.4, sinCoro: true }); nota(NOTAS.G4, 0.6, 5, 0.045, { eco: 0.9, ataque: 0.5, sinCoro: true }); nota(NOTAS.G3, 1.2, 4.4, 0.05, { eco: 0.7, ataque: 0.6, corte: 900, sinCoro: true }); } })(); },   // F906: inhala sube, exhala baja
     semilla: ok(function () { nota(NOTAS.D4, 0, 0.22, 0.09, { eco: 0.3, corte: 1100 }); nota(NOTAS.A4, 0.12, 0.35, 0.08, { eco: 0.5 }); nota(NOTAS.E5, 0.24, 0.6, 0.07, { eco: 0.7, brillo: 0.2 }); })   // algo que cae en la tierra y brota
   };
   // F903: ahorro de batería: con la app en segundo plano el audio se duerme del todo y se despierta al volver
@@ -116,7 +122,7 @@
     try {
       if (API._sono || !activo()) return; API._sono = true;
       iniciar(); if (!ctx) return;
-      const sonar = () => { try { API.firma(); } catch (e) { /* sin sonido */ } };
+      const sonar = () => { try { ultSon = 0; API.firma(); } catch (e) { /* sin sonido */ } };
       if (ctx.state === 'suspended' && ctx.resume) ctx.resume().then(sonar, sonar); else sonar();
     } catch (e) { /* sin sonido */ }
   };
@@ -127,5 +133,5 @@
     new MutationObserver((ms) => { for (const m of ms) for (const n of m.addedNodes) { if (n && n.classList && (n.classList.contains('cf-pt') || n.classList.contains('fb-spark') || n.classList.contains('toast-ok'))) { if (!API._ult || Date.now() - API._ult > 900) { API._ult = Date.now(); API.logro(); } return; } } }).observe(document.body || document.documentElement, { childList: true, subtree: true });
   } catch (e) { /* sin observador */ }
   // intenta sonar la firma al abrir (funciona cuando el navegador ya permitió audio, p. ej. app instalada)
-  setTimeout(() => { try { if (activo()) { iniciar(); if (ctx && ctx.state === 'running' && !API._sono) { API._sono = true; API.firma(); } } } catch (e) { /* nada */ } }, 350);
+  setTimeout(() => { try { if (activo()) { iniciar(); if (ctx && ctx.state === 'running' && !API._sono) { API._sono = true; ultSon = 0; API.firma(); } } } catch (e) { /* nada */ } }, 350);
 })();
