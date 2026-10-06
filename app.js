@@ -475,6 +475,18 @@
       box.innerHTML = `<p class="suave">📲 Para dejarla como app: menú ⋮ del navegador → <b>«Instalar app»</b> o «Agregar a pantalla de inicio».</p>`;
     }
   }
+  async function instalarUnToque() {                       // F898: un solo botón; si el navegador no deja instalar directo, muestra los pasos de SU teléfono
+    if (promptInstalar && !yaInstalada()) { try { promptInstalar.prompt(); await promptInstalar.userChoice; } catch (e) { /* nada */ } promptInstalar = null; document.querySelectorAll('[data-instalar-box]').forEach(pintarInstalar); return; }
+    vistaInstalar();
+  }
+  function vistaInstalar() {
+    const ya = yaInstalada(), ios = esIOS();
+    const p = ya ? ['Ya tienes Tierra Buena instalada. Ábrela desde el ícono de tu pantalla de inicio.'] : ios
+      ? ['1. Abre esta página en Safari (si estás en otro navegador, copia el enlace y pégalo en Safari).', '2. Toca el botón Compartir: el cuadrado con la flecha hacia arriba.', '3. Elige «Agregar a pantalla de inicio» y toca «Agregar».']
+      : ['1. Toca el menú ⋮ de tu navegador (arriba a la derecha).', '2. Elige «Instalar app» o «Agregar a pantalla de inicio».', '3. Confirma. El ícono de Tierra Buena aparece junto a tus otras apps.'];
+    textoPantalla('Instalar la app', p.concat(ya ? [] : ['Después, mantén tocado el ícono para ir directo a tu versículo, a la Biblia o a tu calendario.']), '');
+  }
+  const instalarChip = () => { try { if (yaInstalada() || localStorage.getItem('tb_movil_inst_no') === String(new Date().getMonth())) return ''; } catch (e) { return ''; } return `<span class="hoy-inst"><button type="button" class="hoy-fecha" data-ir="inst">${svg('compartir', 16)}<span><b>Instalar la app</b> · un toque</span></button><button type="button" class="hoy-inst-x" data-ir="instno" aria-label="Ahora no">${svg('x', 14)}</button></span>`; };
   const bloqueInstalar = () => '<div data-instalar-box class="sep16"></div>';
   const codigoDeEnlace = () => { try { const q = new URLSearchParams(location.search.slice(1) || location.hash.replace(/^#\??/, '')); const c = (q.get('c') || q.get('codigo') || '').toUpperCase(); return /^[A-Z0-9]{6}$/.test(c) ? c : ''; } catch (e) { return ''; } };
 
@@ -1018,17 +1030,21 @@
   // F881: racha de lectura (días seguidos en que abriste un capítulo). Solo vive en el teléfono.
   const K_RACHA = 'tb_movil_racha';
   const diaTxt = (d) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-  function rachaMarcar() {
+  function rachaMarcar() {                                  // F898: «racha con gracia» (como la reparación de racha de Glorify): un día sin leer no la rompe, una vez por semana
     try {
-      const hoy = new Date(), ayer = new Date(hoy.getTime() - 86400000), r = leer(K_RACHA) || { u: '', n: 0 };
+      const hoy = new Date(), ayer = new Date(hoy.getTime() - 86400000), antes = new Date(hoy.getTime() - 2 * 86400000), r = leer(K_RACHA) || { u: '', n: 0 };
       if (r.u === diaTxt(hoy)) return;
-      guardar(K_RACHA, { u: diaTxt(hoy), n: r.u === diaTxt(ayer) ? (Number(r.n) || 0) + 1 : 1 });
+      const graciaLibre = !r.g || (Date.now() - Number(r.g)) > 7 * 86400000;
+      if (r.u === diaTxt(ayer)) guardar(K_RACHA, { u: diaTxt(hoy), n: (Number(r.n) || 0) + 1, g: r.g });
+      else if (r.u === diaTxt(antes) && graciaLibre) guardar(K_RACHA, { u: diaTxt(hoy), n: (Number(r.n) || 0) + 1, g: Date.now() });
+      else guardar(K_RACHA, { u: diaTxt(hoy), n: 1, g: r.g });
     } catch (e) { /* sin racha */ }
   }
   function rachaActual() {
     const r = leer(K_RACHA); if (!r || !r.u) return 0;
-    const hoy = new Date(), ayer = new Date(hoy.getTime() - 86400000);
-    return (r.u === diaTxt(hoy) || r.u === diaTxt(ayer)) ? Number(r.n) || 0 : 0;   // si faltó ayer, vuelve a empezar
+    const hoy = new Date(), ayer = new Date(hoy.getTime() - 86400000), antes = new Date(hoy.getTime() - 2 * 86400000);
+    const graciaLibre = !r.g || (Date.now() - Number(r.g)) > 7 * 86400000;
+    return (r.u === diaTxt(hoy) || r.u === diaTxt(ayer) || (r.u === diaTxt(antes) && graciaLibre)) ? Number(r.n) || 0 : 0;   // si faltó más de un día, vuelve a empezar
   }
   // Portada viva: el cielo cambia con la hora (amanecer, día, atardecer, noche) y respira con calma.
   function faseDelDia(h) { return h >= 5 && h < 9 ? 'amanecer' : h >= 9 && h < 17 ? 'dia' : h >= 17 && h < 20 ? 'atardecer' : 'noche'; }
@@ -1048,12 +1064,12 @@
     const id = leer(K_ID), nom = perfilLeer().n ? perfilLeer().n.split(/\s+/)[0] : (id && id.nombre ? String(id.nombre).trim().split(/\s+/)[0] : ''), racha = rachaActual();
     $('#pantalla').innerHTML = `<div class="hoy fase-${fase}">${escenaHoy(fase)}<p class="hoy-saludo">${esc(saludo)}${nom ? ', ' + esc(nom) : ''}</p>
       <h1>Hoy</h1><div class="hoy-verso" id="hoyVerso"><span class="esqueleto"></span><span class="esqueleto corto"></span></div>
-      ${racha ? `<p class="hoy-racha">${svg('llama', 18)}<span>${racha === 1 ? '1 día leyendo la Palabra' : racha + ' días seguidos leyendo la Palabra'}</span></p>` : ''}</div>
+      ${racha ? `<p class="hoy-racha">${svg('llama', 18)}<span>${racha === 1 ? '1 día leyendo la Palabra' : racha + ' días seguidos leyendo la Palabra'}</span></p>` : ''}${fechaCercanaChip()}${instalarChip()}</div>
       <h2 class="sep">Tu Palabra</h2>
       <div class="grid">${activa('✨', 'Hoy lo hago', 'Leer es el principio: da un paso hoy.', 'hacer')}${inf ? activa('▶️', 'Seguir leyendo', esc(inf[1]) + ' ' + Number(ult.cap) + ' · donde te quedaste', 'seguir') : ''}${activa('📖', 'Leer la Biblia', 'Reina-Valera 1909. Los libros que lees quedan para leer sin internet.', 'biblia')}${activa('🔖', 'Mi Biblia', 'Tus resaltes, notas y versículos guardados.', 'mibiblia')}${activa('🗓', 'Planes de lectura', 'Un poquito cada día, con tu avance.', 'planes')}${activa('✨', 'Versículo de hoy', 'Una frase para empezar el día.', 'versiculo')}${activa('📜', 'Fábula del mes', 'Un relato corto para practicar, capítulo a capítulo.', 'fabula')}</div>`;
     document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => {
       const k = b.dataset.ir;
-      if (k === 'hacer') vistaHacer(); else if (k === 'biblia') vistaBiblia(); else if (k === 'versiculo') vistaVersiculo(); else if (k === 'fabula') vistaFabula(); else if (k === 'mibiblia') vistaMiBiblia(); else if (k === 'planes') vistaPlanes(); else if (k === 'seguir' && inf) vistaCapitulo(ult.cod, Number(ult.cap));
+      if (k === 'hacer') vistaHacer(); else if (k === 'biblia') vistaBiblia(); else if (k === 'versiculo') vistaVersiculo(); else if (k === 'fabula') vistaFabula(); else if (k === 'mibiblia') vistaMiBiblia(); else if (k === 'planes') vistaPlanes(); else if (k === 'cal') vistaCalendario(); else if (k === 'inst') instalarUnToque(); else if (k === 'instno') { try { localStorage.setItem('tb_movil_inst_no', String(new Date().getMonth())); } catch (e) { /* nada */ } b.closest('.hoy-inst').remove(); } else if (k === 'seguir' && inf) vistaCapitulo(ult.cod, Number(ult.cap));
     }));
     // F871: el versículo del día aparece arriba, en «Hoy» (si no hay internet ni copia guardada, la zona se oculta sola).
     (async () => {
@@ -2339,12 +2355,12 @@
       'Más adelante podría haber un apoyo voluntario para sostener la app. Si llega, será claro, sin letra chica, y lo que ya usas seguirá siendo tuyo.'
     ]);
   }
-  function vistaWidgets() {
+  function vistaWidgets() {                                 // F898: lo que sí se puede hoy en una app web instalada
     textoPantalla('Widgets', [
-      'Pronto podrás poner en la pantalla de tu teléfono tu versículo del día, tu racha de lectura y el paso de acción de hoy.',
-      'Mientras llega, instala Tierra Buena en tu pantalla de inicio: se abre como una app y funciona aunque no tengas internet.'
-    ], '<button type="button" class="btn" id="wgInst">Ver cómo instalarla</button>');
-    $('#wgInst').onclick = () => ir('perfil');
+      'Con Tierra Buena instalada, mantén tocado su ícono: aparecen atajos directos a tu versículo de hoy, a la Biblia y a tu calendario. Funciona en Android.',
+      'Los widgets que se quedan fijos en la pantalla (como un reloj) solo existen en apps de tienda. Los estamos preparando para cuando publiquemos la app; mientras tanto, «Hoy» muestra tu versículo, tu racha y la próxima fecha importante.'
+    ], '<button type="button" class="btn" id="wgInst">Instalar la app</button>');
+    $('#wgInst').onclick = instalarUnToque;
   }
   // Fechas cristianas que celebran todas las iglesias (sin santos ni fiestas que dividan). La Pascua se calcula (método de Meeus).
   function pascua(a) {
@@ -2371,23 +2387,37 @@
     const Pen = [mas(49), 'Pentecostés', 'Se celebra el nacimiento de la iglesia.', 'Une a dos personas que se llevan mal.'];
     const Adv = [dom4, 'Primer domingo de Adviento', 'Empieza la espera de la Navidad.', 'Prepara algo para dar.'];
     const Nav = [nav, 'Navidad', 'Celebramos que la esperanza llegó a nuestro mundo.', 'Regala tiempo a alguien solo.'];
+    const hoyC = new Date(); hoyC.setHours(0, 0, 0, 0);     // F898: Mes de la Biblia (todo septiembre) y fechas de Chile para todas las tradiciones
+    const MesB = [(hoyC.getFullYear() === a && hoyC.getMonth() === 8) ? hoyC : new Date(a, 8, 1), 'Mes de la Biblia', 'Todo septiembre: un mes para leer y compartir la Palabra.', 'Lee un capítulo cada día y cuéntaselo a alguien.', 'mes'];
+    const dom = (m, n) => { const p = new Date(a, m, 1); return new Date(a, m, 1 + (7 - p.getDay()) % 7 + 7 * (n - 1)); };
+    const chile = [[new Date(a, 0, 1), 'Año Nuevo', 'Empezamos un año con esperanza.', 'Escribe una meta pequeña para tu año.'], [new Date(a, 4, 1), 'Día del Trabajo', 'Valoramos el esfuerzo de cada persona.', 'Agradece a alguien por su trabajo.'], [dom(4, 2), 'Día de la Madre (Chile)', 'Honramos a quienes nos cuidaron.', 'Llama o abraza a una madre que admires.'], [dom(5, 3), 'Día del Padre (Chile)', 'Honramos a quienes nos guiaron.', 'Agradece a un padre o a quien hizo ese papel.'], [new Date(a, 6, 26), 'Día de los Abuelos (Chile)', 'Valoramos la sabiduría de nuestros mayores.', 'Visita o llama a una persona mayor.'], [dom(7, 2), 'Día del Niño (Chile)', 'Cuidamos a los más pequeños.', 'Dedica un rato a jugar con un niño.'], [new Date(a, 8, 18), 'Fiestas Patrias de Chile', 'Damos gracias por nuestra tierra y su gente.', 'Ora por Chile y comparte con tu vecindario.'], [new Date(a, 9, 31), 'Día de las Iglesias Evangélicas y Protestantes', 'Agradecemos la Palabra al alcance de todos.', 'Lee un pasaje con alguien o regala una Biblia.']];
     let l;
-    if (trad === 'evangelica') l = [Ram, Vie, Pas, Asc, Pen, Nav, [new Date(a, 9, 31), 'Día de las Iglesias Evangélicas y Protestantes', 'Agradecemos la Palabra al alcance de todos.', 'Lee un pasaje con alguien o regala una Biblia.']];
+    if (trad === 'evangelica') l = [MesB, Vie, Pas, Asc, Pen, Nav];
     else if (trad === 'catolica') l = [[new Date(a, 0, 1), 'Santa María, Madre de Dios', 'Empezamos el año confiando en Dios.', 'Escribe una intención para el año.'], Epi, Cen, Ram, Jue, Vie, Pas, Asc, Pen, [mas(60), 'Corpus Christi', 'Se celebra la presencia de Cristo en la comunidad.', 'Comparte tu mesa con alguien.'], [new Date(a, 7, 15), 'Asunción de la Virgen María', 'Se recuerda a María y su esperanza.', 'Llama a tu mamá o a una madre que admires.'], [new Date(a, 10, 1), 'Todos los Santos', 'Recordamos a quienes vivieron el bien.', 'Agradece a alguien que te enseñó a ser mejor.'], [new Date(a, 11, 8), 'Inmaculada Concepción', 'Fiesta de María en Adviento.', 'Haz un gesto de pureza de corazón: perdona.'], Adv, Nav];
     else if (trad === 'ortodoxa') { const O = pascuaOrtodoxa(a), mo = mk(O); l = [[new Date(a, 0, 7), 'Navidad ortodoxa', 'Celebramos el nacimiento de Cristo.', 'Regala tiempo a alguien solo.'], [new Date(a, 0, 19), 'Teofanía', 'Se recuerda el bautismo de Jesús.', 'Agradece por tu familia y tu comunidad.'], [mo(-7), 'Domingo de Ramos ortodoxo', 'Se recuerda la entrada a Jerusalén.', 'Recibe a alguien con alegría.'], [mo(-2), 'Viernes Santo ortodoxo', 'Un día de silencio y gratitud.', 'Haz un momento de silencio y da gracias.'], [O, 'Pascua ortodoxa', 'Celebramos la vida nueva: «¡Cristo ha resucitado!»', 'Comparte una buena noticia.'], [mo(39), 'Ascensión ortodoxa', 'Se recuerda el envío a servir.', 'Haz algo bueno por tu barrio.'], [mo(49), 'Pentecostés ortodoxo', 'Se celebra el nacimiento de la iglesia.', 'Une a dos personas que se llevan mal.']]; }
-    else l = [Epi, Cen, Ram, Jue, Vie, Pas, Asc, Pen, Adv, Nav];
-    return l.filter((x) => x[0] && !isNaN(x[0]));
+    else l = [MesB, Jue, Vie, Pas, Asc, Pen, Adv, Nav];   // las fechas católicas (Epifanía, Ceniza, Ramos) solo salen si la persona elige «Católica'
+    return l.concat(chile).filter((x) => x[0] && !isNaN(x[0]));
   }
   const tradLeer = () => { try { const o = onbLeer(); return (o && o.trad) || ''; } catch (e) { return ''; } };
+  function fechaCercanaChip() {                             // F897: en «Hoy», solo si la fecha santa de tu calendario cae en los próximos 7 días (si no, no aparece nada: sin ruido)
+    try {
+      const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+      const a = hoy.getFullYear(), t = tradLeer();
+      const p = fechasSantas(a, t).concat(fechasSantas(a + 1, t)).sort((x, y) => x[0] - y[0]).find((x) => x[0] >= hoy);
+      if (!p) return '';
+      const n = Math.round((p[0] - hoy) / 86400000); if (n > 7) return '';
+      return `<button type="button" class="hoy-fecha" data-ir="cal">${svg('calendario', 16)}<span><b>${esc(p[1])}</b> · ${n === 0 ? (p[4] === 'mes' ? 'todo este mes' : 'hoy') : n === 1 ? 'mañana' : 'en ' + n + ' días'}</span></button>`;
+    } catch (e) { return ''; }
+  }
   function vistaCalendario() {
     const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
     const a = hoy.getFullYear(), lista = fechasSantas(a, tradLeer()).concat(fechasSantas(a + 1, tradLeer())).sort((x, y) => x[0] - y[0]).filter((x) => x[0] >= hoy).slice(0, 8);
     const fmt = (d) => d.toLocaleDateString('es', { weekday: 'long', day: 'numeric', month: 'long' });
-    const dias = (d) => { const n = Math.round((d - hoy) / 86400000); return n === 0 ? 'Hoy' : n === 1 ? 'Mañana' : 'En ' + n + ' días'; };
+    const dias = (d, f) => { const n = Math.round((d - hoy) / 86400000); return n === 0 ? (f === 'mes' ? 'Todo este mes' : 'Hoy') : n === 1 ? 'Mañana' : 'En ' + n + ' días'; };
     const [p, ...resto] = lista;
     $('#pantalla').innerHTML = `${cabecera('Calendario santo', 'Menú')}<p class="suave">Cada fecha trae un paso pequeño para vivirla.</p><p class="cal-trad"><span>${svg('calendario', 18)} ${esc(TRAD_N[tradLeer()] || 'Fechas para todos')}</span><button type="button" class="enlace" id="calCambiar">Cambiar</button></p>
-      ${p ? `<div class="card cal-prox"><small>Lo que viene</small><h3>${esc(p[1])}</h3><p class="cal-cuando">${esc(dias(p[0]))} · ${esc(fmt(p[0]))}</p><p>${esc(p[2])}</p><p class="cal-paso">${svg('chispas', 18)} <b>Tu paso:</b> ${esc(p[3])}</p></div>` : ''}
-      <h2 class="sep">Después</h2><div class="lista">${resto.map((x) => `<div class="fila cal-fila"><span class="fila-ico t2" aria-hidden="true">${svg('calendario', 20)}</span><span class="fila-txt"><b>${esc(x[1])}</b><small>${esc(dias(x[0]))} · ${esc(fmt(x[0]))}</small></span></div>`).join('')}</div>`;
+      ${p ? `<div class="card cal-prox"><small>Lo que viene</small><h3>${esc(p[1])}</h3><p class="cal-cuando">${esc(dias(p[0], p[4]))} · ${esc(fmt(p[0]))}</p><p>${esc(p[2])}</p><p class="cal-paso">${svg('chispas', 18)} <b>Tu paso:</b> ${esc(p[3])}</p></div>` : ''}
+      <h2 class="sep">Después</h2><div class="lista">${resto.map((x) => `<div class="fila cal-fila"><span class="fila-ico t2" aria-hidden="true">${svg('calendario', 20)}</span><span class="fila-txt"><b>${esc(x[1])}</b><small>${esc(dias(x[0], x[4]))} · ${esc(fmt(x[0]))}</small></span></div>`).join('')}</div>`;
     $('#volver').onclick = menuAbrir; $('#calCambiar').onclick = planRehacer; window.scrollTo(0, 0);
   }
   const menuCerrar = () => { try { const c = $('#cajonMenu'); if (c) c.remove(); } catch (e) { /* nada */ } };
@@ -2398,6 +2428,7 @@
     const h = nuevoEl(`<div class="cajon" id="cajonMenu" role="dialog" aria-modal="true" aria-label="Menú"><nav class="cajon-in">
       <div class="cj-cab">${avatarHTML(nombre, p, true)}<div><b>${esc(nombre)}</b><small>${esc(planResumen())}</small></div><button type="button" class="cj-x" id="cjX" aria-label="Cerrar">${svg('x', 20)}</button></div>
       <div class="cj-lista">
+        ${yaInstalada() ? '' : it('inst', 'compartir', 'Instalar la app', 'Un toque y queda en tu pantalla')}
         ${it('plan', 'brote', 'Planes de trabajo', 'Contesta de nuevo y la app se adapta')}
         ${it('info', 'ayuda', 'Información', 'Qué es y cómo usarla')}
         ${it('cal', 'calendario', 'Calendario santo', 'Fechas para vivir juntos')}
@@ -2409,7 +2440,7 @@
       </div></nav></div>`);
     if (!h) return ir('perfil');
     document.body.appendChild(h);
-    const va = { plan: planRehacer, info: vistaInfo, cal: vistaCalendario, comp: invitarHoja, wid: vistaWidgets, conf: () => ir('perfil'), sus: vistaSuscripcion, hist: vistaHistoria };
+    const va = { inst: instalarUnToque, plan: planRehacer, info: vistaInfo, cal: vistaCalendario, comp: invitarHoja, wid: vistaWidgets, conf: () => ir('perfil'), sus: vistaSuscripcion, hist: vistaHistoria };
     h.querySelectorAll('.cj-it').forEach((b) => b.addEventListener('click', () => { vibra(); menuCerrar(); entrandoPon(false); (va[b.dataset.cj] || (() => {}))(); }));
     $('#cjX').onclick = menuCerrar; h.addEventListener('click', (e) => { if (e && e.target === h) menuCerrar(); });
   }
@@ -2647,5 +2678,10 @@
   // F892: sin cuenta, ni iglesia, ni solicitud (primera vez o quien dijo «solo quiero leer») se abre la portada animada cada vez; con cuenta o iglesia, directo a la app
   const portadaYaVista = () => { try { if (sessionStorage.getItem('tb_movil_portada') === '1') return true; sessionStorage.setItem('tb_movil_portada', '1'); return false; } catch (e) { return true; } };   // una vez por apertura (no en cada recarga); si no hay dónde anotarlo, no molesta
   if (!codigoDeEnlace() && (!hayOnb() || !portadaYaVista())) onbSplash(); else ir(tabInicio());   // F893: la portada sale al abrir la app para todos (una vez por apertura)
+  try {   // F898: atajos del ícono instalado (manifest → shortcuts)
+    const q = new URLSearchParams(String((window.location && window.location.search) || '').slice(1)).get('ir');
+    const at = { versiculo: vistaVersiculo, biblia: vistaBiblia, calendario: vistaCalendario };
+    if (q && at[q] && !codigoDeEnlace()) setTimeout(() => { try { ir('palabra'); at[q](); } catch (e) { /* nada */ } }, 60);
+  } catch (e) { /* sin atajo */ }
   syncInicio();
 })();

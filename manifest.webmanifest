@@ -40,5 +40,40 @@
     "lifestyle",
     "education"
   ],
-  "dir": "ltr"
+  "dir": "ltr",
+  "shortcuts": [
+    {
+      "name": "Versículo de hoy",
+      "short_name": "Versículo",
+      "url": "./index.html?ir=versiculo",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Leer la Biblia",
+      "short_name": "Biblia",
+      "url": "./index.html?ir=biblia",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Calendario santo",
+      "short_name": "Calendario",
+      "url": "./index.html?ir=calendario",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
 }

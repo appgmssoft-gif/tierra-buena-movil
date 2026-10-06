@@ -931,3 +931,17 @@ body.entrando main{padding-top:calc(22px + var(--sa-t))}
 }
 .cal-trad{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:10px 0 0;padding:10px 14px;border-radius:14px;background:color-mix(in srgb,var(--verde) 10%,transparent);font-weight:700}
 .cal-trad span{display:flex;align-items:center;gap:8px}
+
+/* F897 · fecha santa cercana en Hoy (discreta, solo ≤7 días) */
+.hoy-fecha{display:inline-flex;align-items:center;gap:8px;margin:10px 0 0;padding:8px 14px;border-radius:999px;border:1px solid color-mix(in srgb,var(--oro) 45%,transparent);background:color-mix(in srgb,var(--oro) 12%,transparent);color:var(--tinta);font:inherit;font-size:.92rem;cursor:pointer;min-height:40px;max-width:100%}
+.hoy-fecha svg{color:var(--oro);flex:none}
+.hoy-fecha span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hoy-fecha:active{transform:scale(.97)}
+
+/* F898 · dock firme: la barra de abajo no se mueve con el contenido ni con el rebote del dedo */
+html{overscroll-behavior-y:none;-webkit-text-size-adjust:100%}
+body{overscroll-behavior-y:none;min-height:100%}
+.barra{position:fixed;inset:auto 12px calc(10px + env(safe-area-inset-bottom,0px)) 12px;transform:translateZ(0);-webkit-transform:translateZ(0);will-change:transform;backface-visibility:hidden;z-index:30;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+main{padding-bottom:calc(104px + env(safe-area-inset-bottom,0px))}
+.hoy-inst{display:inline-flex;align-items:center;gap:4px;margin:10px 0 0 6px;vertical-align:top}.hoy-inst .hoy-fecha{margin:0}
+.hoy-inst-x{border:0;background:transparent;color:var(--suave);width:36px;height:36px;border-radius:50%;display:inline-grid;place-items:center;cursor:pointer}
