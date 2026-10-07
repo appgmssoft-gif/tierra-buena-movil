@@ -1,0 +1,37 @@
+{
+  "_nota": "F922 · Catálogo del Inicio «Tierra Buena». Solo lectura. Cambiar precios, topes o textos no toca el código. Los datos de cada árbol y ave son breves y generales; VERIFICAR con una fuente (CONAF, Museo Nacional de Historia Natural, Aves de Chile) antes de publicar. Lenguaje: neutro y cordial.",
+  "ciclo": { "dias": 30, "etapas": [ { "id": "brote", "desde": 1 }, { "id": "raiz", "desde": 8 }, { "id": "ramas", "desde": 15 }, { "id": "frondoso", "desde": 22 } ], "gracia_dias": 1, "maleza_max": 5, "paisaje_guardado": 6 },
+  "primera_eleccion": ["araucaria", "canelo", "quillay"],
+  "orden_especies": ["araucaria", "canelo", "quillay", "roble", "alerce", "palma_chilena", "cerezo", "sauce"],
+  "especies": {
+    "araucaria": { "nombre": "Araucaria", "otro": "Pewén", "origen": "nativo de Chile", "mensaje": "La paciencia también construye. Algunas de las más antiguas llevan más de mil años de pie.", "dato": "Crece lento y echa raíces profundas; su piñón alimentó por siglos al pueblo pehuenche." },
+    "canelo": { "nombre": "Canelo", "otro": "Foye", "origen": "nativo de Chile", "mensaje": "Una rama de canelo ha sido señal de paz para el pueblo mapuche. Se puede empezar por un gesto de paz.", "dato": "Es un árbol de bosque húmedo, de hojas siempre verdes y corteza aromática." },
+    "quillay": { "nombre": "Quillay", "otro": "El árbol del jabón", "origen": "nativo de Chile", "mensaje": "Su corteza limpia y cuida. Hay personas que sirven en silencio y dejan todo mejor.", "dato": "Resiste la sequía de la zona central; de su corteza se extrae saponina." },
+    "roble": { "nombre": "Roble", "otro": "Nothofagus obliqua", "origen": "nativo de Chile", "mensaje": "La firmeza se nota en la raíz, no en el ruido. Se puede ser fuerte y amable a la vez.", "dato": "Forma bosques en el centro-sur del país y cambia de color en otoño." },
+    "alerce": { "nombre": "Alerce", "otro": "Fitzroya", "origen": "nativo de Chile", "mensaje": "Lo que se hace con constancia puede durar más que quien lo empezó.", "dato": "Es una de las especies más longevas del mundo; hay ejemplares de miles de años." },
+    "palma_chilena": { "nombre": "Palma chilena", "otro": "Jubaea", "origen": "nativo de Chile", "mensaje": "No todo se ve de inmediato. Lo valioso suele tardar y vale la espera.", "dato": "Tarda muchos años en madurar y vive siglos; es endémica de Chile." },
+    "cerezo": { "nombre": "Cerezo", "otro": "", "origen": "visitante", "mensaje": "Florecer dura poco, y por eso se mira con atención. Hay belleza en lo que pasa.", "dato": "Florece una vez al año, al comienzo de la primavera." },
+    "sauce": { "nombre": "Sauce", "otro": "", "origen": "visitante", "mensaje": "Se puede ser flexible sin dejar de ser uno mismo.", "dato": "Sus ramas largas se curvan con el viento y casi nunca se quiebran." }
+  },
+  "semillas": {
+    "copihue": { "nombre": "Copihue", "precio": 20, "casillas": ["pasto-1", "pasto-2", "pasto-3", "pasto-4", "pasto-5", "pasto-6"], "mensaje": "La flor nacional crece enredada en otros árboles. Nadie florece del todo solo.", "dato": "Es una enredadera del bosque sureño y su flor es la flor nacional de Chile." },
+    "ananuca": { "nombre": "Añañuca", "precio": 15, "casillas": ["pasto-1", "pasto-2", "pasto-3", "pasto-4", "pasto-5", "pasto-6"], "mensaje": "Después de la sequía, algunas flores vuelven. Una pausa no es un final.", "dato": "Brota en el norte y centro del país cuando llegan las lluvias, en el llamado desierto florido." },
+    "pata_de_guanaco": { "nombre": "Pata de guanaco", "precio": 25, "casillas": ["pasto-1", "pasto-2", "pasto-3", "pasto-4", "pasto-5", "pasto-6"], "mensaje": "La vida espera su momento. Hay etapas para cuidar sin ver todavía el resultado.", "dato": "Tapiza de rosado el desierto de Atacama en los años de lluvia." },
+    "lavanda": { "nombre": "Lavanda", "precio": 18, "casillas": ["pasto-1", "pasto-2", "pasto-3", "pasto-4", "pasto-5", "pasto-6"], "mensaje": "Lo que da calma a otros también calma a quien lo planta.", "dato": "Es aromática y atrae a las abejas." }
+  },
+  "aves": {
+    "golondrina": { "nombre": "Golondrina", "precio": 90, "mensaje": "Siempre se puede volver. Regresa cada primavera al mismo lugar, y el lugar la espera.", "dato": "Migra largas distancias y suele volver al mismo sitio para anidar." },
+    "chucao": { "nombre": "Chucao", "precio": 80, "mensaje": "Es pequeño y se hace oír. Una voz sencilla también puede acompañar a un bosque entero.", "dato": "Vive en el sotobosque del sur de Chile y se oye más de lo que se ve." },
+    "queltehue": { "nombre": "Queltehue", "precio": 100, "mensaje": "Avisa para cuidar a los demás. Estar atento a quien lo necesita también es una forma de servir.", "dato": "Es muy común en campos y plazas de Chile y defiende su nido con insistencia." },
+    "picaflor": { "nombre": "Picaflor", "precio": 110, "mensaje": "Pequeñas visitas, hechas con constancia, mantienen viva una flor.", "dato": "Se alimenta del néctar y poliniza las flores que visita." },
+    "condor": { "nombre": "Cóndor", "precio": 150, "mensaje": "Hay momentos para mirar desde lo alto y recordar lo que importa. Se avanza mejor sin apuro.", "dato": "Aprovecha las corrientes de aire para volar largas distancias casi sin batir las alas." },
+    "gorrion": { "nombre": "Gorrión", "precio": 80, "mensaje": "Lo pequeño también es visto y cuidado. Nadie pasa inadvertido.", "dato": "Vive cerca de las personas, en plazas, techos y jardines." }
+  },
+  "economia": {
+    "origenes": { "lectura": { "gotas": 2, "tope_dia": 6 }, "vida": { "gotas": 1, "tope_dia": 5 } },
+    "pendientes_max": 30, "visibles_max": 8, "aves_activas_max": 2,
+    "nota": "Las gotas no vencen y no se compran con dinero. Los topes diarios evitan premiar el abuso."
+  },
+  "maleza": { "tipos": ["hoja_seca", "trebol_gris", "hierba_seca"], "tabla": [ { "ausencia": 2, "cantidad": 1 }, { "ausencia": 3, "cantidad": 2 }, { "ausencia": 5, "cantidad": 3 }, { "ausencia": 7, "cantidad": 4 }, { "ausencia": 10, "cantidad": 5 } ] },
+  "casillas": { "pasto": ["pasto-1", "pasto-2", "pasto-3", "pasto-4", "pasto-5", "pasto-6", "pasto-7", "pasto-8"], "fondo": ["fondo-1", "fondo-2", "fondo-3", "fondo-4", "fondo-5", "fondo-6"] }
+}
