@@ -356,7 +356,10 @@
     try { history.replaceState(null, '', location.pathname); } catch (e) { /* nada */ }
     vistaUnirse();
   }
-  const cuentaBarra = () => { const c = leer(K_CUENTA); return c ? `<p class="suave" id="cuentaBarra">Sesión iniciada: <b>${esc(c.correo)}</b> · <button type="button" class="enlace" id="cuentaSalir">Cerrar sesión</button><br><span id="sincEstado" class="sinc">${esc(syncTexto())}</span></p>` : ''; };
+  const copiaTexto = () => {   // F955: «Copia de seguridad» visible para la persona (la hace resguardo.js)
+    try { const i = window.TBResguardo && window.TBResguardo.info && window.TBResguardo.info(); if (!i || !i.fecha) return 'Copia de seguridad: aún no hay una en este teléfono.'; const d = new Date(i.fecha); return 'Copia de seguridad en este teléfono: ' + d.toLocaleDateString('es-CL', { day: 'numeric', month: 'long' }) + ', ' + d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }) + '.'; } catch (e) { return ''; }
+  };
+  const cuentaBarra = () => { const c = leer(K_CUENTA); return c ? `<p class="suave" id="cuentaBarra">Sesión iniciada: <b>${esc(c.correo)}</b> · <button type="button" class="enlace" id="cuentaSalir">Cerrar sesión</button><br><span id="sincEstado" class="sinc">${esc(syncTexto())}</span><br><span id="copiaEstado" class="sinc">${esc(copiaTexto())}</span></p>` : ''; };
   // ---------- F873 · Revisar la conexión con las cuentas y reenviar el correo de confirmación ----------
   async function diagnosticoNube() {
     const L = [], cab = { apikey: SUPABASE_ANON_KEY };
@@ -1197,7 +1200,7 @@
     ['brotes', '✍️', 'Brotes', 'Completa el versículo y llévalo en la memoria. Usa los que tú resaltaste.'],
     ['sopa', '🔎', 'Sopa del Vivero', 'Letras grandes, sin tiempo y con pistas gratis.']
   ];
-  const JUEGOS_LISTOS = { raices: (v) => vistaRaices(v), brotes: (v) => vistaBrotes(v) };   // id -> función que abre el juego (cada fase nueva se registra aquí)
+  const JUEGOS_LISTOS = { raices: (v) => vistaRaices(v), brotes: (v) => vistaBrotes(v), sopa: (v) => vistaSopa(v), sembrador: (v) => vistaSembrador(v) };   // id -> función que abre el juego (cada fase nueva se registra aquí)
   function juegoTerminar(id, aciertos, total) {   // guarda la partida y da una gota de rocío por jugar (con tope diario)
     const j = leer(K_JUEGOS) || { n: 0, p: {} }; j.n = (j.n || 0) + 1; j.p = j.p || {};
     const q = j.p[id] || { n: 0, mejor: 0 }; q.n++; q.mejor = Math.max(q.mejor, Number(aciertos) || 0); j.p[id] = q; guardar(K_JUEGOS, j);
@@ -1273,6 +1276,95 @@
       juegoCorrer({ id: 'brotes', titulo: 'Brotes', volver, items, otra: () => vistaBrotes(volver) });
     };
     jugar();
+  }
+  // F953 · «SOPA DEL VIVERO» (juego D): sopa de letras grande, 8x8, solo de izquierda a derecha y de arriba hacia abajo, sin tiempo, con pistas gratis.
+  function sopaArmar(palabras) {   // devuelve { g: matriz de letras, pos: {PALABRA: {f, c, dir}} }
+    const N = 8, L = 'ABCDEFGHIJLMNOPQRSTUVXYZ', g = Array.from({ length: N }, () => Array(N).fill('')), pos = {};
+    const azar = (n) => Math.floor(Math.random() * n);
+    palabras.slice().sort((a, b) => b.length - a.length).forEach((w) => {
+      for (let intento = 0; intento < 200; intento++) {
+        const dir = azar(2), f = azar(dir ? N - w.length + 1 : N), c = azar(dir ? N : N - w.length + 1); let ok = true;
+        for (let k = 0; k < w.length; k++) { const x = g[f + (dir ? k : 0)][c + (dir ? 0 : k)]; if (x && x !== w[k]) { ok = false; break; } }
+        if (!ok) continue;
+        for (let k = 0; k < w.length; k++) g[f + (dir ? k : 0)][c + (dir ? 0 : k)] = w[k];
+        pos[w] = { f, c, dir }; return;
+      }
+    });
+    for (let f = 0; f < N; f++) for (let c = 0; c < N; c++) if (!g[f][c]) g[f][c] = L[azar(L.length)];
+    return { g, pos };
+  }
+  async function vistaSopa(volver) {
+    let datos; try { datos = await datoCargar('juego_sopa'); } catch (e) { $('#pantalla').innerHTML = `${cabecera('Sopa del Vivero', 'Juegos')}<p class="suave">${SIN_DATOS}</p>`; volverA('Juegos', volver); return; }
+    const son = (n) => { try { if (window.TBSonido && window.TBSonido[n]) window.TBSonido[n](); } catch (e) { /* sin sonido */ } };
+    const menu = () => {
+      $('#pantalla').innerHTML = `${cabecera('Sopa del Vivero', 'Juegos')}<div class="ju">${JU_HERO(3)}<p class="suave">Elige un tema. Las palabras están de izquierda a derecha o de arriba hacia abajo. No hay tiempo y las pistas son gratis.</p>
+        ${datos.temas.map((t) => `<button type="button" class="ju-modo" data-tema="${esc(t.id)}"><span><b>${esc(t.titulo)}</b><small>${esc(t.ayuda)}</small></span><span class="flecha" aria-hidden="true">›</span></button>`).join('')}</div>`;
+      volverA('Juegos', volver);
+      document.querySelectorAll('[data-tema]').forEach((b) => b.addEventListener('click', () => jugar(datos.temas.find((t) => t.id === b.dataset.tema))));
+    };
+    const jugar = (tema) => {
+      const lista = tema.palabras.slice().sort(() => Math.random() - 0.5).slice(0, 5); let tab = sopaArmar(lista); for (let r = 0; r < 20 && lista.some((w) => !tab.pos[w]); r++) tab = sopaArmar(lista);
+      const { g, pos } = tab, N = g.length;
+      const halladas = new Set(), ok = new Set(); let ini = null, pista = null, aviso = 'Toca la primera letra de una palabra y luego la última.';
+      const celdasDe = (w) => { const p = pos[w], r = []; for (let k = 0; k < w.length; k++) r.push((p.f + (p.dir ? k : 0)) * N + p.c + (p.dir ? 0 : k)); return r; };
+      const pintar = () => {
+        $('#pantalla').innerHTML = `${cabecera('Sopa del Vivero', 'Juegos')}<div class="ju"><h2 class="ju-p">${esc(tema.titulo)}</h2>
+          <div class="so-lista" aria-label="Palabras por encontrar">${lista.map((w) => `<span class="so-pal${halladas.has(w) ? ' hecha' : ''}">${w}</span>`).join('')}</div>
+          <div class="so-grid" role="grid" aria-label="Sopa de letras">${g.map((fila, f) => fila.map((l, c) => { const i = f * N + c; return `<button type="button" role="gridcell" class="so-c${ok.has(i) ? ' ok' : ''}${ini === i ? ' sel' : ''}${pista === i ? ' pista' : ''}" data-i="${i}" aria-label="${l}, fila ${f + 1}, columna ${c + 1}">${l}</button>`; }).join('')).join('')}</div>
+          <p class="so-aviso" role="status" aria-live="polite">${esc(aviso)}</p>
+          <button type="button" class="ju-sig" id="soPista">Pista gratis <span aria-hidden="true">›</span></button></div>`;
+        volverA('Juegos', menu);
+        document.querySelectorAll('.so-c').forEach((b) => b.addEventListener('click', () => tocar(Number(b.dataset.i))));
+        $('#soPista').onclick = () => { const w = lista.find((x) => !halladas.has(x)); if (!w) return; pista = celdasDe(w)[0]; ini = null; aviso = 'La palabra «' + w + '» empieza en la letra marcada.'; pintar(); };
+      };
+      const tocar = (i) => {
+        pista = null;
+        if (ini === null) { ini = i; aviso = 'Ahora toca la última letra de la palabra.'; pintar(); return; }
+        const a = ini, f1 = Math.floor(a / N), c1 = a % N, f2 = Math.floor(i / N), c2 = i % N; ini = null;
+        let w = null;
+        if (f1 === f2 && c2 >= c1) w = g[f1].slice(c1, c2 + 1).join('');
+        else if (c1 === c2 && f2 >= f1) w = g.slice(f1, f2 + 1).map((r) => r[c1]).join('');
+        if (w && lista.includes(w) && !halladas.has(w)) {
+          halladas.add(w); celdasDe(w).forEach((x) => ok.add(x)); son('logro'); aviso = '¡Encontraste «' + w + '»!';
+          if (halladas.size === lista.length) { fin(); return; }
+        } else { son('suave'); aviso = 'Esas letras no forman una palabra de la lista. Puedes intentar de nuevo.'; }
+        pintar();
+      };
+      const fin = () => {
+        juegoTerminar('sopa', lista.length, lista.length);
+        $('#pantalla').innerHTML = `${cabecera('Sopa del Vivero', 'Juegos')}<div class="ju">${JU_HERO(5)}<h2 class="ju-fin">Encontraste las ${lista.length} palabras</h2><p class="suave">${lista.map((w) => esc(w)).join(' · ')}</p>
+          <button type="button" class="ju-sig" id="soOtra">Jugar otra vez <span aria-hidden="true">›</span></button></div>`;
+        volverA('Juegos', menu); $('#soOtra').onclick = () => jugar(tema);
+      };
+      pintar();
+    };
+    menu();
+  }
+  // F954 · «EL SEMBRADOR» (juego E, versión 1): la parábola de los cuatro terrenos como un hábito diario de cuatro pasos. Se guarda dentro de K_JUEGOS (ya viaja a la cuenta).
+  const SEMBRADOR_PASOS = [
+    ['leer', 'El camino', 'Leí un pasaje hoy', 'La semilla cae donde se la recibe con atención. Leer unos minutos, sin apuro, ya es sembrar.'],
+    ['pensar', 'El pedregal', 'Pensé en lo que leí', 'Para que la semilla eche raíz hace falta detenerse: ¿qué me dice este pasaje hoy?'],
+    ['hacer', 'Los espinos', 'Hice un paso concreto', 'Lo leído crece cuando se vive. Un gesto pequeño con alguien cuenta: escuchar, ayudar, perdonar.'],
+    ['orar', 'La buena tierra', 'Oré', 'Orar deja la tierra lista y da fruto. Puede ser una frase corta y sincera.']
+  ];
+  function sembradorEstado() { const j = leer(K_JUEGOS) || { n: 0, p: {} }, s = j.sembrador || {}; return s.f === hoyTxt() ? s : { f: hoyTxt(), pasos: [], cosechas: s.cosechas || 0 }; }
+  function sembradorGuardar(s) { const j = leer(K_JUEGOS) || { n: 0, p: {} }; j.sembrador = s; guardar(K_JUEGOS, j); }
+  function vistaSembrador(volver) {
+    const son = (n) => { try { if (window.TBSonido && window.TBSonido[n]) window.TBSonido[n](); } catch (e) { /* sin sonido */ } };
+    const pintar = () => {
+      const s = sembradorEstado(), n = s.pasos.length;
+      $('#pantalla').innerHTML = `${cabecera('El Sembrador', 'Juegos')}<div class="ju">${JU_HERO(n)}<p class="suave">Una parábola de Jesús sobre la semilla y los cuatro terrenos (Mateo 13:3-9). Marca lo que hiciste hoy; cuando los cuatro terrenos están listos, tu campo da fruto. Es solo para ti: se marca con confianza, sin revisión.</p>
+        <p class="ju-cuenta">Hoy: ${n} de 4 terrenos listos${s.cosechas ? ' · Cosechas: ' + Number(s.cosechas) : ''}</p>
+        ${SEMBRADOR_PASOS.map((p) => { const hecho = s.pasos.includes(p[0]); return `<button type="button" class="ju-modo se-paso${hecho ? ' hecho' : ''}" data-paso="${p[0]}" aria-pressed="${hecho}"><span><b>${esc(p[1])}: ${esc(p[2])}</b><small>${esc(p[3])}</small></span><span class="flecha" aria-hidden="true">${hecho ? '✓' : '›'}</span></button>`; }).join('')}
+        ${n === 4 ? '<p class="ju-vered ok"><b>Tu campo dio fruto hoy.</b> Vuelve mañana para sembrar otra vez.</p>' : ''}</div>`;
+      volverA('Juegos', volver);
+      document.querySelectorAll('[data-paso]').forEach((b) => b.addEventListener('click', () => {
+        const st = sembradorEstado(), id = b.dataset.paso; if (st.pasos.includes(id)) st.pasos = st.pasos.filter((x) => x !== id); else { st.pasos.push(id); son('logro'); }
+        if (st.pasos.length === 4 && !st.cosechado) { st.cosechado = true; st.cosechas = (st.cosechas || 0) + 1; sembradorGuardar(st); juegoTerminar('sembrador', 4, 4); son('logro'); } else sembradorGuardar(st);
+        pintar();
+      }));
+    };
+    pintar();
   }
   function vistaJuegos() {
     const j = leer(K_JUEGOS) || { n: 0 };
