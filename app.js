@@ -487,7 +487,7 @@
     const p = ya ? ['Ya tienes Tierra Buena instalada. Ábrela desde el ícono de tu pantalla de inicio.'] : ios
       ? ['1. Abre esta página en Safari (si estás en otro navegador, copia el enlace y pégalo en Safari).', '2. Toca el botón Compartir: el cuadrado con la flecha hacia arriba.', '3. Elige «Agregar a pantalla de inicio» y toca «Agregar».']
       : ['1. Toca el menú ⋮ de tu navegador (arriba a la derecha).', '2. Elige «Instalar app» o «Agregar a pantalla de inicio».', '3. Confirma. El ícono de Tierra Buena aparece junto a tus otras apps.'];
-    textoPantalla('Instalar la app', p.concat(ya ? [] : ['Después, mantén tocado el ícono para ir directo a tu versículo, a la Biblia o a tu calendario.']), '');
+    textoPantalla('Instalar la app', p.concat(ya ? [] : ['Después, mantén tocado el ícono para ir directo a tu versículo, a la Biblia o a tus fechas importantes.']), '');
   }
   const instalarChip = () => { try { if (yaInstalada() || localStorage.getItem('tb_movil_inst_no') === String(new Date().getMonth())) return ''; } catch (e) { return ''; } return `<span class="hoy-inst"><button type="button" class="hoy-fecha" data-ir="inst">${svg('compartir', 16)}<span><b>Instalar la app</b> · un toque</span></button><button type="button" class="hoy-inst-x" data-ir="instno" aria-label="Ahora no">${svg('x', 14)}</button></span>`; };
   const bloqueInstalar = () => '<div data-instalar-box class="sep16"></div>';
@@ -2435,7 +2435,7 @@
     { id: 'busca', multi: true, max: 3, t: '¿Qué te trae a Tierra Buena?', a: 'Elige hasta tres.', o: [['leer', 'libro', 'Leer la Biblia cada día'], ['orar', 'corazon', 'Orar y encontrar paz'], ['conocer', 'chispas', 'Conocer más a Dios'], ['iglesia', 'iglesia', 'Crecer con mi iglesia'], ['descansar', 'luna', 'Descansar en calma'], ['retos', 'estrella', 'Retos para poner en práctica']] },
     { id: 'info1', info: true, ic: 'gente', t: (r) => (r.nombre ? r.nombre + ', aquí la Palabra se vive' : 'Aquí la Palabra se vive'), a: 'Leer es el principio. Cada día das un paso pequeño: algo que haces por ti, por alguien o por tu comunidad. Empezamos por nosotros.' },
     { id: 'exp', t: '¿Cómo es tu camino con la Biblia?', a: 'No hay respuesta mala.', o: [['nuevo', 'brote', 'Estoy empezando'], ['a_veces', 'libro', 'La leo de vez en cuando'], ['seguido', 'llama', 'La leo seguido'], ['profundo', 'rollo', 'Quiero profundizar']] },
-    { id: 'trad', t: '¿Con qué tradición te sientes en casa?', a: 'Con esto armamos tu calendario y tus fechas. Es opcional y solo lo ves tú.', o: [['evangelica', 'iglesia', 'Evangélica o protestante'], ['catolica', 'iglesia', 'Católica'], ['ortodoxa', 'iglesia', 'Ortodoxa'], ['otra', 'gente', 'Otra iglesia cristiana'], ['explorando', 'chispas', 'Estoy explorando'], ['nodecir', 'candado', 'Prefiero no decirlo']] },
+    { id: 'trad', t: '¿Con qué tradición te sientes en casa?', a: 'Con esto se eligen las fechas importantes que verás. Es opcional y solo lo ves tú.', o: [['evangelica', 'iglesia', 'Evangélica o protestante'], ['catolica', 'iglesia', 'Católica'], ['ortodoxa', 'iglesia', 'Ortodoxa'], ['otra', 'gente', 'Otra iglesia cristiana'], ['explorando', 'chispas', 'Estoy explorando'], ['nodecir', 'candado', 'Prefiero no decirlo']] },
     { id: 'animo', t: '¿Cómo está tu corazón hoy?', a: 'Lo usamos para elegir tu primera lectura.', o: [['paz', 'paloma', 'En paz'], ['cansado', 'luna', 'Cansado'], ['ansioso', 'viento', 'Con preocupación'], ['agradecido', 'corazon', 'Agradecido'], ['dudas', 'ayuda', 'Con dudas']] },
     { id: 'area', t: '¿En qué quieres crecer?', a: 'Elige lo que más necesitas ahora.', o: [['fe', 'llama', 'Mi fe'], ['paz', 'paloma', 'Mi paz interior'], ['familia', 'gente', 'Mi familia'], ['proposito', 'estrella', 'Mi propósito'], ['sabiduria', 'foco', 'Sabiduría para decidir']] },
     { id: 'mom', t: '¿Cuándo te gusta leer?', a: 'Con eso armamos tu horario.', o: [['manana', 'sol', 'Por la mañana'], ['mediodia', 'sol', 'Al mediodía'], ['tarde', 'sol', 'Por la tarde'], ['noche', 'luna', 'De noche'], ['libre', 'calendario', 'Cuando pueda']] },
@@ -2485,7 +2485,7 @@
     ]);
   }
   function vistaInfo() {
-    textoPantalla('Información', [
+    textoPantalla('Cómo usar la app', [
       'Tierra Buena es una app para leer la Biblia, orar y poner en práctica lo que aprendes, sola o con tu iglesia.',
       'Palabra: lees y escuchas la Biblia a tu ritmo. Vida: das un paso pequeño cada día y lo compartes si quieres. Mi iglesia: pides oración, recibes avisos y te unes con el código de tu iglesia.',
       'Tu plan se arma con lo que nos cuentas al empezar, y lo puedes cambiar cuando quieras desde el menú.',
@@ -2499,8 +2499,8 @@
     ]);
   }
   function vistaWidgets() {                                 // F898: lo que sí se puede hoy en una app web instalada
-    textoPantalla('Widgets', [
-      'Con Tierra Buena instalada, mantén tocado su ícono: aparecen atajos directos a tu versículo de hoy, a la Biblia y a tu calendario. Funciona en Android.',
+    textoPantalla('Versículo en mi pantalla', [
+      'Con Tierra Buena instalada, mantén tocado su ícono: aparecen atajos directos a tu versículo de hoy, a la Biblia y a tus fechas importantes. Funciona en Android.',
       'Los widgets que se quedan fijos en la pantalla (como un reloj) solo existen en apps de tienda. Los estamos preparando para cuando publiquemos la app; mientras tanto, «Hoy» muestra tu versículo, tu racha y la próxima fecha importante.'
     ], '<button type="button" class="btn" id="wgInst">Instalar la app</button>');
     $('#wgInst').onclick = instalarUnToque;
@@ -2558,9 +2558,9 @@
     const fmt = (d) => d.toLocaleDateString('es', { weekday: 'long', day: 'numeric', month: 'long' });
     const dias = (d, f) => { const n = Math.round((d - hoy) / 86400000); return n === 0 ? (f === 'mes' ? 'Todo este mes' : 'Hoy') : n === 1 ? 'Mañana' : 'En ' + n + ' días'; };
     const [p, ...resto] = lista;
-    $('#pantalla').innerHTML = `${cabecera('Calendario santo', 'Menú')}<p class="suave">Cada fecha trae un paso pequeño para vivirla.</p><p class="cal-trad"><span>${svg('calendario', 18)} ${esc(TRAD_N[tradLeer()] || 'Fechas para todos')}</span><button type="button" class="enlace" id="calCambiar">Cambiar</button></p>
-      ${p ? `<div class="card cal-prox"><small>Lo que viene</small><h3>${esc(p[1])}</h3><p class="cal-cuando">${esc(dias(p[0], p[4]))} · ${esc(fmt(p[0]))}</p><p>${esc(p[2])}</p><p class="cal-paso">${svg('chispas', 18)} <b>Tu paso:</b> ${esc(p[3])}</p></div>` : ''}
-      ${(() => { try { const mv = window.TBFechas && window.TBFechas.listaHTML(['juntos', 'agenda']); return mv ? '<h2 class="sep">Lo de tu iglesia</h2><div class="lista">' + mv + '</div>' : ''; } catch (e) { return ''; } })()}<h2 class="sep">Después</h2><div class="lista">${resto.map((x) => `<div class="fila cal-fila"><span class="fila-ico t2" aria-hidden="true">${svg('calendario', 20)}</span><span class="fila-txt"><b>${esc(x[1])}</b><small>${esc(dias(x[0], x[4]))} · ${esc(fmt(x[0]))}</small></span></div>`).join('')}</div>`;
+    $('#pantalla').innerHTML = `${cabecera('Fechas importantes', 'Menú')}<p class="suave">Cada fecha incluye una sugerencia sencilla para vivirla.</p><p class="cal-trad"><span>${svg('calendario', 18)} ${esc(TRAD_N[tradLeer()] || 'Fechas para todos')}</span><button type="button" class="enlace" id="calCambiar">Cambiar tradición</button></p>
+      ${p ? `<div class="card cal-prox"><small>Próxima fecha</small><h3>${esc(p[1])}</h3><p class="cal-cuando">${esc(dias(p[0], p[4]))} · ${esc(fmt(p[0]))}</p><p>${esc(p[2])}</p><p class="cal-paso">${svg('chispas', 18)} <b>Sugerencia:</b> ${esc(p[3])}</p></div>` : ''}
+      ${(() => { try { const mv = window.TBFechas && window.TBFechas.listaHTML(['juntos', 'agenda']); return mv ? '<h2 class="sep">Lo de tu iglesia</h2><div class="lista">' + mv + '</div>' : ''; } catch (e) { return ''; } })()}<h2 class="sep">Más adelante</h2><div class="lista">${resto.map((x) => `<div class="fila cal-fila"><span class="fila-ico t2" aria-hidden="true">${svg('calendario', 20)}</span><span class="fila-txt"><b>${esc(x[1])}</b><small>${esc(dias(x[0], x[4]))} · ${esc(fmt(x[0]))}</small></span></div>`).join('')}</div>`;
     $('#volver').onclick = menuAbrir; $('#calCambiar').onclick = planRehacer; window.scrollTo(0, 0);
   }
   const menuCerrar = () => { try { const c = $('#cajonMenu'); if (c) c.remove(); } catch (e) { /* nada */ } };
@@ -2573,12 +2573,12 @@
       <div class="cj-lista">
         ${yaInstalada() ? '' : it('inst', 'compartir', 'Instalar la app', 'Un toque y queda en tu pantalla')}
         ${it('jun', 'brote', 'Juntos hacemos el bien', 'Ideas y movimientos de tu iglesia')}
-        ${it('plan', 'brote', 'Planes de trabajo', 'Contesta de nuevo y la app se adapta')}
-        ${it('info', 'ayuda', 'Información', 'Qué es y cómo usarla')}
-        ${it('cal', 'calendario', 'Calendario santo', 'Fechas para vivir juntos')}
+        ${it('plan', 'brote', 'Personalizar la app', 'Cambiar mis respuestas iniciales')}
+        ${it('info', 'ayuda', 'Cómo usar la app', 'Guía rápida de cada sección')}
+        ${it('cal', 'calendario', 'Fechas importantes', 'Fiestas cristianas y actividades de tu iglesia')}
         ${it('comp', 'compartir', 'Compartir la app', 'Invita a alguien que quieras')}
-        ${it('wid', 'bloques', 'Widgets', 'Tu versículo en la pantalla')}
-        ${it('conf', 'foco', 'Configuración', 'Temas, cuenta y letra')}
+        ${it('wid', 'bloques', 'Versículo en mi pantalla', 'Verlo sin abrir la app')}
+        ${it('conf', 'foco', 'Ajustes y cuenta', 'Temas, letra, sonido y datos de tu cuenta')}
         ${it('sus', 'estrella', 'Suscripción', 'Hoy todo es gratis')}
         ${it('hist', 'hoja', 'Lee nuestra historia', 'Por qué existe Tierra Buena')}
       </div></nav></div>`);
@@ -2727,7 +2727,7 @@
         <div class="ent-fila"><span class="ent-fila-ic">${svg('calendario', 24)}</span><div><small>Tu primer plan</small><b>${esc(pl.n)}</b><span class="suave">${esc(pl.d)}</span></div></div>
         <div class="ent-fila"><span class="ent-fila-ic">${svg('chispas', 24)}</span><div><small>Tu ambiente</small><b>${esc(tm[1])}</b><span class="suave">${esc(tm[2])}</span></div></div>
         <div class="ent-fila"><span class="ent-fila-ic">${svg(r.mom === 'noche' ? 'luna' : 'sol', 24)}</span><div><small>Tu momento</small><b>${esc(mom ? mom[0] : 'Cuando puedas')}</b><span class="suave">${c.hora ? 'Te sugeriremos las ' + c.hora + '.' : 'Sin horario fijo.'}</span></div></div>
-        ${r.trad && r.trad !== 'nodecir' ? `<div class="ent-fila"><span class="ent-fila-ic">${svg('calendario', 24)}</span><div><small>Tu calendario</small><b>${esc(TRAD_N[r.trad] || 'Cristiano')}</b><span class="suave">Con las fechas que viven en tu iglesia.</span></div></div>` : ''}
+        ${r.trad && r.trad !== 'nodecir' ? `<div class="ent-fila"><span class="ent-fila-ic">${svg('calendario', 24)}</span><div><small>Tus fechas</small><b>${esc(TRAD_N[r.trad] || 'Cristiano')}</b><span class="suave">Con las fechas que viven en tu iglesia.</span></div></div>` : ''}
         <div class="ent-fila"><span class="ent-fila-ic">${svg('llama', 24)}</span><div><small>Tu meta</small><b>${c.meta} ${c.meta === 1 ? 'capítulo' : 'capítulos'} al día</b><span class="suave">Toda la Biblia en ${esc(onbRitmo(c.meta))}.</span></div></div>
         <div class="ent-fila"><span class="ent-fila-ic">${svg('chispas', 24)}</span><div><small>Tu primer paso de acción</small><b>Hoy lo hago</b><span class="suave">Cada día un paso pequeño para vivir lo que lees.</span></div></div>
       </div>

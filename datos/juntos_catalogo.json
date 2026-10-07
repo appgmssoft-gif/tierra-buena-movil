@@ -126,11 +126,23 @@
       "obligatorio": true
      },
      {
+      "id": "lider_contacto",
+      "etiqueta": "Contacto de líder",
+      "ayuda": "Teléfono o correo. Solo lo ven el pastor y el equipo; el resto de la congregación no.",
+      "max": 60
+     },
+     {
       "id": "segundo",
       "etiqueta": "2.º líder",
       "ayuda": "Obligatorio: el movimiento sigue si falta el líder.",
       "tipo": "persona",
       "obligatorio": true
+     },
+     {
+      "id": "segundo_contacto",
+      "etiqueta": "Contacto de 2.º líder",
+      "ayuda": "Teléfono o correo. Solo lo ven el pastor y el equipo; el resto de la congregación no.",
+      "max": 60
      },
      {
       "id": "tercero",
@@ -150,6 +162,13 @@
       "ayuda": "Una línea por aporte: qué se necesita y, si se sabe, cuánto. Solo especies y tiempo, sin dinero.",
       "tipo": "lista",
       "ejemplo": "Legumbres, según lo que cada familia pueda traer"
+     },
+     {
+      "id": "encargado",
+      "etiqueta": "Persona a cargo de recibir los aportes",
+      "ayuda": "Una sola persona anota cuando llega cada aporte (queda «recibido» en vez de «por recibir»). Puede ser quien crea el movimiento u otro miembro de la iglesia.",
+      "tipo": "miembro",
+      "obligatorio": true
      }
     ]
    },

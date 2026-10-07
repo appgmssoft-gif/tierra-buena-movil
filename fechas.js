@@ -1,5 +1,5 @@
 // fechas.js - F921. CALENDARIO Y AVISOS DENTRO DE LA APP para todo lo que tenga fecha: movimientos de Juntos, actividades de la agenda de la iglesia
-// (se guardan en el teléfono al abrir la Agenda) y fechas del Calendario santo. Avisa dentro de la app (sin permisos del teléfono) y marca el ícono de Juntos.
+// (se guardan en el teléfono al abrir la Agenda) y fechas de «Fechas importantes». Avisa dentro de la app (sin permisos del teléfono) y marca el ícono de Juntos.
 // Lenguaje: respetuoso y cordial, neutro (ver compartido/docs/TAREAS.md).
 'use strict';
 (function () {
