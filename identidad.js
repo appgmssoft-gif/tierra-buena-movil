@@ -161,72 +161,44 @@
   const confeti = (el) => { if (calma() || !el) return; for (let i = 0; i < 14; i++) { const p = document.createElement('i'); p.className = 'tbj-cf'; p.style.setProperty('--dx', (Math.random() * 160 - 80).toFixed(0) + 'px'); p.style.setProperty('--dy', (-(40 + Math.random() * 90)).toFixed(0) + 'px'); p.style.setProperty('--r', (Math.random() * 360).toFixed(0) + 'deg'); p.style.setProperty('--d', (Math.random() * 0.2).toFixed(2) + 's'); el.appendChild(p); setTimeout(() => { try { p.remove(); } catch (e) { /* nada */ } }, 1200); } };
 
 
-  // F904 · ENCUESTA DEL MES y MURO DE AVANCES. Hoy viven en el teléfono (clave tb_movil_juntos2); al correr SQL_F898_ACCION_JUNTOS.sql se conectan a Supabase para verse entre teléfonos.
-  // Regla de diseño: sin comentarios abiertos ni rankings entre iglesias; solo avances, ánimo («Animar») y una votación al mes.
-  const K_J2 = 'tb_movil_juntos2';
-  const mesClave = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); };
-  const est2 = () => { const e = leer(K_J2, null); return e && typeof e === 'object' ? { votos: e.votos || {}, muro: Array.isArray(e.muro) ? e.muro : [] } : { votos: {}, muro: [] }; };
-  function opcionesDelMes() { const base = MOV.filter((m) => m.tipo === 'idea'); if (!base.length) return []; const n = new Date().getMonth(); return [0, 1, 2, 3].map((k) => base[(n * 2 + k * 3) % base.length]).filter((m, i, v) => v.indexOf(m) === i); }
-  // F904b: si hay sesión y la persona que administra ya activó las opciones del mes en Supabase, la encuesta es REAL (1 persona = 1 voto, cuenta personas, nunca iglesias). Si no, queda la versión de ejemplo del teléfono.
-  async function votoReal() {
-    try { const sb = A().sb; if (!sb || !sb.rpc) return null; const r = await sb.rpc('movimiento_resultados', {}); if (r.error || !Array.isArray(r.data) || !r.data.length) return null; return r.data; } catch (e) { return null; }
-  }
-  async function pintarVoto() {
-    const caja = $('#tbjVoto'); if (!caja) return;
-    const real = await votoReal();
-    if (real) {
-      const tot = real.reduce((s, o) => s + Number(o.votos || 0), 0), voto = real.some((o) => o.mi_voto);
-      caja.innerHTML = `<div class="card tbj-voto"><p class="tbj-vq"><b>¿Qué hacemos entre todos este mes?</b><small>Un voto por persona, de todas las personas de la app. La opción con más votos es el movimiento del mes. Puedes cambiar tu voto mientras dure el mes.</small></p>
-        ${real.map((o) => `<button type="button" class="tbj-op${o.mi_voto ? ' on' : ''}" data-r="${esc(o.opcion_id)}"><span class="tbj-op-ic" aria-hidden="true">🌱</span><span class="tbj-op-tx"><b>${esc(o.titulo)}</b><small>${esc(o.descripcion || '')}</small>${o.paso ? `<small>Tu gesto: ${esc(o.paso)}</small>` : ''}${voto ? barra(Number(o.votos), Math.max(1, tot), '') : ''}</span>${voto ? `<em>${pct(Number(o.votos), tot)}%</em>` : ''}</button>`).join('')}
-        <button type="button" class="btn sec chico" id="tbjSug">💡 Proponer una idea para el próximo mes</button><p class="suave tbj-vnota" id="tbjVmsg">${voto ? 'Gracias por votar.' : 'Elige una.'}</p></div>`;
-      $$('.tbj-op', caja).forEach((b) => { b.onclick = async () => { snd('juntos', 3); try { await A().sb.rpc('movimiento_votar', { p_opcion: b.dataset.r }); } catch (e) { /* sin red */ } pintarVoto(); }; });
-      $('#tbjSug').onclick = async () => { const t = (prompt('¿Qué bien podríamos hacer juntos? (una frase corta)') || '').trim(); if (t.length < 3) return; let m = 'No se pudo enviar. Inténtalo más tarde.'; try { const r = await A().sb.rpc('movimiento_sugerir', { p_titulo: t.slice(0, 80) }); if (r && !r.error) { m = 'Gracias: quien administra revisará tu idea.'; snd('exito'); } } catch (e) { /* sin red */ } const x = $('#tbjVmsg'); if (x) x.textContent = m; };
-      aplicarAnchos(caja); return;
-    }
-    const e = est2(), mes = mesClave(), voto = e.votos[mes], ops = opcionesDelMes();
-    if (!ops.length) { caja.innerHTML = ''; return; }
-    caja.innerHTML = `<div class="card tbj-voto"><p class="tbj-vq"><b>¿Qué haremos juntos este mes?</b><small>Elige la idea que más te gustaría que tu iglesia impulsara. Es tu voto personal.</small></p>
-      ${ops.map((m) => `<button type="button" class="tbj-op${voto === m.id ? ' on' : ''}" data-v="${m.id}" ${voto ? 'disabled' : ''}><span class="tbj-op-ic" aria-hidden="true">${esc(m.icono)}</span><span class="tbj-op-tx"><b>${esc(m.titulo)}</b><small>${esc(corto(m.que_es, 110))}</small></span></button>`).join('')}
-      <p class="suave tbj-vnota">${voto ? 'Gracias por votar. Vuelve el próximo mes: habrá nuevas ideas. Los resultados se verán cuando la votación esté activa en tu iglesia.' : 'Elige una. Todas hacen bien.'}</p></div>`;
-    $$('.tbj-op', caja).forEach((b) => { b.onclick = () => { if (b.disabled) return; snd('juntos', 3); const x = est2(); x.votos[mesClave()] = b.dataset.v; guardar(K_J2, x); pintarVoto(); confeti(caja); }; });
-    aplicarAnchos(caja);
-  }
-  function pintarMuro() {
-    const caja = $('#tbjMuro'); if (!caja) return;
-    const e = est2();
-    const L = e.muro;
-    caja.innerHTML = `<div class="card tbj-muro-nuevo"><label for="tbjTxt" class="tbj-vq"><b>Cuenta un avance</b><small>Algo bueno que hiciste o viste. Sin nombres ni fotos de otras personas.</small></label>
-      <textarea id="tbjTxt" maxlength="220" rows="3" placeholder="Hoy ayudamos a…"></textarea><div class="tbj-muro-fila"><small id="tbjCnt">0 / 220</small><button type="button" class="btn chico" id="tbjPub">Compartir avance</button></div></div>
-      <div class="tbj-muro">${!L.length ? '<div class="card tbj-vacio"><p class="m0">🕊️</p><p class="suave m0t">Aún no hay avances. Cuenta el primero: anima a tu iglesia.</p></div>' : ''}${L.map((m, i) => `<article class="card tbj-post"><p class="tbj-post-q">${esc(m.q || 'Yo')}</p><p>${esc(m.t)}</p><button type="button" class="tbj-an${m.yo ? ' on' : ''}" data-i="${i}" aria-pressed="${!!m.yo}">👏 Animar · <b>${m.a || 0}</b></button></article>`).join('')}</div>`;
-    const t = $('#tbjTxt'); t.oninput = () => { $('#tbjCnt').textContent = t.value.length + ' / 220'; };
-    $('#tbjPub').onclick = () => { const v = t.value.trim(); if (v.length < 8) { snd('error'); t.focus(); return; } const x = est2(); x.muro.unshift({ q: 'Yo', t: v.slice(0, 220), a: 0, f: Date.now() }); x.muro = x.muro.slice(0, 40); guardar(K_J2, x); snd('exito'); pintarMuro(); };
-    $$('.tbj-an', caja).forEach((b) => { b.onclick = () => { const i = Number(b.dataset.i), x = est2(); if (i >= x.muro.length) { snd('toque'); b.classList.toggle('on'); const n = $('b', b); n.textContent = String(Number(n.textContent) + (b.classList.contains('on') ? 1 : -1)); return; } const m = x.muro[i]; m.yo = !m.yo; m.a = Math.max(0, (m.a || 0) + (m.yo ? 1 : -1)); guardar(K_J2, x); snd('toque'); pintarMuro(); }; });
-  }
-
-  function abrir() {
+  let tabJ = 'curso';
+  const TABS = [['curso', '🌿', 'En curso'], ['guard', '⭐', 'Guardados'], ['crear', '✏️', 'Crear'], ['listos', '📚', 'Ideas listas']];
+  const SECC = { curso: 'Lo que se está haciendo ahora. Abre uno para ver el plan y sumarte.', guard: 'Tus ideas guardadas y los movimientos ya terminados.', crear: 'Arma un movimiento nuevo con tu iglesia. Abajo está la guía.', listos: 'Ideas y proyectos con el plan ya escrito. Elige uno y úsalo.' };
+  const PASOS_GUIA = [
+    ['Elige una necesidad', 'Escoge un solo problema real y cercano. Mejor algo pequeño que se pueda terminar.'],
+    ['Di para quién y qué lograrás', 'Escribe a quién ayudas y ponle una meta que se pueda contar (familias, horas, kilos).'],
+    ['Reúne al equipo', 'Un líder y un 2.º líder, para que el movimiento siga aunque uno falte. Un 3.º es opcional.'],
+    ['Pon fecha y lugar', 'Lo ideal es un mes de anticipación (mínimo dos semanas), en un lugar abierto al público y de día.'],
+    ['Reparte los aportes', 'Anota qué se necesita (tiempo o cosas, nunca dinero) y quién recibe lo que llega.'],
+    ['Escribe los pasos', 'Qué se hace primero, qué después y quién lo hace, cada paso con su fecha.'],
+    ['Hazlo y cuenta lo bueno', 'Al terminar anota qué salió bien y qué aprendieron, para que el próximo salga mejor.']];
+  const guiaHTML = () => `<h2 class="sep">Guía: cómo armar un proyecto</h2><div class="card tbj-guia">
+    <details open><summary>7 pasos para armar tu proyecto</summary><ol class="tbj-gpasos">${PASOS_GUIA.map((x) => `<li><b>${esc(x[0])}.</b> ${esc(x[1])}</li>`).join('')}</ol><p class="suave m0">¿No quieres empezar de cero? En «Ideas listas» hay planes ya escritos.</p></details>
+    <details><summary>La receta de un movimiento</summary><ol class="tbj-receta">${RECETA.map((r, n) => `<li><span class="tbj-n" aria-hidden="true">${r[0]}</span><span><b>${n + 1}. ${r[1]}</b><small>${r[2]}</small></span></li>`).join('')}</ol></details>
+    <details><summary>Reglas del bien</summary><ul>${REGLAS.map((r) => `<li>${esc(r)}</li>`).join('')}</ul></details></div>`;
+  function abrir(t) {
     const ap = A(), pant = $('#pantalla'); if (!pant) return;
-    const e = est();
-    const aportes = Object.keys(e.unidos).reduce((s, k) => s + (e.unidos[k].n || 0), 0) + e.mios.reduce((s, m) => s + (m.n || 0), 0);
-    const sumados = Object.keys(e.unidos).length + e.mios.length;
+    if (typeof t === 'string' && SECC[t]) tabJ = t;
     pant.innerHTML = `<button type="button" class="volver" id="tbjVolver">‹ Inicio</button>
-      <section class="tbj-hero"><span class="tbj-h-a" aria-hidden="true"></span><span class="tbj-h-b" aria-hidden="true"></span>
-        <p class="tbj-sello">Movimientos de Tierra Buena</p><h1>Juntos hacemos el bien</h1>
-        <p class="tbj-lema">Aquí la Palabra se vuelve acción. Arma un movimiento con tu iglesia, mira cómo crece e invita a tu congregación.</p>
-        <div class="tbj-huella"><span><b data-n="${aportes}">${aportes}</b><small>pasos míos</small></span><span><b data-n="${sumados}">${sumados}</b><small>movimientos</small></span></div></section>
-      ${recordHTML()}${borradorHTML()}<h2 class="sep">Mis movimientos</h2><div id="tbjMios"></div>
-      <h2 class="sep">En mi iglesia <small class="tbj-ejtag">lo que se necesita y lo que ya llegó</small></h2><div id="tbjIg"></div>
-      <div class="tbj-nuevo">${vistaPrevia() ? '<p class="tbj-previa-nota"><b>Armar un movimiento</b> está disponible para miembros y pastores de una iglesia.</p>' : '<button type="button" class="btn" id="tbjNuevo">＋ Armar un movimiento con mi iglesia</button>'}</div>
-      <h2 class="sep">${vistaPrevia() ? 'Ideas y proyectos de muestra' : 'Ideas y proyectos listos'} <small class="tbj-ejtag">toca uno para ver el plan</small></h2><div id="tbjLista" class="tbj-lista"><p class="suave">Cargando…</p></div>
-      <h2 class="sep">La receta de un movimiento</h2>
-      <ol class="tbj-receta">${RECETA.map((r, i) => `<li><span class="tbj-n" aria-hidden="true">${r[0]}</span><span><b>${i + 1}. ${r[1]}</b><small>${r[2]}</small></span></li>`).join('')}</ol>
-      <div class="card tbj-reglas"><div class="t"><span aria-hidden="true">🛡️</span>Reglas del bien</div><ul>${REGLAS.map((r) => `<li>${esc(r)}</li>`).join('')}</ul></div>`;
+      <section class="tbj-hero chico"><p class="tbj-sello">Movimientos de Tierra Buena</p><h1>Juntos hacemos el bien</h1><p class="tbj-lema">La Palabra se vuelve acción: súmate a lo que ya se hace o arma algo nuevo con tu iglesia.</p></section>
+      <nav class="tbj-tabs" role="tablist" aria-label="Secciones">${TABS.map((x) => `<button type="button" role="tab" class="tbj-tab" data-t="${x[0]}"><span aria-hidden="true">${x[1]}</span>${x[2]}</button>`).join('')}</nav><div id="tbjCuerpo"></div>`;
     $('#tbjVolver').onclick = () => { snd('vuelve'); if (ap.ir) ap.ir('inicio'); };
-    pintarMios(); pintarIglesia(); pintarMuro(); aplicarAnchos(pant);
-    catalogo().then(() => pintarLista()).catch(() => { const c = $('#tbjLista'); if (c) c.innerHTML = '<p class="suave">No pudimos abrir las ideas. Revisa tu internet: lo que ya abriste antes se ve sin conexión.</p>'; }).then(() => pintarVoto());
-    const bn = $('#tbjNuevo'); if (bn) bn.onclick = () => { snd('abre'); empezar(null); };
-    const rb = $('#tbjRetomar'); if (rb) rb.onclick = () => { snd('abre'); const b = leer(K_BOR, null); planForm(b && b.id, b); };
-    const db = $('#tbjDescartar'); if (db) db.onclick = () => { if (!confirm('¿Descartar este plan sin terminar?')) return; guardar(K_BOR, null); abrir(); };
+    $$('.tbj-tab', pant).forEach((b) => { b.onclick = () => { tabJ = b.dataset.t; snd('suave'); pintarTab(); try { window.scrollTo(0, 0); } catch (x) { /* nada */ } }; });
+    pintarTab();
     try { window.scrollTo(0, 0); } catch (x) { /* nada */ }
+  }
+  function pintarTab() {
+    const c = $('#tbjCuerpo'); if (!c) return;
+    $$('.tbj-tab').forEach((b) => { const on = b.dataset.t === tabJ; b.classList.toggle('on', on); b.setAttribute('aria-selected', String(on)); });
+    const intro = `<p class="suave tbj-intro">${SECC[tabJ]}</p>`, fallo = () => { const l = $('#tbjLista'); if (l) l.innerHTML = '<p class="suave">No pudimos abrir las ideas. Revisa tu internet: lo que ya abriste antes se ve sin conexión.</p>'; };
+    if (tabJ === 'curso') { c.innerHTML = intro + recordHTML() + '<div id="tbjIg"></div><div id="tbjMios"></div>'; pintarIglesia(); pintarMios(); }
+    else if (tabJ === 'guard') { c.innerHTML = intro + '<h2 class="sep">Mis ideas</h2><div id="tbjLista" class="tbj-lista"></div><div id="tbjIg"></div><div id="tbjMios"></div>'; catalogo().then(() => pintarLista('fav')).catch(fallo); pintarIglesia(); pintarMios(); }
+    else if (tabJ === 'crear') {
+      c.innerHTML = intro + borradorHTML() + `<div class="tbj-nuevo">${vistaPrevia() ? '<p class="tbj-previa-nota"><b>Armar un movimiento</b> está disponible para miembros y pastores de una iglesia.</p>' : '<button type="button" class="btn" id="tbjNuevo">＋ Armar un movimiento con mi iglesia</button>'}</div>` + guiaHTML();
+      const bn = $('#tbjNuevo'); if (bn) bn.onclick = () => { snd('abre'); empezar(null); };
+      const rb = $('#tbjRetomar'); if (rb) rb.onclick = () => { snd('abre'); const b = leer(K_BOR, null); planForm(b && b.id, b); };
+      const db = $('#tbjDescartar'); if (db) db.onclick = () => { if (!confirm('¿Descartar este plan sin terminar?')) return; guardar(K_BOR, null); pintarTab(); };
+    } else { c.innerHTML = intro + '<div id="tbjLista" class="tbj-lista"><p class="suave">Cargando…</p></div>'; catalogo().then(() => pintarLista()).catch(fallo); }
   }
 
   // ---------- F927 · VISTA PREVIA: quien nunca entró como miembro ni como pastor de una iglesia ve una muestra (3 ideas y 3 proyectos) ----------
@@ -237,16 +209,16 @@
     return out;
   }
   const previaHTML = () => `<div class="card tbj-previa"><span class="tbj-previa-ic" aria-hidden="true">🌱</span><div><b>Vista previa</b><p class="m0">Esta es una pequeña muestra: ${muestra().length} de las ${MOV.length} ideas y proyectos que existen. Al entrar a una iglesia (como miembro o como pastor) se abren todos y se pueden armar movimientos con tu comunidad.</p></div></div>`;
-  function pintarLista() {
+  function pintarLista(solo) {
     const cont = $('#tbjLista'); if (!cont || !CAT) return;
     const fav = favs();
     const chips = [['', 'Todas'], ['fav', '⭐ Mis ideas']].concat(CAT.categorias.map((c) => [c.id, c.icono + ' ' + c.label]));
-    const previa = vistaPrevia(), ver = previa ? muestra() : MOV.filter((m) => !filtroCat || (filtroCat === 'fav' ? fav.includes(m.id) : m.cat === filtroCat));
-    cont.innerHTML = (previa ? previaHTML() : `<div class="tbj-chips" role="group" aria-label="Filtrar por tema">${chips.map((c) => { const on = c[0] === filtroCat; return `<button type="button" class="tbj-chip${on ? ' on' : ''}" data-c="${esc(c[0])}" aria-pressed="${on}">${esc(c[1])}</button>`; }).join('')}</div>`) +
+    const previa = vistaPrevia() && !solo, ver = solo ? MOV.filter((m) => fav.includes(m.id)) : previa ? muestra() : MOV.filter((m) => !filtroCat || (filtroCat === 'fav' ? fav.includes(m.id) : m.cat === filtroCat));
+    cont.innerHTML = (solo ? '' : previa ? previaHTML() : `<div class="tbj-chips" role="group" aria-label="Filtrar por tema">${chips.map((c) => { const on = c[0] === filtroCat; return `<button type="button" class="tbj-chip${on ? ' on' : ''}" data-c="${esc(c[0])}" aria-pressed="${on}">${esc(c[1])}</button>`; }).join('')}</div>`) +
       (ver.length ? ver.map((m) => `<article class="tbj-mov" data-id="${esc(m.id)}"><div class="tbj-mov-cab"><span class="tbj-mov-ic" aria-hidden="true">${esc(m.icono)}</span><div><b>${esc(m.titulo)}</b><small>${m.tipo === 'paquete' ? 'Proyecto listo' : 'Idea'} · ${esc(catDe(m).label)}${fav.includes(m.id) ? ' · ⭐' : ''}</small></div></div>
         <p class="tbj-mov-lema">${esc(corto(m.que_es, 150))}</p>
         <p class="suave m0t">${m.tipo === 'paquete' ? esc((m.lugar_texto || '') + ' · ' + (m.presupuesto_texto || '')) : esc((m.personas || '') + ' · ' + (m.costo || ''))}</p>
-        <div class="tbj-acc"><button type="button" class="btn tbj-ver" data-id="${esc(m.id)}">Ver y usar este plan</button></div></article>`).join('') : '<p class="suave sep">Todavía no marcaste ninguna idea con ⭐.</p>');
+        <div class="tbj-acc"><button type="button" class="btn tbj-ver" data-id="${esc(m.id)}">Ver y usar este plan</button></div></article>`).join('') : '<p class="suave sep">Todavía no guardaste ideas. En «Ideas listas» toca ☆ Me interesa.</p>');
     $$('.tbj-chip', cont).forEach((b) => { b.onclick = () => { filtroCat = b.dataset.c; snd('suave'); pintarLista(); }; });
     $$('.tbj-ver', cont).forEach((b) => { b.onclick = () => { snd('abre'); ficha(b.dataset.id); }; });
   }
@@ -271,9 +243,9 @@
 
   const numerica = (m) => typeof m.meta === 'number' && m.meta >= 1;   // movimientos antiguos con meta en número; los nuevos traen la meta en palabras
   function pintarMios() {
-    const e = est(), cont = $('#tbjMios'); if (!cont) return;
-    if (!e.mios.length) { cont.innerHTML = '<div class="card tbj-vacio"><p class="m0">🌱</p><p class="suave m0t">Aún no has iniciado ninguno. Cuando inicies uno, aquí verás su avance y podrás invitar a otros.</p></div>'; return; }
-    cont.innerHTML = e.mios.map((m) => `<article class="tbj-mov mio${m.ok ? ' cumplido' : ''}" data-id="${m.id}"><div class="tbj-mov-cab"><span class="tbj-mov-ic" aria-hidden="true">${m.ok ? '🏆' : '🌱'}</span><div><b>${esc(m.t)}</b><small>${esc(AMBITOS[m.ambito] || '')}${m.ok ? ' · ¡Cumplido!' : ''}</small></div></div>
+    const e0 = est(), cont = $('#tbjMios'); if (!cont) return; const e = Object.assign({}, e0, { mios: e0.mios.filter((m) => (tabJ === 'guard') === !!m.ok) });
+    if (!e.mios.length) { cont.innerHTML = ''; return; }
+    cont.innerHTML = `<h2 class="sep">${tabJ === 'guard' ? 'Los que cumplí' : 'Los que inicié'}</h2>` + e.mios.map((m) => `<article class="tbj-mov mio${m.ok ? ' cumplido' : ''}" data-id="${m.id}"><div class="tbj-mov-cab"><span class="tbj-mov-ic" aria-hidden="true">${m.ok ? '🏆' : '🌱'}</span><div><b>${esc(m.t)}</b><small>${esc(AMBITOS[m.ambito] || '')}${m.ok ? ' · ¡Cumplido!' : ''}</small></div></div>
       <p class="tbj-mov-lema">${esc(m.que)}</p>${numerica(m) ? `${barra(m.n || 0, m.meta)}<p class="tbj-mov-num"><b>${m.n || 0}</b> de ${m.meta} ${esc(m.unidad)}</p>` : (m.plan && m.plan.meta ? `<p class="tbj-primer"><b>Meta:</b> ${esc(m.plan.meta)}</p>` : '')}${m.plan && m.plan.para_quien ? `<p class="tbj-primer"><b>Para:</b> ${esc(m.plan.para_quien)}</p>` : ''}
       <p class="tbj-primer"><b>Primer paso:</b> ${esc(m.paso)}</p>${m.fecha ? `<p class="tbj-primer"><b>Cuándo:</b> ${esc(cuandoTxt(m))}${m.lugar ? ` · <b>Dónde:</b> ${esc(m.lugar)}` : ''}</p>` : ''}${m.plan && m.plan.encargado_nombre ? `<p class="tbj-primer"><b>Recibe los aportes:</b> ${esc(m.plan.encargado_nombre)}</p>` : ''}${m.lider2 ? `<p class="tbj-primer"><b>Líderes:</b> ${esc(m.lider || 'Yo')} y ${esc(m.lider2)}${m.lider3 ? ', ' + esc(m.lider3) : ''}</p>` : ''}
       ${m.nube && m.nube.estado === 'publicado' ? '<p class="tbj-nube ok"><span aria-hidden="true">✨</span> Publicado en la Agenda de tu iglesia</p>' : (m.plan && m.lider2 ? '<p class="tbj-nube">Solo en tu teléfono' + (m.nube && m.nube.error && MOTIVOS[m.nube.error] ? ' · ' + esc(MOTIVOS[m.nube.error]) : '') + '</p>' : '')}<div class="tbj-acc">${m.ok || !numerica(m) ? '' : `<button type="button" class="btn tbj-mas" data-id="${m.id}">+1 hecho</button>`}${credenciales() && m.plan && m.fecha && m.lider2 && !(m.nube && m.nube.estado === 'publicado') ? `<button type="button" class="btn tbj-pubb" data-id="${m.id}">Publicar en mi iglesia</button>` : ''}<button type="button" class="btn sec tbj-inv2" data-id="${m.id}">Invitar</button><button type="button" class="btn sec tbj-bor" data-id="${m.id}" aria-label="Borrar este movimiento">🗑</button></div></article>`).join('');
@@ -442,28 +414,81 @@
     const lista = marca && Array.isArray(a.aportantes) && a.aportantes.length ? `<ul class="tbj-aport">${a.aportantes.map((x) => `<li class="${x.recibido ? 'rec' : 'por'}"><span><b>${esc(x.nombre)}</b> · ${x.cantidad}</span><span class="tbj-st ${x.recibido ? 'rec' : 'por'}"><i aria-hidden="true"></i>${x.recibido ? 'Recibido' : 'Por recibir'}</span>${abierto ? `<button type="button" class="btn ${x.recibido ? 'sec' : ''} tbj-rec-b" data-a="${esc(a.id)}" data-mi="${esc(x.miembro_id)}" data-r="${x.recibido ? 0 : 1}">${x.recibido ? 'Deshacer' : 'Marcar recibido'}</button>` : ''}</li>`).join('')}</ul>` : '';
     return `<div class="tbj-ap"><div class="tbj-ap-t"><b>${esc(a.descripcion)}</b><div class="tbj-sts">${chips}</div></div>${tot ? barra(rec, tot) : ''}${mio}${lista}</div>`;
   }
+  const ROLES = { lider: 'Líder', lider2: '2.º líder', lider3: '3.er líder' };
+  let UNI = null, CIE = {};
+  const cierreHTML = (c, esPastor) => !c ? '' : `<div class="tbj-cierre${c.oculto ? ' oculto' : ''}"><b>Cómo salió</b>${(c.familias || c.kilos) ? `<p class="tbj-cifras">${c.familias ? `<span><b>${c.familias}</b> familias ayudadas</span>` : ''}${c.kilos ? `<span><b>${c.kilos}</b> kilos reunidos</span>` : ''}</p>` : ''}${[['Salió bien', c.bien], ['Aprendimos', c.aprendimos], ['A quién se ayudó y qué más necesita', c.ayudados], ['Para la próxima', c.mejorar]].map((x) => x[1] ? `<p class="tbj-primer"><b>${x[0]}:</b> ${esc(x[1])}</p>` : '').join('')}${esPastor ? `<button type="button" class="btn sec tbj-ocul" data-m="${esc(c.movimiento_id)}" data-o="${c.oculto ? 0 : 1}">${c.oculto ? 'Mostrar de nuevo' : 'Ocultar este cierre'}</button>` : ''}</div>`;
+  function detalleHTML(m, ed) {
+    const f = (t, v) => v ? `<p class="tbj-primer"><b>${t}:</b> ${esc(v)}</p>` : '';
+    const eq = (m.equipo || []).map((x) => `${esc(ROLES[x.rol] || 'Equipo')}: ${esc(x.nombre)}${x.contacto ? ' · ' + esc(x.contacto) : ''}`).join('<br>');
+    const ps = (m.pasos || []).map((p, i) => ed ? `<li class="tbj-pe${p.hecho ? ' ok' : ''}"><label><input type="checkbox" class="tbj-ph" data-m="${esc(m.id)}" data-p="${i}"${p.hecho ? ' checked' : ''}> <span>${esc(p.texto)}</span></label><input type="date" class="tbj-pf" data-m="${esc(m.id)}" data-p="${i}" value="${esc(p.fecha || '')}" aria-label="Fecha del paso"></li>` : `<li${p.hecho ? ' class="ok"' : ''}>${esc(p.texto)}${p.fecha ? ` <small>· ${esc(p.fecha)}</small>` : ''}${p.hecho ? ' ✓' : ''}</li>`).join('');
+    return f('De qué se trata', m.problema) + f('Para quién', m.para_quien) + f('Meta', m.meta) + f('Cuándo', cuandoIso(m.inicio)) + f('Dónde', m.lugar) + f('Si algo falla', m.plan_b) +
+      (eq ? `<p class="tbj-primer"><b>Equipo:</b><br>${eq}</p>` : '') + (ps ? `<p class="tbj-primer"><b>Pasos:</b></p><ol class="formas tbj-pasos">${ps}</ol>` : '');
+  }
+  function unirHTML(m, esPastor, hayClave) {
+    const u = UNI && UNI[m.id]; if (!u) return '';
+    const n = u.total || 0, txt = n === 0 ? 'Aún nadie se ha unido' : n === 1 ? '1 persona se ha unido' : n + ' personas se han unido';
+    const nom = esPastor || u.nombres ? (Array.isArray(u.nombres) && u.nombres.length ? `<small class="tbj-uni-n">${u.nombres.map(esc).join(', ')}</small>` : '') : '';
+    if (m.estado !== 'publicado' || !hayClave) return `<div class="tbj-uni"><span>🤝 ${txt}</span>${nom}</div>`;
+    return `<div class="tbj-uni"><span>🤝 ${txt}</span><button type="button" class="btn ${u.unido ? 'sec' : ''} tbj-unir" data-m="${esc(m.id)}" data-u="${u.unido ? 0 : 1}">${u.unido ? '✓ Ya te uniste · Salir' : 'Quiero unirme'}</button>${nom}</div>`;
+  }
+  const puedeEd = (m) => m.estado === 'publicado' && !!(UNI && UNI[m.id] && UNI[m.id].nombres != null);
   function pintarIglesia() {
     const cont = $('#tbjIg'); if (!cont) return;
-    const cr = credenciales(), sb = A().sb;
-    if (!cr || !sb || !sb.rpc) { cont.innerHTML = '<div class="card tbj-vacio"><p class="suave m0">Cuando te unas a una iglesia, aquí verás los movimientos que ella publique y podrás anotar lo que aportas.</p></div>'; return; }
-    cont.innerHTML = '<p class="suave">Cargando los movimientos de tu iglesia…</p>';
+    const cr = credenciales(), sb = A().sb, curso = tabJ !== 'guard';
+    if (!cr || !sb || !sb.rpc) { cont.innerHTML = curso ? '<div class="card tbj-vacio"><p class="suave m0">Cuando te unas a una iglesia, aquí verás los movimientos que ella publique y podrás sumarte.</p></div>' : ''; return; }
+    if (curso) cont.innerHTML = '<p class="suave">Cargando los movimientos de tu iglesia…</p>';
     const esPastor = !!cr.p_secreto;
-    (esPastor ? sb.rpc('juntos_pastor_listar', { p_codigo: cr.p_codigo, p_secreto: cr.p_secreto }) : sb.rpc('juntos_miembro_listar', { p_codigo: cr.p_codigo, p_clave: cr.p_clave })).then((r) => {
+    const lst = esPastor ? sb.rpc('juntos_pastor_listar', { p_codigo: cr.p_codigo, p_secreto: cr.p_secreto }) : sb.rpc('juntos_miembro_listar', { p_codigo: cr.p_codigo, p_clave: cr.p_clave });
+    const uni = Promise.resolve(sb.rpc('juntos_unidos_resumen', cr)).then((x) => x, () => ({ error: 1 }));
+    const cie = Promise.resolve(sb.rpc('juntos_cierres_listar', cr)).then((x) => x, () => ({ error: 1 }));
+    Promise.all([lst, uni, cie]).then(([r, u, ci]) => {
+      CIE = {}; if (ci && !ci.error && Array.isArray(ci.data)) ci.data.forEach((x) => { CIE[x.movimiento_id] = x; });
       if (r.error) throw new Error('red');
-      IGL = (Array.isArray(r.data) ? r.data : []).filter((m) => m.estado === 'publicado' || m.estado === 'cerrado');
-      if (!IGL.length) { cont.innerHTML = '<div class="card tbj-vacio"><p class="suave m0">Tu iglesia todavía no ha publicado movimientos. Cuando lo haga, aparecerán aquí con lo que se necesita.</p></div>'; return; }
-      cont.innerHTML = IGL.map((m) => `<article class="tbj-mov tbj-ig"><div class="tbj-mov-cab"><span class="tbj-mov-ic" aria-hidden="true">🌿</span><div><b>${esc(m.titulo)}</b><small>${m.estado === 'cerrado' ? 'Cerrado' : esc(cuandoIso(m.inicio))}${m.lugar ? ' · ' + esc(m.lugar) : ''}</small></div></div>
-        ${m.meta ? `<p class="tbj-primer"><b>Meta:</b> ${esc(m.meta)}</p>` : ''}
+      UNI = null; if (u && !u.error && Array.isArray(u.data)) { UNI = {}; u.data.forEach((x) => { UNI[x.movimiento_id] = x; }); }
+      IGL = (Array.isArray(r.data) ? r.data : []).filter((m) => m.estado === (curso ? 'publicado' : 'cerrado'));
+      if (!IGL.length) { cont.innerHTML = curso ? '<div class="card tbj-vacio"><p class="suave m0">Tu iglesia todavía no ha publicado movimientos. Cuando lo haga, aparecerán aquí con todo lo que se necesita.</p></div>' : ''; return; }
+      cont.innerHTML = `<h2 class="sep">${curso ? 'En mi iglesia' : 'Terminados en mi iglesia'}</h2>` + IGL.map((m) => `<article class="tbj-mov tbj-ig"><div class="tbj-mov-cab"><span class="tbj-mov-ic" aria-hidden="true">🌿</span><div><b>${esc(m.titulo)}</b><small>${m.estado === 'cerrado' ? 'Terminado' : esc(cuandoIso(m.inicio))}${m.lugar ? ' · ' + esc(m.lugar) : ''}</small></div></div>
+        <p class="tbj-mov-lema">${esc(corto(m.problema || m.meta || 'Movimiento de tu iglesia.', 150))}</p>${unirHTML(m, esPastor, !!cr.p_clave)}${cierreHTML(CIE[m.id], esPastor)}${puedeEd(m) ? `<button type="button" class="btn sec tbj-cerrar" data-m="${esc(m.id)}">Cerrar con lo aprendido</button>` : ''}
+        <details class="tbj-det"${IGL.length === 1 ? ' open' : ''}><summary>Ver todo el plan</summary>${detalleHTML(m, puedeEd(m))}
         <p class="tbj-encargado">${m.encargado_aportes ? `<b>Recibe los aportes:</b> ${esc(m.encargado_aportes.nombre)}${m.soy_encargado ? ' (tú)' : ''}` : '<b>Recibe los aportes:</b> el pastor y el equipo del movimiento'}</p>
-        ${(m.aportes || []).length ? '<div class="tbj-aps">' + m.aportes.map((a) => aporteHTML(m, a, esPastor, !!cr.p_clave)).join('') + '</div>' : '<p class="suave">Este movimiento no pide aportes de especies o tiempo.</p>'}</article>`).join('');
+        ${(m.aportes || []).length ? '<div class="tbj-aps">' + m.aportes.map((a) => aporteHTML(m, a, esPastor, !!cr.p_clave)).join('') + '</div>' : '<p class="suave">Este movimiento no pide aportes de especies o tiempo.</p>'}</details></article>`).join('');
       aplicarAnchos(cont);
       $$('.tbj-ap-g', cont).forEach((b) => { b.onclick = () => marcarAporte(b.dataset.a, Number(($('#tbjap-' + b.dataset.a) || {}).value)); });
       $$('.tbj-ap-q', cont).forEach((b) => { b.onclick = () => marcarAporte(b.dataset.a, 0); });
       $$('.tbj-rec-b', cont).forEach((b) => { b.onclick = () => marcarRecibido(b.dataset.a, b.dataset.mi, b.dataset.r === '1'); });
+      const llamarP = async (fn, extra, ok) => { try { const x = await sb.rpc(fn, Object.assign({}, cr, extra)); const d = Array.isArray(x.data) ? x.data[0] : x.data; if (x.error || !d || !d.ok) throw new Error('no'); if (ok) { snd('juntos', 3); aviso(ok); } pintarIglesia(); } catch (e) { snd('error'); aviso('No pudimos guardar el cambio. Inténtalo de nuevo.'); pintarIglesia(); } };
+      $$('.tbj-ph', cont).forEach((b) => { b.onchange = () => llamarP('juntos_paso_actualizar', { p_mov: b.dataset.m, p_pos: Number(b.dataset.p), p_hecho: b.checked, p_fecha: null, p_limpiar_fecha: false }); });
+      $$('.tbj-pf', cont).forEach((b) => { b.onchange = () => llamarP('juntos_paso_actualizar', { p_mov: b.dataset.m, p_pos: Number(b.dataset.p), p_hecho: null, p_fecha: b.value || null, p_limpiar_fecha: !b.value }); });
+      $$('.tbj-ocul', cont).forEach((b) => { b.onclick = () => llamarP('juntos_cierre_ocultar', { p_mov: b.dataset.m, p_oculto: b.dataset.o === '1' }, b.dataset.o === '1' ? 'Cierre oculto para los miembros.' : 'Cierre visible de nuevo.'); });
+      $$('.tbj-cerrar', cont).forEach((b) => { b.onclick = () => { snd('abre'); cierreForm(b.dataset.m); }; });
+      $$('.tbj-unir', cont).forEach((b) => { b.onclick = async () => {
+        b.disabled = true; const dentro = b.dataset.u === '1';
+        try { const x = await sb.rpc('juntos_unirse', Object.assign({}, cr, { p_mov: b.dataset.m, p_unirse: dentro })); const d = Array.isArray(x.data) ? x.data[0] : x.data; if (x.error || !d || !d.ok) throw new Error('no'); snd('juntos', dentro ? 5 : 2); aviso(dentro ? '¡Bienvenido al equipo! El pastor y los líderes ya pueden verte en la lista.' : 'Saliste del movimiento.'); pintarIglesia(); }
+        catch (e) { b.disabled = false; snd('error'); aviso('No pudimos anotarte ahora. Inténtalo de nuevo en un momento.'); }
+      }; });
     }).catch(() => {
       cont.innerHTML = '<div class="card tbj-vacio"><p class="suave m0">No pudimos cargar los movimientos de tu iglesia. Revisa tu internet e inténtalo de nuevo.</p><button type="button" class="btn sec" id="tbjIgRe">Reintentar</button></div>';
       const b = $('#tbjIgRe'); if (b) b.onclick = pintarIglesia;
     });
+  }
+  const CIERRE_C = [['bien', '¿Qué salió bien?', true], ['aprendimos', '¿Qué aprendimos?'], ['ayudados', '¿A quién se ayudó y qué más necesita?'], ['mejorar', '¿Qué mejoraríamos para la próxima vez?']];
+  function cierreForm(id) {
+    const m = IGL.find((z) => z.id === id), pant = $('#pantalla'); if (!m || !pant) return abrir();
+    pant.innerHTML = `<button type="button" class="volver" id="tbjAtras">‹ Juntos hacemos el bien</button><section class="tbj-hero chico"><p class="tbj-sello">Cerrar movimiento</p><h1>${esc(m.titulo)}</h1><p class="tbj-lema">Cuenta lo bueno que dejó este movimiento. Sin nombres de personas ni nada que pueda exponer a alguien.</p></section>
+      <div class="card tbj-cierre-f">${CIERRE_C.map((c) => `<label for="tbjc-${c[0]}">${esc(c[1])}${c[2] ? '' : ' <small class="tbj-op-tag">· opcional</small>'}</label><textarea id="tbjc-${c[0]}" rows="3" maxlength="400"></textarea>`).join('')}
+        <label for="tbjc-fam">Familias ayudadas <small class="tbj-op-tag">· opcional</small></label><input id="tbjc-fam" type="number" inputmode="numeric" min="0" max="99999">
+        <label for="tbjc-kg">Kilos reunidos <small class="tbj-op-tag">· opcional</small></label><input id="tbjc-kg" type="number" inputmode="numeric" min="0" max="99999">
+        <p class="suave tbj-vnota">Al cerrar, el movimiento pasa a «Guardados» y se borran los contactos del equipo.</p><button type="button" class="btn" id="tbjcOk">Cerrar movimiento</button></div>`;
+    $('#tbjAtras').onclick = () => { snd('vuelve'); abrir(); };
+    $('#tbjcOk').onclick = async () => {
+      const v = (k) => ($('#tbjc-' + k).value || '').trim(), n = (k) => { const x = parseInt($('#tbjc-' + k).value, 10); return x >= 0 ? x : null; };
+      if (v('bien').length < 3) { snd('error'); aviso('Cuenta al menos una cosa que salió bien.'); return $('#tbjc-bien').focus(); }
+      if (!confirm('¿Cerrar este movimiento? Ya no se podrá cambiar.')) return;
+      const cr = credenciales(), sb = A().sb; $('#tbjcOk').disabled = true;
+      try { const x = await sb.rpc('juntos_cerrar_positivo', Object.assign({}, cr, { p_mov: id, p_bien: v('bien'), p_aprendimos: v('aprendimos'), p_ayudados: v('ayudados'), p_mejorar: v('mejorar'), p_familias: n('fam'), p_kilos: n('kg') })); const d = Array.isArray(x.data) ? x.data[0] : x.data; if (x.error || !d || !d.ok) throw new Error('no'); snd('juntos', 5); aviso('¡Movimiento cerrado! Gracias por servir.'); tabJ = 'guard'; abrir(); }
+      catch (e) { $('#tbjcOk').disabled = false; snd('error'); aviso('No pudimos cerrar el movimiento ahora. Inténtalo de nuevo.'); }
+    };
+    try { window.scrollTo(0, 0); } catch (x) { /* nada */ }
   }
   async function marcarAporte(aporte, cant) {
     const cr = credenciales(), sb = A().sb; if (!cr || !sb) return;
