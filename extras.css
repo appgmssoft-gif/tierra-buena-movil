@@ -175,3 +175,26 @@ html[data-anim=off] .arr-anillo,html[data-anim=off] .arr-p{opacity:0}
 .arr-toca{position:absolute;left:50%;bottom:calc(9vh + env(safe-area-inset-bottom,0px));transform:translateX(-50%);padding:12px 26px;border:0;border-radius:99px;background:linear-gradient(135deg,var(--oro),var(--verde));color:#fff;font:700 1rem/1 inherit;letter-spacing:.04em;box-shadow:0 10px 30px -10px color-mix(in srgb,var(--oro) 80%,transparent);animation:arr-toca 2.2s ease-in-out infinite}
 @keyframes arr-toca{50%{transform:translateX(-50%) scale(1.06)}}
 @media (prefers-reduced-motion:reduce){.arr-toca{animation:none}}
+
+/* ---- F939 · mejoras generales: foco visible, toques cómodos y movimiento suave en «Hoy lo hago» ---- */
+:where(button,a,input,textarea,select,summary,[tabindex]):focus-visible{outline:3px solid color-mix(in srgb,var(--oro) 80%,transparent);outline-offset:2px;border-radius:12px}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+:where(button,.chip,.tab){-webkit-tap-highlight-color:transparent}
+.chip{min-height:40px}
+.hac-fila .enlace{min-height:44px;padding:0 10px}
+@keyframes hac-flota{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(-12px,10px,0)}}
+@keyframes hac-entra{from{opacity:0;transform:translate3d(0,10px,0)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:no-preference){
+  html:not([data-anim=off]) .hac-h-a{animation:hac-flota 9s ease-in-out infinite}
+  html:not([data-anim=off]) .hac-h-b{animation:hac-flota 12s ease-in-out infinite reverse}
+  html:not([data-anim=off]) .hac-pend,html:not([data-anim=off]) .hac-fin,html:not([data-anim=off]) .hac-mirar{animation:hac-entra .45s ease both}
+  html:not([data-anim=off]) #hacPend>.hac-pend:nth-child(2),html:not([data-anim=off]) #hacFin>.hac-fin:nth-child(2){animation-delay:.07s}
+  html:not([data-anim=off]) #hacPend>.hac-pend:nth-child(3),html:not([data-anim=off]) #hacFin>.hac-fin:nth-child(3){animation-delay:.14s}
+  html:not([data-anim=off]) #hacPend>.hac-pend:nth-child(n+4),html:not([data-anim=off]) #hacFin>.hac-fin:nth-child(n+4){animation-delay:.2s}
+}
+html[data-eco="2"] .hac-h-a,html[data-eco="2"] .hac-h-b{animation:none!important}
+
+/* ---- F941 · Apoyar Tierra Buena ---- */
+.apoyo-per{margin:14px 0}.apoyo-plan{text-align:center;padding:20px 16px}.apoyo-precio{margin:0 0 6px;font-size:1.5rem;font-weight:800;color:var(--tinta)}
+.apoyo-lista{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:12px}.apoyo-lista li{display:flex;gap:10px;align-items:flex-start;color:var(--tinta)}.apoyo-lista .ic{flex:none;color:var(--verde);margin-top:2px}
+.apoyo-acc{display:grid;gap:12px;margin:22px 0 14px}.apoyo-ok{padding:18px 16px;margin:12px 0}

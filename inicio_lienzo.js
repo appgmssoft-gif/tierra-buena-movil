@@ -91,6 +91,74 @@
     return s('<path d="M4 18C2 9 9 3 20 3c1 9-4 16-14 16z"/><path d="M5 19c4-4 9-8 13-13"/>');
   }
 
+
+  // ---------- F937 · Paisaje y clima elegibles (se guardan en este teléfono; no tocan la cuenta ni SYNC_CLAVES) ----------
+  const KFONDO = 'tb_inicio_fondo', KCLIMA = 'tb_inicio_clima';
+  const FONDOS = [['colinas', 'Colinas'], ['lago', 'Lago'], ['rio', 'Río'], ['bosque', 'Bosque nativo'], ['montanas', 'Cordillera'], ['volcan', 'Volcán nevado'], ['costa', 'Costa del Pacífico'], ['desierto', 'Desierto florido']];
+  const CLIMAS = [['natural', 'Natural'], ['despejado', 'Despejado'], ['nublado', 'Nublado'], ['lluvia', 'Lluvia suave'], ['estrellas', 'Noche estrellada'], ['nieve', 'Nieve'], ['arcoiris', 'Arcoíris']];
+  const abierto = (tipo, id) => { try { return !!(window.TBInicio && window.TBInicio.tiene(tipo, id)); } catch (e) { return false; } };
+  const elegido = (k, lista, def, tipo) => { const v = lsGet(k); return lista.some((x) => x[0] === v) && abierto(tipo, v) ? v : def; };
+  const fondoActual = () => elegido(KFONDO, FONDOS, 'colinas', 'lugar'), climaActual = () => elegido(KCLIMA, CLIMAS, 'natural', 'clima');
+  const nube = (x, y, k) => '<g class="nu" transform="translate(' + x + ' ' + y + ') scale(' + k + ')"><ellipse cx="0" cy="0" rx="30" ry="9"/><ellipse cx="-14" cy="-6" rx="14" ry="9"/><ellipse cx="6" cy="-10" rx="17" ry="11"/><ellipse cx="20" cy="-4" rx="12" ry="7"/></g>';
+  // Detrás de las colinas (cielo y lejanía)
+  function atras(f) {
+    if (f === 'montanas') return '<g class="pa-mont"><path class="mo m2" d="M-60 292 L10 214 L52 252 L104 196 L170 276 L228 208 L284 262 L330 220 L430 292Z"/><path class="mo m1" d="M-40 296 L40 206 L84 256 L140 168 L206 270 L262 190 L318 258 L372 204 L440 296Z"/>'
+      + '<path class="nv" d="M140 168 L124 188 L134 184 L142 194 L150 184 L158 188Z"/><path class="nv" d="M262 190 L248 208 L256 204 L264 212 L272 204 L278 208Z"/><path class="nv" d="M40 206 L28 222 L36 219 L42 226 L48 219 L54 222Z"/></g>';
+    if (f === 'volcan') return '<g class="pa-volc"><path class="mo m2" d="M-60 292 L30 232 L90 262 L150 226 L210 278 L330 236 L430 292Z"/><path class="mo m1" d="M196 292 L258 196 C264 184 276 184 282 196 L346 292Z"/><path class="nv" d="M250 210 L258 196 C264 184 276 184 282 196 L290 212 C280 204 272 214 266 206 C260 214 254 206 250 210Z"/><ellipse class="humo" cx="272" cy="176" rx="9" ry="5"/><ellipse class="humo" cx="280" cy="164" rx="12" ry="6"/><ellipse class="humo" cx="292" cy="152" rx="15" ry="7"/></g>';
+    if (f === 'bosque') { let g = '<g class="pa-bosque">'; for (let i = 0; i < 12; i++) { const x = -20 + i * 34, y = 304 - (i % 3) * 3; g += i % 4 === 1 ? '<path class="bo tr2" d="M' + x + ' ' + (y + 4) + ' L' + x + ' ' + (y - 24) + '"/><ellipse class="bo b2" cx="' + x + '" cy="' + (y - 28) + '" rx="16" ry="5"/>' : i % 4 === 3 ? '<path class="bo tr2" d="M' + x + ' ' + (y + 4) + ' L' + x + ' ' + (y - 8) + '"/><ellipse class="bo b1" cx="' + x + '" cy="' + (y - 20) + '" rx="13" ry="15"/>' : '<path class="bo b1" d="M' + x + ' ' + (y - 50) + ' L' + (x - 11) + ' ' + (y + 4) + ' L' + (x + 11) + ' ' + (y + 4) + 'Z"/>'; } return g + '</g>'; }
+    if (f === 'costa') return '<g class="pa-mar"><rect class="mar" x="-300" y="236" width="960" height="70"/><path class="ola" d="M20 252 q10 -5 20 0 t20 0 M150 262 q10 -5 20 0 t20 0 M270 250 q10 -5 20 0 t20 0 M80 276 q10 -5 20 0 t20 0 M220 280 q10 -5 20 0 t20 0"/><path class="velero" d="M300 244 L300 224 L314 242Z M296 246 L318 246 L312 252 L300 252Z"/></g>';
+    return '';
+  }
+  function cielo(c) {
+    if (c === 'estrellas') { let g = '<rect class="noche" x="-300" y="110" width="960" height="200" fill="url(#ilNoche)"/><g class="estr">'; for (let i = 0; i < 26; i++) g += '<circle cx="' + (6 + ((i * 53) % 350)) + '" cy="' + (128 + ((i * 37) % 120)) + '" r="' + (i % 4 === 0 ? 1.5 : 1) + '"/>'; return g + '</g>'; }
+    if (c === 'arcoiris') { const col = ['#e5484d', '#f2a03a', '#f2d64a', '#5cc98a', '#4f9fd8', '#8a6ad6']; return '<g class="arco">' + col.map((k, i) => '<path d="M' + (150 - i * 5) + ' 296 A' + (95 - i * 5) + ' ' + (95 - i * 5) + ' 0 0 1 ' + (340 + i * 5 - 0) + ' 296" fill="none" stroke="' + k + '" stroke-width="4.5"/>').join('') + '</g>'; }
+    return '';
+  }
+  // Sobre las colinas (agua y flores)
+  function frente(f) {
+    if (f === 'lago') return '<g class="cap cap2"><path class="agua" d="M-20 318 C50 306 150 312 200 311 S330 306 400 318 L400 342 C300 334 100 337 -20 342Z"/><path class="brillo" d="M40 322 h34 M120 328 h44 M230 321 h40 M300 330 h30"/><path class="junco" d="M24 342 l-2 -16 M30 342 l2 -13 M338 340 l-2 -16 M344 340 l3 -12"/></g>';
+    if (f === 'rio') return '<g class="cap cap3"><path class="agua" d="M262 296 C250 316 292 326 272 348 C254 370 332 390 318 424 L376 424 C388 390 322 372 338 348 C354 328 304 316 314 296Z"/><path class="brillo" d="M280 320 h14 M296 352 h18 M318 392 h20"/></g>';
+    if (f === 'desierto') return '<g class="cap cap2 pa-flores"><circle class="fl a" cx="40" cy="326" r="3"/><circle class="fl b" cx="78" cy="334" r="3"/><circle class="fl a" cx="124" cy="330" r="2.6"/><circle class="fl c" cx="236" cy="332" r="3"/><circle class="fl a" cx="282" cy="326" r="3"/><circle class="fl b" cx="322" cy="334" r="2.6"/><circle class="fl c" cx="352" cy="328" r="3"/></g>';
+    return '';
+  }
+  // Clima: sol, luna, nubes y caída suave. Solo se mueve con transform/opacity y se detiene con «reducir movimiento».
+  function climaSvg(c) {
+    const noche = (() => { const h = new Date().getHours(); return h >= 20 || h < 6; })();
+    if (c === 'despejado') return noche ? '<g class="cl-luna"><circle cx="292" cy="168" r="15"/><circle class="hu" cx="299" cy="164" r="13"/></g>' : '<g class="cl-sol"><circle class="ha" cx="292" cy="168" r="30"/><circle cx="292" cy="168" r="15"/></g>';
+    if (c === 'estrellas') return '<g class="cl-luna"><circle cx="60" cy="160" r="13"/><circle class="hu" cx="66" cy="156" r="11"/></g>';
+    if (c === 'arcoiris') return '<g class="cl-nubes">' + nube(300, 150, .9) + nube(70, 172, 1) + '</g>';
+    if (c === 'nublado') return '<g class="cl-nubes">' + nube(70, 160, 1.3) + nube(250, 176, 1.1) + nube(170, 140, .9) + '</g>';
+    let g = '<g class="cl-nubes oscuro">' + nube(60, 150, 1.4) + nube(180, 138, 1.2) + nube(290, 156, 1.3) + '</g>';
+    if (c === 'lluvia') { g += '<g class="cl-ll">'; for (let i = 0; i < 18; i++) g += '<line x1="' + (10 + i * 20) + '" y1="' + (170 + (i % 4) * 8) + '" x2="' + (7 + i * 20) + '" y2="' + (182 + (i % 4) * 8) + '"/>'; g += '</g>'; }
+    if (c === 'nieve') { g += '<g class="cl-ni">'; for (let i = 0; i < 20; i++) g += '<circle cx="' + (12 + i * 18) + '" cy="' + (172 + (i % 5) * 9) + '" r="' + (1.6 + (i % 3) * .5) + '"/>'; g += '</g>'; }
+    return g;
+  }
+  function paisajeHoja(alCambiar) {
+    const T = window.TBInicio, K = (CAT && CAT) || {}, saldo = () => { try { return T.cargar().gotas.saldo; } catch (e) { return 0; } };
+    const h = document.createElement('div'); h.className = 'hoja'; h.id = 'hojaPaisaje'; h.setAttribute('role', 'dialog'); h.setAttribute('aria-modal', 'true'); h.setAttribute('aria-label', 'Tu paisaje');
+    const fila = (lista, act, k, tipo) => '<div class="apar-fila pa-fila" role="group">' + lista.map((x) => {
+      const a = abierto(tipo, x[0]), it = (K[tipo === 'lugar' ? 'lugares' : 'climas'] || {})[x[0]] || {};
+      return '<button type="button" class="apar-op pa-op' + (act === x[0] ? ' on' : '') + (a ? '' : ' bloq') + '" data-pk="' + k + '" data-pt="' + tipo + '" data-pv="' + x[0] + '" aria-pressed="' + (act === x[0]) + '">' + x[1] + (a ? '' : '<small>' + (it.precio || '') + ' gotas</small>') + '</button>'; }).join('') + '</div>';
+    const pinta = () => { h.innerHTML = '<div class="hoja-in"><div class="hoja-asa" aria-hidden="true"></div><h3>Tu paisaje</h3><p class="suave">Elige dónde crece tu árbol y cómo está el cielo. Lo nuevo se desbloquea con tus gotas de rocío: ahora tienes <b>' + saldo() + '</b>.</p>'
+      + '<h4 class="apar-t">El lugar</h4>' + fila(FONDOS, fondoActual(), 'f', 'lugar') + '<h4 class="apar-t">El clima</h4>' + fila(CLIMAS, climaActual(), 'c', 'clima') + '<div class="pa-compra" id="paCompra" aria-live="polite"></div><button type="button" class="btn" id="paOk">Listo</button></div>'; ligar(); };
+    const cerrar = () => { try { h.remove(); } catch (e) { /* ya cerrada */ } };
+    function ligar() {
+      Array.prototype.forEach.call(h.querySelectorAll('.pa-op'), (b) => b.addEventListener('click', () => {
+        const tipo = b.getAttribute('data-pt'), id = b.getAttribute('data-pv'), cj = $('#paCompra', h);
+        if (!abierto(tipo, id)) {                                   // bloqueado: se ofrece desbloquear con gotas
+          const it = (K[tipo === 'lugar' ? 'lugares' : 'climas'] || {})[id] || {}, ok = saldo() >= (it.precio || 0);
+          cj.innerHTML = '<p><b>' + esc(it.nombre || id) + '</b> · ' + esc(it.dato || '') + '</p><p class="suave">' + (ok ? 'Cuesta ' + it.precio + ' gotas.' : 'Cuesta ' + it.precio + ' gotas y tienes ' + saldo() + '. Las gotas se ganan leyendo, haciendo una acción de Vida, completando un día de plan o marcando una oración contestada.') + '</p>' + (ok ? '<button type="button" class="btn chico" id="paDesb">Desbloquear</button>' : '');
+          const d = $('#paDesb', h); if (d) d.onclick = () => { const r = T.comprar(tipo, id); if (!r.ok) return; sonido('semilla'); lsSet(tipo === 'lugar' ? KFONDO : KCLIMA, id); pinta(); if (alCambiar) alCambiar(); };
+          return;
+        }
+        lsSet(b.getAttribute('data-pk') === 'f' ? KFONDO : KCLIMA, id); pinta(); if (alCambiar) alCambiar();
+      }));
+      $('#paOk', h).onclick = cerrar;
+    }
+    h.addEventListener('click', (e) => { if (e.target === h) cerrar(); });
+    document.body.appendChild(h); pinta();
+  }
+
   // ---------- Escena (colinas + árbol + paisaje) ----------
   const COL = { c1: 'M-300 300 C-120 255 40 270 150 290 S 330 268 660 286 L660 420 L-300 420Z', c2: 'M-300 332 C-100 296 60 320 190 322 S 380 300 660 326 L660 420 L-300 420Z', c3: 'M-300 374 C-120 336 80 348 190 344 S 400 336 660 362 L660 420 L-300 420Z' };
   // F931 · I4: gotas de rocío. Se ven hasta `visibles_max` (8) en el pasto; el resto se agrupa en una gota grande «+n». No vencen.
@@ -203,14 +271,15 @@
     const c = est.ciclo, et = ETAPAS[window.TBInicio ? window.TBInicio.etapa(c.diasCuidado) : 'brote'] ? window.TBInicio.etapa(c.diasCuidado) : 'brote';
     const fondo = (est.paisaje || []).map((q) => { const s = FONDO[q.casilla]; return s ? '<g transform="translate(' + s[0] + ' ' + s[1] + ') scale(' + s[2] + ')">' + arbol(q.especie, 'frondoso') + '</g>' : ''; }).join('');
     const mal = (est.maleza || []).map((m) => '<button type="button" class="il-maleza s-' + esc(m.casilla) + '" data-id="' + esc(m.id) + '" aria-label="Quitar maleza (' + esc(MALEZA[m.tipo] || 'maleza') + '). Toca para limpiarla">' + malezaIcono(m.tipo) + '</button>').join('');
-    return '<div class="il-escena' + ((est.maleza || []).length ? ' apagado' : '') + '" id="ilEscena">'
+    const fo = fondoActual(), cl = climaActual();
+    return '<div class="il-escena' + ((est.maleza || []).length ? ' apagado' : '') + '" id="ilEscena" data-fondo="' + fo + '" data-clima="' + cl + '">'
       + '<svg class="il-svg" viewBox="0 110 360 310" preserveAspectRatio="xMidYMax meet" aria-hidden="true" focusable="false">'
-      + '<defs><linearGradient id="ilDeg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="dg-a"/><stop offset=".78" class="dg-a"/><stop offset="1" class="dg-b"/></linearGradient>'
+      + '<defs><linearGradient id="ilNoche" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1330" stop-opacity="0"/><stop offset=".45" stop-color="#0b1330" stop-opacity=".62"/><stop offset="1" stop-color="#0b1330" stop-opacity=".4"/></linearGradient><linearGradient id="ilDeg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="dg-a"/><stop offset=".78" class="dg-a"/><stop offset="1" class="dg-b"/></linearGradient>'
       + '<mask id="ilMasc" maskUnits="userSpaceOnUse" x="-300" y="110" width="960" height="310"><rect x="-300" y="110" width="960" height="310" fill="url(#ilDeg)"/></mask></defs><g mask="url(#ilMasc)">'
-      + '<g class="cap cap1"><path class="col c1" d="' + COL.c1 + '"/>' + fondo + '</g>'
+      + '<g class="cap cap0">' + cielo(cl) + atras(fo) + '</g><g class="cap cap1"><path class="col c1" d="' + COL.c1 + '"/>' + fondo + '</g>'
       + '<g class="cap cap2"><path class="col c2" d="' + COL.c2 + '"/></g>'
       + '<g class="cap cap3"><path class="col c3" d="' + COL.c3 + '"/></g></g>'
-      + '<g class="cap cap3"><g class="mundo" transform="translate(180 344)">' + arbol(c.especie, et) + '</g></g></svg>'
+      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g><g class="cap cap3"><g class="mundo" transform="translate(180 344)">' + arbol(c.especie, et) + '</g></g><g class="clima">' + climaSvg(cl) + '</g></svg>'
       + '<i class="il-anillo" id="ilAnillo" aria-hidden="true"></i>'
       + '<button type="button" class="il-resp" id="ilResp" aria-label="Respirar con tu árbol. Toca para una pausa de unos 30 segundos"></button>' + mal + gotasHTML(est) + vivEscena(est) + '</div>';
   }
@@ -356,6 +425,6 @@
     });
   }
 
-  const api = { montar, soltar, arbol, escena, estadoTxt, ETAPAS, FORMA, FONDO, config(c) { CAT = c; } };
+  const api = { paisajeHoja, montar, soltar, arbol, escena, estadoTxt, ETAPAS, FORMA, FONDO, config(c) { CAT = c; } };
   if (typeof window !== 'undefined') window.TBLienzo = api; if (typeof module !== 'undefined') module.exports = api;
 })();

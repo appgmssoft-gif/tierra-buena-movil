@@ -565,12 +565,20 @@
    "vida": {
     "gotas": 1,
     "tope_dia": 5
+   },
+   "plan": {
+    "gotas": 3,
+    "tope_dia": 3
+   },
+   "oracion": {
+    "gotas": 3,
+    "tope_dia": 3
    }
   },
   "pendientes_max": 30,
   "visibles_max": 8,
   "aves_activas_max": 2,
-  "nota": "Las gotas no vencen y no se compran con dinero. Los topes diarios evitan premiar el abuso."
+  "nota": "Las gotas no vencen y no se compran con dinero. Los topes diarios evitan premiar el abuso. F938: también se ganan al completar un día de un plan de lectura (3) y al marcar una oración como contestada (3)."
  },
  "maleza": {
   "tipos": [
@@ -664,5 +672,74 @@
   "Participar en la junta de vecinos o en un grupo del barrio, aunque sea de vez en cuando, mejora el lugar donde se vive.",
   "Cuando alguien piensa distinto, se puede conversar buscando entender antes que ganar."
  ],
- "como": "Cuidar este árbol se parece a cuidarnos: un poco cada día, con paciencia y sin exigencias. Si algún día no puedes venir, el árbol espera y retomas cuando quieras."
+ "como": "Cuidar este árbol se parece a cuidarnos: un poco cada día, con paciencia y sin exigencias. Si algún día no puedes venir, el árbol espera y retomas cuando quieras.",
+ "lugares": {
+  "lago": {
+   "nombre": "Lago",
+   "precio": 60,
+   "dato": "Un agua quieta que refleja el cielo. Sirve para recordar que a veces avanzar es detenerse."
+  },
+  "rio": {
+   "nombre": "Río",
+   "precio": 90,
+   "dato": "El agua no se apura y aun así llega. Un poco cada día también te lleva lejos."
+  },
+  "bosque": {
+   "nombre": "Bosque nativo",
+   "precio": 130,
+   "dato": "Entre los árboles de fondo hay araucarias, alerces y robles: cada uno con su forma, ninguno igual al otro."
+  },
+  "montanas": {
+   "nombre": "Cordillera",
+   "precio": 120,
+   "dato": "Las montañas se ven grandes de lejos y se suben paso a paso."
+  },
+  "volcan": {
+   "nombre": "Volcán nevado",
+   "precio": 150,
+   "dato": "En el sur de Chile hay volcanes nevados que acompañan el paisaje por generaciones. Quietud por fuera, fuerza por dentro."
+  },
+  "costa": {
+   "nombre": "Costa del Pacífico",
+   "precio": 160,
+   "dato": "El mar abre el horizonte. Mirar lejos también descansa."
+  },
+  "desierto": {
+   "nombre": "Desierto florido",
+   "precio": 200,
+   "dato": "En años de buena lluvia, el desierto de Atacama se cubre de flores. Lo que parecía seco estaba esperando."
+  }
+ },
+ "climas": {
+  "despejado": {
+   "nombre": "Despejado",
+   "precio": 25,
+   "dato": "Sol de día y luna de noche, según tu hora."
+  },
+  "nublado": {
+   "nombre": "Nublado",
+   "precio": 25,
+   "dato": "Los días grises también hacen crecer."
+  },
+  "lluvia": {
+   "nombre": "Lluvia suave",
+   "precio": 60,
+   "dato": "La lluvia cuida lo que no ves: las raíces."
+  },
+  "estrellas": {
+   "nombre": "Noche estrellada",
+   "precio": 80,
+   "dato": "Un cielo oscuro y limpio, para cerrar el día en calma."
+  },
+  "nieve": {
+   "nombre": "Nieve",
+   "precio": 100,
+   "dato": "Todo se detiene un rato. Descansar es parte del trabajo."
+  },
+  "arcoiris": {
+   "nombre": "Arcoíris",
+   "precio": 140,
+   "dato": "Después de la lluvia, la luz se abre en colores."
+  }
+ }
 }

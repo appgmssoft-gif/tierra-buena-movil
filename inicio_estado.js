@@ -28,7 +28,7 @@
       if (Array.isArray(x.paisaje)) b.paisaje = x.paisaje.filter((p) => p && p.especie).slice(-6);
       if (Array.isArray(x.maleza)) b.maleza = x.maleza.filter((m) => m && m.id && m.casilla).slice(0, 5);
       const g = x.gotas || {}; b.gotas = { saldo: Math.max(0, +g.saldo || 0), total: Math.max(0, +g.total || 0), pendientes: Array.isArray(g.pendientes) ? g.pendientes.filter((p) => p && p.id).slice(0, 30) : [],
-        hoy: { fecha: (g.hoy && g.hoy.fecha) || null, lectura: +(g.hoy && g.hoy.lectura) || 0, vida: +(g.hoy && g.hoy.vida) || 0 } };
+        hoy: { fecha: (g.hoy && g.hoy.fecha) || null, lectura: +(g.hoy && g.hoy.lectura) || 0, vida: +(g.hoy && g.hoy.vida) || 0, plan: +(g.hoy && g.hoy.plan) || 0, oracion: +(g.hoy && g.hoy.oracion) || 0 } };
       const w = x.vivero || {}; b.vivero = { desbloqueados: Array.isArray(w.desbloqueados) ? w.desbloqueados.filter((s) => typeof s === 'string') : [],
         plantas: Array.isArray(w.plantas) ? w.plantas.filter((p) => p && p.id && p.casilla) : [], aves: Array.isArray(w.aves) ? w.aves.filter((p) => p && p.id) : [] };
     } catch (e) { return nuevo(); }
@@ -97,13 +97,13 @@
   }
 
   // ---- Gotas de rocío ----
-  function reiniciaHoy(e) { const h = hoy(); if (e.gotas.hoy.fecha !== h) e.gotas.hoy = { fecha: h, lectura: 0, vida: 0 }; }
+  function reiniciaHoy(e) { const h = hoy(); if (e.gotas.hoy.fecha !== h) e.gotas.hoy = { fecha: h, lectura: 0, vida: 0, plan: 0, oracion: 0 }; }
   // Ganar gotas por leer o por una acción de Vida. Respeta el tope diario y el máximo de pendientes. Devuelve la cantidad realmente agregada.
   function ganar(origen) {
     const o = cat().economia.origenes[origen]; if (!o) return 0; const e = cargar(); reiniciaHoy(e);
     let n = 0; for (let i = 0; i < o.gotas; i++) {
-      if (e.gotas.hoy[origen] >= o.tope_dia || e.gotas.pendientes.length >= (cat().economia.pendientes_max || 30)) break;
-      const cas = casillaLibre(e, 'pasto') || 'pasto-' + (1 + e.gotas.pendientes.length % 8); e.gotas.pendientes.push({ id: idc('g'), casilla: cas, origen, en: hoy() }); e.gotas.hoy[origen]++; n++;
+      if ((e.gotas.hoy[origen] || 0) >= o.tope_dia || e.gotas.pendientes.length >= (cat().economia.pendientes_max || 30)) break;
+      const cas = casillaLibre(e, 'pasto') || 'pasto-' + (1 + e.gotas.pendientes.length % 8); e.gotas.pendientes.push({ id: idc('g'), casilla: cas, origen, en: hoy() }); e.gotas.hoy[origen] = (e.gotas.hoy[origen] || 0) + 1; n++;
     }
     guardar(e); return n;
   }
@@ -114,9 +114,11 @@
     e.gotas.saldo += sel.length; e.gotas.total += sel.length; guardar(e); return sel.length;
   }
   // ---- Vivero ----
-  function comprar(tipo, id) {                             // tipo: 'semilla' | 'ave'. Devuelve { ok, motivo }
-    const e = cargar(), it = (tipo === 'ave' ? cat().aves : cat().semillas)[id]; if (!it) return { ok: false, motivo: 'no-existe' };
-    const clave = (tipo === 'ave' ? 'ave_' : 'sem_') + id; if (e.vivero.desbloqueados.indexOf(clave) >= 0) return { ok: false, motivo: 'ya-tienes' };
+  const PREF = { semilla: 'sem_', ave: 'ave_', lugar: 'lug_', clima: 'cli_' }, LISTA = { semilla: 'semillas', ave: 'aves', lugar: 'lugares', clima: 'climas' }, GRATIS = { lugar: 'colinas', clima: 'natural' };
+  function tiene(tipo, id) { if (GRATIS[tipo] === id) return true; return cargar().vivero.desbloqueados.indexOf(PREF[tipo] + id) >= 0; }
+  function comprar(tipo, id) {                             // tipo: 'semilla' | 'ave' | 'lugar' | 'clima'. Devuelve { ok, motivo }
+    const e = cargar(), it = (cat()[LISTA[tipo]] || {})[id]; if (!it) return { ok: false, motivo: 'no-existe' };
+    const clave = PREF[tipo] + id; if (e.vivero.desbloqueados.indexOf(clave) >= 0) return { ok: false, motivo: 'ya-tienes' };
     if (e.gotas.saldo < it.precio) return { ok: false, motivo: 'faltan-gotas' };
     e.gotas.saldo -= it.precio; e.vivero.desbloqueados.push(clave); guardar(e); return { ok: true, motivo: null };
   }
@@ -145,6 +147,6 @@
     const items = [ta ? { clave: 'arbol', titulo: 'Del árbol', texto: ta } : null, tp ? { clave: 'planeta', titulo: 'Para el planeta', texto: tp } : null, v ? { clave: 'vida', titulo: v.tema || 'Para crecer', texto: v.texto } : null].filter(Boolean);
     return { titulo: s.nombre + (s.otro ? ' · ' + s.otro : ''), mensaje: s.mensaje, dato: ta || s.dato, items, dia: d, como: K.como || null, vida: v ? { tema: v.tema, texto: v.texto, n: (d % Lv.length) + 1, de: Lv.length } : null }; }
 
-  const api = { config(o) { if (o && o.catalogo) CAT = o.catalogo; if (o && o.hoy) HOY = o.hoy; if (o && o.almacen) ALM = o.almacen; }, cargar, guardar, estado: cargar, etapa, malezaPara, elegirPrimera, visita, sanar, ganar, recolectar, comprar, plantar, activarAve, mensajeActual, K };
+  const api = { config(o) { if (o && o.catalogo) CAT = o.catalogo; if (o && o.hoy) HOY = o.hoy; if (o && o.almacen) ALM = o.almacen; }, cargar, guardar, estado: cargar, etapa, malezaPara, elegirPrimera, visita, sanar, ganar, recolectar, comprar, tiene, plantar, activarAve, mensajeActual, K };
   if (typeof window !== 'undefined') window.TBInicio = api; if (typeof module !== 'undefined') module.exports = api;
 })();

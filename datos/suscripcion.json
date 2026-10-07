@@ -1,0 +1,31 @@
+{
+ "_nota": "F941 · Oferta de suscripción «Tierra Buena Plus». APAGADA por defecto (oferta_activa:false). Precios en CLP = HIPÓTESIS para probar; los precios finales los fijan las tiendas por escalón. Textos neutros y cordiales. La Biblia, la oración, Mi iglesia y el árbol son gratis para siempre y las gotas no se compran.",
+ "oferta_activa": false,
+ "dias_cuidado_minimo": 7,
+ "gracia_dias": 7,
+ "planes": {
+  "mensual": { "nombre": "Mensual", "precio_clp": 2490, "periodo": "mes", "nota": "Se renueva cada mes. Puedes cancelar cuando quieras desde la tienda.", "id_tienda": { "apple": "tb_plus_mensual", "google": "tb_plus_mensual" } },
+  "anual": { "nombre": "Anual", "precio_clp": 24900, "periodo": "año", "nota": "Equivale a unos 2.075 al mes: dos meses de regalo. Se renueva cada año.", "id_tienda": { "apple": "tb_plus_anual", "google": "tb_plus_anual" } }
+ },
+ "incluye": [
+  "Copia de tu jardín y tus notas en la nube, para usar Tierra Buena en otro teléfono.",
+  "Más temas de color y tipos de letra.",
+  "Recordatorios a tu medida.",
+  "Exportar tus notas y versículos guardados a PDF.",
+  "Apoyas que la app siga creciendo, sin anuncios."
+ ],
+ "siempre_gratis": [
+  "La Biblia, los planes de lectura y la lectura del día.",
+  "Tu oración y Mi iglesia.",
+  "Tu árbol, tus gotas y todo lo que se desbloquea con ellas."
+ ],
+ "textos": {
+  "titulo": "Apoyar Tierra Buena",
+  "intro": "Tierra Buena es gratis y seguirá siéndolo. Si te hace bien, puedes ayudar a mantenerla con una suscripción. No es necesario y no cambia lo esencial.",
+  "sin_tienda": "Las suscripciones se activan cuando la app esté instalada desde la tienda. Gracias por querer apoyar.",
+  "vence": "Tu apoyo termina el",
+  "activo": "Gracias por apoyar Tierra Buena.",
+  "cancelar": "Para cambiar o cancelar tu suscripción, abre los ajustes de suscripciones de tu tienda (App Store o Google Play).",
+  "gracia": "Tu suscripción venció hace poco. Tus cosas siguen aquí; puedes renovar cuando quieras."
+ }
+}
