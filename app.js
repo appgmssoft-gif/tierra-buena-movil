@@ -40,7 +40,8 @@
   const guardar = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { return false; } syncMarcar(k); if (k === 'tb_movil_cuenta' || k === 'tb_movil_identidad' || k === 'tb_movil_pastor') marcaDentro(); return true; };
   const borrar = (k) => { try { localStorage.removeItem(k); } catch (e) { /* nada */ } if (k === 'tb_movil_cuenta' || k === 'tb_movil_identidad' || k === 'tb_movil_pastor') marcaDentro(); };
   // F903: «Mi código» y el botón de efectos solo aparecen después del primer ingreso (con cuenta); en el inicio de sesión no estorban.
-  const marcaDentro = () => { try { document.documentElement.setAttribute('data-dentro', (leer('tb_movil_cuenta') || leer('tb_movil_identidad') || leer('tb_movil_pastor')) ? '1' : '0'); } catch (e) { /* nada */ } };
+  const haySesion = () => !!leer('tb_movil_cuenta');   // F936: sin sesión iniciada no se ve ninguna sección
+  const marcaDentro = () => { try { document.documentElement.setAttribute('data-sesion', haySesion() ? '1' : '0'); } catch (e) { /* nada */ } try { document.documentElement.setAttribute('data-dentro', (leer('tb_movil_cuenta') || leer('tb_movil_identidad') || leer('tb_movil_pastor')) ? '1' : '0'); } catch (e) { /* nada */ } };
   marcaDentro();
 
   async function rpc(fn, args) {
@@ -499,8 +500,9 @@
   const icoPastorHTML = () => `<button type="button" class="ico-cod ico-pas" id="icoPastor" aria-label="Soy pastor"><span class="ico-cod-in">${svg('escudo', 22)}</span><span class="ico-cod-t">Soy pastor</span></button>`;
   const ligaCodigo = () => { const b = $('#icoCodigo'); if (b) b.onclick = () => { vibra(); codigoHoja(); }; const q = $('#icoPastor'); if (q) q.onclick = () => { vibra(); pastorHoja(); }; };
   const abrirJuntos = () => { try { if (window.TBJuntos) window.TBJuntos.abrir(); } catch (e) { /* sin Juntos */ } };
-  function irACodigo(cod) { try { onbParar(); entrandoPon(false); } catch (e) { /* nada */ } codigoPrevio = /^[A-Z0-9]{6}$/.test(cod || '') ? cod : ''; vistaCodigo(); }
-  function codigoHoja() {                                  // hoja inferior: se escribe el código y se sigue al paso normal de unirse
+  function irACodigo(cod) { if (!haySesion()) return puerta(); try { onbParar(); entrandoPon(false); } catch (e) { /* nada */ } codigoPrevio = /^[A-Z0-9]{6}$/.test(cod || '') ? cod : ''; vistaCodigo(); }
+  function codigoHoja() {
+    if (!haySesion()) return puerta();                                  // hoja inferior: se escribe el código y se sigue al paso normal de unirse
     const h = nuevoEl(`<div class="hoja" id="hojaCodigo" role="dialog" aria-modal="true" aria-label="Código de mi iglesia"><div class="hoja-in hoja-cod"><div class="hoja-asa" aria-hidden="true"></div><div class="hoja-cod-ic" aria-hidden="true">${svg('iglesia', 30)}</div><h3>El código de tu iglesia</h3><p class="suave">Tu pastor te lo da. Son 6 letras o números.</p><input id="codHoja" class="cod-in" type="text" maxlength="6" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" placeholder="AB12CD" aria-label="Código de 6 letras o números"><div class="cod-pts" id="codPts" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div><p id="codErr" class="error" role="alert" hidden></p><div class="hoja-bt"><button type="button" class="btn" id="codSig">Buscar mi iglesia</button><button type="button" class="btn sec" id="codX">Ahora no</button></div></div></div>`);
     if (!h) return irACodigo('');                          // si la hoja no se puede mostrar, va directo a la pantalla del código
     document.body.appendChild(h);
@@ -518,23 +520,31 @@
     setTimeout(() => { try { inp.focus(); } catch (e) { /* nada */ } }, 150);
   }
 
+  // F936 · Sesión obligatoria: sin cuenta iniciada solo se ve esta puerta (entrar o crear cuenta). El inicio de sesión en sí no cambia: solo se abre desde aquí.
+  function puerta() {
+    entrandoPon(false); try { onbParar(); } catch (e) { /* nada */ }
+    $('#pantalla').innerHTML = `
+      <div class="hero hero-viva"><span class="hv-caja" aria-hidden="true"><i></i><i></i><i></i><i></i></span><div class="hero-ico" aria-hidden="true">${svg('hoja', 38)}</div><h1>Bienvenido a Tierra Buena</h1>
+      <p>Para ver la Palabra, tu iglesia y tu jardín, primero inicia sesión con tu correo. Es gratis y toma un minuto.</p></div>
+      <div class="grid grid-ent">
+        ${activa('✉️', 'Entrar con mi correo', 'Si ya tienes cuenta, aquí entras. Es la misma del computador.', 'cuenta')}
+        ${activa('🌱', 'Crear mi cuenta', 'Si es tu primera vez, la creas aquí con tu correo.', 'crear')}
+      </div>
+      ${bloqueInstalar()}`;
+    pantEntra('adelante');
+    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => vistaCuenta(b.dataset.ir === 'crear' ? 'crear' : 'entrar')));
+    pintarInstalar($('[data-instalar-box]'));
+  }
   function vistaUnirse() {
+    if (!leer(K_CUENTA)) return puerta();                  // F936: sin sesión, solo la puerta
     if (codigoDeEnlace()) return vistaCodigo();            // vino de un enlace con el código de su iglesia
     const conCuenta = !!leer(K_CUENTA);
-    $('#pantalla').innerHTML = conCuenta ? `
+    $('#pantalla').innerHTML = `
       <div class="ent-top">${icoPastorHTML()}${icoCodigoHTML()}</div>
       <div class="hero hero-viva"><span class="hv-caja" aria-hidden="true"><i></i><i></i><i></i><i></i></span><div class="hero-ico" aria-hidden="true">${svg('iglesia', 38)}</div><h1>Tu iglesia te espera</h1>
       <p>¿Eres miembro? Toca <b>Mi código</b>. ¿Cuidas una iglesia? Toca <b>Soy pastor</b>.</p></div>
       ${cuentaBarra()}
       <div id="tbEjem" class="tb-ejem-caja"></div>
-      ${bloqueInstalar()}` : `
-      <div class="hero hero-viva"><span class="hv-caja" aria-hidden="true"><i></i><i></i><i></i><i></i></span><div class="hero-ico" aria-hidden="true">${svg("hoja", 38)}</div><h1>Bienvenido a Tierra Buena</h1>
-      <p>Tu iglesia, la Palabra y tu crecimiento, en tu bolsillo.</p></div>
-      <h2 class="sep">Elige cómo entrar</h2>
-      <div class="grid grid-ent">
-        ${activa('✉️', 'Entrar con mi correo y contraseña', 'La misma cuenta del computador. Si no tienes, la creas aquí.', 'cuenta')}
-        ${activa('📖', 'Solo quiero leer y orar', 'Biblia, versículo del día y Vida y servicio, sin unirte.', 'solo')}
-      </div>
       ${bloqueInstalar()}`;
     ligaCodigo(); pantEntra('adelante');
     try { if (window.TBEjemplos && $('#tbEjem')) window.TBEjemplos.pintar($('#tbEjem'), 'ambos'); } catch (e) { /* sin ejemplos */ }
@@ -2320,7 +2330,7 @@
     h.addEventListener('click', (e) => { if (e && e.target === h) cerrar(); });
     pantallaCodigo();
   }
-  function vistaPastorEntrar() { pastorHoja(); }
+  function vistaPastorEntrar() { if (!haySesion()) return puerta(); pastorHoja(); }
   async function vistaPastor() {
     const p = pastorLeer(); if (!p) return vistaPastorEntrar();
     const fil = (cls, ico, tit, sub, ir3, n) => `<button type="button" class="fila" data-pp="${ir3}"><span class="fila-ico ${cls}" aria-hidden="true">${ico}</span><span class="fila-txt">${tit}<small>${sub}</small></span><span class="insignia" id="n-${ir3}" hidden></span><span class="flecha" aria-hidden="true">›</span></button>`;
@@ -2630,7 +2640,7 @@
     const botones = dentro
       ? `<button type="button" class="btn" id="onbEmpezar">Entrar</button>`
       : ya
-      ? `<button type="button" class="btn" id="onbEmpezar">Entrar a mi cuenta</button><p class="ent-links"><button type="button" class="enlace" id="onbCrear">Crear una cuenta nueva</button></p><p class="ent-links"><button type="button" class="enlace" id="onbLeer">Solo quiero leer</button></p>`
+      ? `<button type="button" class="btn" id="onbEmpezar">Entrar a mi cuenta</button><p class="ent-links"><button type="button" class="enlace" id="onbCrear">Crear una cuenta nueva</button></p>`
       : `<button type="button" class="btn" id="onbEmpezar">Empezar</button><p class="ent-links"><button type="button" class="enlace" id="onbYaTengo">Ya tengo cuenta</button></p>`;   // F888: la primera vez solo ofrece «Empezar»; «Ya tengo cuenta» aparece al final de las preguntas
     $('#pantalla').innerHTML = `<section class="ent ent-splash ent-port" data-i="0"><div class="pt-vista" id="ptVista"><div class="pt-pista">${sl}${fin}</div></div><div class="pt-pie"><div class="pt-pts">${pts}</div>${botones}</div></section>`;
     ligaCodigo();
@@ -2653,7 +2663,7 @@
     }
     $('#onbEmpezar').onclick = () => { quieta(); if (dentro) { onbParar(); entrandoPon(false); ir(tabInicio()); } else if (ya) onbCuentaIr('entrar'); else onbPregunta(0); };
     if (!dentro && !ya) $('#onbYaTengo').onclick = () => { quieta(); onbCuentaIr('entrar'); };
-    if (ya) { $('#onbCrear').onclick = () => onbCuentaIr('crear'); $('#onbLeer').onclick = () => { onbParar(); entrandoPon(false); ir('palabra'); }; }
+    if (ya) { $('#onbCrear').onclick = () => onbCuentaIr('crear'); }
   }
   function onbPregunta(i) {
     onbParar(); entrandoPon(true);
@@ -2736,7 +2746,7 @@
       <label class="chk"><input type="checkbox" id="onbPlan"${onbEstado.plan ? ' checked' : ''}><span>Empezar «${esc(pl.n)}» al entrar</span></label>
       <button type="button" class="btn" id="onbSig">${onbEstado.cambiar ? 'Guardar mi nuevo plan' : 'Crear mi cuenta'}</button>
       <button type="button" class="btn sec" id="onbCambiar">Cambiar mis respuestas</button>
-      ${onbEstado.cambiar ? '<p class="ent-links"><button type="button" class="enlace" id="onbCancelar">Dejar mi plan como estaba</button></p>' : '<p class="ent-links"><button type="button" class="enlace" id="onbYa">Ya tengo cuenta</button></p><p class="ent-links"><button type="button" class="enlace" id="onbLuego">Ahora no, solo quiero leer</button></p>'}</section>`;
+      ${onbEstado.cambiar ? '<p class="ent-links"><button type="button" class="enlace" id="onbCancelar">Dejar mi plan como estaba</button></p>' : '<p class="ent-links"><button type="button" class="enlace" id="onbYa">Ya tengo cuenta</button></p>'}</section>`;
     (async () => {                                         // el versículo sale de la Biblia que ya está en el teléfono
       try { const l = await libroCargar(vp[0]), t = l[Number(vp[1]) - 1][Number(vp[2]) - 1], a = $('#onbVersT'), b = $('#onbVersR'); if (a && t) { a.textContent = '«' + t + '»'; b.textContent = libroInfo(vp[0])[1] + ' ' + vp[1] + ':' + vp[2]; } else if ($('#onbVers')) $('#onbVers').hidden = true; } catch (e) { const v = $('#onbVers'); if (v) v.hidden = true; }
     })();
@@ -2747,7 +2757,6 @@
     $('#onbSig').onclick = () => { onbGuardar(false); if (onbEstado.cambiar) { onbEstado.cambiar = false; entrandoPon(false); ir('perfil'); toastBib('Tu nuevo plan está listo'); } else onbCuentaIr('crear'); };
     if (onbEstado.cambiar) $('#onbCancelar').onclick = () => { onbEstado.cambiar = false; entrandoPon(false); ir('perfil'); };
     else $('#onbYa').onclick = () => onbCuentaIr('entrar');
-    if (!onbEstado.cambiar) $('#onbLuego').onclick = () => { onbGuardar(false); onbIr(); };
   }
   // ---------- Navegación ----------
     // F902 · INICIO: el 5.º menú, al centro. Más aire y menos cosas. Aquí vive «Juntos hacemos el bien» (ya no está dentro de Vida).
@@ -2800,6 +2809,7 @@
     } catch (e) { /* sin animación */ }
   }
   function ir(tab, directo) {
+    if (!haySesion()) return puerta();                       // F936: sin sesión no se abre ninguna sección
     const sentido = ORDEN_TAB.indexOf(tab) < ORDEN_TAB.indexOf(tabPrev) ? 'atras' : 'adelante'; tabPrev = tab;
     const tabMarca = tab === 'pastor' ? 'iglesia' : tab;
     document.querySelectorAll('.tab').forEach((b) => { if (b.dataset.tab === tabMarca) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
@@ -2906,11 +2916,12 @@
   } catch (e) { /* sin modo prueba */ }
   // F892: sin cuenta, ni iglesia, ni solicitud (primera vez o quien dijo «solo quiero leer») se abre la portada animada cada vez; con cuenta o iglesia, directo a la app
   const portadaYaVista = () => { try { if (sessionStorage.getItem('tb_movil_portada') === '1') return true; sessionStorage.setItem('tb_movil_portada', '1'); return false; } catch (e) { return true; } };   // una vez por apertura (no en cada recarga); si no hay dónde anotarlo, no molesta
-  if (!codigoDeEnlace() && (!hayOnb() || !portadaYaVista())) onbSplash(); else ir(tabInicio());   // F893: la portada sale al abrir la app para todos (una vez por apertura)
+  marcaDentro();
+  if (!haySesion() ? (!hayOnb() || !portadaYaVista()) : (!codigoDeEnlace() && (!hayOnb() || !portadaYaVista()))) onbSplash(); else ir(tabInicio());   // F936: sin sesión, la portada y luego la puerta   // F893: la portada sale al abrir la app para todos (una vez por apertura)
   try {   // F898: atajos del ícono instalado (manifest → shortcuts)
     const q = new URLSearchParams(String((window.location && window.location.search) || '').slice(1)).get('ir');
     const at = { versiculo: vistaVersiculo, biblia: vistaBiblia, calendario: vistaCalendario };
-    if (q && at[q] && !codigoDeEnlace()) setTimeout(() => { try { ir('palabra'); at[q](); } catch (e) { /* nada */ } }, 60);
+    if (q && at[q] && haySesion() && !codigoDeEnlace()) setTimeout(() => { try { ir('palabra'); at[q](); } catch (e) { /* nada */ } }, 60);
   } catch (e) { /* sin atajo */ }
   const fechasProx = () => { try { const hoy = new Date(); hoy.setHours(0, 0, 0, 0); const a = hoy.getFullYear(); return fechasSantas(a, tradLeer()).concat(fechasSantas(a + 1, tradLeer())).filter((x) => x[0] >= hoy && x[4] !== 'mes').sort((x, y) => x[0] - y[0]).slice(0, 6).map((x) => ({ id: 's' + x[0].getTime(), t: x[1], fecha: x[0] })); } catch (e) { return []; } };
   window.TBApp = { fechasProx, sb: SB, leer, guardar, esc, ir, vibra, svg, volverVida: () => ir('inicio'), guardarAjuste: (c) => { perfilGuardar(c); ajusteAplicar(); } };   // F901: lo usan identidad.js (ejemplos y Juntos)

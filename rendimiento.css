@@ -68,3 +68,7 @@ html:not([data-anim=off]) .ambiente::before,html:not([data-anim=off]) .ambiente:
 html:not([data-anim=off]) #pantalla{backface-visibility:hidden}
 /* mientras la pantalla se desliza al cambiar de pestaña, nada más se mueve (menos trabajo en esos 0,3 s) */
 html.tb-cambia .tb-anima,html.tb-cambia .tb-anima::before,html.tb-cambia .tb-anima::after{animation-play-state:paused!important}
+
+/* F936 · Sesión obligatoria: sin sesión no hay barra, menú ni accesos rápidos; solo la portada, la puerta y el inicio de sesión. */
+html[data-sesion="0"] .barra,html[data-sesion="0"] .btn-menu,html[data-sesion="0"] .tb-rapido,html[data-sesion="0"] .barra-top{display:none!important}
+html[data-sesion="0"] #pantalla{padding-bottom:24px}

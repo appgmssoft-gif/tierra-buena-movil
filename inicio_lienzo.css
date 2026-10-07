@@ -157,14 +157,25 @@ html[data-eco="2"] .il-gota svg{animation:none!important}
 .il-viv-tx{display:flex;flex-direction:column;gap:4px;min-width:0}.il-viv-tx b{font-size:1rem}.il-viv-tx small{font-size:.8rem;line-height:1.4;color:var(--suave)}
 .il-viv-bt{flex:none;min-height:44px;padding:8px 16px}.il-viv-ok{flex:none;font-size:.82rem;font-weight:600;color:var(--oro)}
 .il-viv-est{margin:16px 0 0;min-height:1.4em;font-size:.88rem;color:var(--oro);font-weight:600}
-.il-planta{position:absolute;width:32px;height:32px;margin:-30px 0 0 -16px;pointer-events:none;transform-origin:50% 100%}
-html:not([data-anim=off]) .il-planta{animation:il-mece 5s ease-in-out infinite alternate}
+.il-planta{position:absolute;display:flex;justify-content:center;align-items:flex-end;width:80px;height:0;margin:0 0 0 -40px;pointer-events:none}
+.il-planta svg{display:block;transform-origin:50% 100%}
+html:not([data-anim=off]) .il-planta svg{animation:il-mece 5s ease-in-out infinite alternate}
 @keyframes il-mece{from{transform:rotate(-3deg)}to{transform:rotate(3deg)}}
-.il-ave{position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;pointer-events:none}.il-ave.n1{left:20%;top:42%}.il-ave.n2{left:80%;top:36%}
-html:not([data-anim=off]) .il-ave{animation:il-vuela 4s ease-in-out infinite alternate}.il-ave.n2{animation-delay:-2s}
-@keyframes il-vuela{from{transform:translateY(0)}to{transform:translateY(-6px)}}
-@media (prefers-reduced-motion:reduce){.il-planta,.il-ave,.il-viv.entra{animation:none!important}}
-html[data-eco="2"] .il-planta,html[data-eco="2"] .il-ave{animation:none!important}
+.il-planta.s-pasto-3,.il-planta.s-pasto-4{transform:scale(.82);transform-origin:50% 0}.il-planta.s-pasto-1,.il-planta.s-pasto-6{transform:scale(.92);transform-origin:50% 0}.il-planta.s-pasto-7,.il-planta.s-pasto-8{transform:scale(1.12);transform-origin:50% 0}
+/* F936: cada ave tiene su lugar: el cóndor en el cielo, la golondrina y el gorrión en el aire cerca del árbol, el chucao y el queltehue en el suelo, el picaflor junto a las flores. */
+.il-ave{position:absolute;display:flex;justify-content:center;align-items:flex-end;width:120px;height:0;margin:0 0 0 -60px;pointer-events:none}.il-ave svg{display:block}
+.il-ave.a-condor{left:74%;top:19%}.il-ave.a-golondrina{left:22%;top:34%}.il-ave.a-gorrion{left:77%;top:47%}.il-ave.a-picaflor{left:46%;top:77%}.il-ave.a-chucao{left:21%;top:91%}.il-ave.a-queltehue{left:56%;top:94%}
+html:not([data-anim=off]) .il-ave.l-cielo svg{animation:il-planea 9s ease-in-out infinite alternate}
+html:not([data-anim=off]) .il-ave.a-golondrina svg{animation:il-surca 5.5s ease-in-out infinite alternate}
+html:not([data-anim=off]) .il-ave.l-flor svg{animation:il-flota 1.6s ease-in-out infinite alternate}
+html:not([data-anim=off]) .il-ave.l-suelo svg,html:not([data-anim=off]) .il-ave.a-gorrion svg{animation:il-salta 3.4s ease-in-out infinite}
+.il-ave.n2 svg{animation-delay:-1.7s!important}
+@keyframes il-planea{from{transform:translate(-14px,0) rotate(-2deg)}to{transform:translate(14px,-4px) rotate(2deg)}}
+@keyframes il-surca{from{transform:translate(-8px,2px)}to{transform:translate(10px,-6px)}}
+@keyframes il-flota{from{transform:translateY(0)}to{transform:translateY(-4px)}}
+@keyframes il-salta{0%,70%,100%{transform:translateY(0)}80%{transform:translateY(-4px)}90%{transform:translateY(0)}}
+@media (prefers-reduced-motion:reduce){.il-planta svg,.il-ave svg,.il-viv.entra{animation:none!important}}
+html[data-eco="2"] .il-planta svg,html[data-eco="2"] .il-ave svg{animation:none!important}
 
 /* ---- F933 · Mensajes del día (3 tarjetas) ---- */
 .il-msg.entra{animation:il-viv-sube .45s ease-out 1}
@@ -181,27 +192,34 @@ html:not([data-anim=off]) .il-msg.entra .il-mc.d1{animation-delay:.12s}html:not(
 @keyframes il-mc-in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 
 /* ---- F933 · Vivero con contenido visual ---- */
-.il-viv-cab{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 8px}.il-viv-cab h3{margin:0}
+.il-viv-cab{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 6px}.il-viv-cab h3{margin:0}
 .il-viv-cab .il-viv-saldo{margin:0;padding:6px 14px;border-radius:999px;background:color-mix(in srgb,#7fc4e6 18%,transparent);font-weight:600}
-.il-viv-vista{margin:6px 0 0;border-radius:18px;overflow:hidden;border:1px solid color-mix(in srgb,var(--suave) 18%,transparent);line-height:0}
+.il-viv{padding:16px 16px 14px}.il-viv-ay{margin:0 0 10px}
+.il-viv-tabs{display:flex;gap:8px;margin:0 0 10px}.il-viv-tab{flex:1;min-height:40px;padding:6px 12px;border-radius:999px;border:1px solid color-mix(in srgb,var(--suave) 26%,transparent);background:transparent;color:var(--suave);font:600 .86rem/1.2 system-ui,sans-serif;cursor:pointer}
+.il-viv-tab.on{color:var(--tinta);border-color:var(--oro);background:color-mix(in srgb,var(--oro) 12%,transparent)}.il-viv-tab:active{transform:scale(.97)}
+/* F936: carrusel que se desliza de lado (una sola fila) en vez de una lista larga */
+.il-viv-car{display:flex;gap:10px;overflow-x:auto;overflow-y:hidden;margin:0 -16px 12px;padding:2px 16px 8px;scroll-snap-type:x proximity;scroll-padding:0 16px;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;scrollbar-width:none;touch-action:pan-x pan-y}
+.il-viv-car::-webkit-scrollbar{display:none}
+.il-viv-tile{flex:none;width:112px;scroll-snap-align:center;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px;padding:8px 6px 10px;border-radius:16px;border:1px solid color-mix(in srgb,var(--suave) 20%,transparent);background:transparent;color:var(--tinta);font:inherit;cursor:pointer}
+.il-viv-tile b{font-size:.84rem;font-weight:600;text-align:center;line-height:1.2}.il-viv-tile.sel{border-color:var(--oro);background:color-mix(in srgb,var(--oro) 10%,transparent)}.il-viv-tile:active{transform:scale(.97)}
+.il-viv-arte{display:flex;align-items:flex-end;justify-content:center;width:100%;height:74px;padding-bottom:4px;border-radius:12px;background:linear-gradient(180deg,color-mix(in srgb,#9fcbe4 22%,transparent),color-mix(in srgb,#86b97a 34%,transparent));overflow:hidden}
+.il-viv-arte svg{display:block;max-width:100%;max-height:100%}
+.il-viv-tile.mio .il-viv-arte{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,#6fae6e 55%,transparent)}
+.il-viv-chip{display:inline-flex;align-items:center;gap:4px;font-size:.76rem;font-weight:600;color:#4a97bd}.il-viv-chip .il-ic{margin:0}.il-viv-chip.ok{color:var(--oro)}
+.il-viv-vista{margin:0;border-radius:16px;overflow:hidden;border:1px solid color-mix(in srgb,var(--suave) 18%,transparent);line-height:0}
 .il-viv-svg{display:block;width:100%;height:auto}
-.il-viv-vista.pop{animation:il-pop .4s ease-out 1}@keyframes il-pop{from{opacity:.4;transform:scale(.96)}to{opacity:1;transform:none}}
+.il-viv-vista.pop{animation:il-pop .4s ease-out 1}@keyframes il-pop{from{opacity:.4;transform:scale(.97)}to{opacity:1;transform:none}}
 .vv-sway{transform-box:fill-box;transform-origin:50% 100%}
 html:not([data-anim=off]) .vv-sway{animation:il-mece 4.5s ease-in-out infinite alternate}.vv-d1{animation-delay:-1.5s!important}.vv-d2{animation-delay:-3s!important}
-html:not([data-anim=off]) .vv-posa{animation:il-vuela 3.2s ease-in-out infinite alternate}html:not([data-anim=off]) .vv-vuela{animation:vv-pasa 7s ease-in-out infinite alternate}
-@keyframes vv-pasa{from{transform:translate(30px,34px) scale(1.3)}to{transform:translate(120px,18px) scale(1.3)}}
-.il-viv-ficha{padding:16px 4px 4px}.il-viv-ficha h4{margin:0 0 6px;font:600 1.1rem/1.3 Fraunces,Georgia,serif;text-transform:none;letter-spacing:0;color:var(--tinta)}
-.il-viv-dato{margin:0 0 8px;font-size:.88rem;line-height:1.5;color:var(--suave)}.il-viv-frase{margin:0 0 14px;font-size:.95rem;line-height:1.55;font-style:italic}
+html:not([data-anim=off]) .vv-posa{animation:il-flota 3s ease-in-out infinite alternate}html:not([data-anim=off]) .vv-flota{animation:il-flota 1.4s ease-in-out infinite alternate}
+html:not([data-anim=off]) .vv-planea{animation:vv-plan 8s ease-in-out infinite alternate}html:not([data-anim=off]) .vv-salta{animation:il-salta 3.4s ease-in-out infinite}
+@keyframes vv-plan{from{transform:translate(-22px,2px) rotate(-1.5deg)}to{transform:translate(22px,-6px) rotate(1.5deg)}}
+html:not([data-anim=off]) .av-ala{transform-box:fill-box;transform-origin:70% 100%;animation:av-bate .16s linear infinite alternate}@keyframes av-bate{from{transform:scaleY(.55)}to{transform:scaleY(1.05)}}
+.il-viv-ficha{padding:12px 2px 2px}.il-viv-ficha h4{margin:0 0 2px;font:600 1.08rem/1.3 Fraunces,Georgia,serif;text-transform:none;letter-spacing:0;color:var(--tinta)}
+.il-viv-rasgo{margin:0 0 8px;font-size:.78rem;font-weight:600;color:var(--oro);line-height:1.4}
+.il-viv-dato{margin:0 0 6px;font-size:.86rem;line-height:1.5;color:var(--suave)}.il-viv-frase{margin:0 0 12px;font-size:.9rem;line-height:1.5;font-style:italic}
 .il-viv-prog{margin:0 0 6px}.il-viv-prog .pg-f{fill:color-mix(in srgb,var(--suave) 22%,transparent)}.il-viv-prog .pg-v{fill:#7fc4e6}
-.il-viv-pre{margin:0 0 12px;font-size:.84rem;color:var(--suave)}.il-viv-main{width:100%}.il-viv-ok2{margin:0;font-weight:600;color:var(--oro);font-size:.9rem}
-.il-viv-tit{margin:22px 0 10px!important}
-.il-viv-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-@media (min-width:430px){.il-viv-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-.il-viv-tile{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border-radius:16px;border:1px solid color-mix(in srgb,var(--suave) 20%,transparent);background:transparent;color:var(--tinta);font:inherit;cursor:pointer;min-height:112px}
-.il-viv-tile b{font-size:.88rem;font-weight:600;text-align:center}.il-viv-tile.sel{border-color:var(--oro);background:color-mix(in srgb,var(--oro) 10%,transparent)}.il-viv-tile:active{transform:scale(.97)}
-.il-viv-arte{display:flex;align-items:center;justify-content:center;width:58px;height:58px;border-radius:50%;background:color-mix(in srgb,var(--suave) 10%,transparent)}
-.il-viv-tile.mio .il-viv-arte{background:color-mix(in srgb,#6fae6e 18%,transparent)}
-.il-viv-chip{display:inline-flex;align-items:center;gap:4px;font-size:.76rem;font-weight:600;color:#4a97bd}.il-viv-chip .il-ic{margin:0}.il-viv-chip.ok{color:var(--oro)}
-.il-viv-jardin{margin:18px 0 0;font-size:.84rem;color:var(--suave);line-height:1.5}
-@media (prefers-reduced-motion:reduce){.il-msg.entra,.il-msg.entra .il-mc,.il-viv-vista.pop,.vv-sway,.vv-posa,.vv-vuela{animation:none!important}}
-html[data-eco="2"] .vv-sway,html[data-eco="2"] .vv-posa,html[data-eco="2"] .vv-vuela{animation:none!important}
+.il-viv-pre{margin:0 0 10px;font-size:.84rem;color:var(--suave)}.il-viv-main{width:100%}.il-viv-ok2{margin:0;font-weight:600;color:var(--oro);font-size:.9rem}
+.il-viv-jardin{margin:12px 0 0;font-size:.82rem;color:var(--suave);line-height:1.5}.il-viv-est{margin:8px 0 0;min-height:1.2em}
+@media (prefers-reduced-motion:reduce){.il-msg.entra,.il-msg.entra .il-mc,.il-viv-vista.pop,.vv-sway,.vv-posa,.vv-flota,.vv-planea,.vv-salta,.av-ala{animation:none!important}}
+html[data-eco="2"] .vv-sway,html[data-eco="2"] .vv-posa,html[data-eco="2"] .vv-flota,html[data-eco="2"] .vv-planea,html[data-eco="2"] .vv-salta,html[data-eco="2"] .av-ala{animation:none!important}
