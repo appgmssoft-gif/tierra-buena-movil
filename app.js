@@ -770,6 +770,7 @@
     const cuenta = !!leer(K_CUENTA), off = metaLeer().off;
     $('#pantalla').innerHTML = `${volver()}<h1>Mi privacidad</h1><div class="filete"></div>
       <p class="suave">Tus datos son tuyos. Así de claro: qué ve cada persona y qué puedes hacer tú.</p>
+      <p class="suave"><a href="privacidad.html" target="_blank" rel="noopener">Leer la política de privacidad completa</a></p>
       <h2 class="sep">Qué ve cada persona</h2>
       <div class="quien-lista">${PRIV_FILAS.map((f) => `<div class="card quien"><span class="quien-ico" aria-hidden="true">${f[0]}</span><div><b>${esc(f[1])}</b><span class="quien-chip ${QUIEN[f[2]][1]}">${esc(QUIEN[f[2]][0])}</span><p class="suave m0t">${esc(f[3])}</p></div></div>`).join('')}</div>
       <h2 class="sep">Lo que puedes hacer</h2>
