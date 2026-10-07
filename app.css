@@ -985,3 +985,6 @@ main h2.sep{margin:30px 2px 12px}.grid{gap:14px}
 .plan-foto.sin img{display:none}
 .plan-ctx{font-size:1.05rem;line-height:1.5;margin:6px 0 12px}
 .ic-color{stroke:none;fill:none;color:inherit}
+
+/* F945 · Raíces */
+.card.ok{border-color:var(--verde);border-width:2px}.card.mal{border-style:dashed;opacity:.75}.card:disabled{cursor:default}

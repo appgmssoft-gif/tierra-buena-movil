@@ -1157,6 +1157,74 @@
     const nubes = fase === 'noche' ? '' : '<g class="h-nube n1"><ellipse cx="80" cy="70" rx="40" ry="12"/><ellipse cx="108" cy="62" rx="26" ry="11"/></g><g class="h-nube n2"><ellipse cx="220" cy="150" rx="34" ry="10"/><ellipse cx="244" cy="143" rx="20" ry="9"/></g>';
     return `<svg class="hoy-escena" viewBox="0 0 400 420" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">${estrellas}${astro}${nubes}<path class="h-col1" d="M0 336 Q90 296 190 326 T400 308 V420 H0z"/><path class="h-col2" d="M0 372 Q110 344 220 366 T400 352 V420 H0z"/></svg>`;
   }
+  // F944 · JUEGOS (fase A): entrada común. Cada juego se enchufa aquí con su vista y llama a juegoTerminar(id, aciertos, total).
+  const K_JUEGOS = 'tb_movil_juegos';
+  const JUEGOS = [
+    ['sembrador', '🌱', 'El Sembrador', 'Cada capítulo que lees es una semilla. Prepara la tierra y mira crecer tu campo.'],
+    ['raices', '📖', 'Raíces', 'Preguntas sobre lo que leíste, con el versículo que explica la respuesta.'],
+    ['brotes', '✍️', 'Brotes', 'Completa el versículo y llévalo en la memoria.'],
+    ['sopa', '🔎', 'Sopa del Vivero', 'Letras grandes, sin tiempo y con pistas gratis.']
+  ];
+  const JUEGOS_LISTOS = { raices: (v) => vistaRaices(v) };   // id -> función que abre el juego (cada fase nueva se registra aquí)
+  function juegoTerminar(id, aciertos, total) {   // guarda la partida y da una gota de rocío por jugar (con tope diario)
+    const j = leer(K_JUEGOS) || { n: 0, p: {} }; j.n = (j.n || 0) + 1; j.p = j.p || {};
+    const q = j.p[id] || { n: 0, mejor: 0 }; q.n++; q.mejor = Math.max(q.mejor, Number(aciertos) || 0); j.p[id] = q; guardar(K_JUEGOS, j);
+    if (aciertos > 0) gotaGanar('juego'); return q;
+  }
+  // F945 · «RAÍCES» (juego B): preguntas con el versículo que explica la respuesta. Reto del día = 5 fijas por fecha; «Otras 5» = al azar.
+  function raicesElegir(bank, diario) {
+    let sem = 0; const f = diario ? hoyTxt() : String(Date.now()); for (let i = 0; i < f.length; i++) sem = (sem * 31 + f.charCodeAt(i)) >>> 0;
+    const azar = () => { sem = (sem * 1664525 + 1013904223) >>> 0; return sem / 4294967296; };
+    const ult = leer(K_BIB), a = bank.slice().sort(() => azar() - 0.5);
+    const del = ult ? a.filter((q) => q.cod === ult.cod) : [];   // primero las del libro que leíste por última vez
+    return del.slice(0, 2).concat(a.filter((q) => !del.slice(0, 2).includes(q))).slice(0, 5);
+  }
+  async function vistaRaices(volver) {
+    let bank; try { bank = (await datoCargar('juego_raices')).preguntas; } catch (e) { $('#pantalla').innerHTML = `${cabecera('Raíces', 'Juegos')}<p class="suave">${SIN_DATOS}</p>`; volverA('Juegos', volver); return; }
+    const son = (n) => { try { if (window.TBSonido && window.TBSonido[n]) window.TBSonido[n](); } catch (e) { /* sin sonido */ } };
+    const inicio = () => {
+      $('#pantalla').innerHTML = `${cabecera('Raíces', 'Juegos')}<p class="suave">Cinco preguntas. Después de cada respuesta aparece el versículo que la explica.</p>
+        <div class="grid"><button type="button" class="card" id="rzDia"><div class="t"><span aria-hidden="true">🌅</span>Reto de hoy<span class="flecha" aria-hidden="true">›</span></div><p class="suave m0t">Las mismas cinco preguntas durante todo el día.</p></button>
+        <button type="button" class="card" id="rzMas"><div class="t"><span aria-hidden="true">🔀</span>Otras cinco<span class="flecha" aria-hidden="true">›</span></div><p class="suave m0t">Preguntas distintas cada vez.</p></button></div>`;
+      volverA('Juegos', volver); $('#rzDia').onclick = () => jugar(raicesElegir(bank, true)); $('#rzMas').onclick = () => jugar(raicesElegir(bank, false));
+    };
+    const jugar = (qs) => {
+      let i = 0, ac = 0;
+      const pregunta = () => {
+        const q = qs[i], ord = q.o.map((t, k) => k).sort(() => Math.random() - 0.5), inf = libroInfo(q.cod);
+        $('#pantalla').innerHTML = `${cabecera('Raíces', 'Juegos')}<p class="suave">Pregunta ${i + 1} de ${qs.length}</p><h2 class="m0t">${esc(q.p)}</h2>
+          <div class="grid sep16">${ord.map((k) => `<button type="button" class="card" data-k="${k}"><div class="t">${esc(q.o[k])}</div></button>`).join('')}</div><div id="rzRes"></div>`;
+        volverA('Juegos', volver);
+        document.querySelectorAll('[data-k]').forEach((b) => b.addEventListener('click', async () => {
+          const bien = Number(b.dataset.k) === q.c; if (bien) ac++; son(bien ? 'logro' : 'suave');
+          document.querySelectorAll('[data-k]').forEach((x) => { x.disabled = true; const c = Number(x.dataset.k) === q.c; if (c) { x.classList.add('ok'); x.querySelector('.t').insertAdjacentHTML('afterbegin', '<span aria-hidden="true">✓ </span>'); } else if (x === b) { x.classList.add('mal'); } });
+          const ref = `${inf ? esc(inf[1]) : esc(q.cod)} ${q.cap}:${q.v}`;
+          $('#rzRes').innerHTML = `<p class="${bien ? '' : 'suave'}"><b>${bien ? 'Correcto.' : 'La respuesta correcta está marcada con ✓.'}</b></p><p class="suave" id="rzVer">${ref}</p><button type="button" class="card" id="rzSig"><div class="t">${i + 1 < qs.length ? 'Siguiente' : 'Ver resultado'}<span class="flecha" aria-hidden="true">›</span></div></button>`;
+          $('#rzSig').onclick = () => { i++; if (i < qs.length) pregunta(); else fin(); }; $('#rzSig').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+          try { const lib = await libroCargar(q.cod, verActual()), t = lib[q.cap - 1] && lib[q.cap - 1][q.v - 1], el = $('#rzVer'); if (t && el) el.innerHTML = `«${esc(t)}»<br><b>${ref}</b>`; } catch (e) { /* sin internet: queda la cita */ }
+        }));
+      };
+      const fin = () => {
+        juegoTerminar('raices', ac, qs.length); son('logro');
+        $('#pantalla').innerHTML = `${cabecera('Raíces', 'Juegos')}<h2>${ac} de ${qs.length}</h2><p class="suave">${ac >= 4 ? 'Muy buen repaso de la Palabra.' : ac >= 2 ? 'Buen avance. Cada repaso deja algo.' : 'Lo importante es volver a leer. Puedes intentarlo otra vez.'}${ac > 0 ? ' Una gota de rocío te espera en el Inicio.' : ''}</p>
+          <div class="grid"><button type="button" class="card" id="rzOtra"><div class="t">Otras cinco<span class="flecha" aria-hidden="true">›</span></div></button></div>`;
+        volverA('Juegos', volver); $('#rzOtra').onclick = () => jugar(raicesElegir(bank, false));
+      };
+      pregunta();
+    };
+    inicio();
+  }
+  function vistaJuegos() {
+    const j = leer(K_JUEGOS) || { n: 0 };
+    $('#pantalla').innerHTML = `${cabecera('Juegos', 'Palabra')}<p class="suave">Juegos pensados para lo que lees y vives aquí. Jugar da gotas de rocío para tu Inicio; no hay anuncios ni monedas.</p>
+      ${j.n ? `<p class="suave">Partidas jugadas: ${Number(j.n)}</p>` : ''}
+      <div class="grid">${JUEGOS.map((g) => JUEGOS_LISTOS[g[0]]
+        ? `<button type="button" class="card" data-juego="${g[0]}"><div class="t"><span aria-hidden="true">${g[1]}</span>${g[2]}<span class="flecha" aria-hidden="true">›</span></div><p class="suave m0t">${g[3]}</p></button>`
+        : `<div class="card pronto"><div class="t"><span aria-hidden="true">${g[1]}</span>${g[2]}</div><p class="suave m0t">${g[3]} <b>Muy pronto.</b></p></div>`).join('')}</div>`;
+    volverA('Palabra', vistaPalabra);
+    document.querySelectorAll('[data-juego]').forEach((b) => b.addEventListener('click', () => { const f = JUEGOS_LISTOS[b.dataset.juego]; if (f) f(vistaJuegos); }));
+  }
+
   function vistaPalabra() {
     const ult = leer(K_BIB), inf = ult && libroInfo(ult.cod);
     let planAct = null; try { for (const pl of PLANES) { const e = planEstado(pl.id); if (e && e.h.length < PD(pl).length) { planAct = { pl, n: e.h.length }; break; } } } catch (e) { planAct = null; }   // F915: plan en curso (si hay)
@@ -1166,10 +1234,10 @@
       <h1>Hoy</h1><div class="hoy-verso" id="hoyVerso"><span class="esqueleto"></span><span class="esqueleto corto"></span></div>
       ${racha ? `<p class="hoy-racha">${svg('llama', 18)}<span>${racha === 1 ? '1 día leyendo la Palabra' : racha + ' días seguidos leyendo la Palabra'}</span></p>` : ''}${fechaCercanaChip()}${instalarChip()}</div>
       <h2 class="sep">Tu Palabra</h2>
-      <div class="grid">${activa('✨', 'Hoy lo hago', 'Leer es el principio: da un paso hoy.', 'hacer')}${inf ? activa('▶️', 'Seguir leyendo', esc(inf[1]) + ' ' + Number(ult.cap) + ' · donde te quedaste', 'seguir') : ''}${activa('📖', 'Leer la Biblia', 'Biblia en español: elige tu versión. Los libros que lees quedan para leer sin internet.', 'biblia')}${activa('🔖', 'Mi Biblia', 'Tus resaltes, notas y versículos guardados.', 'mibiblia')}${activa('✨', 'Versículo de hoy', 'Una frase para empezar el día.', 'versiculo')}${planAct ? activa('🗓', 'Mi plan: ' + esc(planAct.pl.n || 'lectura'), 'Día ' + (planAct.n + 1) + ' de ' + planAct.pl.dias.length + ' · sigue donde ibas.', 'plan') : activa('🗓', 'Plan de lectura', 'Elige uno y lee un poquito cada día, con tu avance.', 'planes')}</div>`;
+      <div class="grid">${activa('✨', 'Hoy lo hago', 'Leer es el principio: da un paso hoy.', 'hacer')}${inf ? activa('▶️', 'Seguir leyendo', esc(inf[1]) + ' ' + Number(ult.cap) + ' · donde te quedaste', 'seguir') : ''}${activa('📖', 'Leer la Biblia', 'Biblia en español: elige tu versión. Los libros que lees quedan para leer sin internet.', 'biblia')}${activa('🔖', 'Mi Biblia', 'Tus resaltes, notas y versículos guardados.', 'mibiblia')}${activa('✨', 'Versículo de hoy', 'Una frase para empezar el día.', 'versiculo')}${planAct ? activa('🗓', 'Mi plan: ' + esc(planAct.pl.n || 'lectura'), 'Día ' + (planAct.n + 1) + ' de ' + planAct.pl.dias.length + ' · sigue donde ibas.', 'plan') : activa('🗓', 'Plan de lectura', 'Elige uno y lee un poquito cada día, con tu avance.', 'planes')}${activa('🌱', 'Juegos', 'Repasa la Palabra jugando: sin anuncios, sin monedas y sin internet.', 'juegos')}</div>`;
     document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => {
       const k = b.dataset.ir;
-      if (k === 'hacer') vistaHacer(); else if (k === 'biblia') vistaBiblia(); else if (k === 'versiculo') vistaVersiculo(); else if (k === 'fabula') vistaFabula(); else if (k === 'mibiblia') vistaMiBiblia(); else if (k === 'planes') vistaPlanes(); else if (k === 'plan' && planAct) vistaPlan(planAct.pl.id); else if (k === 'cal') vistaCalendario(); else if (k === 'inst') instalarUnToque(); else if (k === 'instno') { try { localStorage.setItem('tb_movil_inst_no', String(new Date().getMonth())); } catch (e) { /* nada */ } b.closest('.hoy-inst').remove(); } else if (k === 'seguir' && inf) vistaCapitulo(ult.cod, Number(ult.cap));
+      if (k === 'hacer') vistaHacer(); else if (k === 'juegos') vistaJuegos(); else if (k === 'biblia') vistaBiblia(); else if (k === 'versiculo') vistaVersiculo(); else if (k === 'fabula') vistaFabula(); else if (k === 'mibiblia') vistaMiBiblia(); else if (k === 'planes') vistaPlanes(); else if (k === 'plan' && planAct) vistaPlan(planAct.pl.id); else if (k === 'cal') vistaCalendario(); else if (k === 'inst') instalarUnToque(); else if (k === 'instno') { try { localStorage.setItem('tb_movil_inst_no', String(new Date().getMonth())); } catch (e) { /* nada */ } b.closest('.hoy-inst').remove(); } else if (k === 'seguir' && inf) vistaCapitulo(ult.cod, Number(ult.cap));
     }));
     // F871: el versículo del día aparece arriba, en «Hoy» (si no hay internet ni copia guardada, la zona se oculta sola).
     (async () => {

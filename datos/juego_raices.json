@@ -1,0 +1,594 @@
+{
+ "borrador": true,
+ "nota": "Borrador por revisar por pastor o líder antes de publicar. Cada pregunta cita un versículo.",
+ "preguntas": [
+  {
+   "id": "r01",
+   "cod": "GEN",
+   "cap": 1,
+   "v": 1,
+   "p": "¿Qué hizo Dios en el principio?",
+   "o": [
+    "Creó los cielos y la tierra",
+    "Separó las aguas del mar",
+    "Formó a Adán",
+    "Envió el diluvio"
+   ],
+   "c": 0
+  },
+  {
+   "id": "r02",
+   "cod": "GEN",
+   "cap": 1,
+   "v": 27,
+   "p": "Según este versículo, ¿a imagen de quién fue creado el ser humano?",
+   "o": [
+    "De los ángeles",
+    "De Dios",
+    "De la naturaleza",
+    "De Adán"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r03",
+   "cod": "GEN",
+   "cap": 2,
+   "v": 2,
+   "p": "¿Qué hizo Dios el día séptimo?",
+   "o": [
+    "Plantó un huerto",
+    "Creó los animales",
+    "Reposó de su obra",
+    "Hizo la luz"
+   ],
+   "c": 2
+  },
+  {
+   "id": "r04",
+   "cod": "GEN",
+   "cap": 6,
+   "v": 14,
+   "p": "¿Qué mandó Dios que construyera Noé?",
+   "o": [
+    "Una torre",
+    "Un arca",
+    "Un templo",
+    "Un altar"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r05",
+   "cod": "GEN",
+   "cap": 9,
+   "v": 13,
+   "p": "¿Qué puso Dios en las nubes como señal de su pacto?",
+   "o": [
+    "Una estrella",
+    "Su arco",
+    "Una columna de fuego",
+    "Una paloma"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r06",
+   "cod": "GEN",
+   "cap": 12,
+   "v": 1,
+   "p": "¿Qué le pidió Dios a Abram?",
+   "o": [
+    "Que construyera un arca",
+    "Que saliera de su tierra",
+    "Que subiera a un monte con su hijo",
+    "Que liberara a un pueblo"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r07",
+   "cod": "GEN",
+   "cap": 37,
+   "v": 3,
+   "p": "¿Qué le regaló Israel (Jacob) a su hijo José?",
+   "o": [
+    "Un anillo",
+    "Una túnica de diversos colores",
+    "Un rebaño",
+    "Una espada"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r08",
+   "cod": "EXO",
+   "cap": 14,
+   "v": 21,
+   "p": "¿Qué pasó cuando Moisés extendió su mano sobre el mar?",
+   "o": [
+    "El mar se abrió por medio de un fuerte viento",
+    "Cayó maná del cielo",
+    "Se oscureció el cielo",
+    "Apareció una nube"
+   ],
+   "c": 0
+  },
+  {
+   "id": "r09",
+   "cod": "EXO",
+   "cap": 20,
+   "v": 12,
+   "p": "¿A quiénes dice este mandamiento que se debe honrar?",
+   "o": [
+    "A los ancianos",
+    "A los reyes",
+    "A tu padre y a tu madre",
+    "A los sacerdotes"
+   ],
+   "c": 2
+  },
+  {
+   "id": "r10",
+   "cod": "JOS",
+   "cap": 1,
+   "v": 9,
+   "p": "¿Qué le dice Dios a Josué que sea?",
+   "o": [
+    "Esforzado y valiente",
+    "Rico y poderoso",
+    "Callado y paciente",
+    "Rápido y astuto"
+   ],
+   "c": 0
+  },
+  {
+   "id": "r11",
+   "cod": "RUT",
+   "cap": 1,
+   "v": 16,
+   "p": "¿Quién le dijo a Noemí: «a dondequiera que tú fueres, iré yo»?",
+   "o": [
+    "Orfa",
+    "Ester",
+    "Rut",
+    "Ana"
+   ],
+   "c": 2
+  },
+  {
+   "id": "r12",
+   "cod": "1SA",
+   "cap": 16,
+   "v": 7,
+   "p": "Según este versículo, ¿qué mira Jehová?",
+   "o": [
+    "La apariencia",
+    "La estatura",
+    "El corazón",
+    "La riqueza"
+   ],
+   "c": 2
+  },
+  {
+   "id": "r13",
+   "cod": "1SA",
+   "cap": 17,
+   "v": 49,
+   "p": "¿Qué usó David para vencer al filisteo?",
+   "o": [
+    "Una honda y una piedra",
+    "Una lanza",
+    "Una espada de bronce",
+    "Un arco"
+   ],
+   "c": 0
+  },
+  {
+   "id": "r14",
+   "cod": "PSA",
+   "cap": 23,
+   "v": 1,
+   "p": "¿Cómo llama el salmista a Jehová en este salmo?",
+   "o": [
+    "Mi rey",
+    "Mi pastor",
+    "Mi maestro",
+    "Mi juez"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r15",
+   "cod": "PSA",
+   "cap": 46,
+   "v": 1,
+   "p": "¿Qué es Dios para nosotros, según este versículo?",
+   "o": [
+    "Amparo y fortaleza",
+    "Castigo y temor",
+    "Silencio y distancia",
+    "Ley y tribunal"
+   ],
+   "c": 0
+  },
+  {
+   "id": "r16",
+   "cod": "PSA",
+   "cap": 119,
+   "v": 105,
+   "p": "¿Con qué compara el salmista la palabra de Dios?",
+   "o": [
+    "Con una lámpara a sus pies",
+    "Con un río",
+    "Con un escudo de bronce",
+    "Con una montaña"
+   ],
+   "c": 0
+  },
+  {
+   "id": "r17",
+   "cod": "PSA",
+   "cap": 133,
+   "v": 1,
+   "p": "¿Qué dice este salmo que es bueno y delicioso?",
+   "o": [
+    "Viajar solo",
+    "Habitar los hermanos juntos en armonía",
+    "Guardar silencio",
+    "Acumular riquezas"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r18",
+   "cod": "PRO",
+   "cap": 3,
+   "v": 5,
+   "p": "¿De qué manera se invita a confiar en Jehová?",
+   "o": [
+    "Con todo el corazón",
+    "Solo en tiempos difíciles",
+    "Con ayuda de la propia prudencia",
+    "Una vez al año"
+   ],
+   "c": 0
+  },
+  {
+   "id": "r19",
+   "cod": "PRO",
+   "cap": 15,
+   "v": 1,
+   "p": "¿Qué hace la blanda respuesta?",
+   "o": [
+    "Aumenta el enojo",
+    "Quita la ira",
+    "Trae riqueza",
+    "Llama la atención"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r20",
+   "cod": "ISA",
+   "cap": 40,
+   "v": 31,
+   "p": "¿Qué tendrán los que esperan a Jehová?",
+   "o": [
+    "Nuevas fuerzas",
+    "Muchas riquezas",
+    "Largos viajes",
+    "Un reino"
+   ],
+   "c": 0
+  },
+  {
+   "id": "r21",
+   "cod": "DAN",
+   "cap": 6,
+   "v": 22,
+   "p": "¿Qué hizo Dios para librar a Daniel en el foso?",
+   "o": [
+    "Abrió la tierra",
+    "Envió su ángel que cerró la boca de los leones",
+    "Apagó el fuego",
+    "Hizo caer los muros"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r22",
+   "cod": "JON",
+   "cap": 1,
+   "v": 17,
+   "p": "¿Cuánto tiempo estuvo Jonás en el vientre del gran pez?",
+   "o": [
+    "Un día",
+    "Tres días y tres noches",
+    "Siete días",
+    "Cuarenta días"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r23",
+   "cod": "MAT",
+   "cap": 5,
+   "v": 9,
+   "p": "¿A quiénes llama bienaventurados este versículo?",
+   "o": [
+    "A los ricos",
+    "A los pacificadores",
+    "A los fuertes",
+    "A los sabios"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r24",
+   "cod": "MAT",
+   "cap": 6,
+   "v": 9,
+   "p": "¿Cómo comienza esta oración que Jesús enseñó?",
+   "o": [
+    "Señor mío",
+    "Padre nuestro que estás en los cielos",
+    "Dios de Abraham",
+    "Santo, santo, santo"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r25",
+   "cod": "MAT",
+   "cap": 7,
+   "v": 12,
+   "p": "¿Qué enseña este versículo que hagamos con los demás?",
+   "o": [
+    "Lo mismo que queremos que hagan con nosotros",
+    "Lo que ellos hacen con nosotros",
+    "Lo que nos conviene",
+    "Nada, cada uno por su lado"
+   ],
+   "c": 0
+  },
+  {
+   "id": "r26",
+   "cod": "MAT",
+   "cap": 13,
+   "v": 8,
+   "p": "¿Qué pasó con la semilla que cayó en buena tierra?",
+   "o": [
+    "Se secó",
+    "Fue comida por las aves",
+    "Dio fruto, a ciento, a sesenta y a treinta por uno",
+    "Quedó entre espinos"
+   ],
+   "c": 2
+  },
+  {
+   "id": "r27",
+   "cod": "MAT",
+   "cap": 22,
+   "v": 39,
+   "p": "¿Cómo se debe amar al prójimo, según este versículo?",
+   "o": [
+    "Más que a uno mismo",
+    "Como a uno mismo",
+    "Cuando es conveniente",
+    "Solo a quien nos ama"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r28",
+   "cod": "MAT",
+   "cap": 28,
+   "v": 19,
+   "p": "¿Qué dice Jesús a sus discípulos que hagan?",
+   "o": [
+    "Que se escondan",
+    "Que hagan discípulos a todas las naciones",
+    "Que construyan un templo",
+    "Que guarden silencio"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r29",
+   "cod": "LUK",
+   "cap": 2,
+   "v": 7,
+   "p": "¿Dónde fue acostado Jesús al nacer?",
+   "o": [
+    "En una cuna de oro",
+    "En un pesebre",
+    "En un templo",
+    "En una barca"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r30",
+   "cod": "LUK",
+   "cap": 10,
+   "v": 33,
+   "p": "En la parábola, ¿quién tuvo misericordia del hombre herido?",
+   "o": [
+    "Un sacerdote",
+    "Un levita",
+    "Un samaritano",
+    "Un soldado"
+   ],
+   "c": 2
+  },
+  {
+   "id": "r31",
+   "cod": "LUK",
+   "cap": 15,
+   "v": 20,
+   "p": "¿Qué hizo el padre al ver venir a su hijo de lejos?",
+   "o": [
+    "Cerró la puerta",
+    "Corrió y se echó sobre su cuello",
+    "Lo envió con los siervos",
+    "Esperó en silencio"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r32",
+   "cod": "JHN",
+   "cap": 3,
+   "v": 16,
+   "p": "¿Qué dice este versículo que hizo Dios por el mundo?",
+   "o": [
+    "Lo juzgó",
+    "Lo amó de tal manera que dio a su Hijo",
+    "Lo ignoró",
+    "Lo dividió"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r33",
+   "cod": "JHN",
+   "cap": 11,
+   "v": 35,
+   "p": "¿Cuál es el versículo más corto de este capítulo?",
+   "o": [
+    "Jesús lloró",
+    "Jesús oró",
+    "Jesús calló",
+    "Jesús se fue"
+   ],
+   "c": 0
+  },
+  {
+   "id": "r34",
+   "cod": "JHN",
+   "cap": 13,
+   "v": 34,
+   "p": "¿Cuál es el mandamiento nuevo que Jesús da?",
+   "o": [
+    "Que se aparten del mundo",
+    "Que se amen unos a otros",
+    "Que ayunen cada semana",
+    "Que guarden sus riquezas"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r35",
+   "cod": "ROM",
+   "cap": 8,
+   "v": 28,
+   "p": "¿Qué ayuda a bien a los que aman a Dios?",
+   "o": [
+    "Solo las cosas fáciles",
+    "Todas las cosas",
+    "Únicamente los milagros",
+    "Lo que ellos planean"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r36",
+   "cod": "1CO",
+   "cap": 13,
+   "v": 13,
+   "p": "¿Cuál es el mayor entre la fe, la esperanza y el amor?",
+   "o": [
+    "La fe",
+    "La esperanza",
+    "El amor",
+    "Todos son iguales"
+   ],
+   "c": 2
+  },
+  {
+   "id": "r37",
+   "cod": "GAL",
+   "cap": 5,
+   "v": 22,
+   "p": "¿Cuál de estas cosas aparece como fruto del Espíritu?",
+   "o": [
+    "Gozo",
+    "Orgullo",
+    "Envidia",
+    "Ira"
+   ],
+   "c": 0
+  },
+  {
+   "id": "r38",
+   "cod": "GAL",
+   "cap": 6,
+   "v": 9,
+   "p": "¿Qué se invita a no hacer, según este versículo?",
+   "o": [
+    "Cansarnos de hacer bien",
+    "Reunirnos",
+    "Compartir",
+    "Descansar nunca"
+   ],
+   "c": 0
+  },
+  {
+   "id": "r39",
+   "cod": "PHP",
+   "cap": 4,
+   "v": 13,
+   "p": "¿En quién dice Pablo que todo lo puede?",
+   "o": [
+    "En sus fuerzas",
+    "En Cristo que lo fortalece",
+    "En sus amigos",
+    "En su experiencia"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r40",
+   "cod": "HEB",
+   "cap": 11,
+   "v": 1,
+   "p": "¿Qué es la fe, según este versículo?",
+   "o": [
+    "La certeza de lo que se espera",
+    "Una emoción pasajera",
+    "Una tradición",
+    "Un premio"
+   ],
+   "c": 0
+  },
+  {
+   "id": "r41",
+   "cod": "JAS",
+   "cap": 2,
+   "v": 17,
+   "p": "¿Qué dice este versículo de la fe sin obras?",
+   "o": [
+    "Que es perfecta",
+    "Que es muerta en sí misma",
+    "Que es suficiente",
+    "Que es temporal"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r42",
+   "cod": "1JN",
+   "cap": 4,
+   "v": 8,
+   "p": "¿Qué dice este versículo que es Dios?",
+   "o": [
+    "Poder",
+    "Amor",
+    "Silencio",
+    "Misterio"
+   ],
+   "c": 1
+  }
+ ]
+}

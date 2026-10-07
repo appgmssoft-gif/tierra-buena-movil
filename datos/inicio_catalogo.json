@@ -573,7 +573,7 @@
    "oracion": {
     "gotas": 3,
     "tope_dia": 3
-   }
+   }, "juego": {"gotas": 1, "tope_dia": 3}
   },
   "pendientes_max": 30,
   "visibles_max": 8,
