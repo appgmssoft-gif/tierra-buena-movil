@@ -215,26 +215,34 @@
         <div class="tbj-huella"><span><b data-n="${aportes}">${aportes}</b><small>pasos míos</small></span><span><b data-n="${sumados}">${sumados}</b><small>movimientos</small></span></div></section>
       ${recordHTML()}${borradorHTML()}<h2 class="sep">Mis movimientos</h2><div id="tbjMios"></div>
       <h2 class="sep">En mi iglesia <small class="tbj-ejtag">lo que se necesita y lo que ya llegó</small></h2><div id="tbjIg"></div>
-      <div class="tbj-nuevo"><button type="button" class="btn" id="tbjNuevo">＋ Armar un movimiento con mi iglesia</button></div>
-      <h2 class="sep">Ideas y proyectos listos <small class="tbj-ejtag">toca uno para ver el plan</small></h2><div id="tbjLista" class="tbj-lista"><p class="suave">Cargando…</p></div>
+      <div class="tbj-nuevo">${vistaPrevia() ? '<p class="tbj-previa-nota"><b>Armar un movimiento</b> está disponible para miembros y pastores de una iglesia.</p>' : '<button type="button" class="btn" id="tbjNuevo">＋ Armar un movimiento con mi iglesia</button>'}</div>
+      <h2 class="sep">${vistaPrevia() ? 'Ideas y proyectos de muestra' : 'Ideas y proyectos listos'} <small class="tbj-ejtag">toca uno para ver el plan</small></h2><div id="tbjLista" class="tbj-lista"><p class="suave">Cargando…</p></div>
       <h2 class="sep">La receta de un movimiento</h2>
       <ol class="tbj-receta">${RECETA.map((r, i) => `<li><span class="tbj-n" aria-hidden="true">${r[0]}</span><span><b>${i + 1}. ${r[1]}</b><small>${r[2]}</small></span></li>`).join('')}</ol>
       <div class="card tbj-reglas"><div class="t"><span aria-hidden="true">🛡️</span>Reglas del bien</div><ul>${REGLAS.map((r) => `<li>${esc(r)}</li>`).join('')}</ul></div>`;
     $('#tbjVolver').onclick = () => { snd('vuelve'); if (ap.ir) ap.ir('inicio'); };
     pintarMios(); pintarIglesia(); pintarMuro(); aplicarAnchos(pant);
     catalogo().then(() => pintarLista()).catch(() => { const c = $('#tbjLista'); if (c) c.innerHTML = '<p class="suave">No pudimos abrir las ideas. Revisa tu internet: lo que ya abriste antes se ve sin conexión.</p>'; }).then(() => pintarVoto());
-    $('#tbjNuevo').onclick = () => { snd('abre'); empezar(null); };
+    const bn = $('#tbjNuevo'); if (bn) bn.onclick = () => { snd('abre'); empezar(null); };
     const rb = $('#tbjRetomar'); if (rb) rb.onclick = () => { snd('abre'); const b = leer(K_BOR, null); planForm(b && b.id, b); };
     const db = $('#tbjDescartar'); if (db) db.onclick = () => { if (!confirm('¿Descartar este plan sin terminar?')) return; guardar(K_BOR, null); abrir(); };
     try { window.scrollTo(0, 0); } catch (x) { /* nada */ }
   }
 
+  // ---------- F927 · VISTA PREVIA: quien nunca entró como miembro ni como pastor de una iglesia ve una muestra (3 ideas y 3 proyectos) ----------
+  const vistaPrevia = () => !credenciales();
+  function muestra() {                                       // 3 ideas y 3 proyectos listos, de temas distintos, siempre los mismos
+    const out = [];
+    ['idea', 'paquete'].forEach((tipo) => { const vistos = []; MOV.forEach((m) => { if (m.tipo === tipo && vistos.length < 3 && !vistos.includes(m.cat)) { vistos.push(m.cat); out.push(m); } }); });
+    return out;
+  }
+  const previaHTML = () => `<div class="card tbj-previa"><span class="tbj-previa-ic" aria-hidden="true">🌱</span><div><b>Vista previa</b><p class="m0">Esta es una pequeña muestra: ${muestra().length} de las ${MOV.length} ideas y proyectos que existen. Al entrar a una iglesia (como miembro o como pastor) se abren todos y se pueden armar movimientos con tu comunidad.</p></div></div>`;
   function pintarLista() {
     const cont = $('#tbjLista'); if (!cont || !CAT) return;
     const fav = favs();
     const chips = [['', 'Todas'], ['fav', '⭐ Mis ideas']].concat(CAT.categorias.map((c) => [c.id, c.icono + ' ' + c.label]));
-    const ver = MOV.filter((m) => !filtroCat || (filtroCat === 'fav' ? fav.includes(m.id) : m.cat === filtroCat));
-    cont.innerHTML = `<div class="tbj-chips" role="group" aria-label="Filtrar por tema">${chips.map((c) => { const on = c[0] === filtroCat; return `<button type="button" class="tbj-chip${on ? ' on' : ''}" data-c="${esc(c[0])}" aria-pressed="${on}">${esc(c[1])}</button>`; }).join('')}</div>` +
+    const previa = vistaPrevia(), ver = previa ? muestra() : MOV.filter((m) => !filtroCat || (filtroCat === 'fav' ? fav.includes(m.id) : m.cat === filtroCat));
+    cont.innerHTML = (previa ? previaHTML() : `<div class="tbj-chips" role="group" aria-label="Filtrar por tema">${chips.map((c) => { const on = c[0] === filtroCat; return `<button type="button" class="tbj-chip${on ? ' on' : ''}" data-c="${esc(c[0])}" aria-pressed="${on}">${esc(c[1])}</button>`; }).join('')}</div>`) +
       (ver.length ? ver.map((m) => `<article class="tbj-mov" data-id="${esc(m.id)}"><div class="tbj-mov-cab"><span class="tbj-mov-ic" aria-hidden="true">${esc(m.icono)}</span><div><b>${esc(m.titulo)}</b><small>${m.tipo === 'paquete' ? 'Proyecto listo' : 'Idea'} · ${esc(catDe(m).label)}${fav.includes(m.id) ? ' · ⭐' : ''}</small></div></div>
         <p class="tbj-mov-lema">${esc(corto(m.que_es, 150))}</p>
         <p class="suave m0t">${m.tipo === 'paquete' ? esc((m.lugar_texto || '') + ' · ' + (m.presupuesto_texto || '')) : esc((m.personas || '') + ' · ' + (m.costo || ''))}</p>
@@ -252,10 +260,10 @@
       <div class="card">${pasos.length ? `<h3 class="m0t">Cómo empezar</h3><ol class="formas">${pasos.map((x) => `<li>${esc(x)}</li>`).join('')}</ol>` : ''}
         <p class="suave${pasos.length ? '' : ' m0t'}">${paq ? `<b>📍 Dónde:</b> ${esc(m.lugar_texto)} · <b>💰 Dinero:</b> ${esc(m.presupuesto_texto)}${Number(m.personas_sugeridas) ? ` · <b>👥 Personas sugeridas:</b> ${Number(m.personas_sugeridas)}` : ''}` : `<b>👥 Personas:</b> ${esc(m.personas)} · <b>💰 Costo:</b> ${esc(m.costo)}`}</p>
         ${m.versiculo ? `<p class="suave m0">${esc(m.versiculo)}</p>` : ''}</div>
-      <button type="button" class="btn" id="tbjUsar">Usar este plan</button><button type="button" class="btn sec" id="tbjFav"></button>`;
+      ${vistaPrevia() ? '<p class="tbj-previa-nota"><b>Vista previa.</b> Para usar este plan y armar el movimiento, primero hay que entrar a una iglesia como miembro o como pastor.</p>' : '<button type="button" class="btn" id="tbjUsar">Usar este plan</button>'}<button type="button" class="btn sec" id="tbjFav"></button>`;
     const pintarFav = () => { $('#tbjFav').textContent = favs().includes(m.id) ? '⭐ Quitar de mis ideas' : '☆ Me interesa'; };
     $('#tbjAtras').onclick = () => { snd('vuelve'); abrir(); };
-    $('#tbjUsar').onclick = () => { snd('armar'); empezar(m); };
+    const bu = $('#tbjUsar'); if (bu) bu.onclick = () => { snd('armar'); empezar(m); };
     $('#tbjFav').onclick = () => { const l = favs().filter((x) => x !== m.id); if (!favs().includes(m.id)) l.push(m.id); guardar(K_FAV, l); snd('toque'); pintarFav(); };
     pintarFav();
     try { window.scrollTo(0, 0); } catch (x) { /* nada */ }
@@ -290,6 +298,7 @@
     return v;
   }
   function empezar(it) {
+    if (vistaPrevia()) return aviso('Armar un movimiento está disponible para miembros y pastores de una iglesia.');
     const b = leer(K_BOR, null);
     if (b && b.vals && !confirm('Tienes un plan sin terminar. ¿Empezar uno nuevo y descartar ese?')) return abrir();
     planForm(it, null);
