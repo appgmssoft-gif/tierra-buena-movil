@@ -1501,7 +1501,7 @@
     $('#hacMirar').onclick = () => { $('#hacMirarForm').hidden = false; $('#hacMirar').hidden = true; try { $('#mQue').focus(); } catch (e) { /* nada */ } };
     $('#mOk').onclick = () => { const q = $('#mQue').value.trim(), n = $('#mNec').value.trim(), y = $('#mYo').value.trim(); if (!y) { toastBib('Cuéntanos qué puedes hacer tú'); return; } nueva(y, 'mirar', ''); const l = hacLista(), u = l[l.length - 1]; if (u) { u.vi = q.slice(0, 120); u.nec = n.slice(0, 120); hacGuardar(l); } toastBib('Mirar para ayudar: ¡gracias por actuar!'); setTimeout(() => vistaHacer(null, atras), 600); };
     const cierra = (id, est) => { const l = hacLista(), x = l.find((y) => y.id === id); if (!x) return; x.est = est; x.fin = new Date().toISOString(); hacGuardar(l); };
-    document.querySelectorAll('[data-hec]').forEach((b) => b.addEventListener('click', () => { cierra(b.dataset.hec, 'hecho'); vibra(); confeti(b); toastBib('¡Lo hiciste! Así se mejora el mundo'); setTimeout(() => vistaHacer(null, atras), 800); }));
+    document.querySelectorAll('[data-hec]').forEach((b) => b.addEventListener('click', () => { cierra(b.dataset.hec, 'hecho'); gotaGanar('vida'); vibra(); confeti(b); toastBib('¡Lo hiciste! Así se mejora el mundo'); setTimeout(() => vistaHacer(null, atras), 800); }));
     document.querySelectorAll('[data-int]').forEach((b) => b.addEventListener('click', () => { cierra(b.dataset.int, 'intente'); vibra(); toastBib('Intentarlo ya es avanzar. Sigue.'); setTimeout(() => vistaHacer(null, atras), 700); }));
     document.querySelectorAll('[data-quitar]').forEach((b) => b.addEventListener('click', () => { hacGuardar(hacLista().filter((x) => x.id !== b.dataset.quitar)); vistaHacer(null, atras); }));
     document.querySelectorAll('[data-comp]').forEach((b) => b.addEventListener('click', async () => { const x = hacLista().find((y) => y.id === b.dataset.comp); if (!x) return; const t = hacTexto(x); try { if (navigator.share) await navigator.share({ text: t }); else { await navigator.clipboard.writeText(t); toastBib('Copiado: pégalo donde quieras animar a otros'); } } catch (e) { /* se cerró el menú */ } }));
@@ -1772,7 +1772,9 @@
 
   // ---------- F883 · Mi Biblia, planes de lectura, logros ----------
   const hoyTxt = () => diaTxt(new Date());
-  function leidoMarcar(cod, cap) { const l = leer(K_LEIDOS) || {}; if (l[cod + '.' + cap] === hoyTxt()) return; l[cod + '.' + cap] = hoyTxt(); guardar(K_LEIDOS, l); }
+  // F931 (I4): leer un capítulo o cumplir una acción de Vida da gotas de rocío en el Inicio (con topes diarios; sin Inicio o sin árbol elegido no pasa nada).
+  function gotaGanar(origen) { try { if (window.TBInicio && !window.TBInicio.cargar().eligiendo && window.TBInicio.ganar(origen)) toastBib('Una gota de rocío te espera en el Inicio'); } catch (e) { /* sin Inicio */ } }
+  function leidoMarcar(cod, cap) { const l = leer(K_LEIDOS) || {}; if (l[cod + '.' + cap] === hoyTxt()) return; l[cod + '.' + cap] = hoyTxt(); guardar(K_LEIDOS, l); gotaGanar('lectura'); }
   const nLeidos = () => Object.keys(leer(K_LEIDOS) || {}).length;
   const leidosHoy = () => Object.values(leer(K_LEIDOS) || {}).filter((d) => d === hoyTxt()).length;
   const rg = (k) => { const o = leer(k); return o && typeof o === 'object' ? o : {}; };

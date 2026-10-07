@@ -105,13 +105,15 @@
       nota(NOTAS.G4, 0, 2.2, 0.07, { eco: 0.9, brillo: 0.05, corte: 3200, ataque: 0.02 }); nota(NOTAS.G4 * 2.76, 0, 0.9, 0.012, { eco: 0.9, brillo: 0, corte: 5200, ataque: 0.004 });
       nota(NOTAS.D5, 0.14, 2.0, 0.07, { eco: 0.85, ataque: 0.05 }); nota(NOTAS.B4, 0.28, 2.0, 0.06, { eco: 0.85, ataque: 0.06 }); nota(NOTAS.G5, 0.42, 1.8, 0.05, { eco: 0.9, brillo: 0.2, ataque: 0.07 });
     }),
+    gota: ok(function () { nota(NOTAS.E5, 0, 0.18, 0.06, { eco: 0.5, brillo: 0.2, ataque: 0.005 }); nota(NOTAS.B4, 0.09, 0.5, 0.05, { eco: 0.8, ataque: 0.01 }); }),   // F931 (I4): una gota de rocío que se recoge
+    sana: ok(function () { nota(NOTAS.G4, 0, 0.5, 0.06, { eco: 0.7, ataque: 0.02 }); nota(NOTAS.D5, 0.1, 0.7, 0.06, { eco: 0.8, brillo: 0.15, ataque: 0.03 }); nota(NOTAS.G5, 0.22, 1.1, 0.045, { eco: 0.9, brillo: 0.25, ataque: 0.04 }); }),   // F930 (I3): sello Tierra Buena al limpiar maleza: tres notas que suben, como la luz que vuelve
     semilla: ok(function () { nota(NOTAS.D4, 0, 0.22, 0.09, { eco: 0.3, corte: 1100 }); nota(NOTAS.A4, 0.12, 0.35, 0.08, { eco: 0.5 }); nota(NOTAS.E5, 0.24, 0.6, 0.07, { eco: 0.7, brillo: 0.2 }); })   // algo que cae en la tierra y brota
   };
   // F903: ahorro de batería: con la app en segundo plano el audio se duerme del todo y se despierta al volver
   document.addEventListener('visibilitychange', () => { try { if (!ctx) return; if (document.hidden) { if (ctx.state === 'running') ctx.suspend(); } else if (activo() && ctx.state === 'suspended' && API._sono) ctx.resume(); } catch (e) { /* sin audio */ } });
   // F915: SIN SONIDOS DOBLES. Si otro sonido DISTINTO sonó hace menos de 0,3 s, los sonidos «suaves» (toque, abre, vuelve, suave, tab) se callan:
   // suena uno solo, el primero. Los momentos importantes (firma, logro, éxito, aviso, error, campana, juntos, semilla, calma, respira) y las teclas siempre suenan.
-  const FUERTES = ['firma', 'exito', 'logro', 'aviso', 'error', 'campana', 'juntos', 'semilla', 'calma', 'respira', 'suerte', 'tecla', 'iglesia', 'armar', 'recordatorio'];
+  const FUERTES = ['firma', 'exito', 'logro', 'aviso', 'error', 'campana', 'juntos', 'semilla', 'sana', 'gota', 'calma', 'respira', 'suerte', 'tecla', 'iglesia', 'armar', 'recordatorio'];
   let ultNom = '', ultMs = 0;
   Object.keys(API).forEach((k) => {
     const f = API[k]; if (typeof f !== 'function' || k === 'activo' || k === 'poner') return;

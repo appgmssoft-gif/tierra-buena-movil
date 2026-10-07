@@ -2,7 +2,7 @@
    Solo se anima con transform y opacity. Sin atributo style en el HTML (CSP). Con «reducir movimiento» o Animaciones en «Quietas», todo queda quieto pero visible. */
 
 /* El Inicio con lienzo se ordena de arriba hacia abajo (antes todo iba centrado) */
-.inicio-limpio.il-con-lienzo{justify-content:flex-start;padding:44px 0 24px;gap:6px}
+.inicio-limpio.il-con-lienzo{justify-content:flex-start;padding:56px 0 40px;gap:14px}
 .inicio-limpio.il-con-lienzo .il-sal,.inicio-limpio.il-con-lienzo .il-frase,.inicio-limpio.il-con-lienzo .il-hora{padding:0 22px}
 .il-hora{margin:0;font-size:.74rem;font-weight:600;letter-spacing:.06em;color:var(--suave);font-variant-numeric:tabular-nums}
 .inicio-limpio.il-con-lienzo .il-frase{min-height:2.4em;font-size:1.02rem}
@@ -30,7 +30,7 @@ html:not([data-anim=off]) .cap{transition:transform .9s cubic-bezier(.22,.61,.36
 .tr-raices{opacity:.55}
 .tr-hebra{fill:none;stroke-width:3;stroke-linecap:round;stroke:#9ab654;opacity:.9}
 .arbol{--h:#4f9a5b;--h2:#79c07a}
-.tr-h{fill:var(--h)}.tr-h2{fill:var(--h2)}
+.tr-h{fill:var(--h)}.tr-h2{fill:var(--h2)}.tr-h3{fill:var(--h3,var(--h2))}
 .esp-araucaria{--h:#3d6b4a;--h2:#5c8f63}
 .esp-canelo{--h:#4f9a5b;--h2:#79c07a}
 .esp-quillay{--h:#6f8f3f;--h2:#98b45a}
@@ -38,6 +38,7 @@ html:not([data-anim=off]) .cap{transition:transform .9s cubic-bezier(.22,.61,.36
 .esp-alerce{--h:#3b6a52;--h2:#5b8d73}
 .esp-palma_chilena .tr-t.t4,.esp-palma_chilena .tr-t.t3{stroke:#4f8a3c}
 .esp-cerezo{--h:#e9a3bb;--h2:#f6c9d8}
+.esp-jacaranda{--h:#a98bd6;--h2:#d9a6d8;--h3:#f3c2dc}
 .esp-sauce{--h:#8cad4a;--h2:#b6cc6a}
 @media (prefers-color-scheme:dark){.tr-t{stroke:#8a6a48}.esp-palma_chilena .tr-t.t4,.esp-palma_chilena .tr-t.t3{stroke:#6ea65a}}
 html[data-tema=medianoche] .tr-t{stroke:#8a6a48}
@@ -70,36 +71,36 @@ html:not([data-anim=off]) .il-escena.brota .mundo{animation:il-brota 1.4s ease b
 .il-maleza::after{content:"";position:absolute;inset:2px;border-radius:50%;border:2px solid color-mix(in srgb,var(--oro) 65%,transparent);opacity:0}
 @keyframes il-late{0%,100%{opacity:0;transform:scale(.8)}50%{opacity:.9;transform:scale(1.15)}}
 html:not([data-anim=off]) .il-maleza::after{animation:il-late 1.8s ease-in-out 2}
-.mz-a{fill:#8b7449;stroke:none}.mz-t{fill:none;stroke:#7a6540;stroke-width:2;stroke-linecap:round}
+.il-maleza svg,.il-mz svg{color:#8b7449}
 .s-pasto-1{left:14%;top:84%}.s-pasto-2{left:30%;top:92%}.s-pasto-3{left:36%;top:80%}.s-pasto-4{left:64%;top:80%}
 .s-pasto-5{left:70%;top:92%}.s-pasto-6{left:86%;top:85%}.s-pasto-7{left:8%;top:95%}.s-pasto-8{left:92%;top:96%}
 
 /* ---- Textos bajo el paisaje ---- */
-.il-datos{width:100%;max-width:26em;padding:6px 22px 0;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+.il-datos{width:100%;max-width:26em;padding:10px 26px 0;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
 .il-nombre{margin:0;font:600 1.05rem/1.3 Fraunces,Georgia,serif;color:var(--tinta)}
 .il-nombre span{font-weight:500;color:var(--suave)}
 .il-estado{margin:0;font-size:.9rem;line-height:1.4;color:var(--suave);min-height:1.4em}
 .il-guia{margin:0;font-size:.84rem;color:var(--oro);font-weight:600}
-.il-btn-msg{margin-top:4px;min-height:44px;padding:8px 18px;border-radius:999px;border:1px solid color-mix(in srgb,var(--suave) 30%,transparent);background:var(--vidrio,transparent);color:var(--tinta);font:inherit;font-size:.88rem;cursor:pointer}
+.il-btn-msg{margin-top:16px;min-height:48px;padding:10px 22px;border-radius:999px;border:1px solid color-mix(in srgb,var(--suave) 30%,transparent);background:var(--vidrio,transparent);color:var(--tinta);font:inherit;font-size:.88rem;cursor:pointer}
 .il-btn-msg:active{transform:scale(.97)}
-.il-msg{margin-top:6px;padding:14px 16px;border-radius:16px;background:var(--vidrio,transparent);border:1px solid color-mix(in srgb,var(--suave) 22%,transparent);text-align:left;width:100%}
+.il-msg{margin-top:14px;padding:20px 22px;border-radius:20px;background:var(--vidrio,transparent);border:1px solid color-mix(in srgb,var(--suave) 22%,transparent);text-align:left;width:100%}
 .il-msg[hidden]{display:none}
 .il-msg h3{margin:0 0 6px;font:600 1rem/1.3 Fraunces,Georgia,serif}
-.il-msg p{margin:0 0 8px;font-size:.92rem;line-height:1.5;color:var(--tinta)}
+.il-msg p{margin:0 0 14px;font-size:.92rem;line-height:1.5;color:var(--tinta)}
 .il-msg .il-dato{color:var(--suave);font-size:.86rem}
-.il-msg .il-como{color:var(--suave);font-size:.82rem;margin-bottom:10px}
+.il-msg .il-como{color:var(--suave);font-size:.82rem;margin-bottom:16px}
 .il-comp{width:100%}
 
 /* ---- Elección de la primera semilla ---- */
 .il-elige{width:100%;max-width:28em;padding:8px 22px 0;text-align:center}
-.il-elige h2{margin:6px 0 8px;font:600 1.3rem/1.3 Fraunces,Georgia,serif;color:var(--tinta)}
-.il-elige-sub{margin:0 0 16px;font-size:.92rem;line-height:1.5;color:var(--suave)}
-.il-semillas{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
-.il-semilla{display:flex;align-items:center;gap:12px;width:100%;min-height:84px;padding:10px 14px;text-align:left;border-radius:18px;border:2px solid color-mix(in srgb,var(--suave) 24%,transparent);background:var(--vidrio,transparent);color:var(--tinta);font:inherit;cursor:pointer;transition:border-color .25s,transform .25s}
+.il-elige h2{margin:10px 0 12px;font:600 1.3rem/1.3 Fraunces,Georgia,serif;color:var(--tinta)}
+.il-elige-sub{margin:0 0 24px;font-size:.92rem;line-height:1.5;color:var(--suave)}
+.il-semillas{display:flex;flex-direction:column;gap:16px;margin-bottom:24px}
+.il-semilla{display:flex;align-items:center;gap:16px;width:100%;min-height:96px;padding:14px 18px;text-align:left;border-radius:18px;border:2px solid color-mix(in srgb,var(--suave) 24%,transparent);background:var(--vidrio,transparent);color:var(--tinta);font:inherit;cursor:pointer;transition:border-color .25s,transform .25s}
 .il-semilla.on{border-color:var(--oro);transform:scale(1.015)}
 .il-semilla:focus-visible{outline:2px solid var(--oro);outline-offset:2px}
 .il-mini{flex:0 0 58px;width:58px;height:96px}
-.il-sem-tx{display:flex;flex-direction:column;gap:2px;min-width:0}
+.il-sem-tx{display:flex;flex-direction:column;gap:5px;min-width:0}
 .il-sem-tx b{font:600 1.02rem/1.3 Fraunces,Georgia,serif}
 .il-sem-tx em{font-style:normal;font-size:.8rem;color:var(--suave)}
 .il-sem-tx small{display:none;font-size:.82rem;line-height:1.4;color:var(--suave)}
@@ -114,3 +115,53 @@ html:not([data-anim=off]) .il-maleza::after{animation:il-late 1.8s ease-in-out 2
   .il-escena .il-svg,.il-escena .cap,.il-escena .mundo{animation:none!important}
 }
 html[data-anim=off] .cap,html[data-anim=off] .il-maleza,html[data-anim=off] .il-semilla,html[data-anim=off] .il-anillo{transition:none!important}
+
+.il-ic{flex:none;vertical-align:-3px;margin-right:7px}.il-btn-msg{display:inline-flex;align-items:center;justify-content:center}
+.il-tema{margin:0 0 4px;font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:var(--suave)}.il-msg .il-vida{font-size:.98rem;line-height:1.55}
+.il-acc{display:flex;gap:14px;flex-wrap:wrap;margin-top:6px}.il-acc .btn{display:inline-flex;align-items:center}
+
+/* F930 · I3: maleza y sanación. Sin brillo mientras haya maleza (un solo filtro, sin animar); al limpiar la última vuelve con un resplandor corto. */
+.il-escena.apagado .arbol{filter:saturate(.55) brightness(.94)}
+.il-escena .arbol{transition:filter .9s ease}
+html:not([data-anim=off]) .il-escena.brilla .arbol{animation:il-brilla 1.6s ease-out 1}
+@keyframes il-brilla{0%{filter:brightness(1.35) saturate(1.2)}100%{filter:none}}
+.il-luz{position:absolute;left:50%;top:50%;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:radial-gradient(circle,#fff6c8 0,var(--oro,#e8c76a) 60%,transparent 100%);pointer-events:none;animation:il-luz .8s ease-out forwards}
+@keyframes il-luz{0%{opacity:.95;transform:translate(0,0) scale(.6)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1.2)}}
+@media (prefers-reduced-motion:reduce){.il-luz,.il-escena.brilla .arbol{animation:none!important}}
+html[data-eco="2"] .il-luz,html[data-eco="2"] .il-escena.brilla .arbol{animation:none!important}
+
+/* F931 · I4: gotas de rocío en el pasto (brillan una vez al entrar y luego reposan; el contador es discreto). */
+.il-gota{position:absolute;width:44px;height:44px;margin:-22px 0 0 -22px;border:0;background:transparent;color:#7fc4e6;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:opacity .4s,transform .4s;-webkit-tap-highlight-color:transparent}
+.il-gota svg{width:24px;height:24px;fill:color-mix(in srgb,#bfe6f6 55%,transparent);filter:drop-shadow(0 0 6px rgba(160,220,245,.8))}
+.il-gota:focus-visible{outline:2px solid var(--oro);border-radius:50%}
+.il-gota.recoge{opacity:0;transform:translateY(-14px) scale(.6);pointer-events:none}
+.il-gota-grupo{left:50%;top:97%;width:52px;height:52px;margin:-26px 0 0 -26px}.il-gota-grupo svg{width:34px;height:34px}
+.il-gota-grupo b{position:absolute;font:700 .72rem/1 system-ui,sans-serif;color:#2c5a73;top:56%}
+html:not([data-anim=off]) .il-gota svg{animation:il-gota-brilla 1.6s ease-out 1}
+@keyframes il-gota-brilla{0%{transform:scale(.4);opacity:0}60%{transform:scale(1.15);opacity:1}100%{transform:scale(1)}}
+.il-gotas{margin:0;min-height:1.2em;font-size:.82rem;color:var(--suave);display:flex;align-items:center;justify-content:center}.il-gotas:empty{display:none}.il-gotas .il-ic{margin-right:5px;color:#7fc4e6}
+@media (prefers-reduced-motion:reduce){.il-gota svg{animation:none!important}.il-gota{transition:none!important}}
+html[data-eco="2"] .il-gota svg{animation:none!important}
+
+/* F932 · I5: Vivero. Botones en fila con aire; panel que sube suave (sin ventana emergente); flores y aves en el paisaje. */
+.il-fila{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin-top:16px;width:100%}.il-fila .il-btn-msg{margin-top:0}
+.il-viv{width:100%;margin-top:16px;padding:22px;border-radius:22px;background:var(--vidrio,transparent);border:1px solid color-mix(in srgb,var(--suave) 22%,transparent);text-align:left}
+.il-viv[hidden]{display:none}
+.il-viv.entra{animation:il-viv-sube .5s ease-out 1}
+@keyframes il-viv-sube{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+.il-viv h3{margin:0 0 6px;font:600 1.2rem/1.3 Fraunces,Georgia,serif}.il-viv h4{margin:24px 0 8px;font:600 .8rem/1.3 system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--suave)}
+.il-viv-saldo{margin:0 0 8px;font-size:.95rem;display:flex;align-items:center;gap:6px}.il-viv-saldo .il-ic{color:#7fc4e6;margin:0}
+.il-viv-ay{margin:0 0 12px;font-size:.84rem;line-height:1.5;color:var(--suave)}
+.il-viv-lista{display:flex;flex-direction:column;gap:14px}
+.il-viv-fila{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;border-radius:16px;border:1px solid color-mix(in srgb,var(--suave) 18%,transparent)}
+.il-viv-tx{display:flex;flex-direction:column;gap:4px;min-width:0}.il-viv-tx b{font-size:1rem}.il-viv-tx small{font-size:.8rem;line-height:1.4;color:var(--suave)}
+.il-viv-bt{flex:none;min-height:44px;padding:8px 16px}.il-viv-ok{flex:none;font-size:.82rem;font-weight:600;color:var(--oro)}
+.il-viv-est{margin:16px 0 0;min-height:1.4em;font-size:.88rem;color:var(--oro);font-weight:600}
+.il-planta{position:absolute;width:32px;height:32px;margin:-30px 0 0 -16px;pointer-events:none;transform-origin:50% 100%}
+html:not([data-anim=off]) .il-planta{animation:il-mece 5s ease-in-out infinite alternate}
+@keyframes il-mece{from{transform:rotate(-3deg)}to{transform:rotate(3deg)}}
+.il-ave{position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;pointer-events:none}.il-ave.n1{left:20%;top:42%}.il-ave.n2{left:80%;top:36%}
+html:not([data-anim=off]) .il-ave{animation:il-vuela 4s ease-in-out infinite alternate}.il-ave.n2{animation-delay:-2s}
+@keyframes il-vuela{from{transform:translateY(0)}to{transform:translateY(-6px)}}
+@media (prefers-reduced-motion:reduce){.il-planta,.il-ave,.il-viv.entra{animation:none!important}}
+html[data-eco="2"] .il-planta,html[data-eco="2"] .il-ave{animation:none!important}

@@ -133,8 +133,9 @@
     if (e.vivero.aves.length >= (cat().economia.aves_activas_max || 2)) return { ok: false, motivo: 'maximo' };
     e.vivero.aves.push({ id, desde: hoy() }); guardar(e); return { ok: true };
   }
-  // Mensaje del árbol del ciclo actual (para compartir o leer en el Inicio): { titulo, mensaje, dato } o null.
-  function mensajeActual() { const e = cargar(), s = cat().especies[e.ciclo.especie]; return s ? { titulo: s.nombre + (s.otro ? ' · ' + s.otro : ''), mensaje: s.mensaje, dato: s.dato } : null; }
+  // Mensaje del árbol del ciclo actual: { titulo, mensaje, dato, vida: {tema, texto, n, de} }. `vida` rota según el día de cuidado; `salto` pasa al siguiente.
+  function mensajeActual(salto) { const e = cargar(), s = cat().especies[e.ciclo.especie]; if (!s) return null; const L = s.vida || [], n = L.length ? (((e.ciclo.diasCuidado || 0) + (salto || 0)) % L.length + L.length) % L.length : 0;
+    return { titulo: s.nombre + (s.otro ? ' · ' + s.otro : ''), mensaje: s.mensaje, dato: s.dato, vida: L.length ? { tema: L[n].tema, texto: L[n].texto, n: n + 1, de: L.length } : null }; }
 
   const api = { config(o) { if (o && o.catalogo) CAT = o.catalogo; if (o && o.hoy) HOY = o.hoy; if (o && o.almacen) ALM = o.almacen; }, cargar, guardar, estado: cargar, etapa, malezaPara, elegirPrimera, visita, sanar, ganar, recolectar, comprar, plantar, activarAve, mensajeActual, K };
   if (typeof window !== 'undefined') window.TBInicio = api; if (typeof module !== 'undefined') module.exports = api;
