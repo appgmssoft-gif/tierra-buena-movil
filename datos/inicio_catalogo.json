@@ -1,5 +1,5 @@
 {
- "_nota": "F929 · Catálogo del Inicio «Tierra Buena». Solo lectura; cambiar textos no toca el código. Cada árbol tiene `mensaje` (al elegirlo) y `vida`: mensajes (5 a 6) para la vida personal (uno distinto por día de cuidado). Datos VERIFICADOS el 7 oct (CONAF, SAG, Min. Medio Ambiente): araucaria, canelo, alerce. Por verificar: quillay, roble, palma chilena, cerezo, sauce, semillas y aves. Lenguaje: neutro y cordial. Los mensajes son de crecimiento personal y de cuidado de la naturaleza y el planeta (no religiosos). El jacarandá (F930) es la opción más colorida.",
+ "_nota": "F929 · Catálogo del Inicio «Tierra Buena». Solo lectura; cambiar textos no toca el código. Cada árbol tiene `mensaje` (al elegirlo) y `vida`: mensajes (5 a 6) para la vida personal (uno distinto por día de cuidado). Datos VERIFICADOS el 7 oct (CONAF, SAG, Min. Medio Ambiente): araucaria, canelo, alerce. Por verificar: quillay, roble, palma chilena, cerezo, sauce, semillas y aves. Lenguaje: neutro y cordial. Los mensajes son de crecimiento personal y de cuidado de la naturaleza y el planeta (no religiosos). El jacarandá (F930) es la opción más colorida. F933: cada día se desbloquean 3 mensajes: `arbol` (+`arbol_comun`) = dato real; `planeta` (+`planeta_comun`) = respeto a la naturaleza; `vida` (+`vida_comun`) = crecer como personas y sociedad. Rotan solos por fecha. F934: datos VERIFICADOS el 7 oct con fuentes (CONAF/Árboles Nativos de Chile, SAG, Reforestemos, UC, prensa): quillay, roble, palma chilena, sauce chileno, jacarandá, cerezo (exportación), copihue, desierto florido, cóndor y Pando. Sin verificar aún: araucaria (parte), canelo (parte), lavanda, chucao, queltehue, picaflor, golondrina, gorrión y los bancos comunes de árbol/planeta (conocimiento general).",
  "ciclo": {
   "dias": 30,
   "etapas": [
@@ -73,6 +73,19 @@
      "tema": "Cuidar el planeta",
      "texto": "Un bosque milenario depende de decisiones de hoy. Evitar el fuego y cuidar el entorno cuando se sale de paseo protege lo que tarda siglos en crecer."
     }
+   ],
+   "arbol": [
+    "Es Monumento Natural desde 1976 y una de las especies más emblemáticas del sur de Chile.",
+    "Algunas superan los 1.600 años: hay ejemplares vivos que ya estaban en pie mucho antes de la llegada de los españoles.",
+    "Su piñón fue base de la alimentación del pueblo pehuenche, cuyo nombre significa «gente del pewén».",
+    "Su familia de árboles ya existía en la era de los dinosaurios; se la considera casi un fósil viviente.",
+    "Hay ejemplares femeninos y masculinos, y solo los femeninos producen piñones.",
+    "Su corteza gruesa funciona como una armadura: ayuda a los ejemplares adultos a resistir el fuego."
+   ],
+   "planeta": [
+    "Sus bosques de cordillera sufren con los incendios. Un fuego pequeño en un paseo puede borrar siglos de crecimiento.",
+    "El piñón alimenta a personas, aves y animales del bosque. Recoger solo lo necesario deja alimento para todos.",
+    "En un bosque nativo, caminar por los senderos protege a las plántulas, que crecen muy despacio."
    ]
   },
   "canelo": {
@@ -106,6 +119,19 @@
      "tema": "Agua y naturaleza",
      "texto": "Este árbol vive donde hay agua limpia. Cuidar un río, una quebrada o incluso el consumo de agua en casa es cuidar su hogar."
     }
+   ],
+   "arbol": [
+    "Es el árbol sagrado del pueblo mapuche, asociado a la paz, el bien y la justicia.",
+    "Su corteza es rica en vitamina C y se usó para prevenir el escorbuto en largos viajes por mar.",
+    "Sus hojas tienen un aroma picante al frotarlas, y por abajo son más claras que por arriba.",
+    "Sus flores son blancas, perfumadas y se agrupan en pequeños ramilletes.",
+    "Crece desde el centro de Chile hasta el extremo sur, sobre todo en lugares húmedos.",
+    "En ceremonias mapuche su rama se usa como símbolo de paz y de acuerdos."
+   ],
+   "planeta": [
+    "Crece junto a ríos y zonas húmedas: cuidar el agua y las vertientes es cuidar también al bosque.",
+    "Los árboles filtran la lluvia y mantienen firme el suelo. Talar sin necesidad lo debilita.",
+    "Un gesto sencillo: no dejar residuos cerca de ríos, esteros o vertientes."
    ]
   },
   "quillay": {
@@ -113,7 +139,7 @@
    "otro": "El árbol del jabón",
    "origen": "nativo de Chile",
    "mensaje": "Su corteza limpia y cuida. Hay personas que sirven en silencio y dejan todo mejor.",
-   "dato": "Resiste la sequía de la zona central; de su corteza se extrae saponina.",
+   "dato": "Su nombre viene del mapudungún küllay («jabón»). Es endémico de Chile y resiste la sequía de la zona central.",
    "vida": [
     {
      "tema": "Servicio",
@@ -139,6 +165,21 @@
      "tema": "Tierra y suelo",
      "texto": "Un suelo sano alimenta todo lo demás. Compostar restos de comida o regar con medida devuelve algo a la tierra."
     }
+   ],
+   "arbol": [
+    "Su nombre viene del mapudungún küllay, que significa «jabón»: su corteza hace espuma gracias a la saponina.",
+    "Es endémico de Chile, es decir, no crece de forma natural en ningún otro país. Vive entre Coquimbo y el Biobío, desde la costa hasta los 1.600 metros de altitud.",
+    "Los pueblos originarios ya usaban su corteza como champú y detergente.",
+    "Su corteza se exportó a Europa y Asia con el nombre de «palo de Panamá», porque viajaba por ese canal.",
+    "Una molécula de su corteza, la QS-21, se usa en vacunas de última generación. Solo la produce el quillay y un pariente cercano.",
+    "Resiste la sequía y las heladas, y sus raíces extensas ayudan a sujetar el suelo en las pendientes.",
+    "Sus hojas verde brillante tienen dientes en el borde, y sus flores blanco-verdosas tienen forma de estrella.",
+    "En la Reserva Nacional Lago Peñuelas vive un ejemplar muy conocido por su edad y su tamaño: «Don Quillay»."
+   ],
+   "planeta": [
+    "Un quillay puede tardar hasta 25 años en tener una corteza apta para extraer, y las prácticas intensivas muchas veces lo matan. Cuidar los que quedan importa.",
+    "Se usa para reforestar suelos áridos: un árbol nativo que ayuda a recuperar laderas secas.",
+    "La zona central de Chile es un punto de alta biodiversidad en el mundo y está muy presionada. Plantar especies nativas ayuda."
    ]
   },
   "roble": {
@@ -146,7 +187,7 @@
    "otro": "Nothofagus obliqua",
    "origen": "nativo de Chile",
    "mensaje": "La firmeza se nota en la raíz, no en el ruido. Se puede ser fuerte y amable a la vez.",
-   "dato": "Forma bosques en el centro-sur del país y cambia de color en otoño.",
+   "dato": "Joven se llama hualle y adulto, pellín. En primavera sus ramas lucen el digüeñe, un hongo comestible.",
    "vida": [
     {
      "tema": "Carácter",
@@ -172,6 +213,20 @@
      "tema": "Bosque y comunidad",
      "texto": "Un bosque funciona como una red: los árboles comparten espacio y recursos. Valorar lo que se comparte también cuida el planeta."
     }
+   ],
+   "arbol": [
+    "Cuando es joven se llama hualle y cuando es adulto, pellín: con los años su madera se vuelve rojiza.",
+    "Puede superar los 40 metros de altura y tener un tronco de hasta 2 metros de ancho.",
+    "En primavera aparece sobre sus ramas el digüeñe, un hongo anaranjado comestible muy apreciado.",
+    "Su madera se ha usado para construir embarcaciones, puentes y muelles.",
+    "Crece en Chile, desde O'Higgins hasta Los Lagos, y también en la zona andina de Argentina.",
+    "Pierde sus hojas en otoño, cuando se tiñen de amarillo y rojo.",
+    "Su bosque es hogar de una gran diversidad de insectos y otros artrópodos nativos."
+   ],
+   "planeta": [
+    "Grandes extensiones de bosque de roble del valle central fueron reemplazadas por praderas y plantaciones. Cada bosque nativo que se conserva es irremplazable.",
+    "El suelo de un bosque guarda agua y carbono. Cuidarlo es cuidar el aire que respiramos.",
+    "Aunque hoy no está amenazado, ha sido muy explotado por su madera. Elegir madera de origen legal ayuda."
    ]
   },
   "alerce": {
@@ -205,6 +260,19 @@
      "tema": "Futuro del planeta",
      "texto": "Los árboles más antiguos guardan la historia del clima. Reducir el desperdicio hoy es una forma de pensar en quienes vendrán."
     }
+   ],
+   "arbol": [
+    "Es Monumento Natural. En el Parque Nacional Alerce Costero hay un ejemplar estimado en más de 5.400 años, el árbol más longevo conocido.",
+    "Puede superar los 40 metros de altura y tener un tronco de varios metros de ancho.",
+    "Su madera es liviana y resiste la humedad; por eso se usó en las tejuelas de las casas de Chiloé.",
+    "Crece muy lento: un tronco grueso guarda muchos siglos de lluvia y paciencia.",
+    "Vive en bosques lluviosos del sur de Chile y de Argentina.",
+    "Su corta está prohibida desde 1976, cuando fue declarado Monumento Natural."
+   ],
+   "planeta": [
+    "Un alerce cortado hoy tarda miles de años en reponerse. Por eso proteger los bosques milenarios es urgente.",
+    "Los bosques lluviosos del sur guardan mucha agua y carbono; cuidarlos también ayuda al clima.",
+    "Elegir madera de origen legal es una forma de respetar los bosques."
    ]
   },
   "palma_chilena": {
@@ -212,7 +280,7 @@
    "otro": "Jubaea",
    "origen": "nativo de Chile",
    "mensaje": "No todo se ve de inmediato. Lo valioso suele tardar y vale la espera.",
-   "dato": "Tarda muchos años en madurar y vive siglos; es endémica de Chile.",
+   "dato": "Es la única palmera nativa de Chile continental. Tarda unos 60 años en dar semillas y está catalogada como Vulnerable.",
    "vida": [
     {
      "tema": "Espera",
@@ -238,6 +306,20 @@
      "tema": "Especies propias",
      "texto": "Solo existe en Chile y es lenta en crecer. Conocer y proteger lo propio de cada lugar evita perderlo para siempre."
     }
+   ],
+   "arbol": [
+    "Es la única palmera nativa de Chile continental y una de las más australes del mundo.",
+    "Tarda unos 60 años en dar semillas y sigue creciendo hasta pasar los 30 metros de altura.",
+    "Su tronco liso y gris puede medir hasta 1 metro de ancho.",
+    "Suelta con facilidad sus hojas muertas y no deja refugios secos para roedores.",
+    "Sus coquitos son comestibles, y de su fruto se obtiene un aceite usado en pastelería y cosmética.",
+    "Quedan cerca de 120.000 ejemplares silvestres, y el 87% está en los valles de Ocoa y Cocalán.",
+    "Puede vivir cientos de años; algunas estimaciones hablan de más de 1.000."
+   ],
+   "planeta": [
+    "Es una especie Vulnerable desde 2008. Antes se derribaba la palma entera para sacar la savia; en algunos palmares hoy la miel se obtiene sin derribarla.",
+    "Sus amenazas son los incendios, la extracción excesiva de semillas y el ganado que come sus brotes.",
+    "Las especies que solo existen en un lugar no tienen reemplazo: si se pierden aquí, se pierden para el mundo."
    ]
   },
   "cerezo": {
@@ -245,7 +327,7 @@
    "otro": "",
    "origen": "visitante",
    "mensaje": "Florecer dura poco, y por eso se mira con atención. Hay belleza en lo que pasa.",
-   "dato": "Florece una vez al año, al comienzo de la primavera.",
+   "dato": "Chile es el mayor exportador de cerezas del mundo, y su fruta madura en pleno verano del sur.",
    "vida": [
     {
      "tema": "Gratitud",
@@ -271,14 +353,28 @@
      "tema": "Estaciones",
      "texto": "Las estaciones marcan un ritmo que cuesta recordar en la ciudad. Salir a mirar un cambio de estación devuelve la conexión con la naturaleza."
     }
+   ],
+   "arbol": [
+    "Florece una vez al año, al comienzo de la primavera.",
+    "Sus flores duran pocos días, y por eso verlas es un momento especial.",
+    "En Japón, el hanami celebra desde hace siglos la floración de los cerezos.",
+    "Chile es el mayor exportador de cerezas del mundo: en una sola temporada despacha más de 110 millones de cajas.",
+    "Chile concentra el 96% de las exportaciones de cerezas del hemisferio sur.",
+    "Sus frutos llegan a China entre diciembre y febrero, cuando allá es invierno y se celebra el Año Nuevo Lunar.",
+    "Pierde sus hojas en otoño: el árbol cambia con cada estación."
+   ],
+   "planeta": [
+    "Los árboles florecen en su estación. Un clima cambiante puede adelantar o atrasar las flores: es una señal para escuchar.",
+    "Las abejas necesitan flores durante casi todo el año. Plantar flores en el balcón o el patio les da alimento.",
+    "Un árbol en la ciudad da sombra y baja la temperatura. Cuidar los de la calle ayuda a todos."
    ]
   },
   "sauce": {
-   "nombre": "Sauce",
+   "nombre": "Sauce chileno",
    "otro": "",
    "origen": "visitante",
-   "mensaje": "Se puede ser flexible sin dejar de ser uno mismo.",
-   "dato": "Sus ramas largas se curvan con el viento y casi nunca se quiebran.",
+   "mensaje": "Crece junto al agua y sostiene la orilla. Quien cuida un lugar también lo sostiene.",
+   "dato": "Es la única especie de sauce autóctona de Sudamérica y vive en las riberas, desde Arica hasta la Araucanía.",
    "vida": [
     {
      "tema": "Flexibilidad",
@@ -304,6 +400,20 @@
      "tema": "Agua y cuidado",
      "texto": "Crece cerca del agua y la protege con sus raíces. Evitar botar basura cerca de ríos y orillas ayuda a mantenerla limpia."
     }
+   ],
+   "arbol": [
+    "El sauce chileno (Salix humboldtiana) es la única especie de sauce autóctona de Sudamérica.",
+    "Crece a orillas de ríos y quebradas, desde Arica hasta la Araucanía.",
+    "En los valles del norte de Chile llega hasta los 2.500 metros de altitud.",
+    "Su corteza contiene salicina, sustancia de la que se obtuvo la base de la aspirina; en la medicina popular se usó contra la fiebre.",
+    "Una rama plantada en tierra húmeda echa raíces rápido, y por eso se usó para hacer cercos vivos.",
+    "También se lo conoce como sauce amargo o sauce criollo.",
+    "Puede medir entre 18 y 25 metros de altura."
+   ],
+   "planeta": [
+    "Las orillas con árboles mantienen limpia el agua; las que no tienen vegetación se erosionan.",
+    "El agua dulce es limitada. Cerrar la llave mientras uno se cepilla los dientes también cuida un río.",
+    "En la Patagonia argentina, sauces traídos de afuera han desplazado al sauce criollo en las riberas. Cuidar lo nativo importa."
    ]
   },
   "jacaranda": {
@@ -311,7 +421,7 @@
    "otro": "El árbol de las flores lilas",
    "origen": "visitante",
    "mensaje": "Florecer no es competir. Cada persona tiene su propia temporada, y la propia también llega.",
-   "dato": "Es originario de Sudamérica y florece en primavera; al caer, sus flores lilas alfombran el suelo.",
+   "dato": "Es nativo de Sudamérica, florece antes de echar hojas nuevas y sus flores lilas alfombran el suelo.",
    "vida": [
     {
      "tema": "Valorarse",
@@ -333,6 +443,20 @@
      "tema": "Alegría",
      "texto": "Se puede agregar un poco de color al día: una flor en la mesa, una canción, un saludo. La alegría también se cultiva."
     }
+   ],
+   "arbol": [
+    "Es nativo del noroeste de Argentina, Bolivia, Paraguay y Brasil.",
+    "Florece antes de que le salgan las hojas nuevas, y por eso sus ramas se ven cubiertas de flores.",
+    "Sus flores tubulares miden hasta 5 centímetros y se agrupan en racimos.",
+    "Según cómo se cultive, puede empezar a florecer desde el segundo año.",
+    "Su fruto es una cápsula leñosa y aplanada que, al madurar, libera semillas ligeras con un borde alado.",
+    "Carlos Thays lo incorporó al paisaje de Buenos Aires a fines del siglo XIX, y hoy tiñe de violeta esa ciudad en noviembre.",
+    "En su lugar de origen puede llegar a los 20 metros de altura."
+   ],
+   "planeta": [
+    "Los árboles floridos de la ciudad alegran, dan sombra y refrescan. Cuidarlos es cuidar un bien de todos.",
+    "Quemar hojas y ramas contamina el aire; dejarlas como abono devuelve nutrientes a la tierra.",
+    "Reutilizar es mejor que botar: lo que no se compra tampoco se convierte en basura."
    ]
   }
  },
@@ -349,7 +473,7 @@
     "pasto-6"
    ],
    "mensaje": "La flor nacional crece enredada en otros árboles. Nadie florece del todo solo.",
-   "dato": "Es una enredadera del bosque sureño y su flor es la flor nacional de Chile."
+   "dato": "Es la flor nacional desde el 24 de febrero de 1977 y solo crece en Chile. Florece en otoño y la polinizan picaflores, entre ellos el picaflor gigante."
   },
   "ananuca": {
    "nombre": "Añañuca",
@@ -363,7 +487,7 @@
     "pasto-6"
    ],
    "mensaje": "Después de la sequía, algunas flores vuelven. Una pausa no es un final.",
-   "dato": "Brota en el norte y centro del país cuando llegan las lluvias, en el llamado desierto florido."
+   "dato": "La añañuca roja es una de las plantas del desierto florido: espera bajo tierra, como bulbo, hasta que las lluvias la despiertan."
   },
   "pata_de_guanaco": {
    "nombre": "Pata de guanaco",
@@ -377,7 +501,7 @@
     "pasto-6"
    ],
    "mensaje": "La vida espera su momento. Hay etapas para cuidar sin ver todavía el resultado.",
-   "dato": "Tapiza de rosado el desierto de Atacama en los años de lluvia."
+   "dato": "Sus semillas pueden esperar años bajo la arena. Germinan cuando llueve lo suficiente y hubo frío previo, y tiñen de rosado el desierto cada varios años."
   },
   "lavanda": {
    "nombre": "Lavanda",
@@ -405,7 +529,7 @@
    "nombre": "Chucao",
    "precio": 80,
    "mensaje": "Es pequeño y se hace oír. Una voz sencilla también puede acompañar a un bosque entero.",
-   "dato": "Vive en el sotobosque del sur de Chile y se oye más de lo que se ve."
+   "dato": "Mide unos 19 cm y vive casi siempre en el suelo del bosque. Según la creencia mapuche, oír su canto a la derecha anuncia un buen viaje. Necesita bosques de más de 100 hectáreas."
   },
   "queltehue": {
    "nombre": "Queltehue",
@@ -423,7 +547,7 @@
    "nombre": "Cóndor",
    "precio": 150,
    "mensaje": "Hay momentos para mirar desde lo alto y recordar lo que importa. Se avanza mejor sin apuro.",
-   "dato": "Aprovecha las corrientes de aire para volar largas distancias casi sin batir las alas."
+   "dato": "Su envergadura llega a unos 3,3 metros y puede planear horas sin batir las alas. Pone uno o dos huevos cada dos años."
   },
   "gorrion": {
    "nombre": "Gorrión",
@@ -496,5 +620,49 @@
    "fondo-5",
    "fondo-6"
   ]
- }
+ },
+ "arbol_comun": [
+  "Los anillos del tronco guardan la historia del árbol: cada uno es un año, con sus lluvias y sus sequías.",
+  "Un árbol grande puede mover cientos de litros de agua al día, desde la raíz hasta las hojas.",
+  "Muchos árboles se asocian con hongos del suelo; ese intercambio ayuda a ambos a alimentarse.",
+  "Un solo árbol maduro puede dar sombra, refugio y alimento a decenas de especies.",
+  "Con la luz del sol, las hojas toman dióxido de carbono y liberan oxígeno: eso es la fotosíntesis.",
+  "La copa de un árbol baja la temperatura de su entorno varios grados en los días de calor.",
+  "Algunos árboles liberan sustancias aromáticas que ahuyentan a los insectos.",
+  "Por dentro, el tronco tiene capas distintas: unas llevan agua hacia arriba y otras reparten azúcares.",
+  "En Utah hay un bosque de unos 47.000 troncos de álamo que en realidad es un solo organismo: comparten raíces y genes. Se lo llama Pando.",
+  "Las semillas del desierto de Atacama pueden esperar años, incluso décadas, bajo la arena hasta que llueve lo suficiente."
+ ],
+ "planeta_comun": [
+  "Cerrar la llave mientras uno se enjabona o se cepilla los dientes ahorra varios litros cada vez.",
+  "Al volver de un paseo, llevarse la basura deja el lugar como se encontró.",
+  "Apagar las luces y desenchufar lo que no se usa ahorra energía.",
+  "Una botella reutilizable evita cientos de envases desechables al año.",
+  "Separar los restos de comida para hacer abono devuelve nutrientes a la tierra.",
+  "En trayectos cortos, caminar o usar la bicicleta reduce el humo y mejora el aire de todos.",
+  "Las colillas de cigarro tardan años en degradarse y contaminan el agua. Un cenicero portátil ayuda.",
+  "Las abejas polinizan buena parte de nuestros alimentos. No usar venenos en el jardín las protege.",
+  "Reparar antes de comprar algo nuevo alarga la vida de las cosas.",
+  "Comprar solo lo necesario reduce lo que se bota.",
+  "En zonas secas como el norte de Chile cada litro cuenta. Regar al atardecer o temprano evita que el agua se evapore.",
+  "Los humedales y las vertientes son hogar de muchas aves. Observarlas de lejos las deja tranquilas.",
+  "Plantar una especie nativa ayuda a las aves e insectos del lugar.",
+  "Contar a alguien lo que se aprendió de la naturaleza multiplica el cuidado.",
+  "En el desierto florido, cada flor cortada se lleva semillas del banco que despertará en la próxima lluvia. Mirar sin cortar las deja volver.",
+  "Los vehículos fuera de los caminos destruyen las semillas y bulbos del desierto que esperan la próxima lluvia.",
+  "Los cebos envenenados que algunos ponen contra animales también matan a cóndores y otras aves. Evitarlos protege a todos."
+ ],
+ "vida_comun": [
+  "Saludar a quien se cruza en la escalera o en la calle hace más cálido el barrio.",
+  "Escuchar a alguien hasta el final, sin interrumpir, es una forma concreta de respeto.",
+  "Agradecer a quien hace un trabajo que casi nadie nota: el aseo, el transporte, la atención.",
+  "Ofrecer ayuda a un vecino mayor, con las compras o un trámite, fortalece la comunidad.",
+  "Cumplir lo que se prometió, aunque sea algo pequeño, hace que los demás puedan confiar.",
+  "Antes de repetir un rumor, se puede preguntar si es cierto y si ayuda a alguien.",
+  "Reconocer un error con sencillez y repararlo mejora la convivencia más que defenderse.",
+  "Respetar la fila, el turno y los horarios de otros es una manera cotidiana de convivir bien.",
+  "Participar en la junta de vecinos o en un grupo del barrio, aunque sea de vez en cuando, mejora el lugar donde se vive.",
+  "Cuando alguien piensa distinto, se puede conversar buscando entender antes que ganar."
+ ],
+ "como": "Cuidar este árbol se parece a cuidarnos: un poco cada día, con paciencia y sin exigencias. Si algún día no puedes venir, el árbol espera y retomas cuando quieras."
 }

@@ -133,9 +133,17 @@
     if (e.vivero.aves.length >= (cat().economia.aves_activas_max || 2)) return { ok: false, motivo: 'maximo' };
     e.vivero.aves.push({ id, desde: hoy() }); guardar(e); return { ok: true };
   }
-  // Mensaje del árbol del ciclo actual: { titulo, mensaje, dato, vida: {tema, texto, n, de} }. `vida` rota según el día de cuidado; `salto` pasa al siguiente.
-  function mensajeActual(salto) { const e = cargar(), s = cat().especies[e.ciclo.especie]; if (!s) return null; const L = s.vida || [], n = L.length ? (((e.ciclo.diasCuidado || 0) + (salto || 0)) % L.length + L.length) % L.length : 0;
-    return { titulo: s.nombre + (s.otro ? ' · ' + s.otro : ''), mensaje: s.mensaje, dato: s.dato, vida: L.length ? { tema: L[n].tema, texto: L[n].texto, n: n + 1, de: L.length } : null }; }
+  // F933 · Mensajes del día: 3 por día que cambian solos con la fecha (no con el botón). 1 = dato real del árbol, 2 = respeto a la naturaleza y al planeta, 3 = crecer como personas y sociedad.
+  // Rotan por los días desde que empezó el árbol (`salto` suma días: solo para pruebas). Los datos propios de la especie y los comunes se alternan.
+  const mezcla = (a, b) => { const r = [], n = Math.max(a.length, b.length); for (let i = 0; i < n; i++) { if (i < a.length) r.push(a[i]); if (i < b.length) r.push(b[i]); } return r; };
+  const dia = (e, salto) => { const c = e.ciclo, d = c.inicio && isFinite(dnum(c.inicio)) ? Math.max(0, dif(hoy(), c.inicio)) : (c.diasCuidado || 0); return d + (salto || 0); };
+  const elige = (L, d) => (L.length ? L[((d % L.length) + L.length) % L.length] : null);
+  function mensajeActual(salto) { const e = cargar(), K = cat(), s = K.especies[e.ciclo.especie]; if (!s) return null; const d = dia(e, salto);
+    const La = mezcla(s.arbol || (s.dato ? [s.dato] : []), K.arbol_comun || []), Lp = mezcla(s.planeta || [], K.planeta_comun || []);
+    const Lv = (s.vida || []).map((x) => ({ tema: x.tema, texto: x.texto })).concat((K.vida_comun || []).map((t) => ({ tema: 'Convivir mejor', texto: t })));
+    const ta = elige(La, d), tp = elige(Lp, d), v = Lv.length ? Lv[((d % Lv.length) + Lv.length) % Lv.length] : null;
+    const items = [ta ? { clave: 'arbol', titulo: 'Del árbol', texto: ta } : null, tp ? { clave: 'planeta', titulo: 'Para el planeta', texto: tp } : null, v ? { clave: 'vida', titulo: v.tema || 'Para crecer', texto: v.texto } : null].filter(Boolean);
+    return { titulo: s.nombre + (s.otro ? ' · ' + s.otro : ''), mensaje: s.mensaje, dato: ta || s.dato, items, dia: d, como: K.como || null, vida: v ? { tema: v.tema, texto: v.texto, n: (d % Lv.length) + 1, de: Lv.length } : null }; }
 
   const api = { config(o) { if (o && o.catalogo) CAT = o.catalogo; if (o && o.hoy) HOY = o.hoy; if (o && o.almacen) ALM = o.almacen; }, cargar, guardar, estado: cargar, etapa, malezaPara, elegirPrimera, visita, sanar, ganar, recolectar, comprar, plantar, activarAve, mensajeActual, K };
   if (typeof window !== 'undefined') window.TBInicio = api; if (typeof module !== 'undefined') module.exports = api;
