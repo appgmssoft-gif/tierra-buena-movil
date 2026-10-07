@@ -79,6 +79,7 @@
 
   // ---- 3) acceso rápido ----
   const sonOn = () => { try { return !window.TBSonido || window.TBSonido.activo(); } catch (e) { return true; } };
+  const velaOn = () => { try { return localStorage.getItem('tb_inicio_pantalla') === '1'; } catch (e) { return false; } };
   const movOn = () => { try { return H.getAttribute('data-anim') !== 'off'; } catch (e) { return true; } };
   function hoja() {
     if (document.getElementById('tbRap')) return;
@@ -87,6 +88,7 @@
     caja.innerHTML = `<div><h2>Efectos y sonido</h2><p>Cámbialos cuando quieras. Si tu teléfono se calienta, elige «Ahorro»: la decoración se queda, solo se detiene lo que se mueve.</p>
       <div class="tb-fila"><span class="ic" aria-hidden="true">🔊</span><span class="tx"><b>Sonidos</b><small>La melodía y los sonidos al tocar.</small></span><button type="button" class="tb-int" id="rpSon" aria-pressed="${sonOn()}">${sonOn() ? 'Activos' : 'Apagados'}</button></div>
       <div class="tb-fila"><span class="ic" aria-hidden="true">✨</span><span class="tx"><b>Animaciones</b><small>Movimiento en pantallas y botones.</small></span><button type="button" class="tb-int" id="rpMov" aria-pressed="${movOn()}">${movOn() ? 'Activas' : 'Quietas'}</button></div>
+      <div class="tb-fila"><span class="ic" aria-hidden="true">💡</span><span class="tx"><b>Dejar la pantalla encendida en Inicio</b><small>Útil para rezar, respirar o dejar tu árbol a la vista. Se apaga sola a los 10 minutos, y no se usa si la batería está baja.</small></span><button type="button" class="tb-int" id="rpVela" aria-pressed="${velaOn()}">${velaOn() ? 'Activada' : 'Apagada'}</button></div>
       <div class="tb-fila"><span class="ic" aria-hidden="true">🌡️</span><span class="tx"><b>Cuidar el teléfono</b><small>Menos calor y más batería.</small><span class="tb-niv" role="group" aria-label="Cuidar el teléfono"><button type="button" data-n="auto" aria-pressed="${m === 'auto'}">Auto</button><button type="button" data-n="0" aria-pressed="${m === '0'}">Completo</button><button type="button" data-n="1" aria-pressed="${m === '1'}">Equilibrado</button><button type="button" data-n="2" aria-pressed="${m === '2'}">Ahorro</button></span></span></div>
       <button type="button" class="tb-cerrar" id="rpOk">Listo</button></div>`;
     document.body.appendChild(caja);
@@ -95,6 +97,7 @@
     document.getElementById('rpOk').onclick = cerrar;
     document.getElementById('rpSon').onclick = (ev) => { const v = !sonOn(); try { if (window.TBSonido) window.TBSonido.poner(v); } catch (e) { /* sin sonido */ } ev.currentTarget.setAttribute('aria-pressed', String(v)); ev.currentTarget.textContent = v ? 'Activos' : 'Apagados'; };
     document.getElementById('rpMov').onclick = (ev) => { const v = !movOn(); try { if (A().guardarAjuste) A().guardarAjuste({ m: v ? 'on' : 'off' }); else H.setAttribute('data-anim', v ? 'on' : 'off'); } catch (e) { /* sin guardar */ } ev.currentTarget.setAttribute('aria-pressed', String(v)); ev.currentTarget.textContent = v ? 'Activas' : 'Quietas'; };
+    document.getElementById('rpVela').onclick = (ev) => { const v = !velaOn(); try { localStorage.setItem('tb_inicio_pantalla', v ? '1' : '0'); } catch (e) { /* sin guardar */ } ev.currentTarget.setAttribute('aria-pressed', String(v)); ev.currentTarget.textContent = v ? 'Activada' : 'Apagada'; };
     Array.prototype.forEach.call(caja.querySelectorAll('.tb-niv button'), (b) => { b.onclick = () => { poner(b.dataset.n); if (b.dataset.n === 'auto') nivelAuto = 0; aplicar(); Array.prototype.forEach.call(caja.querySelectorAll('.tb-niv button'), (x) => x.setAttribute('aria-pressed', String(x === b))); if (b.dataset.n === 'auto') vigilar(); }; });
     document.getElementById('rpOk').focus();
   }

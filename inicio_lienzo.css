@@ -1,0 +1,116 @@
+/* inicio_lienzo.css - F928 · I2. Estilos del lienzo del Inicio «Tierra Buena». Se carga DESPUÉS de rendimiento.css.
+   Solo se anima con transform y opacity. Sin atributo style en el HTML (CSP). Con «reducir movimiento» o Animaciones en «Quietas», todo queda quieto pero visible. */
+
+/* El Inicio con lienzo se ordena de arriba hacia abajo (antes todo iba centrado) */
+.inicio-limpio.il-con-lienzo{justify-content:flex-start;padding:44px 0 24px;gap:6px}
+.inicio-limpio.il-con-lienzo .il-sal,.inicio-limpio.il-con-lienzo .il-frase,.inicio-limpio.il-con-lienzo .il-hora{padding:0 22px}
+.il-hora{margin:0;font-size:.74rem;font-weight:600;letter-spacing:.06em;color:var(--suave);font-variant-numeric:tabular-nums}
+.inicio-limpio.il-con-lienzo .il-frase{min-height:2.4em;font-size:1.02rem}
+.inicio-limpio.il-eligiendo .il-frase,.inicio-limpio.il-eligiendo .il-hora{display:none}
+#ilLienzo{width:100%;display:flex;flex-direction:column;align-items:center}
+.il-carga{margin:28px 22px;color:var(--suave);font-size:.9rem;text-align:center}
+
+/* ---- Escena ---- */
+.il-escena{position:relative;width:min(100vw,520px);aspect-ratio:360/310;margin:2px auto 0;touch-action:pan-y;overflow:visible}
+.dg-a{stop-color:#fff}.dg-b{stop-color:#000}
+.il-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.col.c1{fill:color-mix(in srgb,var(--verde) 32%,var(--papel))}
+.col.c2{fill:color-mix(in srgb,var(--verde) 50%,var(--papel))}
+.col.c3{fill:color-mix(in srgb,var(--verde) 70%,var(--papel))}
+.cap{transform:translateX(0)}
+.il-escena.mueve .cap{will-change:transform}
+.il-escena.mueve .cap1{transform:translateX(calc(var(--px,0) * -5px))}
+.il-escena.mueve .cap2{transform:translateX(calc(var(--px,0) * -10px))}
+.il-escena.mueve .cap3{transform:translateX(calc(var(--px,0) * -18px))}
+html:not([data-anim=off]) .cap{transition:transform .9s cubic-bezier(.22,.61,.36,1)}
+
+/* ---- Árbol: color por especie ---- */
+.tr-t{fill:none;stroke:#6b4a2f;stroke-linecap:round;stroke-linejoin:round}
+.t1{stroke-width:1.5}.t2{stroke-width:2}.t3{stroke-width:3}.t4{stroke-width:4}.t8{stroke-width:8}.t10{stroke-width:10}
+.tr-raices{opacity:.55}
+.tr-hebra{fill:none;stroke-width:3;stroke-linecap:round;stroke:#9ab654;opacity:.9}
+.arbol{--h:#4f9a5b;--h2:#79c07a}
+.tr-h{fill:var(--h)}.tr-h2{fill:var(--h2)}
+.esp-araucaria{--h:#3d6b4a;--h2:#5c8f63}
+.esp-canelo{--h:#4f9a5b;--h2:#79c07a}
+.esp-quillay{--h:#6f8f3f;--h2:#98b45a}
+.esp-roble{--h:#5d8a3a;--h2:#8cb15a}
+.esp-alerce{--h:#3b6a52;--h2:#5b8d73}
+.esp-palma_chilena .tr-t.t4,.esp-palma_chilena .tr-t.t3{stroke:#4f8a3c}
+.esp-cerezo{--h:#e9a3bb;--h2:#f6c9d8}
+.esp-sauce{--h:#8cad4a;--h2:#b6cc6a}
+@media (prefers-color-scheme:dark){.tr-t{stroke:#8a6a48}.esp-palma_chilena .tr-t.t4,.esp-palma_chilena .tr-t.t3{stroke:#6ea65a}}
+html[data-tema=medianoche] .tr-t{stroke:#8a6a48}
+
+/* ---- Entrada suave (una sola vez), paneo al cambiar de árbol y brote al plantar ---- */
+@keyframes il-sube{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes il-pano1{from{transform:translateX(24px)}to{transform:none}}
+@keyframes il-pano2{from{transform:translateX(52px)}to{transform:none}}
+@keyframes il-pano3{from{transform:translateX(96px)}to{transform:none}}
+@keyframes il-brota{from{opacity:0;transform:translateY(10px) scale(.7)}to{opacity:1;transform:none}}
+html:not([data-anim=off]) .il-escena.entra .il-svg{animation:il-sube .9s ease both}
+html:not([data-anim=off]) .il-escena.pano .cap1{animation:il-pano1 2.6s cubic-bezier(.3,.6,.3,1) both}
+html:not([data-anim=off]) .il-escena.pano .cap2{animation:il-pano2 2.6s cubic-bezier(.3,.6,.3,1) both}
+html:not([data-anim=off]) .il-escena.pano .cap3{animation:il-pano3 2.6s cubic-bezier(.3,.6,.3,1) both}
+html:not([data-anim=off]) .il-escena.brota .mundo{animation:il-brota 1.4s ease both}
+
+/* ---- Respirar: anillo que nace del tronco (zona táctil grande, transparente) ---- */
+.il-resp{position:absolute;left:50%;top:46%;width:22%;height:30%;transform:translateX(-50%);border:0;background:transparent;border-radius:40%;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.il-resp:focus-visible{outline:2px solid var(--oro);outline-offset:2px}
+.il-anillo{position:absolute;left:50%;top:60%;width:34%;aspect-ratio:1;margin:-17% 0 0 -17%;border-radius:50%;border:2px solid color-mix(in srgb,var(--oro) 70%,transparent);opacity:0;transform:scale(.6);pointer-events:none}
+.il-anillo.in{opacity:.85;transform:scale(1.9);transition:transform 4s ease-in-out,opacity 1s}
+.il-anillo.ex{opacity:.25;transform:scale(.6);transition:transform 6s ease-in-out,opacity 6s}
+
+/* ---- Maleza (versión simple; I3 la pule): se toca para quitarla ---- */
+.il-maleza{position:absolute;width:44px;height:44px;margin:-22px 0 0 -22px;border:0;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:.92;transition:opacity .4s,transform .4s;-webkit-tap-highlight-color:transparent}
+.il-maleza:focus-visible{outline:2px solid var(--oro);border-radius:50%}
+.il-maleza.sana{opacity:0;transform:translateY(-10px) scale(.6);pointer-events:none}
+.il-maleza svg{position:relative;width:34px;height:34px}
+.il-maleza::before{content:"";position:absolute;inset:4px;border-radius:50%;background:color-mix(in srgb,var(--papel) 60%,transparent)}
+.il-maleza::after{content:"";position:absolute;inset:2px;border-radius:50%;border:2px solid color-mix(in srgb,var(--oro) 65%,transparent);opacity:0}
+@keyframes il-late{0%,100%{opacity:0;transform:scale(.8)}50%{opacity:.9;transform:scale(1.15)}}
+html:not([data-anim=off]) .il-maleza::after{animation:il-late 1.8s ease-in-out 2}
+.mz-a{fill:#8b7449;stroke:none}.mz-t{fill:none;stroke:#7a6540;stroke-width:2;stroke-linecap:round}
+.s-pasto-1{left:14%;top:84%}.s-pasto-2{left:30%;top:92%}.s-pasto-3{left:36%;top:80%}.s-pasto-4{left:64%;top:80%}
+.s-pasto-5{left:70%;top:92%}.s-pasto-6{left:86%;top:85%}.s-pasto-7{left:8%;top:95%}.s-pasto-8{left:92%;top:96%}
+
+/* ---- Textos bajo el paisaje ---- */
+.il-datos{width:100%;max-width:26em;padding:6px 22px 0;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+.il-nombre{margin:0;font:600 1.05rem/1.3 Fraunces,Georgia,serif;color:var(--tinta)}
+.il-nombre span{font-weight:500;color:var(--suave)}
+.il-estado{margin:0;font-size:.9rem;line-height:1.4;color:var(--suave);min-height:1.4em}
+.il-guia{margin:0;font-size:.84rem;color:var(--oro);font-weight:600}
+.il-btn-msg{margin-top:4px;min-height:44px;padding:8px 18px;border-radius:999px;border:1px solid color-mix(in srgb,var(--suave) 30%,transparent);background:var(--vidrio,transparent);color:var(--tinta);font:inherit;font-size:.88rem;cursor:pointer}
+.il-btn-msg:active{transform:scale(.97)}
+.il-msg{margin-top:6px;padding:14px 16px;border-radius:16px;background:var(--vidrio,transparent);border:1px solid color-mix(in srgb,var(--suave) 22%,transparent);text-align:left;width:100%}
+.il-msg[hidden]{display:none}
+.il-msg h3{margin:0 0 6px;font:600 1rem/1.3 Fraunces,Georgia,serif}
+.il-msg p{margin:0 0 8px;font-size:.92rem;line-height:1.5;color:var(--tinta)}
+.il-msg .il-dato{color:var(--suave);font-size:.86rem}
+.il-msg .il-como{color:var(--suave);font-size:.82rem;margin-bottom:10px}
+.il-comp{width:100%}
+
+/* ---- Elección de la primera semilla ---- */
+.il-elige{width:100%;max-width:28em;padding:8px 22px 0;text-align:center}
+.il-elige h2{margin:6px 0 8px;font:600 1.3rem/1.3 Fraunces,Georgia,serif;color:var(--tinta)}
+.il-elige-sub{margin:0 0 16px;font-size:.92rem;line-height:1.5;color:var(--suave)}
+.il-semillas{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.il-semilla{display:flex;align-items:center;gap:12px;width:100%;min-height:84px;padding:10px 14px;text-align:left;border-radius:18px;border:2px solid color-mix(in srgb,var(--suave) 24%,transparent);background:var(--vidrio,transparent);color:var(--tinta);font:inherit;cursor:pointer;transition:border-color .25s,transform .25s}
+.il-semilla.on{border-color:var(--oro);transform:scale(1.015)}
+.il-semilla:focus-visible{outline:2px solid var(--oro);outline-offset:2px}
+.il-mini{flex:0 0 58px;width:58px;height:96px}
+.il-sem-tx{display:flex;flex-direction:column;gap:2px;min-width:0}
+.il-sem-tx b{font:600 1.02rem/1.3 Fraunces,Georgia,serif}
+.il-sem-tx em{font-style:normal;font-size:.8rem;color:var(--suave)}
+.il-sem-tx small{display:none;font-size:.82rem;line-height:1.4;color:var(--suave)}
+.il-semilla.on .il-sem-tx small{display:block}
+.il-plantar{width:100%;position:sticky;bottom:calc(104px + env(safe-area-inset-bottom,0px))}
+.il-plantar:disabled{opacity:.55}
+
+@media (prefers-reduced-motion:reduce){
+  .il-maleza::after{animation:none!important}
+  .il-maleza::after{animation:none!important}
+  .cap,.il-maleza,.il-semilla,.il-anillo{transition:none!important}
+  .il-escena .il-svg,.il-escena .cap,.il-escena .mundo{animation:none!important}
+}
+html[data-anim=off] .cap,html[data-anim=off] .il-maleza,html[data-anim=off] .il-semilla,html[data-anim=off] .il-anillo{transition:none!important}

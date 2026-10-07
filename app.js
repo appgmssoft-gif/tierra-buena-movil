@@ -2755,6 +2755,7 @@
     if (calmaIdle) { clearTimeout(calmaIdle); calmaIdle = 0; }
     calmaResp.forEach(clearTimeout); calmaResp = [];
     if (calmaVela) { try { calmaVela.release(); } catch (e) { /* nada */ } calmaVela = null; }
+    if (window.TBLienzo) { try { window.TBLienzo.soltar(); } catch (e) { /* nada */ } }   // F928: el jardín también se apaga al salir
   }
   function vistaInicio() {                                  // F909: INICIO LIMPIO = solo el fondo vivo + frases pequeñas que pasan despacio. Se animan solo con opacity/transform y se pausan si Inicio no se ve.
     calmaSoltar();
@@ -2762,16 +2763,21 @@
     const FRASES = ['Hoy basta con dar un buen paso.', 'Lo pequeño, hecho con cariño, cuenta.', 'Respira. Vas bien.', 'Una palabra amable también es una semilla.', 'No tienes que poder con todo hoy.', 'Lo que siembras con paciencia, crece.', 'Haz una cosa buena y déjala ir.', 'Pregunta cómo está alguien. En serio.', 'La calma también se practica.', 'Hay buena tierra donde estás parado.', 'Descansar es parte del trabajo.', 'Sé el aviso bueno de alguien hoy.'];
     const hoy = new Date(), h0 = hoy.getHours(), saludo = h0 < 6 ? 'Qué bueno verte despierto' : h0 < 12 ? 'Buenos días' : h0 < 19 ? 'Buenas tardes' : 'Buenas noches';
     let k = (hoy.getFullYear() * 366 + hoy.getMonth() * 31 + hoy.getDate()) % FRASES.length;
-    $('#pantalla').innerHTML = `<section class="inicio-limpio" id="inicioLimpio" aria-label="Inicio"><button type="button" class="il-juntos" id="ilJuntos" aria-label="Juntos hacemos el bien" title="Juntos hacemos el bien">${svg('gente', 22)}</button><p class="il-sal">${saludo}${n ? ', ' + esc(n) : ''}</p><p class="il-frase" id="ilFrase" aria-live="off"></p></section>`;
+    $('#pantalla').innerHTML = `<section class="inicio-limpio${window.TBLienzo ? ' il-con-lienzo' : ''}" id="inicioLimpio" aria-label="Inicio"><button type="button" class="il-juntos" id="ilJuntos" aria-label="Juntos hacemos el bien" title="Juntos hacemos el bien">${svg('gente', 22)}</button><p class="il-sal">${saludo}${n ? ', ' + esc(n) : ''}</p><time class="il-hora" id="ilHora"></time><p class="il-frase" id="ilFrase" aria-live="off"></p><div id="ilLienzo"></div></section>`;
     const sec = $('#inicioLimpio'), fr = $('#ilFrase');
     const bj = $('#ilJuntos'); if (bj) bj.onclick = () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) { /* sin vibración */ } abrirJuntos(); };
     const quieto = () => document.documentElement.getAttribute('data-anim') === 'off' || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
     fr.textContent = FRASES[k]; calmaResp.push(setTimeout(() => { if (fr.isConnected) fr.classList.add('on'); }, 120));
+    const reloj = $('#ilHora'), horaTxt = () => { try { return new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; } };   // F928: reloj pequeño, se actualiza con el mismo temporizador de las frases (sin otro)
+    if (reloj) reloj.textContent = horaTxt();
+    if (window.TBLienzo) window.TBLienzo.montar($('#ilLienzo'));
     let visible = true;
     const io = typeof IntersectionObserver === 'function' ? new IntersectionObserver((es) => { visible = es[es.length - 1].isIntersecting; }) : null; if (io) io.observe(sec);
     relojInicio = setInterval(() => {                         // una frase cada 11 s; si no se ve, no hace nada
       if (!sec.isConnected) { if (io) io.disconnect(); return calmaSoltar(); }
-      if (document.hidden || !visible || quieto()) return;
+      if (document.hidden || !visible) return;
+      if (reloj) { const t = horaTxt(); if (reloj.textContent !== t) reloj.textContent = t; }
+      if (quieto()) return;
       fr.classList.remove('on');
       calmaResp.push(setTimeout(() => { if (!fr.isConnected) return; k = (k + 1) % FRASES.length; fr.textContent = FRASES[k]; fr.classList.add('on'); }, 1500));
     }, 11000);
