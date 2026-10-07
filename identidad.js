@@ -415,6 +415,7 @@
     return `<div class="tbj-ap"><div class="tbj-ap-t"><b>${esc(a.descripcion)}</b><div class="tbj-sts">${chips}</div></div>${tot ? barra(rec, tot) : ''}${mio}${lista}</div>`;
   }
   const ROLES = { lider: 'Líder', lider2: '2.º líder', lider3: '3.er líder' };
+  const K_CACHE = 'tb_movil_juntos_cache';   // última lista de movimientos de la iglesia (sin contactos) para verla sin internet
   let UNI = null, CIE = {};
   const cierreHTML = (c, esPastor) => !c ? '' : `<div class="tbj-cierre${c.oculto ? ' oculto' : ''}"><b>Cómo salió</b>${(c.familias || c.kilos) ? `<p class="tbj-cifras">${c.familias ? `<span><b>${c.familias}</b> familias ayudadas</span>` : ''}${c.kilos ? `<span><b>${c.kilos}</b> kilos reunidos</span>` : ''}</p>` : ''}${[['Salió bien', c.bien], ['Aprendimos', c.aprendimos], ['A quién se ayudó y qué más necesita', c.ayudados], ['Para la próxima', c.mejorar]].map((x) => x[1] ? `<p class="tbj-primer"><b>${x[0]}:</b> ${esc(x[1])}</p>` : '').join('')}${esPastor ? `<button type="button" class="btn sec tbj-ocul" data-m="${esc(c.movimiento_id)}" data-o="${c.oculto ? 0 : 1}">${c.oculto ? 'Mostrar de nuevo' : 'Ocultar este cierre'}</button>` : ''}</div>`;
   function detalleHTML(m, ed) {
@@ -445,6 +446,7 @@
       CIE = {}; if (ci && !ci.error && Array.isArray(ci.data)) ci.data.forEach((x) => { CIE[x.movimiento_id] = x; });
       if (r.error) throw new Error('red');
       UNI = null; if (u && !u.error && Array.isArray(u.data)) { UNI = {}; u.data.forEach((x) => { UNI[x.movimiento_id] = x; }); }
+      try { guardar(K_CACHE, { cod: cr.p_codigo, t: Date.now(), l: (Array.isArray(r.data) ? r.data : []).filter((m) => m.estado === 'publicado').map((m) => ({ id: m.id, titulo: m.titulo, estado: m.estado, inicio: m.inicio, lugar: m.lugar, problema: m.problema, para_quien: m.para_quien, meta: m.meta, plan_b: m.plan_b, equipo: (m.equipo || []).map((x) => ({ rol: x.rol, nombre: x.nombre })), pasos: m.pasos || [] })) }); } catch (e) { /* sin copia */ }
       IGL = (Array.isArray(r.data) ? r.data : []).filter((m) => m.estado === (curso ? 'publicado' : 'cerrado'));
       if (!IGL.length) { cont.innerHTML = curso ? '<div class="card tbj-vacio"><p class="suave m0">Tu iglesia todavía no ha publicado movimientos. Cuando lo haga, aparecerán aquí con todo lo que se necesita.</p></div>' : ''; return; }
       cont.innerHTML = `<h2 class="sep">${curso ? 'En mi iglesia' : 'Terminados en mi iglesia'}</h2>` + IGL.map((m) => `<article class="tbj-mov tbj-ig"><div class="tbj-mov-cab"><span class="tbj-mov-ic" aria-hidden="true">🌿</span><div><b>${esc(m.titulo)}</b><small>${m.estado === 'cerrado' ? 'Terminado' : esc(cuandoIso(m.inicio))}${m.lugar ? ' · ' + esc(m.lugar) : ''}</small></div></div>
@@ -467,6 +469,12 @@
         catch (e) { b.disabled = false; snd('error'); aviso('No pudimos anotarte ahora. Inténtalo de nuevo en un momento.'); }
       }; });
     }).catch(() => {
+      const ca = curso ? leer(K_CACHE, null) : null;
+      if (ca && ca.cod === cr.p_codigo && Array.isArray(ca.l) && ca.l.length) {
+        let cuando = ''; try { cuando = new Date(ca.t).toLocaleDateString('es-CL', { day: 'numeric', month: 'long' }); } catch (e) { /* nada */ }
+        cont.innerHTML = `<h2 class="sep">En mi iglesia</h2><div class="card tbj-vacio"><p class="suave m0">Sin conexión. Esto es lo último que se guardó${cuando ? ' el ' + esc(cuando) : ''}; puede haber cambios.</p><button type="button" class="btn sec" id="tbjIgRe">Reintentar</button></div>` + ca.l.map((m) => `<article class="tbj-mov tbj-ig"><div class="tbj-mov-cab"><span class="tbj-mov-ic" aria-hidden="true">🌿</span><div><b>${esc(m.titulo)}</b><small>${esc(cuandoIso(m.inicio))}${m.lugar ? ' · ' + esc(m.lugar) : ''}</small></div></div><details class="tbj-det" open><summary>Ver todo el plan</summary>${detalleHTML(m, false)}</details></article>`).join('');
+        const b2 = $('#tbjIgRe'); if (b2) b2.onclick = pintarIglesia; return;
+      }
       cont.innerHTML = '<div class="card tbj-vacio"><p class="suave m0">No pudimos cargar los movimientos de tu iglesia. Revisa tu internet e inténtalo de nuevo.</p><button type="button" class="btn sec" id="tbjIgRe">Reintentar</button></div>';
       const b = $('#tbjIgRe'); if (b) b.onclick = pintarIglesia;
     });

@@ -352,7 +352,7 @@
   async function cerrarSesionCuenta() {
     await syncCerrar();                             // F872: lo pendiente viaja a la cuenta antes de salir
     try { if (hayAuth()) await SB.auth.signOut(); } catch (e) { /* sin red: igual se cierra aquí */ }
-    borrar(K_CUENTA); borrar(K_ID); borrar(K_SOL); borrar(K_IG); marcaDentro();
+    borrar(K_CUENTA); borrar('tb_movil_juntos_cache'); borrar(K_ID); borrar(K_SOL); borrar(K_IG); marcaDentro();
     try { history.replaceState(null, '', location.pathname); } catch (e) { /* nada */ }
     vistaUnirse();
   }
@@ -727,7 +727,7 @@
       if (!confirm('¿Salir de esta iglesia? Se borrará tu nombre en la iglesia y en este teléfono.')) return;
       await rpc('miembro_eliminar', { p_codigo: id.codigo, p_clave: id.clave });
       await iglesiaAcuenta(null);
-      borrar(K_ID); borrar(K_SOL); borrar(K_IG); try { history.replaceState(null, '', location.pathname); } catch (e) { /* nada */ } vistaUnirse();
+      borrar(K_ID); borrar('tb_movil_juntos_cache'); borrar(K_SOL); borrar(K_IG); try { history.replaceState(null, '', location.pathname); } catch (e) { /* nada */ } vistaUnirse();
     };
   }
 
@@ -2548,7 +2548,7 @@
     try { if (window.TBEjemplos && $('#tbEjem')) window.TBEjemplos.pintar($('#tbEjem'), 'pastor'); } catch (e) { /* sin ejemplos */ }
     document.querySelectorAll('[data-ir=juntos]').forEach((b) => b.addEventListener('click', abrirJuntos));
     document.querySelectorAll('[data-pp]').forEach((b) => b.addEventListener('click', () => ({ sol: pSolicitudes, ora: pOraciones, vis: pVisitas, mie: pMiembros, min: pMinisterios, age: () => vistaAgenda(modoPastor(p)), avi: () => vistaAvisos(modoPastor(p)), dat: pDatos }[b.dataset.pp])(p)));
-    $('#pSalir').onclick = () => { if (confirm('¿Salir del modo pastor en este teléfono? Tu llave se borra de aquí (sigue en tu computador).')) { borrar(K_PASTOR); barraRefrescar('perfil'); ir('perfil'); } };
+    $('#pSalir').onclick = () => { if (confirm('¿Salir del modo pastor en este teléfono? Tu llave se borra de aquí (sigue en tu computador).')) { borrar(K_PASTOR); borrar('tb_movil_juntos_cache'); barraRefrescar('perfil'); ir('perfil'); } };
     const ins = (k, n) => { const e = $('#n-' + k); if (e && n > 0) { e.textContent = n > 99 ? '99+' : String(n); e.hidden = false; } };
     rpc('iglesia_perfil', { p_codigo: p.codigo }).then((r) => { const h = $('#pIgl'); if (h && r.ok && r.data && r.data.nombre) h.textContent = r.data.nombre; });
     prpc('solicitud_pastor_listar', p).then((r) => r.ok && ins('sol', (r.data || []).length));
