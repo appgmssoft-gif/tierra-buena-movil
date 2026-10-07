@@ -47,22 +47,36 @@
     "titulo": "1. Qué queremos lograr",
     "campos": [
      {
+      "id": "nombre",
+      "etiqueta": "Nombre del movimiento",
+      "ayuda": "Corto y claro, para que todos lo reconozcan.",
+      "ejemplo": "Una olla para la congregación",
+      "max": 60,
+      "obligatorio": true
+     },
+     {
       "id": "problema",
       "etiqueta": "¿Qué necesidad vemos?",
       "ayuda": "Una o dos frases, sin nombres de personas.",
-      "max": 300
+      "max": 300,
+      "obligatorio": true,
+      "ejemplo": "Hay familias del sector que no alcanzan a comer a fin de mes."
      },
      {
       "id": "para_quien",
       "etiqueta": "¿A quién ayudamos?",
       "ayuda": "Un grupo, no personas con nombre (p. ej. «familias del sector»).",
-      "max": 150
+      "max": 150,
+      "obligatorio": true,
+      "ejemplo": "Familias del sector"
      },
      {
       "id": "meta",
       "etiqueta": "Meta en palabras simples",
       "ayuda": "Algo que se pueda ver al terminar.",
-      "max": 200
+      "max": 200,
+      "obligatorio": true,
+      "ejemplo": "Cada sábado se entrega comida caliente a quien la necesite."
      }
     ]
    },
@@ -72,21 +86,31 @@
     "campos": [
      {
       "id": "fecha",
-      "etiqueta": "Fecha y hora de inicio",
+      "etiqueta": "Fecha de inicio",
       "ayuda": "Mínimo 2 semanas desde hoy; se sugiere 1 mes.",
-      "tipo": "fecha"
+      "tipo": "fecha",
+      "obligatorio": true
+     },
+     {
+      "id": "hora",
+      "etiqueta": "Hora de inicio",
+      "ayuda": "Ayuda a que todos puedan organizarse.",
+      "tipo": "hora"
      },
      {
       "id": "lugar",
       "etiqueta": "Lugar",
       "ayuda": "Abierto, seguro y de día.",
-      "max": 80
+      "max": 80,
+      "obligatorio": true,
+      "ejemplo": "Sala de la iglesia"
      },
      {
       "id": "plan_b",
       "etiqueta": "Plan B si cambia el clima o el lugar",
       "ayuda": "Dónde se hace o a qué fecha pasa.",
-      "max": 200
+      "max": 200,
+      "ejemplo": "Si llueve, se hace en la sala principal."
      }
     ]
    },
@@ -97,14 +121,16 @@
      {
       "id": "lider",
       "etiqueta": "Líder",
-      "ayuda": "Obligatorio.",
-      "tipo": "persona"
+      "ayuda": "Quien guía el movimiento.",
+      "tipo": "persona",
+      "obligatorio": true
      },
      {
       "id": "segundo",
       "etiqueta": "2.º líder",
       "ayuda": "Obligatorio: el movimiento sigue si falta el líder.",
-      "tipo": "persona"
+      "tipo": "persona",
+      "obligatorio": true
      },
      {
       "id": "tercero",
@@ -121,8 +147,9 @@
      {
       "id": "aportes",
       "etiqueta": "Lista de aportes (especies y tiempo)",
-      "ayuda": "Cada línea: qué, cuánto y unidad. Los miembros marcan lo que traen.",
-      "tipo": "lista"
+      "ayuda": "Una línea por aporte: qué se necesita y, si se sabe, cuánto. Solo especies y tiempo, sin dinero.",
+      "tipo": "lista",
+      "ejemplo": "Legumbres, según lo que cada familia pueda traer"
      }
     ]
    },
@@ -133,8 +160,10 @@
      {
       "id": "pasos",
       "etiqueta": "Pasos en orden",
-      "ayuda": "Cada paso con su fecha y responsable.",
-      "tipo": "lista"
+      "ayuda": "Una línea por paso, en orden. Puedes anotar fecha y responsable (p. ej. «Sábado 3: reunir los insumos — Ana»).",
+      "tipo": "lista",
+      "obligatorio": true,
+      "ejemplo": "Conversar con el pastor y fijar el día"
      }
     ]
    },

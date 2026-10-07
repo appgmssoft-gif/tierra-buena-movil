@@ -11,6 +11,10 @@
   const calma = () => { try { return document.documentElement.getAttribute('data-anim') === 'off' || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
   const leer = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k) || 'null'); return v == null ? d : v; } catch (e) { return d; } };
   const guardar = (k, v) => { try { if (A().guardar) return A().guardar(k, v); localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } };
+  // Fechas locales (F923: estas tres se usaban en el formulario y en «Mis movimientos» pero no estaban definidas; el formulario fallaba al abrirse).
+  const DIA = 86400000;
+  const hoyISO = (n) => { const d = new Date(Date.now() + (n || 0) * DIA), z = (x) => String(x).padStart(2, '0'); return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate()); };
+  const cuandoTxt = (m) => { try { const n = Math.round((new Date(m.fecha + 'T12:00:00') - new Date(new Date().toDateString() + ' 12:00:00')) / DIA), f = new Date(m.fecha + 'T12:00:00').toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' }); return f + (m.hora ? ' · ' + m.hora : '') + (n === 0 ? ' · hoy' : n === 1 ? ' · falta 1 día' : n > 1 ? ' · faltan ' + n + ' días' : ''); } catch (e) { return String(m.fecha || ''); } };
   function aviso(txt) {
     try { const o = $('.tb-aviso'); if (o) o.remove(); const d = document.createElement('div'); d.className = 'tb-aviso'; d.setAttribute('role', 'status'); d.textContent = txt; document.body.appendChild(d); setTimeout(() => { try { d.remove(); } catch (e) { /* nada */ } }, 3200); } catch (e) { /* nada */ }
   }
@@ -127,65 +131,20 @@
   // =====================================================================================================
   const K_J = 'tb_movil_juntos';
   const AMBITOS = { iglesia: 'Mi iglesia', grupo: 'Mi grupo o ministerio', iglesias: 'Con otras iglesias', barrio: 'Mi barrio' };
-  // F919/F921: IDEAS (sin cifras ni personas inventadas; cada una trae un ejemplo de cómo podría organizarse). Aquí SÍ puede haber más ejemplos y variedad: es el lugar de las ideas.
-  const CATS = ['Alimentos y ropa', 'Niñez y jóvenes', 'Adultos mayores y acompañar', 'Cuidado del entorno', 'Salud', 'Entre iglesias'];
-  let filtroCat = '';
-  const MOV = [
-    { id: 'olla', ic: '🍲', t: 'Una olla para la congregación', lema: 'Que nadie en nuestra iglesia ni en nuestra cuadra pase hambre.', ambito: 'iglesia', cat: 'Alimentos y ropa', unidad: 'platos',
-      pasos: ['Cada familia aporta 1 kilo de lo que tenga (arroz, legumbres, verduras).', 'Dos o tres personas cocinan un sábado en la sala de la iglesia.', 'Se lleva un plato a quien esté pasando un mal momento.'],
-      ej: 'Un sábado a las 10:00 en la sala de la iglesia: 3 personas cocinan, 2 reparten y 1 anota lo recibido.' },
-    { id: 'canasta', ic: '🧺', t: 'Canasta de fin de año', lema: 'Una mesa con lo necesario para quien lo requiere en estas fechas.', ambito: 'iglesia', cat: 'Alimentos y ropa', unidad: 'canastas',
-      pasos: ['Se define qué lleva cada canasta (por ejemplo, 6 productos básicos).', 'Cada familia o grupo se compromete con un producto.', 'Se arman y se entregan con discreción.'],
-      ej: 'Se arman 10 canastas el último sábado de noviembre; cada célula aporta un producto.' },
-    { id: 'abrigo', ic: '🧥', t: 'Abrigo para el invierno', lema: 'Una chaqueta que ya no se usa puede ser el abrigo de otra persona.', ambito: 'iglesia', cat: 'Alimentos y ropa', unidad: 'abrigos',
-      pasos: ['Cada persona separa 2 prendas limpias y en buen estado.', 'Se juntan en el templo o en la sala de reuniones.', 'El grupo de servicio las entrega con dignidad.'],
-      ej: 'Durante dos domingos se recibe ropa al salir del culto; el tercer sábado se ordena y se entrega.' },
-    { id: 'ropero', ic: '👕', t: 'Ropero solidario', lema: 'Un lugar fijo donde la ropa en buen estado encuentra nuevo dueño.', ambito: 'iglesia', cat: 'Alimentos y ropa', unidad: 'prendas entregadas',
-      pasos: ['Se destina un rincón o armario de la iglesia.', 'Un equipo ordena por talla y temporada.', 'Se abre un día fijo al mes.'],
-      ej: 'Primer sábado de cada mes, de 10:00 a 12:00, atendido por 3 personas del grupo de servicio.' },
-    { id: 'utiles', ic: '🎒', t: 'Ningún niño sin útiles', lema: 'Que la falta de un cuaderno no sea una razón para quedarse atrás.', ambito: 'iglesia', cat: 'Niñez y jóvenes', unidad: 'kits escolares',
-      pasos: ['La iglesia recoge lápices, cuadernos y mochilas en buen estado.', 'Se arman kits de 5 elementos básicos.', 'Se entregan con discreción, sin exponer a ninguna familia.'],
-      ej: 'Se recibe material en febrero y los kits se entregan antes del inicio de clases.' },
-    { id: 'merienda', ic: '🥪', t: 'Merienda para niños', lema: 'Un momento a la semana donde los niños del sector comen y comparten.', ambito: 'grupo', cat: 'Niñez y jóvenes', unidad: 'meriendas',
-      pasos: ['El ministerio de niños define el día y la cantidad.', 'Cada familia aporta pan o fruta por turnos.', 'Siempre hay dos adultos presentes.'],
-      ej: 'Cada miércoles a las 17:00 en la sala de la iglesia, con un turno semanal de dos familias.' },
-    { id: 'jovenes', ic: '🎶', t: 'Tarde de jóvenes que sirve', lema: 'Los jóvenes ponen su energía al servicio de la comunidad.', ambito: 'grupo', cat: 'Niñez y jóvenes', unidad: 'jóvenes participando',
-      pasos: ['El grupo de jóvenes elige una necesidad concreta.', 'Se reparten tareas (cocinar, limpiar, acompañar).', 'Al terminar se comparte qué se aprendió.'],
-      ej: 'Un sábado por la tarde, el grupo de jóvenes limpia y pinta la sala de un hogar de adultos mayores.' },
-    { id: 'refuerzo', ic: '📚', t: 'Refuerzo escolar en la iglesia', lema: 'Quien sabe, enseña. Quien aprende, un día enseñará.', ambito: 'grupo', cat: 'Niñez y jóvenes', unidad: 'estudiantes',
-      pasos: ['Cada voluntario ofrece 1 hora semanal en lo que mejor sabe.', 'La sala de la iglesia sirve: luz y una mesa bastan.', 'Se informa a las familias que lo necesiten.'],
-      ej: 'Martes y jueves de 16:00 a 17:00, con 4 voluntarios (lectura, matemática e inglés).' },
-    { id: 'acompana', ic: '☎️', t: 'Hermanos que se acompañan', lema: 'Una llamada a tiempo puede cambiar un día entero.', ambito: 'grupo', cat: 'Adultos mayores y acompañar', unidad: 'visitas o llamadas',
-      pasos: ['Cada joven o líder elige a un adulto mayor de la congregación.', 'Lo llama o lo visita durante la semana.', 'Pregunta si necesita compras, trámites o compañía.'],
-      ej: 'Cada domingo se asignan los contactos de la semana y el domingo siguiente se comparte cómo resultó.' },
-    { id: 'compras', ic: '🛒', t: 'Compras y trámites para quien no puede', lema: 'Un par de manos para lo cotidiano.', ambito: 'grupo', cat: 'Adultos mayores y acompañar', unidad: 'encargos realizados',
-      pasos: ['Se arma una lista de personas que lo desean, con su consentimiento.', 'Un voluntario las contacta cada semana.', 'Se anota lo realizado para no repetir ni olvidar.'],
-      ej: 'Los viernes por la mañana, dos voluntarios hacen las compras de 5 personas de la congregación.' },
-    { id: 'hospital', ic: '🏥', t: 'Visita a enfermos', lema: 'Estar presente cuando alguien atraviesa un momento difícil.', ambito: 'iglesia', cat: 'Adultos mayores y acompañar', unidad: 'visitas',
-      pasos: ['El pastor o el líder informa a quién se puede visitar, con su consentimiento.', 'Se visita en parejas, en horarios de visita.', 'Se acompaña con una oración o una conversación breve.'],
-      ej: 'Parejas de visita por turnos: cada una recibe un nombre y un horario, y avisa al líder cuando termina.' },
-    { id: 'vigilia', ic: '🕯️', t: 'Cadena de oración', lema: 'Sostener juntos una necesidad con constancia.', ambito: 'iglesia', cat: 'Adultos mayores y acompañar', unidad: 'horas de oración',
-      pasos: ['Se define la necesidad (con el permiso de quien la presenta).', 'Se reparten horas del día entre los participantes.', 'Se avisa cuando hay novedades.'],
-      ej: 'Durante 7 días, cada persona toma una hora y la anota en una lista compartida del grupo.' },
-    { id: 'plaza', ic: '🌳', t: 'Cuidar nuestro templo y su plaza', lema: 'Cuidar un lugar de todos es decir «esto es nuestro».', ambito: 'iglesia', cat: 'Cuidado del entorno', unidad: 'jornadas',
-      pasos: ['Un sábado por la mañana, con guantes y bolsas.', 'Se riegan y plantan plantas del entorno.', 'Se invita a un vecino que nunca ha venido.'],
-      ej: 'Sábado de 9:00 a 12:00; cada familia lleva una herramienta y se comparte un desayuno al final.' },
-    { id: 'huerta', ic: '🥬', t: 'Huerta de la iglesia', lema: 'Lo que se cosecha entre varios sabe mejor.', ambito: 'iglesia', cat: 'Cuidado del entorno', unidad: 'familias participando',
-      pasos: ['Se elige un rincón del terreno y un día fijo para regar.', 'Cada familia trae semillas, herramientas o sus manos.', 'Lo cosechado se reparte con quien lo necesite.'],
-      ej: 'Se arman 6 camas de cultivo en primavera; cada familia cuida una por un mes.' },
-    { id: 'reciclaje', ic: '♻️', t: 'Reciclaje de la iglesia', lema: 'Pequeños hábitos que cuidan lo que se nos confió.', ambito: 'iglesia', cat: 'Cuidado del entorno', unidad: 'kilos reciclados',
-      pasos: ['Se instalan contenedores rotulados.', 'Un equipo los lleva al punto de reciclaje.', 'Lo obtenido, si lo hay, se destina a una necesidad acordada.'],
-      ej: 'Contenedores de cartón, plástico y vidrio a la salida del templo; se llevan al punto limpio cada dos semanas.' },
-    { id: 'jornada', ic: '🩺', t: 'Jornada de salud con profesionales de la congregación', lema: 'Orientación y controles básicos a cargo de quienes saben.', ambito: 'iglesia', cat: 'Salud', unidad: 'personas atendidas',
-      pasos: ['Se invita a profesionales de la salud de la propia iglesia.', 'Se coordinan permisos y el espacio con la autoridad correspondiente.', 'Se atiende con orden y respetando la privacidad.'],
-      ej: 'Un sábado de mañana con 3 profesionales voluntarios, un espacio ventilado y turnos de atención.' },
-    { id: 'taller', ic: '🧶', t: 'Taller de oficios', lema: 'Aprender y enseñar tejido, costura, cocina u otros oficios.', ambito: 'grupo', cat: 'Alimentos y ropa', unidad: 'talleres',
-      pasos: ['Se identifican personas que dominan un oficio.', 'Se define un horario fijo y un cupo.', 'Lo elaborado puede donarse a quien lo necesite.'],
-      ej: 'Jueves a las 15:00: taller de tejido; las bufandas terminadas se entregan en invierno.' },
-    { id: 'hermanas', ic: '🤝', t: 'Iglesias hermanas', lema: 'Una causa compartida une más que cualquier diferencia.', ambito: 'iglesias', cat: 'Entre iglesias', unidad: 'iglesias participando',
-      pasos: ['Cada pastor conversa la idea con su congregación.', 'Se acuerda un día y un lugar para trabajar juntos.', 'Se reparte el trabajo y se agradece al final.'],
-      ej: 'Tres iglesias del sector preparan juntas una olla común un sábado, cada una aporta voluntarios e insumos.' }
-  ];
+  // J1 (F923): las ideas y los proyectos listos viven en UN solo catálogo (datos/juntos_catalogo.json). Vida ya no los repite: este es el único camino.
+  const K_FAV = 'tb_movil_ideas_fav';          // «Me interesa»: misma clave e ids de antes, no se pierde nada
+  let CAT = null, MOV = [], filtroCat = '';
+  const corto = (t, n) => { t = String(t || ''); return t.length > n ? t.slice(0, n - 1).replace(/\s+\S*$/, '') + '…' : t; };
+  async function catalogo() {
+    if (CAT) return CAT;
+    const r = await fetch('datos/juntos_catalogo.json'); if (!r.ok) throw new Error('http ' + r.status);
+    const d = await r.json(); if (!d || !Array.isArray(d.items) || !Array.isArray(d.categorias)) throw new Error('catálogo no válido');
+    MOV = d.items; return (CAT = d);
+  }
+  const catDe = (m) => (CAT && CAT.categorias.find((c) => c.id === m.cat)) || { icono: '', label: '' };
+  const ideaBase = (m) => (m.tipo === 'paquete' && m.idea_id && MOV.find((z) => z.id === m.idea_id)) || m;
+  const favs = () => { const l = leer(K_FAV, []); return Array.isArray(l) ? l : []; };
+  const ambitoDe = (m) => (m.cat === 'entre_iglesias' ? 'iglesias' : m.lugar_tipo === 'publico' ? 'barrio' : 'iglesia');
   const RECETA = [['👀', 'Mira', 'Escoge un problema real que veas cerca, uno solo.'], ['🤝', 'Une', 'Invita a 3 personas. Un movimiento es de muchos o no es movimiento.'], ['⚡', 'Empieza', 'Da un primer paso en 72 horas. Lo pequeño que empieza gana.'], ['📏', 'Mide', 'Ponle un número: platos, personas, abrigos, horas.'], ['🎉', 'Celebra', 'Cuenta lo logrado para que otros se animen.']];
   const REGLAS = ['Nunca publiques nombres, fotos ni direcciones de personas sin su permiso.', 'No se maneja dinero en la app: se piden tiempo, cosas o ayuda, y se rinde cuentas.', 'Ayuda con dignidad: pregunta qué necesita la persona, no decidas por ella.', 'Respeta a tu congregación: tu pastor y tus líderes guían. Si surge un problema, se conversa dentro de la iglesia.'];
 
@@ -194,7 +153,7 @@
   const pct = (a, b) => Math.max(0, Math.min(100, Math.round(a * 100 / Math.max(1, b))));
   const barra = (v, m, cl) => `<div class="tbj-bar ${cl || ''}" role="progressbar" aria-valuemin="0" aria-valuemax="${m}" aria-valuenow="${Math.min(v, m)}"><i data-w="${pct(v, m)}"></i></div>`;
   const aplicarAnchos = (r) => { $$('.tbj-bar i[data-w]', r).forEach((i) => { setTimeout(() => { i.style.setProperty('--w', i.dataset.w + '%'); }, calma() ? 0 : 60); }); };
-  const invitacion = (t, lema, meta, unidad, cuando) => `🌍 ${t}\n${lema}\nMeta: ${meta} ${unidad}.${cuando ? '\n' + cuando : ''}\n¿Te sumas? Yo ya empecé. Lo hacemos juntos con la app Tierra Buena: ${location.origin}${location.pathname}\n#JuntosHacemosElBien`;
+  const invitacion = (t, lema, meta, unidad, cuando) => `🌍 ${t}\n${lema}${meta ? '\nMeta: ' + meta + (unidad ? ' ' + unidad : '') + '.' : ''}${cuando ? '\n' + cuando : ''}\n¿Te sumas? Yo ya empecé. Lo hacemos juntos con la app Tierra Buena: ${location.origin}${location.pathname}\n#JuntosHacemosElBien`;
   function compartir(txt) {
     try { if (navigator.share) { navigator.share({ text: txt }).catch(() => { /* cancelado */ }); return; } } catch (e) { /* sin compartir */ }
     try { window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank', 'noopener'); } catch (e) { /* nada */ }
@@ -207,7 +166,7 @@
   const K_J2 = 'tb_movil_juntos2';
   const mesClave = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); };
   const est2 = () => { const e = leer(K_J2, null); return e && typeof e === 'object' ? { votos: e.votos || {}, muro: Array.isArray(e.muro) ? e.muro : [] } : { votos: {}, muro: [] }; };
-  function opcionesDelMes() { const n = new Date().getMonth(); return [0, 1, 2, 3].map((k) => MOV[(n * 2 + k * 3) % MOV.length]).filter((m, i, v) => v.indexOf(m) === i); }
+  function opcionesDelMes() { const base = MOV.filter((m) => m.tipo === 'idea'); if (!base.length) return []; const n = new Date().getMonth(); return [0, 1, 2, 3].map((k) => base[(n * 2 + k * 3) % base.length]).filter((m, i, v) => v.indexOf(m) === i); }
   // F904b: si hay sesión y la persona que administra ya activó las opciones del mes en Supabase, la encuesta es REAL (1 persona = 1 voto, cuenta personas, nunca iglesias). Si no, queda la versión de ejemplo del teléfono.
   async function votoReal() {
     try { const sb = A().sb; if (!sb || !sb.rpc) return null; const r = await sb.rpc('movimiento_resultados', {}); if (r.error || !Array.isArray(r.data) || !r.data.length) return null; return r.data; } catch (e) { return null; }
@@ -225,8 +184,9 @@
       aplicarAnchos(caja); return;
     }
     const e = est2(), mes = mesClave(), voto = e.votos[mes], ops = opcionesDelMes();
+    if (!ops.length) { caja.innerHTML = ''; return; }
     caja.innerHTML = `<div class="card tbj-voto"><p class="tbj-vq"><b>¿Qué haremos juntos este mes?</b><small>Elige la idea que más te gustaría que tu iglesia impulsara. Es tu voto personal.</small></p>
-      ${ops.map((m) => `<button type="button" class="tbj-op${voto === m.id ? ' on' : ''}" data-v="${m.id}" ${voto ? 'disabled' : ''}><span class="tbj-op-ic" aria-hidden="true">${m.ic}</span><span class="tbj-op-tx"><b>${esc(m.t)}</b><small>${esc(m.lema)}</small></span></button>`).join('')}
+      ${ops.map((m) => `<button type="button" class="tbj-op${voto === m.id ? ' on' : ''}" data-v="${m.id}" ${voto ? 'disabled' : ''}><span class="tbj-op-ic" aria-hidden="true">${esc(m.icono)}</span><span class="tbj-op-tx"><b>${esc(m.titulo)}</b><small>${esc(corto(m.que_es, 110))}</small></span></button>`).join('')}
       <p class="suave tbj-vnota">${voto ? 'Gracias por votar. Vuelve el próximo mes: habrá nuevas ideas. Los resultados se verán cuando la votación esté activa en tu iglesia.' : 'Elige una. Todas hacen bien.'}</p></div>`;
     $$('.tbj-op', caja).forEach((b) => { b.onclick = () => { if (b.disabled) return; snd('juntos', 3); const x = est2(); x.votos[mesClave()] = b.dataset.v; guardar(K_J2, x); pintarVoto(); confeti(caja); }; });
     aplicarAnchos(caja);
@@ -248,80 +208,170 @@
     const e = est();
     const aportes = Object.keys(e.unidos).reduce((s, k) => s + (e.unidos[k].n || 0), 0) + e.mios.reduce((s, m) => s + (m.n || 0), 0);
     const sumados = Object.keys(e.unidos).length + e.mios.length;
-    pant.innerHTML = `<button type="button" class="volver" id="tbjVolver">‹ Vida</button>
+    pant.innerHTML = `<button type="button" class="volver" id="tbjVolver">‹ Inicio</button>
       <section class="tbj-hero"><span class="tbj-h-a" aria-hidden="true"></span><span class="tbj-h-b" aria-hidden="true"></span>
         <p class="tbj-sello">Movimientos de Tierra Buena</p><h1>Juntos hacemos el bien</h1>
         <p class="tbj-lema">Aquí la Palabra se vuelve acción. Arma un movimiento con tu iglesia, mira cómo crece e invita a tu congregación.</p>
         <div class="tbj-huella"><span><b data-n="${aportes}">${aportes}</b><small>pasos míos</small></span><span><b data-n="${sumados}">${sumados}</b><small>movimientos</small></span></div></section>
-      ${recordHTML()}<h2 class="sep">Mis movimientos</h2><div id="tbjMios"></div>
+      ${recordHTML()}${borradorHTML()}<h2 class="sep">Mis movimientos</h2><div id="tbjMios"></div>
       <div class="tbj-nuevo"><button type="button" class="btn" id="tbjNuevo">＋ Armar un movimiento con mi iglesia</button></div>
-      <h2 class="sep">Ideas para tu iglesia <small class="tbj-ejtag">toca una para armarla</small></h2><div id="tbjLista" class="tbj-lista"></div>
+      <h2 class="sep">Ideas y proyectos listos <small class="tbj-ejtag">toca uno para ver el plan</small></h2><div id="tbjLista" class="tbj-lista"><p class="suave">Cargando…</p></div>
       <h2 class="sep">La receta de un movimiento</h2>
       <ol class="tbj-receta">${RECETA.map((r, i) => `<li><span class="tbj-n" aria-hidden="true">${r[0]}</span><span><b>${i + 1}. ${r[1]}</b><small>${r[2]}</small></span></li>`).join('')}</ol>
       <div class="card tbj-reglas"><div class="t"><span aria-hidden="true">🛡️</span>Reglas del bien</div><ul>${REGLAS.map((r) => `<li>${esc(r)}</li>`).join('')}</ul></div>`;
-    $('#tbjVolver').onclick = () => { snd('vuelve'); if (ap.ir) ap.ir('vida'); };
-    pintarMios(); pintarLista(); pintarVoto(); pintarMuro(); aplicarAnchos(pant);
-    $('#tbjNuevo').onclick = () => { snd('abre'); formulario(); };
+    $('#tbjVolver').onclick = () => { snd('vuelve'); if (ap.ir) ap.ir('inicio'); };
+    pintarMios(); pintarMuro(); aplicarAnchos(pant);
+    catalogo().then(() => pintarLista()).catch(() => { const c = $('#tbjLista'); if (c) c.innerHTML = '<p class="suave">No pudimos abrir las ideas. Revisa tu internet: lo que ya abriste antes se ve sin conexión.</p>'; }).then(() => pintarVoto());
+    $('#tbjNuevo').onclick = () => { snd('abre'); empezar(null); };
+    const rb = $('#tbjRetomar'); if (rb) rb.onclick = () => { snd('abre'); const b = leer(K_BOR, null); planForm(b && b.id, b); };
+    const db = $('#tbjDescartar'); if (db) db.onclick = () => { if (!confirm('¿Descartar este plan sin terminar?')) return; guardar(K_BOR, null); abrir(); };
     try { window.scrollTo(0, 0); } catch (x) { /* nada */ }
   }
 
   function pintarLista() {
-    const cont = $('#tbjLista'); if (!cont) return;
-    const ver = MOV.filter((m) => !filtroCat || m.cat === filtroCat);
-    cont.innerHTML = `<div class="tbj-chips" role="group" aria-label="Filtrar ideas">${['Todas'].concat(CATS).map((c) => { const on = (c === 'Todas' && !filtroCat) || c === filtroCat; return `<button type="button" class="tbj-chip${on ? ' on' : ''}" data-c="${c === 'Todas' ? '' : esc(c)}" aria-pressed="${on}">${esc(c)}</button>`; }).join('')}</div>` + ver.map((m) => `<article class="tbj-mov" data-id="${m.id}"><div class="tbj-mov-cab"><span class="tbj-mov-ic" aria-hidden="true">${m.ic}</span><div><b>${esc(m.t)}</b><small>${esc(AMBITOS[m.ambito])} · ${esc(m.cat)}</small></div></div>
-        <p class="tbj-mov-lema">${esc(m.lema)}</p>
-        <details class="tbj-pasos"><summary>Cómo se puede hacer</summary><ul>${m.pasos.map((p) => `<li>${esc(p)}</li>`).join('')}</ul><p class="tbj-ej"><b>Ejemplo:</b> ${esc(m.ej)}</p></details>
-        <div class="tbj-acc"><button type="button" class="btn tbj-armar" data-id="${m.id}">Armarlo en mi iglesia</button></div></article>`).join('');
+    const cont = $('#tbjLista'); if (!cont || !CAT) return;
+    const fav = favs();
+    const chips = [['', 'Todas'], ['fav', '⭐ Mis ideas']].concat(CAT.categorias.map((c) => [c.id, c.icono + ' ' + c.label]));
+    const ver = MOV.filter((m) => !filtroCat || (filtroCat === 'fav' ? fav.includes(m.id) : m.cat === filtroCat));
+    cont.innerHTML = `<div class="tbj-chips" role="group" aria-label="Filtrar por tema">${chips.map((c) => { const on = c[0] === filtroCat; return `<button type="button" class="tbj-chip${on ? ' on' : ''}" data-c="${esc(c[0])}" aria-pressed="${on}">${esc(c[1])}</button>`; }).join('')}</div>` +
+      (ver.length ? ver.map((m) => `<article class="tbj-mov" data-id="${esc(m.id)}"><div class="tbj-mov-cab"><span class="tbj-mov-ic" aria-hidden="true">${esc(m.icono)}</span><div><b>${esc(m.titulo)}</b><small>${m.tipo === 'paquete' ? 'Proyecto listo' : 'Idea'} · ${esc(catDe(m).label)}${fav.includes(m.id) ? ' · ⭐' : ''}</small></div></div>
+        <p class="tbj-mov-lema">${esc(corto(m.que_es, 150))}</p>
+        <p class="suave m0t">${m.tipo === 'paquete' ? esc((m.lugar_texto || '') + ' · ' + (m.presupuesto_texto || '')) : esc((m.personas || '') + ' · ' + (m.costo || ''))}</p>
+        <div class="tbj-acc"><button type="button" class="btn tbj-ver" data-id="${esc(m.id)}">Ver y usar este plan</button></div></article>`).join('') : '<p class="suave sep">Todavía no marcaste ninguna idea con ⭐.</p>');
     $$('.tbj-chip', cont).forEach((b) => { b.onclick = () => { filtroCat = b.dataset.c; snd('suave'); pintarLista(); }; });
-    $$('.tbj-armar', cont).forEach((b) => { b.onclick = () => { const m = MOV.find((z) => z.id === b.dataset.id); snd('armar'); formulario(m); }; });
+    $$('.tbj-ver', cont).forEach((b) => { b.onclick = () => { snd('abre'); ficha(b.dataset.id); }; });
   }
 
+  // Ficha de una idea o proyecto listo + botón «Usar este plan» (abre «Arma tu movimiento» ya precargado).
+  function ficha(id) {
+    const m = MOV.find((z) => z.id === id); if (!m) return abrir();
+    const base = ideaBase(m), pasos = base.como_empezar || [], paq = m.tipo === 'paquete', pant = $('#pantalla');
+    pant.innerHTML = `<button type="button" class="volver" id="tbjAtras">‹ Juntos hacemos el bien</button>
+      <section class="tbj-hero chico"><p class="tbj-sello">${paq ? 'Proyecto listo' : 'Idea'} · ${esc(catDe(m).label)}</p><h1>${esc(m.titulo)}</h1><p class="tbj-lema">${esc(m.que_es)}</p></section>
+      <div class="card">${pasos.length ? `<h3 class="m0t">Cómo empezar</h3><ol class="formas">${pasos.map((x) => `<li>${esc(x)}</li>`).join('')}</ol>` : ''}
+        <p class="suave${pasos.length ? '' : ' m0t'}">${paq ? `<b>📍 Dónde:</b> ${esc(m.lugar_texto)} · <b>💰 Dinero:</b> ${esc(m.presupuesto_texto)}${Number(m.personas_sugeridas) ? ` · <b>👥 Personas sugeridas:</b> ${Number(m.personas_sugeridas)}` : ''}` : `<b>👥 Personas:</b> ${esc(m.personas)} · <b>💰 Costo:</b> ${esc(m.costo)}`}</p>
+        ${m.versiculo ? `<p class="suave m0">${esc(m.versiculo)}</p>` : ''}</div>
+      <button type="button" class="btn" id="tbjUsar">Usar este plan</button><button type="button" class="btn sec" id="tbjFav"></button>`;
+    const pintarFav = () => { $('#tbjFav').textContent = favs().includes(m.id) ? '⭐ Quitar de mis ideas' : '☆ Me interesa'; };
+    $('#tbjAtras').onclick = () => { snd('vuelve'); abrir(); };
+    $('#tbjUsar').onclick = () => { snd('armar'); empezar(m); };
+    $('#tbjFav').onclick = () => { const l = favs().filter((x) => x !== m.id); if (!favs().includes(m.id)) l.push(m.id); guardar(K_FAV, l); snd('toque'); pintarFav(); };
+    pintarFav();
+    try { window.scrollTo(0, 0); } catch (x) { /* nada */ }
+  }
+
+  const numerica = (m) => typeof m.meta === 'number' && m.meta >= 1;   // movimientos antiguos con meta en número; los nuevos traen la meta en palabras
   function pintarMios() {
     const e = est(), cont = $('#tbjMios'); if (!cont) return;
     if (!e.mios.length) { cont.innerHTML = '<div class="card tbj-vacio"><p class="m0">🌱</p><p class="suave m0t">Aún no has iniciado ninguno. Cuando inicies uno, aquí verás su avance y podrás invitar a otros.</p></div>'; return; }
     cont.innerHTML = e.mios.map((m) => `<article class="tbj-mov mio${m.ok ? ' cumplido' : ''}" data-id="${m.id}"><div class="tbj-mov-cab"><span class="tbj-mov-ic" aria-hidden="true">${m.ok ? '🏆' : '🌱'}</span><div><b>${esc(m.t)}</b><small>${esc(AMBITOS[m.ambito] || '')}${m.ok ? ' · ¡Cumplido!' : ''}</small></div></div>
-      <p class="tbj-mov-lema">${esc(m.que)}</p>${barra(m.n || 0, m.meta)}<p class="tbj-mov-num"><b>${m.n || 0}</b> de ${m.meta} ${esc(m.unidad)}</p>
+      <p class="tbj-mov-lema">${esc(m.que)}</p>${numerica(m) ? `${barra(m.n || 0, m.meta)}<p class="tbj-mov-num"><b>${m.n || 0}</b> de ${m.meta} ${esc(m.unidad)}</p>` : (m.plan && m.plan.meta ? `<p class="tbj-primer"><b>Meta:</b> ${esc(m.plan.meta)}</p>` : '')}${m.plan && m.plan.para_quien ? `<p class="tbj-primer"><b>Para:</b> ${esc(m.plan.para_quien)}</p>` : ''}
       <p class="tbj-primer"><b>Primer paso:</b> ${esc(m.paso)}</p>${m.fecha ? `<p class="tbj-primer"><b>Cuándo:</b> ${esc(cuandoTxt(m))}${m.lugar ? ` · <b>Dónde:</b> ${esc(m.lugar)}` : ''}</p>` : ''}${m.lider2 ? `<p class="tbj-primer"><b>Líderes:</b> ${esc(m.lider || 'Yo')} y ${esc(m.lider2)}${m.lider3 ? ', ' + esc(m.lider3) : ''}</p>` : ''}
-      <div class="tbj-acc">${m.ok ? '' : `<button type="button" class="btn tbj-mas" data-id="${m.id}">+1 hecho</button>`}<button type="button" class="btn sec tbj-inv2" data-id="${m.id}">Invitar</button><button type="button" class="btn sec tbj-bor" data-id="${m.id}" aria-label="Borrar este movimiento">🗑</button></div></article>`).join('');
+      <div class="tbj-acc">${m.ok || !numerica(m) ? '' : `<button type="button" class="btn tbj-mas" data-id="${m.id}">+1 hecho</button>`}<button type="button" class="btn sec tbj-inv2" data-id="${m.id}">Invitar</button><button type="button" class="btn sec tbj-bor" data-id="${m.id}" aria-label="Borrar este movimiento">🗑</button></div></article>`).join('');
     $$('.tbj-mas', cont).forEach((b) => { b.onclick = () => { const x = est(), m = x.mios.find((z) => z.id === b.dataset.id); if (!m) return; m.n = (m.n || 0) + 1; x.total += 1; const cumplido = !m.ok && m.n >= m.meta; if (cumplido) m.ok = true; salvar(x); snd(cumplido ? 'logro' : 'semilla'); confeti(b.parentNode); setTimeout(abrir, calma() ? 0 : 500); }; });
-    $$('.tbj-inv2', cont).forEach((b) => { b.onclick = () => { const m = est().mios.find((z) => z.id === b.dataset.id); if (m) { snd('suave'); compartir(invitacion(m.t, m.que, m.meta, m.unidad, m.fecha ? 'Cuándo: ' + cuandoTxt(m) + (m.lugar ? ' · Dónde: ' + m.lugar : '') : '')); } }; });
+    $$('.tbj-inv2', cont).forEach((b) => { b.onclick = () => { const m = est().mios.find((z) => z.id === b.dataset.id); if (m) { snd('suave'); compartir(invitacion(m.t, m.que, numerica(m) ? m.meta : (m.plan && m.plan.meta) || '', numerica(m) ? m.unidad : '', m.fecha ? 'Cuándo: ' + cuandoTxt(m) + (m.lugar ? ' · Dónde: ' + m.lugar : '') : '')); } }; });
     $$('.tbj-bor', cont).forEach((b) => { b.onclick = () => { if (!confirm('¿Borrar este movimiento de tu teléfono?')) return; const x = est(); x.mios = x.mios.filter((z) => z.id !== b.dataset.id); salvar(x); abrir(); }; });
   }
 
-  function formulario(idea) {
-    idea = idea || {};
-    const pant = $('#pantalla'), ap = A();
-    pant.innerHTML = `<button type="button" class="volver" id="tbjAtras">‹ Juntos hacemos el bien</button>
-      <section class="tbj-hero chico"><h1>Arma tu movimiento</h1><p class="tbj-lema">Unas preguntas cortas. Después invitas a tu congregación con un mensaje listo.</p></section>
-      <label for="tbjT">1. ¿Cómo se llama? (corto y que inspire)</label><input id="tbjT" type="text" maxlength="60" value="${esc(idea.t || '')}" placeholder="Ej. Una olla para la congregación" autocomplete="off">
-      <label for="tbjQ">2. ¿Qué problema real quieres mejorar?</label><textarea id="tbjQ" rows="2" maxlength="140" placeholder="Ej. Hay familias de la iglesia que no alcanzan a comer a fin de mes.">${esc(idea.lema || '')}</textarea>
-      <label for="tbjA">3. ¿Quiénes pueden sumarse primero?</label><select id="tbjA">${Object.keys(AMBITOS).map((k) => `<option value="${k}"${k === (idea.ambito || 'iglesia') ? ' selected' : ''}>${AMBITOS[k]}</option>`).join('')}</select>
-      <label for="tbjM">4. ¿Cuánto quieres lograr? (un número y qué mide)</label><div class="tbj-fila"><input id="tbjM" type="number" inputmode="numeric" min="1" max="100000" placeholder="50"><input id="tbjU" type="text" maxlength="30" value="${esc(idea.unidad || '')}" placeholder="platos, abrigos, horas…" autocomplete="off"></div>
-      <label for="tbjP">5. ¿Cuál es el primer paso que darás en 72 horas?</label><textarea id="tbjP" rows="2" maxlength="140" placeholder="Ej. Preguntar a 3 familias si quieren aportar una verdura.">${esc((idea.pasos && idea.pasos[0]) || '')}</textarea>
-      <label for="tbjF">6. ¿Cuándo es? (se recomienda 1 mes, para que todos se organicen y puedan asistir)</label><input id="tbjF" type="date" min="${hoyISO(1)}" value="${hoyISO(30)}"><p class="suave tbj-vnota" id="tbjFn" aria-live="polite">Se sugiere 1 mes de anticipación. Puedes elegir otra fecha si lo necesitas.</p>
-      <label for="tbjL">7. ¿Dónde? (un lugar abierto o la propia iglesia)</label><input id="tbjL" type="text" maxlength="80" placeholder="Ej. Sala de la iglesia" autocomplete="off">
-      <label for="tbjL1">8. ¿Quién lidera, y quién lo reemplaza si falta?</label><div class="tbj-fila"><input id="tbjL1" type="text" maxlength="40" placeholder="Líder" autocomplete="off"><input id="tbjL2" type="text" maxlength="40" placeholder="2.º líder (obligatorio)" autocomplete="off"></div><input id="tbjL3" type="text" maxlength="40" placeholder="3.er líder (opcional)" autocomplete="off">
-      <div class="card tbj-reglas"><div class="t"><span aria-hidden="true">🛡️</span>Me comprometo a</div><ul class="tbj-comp"><li><label><input type="checkbox" class="tbjC"> Cuidar la dignidad de quien reciba ayuda: sin nombres, rostros ni datos publicados.</label></li><li><label><input type="checkbox" class="tbjC"> Respetar a mi congregación y a mi pastor; lo que surja se conversa dentro de la iglesia.</label></li><li><label><input type="checkbox" class="tbjC"> No manejar dinero por la app y tener los permisos al día si el lugar los pide.</label></li></ul></div>
-      <p id="tbjErr" class="error" role="alert" hidden></p><button type="button" class="btn" id="tbjCrear">Crear mi movimiento</button>`;
-    $('#tbjAtras').onclick = () => { snd('vuelve'); abrir(); };
-    $('#tbjF').oninput = () => { const v = $('#tbjF').value, n = $('#tbjFn'); n.textContent = v && v < hoyISO(30) ? 'Es menos de 1 mes. Es posible que algunas personas no alcancen a organizarse; avisa con tiempo.' : 'Se sugiere 1 mes de anticipación. Puedes elegir otra fecha si lo necesitas.'; };
-    $('#tbjCrear').onclick = () => {
-      const t = $('#tbjT').value.trim().replace(/\s+/g, ' '), que = $('#tbjQ').value.trim(), meta = Math.floor(Number($('#tbjM').value)), unidad = $('#tbjU').value.trim() || 'pasos', paso = $('#tbjP').value.trim();
-      const er = (m) => { const x = $('#tbjErr'); x.textContent = m; x.hidden = false; snd('error'); };
-      if (t.length < 3) return er('Ponle un nombre de al menos 3 letras.');
-      if (que.length < 8) return er('Cuéntanos en una frase qué problema quieres mejorar.');
-      if (!(meta >= 1 && meta <= 100000)) return er('Ponle una meta con número (por ejemplo, 50).');
-      if (paso.length < 5) return er('Escribe el primer paso que darás.');
-      const fecha = $('#tbjF').value, lugar = $('#tbjL').value.trim(), l1 = $('#tbjL1').value.trim(), l2 = $('#tbjL2').value.trim(), l3 = $('#tbjL3').value.trim();
-      if (!fecha || fecha < hoyISO(1)) return er('Elige una fecha a partir de mañana.');
-      if (lugar.length < 3) return er('Escribe dónde será.');
-      if (l2.length < 2) return er('Hace falta un 2.º líder, por si el líder no puede ir.');
-      if ($$('.tbjC').some((c) => !c.checked)) return er('Marca los tres compromisos para continuar.');
-      const x = est(); x.mios.unshift({ id: 'm' + Date.now().toString(36), t: t.slice(0, 60), que: que.slice(0, 140), ambito: $('#tbjA').value, meta, unidad: unidad.slice(0, 30), paso: paso.slice(0, 140), fecha, lugar: lugar.slice(0, 80), lider: l1.slice(0, 40), lider2: l2.slice(0, 40), lider3: l3.slice(0, 40), comp: true, n: 0, creado: new Date().toISOString() });
-      x.mios = x.mios.slice(0, 20); salvar(x); snd('juntos', 5); abrir();
-      setTimeout(() => aviso('¡Listo! Toca «Invitar» para avisar a tu congregación.'), 200);
+  // =====================================================================================================
+  // J2 (F923) · «ARMA TU MOVIMIENTO» = el plan en blanco del catálogo (plantilla), una sección por pantalla.
+  // Los campos, las ayudas, los ejemplos y lo obligatorio salen de datos/juntos_catalogo.json. El avance se guarda solo (borrador en el teléfono).
+  // =====================================================================================================
+  const K_BOR = 'tb_movil_juntos_borrador';
+  let F = null;                                  // { item, secs, vals, paso }
+  const sinNum = (t) => String(t || '').replace(/^\d+\.\s*/, '');
+  const fechaLarga = (iso) => { try { return new Date(iso + 'T12:00:00').toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' }); } catch (e) { return iso; } };
+  const campos = () => F.secs.reduce((a, s) => a.concat(s.campos), []);
+  function valoresIniciales(secs, it) {
+    const v = {}; secs.forEach((s) => s.campos.forEach((c) => { v[c.id] = c.tipo === 'lista' ? [''] : c.tipo === 'casilla' ? false : c.tipo === 'fecha' ? hoyISO(30) : ''; }));
+    if (it) { v.nombre = it.titulo || ''; if (it.lugar_tipo === 'iglesia') v.lugar = it.lugar_texto || ''; const p = (ideaBase(it).como_empezar || []).map((x) => corto(x, 120)); if (p.length) v.pasos = p; }
+    return v;
+  }
+  function empezar(it) {
+    const b = leer(K_BOR, null);
+    if (b && b.vals && !confirm('Tienes un plan sin terminar. ¿Empezar uno nuevo y descartar ese?')) return abrir();
+    planForm(it, null);
+  }
+  async function planForm(it, bor) {
+    try { await catalogo(); } catch (e) { return aviso('No pudimos abrir el plan. Revisa tu internet y vuelve a intentarlo.'); }
+    if (typeof it === 'string') it = MOV.find((z) => z.id === it) || null;
+    const secs = CAT.plantilla.secciones.filter((s) => s.id !== 'cierre');   // «Al terminar» se llena al cerrar el movimiento (J5)
+    F = { item: it || null, secs, vals: valoresIniciales(secs, it), paso: 0 };
+    if (bor && bor.vals) { Object.keys(F.vals).forEach((k) => { const x = bor.vals[k]; if (x == null) return; if (Array.isArray(F.vals[k])) { if (Array.isArray(x) && x.length) F.vals[k] = x.map(String); } else F.vals[k] = typeof F.vals[k] === 'boolean' ? !!x : String(x); }); F.paso = Math.min(Math.max(0, bor.paso | 0), secs.length - 1); }
+    pintarPaso();
+  }
+  const guardarBor = () => { if (F) guardar(K_BOR, { id: F.item ? F.item.id : '', vals: F.vals, paso: F.paso, t: Date.now() }); };
+  function borradorHTML() {
+    const b = leer(K_BOR, null); if (!b || !b.vals) return '';
+    return `<div class="card tbj-borr"><p class="m0"><b>Tienes un plan sin terminar</b><br><small>${esc(b.vals.nombre || 'Sin nombre')} · va en el paso ${(b.paso | 0) + 1}</small></p><div class="tbj-acc"><button type="button" class="btn" id="tbjRetomar">Continuar</button><button type="button" class="btn sec" id="tbjDescartar">Descartar</button></div></div>`;
+  }
+  function fechaNota(v) { return v && v < hoyISO(30) ? 'Es menos de 1 mes: es posible que algunas personas no alcancen a organizarse. Puedes continuar.' : 'Con 1 mes de anticipación todas las personas pueden organizarse y asistir.'; }
+  function campoHTML(c) {
+    const id = 'tbjf-' + c.id, v = F.vals[c.id], op = c.obligatorio ? '' : ' <small class="tbj-op-tag">· opcional</small>';
+    const ay = c.ayuda ? `<p class="suave tbj-vnota" id="${id}-a">${esc(c.ayuda)}</p>` : '', desc = c.ayuda ? ` aria-describedby="${id}-a"` : '', ph = c.ejemplo ? ` placeholder="Ej. ${esc(c.ejemplo)}"` : '';
+    if (c.tipo === 'casilla') return `<li><label><input type="checkbox" class="tbjC" id="${id}"${v ? ' checked' : ''}> <span>${esc(c.etiqueta)}${op}</span></label></li>`;
+    const lab = `<label for="${id}">${esc(c.etiqueta)}${op}</label>`;
+    if (c.tipo === 'fecha') return `${lab}<input id="${id}" type="date" min="${hoyISO(14)}" value="${esc(v)}"${desc}><p class="suave tbj-vnota" id="tbjFn" aria-live="polite">${esc(fechaNota(v))}</p>${ay}`;
+    if (c.tipo === 'hora') return `${lab}<input id="${id}" type="time" value="${esc(v)}"${desc}>${ay}`;
+    if (c.tipo === 'persona') return `${lab}<input id="${id}" type="text" maxlength="40" value="${esc(v)}" autocomplete="off" enterkeyhint="next"${desc}${ph}>${ay}`;
+    if (c.tipo === 'lista') return `<p class="tbj-vq m0"><b>${esc(c.etiqueta)}</b>${op}</p>${ay}<div id="${id}">${v.map((x, k) => `<div class="tbj-li"><input class="tbjl" type="text" maxlength="120" data-f="${esc(c.id)}" data-i="${k}" value="${esc(x)}" aria-label="${esc(c.etiqueta)}: línea ${k + 1}"${ph}><button type="button" class="btn sec tbjq" data-f="${esc(c.id)}" data-i="${k}" aria-label="Quitar la línea ${k + 1}">✕</button></div>`).join('')}</div><button type="button" class="btn sec chico tbjmas" data-f="${esc(c.id)}">＋ Agregar otra línea</button>`;
+    const largo = (c.max || 0) > 100;
+    return `${lab}${largo ? `<textarea id="${id}" rows="3" maxlength="${c.max}"${desc}${ph}>${esc(v)}</textarea>` : `<input id="${id}" type="text" maxlength="${c.max || 80}" value="${esc(v)}" autocomplete="off"${desc}${ph}>`}${ay}`;
+  }
+  function recoger() {
+    if (!F) return;
+    F.secs[F.paso].campos.forEach((c) => {
+      if (c.tipo === 'lista') { const l = $$('.tbjl').filter((e) => e.dataset.f === c.id); if (l.length) F.vals[c.id] = l.map((e) => String(e.value || '')); }
+      else if (c.tipo === 'casilla') { const e = $('#tbjf-' + c.id); if (e) F.vals[c.id] = !!e.checked; }
+      else { const e = $('#tbjf-' + c.id); if (e) F.vals[c.id] = String(e.value || ''); }
+    });
+  }
+  const limpiar = (a) => (Array.isArray(a) ? a : []).map((x) => String(x).replace(/\s+/g, ' ').trim()).filter(Boolean);
+  function validar(s) {
+    const V = F.vals, falta = (c) => ({ id: c.id, msg: `Falta completar: «${c.etiqueta}».` });
+    for (const c of s.campos) {
+      if (!c.obligatorio) continue;
+      const v = V[c.id];
+      if (c.tipo === 'casilla') { if (!v) return { id: c.id, msg: 'Para continuar, marca este compromiso: «' + c.etiqueta + '»' }; continue; }
+      if (c.tipo === 'lista') { if (!limpiar(v).length) return { id: c.id, msg: `Escribe al menos una línea en «${c.etiqueta}».` }; continue; }
+      if (c.tipo === 'fecha') { if (!v || v < hoyISO(14)) return { id: c.id, msg: 'La fecha de inicio debe ser desde el ' + fechaLarga(hoyISO(14)) + ' (2 semanas desde hoy). Se sugiere 1 mes.' }; continue; }
+      if (String(v || '').trim().length < (c.tipo === 'persona' ? 2 : 3)) return falta(c);
+    }
+    if (s.campos.some((c) => c.id === 'segundo') && String(V.lider || '').trim().toLowerCase() === String(V.segundo || '').trim().toLowerCase() && String(V.segundo || '').trim()) return { id: 'segundo', msg: 'El 2.º líder debe ser otra persona: así el movimiento sigue si falta el líder.' };
+    return null;
+  }
+  function pintarPaso() {
+    const S = F.secs, i = F.paso, s = S[i], pant = $('#pantalla'), ultimo = i === S.length - 1, soloCasillas = s.campos.every((c) => c.tipo === 'casilla');
+    pant.innerHTML = `<button type="button" class="volver" id="tbjAtras">‹ Guardar y salir</button>
+      <section class="tbj-hero chico"><p class="tbj-sello">Paso ${i + 1} de ${S.length}</p><h1>${esc(sinNum(s.titulo))}</h1>${i === 0 && F.item ? `<p class="tbj-lema">Partimos de «${esc(F.item.titulo)}». Puedes cambiar lo que quieras.</p>` : ''}</section>
+      ${barra(i + 1, S.length)}<p class="suave tbj-vnota">Tu avance se guarda solo. Puedes salir y continuar cuando quieras.</p>
+      ${i === 0 && CAT.plantilla.reglas ? `<details class="tbj-pasos"><summary>Reglas de un movimiento</summary><ul>${CAT.plantilla.reglas.map((r) => `<li>${esc(r)}</li>`).join('')}</ul></details>` : ''}
+      ${soloCasillas ? `<div class="card tbj-reglas"><div class="t"><span aria-hidden="true">🛡️</span>Nos comprometemos a</div><ul class="tbj-comp">${s.campos.map(campoHTML).join('')}</ul></div>` : s.campos.map(campoHTML).join('')}
+      <p id="tbjErr" class="error" role="alert" hidden></p>
+      <div class="tbj-acc">${i > 0 ? '<button type="button" class="btn sec" id="tbjPrev">‹ Atrás</button>' : ''}<button type="button" class="btn" id="tbjSig">${ultimo ? 'Crear mi movimiento' : 'Siguiente ›'}</button></div>`;
+    aplicarAnchos(pant);
+    pant.oninput = () => { if (F && $('#tbjSig')) { recoger(); guardarBor(); } };
+    $('#tbjAtras').onclick = () => { recoger(); guardarBor(); snd('vuelve'); F = null; abrir(); setTimeout(() => aviso('Tu avance quedó guardado.'), 200); };
+    const pv = $('#tbjPrev'); if (pv) pv.onclick = () => { recoger(); F.paso = Math.max(0, F.paso - 1); guardarBor(); snd('suave'); pintarPaso(); };
+    const f = $('#tbjf-fecha'); if (f) f.oninput = () => { const n = $('#tbjFn'); if (n) n.textContent = fechaNota(f.value); };
+    $$('.tbjmas').forEach((b) => { b.onclick = () => { recoger(); const a = F.vals[b.dataset.f]; if (a.length < 12) a.push(''); guardarBor(); pintarPaso(); const l = $$('.tbjl').filter((e) => e.dataset.f === b.dataset.f); try { l[l.length - 1].focus(); } catch (x) { /* nada */ } }; });
+    $$('.tbjq').forEach((b) => { b.onclick = () => { recoger(); const a = F.vals[b.dataset.f]; a.splice(Number(b.dataset.i), 1); if (!a.length) a.push(''); guardarBor(); pintarPaso(); }; });
+    $('#tbjSig').onclick = () => {
+      recoger(); const er = validar(s);
+      if (er) { const m = $('#tbjErr'); m.textContent = er.msg; m.hidden = false; snd('error'); try { const e = $('#tbjf-' + er.id) || $$('.tbjl')[0]; if (e && e.focus) e.focus(); } catch (x) { /* nada */ } return; }
+      guardarBor();
+      if (ultimo) return crear();
+      F.paso += 1; guardarBor(); snd('suave'); pintarPaso(); try { window.scrollTo(0, 0); } catch (x) { /* nada */ }
     };
-    try { window.scrollTo(0, 0); $('#tbjT').focus(); } catch (x) { /* nada */ }
+    try { window.scrollTo(0, 0); } catch (x) { /* nada */ }
+  }
+  function crear() {
+    const V = F.vals, t = (k) => String(V[k] || '').replace(/\s+/g, ' ').trim();
+    const plan = { problema: t('problema'), para_quien: t('para_quien'), meta: t('meta'), fecha: V.fecha, hora: t('hora'), lugar: t('lugar'), plan_b: t('plan_b'), lider: t('lider'), segundo: t('segundo'), tercero: t('tercero'), aportes: limpiar(V.aportes), pasos: limpiar(V.pasos), compromisos: { dignidad: !!V.c_dignidad, respeto: !!V.c_respeto, sin_dinero: !!V.c_sin_dinero, permisos: !!V.c_permisos }, origen: F.item ? F.item.id : '' };
+    const x = est();
+    x.mios.unshift({ id: 'm' + Date.now().toString(36), t: t('nombre').slice(0, 60), que: plan.problema.slice(0, 300), ambito: F.item ? ambitoDe(F.item) : 'iglesia', paso: plan.pasos[0] || '', fecha: plan.fecha, hora: plan.hora, lugar: plan.lugar.slice(0, 80), lider: plan.lider.slice(0, 40), lider2: plan.segundo.slice(0, 40), lider3: plan.tercero.slice(0, 40), comp: true, n: 0, plan, creado: new Date().toISOString() });
+    x.mios = x.mios.slice(0, 20); salvar(x); guardar(K_BOR, null); F = null; snd('juntos', 5); abrir();
+    setTimeout(() => aviso('¡Listo! Tu movimiento ya está en «Mis movimientos». Toca «Invitar» para avisar a tu congregación.'), 200);
   }
   // F920 · CALENDARIO Y AVISOS DENTRO DE LA APP. Los movimientos con fecha se ven en la Agenda y el Calendario, y avisan a 30, 14, 7, 3 y 1 día y el mismo día.
   const diasPara = (m) => Math.round((new Date(m.fecha + 'T12:00:00') - new Date(new Date().toDateString() + ' 12:00:00')) / DIA);

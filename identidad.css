@@ -254,3 +254,8 @@ button,.card,.fila,.chip{-webkit-tap-highlight-color:transparent}
 .tbej-btn i{font-style:normal;color:var(--suave);font-size:1.3rem}
 .tbej-cerrar{width:100%;min-height:44px;margin-top:8px;border:0;border-radius:14px;background:none;color:var(--suave);font:700 .88rem/1 inherit;font-family:inherit;cursor:pointer}
 .fila-ico svg{width:22px;height:22px;display:block}
+
+/* J2 (F923): asistente «Arma tu movimiento» */
+.tbj-li{display:flex;gap:8px;margin:6px 0}.tbj-li input{flex:1;min-width:0}.tbj-li .btn{flex:0 0 48px;min-width:48px;padding:0}
+.tbj-op-tag{color:var(--suave);font-weight:400}.tbj-borr{margin:10px 0}.tbj-borr small{color:var(--suave)}
+.tbjmas{margin:4px 0 12px}
