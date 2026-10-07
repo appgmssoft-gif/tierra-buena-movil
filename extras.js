@@ -204,7 +204,7 @@
       if (ancla) ancla.after(car); else pant.insertBefore(car, pant.firstChild);
       let tras = car;
       if (tab === 'perfil') { const s = filaSonido(); tras.after(s); tras = s; }
-      if (tab === 'palabra') fabulaTarjeta().then((t) => { if (t && car.isConnected && !$('.tbfab', pant)) car.after(t); });
+      if (tab === 'palabra') { const pl = $('.tbplan', pant); if (pl && car.isConnected) { pl.classList.add('tbplan-on'); car.after(pl); } }   // F947: el plan de lectura ocupa el lugar de la fábula; la fábula pasó a la lista
       $$('[data-ir=hacer]', pant).forEach((b) => b.classList.add('tb-destacada'));
     } catch (e) { /* sin extras: la app sigue igual */ } finally { poniendo = false; }
   }
