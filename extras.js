@@ -87,7 +87,7 @@
     ],
     vida: [
       { k: 'sol', c: 'c1', t: 'Hoy lo hago', d: 'Un paso pequeño hoy. Intentarlo ya cuenta.', p: [['Elegir una acción sencilla', /Hoy lo hago/], ['Hacerla y marcarla', /Hoy lo hago/], ['Sumar tus días de práctica', /Hoy lo hago/]], b: 'Abrir «Hoy lo hago»' },
-      { k: 'gente', c: 'c3', t: 'Juntos hacemos el bien', d: 'Movimientos para mejorar tu barrio, tu ciudad y tu país.', p: [['Sumarte a un movimiento en marcha', /Juntos hacemos/], ['Iniciar el tuyo en 5 preguntas', /Juntos hacemos/], ['Invitar a tu familia y vecinos', /Juntos hacemos/]], b: 'Entrar a Juntos' },
+      { k: 'gente', c: 'c3', t: 'Juntos hacemos el bien', d: 'Ideas y movimientos para que tu iglesia ayude en acción.', p: [['Elegir una idea para tu iglesia', /Juntos hacemos/], ['Ponerle fecha, lugar y líderes', /Juntos hacemos/], ['Invitar a tu congregación', /Juntos hacemos/]], b: 'Entrar a Juntos' },
       { k: 'corazon', c: 'c4', t: 'Mi oración', d: 'Tu diario de peticiones, solo para ti.', p: [['Escribir tus peticiones', /Mi oraci[óo]n/], ['Ver cuáles ya fueron respondidas', /Mi oraci[óo]n/], ['Mantener todo privado', /Mi oraci[óo]n/]], b: 'Abrir Mi oración' },
       { k: 'nota', c: 'c5', t: 'Música', d: 'Letras para cantar y para leer en el culto.', p: [['Buscar una canción', /M[úu]sica/], ['Leer la letra grande', /M[úu]sica/], ['Cantar en familia', /M[úu]sica/]], b: 'Abrir Música' },
       { k: 'brote', c: 'c2', t: 'Mi crecimiento', d: 'Pequeños pasos de cada semana.', p: [['Elegir un hábito', /Mi crecimiento/], ['Ver cómo crece tu avance', /Mi crecimiento/], ['Celebrar cada logro', /Mi crecimiento/]], b: 'Abrir Mi crecimiento' },
@@ -98,13 +98,13 @@
       { k: 'corazon', c: 'c4', t: 'Pedir oración', d: 'Que otros oren contigo, con la privacidad que elijas.', p: [['Elegir quién puede verlo', /Pedir oraci[óo]n/], ['Ocultar tu nombre si quieres', /Pedir oraci[óo]n/], ['Ver tus peticiones', /Pedir oraci[óo]n/]], b: 'Pedir oración' },
       { k: 'gente', c: 'c3', t: 'Pedir una visita', d: 'Tu pastor puede acompañarte donde estés.', p: [['Elegir el tipo de visita', /Pedir visita/], ['Decir tus horarios', /Pedir visita/], ['Ver la respuesta del pastor', /Pedir visita/]], b: 'Pedir una visita' },
       { k: 'estrella', c: 'c5', t: 'Avisos y agenda', d: 'Entérate de lo que viene.', p: [['Ver las próximas actividades', /Agenda/], ['Leer los avisos de tu pastor', /Avisos/], ['Orar con las peticiones del Muro', /Muro/]], b: 'Ver la agenda' },
-      { k: 'gente', c: 'c1', t: 'Juntos hacemos el bien', d: 'Tu iglesia y tu barrio, moviéndose juntos.', p: [['Ver la acción del mes', /Acci[óo]n del mes/], ['Sumarte a un movimiento', /Juntos hacemos/, 'vida'], ['Iniciar uno con tu iglesia', /Juntos hacemos/, 'vida']], b: 'Entrar a Juntos' }
+      { k: 'gente', c: 'c1', t: 'Juntos hacemos el bien', d: 'Tu iglesia, moviéndose junta.', p: [['Ver la acción del mes', /Acci[óo]n del mes/], ['Elegir una idea para tu iglesia', /Juntos hacemos/, 'vida'], ['Armar uno con tu iglesia', /Juntos hacemos/, 'vida']], b: 'Entrar a Juntos' }
     ],
     pastor: [
       { k: 'escudo', c: 'c1', t: 'Para atender hoy', d: 'Lo que más espera tu respuesta.', p: [['Aceptar o rechazar solicitudes', /Solicitudes/], ['Leer las peticiones de oración', /Oraciones/], ['Responder pedidos de visita', /Visitas/]], b: 'Ver solicitudes' },
       { k: 'casa', c: 'c2', t: 'Tu iglesia', d: 'Personas, grupos y actividades.', p: [['Conocer a tus miembros', /Miembros/], ['Repartir el servicio en ministerios', /Ministerios y l[íi]deres/], ['Cuidar el código y los datos', /Datos y c[óo]digo/]], b: 'Ver miembros' },
       { k: 'estrella', c: 'c5', t: 'Comunicar bien', d: 'Que lo importante llegue y se lea.', p: [['Publicar la agenda del mes', /Agenda/], ['Escribir un aviso para todos o un grupo', /Avisos/], ['Compartir peticiones en el Muro', /Oraciones/]], b: 'Escribir un aviso' },
-      { k: 'gente', c: 'c3', t: 'Juntos hacemos el bien', d: 'Impulsa un movimiento con tu barrio.', p: [['Iniciar un movimiento con tu iglesia', /Juntos hacemos/], ['Invitar a otras iglesias y vecinos', /Juntos hacemos/], ['Medir y celebrar lo logrado', /Juntos hacemos/]], b: 'Entrar a Juntos' }
+      { k: 'gente', c: 'c3', t: 'Juntos hacemos el bien', d: 'Impulsa un movimiento con tu congregación.', p: [['Armar un movimiento con tu iglesia', /Juntos hacemos/], ['Invitar a otras iglesias hermanas', /Juntos hacemos/], ['Medir y celebrar lo logrado', /Juntos hacemos/]], b: 'Entrar a Juntos' }
     ],
     perfil: [
       { k: 'brote', c: 'c2', t: 'Tu camino', d: 'Tu racha, tus logros y tu avance.', p: [['Ver tus días seguidos', '.stats'], ['Desbloquear logros', { h: /Mis logros/ }], ['Seguir creciendo con pasos de acción', /Pasos de acci[óo]n/]], b: 'Ver mis días seguidos' },

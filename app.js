@@ -627,7 +627,7 @@
       <div class="grid">${activa('🙏', 'Pedir oración', 'Cuéntale a tu pastor por qué orar.', 'oracion')}${activa('🤝', 'Pedir visita', 'Pide que tu pastor te visite.', 'visita')}</div>
       <h2 class="sep">Vivir con mi iglesia</h2>
       <div class="grid">${activa('📅', 'Agenda', 'Actividades de tu iglesia y de tus grupos.', 'agenda')}${activa('📣', 'Avisos', 'Mensajes de tu pastor y de los líderes.', 'avisos')}${activa('🕍', 'Mis ministerios', 'Los grupos donde sirves y quién los lidera.', 'ministerios')}${activa('🧱', 'Muro', 'Peticiones que tu pastor compartió, para orar juntos.', 'muro')}${activa('🌟', 'Acción del mes', 'Lo que viviremos juntos este mes.', 'accion')}</div>
-      <h2 class="sep">Aprende a sacarle el jugo</h2>
+      
       <div id="tbEjem" class="tb-ejem-caja"></div>
       <h2 class="sep">Mis cosas</h2>
       <div class="grid">${activa('🕊️', 'Mi oración', 'Tu diario. Solo lo ves tú.', 'mioracion')}${activa('🌱', 'Mi crecimiento', 'Un paso por semana. Solo lo ves tú.', 'crec')}${activa('🔒', 'Mi privacidad', 'Qué ve tu pastor, descargar o borrar tus datos.', 'privacidad')}${activa('❓', 'Ayuda', 'Respuestas cortas a lo que más se pregunta.', 'ayuda')}</div>
@@ -1476,8 +1476,8 @@
     const delMes = todas.filter((x) => x.est !== 'pend' && String(x.fin || '').slice(0, 7) === mes);
     let tipo = (pre && pre.tipo) || 'otros';
     const volverFn = atras || vistaVida;
-    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ ${atras ? 'Volver' : 'Vida'}</button><h1>Hoy lo hago</h1><div class="filete"></div>
-      <p class="suave">Leer es el principio. Aquí damos el paso: algo pequeño, hoy, que mejora tu vida y la de los demás. Intentarlo ya cuenta.</p>
+    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ ${atras ? 'Volver' : 'Vida'}</button><section class="hac-hero"><span class="hac-h-a" aria-hidden="true"></span><span class="hac-h-b" aria-hidden="true"></span><p class="hac-sello">Un paso a la vez</p><h1>Hoy lo hago</h1>
+        <p class="hac-lema">Leer es el principio. Aquí damos el paso: algo pequeño, hoy, que mejora tu vida y la de los demás. Intentarlo ya cuenta.</p></section>
       <div class="stats hac-stats"><div class="stat"><span class="stat-ic">${svg('check', 22)}</span><b>${delMes.length}</b><small>pasos este mes</small></div><div class="stat"><span class="stat-ic">${svg('trofeo', 22)}</span><b>${nHechas()}</b><small>en total</small></div></div>
       <div class="card hac-nueva"><h3 class="m0">${pre && pre.ref ? 'Lo que leí en ' + esc(pre.ref) + ': ¿qué haré?' : '¿Qué vas a hacer hoy?'}</h3>
         <div class="chips hac-tipos" role="group" aria-label="Tipo de acción">${HAC_TIPOS.map((t) => `<button type="button" class="chip${t[0] === tipo ? ' on' : ''}" data-tipo="${t[0]}" aria-pressed="${t[0] === tipo}">${esc(t[1])}</button>`).join('')}</div>
@@ -2161,8 +2161,9 @@
   // Pantalla común (miembro/líder y pastor). modo: { pas, id, volverTxt, volverFn }
   async function vistaAgenda(modo) {
     const { pas, id } = modo;
-    $('#pantalla').innerHTML = `${cabecera('Agenda', modo.volverTxt)}<p class="suave" id="agmsg">Cargando…</p><div id="aglista"></div><div id="agform"></div>`;
+    $('#pantalla').innerHTML = `${cabecera('Agenda', modo.volverTxt)}<p class="suave" id="agmsg">Cargando…</p><div id="agmov"></div><div id="aglista"></div><div id="agform"></div>`;
     volverA(modo.volverTxt, modo.volverFn);
+    try { const mv = window.TBJuntos && window.TBJuntos.listaHTML(); if (mv) $('#agmov').innerHTML = '<h2 class="sep">Movimientos de tu iglesia</h2><div class="lista">' + mv + '</div>'; } catch (e) { /* sin movimientos */ }
     const [rE, rM] = await Promise.all([
       pas ? rpcRaw('agenda_pastor_listar', { p_codigo: pas.codigo, p_secreto: pas.secreto }) : rpcRaw('agenda_miembro_listar', { p_codigo: id.codigo, p_clave: id.clave }),
       pas ? rpcRaw('ministerio_pastor_listar', { p_codigo: pas.codigo, p_secreto: pas.secreto }) : misMinisterios(id).then((r) => ({ ok: r.ok, data: r.lista }))
@@ -2171,6 +2172,7 @@
     if (!rE.ok) { m.textContent = rE.falta ? 'La agenda aún no está lista. Estamos preparándola; vuelve a intentarlo más tarde.' : MOTIVOS['sin-internet']; return; }
     const mins = (rM.ok && Array.isArray(rM.data) ? rM.data : []).filter((x) => pas || x.es_lider);
     const lista = rE.data || [];
+    try { guardar('tb_movil_agenda_cache', lista.map((e) => ({ id: e.id, t: e.titulo, fecha: e.inicio, lugar: e.lugar || '' }))); } catch (e) { /* sin copia */ }   // F921: alimenta calendario y avisos
     m.textContent = lista.length ? 'Lo que viene en tu iglesia.' : 'Todavía no hay actividades.';
     $('#aglista').innerHTML = lista.map((e) => eventoHTML(e, !!pas || e.puede_borrar)).join('');
     if (pas || mins.length) $('#agform').innerHTML = formAgenda(mins, !!pas);
@@ -2380,9 +2382,9 @@
     const p = pastorLeer(); if (!p) return vistaPastorEntrar();
     const fil = (cls, ico, tit, sub, ir3, n) => `<button type="button" class="fila" data-pp="${ir3}"><span class="fila-ico ${cls}" aria-hidden="true">${ico}</span><span class="fila-txt">${tit}<small>${sub}</small></span><span class="insignia" id="n-${ir3}" hidden></span><span class="flecha" aria-hidden="true">›</span></button>`;
     $('#pantalla').innerHTML = `<section class="saludo"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML('P', { g: perfilLeer().g, e: '🛡️' }, false)}<div><p class="suave m0">Modo pastor</p><h1 id="pIgl">Mi iglesia</h1><p class="suave m0">Código <b>${esc(p.codigo)}</b></p></div></section>
-      <h2 class="sep">Para atender hoy</h2><div class="lista">${fil('t1', '👋', 'Solicitudes', 'Quién quiere unirse', 'sol')}${fil('t2', '🙏', 'Oraciones', 'Peticiones recibidas', 'ora')}${fil('t3', '🤝', 'Visitas', 'Quién pide que lo visites', 'vis')}</div>
-      <h2 class="sep">Mi iglesia</h2><div class="lista">${fil('t4', '👥', 'Miembros', 'Quiénes forman tu iglesia', 'mie')}${fil('t1', '🕍', 'Ministerios y líderes', 'Grupos, personas y líderes', 'min')}${fil('t2', '📅', 'Agenda', 'Actividades y reuniones', 'age')}${fil('t3', '📣', 'Avisos', 'Mensajes para todos o un grupo', 'avi')}${fil('t4', '⚙️', 'Datos y código', 'Nombre, eslogan y código', 'dat')}</div>
-      <h2 class="sep">Aprende a sacarle el jugo</h2><div id="tbEjem" class="tb-ejem-caja"></div>
+      <h2 class="sep">Para atender hoy</h2><div class="lista">${fil('t1', svg('gente', 22), 'Solicitudes', 'Quién quiere unirse', 'sol')}${fil('t2', svg('corazon', 22), 'Oraciones', 'Peticiones recibidas', 'ora')}${fil('t3', svg('compartir', 22), 'Visitas', 'Quién pide que lo visites', 'vis')}</div>
+      <h2 class="sep">Mi iglesia</h2><div class="lista">${fil('t4', svg('gente', 22), 'Miembros', 'Quiénes forman tu iglesia', 'mie')}${fil('t1', svg('iglesia', 22), 'Ministerios y líderes', 'Grupos, personas y líderes', 'min')}${fil('t2', svg('calendario', 22), 'Agenda', 'Actividades y reuniones', 'age')}${fil('t3', svg('altavoz', 22), 'Avisos', 'Mensajes para todos o un grupo', 'avi')}${fil('t4', svg('bloques', 22), 'Datos y código', 'Nombre, eslogan y código', 'dat')}</div>
+      <div id="tbEjem" class="tb-ejem-caja"></div>
       <p class="suave sep16">💻 Las finanzas se administran solo desde el computador.</p>
       <button type="button" class="btn sec sep16" id="pSalir">Salir del modo pastor</button>`;
     try { if (window.TBEjemplos && $('#tbEjem')) window.TBEjemplos.pintar($('#tbEjem'), 'pastor'); } catch (e) { /* sin ejemplos */ }
@@ -2617,7 +2619,7 @@
     const [p, ...resto] = lista;
     $('#pantalla').innerHTML = `${cabecera('Calendario santo', 'Menú')}<p class="suave">Cada fecha trae un paso pequeño para vivirla.</p><p class="cal-trad"><span>${svg('calendario', 18)} ${esc(TRAD_N[tradLeer()] || 'Fechas para todos')}</span><button type="button" class="enlace" id="calCambiar">Cambiar</button></p>
       ${p ? `<div class="card cal-prox"><small>Lo que viene</small><h3>${esc(p[1])}</h3><p class="cal-cuando">${esc(dias(p[0], p[4]))} · ${esc(fmt(p[0]))}</p><p>${esc(p[2])}</p><p class="cal-paso">${svg('chispas', 18)} <b>Tu paso:</b> ${esc(p[3])}</p></div>` : ''}
-      <h2 class="sep">Después</h2><div class="lista">${resto.map((x) => `<div class="fila cal-fila"><span class="fila-ico t2" aria-hidden="true">${svg('calendario', 20)}</span><span class="fila-txt"><b>${esc(x[1])}</b><small>${esc(dias(x[0], x[4]))} · ${esc(fmt(x[0]))}</small></span></div>`).join('')}</div>`;
+      ${(() => { try { const mv = window.TBFechas && window.TBFechas.listaHTML(['juntos', 'agenda']); return mv ? '<h2 class="sep">Lo de tu iglesia</h2><div class="lista">' + mv + '</div>' : ''; } catch (e) { return ''; } })()}<h2 class="sep">Después</h2><div class="lista">${resto.map((x) => `<div class="fila cal-fila"><span class="fila-ico t2" aria-hidden="true">${svg('calendario', 20)}</span><span class="fila-txt"><b>${esc(x[1])}</b><small>${esc(dias(x[0], x[4]))} · ${esc(fmt(x[0]))}</small></span></div>`).join('')}</div>`;
     $('#volver').onclick = menuAbrir; $('#calCambiar').onclick = planRehacer; window.scrollTo(0, 0);
   }
   const menuCerrar = () => { try { const c = $('#cajonMenu'); if (c) c.remove(); } catch (e) { /* nada */ } };
@@ -2629,7 +2631,7 @@
       <div class="cj-cab">${avatarHTML(nombre, p, true)}<div><b>${esc(nombre)}</b><small>${esc(planResumen())}</small></div><button type="button" class="cj-x" id="cjX" aria-label="Cerrar">${svg('x', 20)}</button></div>
       <div class="cj-lista">
         ${yaInstalada() ? '' : it('inst', 'compartir', 'Instalar la app', 'Un toque y queda en tu pantalla')}
-        ${it('jun', 'brote', 'Juntos hacemos el bien', 'Muro, encuesta del mes y movimientos')}
+        ${it('jun', 'brote', 'Juntos hacemos el bien', 'Ideas y movimientos de tu iglesia')}
         ${it('plan', 'brote', 'Planes de trabajo', 'Contesta de nuevo y la app se adapta')}
         ${it('info', 'ayuda', 'Información', 'Qué es y cómo usarla')}
         ${it('cal', 'calendario', 'Calendario santo', 'Fechas para vivir juntos')}
@@ -2673,7 +2675,7 @@
     { ic: 'libro', t: 'Lee y escucha a tu ritmo', a: 'La Biblia en tu teléfono, con la letra que te guste. También puedes escucharla.', c: ['altavoz', 'marcador', 'pluma'] },
     { ic: 'check', t: 'Un paso pequeño cada día', a: 'Elige algo para hacer hoy. Si lo intentas, también cuenta.', c: ['estrella', 'llama', 'trofeo'] },
     { ic: 'iglesia', t: 'Camina con tu iglesia', a: 'Pide oración, recibe avisos y súmate a lo que hace tu comunidad.', c: ['paloma', 'calendario', 'gente'] },
-    { ic: 'gente', t: 'Juntos hacemos el bien', a: 'Cada mes elegimos entre todos una acción para mejorar nuestro entorno. Venga de la iglesia que venga: lo que nos une es ayudar.', c: ['corazon', 'hoja', 'sol'] }
+    { ic: 'gente', t: 'Juntos hacemos el bien', a: 'Tu iglesia pasa de la Palabra a la acción: elige una idea, ponle fecha, lugar y líderes, e invita a tu congregación.', c: ['corazon', 'hoja', 'sol'] }
   ];
   const portMov = () => { try { const h = document.documentElement; return !(h && h.getAttribute && h.getAttribute('data-anim') === 'off') && !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
   function onbSplash() {
@@ -2961,6 +2963,7 @@
     const at = { versiculo: vistaVersiculo, biblia: vistaBiblia, calendario: vistaCalendario };
     if (q && at[q] && !codigoDeEnlace()) setTimeout(() => { try { ir('palabra'); at[q](); } catch (e) { /* nada */ } }, 60);
   } catch (e) { /* sin atajo */ }
-  window.TBApp = { sb: SB, leer, guardar, esc, ir, vibra, svg, volverVida: () => ir('inicio'), guardarAjuste: (c) => { perfilGuardar(c); ajusteAplicar(); } };   // F901: lo usan identidad.js (ejemplos y Juntos)
+  const fechasProx = () => { try { const hoy = new Date(); hoy.setHours(0, 0, 0, 0); const a = hoy.getFullYear(); return fechasSantas(a, tradLeer()).concat(fechasSantas(a + 1, tradLeer())).filter((x) => x[0] >= hoy && x[4] !== 'mes').sort((x, y) => x[0] - y[0]).slice(0, 6).map((x) => ({ id: 's' + x[0].getTime(), t: x[1], fecha: x[0] })); } catch (e) { return []; } };
+  window.TBApp = { fechasProx, sb: SB, leer, guardar, esc, ir, vibra, svg, volverVida: () => ir('inicio'), guardarAjuste: (c) => { perfilGuardar(c); ajusteAplicar(); } };   // F901: lo usan identidad.js (ejemplos y Juntos)
   syncInicio();
 })();

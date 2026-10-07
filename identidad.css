@@ -65,6 +65,11 @@
 .tbj-huella{display:flex;gap:10px;position:relative}
 .tbj-huella span{flex:1;padding:10px 12px;border-radius:16px;background:rgba(255,255,255,.12);box-shadow:inset 0 0 0 1px rgba(255,233,168,.22)}
 .tbj-huella b{display:block;font-size:1.7rem;line-height:1;color:#ffe9a8}.tbj-huella small{opacity:.85}
+.tbj-comp{list-style:none;margin:0;padding:0}.tbj-comp li{margin:6px 0}.tbj-comp label{display:flex;gap:10px;align-items:flex-start;font-size:.92rem;line-height:1.35}.tbj-comp input{margin-top:3px;flex:none;width:auto}
+.tbj-record ul{margin:6px 0 0;padding-left:1.1rem}.tbj-record li{margin:4px 0}
+.il-juntos.tbj-punto{position:relative}.il-juntos.tbj-punto::after{content:'';position:absolute;top:2px;right:2px;width:9px;height:9px;border-radius:50%;background:var(--acento,#d9a441)}
+.tbj-chips{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}.tbj-chips::-webkit-scrollbar{display:none}.tbj-chip{flex:none;border:1px solid var(--borde,rgba(0,0,0,.15));background:transparent;color:inherit;border-radius:999px;padding:6px 12px;font-size:.84rem}.tbj-chip.on{background:var(--acento,#d9a441);color:#1b1b1b;border-color:transparent;font-weight:600}
+.tbj-ej{margin:8px 0 0;font-size:.9rem;opacity:.9}
 .tbj-ejtag{font-weight:600;color:var(--suave);font-size:.74rem;letter-spacing:.04em;text-transform:uppercase;margin-left:6px}
 .tbj-nuevo{margin:10px 0 0}.tbj-nuevo .btn{width:100%}
 .tbj-lista{display:flex;flex-direction:column;gap:12px}
@@ -232,3 +237,20 @@ button,.card,.fila,.chip{-webkit-tap-highlight-color:transparent}
 .tema-c.sel{outline:3px solid var(--tinta);outline-offset:3px;transform:scale(1.1)}
 .tema-c:active{transform:scale(.9)}
 .tema-c.mas{background:color-mix(in srgb,var(--tinta) 10%,transparent);color:var(--suave);font-weight:800;box-shadow:none;display:grid;place-items:center}
+
+/* F915: «Hoy lo hago» con portada propia y tipos de acción como tarjetas grandes */
+.hac-hero{position:relative;overflow:hidden;isolation:isolate;border-radius:26px;padding:22px 20px 20px;margin:4px 0 16px;color:#fff;background:linear-gradient(150deg,color-mix(in srgb,var(--verde) 88%,#000),color-mix(in srgb,var(--oro) 70%,var(--verde)));box-shadow:0 14px 30px -18px color-mix(in srgb,var(--verde) 80%,#000)}
+.hac-hero h1{margin:2px 0 6px;color:#fff}
+.hac-sello{margin:0;font-size:.72rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;opacity:.82}
+.hac-lema{margin:0;line-height:1.45;opacity:.94;max-width:34ch}
+.hac-h-a,.hac-h-b{position:absolute;z-index:-1;border-radius:50%;background:rgba(255,255,255,.12)}
+.hac-h-a{width:150px;height:150px;right:-44px;top:-52px}.hac-h-b{width:90px;height:90px;right:46px;bottom:-46px;background:rgba(255,255,255,.08)}
+.hac-tipos{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.hac-tipos .chip{min-height:48px;justify-content:center;text-align:center;border-radius:16px}
+
+/* F916: botón pequeño de «Ejemplos de uso» (cerrado por defecto) */
+.tbej-btn{width:100%;display:flex;align-items:center;gap:12px;min-height:52px;padding:8px 14px;border:0;border-radius:16px;font:inherit;text-align:left;cursor:pointer;color:var(--tinta);background:color-mix(in srgb,var(--tarjeta) 88%,var(--papel));box-shadow:inset 0 0 0 1px var(--linea)}
+.tbej-btn-ic{font-size:1.2rem}.tbej-btn-tx{flex:1;line-height:1.25}.tbej-btn-tx b{display:block;font-size:.95rem}.tbej-btn-tx small{display:block;color:var(--suave);font-size:.78rem}
+.tbej-btn i{font-style:normal;color:var(--suave);font-size:1.3rem}
+.tbej-cerrar{width:100%;min-height:44px;margin-top:8px;border:0;border-radius:14px;background:none;color:var(--suave);font:700 .88rem/1 inherit;font-family:inherit;cursor:pointer}
+.fila-ico svg{width:22px;height:22px;display:block}

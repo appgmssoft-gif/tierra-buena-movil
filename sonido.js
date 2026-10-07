@@ -1,4 +1,4 @@
-// sonido.js - F902 (melodía de apertura + coro suave en cada nota). F900. Identidad sonora de Tierra Buena. Todo se genera en el teléfono (WebAudio): no hay archivos, no hay derechos de autor, pesa casi nada.
+// sonido.js - F918 (voz propia del área Iglesia). F902 (melodía de apertura + coro suave en cada nota). F900. Identidad sonora de Tierra Buena. Todo se genera en el teléfono (WebAudio): no hay archivos, no hay derechos de autor, pesa casi nada.
 // FIRMA SONORA: tres notas que suben (tierra → brote → cielo): Sol4 · Re5 · Si5, con cola larga y un destello. Es lo primero que se oye y vuelve en los logros.
 // Familia: todos los sonidos usan la misma escala (pentatónica de Sol) y el mismo «timbre cálido» (seno + triángulo suave, ataque redondo, algo de eco), para que suenen a UNA sola app.
 // Regla del usuario: en CADA sesión de trabajo se mejora el sonido (ver compartido/docs/TAREAS.md).
@@ -94,13 +94,24 @@
     })(); },
     calma(i) { ok(function () { const e = [NOTAS.G4, NOTAS.A4, NOTAS.B4, NOTAS.D5, NOTAS.E5, NOTAS.G5][Math.max(0, Math.min(5, Number(i) || 0))]; nota(e, 0, 2.6, 0.075, { eco: 0.95, brillo: 0.22, ataque: 0.03 }); })(); },   // F906: al sembrar una luz en Inicio: escala pentatónica, larga y suave
     respira(entra) { ok(function () { if (entra) { nota(NOTAS.G4, 0, 3.8, 0.06, { eco: 0.8, ataque: 0.9, sinCoro: true }); nota(NOTAS.D5, 0.5, 3.4, 0.045, { eco: 0.8, ataque: 0.9, sinCoro: true }); } else { nota(NOTAS.D5, 0, 5.2, 0.05, { eco: 0.9, ataque: 0.4, sinCoro: true }); nota(NOTAS.G4, 0.6, 5, 0.045, { eco: 0.9, ataque: 0.5, sinCoro: true }); nota(NOTAS.G3, 1.2, 4.4, 0.05, { eco: 0.7, ataque: 0.6, corte: 900, sinCoro: true }); } })(); },   // F906: inhala sube, exhala baja
+    armar: ok(function () {                      // F919: al armar un movimiento con la iglesia: tres notas que suben y se apoyan, como manos que se juntan
+      [[NOTAS.G4, 0], [NOTAS.B4, 0.1], [NOTAS.D5, 0.2]].forEach((n) => nota(n[0], n[1], 0.9, 0.09, { eco: 0.6, ataque: 0.01 })); nota(NOTAS.G5, 0.34, 1.2, 0.07, { eco: 0.85, brillo: 0.2 });
+    }),
+    recordatorio: ok(function (hoy) {            // F920/F921: aviso dentro de la app. Dos notas suaves que bajan; si la fecha es HOY, tres que suben (más presente, siempre cordial)
+      if (hoy === true) { nota(NOTAS.G4, 0, 0.6, 0.07, { eco: 0.6, ataque: 0.02 }); nota(NOTAS.B4, 0.14, 0.6, 0.07, { eco: 0.65, ataque: 0.02 }); nota(NOTAS.D5, 0.28, 1.1, 0.075, { eco: 0.8, ataque: 0.03 }); return; }
+      nota(NOTAS.D5, 0, 0.5, 0.07, { eco: 0.6, ataque: 0.02 }); nota(NOTAS.G4, 0.18, 0.9, 0.065, { eco: 0.7, ataque: 0.03 });
+    }),
+    iglesia: ok(function () {                    // F918: voz propia del área Iglesia: campana lejana + acorde abierto de Sol (reunidos, en paz)
+      nota(NOTAS.G4, 0, 2.2, 0.07, { eco: 0.9, brillo: 0.05, corte: 3200, ataque: 0.02 }); nota(NOTAS.G4 * 2.76, 0, 0.9, 0.012, { eco: 0.9, brillo: 0, corte: 5200, ataque: 0.004 });
+      nota(NOTAS.D5, 0.14, 2.0, 0.07, { eco: 0.85, ataque: 0.05 }); nota(NOTAS.B4, 0.28, 2.0, 0.06, { eco: 0.85, ataque: 0.06 }); nota(NOTAS.G5, 0.42, 1.8, 0.05, { eco: 0.9, brillo: 0.2, ataque: 0.07 });
+    }),
     semilla: ok(function () { nota(NOTAS.D4, 0, 0.22, 0.09, { eco: 0.3, corte: 1100 }); nota(NOTAS.A4, 0.12, 0.35, 0.08, { eco: 0.5 }); nota(NOTAS.E5, 0.24, 0.6, 0.07, { eco: 0.7, brillo: 0.2 }); })   // algo que cae en la tierra y brota
   };
   // F903: ahorro de batería: con la app en segundo plano el audio se duerme del todo y se despierta al volver
   document.addEventListener('visibilitychange', () => { try { if (!ctx) return; if (document.hidden) { if (ctx.state === 'running') ctx.suspend(); } else if (activo() && ctx.state === 'suspended' && API._sono) ctx.resume(); } catch (e) { /* sin audio */ } });
   // F915: SIN SONIDOS DOBLES. Si otro sonido DISTINTO sonó hace menos de 0,3 s, los sonidos «suaves» (toque, abre, vuelve, suave, tab) se callan:
   // suena uno solo, el primero. Los momentos importantes (firma, logro, éxito, aviso, error, campana, juntos, semilla, calma, respira) y las teclas siempre suenan.
-  const FUERTES = ['firma', 'exito', 'logro', 'aviso', 'error', 'campana', 'juntos', 'semilla', 'calma', 'respira', 'suerte', 'tecla'];
+  const FUERTES = ['firma', 'exito', 'logro', 'aviso', 'error', 'campana', 'juntos', 'semilla', 'calma', 'respira', 'suerte', 'tecla', 'iglesia', 'armar', 'recordatorio'];
   let ultNom = '', ultMs = 0;
   Object.keys(API).forEach((k) => {
     const f = API[k]; if (typeof f !== 'function' || k === 'activo' || k === 'poner') return;
@@ -116,6 +127,7 @@
       if (!listo && !ctx) return;
       const t = por(ev && ev.target); if (!t) return;
       const tab = t.closest('.tab');
+      if (tab && tab.getAttribute('data-tab') === 'iglesia') return API.iglesia();   // F918
       if (tab) { const i = Array.prototype.indexOf.call(document.querySelectorAll('.tab'), tab); API.tab(i < 0 ? 0 : i); return; }
       if (t.closest('.volver')) return API.vuelve();
       if (t.closest('summary')) return API.suave();
