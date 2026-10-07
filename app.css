@@ -979,3 +979,9 @@ main h2.sep{margin:30px 2px 12px}.grid{gap:14px}
 .pf-grupo[open]>summary::after{transform:rotate(-135deg)}
 .pf-grupo[open]>summary{border-bottom:1px solid var(--linea)}
 .pf-grupo>:not(summary){margin-left:14px;margin-right:14px}.pf-grupo>:nth-child(2){margin-top:14px}.pf-grupo>:last-child{margin-bottom:16px}
+/* F942 · foto de cada plan */
+.plan-foto{position:relative;width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;margin:0 0 10px;background:linear-gradient(135deg,color-mix(in srgb,var(--verde) 55%,#fff),color-mix(in srgb,var(--oro) 55%,#fff))}
+.plan-foto img{width:100%;height:100%;object-fit:cover;display:block}
+.plan-foto.sin img{display:none}
+.plan-ctx{font-size:1.05rem;line-height:1.5;margin:6px 0 12px}
+.ic-color{stroke:none;fill:none;color:inherit}

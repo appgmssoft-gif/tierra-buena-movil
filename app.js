@@ -183,7 +183,24 @@
   };
   SV.pausa = '<path d="M8 5v14M16 5v14"/>'; SV.audifonos = '<path d="M4 14v-2a8 8 0 0 1 16 0v2"/><path d="M4 14h3v6H5a1 1 0 0 1-1-1zM20 14h-3v6h2a1 1 0 0 0 1-1z"/>'; SV.texto = '<path d="M4 19 9.500 5 15 19M6 14h7M17 12h3M18.500 12v7"/>';
   const EMO = { '📖': 'libro', '✨': 'chispas', '📜': 'rollo', '🌱': 'brote', '🙏': 'corazon', '🕍': 'iglesia', '⛪': 'iglesia', '🔑': 'llave', '✉': 'correo', '🔒': 'candado', '📣': 'altavoz', '📅': 'calendario', '💡': 'foco', '🎓': 'birrete', '🌟': 'estrella', '❓': 'ayuda', '▶': 'play', '📝': 'pluma', '🤝': 'gente', '🧠': 'mente', '🫁': 'viento', '🧱': 'bloques', '🧰': 'llave2', '🕊': 'paloma', '🌿': 'hoja', '🔖': 'marcador', '🗓': 'calendario', '🏆': 'trofeo', '🖼': 'imagen', '🎵': 'nota', '🎶': 'nota', '🎉': 'chispas', '🗑': 'papelera', '✓': 'check' };
-  const svg = (k, tam) => `<svg class="ic" viewBox="0 0 24 24" width="${tam || 24}" height="${tam || 24}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${SV[k] || ''}</svg>`;
+  // F942: pictogramas a color (más fáciles de reconocer para personas mayores). Si una clave no está aquí, sigue el ícono de línea.
+  const PICTO = {
+    libro: '<path d="M2.500 5C6 3.500 9.500 4 12 6.500v14C9.500 18.500 6 18 2.500 19.500z" fill="#2f7d4f"/><path d="M21.500 5C18 3.500 14.500 4 12 6.500v14c2.500-2 6-2.500 9.500-1z" fill="#e9b949"/>',
+    corazon: '<path d="M12 21s-8.500-5.300-8.500-11.500A4.800 4.800 0 0 1 12 6.800a4.800 4.800 0 0 1 8.500 2.700C20.500 15.700 12 21 12 21z" fill="#d9534f"/>',
+    iglesia: '<path d="M3 11.500 12 4.500l9 7z" fill="#8b5a2b"/><rect x="5" y="11" width="14" height="10" fill="#e3c08a"/><rect x="10" y="15" width="4" height="6" rx="1" fill="#6b4423"/><path d="M12 1v4M10.200 2.800h3.600" stroke="#8b5a2b" stroke-width="1.500" stroke-linecap="round"/>',
+    gente: '<circle cx="8" cy="8" r="3.300" fill="#e0a96d"/><path d="M2 21c0-4 2.500-6 6-6s6 2 6 6z" fill="#2f7d4f"/><circle cx="17" cy="9" r="2.800" fill="#f1c58b"/><path d="M13.500 21c0-3.500 1.600-5 3.500-5s5 1.500 5 5z" fill="#e9b949"/>',
+    calendario: '<rect x="3" y="4.500" width="18" height="16.500" rx="2.500" fill="#f6f1e4" stroke="#b9ad92" stroke-width="1"/><path d="M3 7a2.500 2.500 0 0 1 2.500-2.500h13A2.500 2.500 0 0 1 21 7v3H3z" fill="#d9534f"/><g fill="#6b5a3a"><circle cx="8" cy="14" r="1.200"/><circle cx="12" cy="14" r="1.200"/><circle cx="16" cy="14" r="1.200"/><circle cx="8" cy="18" r="1.200"/><circle cx="12" cy="18" r="1.200"/></g>',
+    altavoz: '<path d="M3 10v4h3.500l8 4.500v-13l-8 4.500z" fill="#e9b949"/><path d="M18 9a4 4 0 0 1 0 6M20 6.500a7.500 7.500 0 0 1 0 11" stroke="#d9534f" stroke-width="1.800" fill="none" stroke-linecap="round"/>',
+    brote: '<path d="M12 21v-9" stroke="#7a5230" stroke-width="2" stroke-linecap="round"/><path d="M12 13C12 8 8.500 5.500 4 6c0 4.500 3 7.500 8 7z" fill="#4caf6a"/><path d="M12 11c0-4 3-6.500 8-6.500 0 4.500-3 7-8 6.500z" fill="#2f7d4f"/>',
+    trofeo: '<path d="M7 3h10v6a5 5 0 0 1-10 0z" fill="#e9b949"/><path d="M7 5H4.500a2.500 2.500 0 0 0 2.700 4M17 5h2.500a2.500 2.500 0 0 1-2.700 4" stroke="#c98f1a" stroke-width="1.600" fill="none"/><rect x="10.500" y="14" width="3" height="4" fill="#c98f1a"/><rect x="7.500" y="18" width="9" height="3" rx="1" fill="#8b5a2b"/>',
+    llama: '<path d="M12 2c1 4 6 6.500 6 12a6 6 0 0 1-12 0c0-2.500 1.200-4 2.500-5.500.2 1.800 1 2.800 2 3C10 8.500 11 5 12 2z" fill="#f08a24"/><path d="M12 11c.8 2 3 3 3 5.500a3 3 0 0 1-6 0c0-1.600 1.500-2.800 3-5.500z" fill="#f5c542"/>',
+    nota: '<path d="M9 17V5l11-2v12" stroke="#6a4fb3" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="6.500" cy="17.500" r="3" fill="#6a4fb3"/><circle cx="17.500" cy="15.500" r="3" fill="#6a4fb3"/>',
+    foco: '<path d="M12 2.500a6.500 6.500 0 0 0-3.500 12c.7.6 1 1.300 1 2h5c0-.7.300-1.400 1-2A6.500 6.500 0 0 0 12 2.500z" fill="#f5c542"/><rect x="9.500" y="18" width="5" height="3" rx="1" fill="#8b7d5a"/>',
+    hoja: '<path d="M11 20A7 7 0 0 1 9.800 6.100C15.500 5 17 4.500 19 2c1 2 2 4.200 2 8 0 5.500-4.800 10-10 10z" fill="#4caf6a"/><path d="M3 21c1-4 4-7 9-10" stroke="#2f7d4f" stroke-width="1.600" fill="none" stroke-linecap="round"/>',
+    pluma: '<path d="M16.400 3.600a2.100 2.100 0 0 1 3 3L7.400 18.600l-3.800 1 1-3.800z" fill="#e9b949" stroke="#c98f1a" stroke-width="1"/><path d="M4.500 21h16" stroke="#6b5a3a" stroke-width="1.800" stroke-linecap="round"/>'
+  };
+  PICTO.estrella = '<g fill="#e9b949" stroke="#c98f1a" stroke-width="1">' + SV.estrella + '</g>';
+  const svg = (k, tam) => PICTO[k] ? `<svg class="ic ic-color" viewBox="0 0 24 24" width="${tam || 24}" height="${tam || 24}" aria-hidden="true" focusable="false">${PICTO[k]}</svg>` : (SV[k] ? `<svg class="ic" viewBox="0 0 24 24" width="${tam || 24}" height="${tam || 24}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${SV[k]}</svg>` : '');
   const icono = (e, tam) => { const k = EMO[String(e).replace(/\uFE0F/g, '')]; return k ? svg(k, tam) : e; };
   const activa = (ico, titulo, ayuda, ir) => `<button type="button" class="card" data-ir="${ir}"><div class="t"><span aria-hidden="true">${icono(ico)}</span>${titulo}<span class="flecha" aria-hidden="true">›</span></div><p class="suave m0t">${ayuda}</p></button>`;
 
@@ -643,7 +660,7 @@
       <h2 class="sep">Pedir ayuda</h2>
       <div class="grid">${activa('🙏', 'Pedir oración', 'Cuéntale a tu pastor por qué orar.', 'oracion')}${activa('🤝', 'Pedir visita', 'Pide que tu pastor te visite.', 'visita')}</div>
       <h2 class="sep">Vivir con mi iglesia</h2>
-      <div class="grid">${activa('📅', 'Agenda', 'Actividades de tu iglesia y de tus grupos.', 'agenda')}${activa('📣', 'Avisos', 'Mensajes de tu pastor y de los líderes.', 'avisos')}${activa('🕍', 'Mis ministerios', 'Los grupos donde sirves y quién los lidera.', 'ministerios')}${activa('🧱', 'Muro', 'Peticiones que tu pastor compartió, para orar juntos.', 'muro')}${activa('🌟', 'Acción del mes', 'Lo que viviremos juntos este mes.', 'accion')}</div>
+      <div class="grid">${activa('📅', 'Agenda', 'Actividades de tu iglesia y de tus grupos.', 'agenda')}${activa('📣', 'Avisos', 'Mensajes de tu pastor y de los líderes.', 'avisos')}${activa('🕍', 'Mis ministerios', 'Los grupos donde sirves y quién los lidera.', 'ministerios')}${activa('🧱', 'Muro', 'Peticiones que tu pastor compartió, para orar juntos.', 'muro')}${activa('🌟', 'Acción del mes', 'Lo que viviremos juntos este mes.', 'accion')}${activa('🤲', 'Juntos hacemos el bien', 'Ideas y movimientos para servir con tu iglesia.', 'juntos')}</div>
       
       <div id="tbEjem" class="tb-ejem-caja"></div>
       <h2 class="sep">Mis cosas</h2>
@@ -1141,7 +1158,7 @@
   }
   function vistaPalabra() {
     const ult = leer(K_BIB), inf = ult && libroInfo(ult.cod);
-    let planAct = null; try { for (const pl of PLANES) { const e = planEstado(pl.id); if (e && e.h.length < pl.dias.length) { planAct = { pl, n: e.h.length }; break; } } } catch (e) { planAct = null; }   // F915: plan en curso (si hay)
+    let planAct = null; try { for (const pl of PLANES) { const e = planEstado(pl.id); if (e && e.h.length < PD(pl).length) { planAct = { pl, n: e.h.length }; break; } } } catch (e) { planAct = null; }   // F915: plan en curso (si hay)
     const hora = new Date().getHours(), fase = faseDelDia(hora), saludo = hora < 12 ? 'Buenos días' : hora < 19 ? 'Buenas tardes' : 'Buenas noches';
     const id = leer(K_ID), nom = perfilLeer().n ? perfilLeer().n.split(/\s+/)[0] : (id && id.nombre ? String(id.nombre).trim().split(/\s+/)[0] : ''), racha = rachaActual();
     $('#pantalla').innerHTML = `<div class="hoy fase-${fase}">${escenaHoy(fase)}<p class="hoy-saludo">${esc(saludo)}${nom ? ', ' + esc(nom) : ''}</p>
@@ -1798,43 +1815,55 @@
   const nResaltes = () => Object.values(rg(K_RES)).reduce((t, a) => t + (Array.isArray(a) ? a.length : 0), 0);
   const rango = (cod, a, b) => { const r = []; for (let i = a; i <= b; i++) r.push([cod, i]); return r; };
   const PLANES = [
-    { id: 'calma', n: 'Salmos para la calma', d: '7 días para respirar y confiar', dias: [23, 27, 46, 91, 121, 139, 63].map((c) => [['PSA', c]]) },
-    { id: 'sermon', n: 'El Sermón del Monte', d: '3 días con las palabras de Jesús', dias: rango('MAT', 5, 7).map((x) => [x]) },
-    { id: 'animo', n: 'Cartas de ánimo', d: '9 días: Filipenses y Santiago', dias: rango('PHP', 1, 4).concat(rango('JAS', 1, 5)).map((x) => [x]) },
-    { id: 'juan', n: 'El Evangelio de Juan', d: '21 días conociendo a Jesús', dias: rango('JHN', 1, 21).map((x) => [x]) },
-    { id: 'prov', n: 'Sabiduría de Proverbios', d: '31 días, un capítulo por día', dias: rango('PRO', 1, 31).map((x) => [x]) }
+    { id: 'calma', n: 'Salmos para la calma', d: '7 días para respirar y confiar', ctx: 'Los salmos son oraciones de personas reales que sintieron miedo y encontraron paz.', dias: [23, 27, 46, 91, 121, 139, 63].map((c) => [['PSA', c]]) },
+    { id: 'sermon', n: 'El Sermón del Monte', d: '3 días con las palabras de Jesús', ctx: 'Jesús enseña en una colina cómo vivir: las bienaventuranzas, la oración y la confianza.', dias: rango('MAT', 5, 7).map((x) => [x]) },
+    { id: 'animo', n: 'Cartas de ánimo', d: '9 días: Filipenses y Santiago', ctx: 'Cartas escritas para animar a creyentes en tiempos difíciles.', dias: rango('PHP', 1, 4).concat(rango('JAS', 1, 5)).map((x) => [x]) },
+    { id: 'juan', n: 'El Evangelio de Juan', d: '21 días conociendo a Jesús', ctx: 'Juan cuenta quién es Jesús: la luz, el pan de vida, el buen pastor.', dias: rango('JHN', 1, 21).map((x) => [x]) },
+    { id: 'prov', n: 'Sabiduría de Proverbios', d: '31 días, un capítulo por día', ctx: 'Consejos breves para el trabajo, la familia, las palabras y el dinero.', dias: rango('PRO', 1, 31).map((x) => [x]) },
+    { id: 'marcos', n: 'Marcos: Jesús en acción', d: '16 días, el Evangelio más corto', ctx: 'El relato más rápido de la vida de Jesús: sanidades, milagros y cruz.', dias: rango('MRK', 1, 16).map((x) => [x]) },
+    { id: 'lucas', n: 'Lucas: la compasión de Jesús', d: '24 días con las parábolas', ctx: 'Aquí están el buen samaritano, el hijo pródigo y la oveja perdida.', dias: rango('LUK', 1, 24).map((x) => [x]) },
+    { id: 'hechos', n: 'Hechos: nace la iglesia', d: '28 días, el viaje de los primeros creyentes', ctx: 'Cómo el Espíritu Santo llevó el mensaje de Jesús de Jerusalén al mundo.', dias: rango('ACT', 1, 28).map((x) => [x]) },
+    { id: 'romanos', n: 'Romanos: la gracia', d: '16 días para entender la fe', ctx: 'Pablo explica con orden qué hizo Dios por nosotros y cómo vivir agradecidos.', dias: rango('ROM', 1, 16).map((x) => [x]) },
+    { id: 'genesis', n: 'Génesis: los comienzos', d: '50 días desde la creación hasta José', ctx: 'La creación, Abraham, Isaac, Jacob y José: el origen de la historia de la fe.', dias: rango('GEN', 1, 50).map((x) => [x]) }
   ];
+  // F942: ritmo de lectura (capítulos por día) y foto de cada plan (img/planes/<id>.jpg)
+  const RITMOS = [1, 2, 3, 5];
+  const planDias = (pl, r) => { const n = Number(r) || 1; if (n <= 1) return pl.dias; const f = [].concat.apply([], pl.dias), o = []; for (let i = 0; i < f.length; i += n) o.push(f.slice(i, i + n)); return o; };
+  const PD = (pl) => { const e = rg(K_PLANES)[pl.id]; return planDias(pl, e && e.r); };
+  const planFoto = (pl) => `<div class="plan-foto" aria-hidden="true"><img src="img/planes/${pl.id}.jpg" alt="" loading="lazy" onerror="this.parentNode.classList.add('sin')"></div>`;
   const planEstado = (id) => { const e = rg(K_PLANES)[id]; return e && Array.isArray(e.h) ? e : null; };
-  const planTxt = (pl, i) => pl.dias[i].map((x) => libroInfo(x[0])[1] + ' ' + x[1]).join(' y ');
+  const planTxt = (pl, i) => PD(pl)[i].map((x) => libroInfo(x[0])[1] + ' ' + x[1]).join(' y ');
   function planAuto(cod, cap) {
     try {
       const pls = rg(K_PLANES); let cambio = null;
-      PLANES.forEach((pl) => { const e = pls[pl.id]; if (!e || !Array.isArray(e.h)) return; const i = pl.dias.findIndex((d, j) => e.h.indexOf(j) < 0 && d.some((x) => x[0] === cod && x[1] === cap)); if (i >= 0) { e.h.push(i); cambio = [pl, i, e.h.length === pl.dias.length]; } });
+      PLANES.forEach((pl) => { const e = pls[pl.id]; if (!e || !Array.isArray(e.h)) return; const i = PD(pl).findIndex((d, j) => e.h.indexOf(j) < 0 && d.some((x) => x[0] === cod && x[1] === cap)); if (i >= 0) { e.h.push(i); cambio = [pl, i, e.h.length === pl.dias.length]; } });
       if (cambio) { guardar(K_PLANES, pls); gotaGanar('plan'); toastBib(cambio[2] ? '¡Plan completado: ' + cambio[0].n + '!' : 'Día ' + (cambio[1] + 1) + ' de «' + cambio[0].n + '» listo'); }
     } catch (e) { /* sin planes */ }
   }
   function vistaPlanes() {
     const pls = rg(K_PLANES);
     $('#pantalla').innerHTML = `${cabecera('Planes de lectura', 'Palabra')}<p class="suave">Un poquito cada día. Si lees el capítulo del plan en la Biblia, se marca solo.</p>
-      <div class="grid">${PLANES.map((pl) => { const e = planEstado(pl.id), n = e ? e.h.length : 0, tot = pl.dias.length; return `<button type="button" class="card plan-card" data-plan="${pl.id}"><div class="t"><span aria-hidden="true">${svg('calendario')}</span>${esc(pl.n)}<span class="flecha" aria-hidden="true">›</span></div><p class="suave m0t">${esc(pl.d)}</p>${e ? `<div class="barra-av" role="progressbar" aria-valuemin="0" aria-valuemax="${tot}" aria-valuenow="${n}"><i class="av-${Math.round((n / tot) * 20) * 5}"></i></div><p class="suave m0t">${n === tot ? '¡Completado!' : n + ' de ' + tot + ' días'}</p>` : '<p class="suave m0t">Toca para empezar</p>'}</button>`; }).join('')}</div>`;
+      <div class="grid">${PLANES.map((pl) => { const e = planEstado(pl.id), n = e ? e.h.length : 0, tot = PD(pl).length; return `<button type="button" class="card plan-card" data-plan="${pl.id}">${planFoto(pl)}<div class="t"><span aria-hidden="true">${svg('calendario')}</span>${esc(pl.n)}<span class="flecha" aria-hidden="true">›</span></div><p class="suave m0t">${esc(pl.d)}</p>${e ? `<div class="barra-av" role="progressbar" aria-valuemin="0" aria-valuemax="${tot}" aria-valuenow="${n}"><i class="av-${Math.round((n / tot) * 20) * 5}"></i></div><p class="suave m0t">${n === tot ? '¡Completado!' : n + ' de ' + tot + ' días'}</p>` : '<p class="suave m0t">Toca para empezar</p>'}</button>`; }).join('')}</div>`;
     volverA('Palabra', vistaPalabra);
     document.querySelectorAll('[data-plan]').forEach((b) => b.addEventListener('click', () => vistaPlan(b.dataset.plan)));
   }
+  let ritSel = 1;
   function vistaPlan(id) {
     const pl = PLANES.find((x) => x.id === id); if (!pl) return vistaPlanes();
-    const e = planEstado(id), hechos = new Set(e ? e.h : []), sig = pl.dias.findIndex((d, j) => !hechos.has(j));
-    $('#pantalla').innerHTML = `${cabecera(pl.n, 'Planes')}<p class="suave">${esc(pl.d)}</p>
-      ${!e ? '<button type="button" class="btn" id="plEmpezar">Empezar este plan</button>' : sig < 0 ? '<div class="card plan-fin"><b>¡Terminaste este plan!</b><p class="suave m0t">Qué hermoso constancia. Puedes volver a leerlo cuando quieras.</p></div>' : `<button type="button" class="btn" id="plHoy">Leer hoy: ${esc(planTxt(pl, sig))}</button>`}
-      <div class="lista sep">${pl.dias.map((d, j) => `<div class="plan-dia${hechos.has(j) ? ' hecho' : ''}"><button type="button" class="plan-leer" data-leer="${j}"><span class="plan-n">${hechos.has(j) ? svg('check', 16) : j + 1}</span><span>Día ${j + 1} · ${esc(planTxt(pl, j))}</span></button>${e ? `<button type="button" class="plan-ok" data-ok="${j}" aria-pressed="${hechos.has(j)}" aria-label="${hechos.has(j) ? 'Quitar la marca' : 'Marcar como leído'}">${svg('check', 18)}</button>` : ''}</div>`).join('')}</div>
+    const e = planEstado(id), DIAS = PD(pl), hechos = new Set(e ? e.h : []), sig = DIAS.findIndex((d, j) => !hechos.has(j));
+    $('#pantalla').innerHTML = `${cabecera(pl.n, 'Planes')}${planFoto(pl)}<p class="suave">${esc(pl.d)}</p>${pl.ctx ? '<p class="plan-ctx">' + esc(pl.ctx) + '</p>' : ''}
+      ${!e ? '<p class="suave m0">¿Cuántos capítulos quieres leer por día?</p><div class="chips" role="group" aria-label="Capítulos por día">' + RITMOS.map((x) => `<button type="button" class="chip${x === ritSel ? ' on' : ''}" data-rit="${x}" aria-pressed="${x === ritSel}">${x}</button>`).join('') + '</div><p class="suave">' + planDias(pl, ritSel).length + ' días con ' + ritSel + (ritSel === 1 ? ' capítulo' : ' capítulos') + ' por día</p><button type="button" class="btn" id="plEmpezar">Empezar este plan</button>' : sig < 0 ? '<div class="card plan-fin"><b>¡Terminaste este plan!</b><p class="suave m0t">Qué hermoso constancia. Puedes volver a leerlo cuando quieras.</p></div>' : `<button type="button" class="btn" id="plHoy">Leer hoy: ${esc(planTxt(pl, sig))}</button>`}
+      <div class="lista sep">${DIAS.map((d, j) => `<div class="plan-dia${hechos.has(j) ? ' hecho' : ''}"><button type="button" class="plan-leer" data-leer="${j}"><span class="plan-n">${hechos.has(j) ? svg('check', 16) : j + 1}</span><span>Día ${j + 1} · ${esc(planTxt(pl, j))}</span></button>${e ? `<button type="button" class="plan-ok" data-ok="${j}" aria-pressed="${hechos.has(j)}" aria-label="${hechos.has(j) ? 'Quitar la marca' : 'Marcar como leído'}">${svg('check', 18)}</button>` : ''}</div>`).join('')}</div>
       ${e ? '<button type="button" class="btn sec sep" id="plQuitar">Dejar este plan</button>' : ''}`;
     volverA('Planes', vistaPlanes);
-    const em = $('#plEmpezar'); if (em) em.onclick = () => { const q = rg(K_PLANES); q[id] = { ini: new Date().toISOString(), h: [] }; guardar(K_PLANES, q); confeti(em); vistaPlan(id); };
-    const hh = $('#plHoy'); if (hh) hh.onclick = () => { const d = pl.dias[sig][0]; vistaCapitulo(d[0], d[1]); };
-    document.querySelectorAll('[data-leer]').forEach((b) => b.addEventListener('click', () => { const d = pl.dias[Number(b.dataset.leer)][0]; vistaCapitulo(d[0], d[1]); }));
+    const em = $('#plEmpezar'); if (em) em.onclick = () => { const q = rg(K_PLANES); q[id] = { ini: new Date().toISOString(), h: [], r: ritSel }; guardar(K_PLANES, q); confeti(em); vistaPlan(id); };
+    document.querySelectorAll('[data-rit]').forEach((b) => b.addEventListener('click', () => { ritSel = Number(b.dataset.rit); vibra(); vistaPlan(id); }));
+    const hh = $('#plHoy'); if (hh) hh.onclick = () => { const d = DIAS[sig][0]; vistaCapitulo(d[0], d[1]); };
+    document.querySelectorAll('[data-leer]').forEach((b) => b.addEventListener('click', () => { const d = DIAS[Number(b.dataset.leer)][0]; vistaCapitulo(d[0], d[1]); }));
     document.querySelectorAll('[data-ok]').forEach((b) => b.addEventListener('click', () => {
       const q = rg(K_PLANES), r = q[id]; if (!r) return; const j = Number(b.dataset.ok), k = r.h.indexOf(j);
       if (k >= 0) r.h.splice(k, 1); else r.h.push(j); guardar(K_PLANES, q); vibra(); vistaPlan(id);
-      if (k < 0) { const nb = document.querySelector('[data-ok="' + j + '"]'); confeti(nb); if (r.h.length === pl.dias.length) toastBib('¡Plan completado!'); }
+      if (k < 0) { const nb = document.querySelector('[data-ok="' + j + '"]'); confeti(nb); if (r.h.length === DIAS.length) toastBib('¡Plan completado!'); }
     }));
     const qb = $('#plQuitar'); if (qb) qb.onclick = () => { if (!confirm('¿Dejar este plan? Se borra tu avance en él.')) return; const q = rg(K_PLANES); delete q[id]; guardar(K_PLANES, q); vistaPlanes(); };
   }

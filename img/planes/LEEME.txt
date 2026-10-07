@@ -1,0 +1,11 @@
+Pon aquí una foto realista por plan (JPG, 1280x720, menos de 150 KB cada una). Si falta, la tarjeta muestra un fondo de color.
+calma.jpg   -> lago al amanecer / paz
+sermon.jpg  -> colina con gente sentada escuchando
+animo.jpg   -> manos escribiendo una carta
+juan.jpg    -> luz entrando en la oscuridad / pan
+prov.jpg    -> anciano y joven conversando
+marcos.jpg  -> orilla del mar de Galilea
+lucas.jpg   -> pastor con oveja
+hechos.jpg  -> grupo de personas orando juntas
+romanos.jpg -> manos abiertas recibiendo luz
+genesis.jpg -> amanecer sobre la tierra / estrellas
