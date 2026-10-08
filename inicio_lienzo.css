@@ -378,3 +378,15 @@ html[data-eco="2"] .il-tri-op.pop,html[data-eco="2"] .il-btn-msg.nuevo::after{an
 .og-trivia p{margin:4px 0 0;color:var(--suave)}
 .og-jugar{width:auto;min-width:96px}
 @media (max-width:360px){.og-grid{grid-template-columns:1fr}}
+
+/* F1012 · Vivero a todo el ancho del teléfono: el panel sale de la columna angosta de .il-datos y se centra en la pantalla. Nada se sale del panel. */
+.il-datos > .il-viv{width:calc(100vw - 20px);max-width:560px;position:relative;left:50%;transform:translateX(-50%);margin:16px 0 0;padding:18px 16px 26px;box-sizing:border-box;overflow:hidden}
+.il-viv *,.il-viv *::before,.il-viv *::after{box-sizing:border-box;min-width:0}
+.il-viv button{max-width:100%}
+.og-grid{width:100%}
+.og-h em,.og-trivia em{white-space:nowrap;font-size:.72rem}
+.og-bt,.og-jugar{white-space:normal;overflow-wrap:anywhere}
+.og-h{flex-wrap:nowrap}
+.og-h span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.og-card{width:100%}
+.og-trivia{width:100%}
