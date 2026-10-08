@@ -435,6 +435,16 @@
     }
     return g;
   }
+  // F1015 · Hojas de la copa: aparecen una por una cada día, en posiciones fijas (siempre igual), con tres verdes.
+  function hojasTB(n) {
+    let g = ''; const tonos = ['#5f9a62', '#7cb36f', '#4f8a55'];
+    for (let i = 0; i < n; i++) {
+      const a = i * 2.39996, r = 74 * Math.sqrt((i + 0.5) / 42), x = Math.cos(a) * r * 1.05, y = -150 + Math.sin(a) * r * 0.9;
+      const s = 4 + (i % 4), rot = (i * 47) % 180;
+      g += '<ellipse cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" rx="' + s + '" ry="' + (s * 0.5).toFixed(1) + '" transform="rotate(' + rot + ' ' + x.toFixed(1) + ' ' + y.toFixed(1) + ')" fill="' + tonos[i % 3] + '"/>';
+    }
+    return g;
+  }
   function escena(est) {
     const c = est.ciclo, et = ETAPAS[window.TBInicio ? window.TBInicio.etapa(c.diasCuidado) : 'brote'] ? window.TBInicio.etapa(c.diasCuidado) : 'brote';
     const pais = est.paisaje || [], nPais = window.TBInicio.entornoVisible(pais.length, c.diasCuidado), escAv = window.TBInicio.avanceDiario(c.diasCuidado).escala;
@@ -448,7 +458,7 @@
       + '<g class="cap cap0">' + cielo(cl) + atras(fo) + '</g><g class="cap cap1"><path class="col c1" d="' + COL.c1 + '"/>' + fondo + '</g>'
       + '<g class="cap cap2"><path class="col c2" d="' + COL.c2 + '"/></g>'
       + '<g class="cap cap3"><path class="col c3" d="' + COL.c3 + '"/></g></g>'
-      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g><g class="esp">' + especialesEscena(est, fo) + '</g><g class="cap cap3"><g class="mundo" transform="translate(180 344) scale(' + window.TBInicio.avanceDiario(c.diasCuidado).escala + ')">' + arbol(c.especie, et) + '</g></g>' + '<g class="tb-hierba" aria-hidden="true">' + hierbaTB(0, 360, 392, 90, 17) + '</g><g class="clima">' + climaSvg(cl) + '</g></svg>'
+      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g><g class="esp">' + especialesEscena(est, fo) + '</g><g class="cap cap3"><g class="mundo" transform="translate(180 344) scale(' + window.TBInicio.avanceDiario(c.diasCuidado).escala + ')">' + arbol(c.especie, et) + hojasTB(window.TBInicio.avanceDiario(c.diasCuidado).hojas) + '</g></g>' + '<g class="tb-hierba" aria-hidden="true">' + hierbaTB(0, 360, 392, 90, 17) + '</g><g class="clima">' + climaSvg(cl) + '</g></svg>'
       + '<i class="il-anillo" id="ilAnillo" aria-hidden="true"></i>'
       + '<button type="button" class="il-resp" id="ilResp" aria-label="Respirar con tu árbol. Toca para una pausa de unos 30 segundos"></button>' + mal + gotasHTML(est) + frutosHTML(est) + vivEscena(est) + '</div>';
   }

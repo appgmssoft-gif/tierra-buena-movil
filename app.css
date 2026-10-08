@@ -1003,3 +1003,6 @@ html[data-tam=m]{font-size:125%}
 
 /* F1002 · Progreso de planes de vida: puntos neutrales, sin culpa */
 .pv-avance{margin:10px 0 14px;display:grid;gap:8px}.pv-puntos{display:flex;gap:8px;flex-wrap:wrap}.pv-punto{width:14px;height:14px;border-radius:50%;background:color-mix(in srgb,var(--suave) 25%,transparent);border:1px solid color-mix(in srgb,var(--suave) 35%,transparent)}.pv-punto.on{background:var(--verde);border-color:var(--verde)}
+
+/* F1017 · Ayuda y contactos */
+.ayuda-bloque{display:grid;gap:10px}.ayuda-t{margin:0;font-size:1rem}.ayuda-lista,.ayuda-pasos{margin:0;padding-left:18px;display:grid;gap:10px}.ayuda-num{font-weight:700;color:var(--oro)}

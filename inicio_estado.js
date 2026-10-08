@@ -48,8 +48,11 @@
     const e = etapa(d), idx = Math.max(0, c.etapas.findIndex((s) => s.id === e));
     const ini = c.etapas[idx].desde, fin = idx + 1 < c.etapas.length ? c.etapas[idx + 1].desde : tot + 1;
     const fraccion = Math.min(1, Math.max(0, (d - ini) / (fin - ini)));
-    const escala = 0.78 + 0.22 * (d - 1) / (tot - 1);
-    return { dia: d, total: tot, etapa: e, fraccion: Math.round(fraccion * 100) / 100, escala: Math.round(escala * 1000) / 1000 };
+    // F1015: crecimiento que se nota desde el día 2: sube rápido al comienzo y luego se suaviza. Hojas nuevas cada día en la copa.
+    const avance = Math.sqrt(Math.max(0, d - 1) / Math.max(1, tot - 1));
+    const escala = 0.55 + 0.45 * avance;
+    const hojas = Math.min(42, Math.round(d * 1.4));
+    return { dia: d, total: tot, etapa: e, fraccion: Math.round(fraccion * 100) / 100, escala: Math.round(escala * 1000) / 1000, hojas: hojas };
   }
   // F1006 · Entorno que crece con el árbol: cuántos elementos comprados se ven según el día (todos al día 30).
   function entornoVisible(total, dia) {
