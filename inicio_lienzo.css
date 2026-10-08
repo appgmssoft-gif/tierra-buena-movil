@@ -332,3 +332,7 @@ html[data-eco="2"] .il-tri-op.pop,html[data-eco="2"] .il-btn-msg.nuevo::after{an
 
 /* F1003 · El contador de gotas del Vivero abre «Obtener gotas» */
 .il-viv-saldo-bt{cursor:pointer;min-height:40px;font:inherit}
+
+/* F1008 · Vivero: pasos numerados y hábitat activo con su nombre */
+.viv-paso{margin:14px 0 6px;font-size:.95rem;color:var(--suave);font-weight:600;letter-spacing:.02em}
+.il-viv-grp-act{display:block;font-size:.72rem;color:var(--oro);margin-top:2px}
