@@ -1,6 +1,6 @@
 // sw.js — F856 (MOV2a). Guarda solo la «cáscara» de la app para que abra sin internet.
 // Nunca guarda llamadas a Supabase: lo que viene de la nube siempre se pide en vivo.
-const V = 'tb-movil-f999i';
+const V = 'tb-movil-f999j';
 const CASCARA = ['./', './index.html', './privacidad.html', './privacidad.css', './app.css', './app.js', './extras.css', './extras.js', './vivero_slots.js', './identidad.css', './identidad.js', './fechas.js', './rendimiento.css', './rendimiento.js', './resguardo.js', './inicio_estado.js', './inicio_lienzo.js', './suscripcion.js', './datos/suscripcion.json', './inicio_lienzo.css', './datos/inicio_catalogo.json', './sonido.js', './vendor/supabase.js', './manifest.webmanifest', './accion_mes.json', './datos/fabulas.json', './datos/juego_raices.json', './datos/juego_sopa.json', './datos/canciones_ejemplo.json', './datos/musica_reflexiones.json', './datos/juntos_catalogo.json', './fonts/literata-latin-wght-normal.woff2', './fonts/fraunces-latin-wght-normal.woff2', './fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2', './icon-192.png', './icon-512.png', './icon-maskable-192.png', './icon-maskable-512.png'];
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(V).then((c) => c.addAll(CASCARA)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', (e) => {

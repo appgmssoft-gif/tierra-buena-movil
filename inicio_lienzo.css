@@ -155,7 +155,7 @@ html[data-eco="2"] .il-gota svg{animation:none!important}
 
 /* F932 · I5: Vivero. Botones en fila con aire; panel que sube suave (sin ventana emergente); flores y aves en el paisaje. */
 .il-fila{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin-top:16px;width:100%}.il-fila .il-btn-msg{margin-top:0}
-.il-viv{width:100%;margin-top:16px;padding:22px;border-radius:22px;background:var(--vidrio,transparent);border:1px solid color-mix(in srgb,var(--suave) 22%,transparent);text-align:left}
+.il-viv{width:100%;margin-top:16px;padding:30px 28px 34px;border-radius:22px;background:var(--vidrio,transparent);border:1px solid color-mix(in srgb,var(--suave) 22%,transparent);text-align:left}
 .il-viv[hidden]{display:none}
 .il-viv.entra{animation:il-viv-sube .5s ease-out 1}
 @keyframes il-viv-sube{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
@@ -357,3 +357,24 @@ html[data-eco="2"] .il-tri-op.pop,html[data-eco="2"] .il-btn-msg.nuevo::after{an
 .viv-pill.on{background:color-mix(in srgb,var(--verde) 35%,transparent);color:var(--tinta);border-color:var(--verde)}
 .viv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;overflow:visible}
 .viv-accion{margin-top:12px}
+
+/* F1011 · Más espacio en el Vivero, Ambiental vacío y menú de gotas como la captura */
+.viv-vacio{margin:18px 0;padding:22px;border-radius:16px;text-align:center;color:var(--suave);border:1px dashed color-mix(in srgb,var(--suave) 30%,transparent)}
+.viv-grid{gap:14px}
+.viv-habitats{gap:14px}
+.og-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.og-titulo{text-align:center;margin:18px 0 6px}
+.og-sub{text-align:center;color:var(--suave);margin:0 0 18px}
+.og-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.og-card{display:grid;gap:8px;padding:14px;border-radius:18px;border:1px solid color-mix(in srgb,var(--oro) 45%,transparent);background:color-mix(in srgb,var(--tinta) 6%,transparent)}
+.og-card:first-child{grid-column:1 / -1}
+.og-h{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--oro)}
+.og-h em{font-style:normal;border:1px solid color-mix(in srgb,var(--oro) 45%,transparent);border-radius:999px;padding:2px 8px}
+.og-card p{margin:0;color:var(--suave);font-size:.92rem;line-height:1.45}
+.og-hoy{color:var(--suave)}
+.og-bt{min-height:44px;width:100%}
+.og-trivia{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:16px;padding:14px 16px;border-radius:18px;border:1px solid color-mix(in srgb,var(--oro) 45%,transparent)}
+.og-trivia em{font-style:normal;margin-left:6px;color:var(--oro)}
+.og-trivia p{margin:4px 0 0;color:var(--suave)}
+.og-jugar{width:auto;min-width:96px}
+@media (max-width:360px){.og-grid{grid-template-columns:1fr}}
