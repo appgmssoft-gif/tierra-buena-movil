@@ -135,6 +135,16 @@ html[data-eco="2"] .il-luz,html[data-eco="2"] .il-escena.brilla .arbol{animation
 .il-gota svg{width:24px;height:24px;fill:color-mix(in srgb,#bfe6f6 55%,transparent);filter:drop-shadow(0 0 6px rgba(160,220,245,.8))}
 .il-gota:focus-visible{outline:2px solid var(--oro);border-radius:50%}
 .il-gota.recoge{opacity:0;transform:translateY(-14px) scale(.6);pointer-events:none}
+.s-arbol{left:57%;top:40%}
+.il-fruto{position:absolute;width:44px;height:44px;margin:-44px 0 0 -22px;border:0;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:opacity .4s,transform .4s;-webkit-tap-highlight-color:transparent}
+.il-fruto svg{width:26px;height:26px;filter:drop-shadow(0 0 5px rgba(255,190,90,.8))}
+.il-fruto:focus-visible{outline:2px solid var(--oro);border-radius:50%}
+.il-fruto.recoge{opacity:0;transform:translateY(-14px) scale(.6);pointer-events:none}
+html:not([data-anim=off]) .il-fruto svg{animation:il-gota-brilla 1.6s ease-out 1}
+@media (prefers-reduced-motion:reduce){.il-fruto svg{animation:none!important}.il-fruto{transition:none!important}}
+html[data-eco="2"] .il-fruto svg{animation:none!important}
+.il-viv-cos .il-ic,.il-viv-cos svg{margin:0}.il-viv-esp{display:flex;justify-content:center;align-items:flex-end;min-height:110px;padding:8px 0}
+.il-viv-tile small{display:block;font-size:.72rem;opacity:.75}
 .il-gota-grupo{left:50%;top:97%;width:52px;height:52px;margin:-26px 0 0 -26px}.il-gota-grupo svg{width:34px;height:34px}
 .il-gota-grupo b{position:absolute;font:700 .72rem/1 system-ui,sans-serif;color:#2c5a73;top:56%}
 html:not([data-anim=off]) .il-gota svg{animation:il-gota-brilla 1.6s ease-out 1}

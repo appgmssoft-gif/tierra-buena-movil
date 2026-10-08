@@ -8,7 +8,7 @@
 // No toca el inicio de sesión: solo mira si existe la clave tb_movil_cuenta. Las llaves de sesión de Supabase (sb-*) no se copian.
 'use strict';
 (function () {
-  const BUILD = 'f956';
+  const BUILD = 'f960';
   const K_ACT = 'tb_respaldo', K_PREV = 'tb_respaldo_previo';
   const PROPIA = /^(tb_movil_|tb_inicio_|tb_suscripcion|tb_fabula_)/, NO_COPIAR = /^(tb_respaldo|tb_movil_sync$)/;
   const TOPE = 900000;   // caracteres por copia: si los datos pasan de esto no se copia (el teléfono tiene ~5 MB en total)

@@ -16,7 +16,7 @@
 
   const nuevo = () => ({ v: VERSION, ciclo: { n: 1, especie: null, inicio: null, diasCuidado: 0, ultimoDia: null, ultimaVisita: null, cerrado: false, diaPendiente: false },
     eligiendo: true, paisaje: [], maleza: [], gotas: { saldo: 0, total: 0, pendientes: [], hoy: { fecha: null, lectura: 0, vida: 0 } },
-    vivero: { desbloqueados: [], plantas: [], aves: [] } });
+    vivero: { desbloqueados: [], plantas: [], aves: [] }, cosechas: { total: 0, pend: [], ult: {} } });
 
   function migrar(x) {                                      // dato dañado o de otra versión → se rescata lo que sirve; nunca error en pantalla
     const b = nuevo(); if (!x || typeof x !== 'object') return b;
@@ -31,6 +31,7 @@
         hoy: { fecha: (g.hoy && g.hoy.fecha) || null, lectura: +(g.hoy && g.hoy.lectura) || 0, vida: +(g.hoy && g.hoy.vida) || 0, plan: +(g.hoy && g.hoy.plan) || 0, oracion: +(g.hoy && g.hoy.oracion) || 0 } };
       const w = x.vivero || {}; b.vivero = { desbloqueados: Array.isArray(w.desbloqueados) ? w.desbloqueados.filter((s) => typeof s === 'string') : [],
         plantas: Array.isArray(w.plantas) ? w.plantas.filter((p) => p && p.id && p.casilla) : [], aves: Array.isArray(w.aves) ? w.aves.filter((p) => p && p.id) : [] };
+      const q = x.cosechas || {}; b.cosechas = { total: Math.max(0, Math.floor(+q.total || 0)), pend: Array.isArray(q.pend) ? q.pend.filter((f) => f && f.id && f.casilla).slice(0, 12) : [], ult: q.ult && typeof q.ult === 'object' ? Object.keys(q.ult).slice(-60).reduce((o, k) => { if (typeof q.ult[k] === 'string') o[k] = q.ult[k]; return o; }, {}) : {} };   // F959: frutos
     } catch (e) { return nuevo(); }
     return b;
   }
@@ -85,7 +86,7 @@
       if (e.maleza.length > 0) { cc.diaPendiente = true; r.pausado = true; }   // con maleza el crecimiento queda en pausa hasta sanar
       else { cc.diasCuidado = Math.min(cat().ciclo.dias, cc.diasCuidado + 1); cc.ultimoDia = h; cc.diaPendiente = false; r.diaNuevo = true; if (cc.diasCuidado >= cat().ciclo.dias) cc.cerrado = true; }
     } else if (e.maleza.length > 0) r.pausado = true;
-    r.maleza = e.maleza.length; r.etapa = etapa(cc.diasCuidado); r.etapaCambio = r.etapa !== antes; guardar(e); return r;
+    madurar(e, h); r.maleza = e.maleza.length; r.etapa = etapa(cc.diasCuidado); r.etapaCambio = r.etapa !== antes; guardar(e); return r;
   }
 
   // Sana UNA maleza (toque). Al sanar la última, el día pendiente cuenta y el crecimiento sigue. Devuelve { ok, quedan, diaNuevo }.
@@ -135,6 +136,32 @@
     if (e.vivero.aves.length >= (cat().economia.aves_activas_max || 2)) return { ok: false, motivo: 'maximo' };
     e.vivero.aves.push({ id, desde: hoy() }); guardar(e); return { ok: true };
   }
+  // ---- F959 · Frutos (la segunda moneda, guardada como `cosechas`): árboles y flores dan fruto al madurar; se recogen tocándolos y sirven para llenar «Tu paisaje» (catálogo `especiales`). Las gotas no se tocan. ----
+  // Lo gastado se calcula con los especiales ya desbloqueados («esp_<id>»): así, al juntar teléfono y nube, nunca se gasta dos veces ni se pierde lo ganado.
+  const gastoCosechas = (e) => e.vivero.desbloqueados.reduce((s, k) => { const m = /^esp_(.+)$/.exec(k), it = m && (cat().especiales || {})[m[1]]; return s + (it ? Math.max(0, +it.cosechas || 0) : 0); }, 0);
+  const cosechasDe = (e) => ({ total: e.cosechas.total, saldo: Math.max(0, e.cosechas.total - gastoCosechas(e)), pend: e.cosechas.pend });
+  function cosechas() { return cosechasDe(cargar()); }
+  // Madurez: el árbol da 1 fruto por ciclo al llegar al día `arbol_desde_dia`; cada flor plantada da 1 fruto cada `planta_dias` días (el reloj de cada flor vuelve a empezar al recogerlo).
+  function madurar(e, h) {
+    const K = cat().frutos || { arbol_desde_dia: 22, planta_dias: 7, pendientes_max: 6 }, c = e.cosechas, ci = e.ciclo, max = K.pendientes_max || 6;
+    if (!e.eligiendo && ci.especie && ci.diasCuidado >= (K.arbol_desde_dia || 22) && !c.ult['arbol' + ci.n] && c.pend.length < max) { c.pend.push({ id: idc('f'), casilla: 'arbol', de: 'arbol' }); c.ult['arbol' + ci.n] = h; }
+    e.vivero.plantas.forEach((p) => {
+      const k = 'p_' + p.id + '_' + p.casilla; if (c.pend.length >= max || c.pend.some((f) => f.k === k)) return;
+      const desde = c.ult[k] || p.en; if (isFinite(dnum(desde)) && dif(h, desde) >= (K.planta_dias || 7)) c.pend.push({ id: idc('f'), casilla: p.casilla, de: 'sem_' + p.id, k });
+    });
+  }
+  function recogerFruto(id) {                              // toque en un fruto maduro; vale 1 en la segunda moneda. Devuelve 1 o 0
+    const e = cargar(), i = e.cosechas.pend.findIndex((f) => f.id === id); if (i < 0) return 0;
+    const f = e.cosechas.pend.splice(i, 1)[0]; if (f.k) e.cosechas.ult[f.k] = hoy(); e.cosechas.total++; guardar(e); return 1;
+  }
+  function tieneEspecial(id) { return cargar().vivero.desbloqueados.indexOf('esp_' + id) >= 0; }
+  function comprarEspecial(id) {                           // contenido de «Tu paisaje»: se paga solo con frutos y requiere tener ese paisaje. Devuelve { ok, motivo }
+    const e = cargar(), it = (cat().especiales || {})[id]; if (!it) return { ok: false, motivo: 'no-existe' };
+    if (e.vivero.desbloqueados.indexOf('esp_' + id) >= 0) return { ok: false, motivo: 'ya-tienes' };
+    if (it.lugar && !tiene('lugar', it.lugar)) return { ok: false, motivo: 'falta-lugar' };
+    if (cosechasDe(e).saldo < (+it.cosechas || 0)) return { ok: false, motivo: 'faltan-frutos' };
+    e.vivero.desbloqueados.push('esp_' + id); guardar(e); return { ok: true, motivo: null };
+  }
   // F933 · Mensajes del día: 3 por día que cambian solos con la fecha (no con el botón). 1 = dato real del árbol, 2 = respeto a la naturaleza y al planeta, 3 = crecer como personas y sociedad.
   // Rotan por los días desde que empezó el árbol (`salto` suma días: solo para pruebas). Los datos propios de la especie y los comunes se alternan.
   const mezcla = (a, b) => { const r = [], n = Math.max(a.length, b.length); for (let i = 0; i < n; i++) { if (i < a.length) r.push(a[i]); if (i < b.length) r.push(b[i]); } return r; };
@@ -147,6 +174,6 @@
     const items = [ta ? { clave: 'arbol', titulo: 'Del árbol', texto: ta } : null, tp ? { clave: 'planeta', titulo: 'Para el planeta', texto: tp } : null, v ? { clave: 'vida', titulo: v.tema || 'Para crecer', texto: v.texto } : null].filter(Boolean);
     return { titulo: s.nombre + (s.otro ? ' · ' + s.otro : ''), mensaje: s.mensaje, dato: ta || s.dato, items, dia: d, como: K.como || null, vida: v ? { tema: v.tema, texto: v.texto, n: (d % Lv.length) + 1, de: Lv.length } : null }; }
 
-  const api = { config(o) { if (o && o.catalogo) CAT = o.catalogo; if (o && o.hoy) HOY = o.hoy; if (o && o.almacen) ALM = o.almacen; }, cargar, guardar, estado: cargar, etapa, malezaPara, elegirPrimera, visita, sanar, ganar, recolectar, comprar, tiene, plantar, activarAve, mensajeActual, K };
+  const api = { config(o) { if (o && o.catalogo) CAT = o.catalogo; if (o && o.hoy) HOY = o.hoy; if (o && o.almacen) ALM = o.almacen; }, cargar, guardar, estado: cargar, etapa, malezaPara, elegirPrimera, visita, sanar, ganar, recolectar, comprar, tiene, plantar, activarAve, mensajeActual, cosechas, recogerFruto, tieneEspecial, comprarEspecial, K };
   if (typeof window !== 'undefined') window.TBInicio = api; if (typeof module !== 'undefined') module.exports = api;
 })();

@@ -1,745 +1,883 @@
 {
- "_nota": "F929 · Catálogo del Inicio «Tierra Buena». Solo lectura; cambiar textos no toca el código. Cada árbol tiene `mensaje` (al elegirlo) y `vida`: mensajes (5 a 6) para la vida personal (uno distinto por día de cuidado). Datos VERIFICADOS el 7 oct (CONAF, SAG, Min. Medio Ambiente): araucaria, canelo, alerce. Por verificar: quillay, roble, palma chilena, cerezo, sauce, semillas y aves. Lenguaje: neutro y cordial. Los mensajes son de crecimiento personal y de cuidado de la naturaleza y el planeta (no religiosos). El jacarandá (F930) es la opción más colorida. F933: cada día se desbloquean 3 mensajes: `arbol` (+`arbol_comun`) = dato real; `planeta` (+`planeta_comun`) = respeto a la naturaleza; `vida` (+`vida_comun`) = crecer como personas y sociedad. Rotan solos por fecha. F934: datos VERIFICADOS el 7 oct con fuentes (CONAF/Árboles Nativos de Chile, SAG, Reforestemos, UC, prensa): quillay, roble, palma chilena, sauce chileno, jacarandá, cerezo (exportación), copihue, desierto florido, cóndor y Pando. Sin verificar aún: araucaria (parte), canelo (parte), lavanda, chucao, queltehue, picaflor, golondrina, gorrión y los bancos comunes de árbol/planeta (conocimiento general).",
- "ciclo": {
-  "dias": 30,
-  "etapas": [
-   {
-    "id": "brote",
-    "desde": 1
-   },
-   {
-    "id": "raiz",
-    "desde": 8
-   },
-   {
-    "id": "ramas",
-    "desde": 15
-   },
-   {
-    "id": "frondoso",
-    "desde": 22
-   }
+  "_nota": "F929 · Catálogo del Inicio «Tierra Buena». Solo lectura; cambiar textos no toca el código. Cada árbol tiene `mensaje` (al elegirlo) y `vida`: mensajes (5 a 6) para la vida personal (uno distinto por día de cuidado). Datos VERIFICADOS el 7 oct (CONAF, SAG, Min. Medio Ambiente): araucaria, canelo, alerce. Por verificar: quillay, roble, palma chilena, cerezo, sauce, semillas y aves. Lenguaje: neutro y cordial. Los mensajes son de crecimiento personal y de cuidado de la naturaleza y el planeta (no religiosos). El jacarandá (F930) es la opción más colorida. F933: cada día se desbloquean 3 mensajes: `arbol` (+`arbol_comun`) = dato real; `planeta` (+`planeta_comun`) = respeto a la naturaleza; `vida` (+`vida_comun`) = crecer como personas y sociedad. Rotan solos por fecha. F934: datos VERIFICADOS el 7 oct con fuentes (CONAF/Árboles Nativos de Chile, SAG, Reforestemos, UC, prensa): quillay, roble, palma chilena, sauce chileno, jacarandá, cerezo (exportación), copihue, desierto florido, cóndor y Pando. Sin verificar aún: araucaria (parte), canelo (parte), lavanda, chucao, queltehue, picaflor, golondrina, gorrión y los bancos comunes de árbol/planeta (conocimiento general).",
+  "ciclo": {
+    "dias": 30,
+    "etapas": [
+      {
+        "id": "brote",
+        "desde": 1
+      },
+      {
+        "id": "raiz",
+        "desde": 8
+      },
+      {
+        "id": "ramas",
+        "desde": 15
+      },
+      {
+        "id": "frondoso",
+        "desde": 22
+      }
+    ],
+    "gracia_dias": 1,
+    "maleza_max": 5,
+    "paisaje_guardado": 6
+  },
+  "primera_eleccion": [
+    "araucaria",
+    "canelo",
+    "quillay",
+    "jacaranda"
   ],
-  "gracia_dias": 1,
-  "maleza_max": 5,
-  "paisaje_guardado": 6
- },
- "primera_eleccion": [
-  "araucaria",
-  "canelo",
-  "quillay",
-  "jacaranda"
- ],
- "orden_especies": [
-  "araucaria",
-  "canelo",
-  "quillay",
-  "jacaranda",
-  "roble",
-  "alerce",
-  "palma_chilena",
-  "cerezo",
-  "sauce"
- ],
- "especies": {
-  "araucaria": {
-   "nombre": "Araucaria",
-   "otro": "Pewén",
-   "origen": "nativo de Chile",
-   "mensaje": "La paciencia también construye. Algunas de las más antiguas llevan más de mil años de pie.",
-   "dato": "Es Monumento Natural desde 1976. Puede superar los 1.600 años y llega a la madurez reproductiva entre los 100 y los 300; su piñón fue base de la alimentación pehuenche.",
-   "vida": [
-    {
-     "tema": "Trabajo y metas",
-     "texto": "Hay metas que no se alcanzan en un mes. Se puede avanzar un poco cada día y confiar en que el tiempo también trabaja."
-    },
-    {
-     "tema": "Familia",
-     "texto": "Los vínculos fuertes crecen despacio, como las raíces. Una llamada o una visita pequeña hoy suma más de lo que parece."
-    },
-    {
-     "tema": "Cambios y pérdidas",
-     "texto": "Después de un incendio o de una sequía, la araucaria sigue en pie. Si algo se perdió, se puede empezar de nuevo desde lo que quedó."
-    },
-    {
-     "tema": "Descanso",
-     "texto": "No todo depende de uno cada día. Hoy se puede dejar una tarea para mañana sin que nada se derrumbe."
-    },
-    {
-     "tema": "Paciencia con uno mismo",
-     "texto": "Un cambio personal también tarda. Se sugiere medir el avance por estaciones, no por días."
-    },
-    {
-     "tema": "Cuidar el planeta",
-     "texto": "Un bosque milenario depende de decisiones de hoy. Evitar el fuego y cuidar el entorno cuando se sale de paseo protege lo que tarda siglos en crecer."
-    }
-   ],
-   "arbol": [
-    "Es Monumento Natural desde 1976 y una de las especies más emblemáticas del sur de Chile.",
-    "Algunas superan los 1.600 años: hay ejemplares vivos que ya estaban en pie mucho antes de la llegada de los españoles.",
-    "Su piñón fue base de la alimentación del pueblo pehuenche, cuyo nombre significa «gente del pewén».",
-    "Su familia de árboles ya existía en la era de los dinosaurios; se la considera casi un fósil viviente.",
-    "Hay ejemplares femeninos y masculinos, y solo los femeninos producen piñones.",
-    "Su corteza gruesa funciona como una armadura: ayuda a los ejemplares adultos a resistir el fuego."
-   ],
-   "planeta": [
-    "Sus bosques de cordillera sufren con los incendios. Un fuego pequeño en un paseo puede borrar siglos de crecimiento.",
-    "El piñón alimenta a personas, aves y animales del bosque. Recoger solo lo necesario deja alimento para todos.",
-    "En un bosque nativo, caminar por los senderos protege a las plántulas, que crecen muy despacio."
-   ]
-  },
-  "canelo": {
-   "nombre": "Canelo",
-   "otro": "Foye",
-   "origen": "nativo de Chile",
-   "mensaje": "Una rama de canelo ha sido señal de paz para el pueblo mapuche. Se puede empezar por un gesto de paz.",
-   "dato": "Es el árbol sagrado del pueblo mapuche, asociado al bien, la paz y la justicia. Su corteza, rica en vitamina C, se usó contra el escorbuto.",
-   "vida": [
-    {
-     "tema": "Reconciliación",
-     "texto": "Si hay una relación tensa, se puede comenzar por un gesto de paz: un saludo, un mensaje breve, escuchar sin responder de inmediato."
-    },
-    {
-     "tema": "Familia",
-     "texto": "En casa, la paz suele empezar por uno. Hoy se puede elegir una palabra amable en un momento difícil."
-    },
-    {
-     "tema": "Trabajo",
-     "texto": "Ser justo con los demás también cuenta como esfuerzo. Reconocer el trabajo de un compañero fortalece al equipo."
-    },
-    {
-     "tema": "Salud emocional",
-     "texto": "Cuidarse no es egoísmo. Si el ánimo está bajo, hablar con alguien de confianza puede ayudar."
-    },
-    {
-     "tema": "Perdón",
-     "texto": "Perdonar no obliga a olvidar. Es dejar de cargar con un peso que no ayuda a avanzar."
-    },
-    {
-     "tema": "Agua y naturaleza",
-     "texto": "Este árbol vive donde hay agua limpia. Cuidar un río, una quebrada o incluso el consumo de agua en casa es cuidar su hogar."
-    }
-   ],
-   "arbol": [
-    "Es el árbol sagrado del pueblo mapuche, asociado a la paz, el bien y la justicia.",
-    "Su corteza es rica en vitamina C y se usó para prevenir el escorbuto en largos viajes por mar.",
-    "Sus hojas tienen un aroma picante al frotarlas, y por abajo son más claras que por arriba.",
-    "Sus flores son blancas, perfumadas y se agrupan en pequeños ramilletes.",
-    "Crece desde el centro de Chile hasta el extremo sur, sobre todo en lugares húmedos.",
-    "En ceremonias mapuche su rama se usa como símbolo de paz y de acuerdos."
-   ],
-   "planeta": [
-    "Crece junto a ríos y zonas húmedas: cuidar el agua y las vertientes es cuidar también al bosque.",
-    "Los árboles filtran la lluvia y mantienen firme el suelo. Talar sin necesidad lo debilita.",
-    "Un gesto sencillo: no dejar residuos cerca de ríos, esteros o vertientes."
-   ]
-  },
-  "quillay": {
-   "nombre": "Quillay",
-   "otro": "El árbol del jabón",
-   "origen": "nativo de Chile",
-   "mensaje": "Su corteza limpia y cuida. Hay personas que sirven en silencio y dejan todo mejor.",
-   "dato": "Su nombre viene del mapudungún küllay («jabón»). Es endémico de Chile y resiste la sequía de la zona central.",
-   "vida": [
-    {
-     "tema": "Servicio",
-     "texto": "Servir sin buscar reconocimiento también deja huella. Hoy se puede ayudar en algo que nadie vaya a notar."
-    },
-    {
-     "tema": "Hogar",
-     "texto": "Ordenar un espacio pequeño, como un cajón o una mesa, a veces ordena también el ánimo."
-    },
-    {
-     "tema": "Amistad",
-     "texto": "Hay amistades que limpian el ambiente con solo estar. Se puede agradecer a alguien que haga ese papel."
-    },
-    {
-     "tema": "Trabajo",
-     "texto": "Hacer bien una tarea sencilla tiene valor. La constancia en lo pequeño sostiene lo grande."
-    },
-    {
-     "tema": "Sequía personal",
-     "texto": "En épocas secas, resistir ya es un logro. No hace falta rendir al máximo para seguir creciendo."
-    },
-    {
-     "tema": "Tierra y suelo",
-     "texto": "Un suelo sano alimenta todo lo demás. Compostar restos de comida o regar con medida devuelve algo a la tierra."
-    }
-   ],
-   "arbol": [
-    "Su nombre viene del mapudungún küllay, que significa «jabón»: su corteza hace espuma gracias a la saponina.",
-    "Es endémico de Chile, es decir, no crece de forma natural en ningún otro país. Vive entre Coquimbo y el Biobío, desde la costa hasta los 1.600 metros de altitud.",
-    "Los pueblos originarios ya usaban su corteza como champú y detergente.",
-    "Su corteza se exportó a Europa y Asia con el nombre de «palo de Panamá», porque viajaba por ese canal.",
-    "Una molécula de su corteza, la QS-21, se usa en vacunas de última generación. Solo la produce el quillay y un pariente cercano.",
-    "Resiste la sequía y las heladas, y sus raíces extensas ayudan a sujetar el suelo en las pendientes.",
-    "Sus hojas verde brillante tienen dientes en el borde, y sus flores blanco-verdosas tienen forma de estrella.",
-    "En la Reserva Nacional Lago Peñuelas vive un ejemplar muy conocido por su edad y su tamaño: «Don Quillay»."
-   ],
-   "planeta": [
-    "Un quillay puede tardar hasta 25 años en tener una corteza apta para extraer, y las prácticas intensivas muchas veces lo matan. Cuidar los que quedan importa.",
-    "Se usa para reforestar suelos áridos: un árbol nativo que ayuda a recuperar laderas secas.",
-    "La zona central de Chile es un punto de alta biodiversidad en el mundo y está muy presionada. Plantar especies nativas ayuda."
-   ]
-  },
-  "roble": {
-   "nombre": "Roble",
-   "otro": "Nothofagus obliqua",
-   "origen": "nativo de Chile",
-   "mensaje": "La firmeza se nota en la raíz, no en el ruido. Se puede ser fuerte y amable a la vez.",
-   "dato": "Joven se llama hualle y adulto, pellín. En primavera sus ramas lucen el digüeñe, un hongo comestible.",
-   "vida": [
-    {
-     "tema": "Carácter",
-     "texto": "La firmeza no necesita levantar la voz. Se puede decir que no con respeto y mantener la decisión."
-    },
-    {
-     "tema": "Familia",
-     "texto": "Sostener a otros exige también cuidarse. Se sugiere reservar un momento propio en la semana."
-    },
-    {
-     "tema": "Otoño de la vida",
-     "texto": "Cambiar de color no es perder valor. Cada etapa, también la de más calma, tiene su belleza."
-    },
-    {
-     "tema": "Trabajo",
-     "texto": "Las raíces se forman cuando nadie mira. El estudio y la práctica de hoy sostienen lo que se logra después."
-    },
-    {
-     "tema": "Decisiones",
-     "texto": "Antes de decidir algo importante, se puede esperar un día y consultarlo con alguien de confianza."
-    },
-    {
-     "tema": "Bosque y comunidad",
-     "texto": "Un bosque funciona como una red: los árboles comparten espacio y recursos. Valorar lo que se comparte también cuida el planeta."
-    }
-   ],
-   "arbol": [
-    "Cuando es joven se llama hualle y cuando es adulto, pellín: con los años su madera se vuelve rojiza.",
-    "Puede superar los 40 metros de altura y tener un tronco de hasta 2 metros de ancho.",
-    "En primavera aparece sobre sus ramas el digüeñe, un hongo anaranjado comestible muy apreciado.",
-    "Su madera se ha usado para construir embarcaciones, puentes y muelles.",
-    "Crece en Chile, desde O'Higgins hasta Los Lagos, y también en la zona andina de Argentina.",
-    "Pierde sus hojas en otoño, cuando se tiñen de amarillo y rojo.",
-    "Su bosque es hogar de una gran diversidad de insectos y otros artrópodos nativos."
-   ],
-   "planeta": [
-    "Grandes extensiones de bosque de roble del valle central fueron reemplazadas por praderas y plantaciones. Cada bosque nativo que se conserva es irremplazable.",
-    "El suelo de un bosque guarda agua y carbono. Cuidarlo es cuidar el aire que respiramos.",
-    "Aunque hoy no está amenazado, ha sido muy explotado por su madera. Elegir madera de origen legal ayuda."
-   ]
-  },
-  "alerce": {
-   "nombre": "Alerce",
-   "otro": "Fitzroya",
-   "origen": "nativo de Chile",
-   "mensaje": "Lo que se hace con constancia puede durar más que quien lo empezó.",
-   "dato": "Es Monumento Natural. En el Parque Nacional Alerce Costero hay un ejemplar cuya edad se estima en más de 5.400 años, el árbol más longevo conocido.",
-   "vida": [
-    {
-     "tema": "Constancia",
-     "texto": "Lo que se hace con perseverancia puede durar más que uno mismo. Se puede pensar qué se desea dejar a quienes vienen después."
-    },
-    {
-     "tema": "Memoria familiar",
-     "texto": "Preguntar a un abuelo o a una persona mayor por su historia es una forma de regar las raíces de la familia."
-    },
-    {
-     "tema": "Cuidado del futuro",
-     "texto": "Proteger lo que otros necesitarán mañana, como el ambiente o la salud, es una decisión de hoy."
-    },
-    {
-     "tema": "Duelo",
-     "texto": "Quien partió sigue presente en lo que enseñó. Recordar con calma también es una manera de honrar."
-    },
-    {
-     "tema": "Calma",
-     "texto": "No hay apuro. Los árboles más antiguos crecieron un poco cada año, incluso en los años difíciles."
-    },
-    {
-     "tema": "Futuro del planeta",
-     "texto": "Los árboles más antiguos guardan la historia del clima. Reducir el desperdicio hoy es una forma de pensar en quienes vendrán."
-    }
-   ],
-   "arbol": [
-    "Es Monumento Natural. En el Parque Nacional Alerce Costero hay un ejemplar estimado en más de 5.400 años, el árbol más longevo conocido.",
-    "Puede superar los 40 metros de altura y tener un tronco de varios metros de ancho.",
-    "Su madera es liviana y resiste la humedad; por eso se usó en las tejuelas de las casas de Chiloé.",
-    "Crece muy lento: un tronco grueso guarda muchos siglos de lluvia y paciencia.",
-    "Vive en bosques lluviosos del sur de Chile y de Argentina.",
-    "Su corta está prohibida desde 1976, cuando fue declarado Monumento Natural."
-   ],
-   "planeta": [
-    "Un alerce cortado hoy tarda miles de años en reponerse. Por eso proteger los bosques milenarios es urgente.",
-    "Los bosques lluviosos del sur guardan mucha agua y carbono; cuidarlos también ayuda al clima.",
-    "Elegir madera de origen legal es una forma de respetar los bosques."
-   ]
-  },
-  "palma_chilena": {
-   "nombre": "Palma chilena",
-   "otro": "Jubaea",
-   "origen": "nativo de Chile",
-   "mensaje": "No todo se ve de inmediato. Lo valioso suele tardar y vale la espera.",
-   "dato": "Es la única palmera nativa de Chile continental. Tarda unos 60 años en dar semillas y está catalogada como Vulnerable.",
-   "vida": [
-    {
-     "tema": "Espera",
-     "texto": "Hay proyectos y sueños que tardan años. La espera también es parte del camino y no significa fracaso."
-    },
-    {
-     "tema": "Estudio y vocación",
-     "texto": "Aprender un oficio o una carrera requiere tiempo. Se puede celebrar cada paso, no solo la meta."
-    },
-    {
-     "tema": "Familia",
-     "texto": "Criar y acompañar son tareas de largo plazo. Los frutos llegan cuando el cuidado ha sido constante."
-    },
-    {
-     "tema": "Raíz propia",
-     "texto": "Esta palma solo crece en Chile. Cada persona también tiene algo propio que no se parece a nadie más."
-    },
-    {
-     "tema": "Paciencia",
-     "texto": "Si hoy no se ve avance, no significa que nada ocurra. Gran parte del crecimiento es invisible."
-    },
-    {
-     "tema": "Especies propias",
-     "texto": "Solo existe en Chile y es lenta en crecer. Conocer y proteger lo propio de cada lugar evita perderlo para siempre."
-    }
-   ],
-   "arbol": [
-    "Es la única palmera nativa de Chile continental y una de las más australes del mundo.",
-    "Tarda unos 60 años en dar semillas y sigue creciendo hasta pasar los 30 metros de altura.",
-    "Su tronco liso y gris puede medir hasta 1 metro de ancho.",
-    "Suelta con facilidad sus hojas muertas y no deja refugios secos para roedores.",
-    "Sus coquitos son comestibles, y de su fruto se obtiene un aceite usado en pastelería y cosmética.",
-    "Quedan cerca de 120.000 ejemplares silvestres, y el 87% está en los valles de Ocoa y Cocalán.",
-    "Puede vivir cientos de años; algunas estimaciones hablan de más de 1.000."
-   ],
-   "planeta": [
-    "Es una especie Vulnerable desde 2008. Antes se derribaba la palma entera para sacar la savia; en algunos palmares hoy la miel se obtiene sin derribarla.",
-    "Sus amenazas son los incendios, la extracción excesiva de semillas y el ganado que come sus brotes.",
-    "Las especies que solo existen en un lugar no tienen reemplazo: si se pierden aquí, se pierden para el mundo."
-   ]
-  },
-  "cerezo": {
-   "nombre": "Cerezo",
-   "otro": "",
-   "origen": "visitante",
-   "mensaje": "Florecer dura poco, y por eso se mira con atención. Hay belleza en lo que pasa.",
-   "dato": "Chile es el mayor exportador de cerezas del mundo, y su fruta madura en pleno verano del sur.",
-   "vida": [
-    {
-     "tema": "Gratitud",
-     "texto": "Hoy se puede detenerse un momento y agradecer algo que pronto cambiará: una etapa, una visita, una estación."
-    },
-    {
-     "tema": "Presencia",
-     "texto": "Estar presente en una conversación, sin mirar el teléfono, es un regalo que dura más que la flor."
-    },
-    {
-     "tema": "Cambios",
-     "texto": "Las etapas pasan, y eso permite que lleguen otras. Se puede recibir con calma lo que viene."
-    },
-    {
-     "tema": "Familia",
-     "texto": "Los momentos con quienes se quiere no se repiten igual. Se sugiere aprovechar una comida o una caminata juntos."
-    },
-    {
-     "tema": "Belleza cotidiana",
-     "texto": "Fijarse en algo hermoso al día, aunque sea pequeño, mejora la forma de mirar la propia vida."
-    },
-    {
-     "tema": "Estaciones",
-     "texto": "Las estaciones marcan un ritmo que cuesta recordar en la ciudad. Salir a mirar un cambio de estación devuelve la conexión con la naturaleza."
-    }
-   ],
-   "arbol": [
-    "Florece una vez al año, al comienzo de la primavera.",
-    "Sus flores duran pocos días, y por eso verlas es un momento especial.",
-    "En Japón, el hanami celebra desde hace siglos la floración de los cerezos.",
-    "Chile es el mayor exportador de cerezas del mundo: en una sola temporada despacha más de 110 millones de cajas.",
-    "Chile concentra el 96% de las exportaciones de cerezas del hemisferio sur.",
-    "Sus frutos llegan a China entre diciembre y febrero, cuando allá es invierno y se celebra el Año Nuevo Lunar.",
-    "Pierde sus hojas en otoño: el árbol cambia con cada estación."
-   ],
-   "planeta": [
-    "Los árboles florecen en su estación. Un clima cambiante puede adelantar o atrasar las flores: es una señal para escuchar.",
-    "Las abejas necesitan flores durante casi todo el año. Plantar flores en el balcón o el patio les da alimento.",
-    "Un árbol en la ciudad da sombra y baja la temperatura. Cuidar los de la calle ayuda a todos."
-   ]
-  },
-  "sauce": {
-   "nombre": "Sauce chileno",
-   "otro": "",
-   "origen": "visitante",
-   "mensaje": "Crece junto al agua y sostiene la orilla. Quien cuida un lugar también lo sostiene.",
-   "dato": "Es la única especie de sauce autóctona de Sudamérica y vive en las riberas, desde Arica hasta la Araucanía.",
-   "vida": [
-    {
-     "tema": "Flexibilidad",
-     "texto": "Adaptarse a un cambio no significa perder la identidad. Se puede ceder en lo secundario y mantener lo esencial."
-    },
-    {
-     "tema": "Estrés",
-     "texto": "Cuando la presión sube, soltar los hombros y respirar profundo ayuda más que resistir con rigidez."
-    },
-    {
-     "tema": "Relaciones",
-     "texto": "Escuchar otra opinión no obliga a cambiar la propia. Permite entender mejor a la otra persona."
-    },
-    {
-     "tema": "Duelo y cansancio",
-     "texto": "Está permitido doblarse ante el cansancio o la tristeza. Lo importante es no quedarse solo: se puede pedir compañía."
-    },
-    {
-     "tema": "Trabajo",
-     "texto": "Hay días en que lo mejor es seguir el ritmo del viento y retomar con fuerza al día siguiente."
-    },
-    {
-     "tema": "Agua y cuidado",
-     "texto": "Crece cerca del agua y la protege con sus raíces. Evitar botar basura cerca de ríos y orillas ayuda a mantenerla limpia."
-    }
-   ],
-   "arbol": [
-    "El sauce chileno (Salix humboldtiana) es la única especie de sauce autóctona de Sudamérica.",
-    "Crece a orillas de ríos y quebradas, desde Arica hasta la Araucanía.",
-    "En los valles del norte de Chile llega hasta los 2.500 metros de altitud.",
-    "Su corteza contiene salicina, sustancia de la que se obtuvo la base de la aspirina; en la medicina popular se usó contra la fiebre.",
-    "Una rama plantada en tierra húmeda echa raíces rápido, y por eso se usó para hacer cercos vivos.",
-    "También se lo conoce como sauce amargo o sauce criollo.",
-    "Puede medir entre 18 y 25 metros de altura."
-   ],
-   "planeta": [
-    "Las orillas con árboles mantienen limpia el agua; las que no tienen vegetación se erosionan.",
-    "El agua dulce es limitada. Cerrar la llave mientras uno se cepilla los dientes también cuida un río.",
-    "En la Patagonia argentina, sauces traídos de afuera han desplazado al sauce criollo en las riberas. Cuidar lo nativo importa."
-   ]
-  },
-  "jacaranda": {
-   "nombre": "Jacarandá",
-   "otro": "El árbol de las flores lilas",
-   "origen": "visitante",
-   "mensaje": "Florecer no es competir. Cada persona tiene su propia temporada, y la propia también llega.",
-   "dato": "Es nativo de Sudamérica, florece antes de echar hojas nuevas y sus flores lilas alfombran el suelo.",
-   "vida": [
-    {
-     "tema": "Valorarse",
-     "texto": "Florecer no es competir. Cada persona tiene su temporada, y reconocer los propios avances también es cuidarse."
-    },
-    {
-     "tema": "Mirar la naturaleza",
-     "texto": "Observar un árbol en flor durante un minuto, sin hacer nada más, baja el ritmo del día y mejora el ánimo."
-    },
-    {
-     "tema": "Soltar",
-     "texto": "Una flor caída no se pierde: nutre el suelo. Lo que se suelta con calma también deja algo bueno."
-    },
-    {
-     "tema": "Cuidar el planeta",
-     "texto": "Un gesto pequeño, como ahorrar agua o separar un residuo, es una forma concreta de agradecer lo que la Tierra da."
-    },
-    {
-     "tema": "Alegría",
-     "texto": "Se puede agregar un poco de color al día: una flor en la mesa, una canción, un saludo. La alegría también se cultiva."
-    }
-   ],
-   "arbol": [
-    "Es nativo del noroeste de Argentina, Bolivia, Paraguay y Brasil.",
-    "Florece antes de que le salgan las hojas nuevas, y por eso sus ramas se ven cubiertas de flores.",
-    "Sus flores tubulares miden hasta 5 centímetros y se agrupan en racimos.",
-    "Según cómo se cultive, puede empezar a florecer desde el segundo año.",
-    "Su fruto es una cápsula leñosa y aplanada que, al madurar, libera semillas ligeras con un borde alado.",
-    "Carlos Thays lo incorporó al paisaje de Buenos Aires a fines del siglo XIX, y hoy tiñe de violeta esa ciudad en noviembre.",
-    "En su lugar de origen puede llegar a los 20 metros de altura."
-   ],
-   "planeta": [
-    "Los árboles floridos de la ciudad alegran, dan sombra y refrescan. Cuidarlos es cuidar un bien de todos.",
-    "Quemar hojas y ramas contamina el aire; dejarlas como abono devuelve nutrientes a la tierra.",
-    "Reutilizar es mejor que botar: lo que no se compra tampoco se convierte en basura."
-   ]
-  }
- },
- "semillas": {
-  "copihue": {
-   "nombre": "Copihue",
-   "precio": 20,
-   "casillas": [
-    "pasto-1",
-    "pasto-2",
-    "pasto-3",
-    "pasto-4",
-    "pasto-5",
-    "pasto-6"
-   ],
-   "mensaje": "La flor nacional crece enredada en otros árboles. Nadie florece del todo solo.",
-   "dato": "Es la flor nacional desde el 24 de febrero de 1977 y solo crece en Chile. Florece en otoño y la polinizan picaflores, entre ellos el picaflor gigante."
-  },
-  "ananuca": {
-   "nombre": "Añañuca",
-   "precio": 15,
-   "casillas": [
-    "pasto-1",
-    "pasto-2",
-    "pasto-3",
-    "pasto-4",
-    "pasto-5",
-    "pasto-6"
-   ],
-   "mensaje": "Después de la sequía, algunas flores vuelven. Una pausa no es un final.",
-   "dato": "La añañuca roja es una de las plantas del desierto florido: espera bajo tierra, como bulbo, hasta que las lluvias la despiertan."
-  },
-  "pata_de_guanaco": {
-   "nombre": "Pata de guanaco",
-   "precio": 25,
-   "casillas": [
-    "pasto-1",
-    "pasto-2",
-    "pasto-3",
-    "pasto-4",
-    "pasto-5",
-    "pasto-6"
-   ],
-   "mensaje": "La vida espera su momento. Hay etapas para cuidar sin ver todavía el resultado.",
-   "dato": "Sus semillas pueden esperar años bajo la arena. Germinan cuando llueve lo suficiente y hubo frío previo, y tiñen de rosado el desierto cada varios años."
-  },
-  "lavanda": {
-   "nombre": "Lavanda",
-   "precio": 18,
-   "casillas": [
-    "pasto-1",
-    "pasto-2",
-    "pasto-3",
-    "pasto-4",
-    "pasto-5",
-    "pasto-6"
-   ],
-   "mensaje": "Lo que da calma a otros también calma a quien lo planta.",
-   "dato": "Es aromática y atrae a las abejas."
-  }
- },
- "aves": {
-  "golondrina": {
-   "nombre": "Golondrina",
-   "precio": 90,
-   "mensaje": "Siempre se puede volver. Regresa cada primavera al mismo lugar, y el lugar la espera.",
-   "dato": "Migra largas distancias y suele volver al mismo sitio para anidar."
-  },
-  "chucao": {
-   "nombre": "Chucao",
-   "precio": 80,
-   "mensaje": "Es pequeño y se hace oír. Una voz sencilla también puede acompañar a un bosque entero.",
-   "dato": "Mide unos 19 cm y vive casi siempre en el suelo del bosque. Según la creencia mapuche, oír su canto a la derecha anuncia un buen viaje. Necesita bosques de más de 100 hectáreas."
-  },
-  "queltehue": {
-   "nombre": "Queltehue",
-   "precio": 100,
-   "mensaje": "Avisa para cuidar a los demás. Estar atento a quien lo necesita también es una forma de servir.",
-   "dato": "Es muy común en campos y plazas de Chile y defiende su nido con insistencia."
-  },
-  "picaflor": {
-   "nombre": "Picaflor",
-   "precio": 110,
-   "mensaje": "Pequeñas visitas, hechas con constancia, mantienen viva una flor.",
-   "dato": "Se alimenta del néctar y poliniza las flores que visita."
-  },
-  "condor": {
-   "nombre": "Cóndor",
-   "precio": 150,
-   "mensaje": "Hay momentos para mirar desde lo alto y recordar lo que importa. Se avanza mejor sin apuro.",
-   "dato": "Su envergadura llega a unos 3,3 metros y puede planear horas sin batir las alas. Pone uno o dos huevos cada dos años."
-  },
-  "gorrion": {
-   "nombre": "Gorrión",
-   "precio": 80,
-   "mensaje": "Lo pequeño también es visto y cuidado. Nadie pasa inadvertido.",
-   "dato": "Vive cerca de las personas, en plazas, techos y jardines."
-  }
- },
- "economia": {
-  "origenes": {
-   "lectura": {
-    "gotas": 2,
-    "tope_dia": 6
-   },
-   "vida": {
-    "gotas": 1,
-    "tope_dia": 5
-   },
-   "plan": {
-    "gotas": 3,
-    "tope_dia": 3
-   },
-   "oracion": {
-    "gotas": 3,
-    "tope_dia": 3
-   }, "juego": {"gotas": 1, "tope_dia": 3}
-  },
-  "pendientes_max": 30,
-  "visibles_max": 8,
-  "aves_activas_max": 2,
-  "nota": "Las gotas no vencen y no se compran con dinero. Los topes diarios evitan premiar el abuso. F938: también se ganan al completar un día de un plan de lectura (3) y al marcar una oración como contestada (3)."
- },
- "maleza": {
-  "tipos": [
-   "hoja_seca",
-   "trebol_gris",
-   "hierba_seca"
+  "orden_especies": [
+    "araucaria",
+    "canelo",
+    "quillay",
+    "jacaranda",
+    "roble",
+    "alerce",
+    "palma_chilena",
+    "cerezo",
+    "sauce"
   ],
-  "tabla": [
-   {
-    "ausencia": 2,
-    "cantidad": 1
-   },
-   {
-    "ausencia": 3,
-    "cantidad": 2
-   },
-   {
-    "ausencia": 5,
-    "cantidad": 3
-   },
-   {
-    "ausencia": 7,
-    "cantidad": 4
-   },
-   {
-    "ausencia": 10,
-    "cantidad": 5
-   }
-  ]
- },
- "casillas": {
-  "pasto": [
-   "pasto-1",
-   "pasto-2",
-   "pasto-3",
-   "pasto-4",
-   "pasto-5",
-   "pasto-6",
-   "pasto-7",
-   "pasto-8"
+  "especies": {
+    "araucaria": {
+      "nombre": "Araucaria",
+      "otro": "Pewén",
+      "origen": "nativo de Chile",
+      "mensaje": "La paciencia también construye. Algunas de las más antiguas llevan más de mil años de pie.",
+      "dato": "Es Monumento Natural desde 1976. Puede superar los 1.600 años y llega a la madurez reproductiva entre los 100 y los 300; su piñón fue base de la alimentación pehuenche.",
+      "vida": [
+        {
+          "tema": "Trabajo y metas",
+          "texto": "Hay metas que no se alcanzan en un mes. Se puede avanzar un poco cada día y confiar en que el tiempo también trabaja."
+        },
+        {
+          "tema": "Familia",
+          "texto": "Los vínculos fuertes crecen despacio, como las raíces. Una llamada o una visita pequeña hoy suma más de lo que parece."
+        },
+        {
+          "tema": "Cambios y pérdidas",
+          "texto": "Después de un incendio o de una sequía, la araucaria sigue en pie. Si algo se perdió, se puede empezar de nuevo desde lo que quedó."
+        },
+        {
+          "tema": "Descanso",
+          "texto": "No todo depende de uno cada día. Hoy se puede dejar una tarea para mañana sin que nada se derrumbe."
+        },
+        {
+          "tema": "Paciencia con uno mismo",
+          "texto": "Un cambio personal también tarda. Se sugiere medir el avance por estaciones, no por días."
+        },
+        {
+          "tema": "Cuidar el planeta",
+          "texto": "Un bosque milenario depende de decisiones de hoy. Evitar el fuego y cuidar el entorno cuando se sale de paseo protege lo que tarda siglos en crecer."
+        }
+      ],
+      "arbol": [
+        "Es Monumento Natural desde 1976 y una de las especies más emblemáticas del sur de Chile.",
+        "Algunas superan los 1.600 años: hay ejemplares vivos que ya estaban en pie mucho antes de la llegada de los españoles.",
+        "Su piñón fue base de la alimentación del pueblo pehuenche, cuyo nombre significa «gente del pewén».",
+        "Su familia de árboles ya existía en la era de los dinosaurios; se la considera casi un fósil viviente.",
+        "Hay ejemplares femeninos y masculinos, y solo los femeninos producen piñones.",
+        "Su corteza gruesa funciona como una armadura: ayuda a los ejemplares adultos a resistir el fuego."
+      ],
+      "planeta": [
+        "Sus bosques de cordillera sufren con los incendios. Un fuego pequeño en un paseo puede borrar siglos de crecimiento.",
+        "El piñón alimenta a personas, aves y animales del bosque. Recoger solo lo necesario deja alimento para todos.",
+        "En un bosque nativo, caminar por los senderos protege a las plántulas, que crecen muy despacio."
+      ]
+    },
+    "canelo": {
+      "nombre": "Canelo",
+      "otro": "Foye",
+      "origen": "nativo de Chile",
+      "mensaje": "Una rama de canelo ha sido señal de paz para el pueblo mapuche. Se puede empezar por un gesto de paz.",
+      "dato": "Es el árbol sagrado del pueblo mapuche, asociado al bien, la paz y la justicia. Su corteza, rica en vitamina C, se usó contra el escorbuto.",
+      "vida": [
+        {
+          "tema": "Reconciliación",
+          "texto": "Si hay una relación tensa, se puede comenzar por un gesto de paz: un saludo, un mensaje breve, escuchar sin responder de inmediato."
+        },
+        {
+          "tema": "Familia",
+          "texto": "En casa, la paz suele empezar por uno. Hoy se puede elegir una palabra amable en un momento difícil."
+        },
+        {
+          "tema": "Trabajo",
+          "texto": "Ser justo con los demás también cuenta como esfuerzo. Reconocer el trabajo de un compañero fortalece al equipo."
+        },
+        {
+          "tema": "Salud emocional",
+          "texto": "Cuidarse no es egoísmo. Si el ánimo está bajo, hablar con alguien de confianza puede ayudar."
+        },
+        {
+          "tema": "Perdón",
+          "texto": "Perdonar no obliga a olvidar. Es dejar de cargar con un peso que no ayuda a avanzar."
+        },
+        {
+          "tema": "Agua y naturaleza",
+          "texto": "Este árbol vive donde hay agua limpia. Cuidar un río, una quebrada o incluso el consumo de agua en casa es cuidar su hogar."
+        }
+      ],
+      "arbol": [
+        "Es el árbol sagrado del pueblo mapuche, asociado a la paz, el bien y la justicia.",
+        "Su corteza es rica en vitamina C y se usó para prevenir el escorbuto en largos viajes por mar.",
+        "Sus hojas tienen un aroma picante al frotarlas, y por abajo son más claras que por arriba.",
+        "Sus flores son blancas, perfumadas y se agrupan en pequeños ramilletes.",
+        "Crece desde el centro de Chile hasta el extremo sur, sobre todo en lugares húmedos.",
+        "En ceremonias mapuche su rama se usa como símbolo de paz y de acuerdos."
+      ],
+      "planeta": [
+        "Crece junto a ríos y zonas húmedas: cuidar el agua y las vertientes es cuidar también al bosque.",
+        "Los árboles filtran la lluvia y mantienen firme el suelo. Talar sin necesidad lo debilita.",
+        "Un gesto sencillo: no dejar residuos cerca de ríos, esteros o vertientes."
+      ]
+    },
+    "quillay": {
+      "nombre": "Quillay",
+      "otro": "El árbol del jabón",
+      "origen": "nativo de Chile",
+      "mensaje": "Su corteza limpia y cuida. Hay personas que sirven en silencio y dejan todo mejor.",
+      "dato": "Su nombre viene del mapudungún küllay («jabón»). Es endémico de Chile y resiste la sequía de la zona central.",
+      "vida": [
+        {
+          "tema": "Servicio",
+          "texto": "Servir sin buscar reconocimiento también deja huella. Hoy se puede ayudar en algo que nadie vaya a notar."
+        },
+        {
+          "tema": "Hogar",
+          "texto": "Ordenar un espacio pequeño, como un cajón o una mesa, a veces ordena también el ánimo."
+        },
+        {
+          "tema": "Amistad",
+          "texto": "Hay amistades que limpian el ambiente con solo estar. Se puede agradecer a alguien que haga ese papel."
+        },
+        {
+          "tema": "Trabajo",
+          "texto": "Hacer bien una tarea sencilla tiene valor. La constancia en lo pequeño sostiene lo grande."
+        },
+        {
+          "tema": "Sequía personal",
+          "texto": "En épocas secas, resistir ya es un logro. No hace falta rendir al máximo para seguir creciendo."
+        },
+        {
+          "tema": "Tierra y suelo",
+          "texto": "Un suelo sano alimenta todo lo demás. Compostar restos de comida o regar con medida devuelve algo a la tierra."
+        }
+      ],
+      "arbol": [
+        "Su nombre viene del mapudungún küllay, que significa «jabón»: su corteza hace espuma gracias a la saponina.",
+        "Es endémico de Chile, es decir, no crece de forma natural en ningún otro país. Vive entre Coquimbo y el Biobío, desde la costa hasta los 1.600 metros de altitud.",
+        "Los pueblos originarios ya usaban su corteza como champú y detergente.",
+        "Su corteza se exportó a Europa y Asia con el nombre de «palo de Panamá», porque viajaba por ese canal.",
+        "Una molécula de su corteza, la QS-21, se usa en vacunas de última generación. Solo la produce el quillay y un pariente cercano.",
+        "Resiste la sequía y las heladas, y sus raíces extensas ayudan a sujetar el suelo en las pendientes.",
+        "Sus hojas verde brillante tienen dientes en el borde, y sus flores blanco-verdosas tienen forma de estrella.",
+        "En la Reserva Nacional Lago Peñuelas vive un ejemplar muy conocido por su edad y su tamaño: «Don Quillay»."
+      ],
+      "planeta": [
+        "Un quillay puede tardar hasta 25 años en tener una corteza apta para extraer, y las prácticas intensivas muchas veces lo matan. Cuidar los que quedan importa.",
+        "Se usa para reforestar suelos áridos: un árbol nativo que ayuda a recuperar laderas secas.",
+        "La zona central de Chile es un punto de alta biodiversidad en el mundo y está muy presionada. Plantar especies nativas ayuda."
+      ]
+    },
+    "roble": {
+      "nombre": "Roble",
+      "otro": "Nothofagus obliqua",
+      "origen": "nativo de Chile",
+      "mensaje": "La firmeza se nota en la raíz, no en el ruido. Se puede ser fuerte y amable a la vez.",
+      "dato": "Joven se llama hualle y adulto, pellín. En primavera sus ramas lucen el digüeñe, un hongo comestible.",
+      "vida": [
+        {
+          "tema": "Carácter",
+          "texto": "La firmeza no necesita levantar la voz. Se puede decir que no con respeto y mantener la decisión."
+        },
+        {
+          "tema": "Familia",
+          "texto": "Sostener a otros exige también cuidarse. Se sugiere reservar un momento propio en la semana."
+        },
+        {
+          "tema": "Otoño de la vida",
+          "texto": "Cambiar de color no es perder valor. Cada etapa, también la de más calma, tiene su belleza."
+        },
+        {
+          "tema": "Trabajo",
+          "texto": "Las raíces se forman cuando nadie mira. El estudio y la práctica de hoy sostienen lo que se logra después."
+        },
+        {
+          "tema": "Decisiones",
+          "texto": "Antes de decidir algo importante, se puede esperar un día y consultarlo con alguien de confianza."
+        },
+        {
+          "tema": "Bosque y comunidad",
+          "texto": "Un bosque funciona como una red: los árboles comparten espacio y recursos. Valorar lo que se comparte también cuida el planeta."
+        }
+      ],
+      "arbol": [
+        "Cuando es joven se llama hualle y cuando es adulto, pellín: con los años su madera se vuelve rojiza.",
+        "Puede superar los 40 metros de altura y tener un tronco de hasta 2 metros de ancho.",
+        "En primavera aparece sobre sus ramas el digüeñe, un hongo anaranjado comestible muy apreciado.",
+        "Su madera se ha usado para construir embarcaciones, puentes y muelles.",
+        "Crece en Chile, desde O'Higgins hasta Los Lagos, y también en la zona andina de Argentina.",
+        "Pierde sus hojas en otoño, cuando se tiñen de amarillo y rojo.",
+        "Su bosque es hogar de una gran diversidad de insectos y otros artrópodos nativos."
+      ],
+      "planeta": [
+        "Grandes extensiones de bosque de roble del valle central fueron reemplazadas por praderas y plantaciones. Cada bosque nativo que se conserva es irremplazable.",
+        "El suelo de un bosque guarda agua y carbono. Cuidarlo es cuidar el aire que respiramos.",
+        "Aunque hoy no está amenazado, ha sido muy explotado por su madera. Elegir madera de origen legal ayuda."
+      ]
+    },
+    "alerce": {
+      "nombre": "Alerce",
+      "otro": "Fitzroya",
+      "origen": "nativo de Chile",
+      "mensaje": "Lo que se hace con constancia puede durar más que quien lo empezó.",
+      "dato": "Es Monumento Natural. En el Parque Nacional Alerce Costero hay un ejemplar cuya edad se estima en más de 5.400 años, el árbol más longevo conocido.",
+      "vida": [
+        {
+          "tema": "Constancia",
+          "texto": "Lo que se hace con perseverancia puede durar más que uno mismo. Se puede pensar qué se desea dejar a quienes vienen después."
+        },
+        {
+          "tema": "Memoria familiar",
+          "texto": "Preguntar a un abuelo o a una persona mayor por su historia es una forma de regar las raíces de la familia."
+        },
+        {
+          "tema": "Cuidado del futuro",
+          "texto": "Proteger lo que otros necesitarán mañana, como el ambiente o la salud, es una decisión de hoy."
+        },
+        {
+          "tema": "Duelo",
+          "texto": "Quien partió sigue presente en lo que enseñó. Recordar con calma también es una manera de honrar."
+        },
+        {
+          "tema": "Calma",
+          "texto": "No hay apuro. Los árboles más antiguos crecieron un poco cada año, incluso en los años difíciles."
+        },
+        {
+          "tema": "Futuro del planeta",
+          "texto": "Los árboles más antiguos guardan la historia del clima. Reducir el desperdicio hoy es una forma de pensar en quienes vendrán."
+        }
+      ],
+      "arbol": [
+        "Es Monumento Natural. En el Parque Nacional Alerce Costero hay un ejemplar estimado en más de 5.400 años, el árbol más longevo conocido.",
+        "Puede superar los 40 metros de altura y tener un tronco de varios metros de ancho.",
+        "Su madera es liviana y resiste la humedad; por eso se usó en las tejuelas de las casas de Chiloé.",
+        "Crece muy lento: un tronco grueso guarda muchos siglos de lluvia y paciencia.",
+        "Vive en bosques lluviosos del sur de Chile y de Argentina.",
+        "Su corta está prohibida desde 1976, cuando fue declarado Monumento Natural."
+      ],
+      "planeta": [
+        "Un alerce cortado hoy tarda miles de años en reponerse. Por eso proteger los bosques milenarios es urgente.",
+        "Los bosques lluviosos del sur guardan mucha agua y carbono; cuidarlos también ayuda al clima.",
+        "Elegir madera de origen legal es una forma de respetar los bosques."
+      ]
+    },
+    "palma_chilena": {
+      "nombre": "Palma chilena",
+      "otro": "Jubaea",
+      "origen": "nativo de Chile",
+      "mensaje": "No todo se ve de inmediato. Lo valioso suele tardar y vale la espera.",
+      "dato": "Es la única palmera nativa de Chile continental. Tarda unos 60 años en dar semillas y está catalogada como Vulnerable.",
+      "vida": [
+        {
+          "tema": "Espera",
+          "texto": "Hay proyectos y sueños que tardan años. La espera también es parte del camino y no significa fracaso."
+        },
+        {
+          "tema": "Estudio y vocación",
+          "texto": "Aprender un oficio o una carrera requiere tiempo. Se puede celebrar cada paso, no solo la meta."
+        },
+        {
+          "tema": "Familia",
+          "texto": "Criar y acompañar son tareas de largo plazo. Los frutos llegan cuando el cuidado ha sido constante."
+        },
+        {
+          "tema": "Raíz propia",
+          "texto": "Esta palma solo crece en Chile. Cada persona también tiene algo propio que no se parece a nadie más."
+        },
+        {
+          "tema": "Paciencia",
+          "texto": "Si hoy no se ve avance, no significa que nada ocurra. Gran parte del crecimiento es invisible."
+        },
+        {
+          "tema": "Especies propias",
+          "texto": "Solo existe en Chile y es lenta en crecer. Conocer y proteger lo propio de cada lugar evita perderlo para siempre."
+        }
+      ],
+      "arbol": [
+        "Es la única palmera nativa de Chile continental y una de las más australes del mundo.",
+        "Tarda unos 60 años en dar semillas y sigue creciendo hasta pasar los 30 metros de altura.",
+        "Su tronco liso y gris puede medir hasta 1 metro de ancho.",
+        "Suelta con facilidad sus hojas muertas y no deja refugios secos para roedores.",
+        "Sus coquitos son comestibles, y de su fruto se obtiene un aceite usado en pastelería y cosmética.",
+        "Quedan cerca de 120.000 ejemplares silvestres, y el 87% está en los valles de Ocoa y Cocalán.",
+        "Puede vivir cientos de años; algunas estimaciones hablan de más de 1.000."
+      ],
+      "planeta": [
+        "Es una especie Vulnerable desde 2008. Antes se derribaba la palma entera para sacar la savia; en algunos palmares hoy la miel se obtiene sin derribarla.",
+        "Sus amenazas son los incendios, la extracción excesiva de semillas y el ganado que come sus brotes.",
+        "Las especies que solo existen en un lugar no tienen reemplazo: si se pierden aquí, se pierden para el mundo."
+      ]
+    },
+    "cerezo": {
+      "nombre": "Cerezo",
+      "otro": "",
+      "origen": "visitante",
+      "mensaje": "Florecer dura poco, y por eso se mira con atención. Hay belleza en lo que pasa.",
+      "dato": "Chile es el mayor exportador de cerezas del mundo, y su fruta madura en pleno verano del sur.",
+      "vida": [
+        {
+          "tema": "Gratitud",
+          "texto": "Hoy se puede detenerse un momento y agradecer algo que pronto cambiará: una etapa, una visita, una estación."
+        },
+        {
+          "tema": "Presencia",
+          "texto": "Estar presente en una conversación, sin mirar el teléfono, es un regalo que dura más que la flor."
+        },
+        {
+          "tema": "Cambios",
+          "texto": "Las etapas pasan, y eso permite que lleguen otras. Se puede recibir con calma lo que viene."
+        },
+        {
+          "tema": "Familia",
+          "texto": "Los momentos con quienes se quiere no se repiten igual. Se sugiere aprovechar una comida o una caminata juntos."
+        },
+        {
+          "tema": "Belleza cotidiana",
+          "texto": "Fijarse en algo hermoso al día, aunque sea pequeño, mejora la forma de mirar la propia vida."
+        },
+        {
+          "tema": "Estaciones",
+          "texto": "Las estaciones marcan un ritmo que cuesta recordar en la ciudad. Salir a mirar un cambio de estación devuelve la conexión con la naturaleza."
+        }
+      ],
+      "arbol": [
+        "Florece una vez al año, al comienzo de la primavera.",
+        "Sus flores duran pocos días, y por eso verlas es un momento especial.",
+        "En Japón, el hanami celebra desde hace siglos la floración de los cerezos.",
+        "Chile es el mayor exportador de cerezas del mundo: en una sola temporada despacha más de 110 millones de cajas.",
+        "Chile concentra el 96% de las exportaciones de cerezas del hemisferio sur.",
+        "Sus frutos llegan a China entre diciembre y febrero, cuando allá es invierno y se celebra el Año Nuevo Lunar.",
+        "Pierde sus hojas en otoño: el árbol cambia con cada estación."
+      ],
+      "planeta": [
+        "Los árboles florecen en su estación. Un clima cambiante puede adelantar o atrasar las flores: es una señal para escuchar.",
+        "Las abejas necesitan flores durante casi todo el año. Plantar flores en el balcón o el patio les da alimento.",
+        "Un árbol en la ciudad da sombra y baja la temperatura. Cuidar los de la calle ayuda a todos."
+      ]
+    },
+    "sauce": {
+      "nombre": "Sauce chileno",
+      "otro": "",
+      "origen": "visitante",
+      "mensaje": "Crece junto al agua y sostiene la orilla. Quien cuida un lugar también lo sostiene.",
+      "dato": "Es la única especie de sauce autóctona de Sudamérica y vive en las riberas, desde Arica hasta la Araucanía.",
+      "vida": [
+        {
+          "tema": "Flexibilidad",
+          "texto": "Adaptarse a un cambio no significa perder la identidad. Se puede ceder en lo secundario y mantener lo esencial."
+        },
+        {
+          "tema": "Estrés",
+          "texto": "Cuando la presión sube, soltar los hombros y respirar profundo ayuda más que resistir con rigidez."
+        },
+        {
+          "tema": "Relaciones",
+          "texto": "Escuchar otra opinión no obliga a cambiar la propia. Permite entender mejor a la otra persona."
+        },
+        {
+          "tema": "Duelo y cansancio",
+          "texto": "Está permitido doblarse ante el cansancio o la tristeza. Lo importante es no quedarse solo: se puede pedir compañía."
+        },
+        {
+          "tema": "Trabajo",
+          "texto": "Hay días en que lo mejor es seguir el ritmo del viento y retomar con fuerza al día siguiente."
+        },
+        {
+          "tema": "Agua y cuidado",
+          "texto": "Crece cerca del agua y la protege con sus raíces. Evitar botar basura cerca de ríos y orillas ayuda a mantenerla limpia."
+        }
+      ],
+      "arbol": [
+        "El sauce chileno (Salix humboldtiana) es la única especie de sauce autóctona de Sudamérica.",
+        "Crece a orillas de ríos y quebradas, desde Arica hasta la Araucanía.",
+        "En los valles del norte de Chile llega hasta los 2.500 metros de altitud.",
+        "Su corteza contiene salicina, sustancia de la que se obtuvo la base de la aspirina; en la medicina popular se usó contra la fiebre.",
+        "Una rama plantada en tierra húmeda echa raíces rápido, y por eso se usó para hacer cercos vivos.",
+        "También se lo conoce como sauce amargo o sauce criollo.",
+        "Puede medir entre 18 y 25 metros de altura."
+      ],
+      "planeta": [
+        "Las orillas con árboles mantienen limpia el agua; las que no tienen vegetación se erosionan.",
+        "El agua dulce es limitada. Cerrar la llave mientras uno se cepilla los dientes también cuida un río.",
+        "En la Patagonia argentina, sauces traídos de afuera han desplazado al sauce criollo en las riberas. Cuidar lo nativo importa."
+      ]
+    },
+    "jacaranda": {
+      "nombre": "Jacarandá",
+      "otro": "El árbol de las flores lilas",
+      "origen": "visitante",
+      "mensaje": "Florecer no es competir. Cada persona tiene su propia temporada, y la propia también llega.",
+      "dato": "Es nativo de Sudamérica, florece antes de echar hojas nuevas y sus flores lilas alfombran el suelo.",
+      "vida": [
+        {
+          "tema": "Valorarse",
+          "texto": "Florecer no es competir. Cada persona tiene su temporada, y reconocer los propios avances también es cuidarse."
+        },
+        {
+          "tema": "Mirar la naturaleza",
+          "texto": "Observar un árbol en flor durante un minuto, sin hacer nada más, baja el ritmo del día y mejora el ánimo."
+        },
+        {
+          "tema": "Soltar",
+          "texto": "Una flor caída no se pierde: nutre el suelo. Lo que se suelta con calma también deja algo bueno."
+        },
+        {
+          "tema": "Cuidar el planeta",
+          "texto": "Un gesto pequeño, como ahorrar agua o separar un residuo, es una forma concreta de agradecer lo que la Tierra da."
+        },
+        {
+          "tema": "Alegría",
+          "texto": "Se puede agregar un poco de color al día: una flor en la mesa, una canción, un saludo. La alegría también se cultiva."
+        }
+      ],
+      "arbol": [
+        "Es nativo del noroeste de Argentina, Bolivia, Paraguay y Brasil.",
+        "Florece antes de que le salgan las hojas nuevas, y por eso sus ramas se ven cubiertas de flores.",
+        "Sus flores tubulares miden hasta 5 centímetros y se agrupan en racimos.",
+        "Según cómo se cultive, puede empezar a florecer desde el segundo año.",
+        "Su fruto es una cápsula leñosa y aplanada que, al madurar, libera semillas ligeras con un borde alado.",
+        "Carlos Thays lo incorporó al paisaje de Buenos Aires a fines del siglo XIX, y hoy tiñe de violeta esa ciudad en noviembre.",
+        "En su lugar de origen puede llegar a los 20 metros de altura."
+      ],
+      "planeta": [
+        "Los árboles floridos de la ciudad alegran, dan sombra y refrescan. Cuidarlos es cuidar un bien de todos.",
+        "Quemar hojas y ramas contamina el aire; dejarlas como abono devuelve nutrientes a la tierra.",
+        "Reutilizar es mejor que botar: lo que no se compra tampoco se convierte en basura."
+      ]
+    }
+  },
+  "semillas": {
+    "copihue": {
+      "nombre": "Copihue",
+      "precio": 20,
+      "casillas": [
+        "pasto-1",
+        "pasto-2",
+        "pasto-3",
+        "pasto-4",
+        "pasto-5",
+        "pasto-6"
+      ],
+      "mensaje": "La flor nacional crece enredada en otros árboles. Nadie florece del todo solo.",
+      "dato": "Es la flor nacional desde el 24 de febrero de 1977 y solo crece en Chile. Florece en otoño y la polinizan picaflores, entre ellos el picaflor gigante."
+    },
+    "ananuca": {
+      "nombre": "Añañuca",
+      "precio": 15,
+      "casillas": [
+        "pasto-1",
+        "pasto-2",
+        "pasto-3",
+        "pasto-4",
+        "pasto-5",
+        "pasto-6"
+      ],
+      "mensaje": "Después de la sequía, algunas flores vuelven. Una pausa no es un final.",
+      "dato": "La añañuca roja es una de las plantas del desierto florido: espera bajo tierra, como bulbo, hasta que las lluvias la despiertan."
+    },
+    "pata_de_guanaco": {
+      "nombre": "Pata de guanaco",
+      "precio": 25,
+      "casillas": [
+        "pasto-1",
+        "pasto-2",
+        "pasto-3",
+        "pasto-4",
+        "pasto-5",
+        "pasto-6"
+      ],
+      "mensaje": "La vida espera su momento. Hay etapas para cuidar sin ver todavía el resultado.",
+      "dato": "Sus semillas pueden esperar años bajo la arena. Germinan cuando llueve lo suficiente y hubo frío previo, y tiñen de rosado el desierto cada varios años."
+    },
+    "lavanda": {
+      "nombre": "Lavanda",
+      "precio": 18,
+      "casillas": [
+        "pasto-1",
+        "pasto-2",
+        "pasto-3",
+        "pasto-4",
+        "pasto-5",
+        "pasto-6"
+      ],
+      "mensaje": "Lo que da calma a otros también calma a quien lo planta.",
+      "dato": "Es aromática y atrae a las abejas."
+    }
+  },
+  "aves": {
+    "golondrina": {
+      "nombre": "Golondrina",
+      "precio": 90,
+      "mensaje": "Siempre se puede volver a empezar. Su canto anuncia la primavera, y cada comienzo trae esperanza.",
+      "dato": "Mide unos 13,5 cm y atrapa insectos al vuelo. Anida en aleros y cavidades, y su canto anuncia la primavera en el sur de Chile."
+    },
+    "chucao": {
+      "nombre": "Chucao",
+      "precio": 80,
+      "mensaje": "Es pequeño y se hace oír. Una voz sencilla también puede acompañar a un bosque entero.",
+      "dato": "Mide unos 19 cm y vive casi siempre en el suelo del bosque. Según la creencia mapuche, oír su canto a la derecha anuncia un buen viaje. Necesita bosques de más de 100 hectáreas."
+    },
+    "queltehue": {
+      "nombre": "Queltehue",
+      "precio": 100,
+      "mensaje": "Avisa para cuidar a los demás. Estar atento a quien lo necesita también es una forma de servir.",
+      "dato": "Es muy común en campos y plazas de Chile y defiende su nido con insistencia."
+    },
+    "picaflor": {
+      "nombre": "Picaflor",
+      "precio": 110,
+      "mensaje": "Pequeñas visitas, hechas con constancia, mantienen viva una flor.",
+      "dato": "Se alimenta del néctar y poliniza las flores que visita."
+    },
+    "condor": {
+      "nombre": "Cóndor",
+      "precio": 150,
+      "mensaje": "Hay momentos para mirar desde lo alto y recordar lo que importa. Se avanza mejor sin apuro.",
+      "dato": "Su envergadura llega a unos 3,3 metros y puede planear horas sin batir las alas. Pone uno o dos huevos cada dos años."
+    },
+    "gorrion": {
+      "nombre": "Gorrión",
+      "precio": 80,
+      "mensaje": "Lo pequeño también es visto y cuidado. Nadie pasa inadvertido.",
+      "dato": "Vive cerca de las personas, en plazas, techos y jardines."
+    }
+  },
+  "economia": {
+    "origenes": {
+      "lectura": {
+        "gotas": 2,
+        "tope_dia": 6
+      },
+      "vida": {
+        "gotas": 1,
+        "tope_dia": 5
+      },
+      "plan": {
+        "gotas": 3,
+        "tope_dia": 3
+      },
+      "oracion": {
+        "gotas": 3,
+        "tope_dia": 3
+      },
+      "juego": {
+        "gotas": 1,
+        "tope_dia": 3
+      }
+    },
+    "pendientes_max": 30,
+    "visibles_max": 8,
+    "aves_activas_max": 2,
+    "nota": "Las gotas no vencen y no se compran con dinero. Los topes diarios evitan premiar el abuso. F938: también se ganan al completar un día de un plan de lectura (3) y al marcar una oración como contestada (3)."
+  },
+  "maleza": {
+    "tipos": [
+      "hoja_seca",
+      "trebol_gris",
+      "hierba_seca"
+    ],
+    "tabla": [
+      {
+        "ausencia": 2,
+        "cantidad": 1
+      },
+      {
+        "ausencia": 3,
+        "cantidad": 2
+      },
+      {
+        "ausencia": 5,
+        "cantidad": 3
+      },
+      {
+        "ausencia": 7,
+        "cantidad": 4
+      },
+      {
+        "ausencia": 10,
+        "cantidad": 5
+      }
+    ]
+  },
+  "casillas": {
+    "pasto": [
+      "pasto-1",
+      "pasto-2",
+      "pasto-3",
+      "pasto-4",
+      "pasto-5",
+      "pasto-6",
+      "pasto-7",
+      "pasto-8"
+    ],
+    "fondo": [
+      "fondo-1",
+      "fondo-2",
+      "fondo-3",
+      "fondo-4",
+      "fondo-5",
+      "fondo-6"
+    ]
+  },
+  "arbol_comun": [
+    "Los anillos del tronco guardan la historia del árbol: cada uno es un año, con sus lluvias y sus sequías.",
+    "Un árbol grande puede mover cientos de litros de agua al día, desde la raíz hasta las hojas.",
+    "Muchos árboles se asocian con hongos del suelo; ese intercambio ayuda a ambos a alimentarse.",
+    "Un solo árbol maduro puede dar sombra, refugio y alimento a decenas de especies.",
+    "Con la luz del sol, las hojas toman dióxido de carbono y liberan oxígeno: eso es la fotosíntesis.",
+    "La copa de un árbol baja la temperatura de su entorno varios grados en los días de calor.",
+    "Algunos árboles liberan sustancias aromáticas que ahuyentan a los insectos.",
+    "Por dentro, el tronco tiene capas distintas: unas llevan agua hacia arriba y otras reparten azúcares.",
+    "En Utah hay un bosque de unos 47.000 troncos de álamo que en realidad es un solo organismo: comparten raíces y genes. Se lo llama Pando.",
+    "Las semillas del desierto de Atacama pueden esperar años, incluso décadas, bajo la arena hasta que llueve lo suficiente."
   ],
-  "fondo": [
-   "fondo-1",
-   "fondo-2",
-   "fondo-3",
-   "fondo-4",
-   "fondo-5",
-   "fondo-6"
-  ]
- },
- "arbol_comun": [
-  "Los anillos del tronco guardan la historia del árbol: cada uno es un año, con sus lluvias y sus sequías.",
-  "Un árbol grande puede mover cientos de litros de agua al día, desde la raíz hasta las hojas.",
-  "Muchos árboles se asocian con hongos del suelo; ese intercambio ayuda a ambos a alimentarse.",
-  "Un solo árbol maduro puede dar sombra, refugio y alimento a decenas de especies.",
-  "Con la luz del sol, las hojas toman dióxido de carbono y liberan oxígeno: eso es la fotosíntesis.",
-  "La copa de un árbol baja la temperatura de su entorno varios grados en los días de calor.",
-  "Algunos árboles liberan sustancias aromáticas que ahuyentan a los insectos.",
-  "Por dentro, el tronco tiene capas distintas: unas llevan agua hacia arriba y otras reparten azúcares.",
-  "En Utah hay un bosque de unos 47.000 troncos de álamo que en realidad es un solo organismo: comparten raíces y genes. Se lo llama Pando.",
-  "Las semillas del desierto de Atacama pueden esperar años, incluso décadas, bajo la arena hasta que llueve lo suficiente."
- ],
- "planeta_comun": [
-  "Cerrar la llave mientras uno se enjabona o se cepilla los dientes ahorra varios litros cada vez.",
-  "Al volver de un paseo, llevarse la basura deja el lugar como se encontró.",
-  "Apagar las luces y desenchufar lo que no se usa ahorra energía.",
-  "Una botella reutilizable evita cientos de envases desechables al año.",
-  "Separar los restos de comida para hacer abono devuelve nutrientes a la tierra.",
-  "En trayectos cortos, caminar o usar la bicicleta reduce el humo y mejora el aire de todos.",
-  "Las colillas de cigarro tardan años en degradarse y contaminan el agua. Un cenicero portátil ayuda.",
-  "Las abejas polinizan buena parte de nuestros alimentos. No usar venenos en el jardín las protege.",
-  "Reparar antes de comprar algo nuevo alarga la vida de las cosas.",
-  "Comprar solo lo necesario reduce lo que se bota.",
-  "En zonas secas como el norte de Chile cada litro cuenta. Regar al atardecer o temprano evita que el agua se evapore.",
-  "Los humedales y las vertientes son hogar de muchas aves. Observarlas de lejos las deja tranquilas.",
-  "Plantar una especie nativa ayuda a las aves e insectos del lugar.",
-  "Contar a alguien lo que se aprendió de la naturaleza multiplica el cuidado.",
-  "En el desierto florido, cada flor cortada se lleva semillas del banco que despertará en la próxima lluvia. Mirar sin cortar las deja volver.",
-  "Los vehículos fuera de los caminos destruyen las semillas y bulbos del desierto que esperan la próxima lluvia.",
-  "Los cebos envenenados que algunos ponen contra animales también matan a cóndores y otras aves. Evitarlos protege a todos."
- ],
- "vida_comun": [
-  "Saludar a quien se cruza en la escalera o en la calle hace más cálido el barrio.",
-  "Escuchar a alguien hasta el final, sin interrumpir, es una forma concreta de respeto.",
-  "Agradecer a quien hace un trabajo que casi nadie nota: el aseo, el transporte, la atención.",
-  "Ofrecer ayuda a un vecino mayor, con las compras o un trámite, fortalece la comunidad.",
-  "Cumplir lo que se prometió, aunque sea algo pequeño, hace que los demás puedan confiar.",
-  "Antes de repetir un rumor, se puede preguntar si es cierto y si ayuda a alguien.",
-  "Reconocer un error con sencillez y repararlo mejora la convivencia más que defenderse.",
-  "Respetar la fila, el turno y los horarios de otros es una manera cotidiana de convivir bien.",
-  "Participar en la junta de vecinos o en un grupo del barrio, aunque sea de vez en cuando, mejora el lugar donde se vive.",
-  "Cuando alguien piensa distinto, se puede conversar buscando entender antes que ganar."
- ],
- "como": "Cuidar este árbol se parece a cuidarnos: un poco cada día, con paciencia y sin exigencias. Si algún día no puedes venir, el árbol espera y retomas cuando quieras.",
- "lugares": {
-  "lago": {
-   "nombre": "Lago",
-   "precio": 60,
-   "dato": "Un agua quieta que refleja el cielo. Sirve para recordar que a veces avanzar es detenerse."
+  "planeta_comun": [
+    "Cerrar la llave mientras uno se enjabona o se cepilla los dientes ahorra varios litros cada vez.",
+    "Al volver de un paseo, llevarse la basura deja el lugar como se encontró.",
+    "Apagar las luces y desenchufar lo que no se usa ahorra energía.",
+    "Una botella reutilizable evita cientos de envases desechables al año.",
+    "Separar los restos de comida para hacer abono devuelve nutrientes a la tierra.",
+    "En trayectos cortos, caminar o usar la bicicleta reduce el humo y mejora el aire de todos.",
+    "Las colillas de cigarro tardan años en degradarse y contaminan el agua. Un cenicero portátil ayuda.",
+    "Las abejas polinizan buena parte de nuestros alimentos. No usar venenos en el jardín las protege.",
+    "Reparar antes de comprar algo nuevo alarga la vida de las cosas.",
+    "Comprar solo lo necesario reduce lo que se bota.",
+    "En zonas secas como el norte de Chile cada litro cuenta. Regar al atardecer o temprano evita que el agua se evapore.",
+    "Los humedales y las vertientes son hogar de muchas aves. Observarlas de lejos las deja tranquilas.",
+    "Plantar una especie nativa ayuda a las aves e insectos del lugar.",
+    "Contar a alguien lo que se aprendió de la naturaleza multiplica el cuidado.",
+    "En el desierto florido, cada flor cortada se lleva semillas del banco que despertará en la próxima lluvia. Mirar sin cortar las deja volver.",
+    "Los vehículos fuera de los caminos destruyen las semillas y bulbos del desierto que esperan la próxima lluvia.",
+    "Los cebos envenenados que algunos ponen contra animales también matan a cóndores y otras aves. Evitarlos protege a todos."
+  ],
+  "vida_comun": [
+    "Saludar a quien se cruza en la escalera o en la calle hace más cálido el barrio.",
+    "Escuchar a alguien hasta el final, sin interrumpir, es una forma concreta de respeto.",
+    "Agradecer a quien hace un trabajo que casi nadie nota: el aseo, el transporte, la atención.",
+    "Ofrecer ayuda a un vecino mayor, con las compras o un trámite, fortalece la comunidad.",
+    "Cumplir lo que se prometió, aunque sea algo pequeño, hace que los demás puedan confiar.",
+    "Antes de repetir un rumor, se puede preguntar si es cierto y si ayuda a alguien.",
+    "Reconocer un error con sencillez y repararlo mejora la convivencia más que defenderse.",
+    "Respetar la fila, el turno y los horarios de otros es una manera cotidiana de convivir bien.",
+    "Participar en la junta de vecinos o en un grupo del barrio, aunque sea de vez en cuando, mejora el lugar donde se vive.",
+    "Cuando alguien piensa distinto, se puede conversar buscando entender antes que ganar."
+  ],
+  "como": "Cuidar este árbol se parece a cuidarnos: un poco cada día, con paciencia y sin exigencias. Si algún día no puedes venir, el árbol espera y retomas cuando quieras.",
+  "lugares": {
+    "lago": {
+      "nombre": "Lago",
+      "precio": 60,
+      "dato": "Un agua quieta que refleja el cielo. Sirve para recordar que a veces avanzar es detenerse."
+    },
+    "rio": {
+      "nombre": "Río",
+      "precio": 90,
+      "dato": "El agua no se apura y aun así llega. Un poco cada día también te lleva lejos."
+    },
+    "bosque": {
+      "nombre": "Bosque nativo",
+      "precio": 130,
+      "dato": "Entre los árboles de fondo hay araucarias, alerces y robles: cada uno con su forma, ninguno igual al otro."
+    },
+    "montanas": {
+      "nombre": "Cordillera",
+      "precio": 120,
+      "dato": "Las montañas se ven grandes de lejos y se suben paso a paso."
+    },
+    "volcan": {
+      "nombre": "Volcán nevado",
+      "precio": 150,
+      "dato": "En el sur de Chile hay volcanes nevados que acompañan el paisaje por generaciones. Quietud por fuera, fuerza por dentro."
+    },
+    "costa": {
+      "nombre": "Costa del Pacífico",
+      "precio": 160,
+      "dato": "El mar abre el horizonte. Mirar lejos también descansa."
+    },
+    "desierto": {
+      "nombre": "Desierto florido",
+      "precio": 200,
+      "dato": "En años de buena lluvia, el desierto de Atacama se cubre de flores. Lo que parecía seco estaba esperando."
+    }
   },
-  "rio": {
-   "nombre": "Río",
-   "precio": 90,
-   "dato": "El agua no se apura y aun así llega. Un poco cada día también te lleva lejos."
+  "climas": {
+    "despejado": {
+      "nombre": "Despejado",
+      "precio": 25,
+      "dato": "Sol de día y luna de noche, según tu hora."
+    },
+    "nublado": {
+      "nombre": "Nublado",
+      "precio": 25,
+      "dato": "Los días grises también hacen crecer."
+    },
+    "lluvia": {
+      "nombre": "Lluvia suave",
+      "precio": 60,
+      "dato": "La lluvia cuida lo que no ves: las raíces."
+    },
+    "estrellas": {
+      "nombre": "Noche estrellada",
+      "precio": 80,
+      "dato": "Un cielo oscuro y limpio, para cerrar el día en calma."
+    },
+    "nieve": {
+      "nombre": "Nieve",
+      "precio": 100,
+      "dato": "Todo se detiene un rato. Descansar es parte del trabajo."
+    },
+    "arcoiris": {
+      "nombre": "Arcoíris",
+      "precio": 140,
+      "dato": "Después de la lluvia, la luz se abre en colores."
+    }
   },
-  "bosque": {
-   "nombre": "Bosque nativo",
-   "precio": 130,
-   "dato": "Entre los árboles de fondo hay araucarias, alerces y robles: cada uno con su forma, ninguno igual al otro."
+  "especiales": {
+    "nenufares": {
+      "nombre": "Nenúfares",
+      "lugar": "lago",
+      "cosechas": 4,
+      "dato": "Sus hojas flotan sobre el agua tranquila y sus flores se abren con la luz del día.",
+      "x": 92,
+      "y": 336,
+      "k": 1
+    },
+    "cisne": {
+      "nombre": "Cisne de cuello negro",
+      "lugar": "lago",
+      "cosechas": 8,
+      "dato": "Vive en lagos y humedales de Chile y se reconoce por su cuello negro y su cuerpo blanco.",
+      "x": 262,
+      "y": 334,
+      "k": 1
+    },
+    "piedras": {
+      "nombre": "Piedras del río",
+      "lugar": "rio",
+      "cosechas": 3,
+      "dato": "El agua las va puliendo con los años.",
+      "x": 300,
+      "y": 372,
+      "k": 1
+    },
+    "sauce": {
+      "nombre": "Sauce",
+      "lugar": "rio",
+      "cosechas": 6,
+      "dato": "Le gusta crecer cerca del agua, y sus ramas cuelgan hacia ella.",
+      "x": 62,
+      "y": 372,
+      "k": 1.1
+    },
+    "helechos": {
+      "nombre": "Helechos",
+      "lugar": "bosque",
+      "cosechas": 4,
+      "dato": "Crecen en la sombra húmeda del bosque, bajo los árboles grandes.",
+      "x": 66,
+      "y": 378,
+      "k": 1
+    },
+    "tronco": {
+      "nombre": "Tronco caído",
+      "lugar": "bosque",
+      "cosechas": 6,
+      "dato": "Un tronco caído se vuelve casa de hongos, insectos y musgos.",
+      "x": 288,
+      "y": 382,
+      "k": 1
+    },
+    "guanaco": {
+      "nombre": "Guanaco",
+      "lugar": "montanas",
+      "cosechas": 8,
+      "dato": "Vive en grupos y recorre las alturas de la cordillera.",
+      "x": 76,
+      "y": 376,
+      "k": 1
+    },
+    "flores_altura": {
+      "nombre": "Flores de altura",
+      "lugar": "montanas",
+      "cosechas": 4,
+      "dato": "Aun entre las rocas y el frío, algunas flores encuentran dónde abrirse.",
+      "x": 292,
+      "y": 386,
+      "k": 1
+    },
+    "rocas_volcanicas": {
+      "nombre": "Rocas volcánicas",
+      "lugar": "volcan",
+      "cosechas": 3,
+      "dato": "Las rocas oscuras guardan la memoria de erupciones muy antiguas.",
+      "x": 70,
+      "y": 380,
+      "k": 1
+    },
+    "araucarias": {
+      "nombre": "Araucarias jóvenes",
+      "lugar": "volcan",
+      "cosechas": 7,
+      "dato": "Las araucarias crecen en la cordillera del sur de Chile, no lejos de los volcanes.",
+      "x": 290,
+      "y": 376,
+      "k": 1
+    },
+    "gaviota": {
+      "nombre": "Gaviota",
+      "lugar": "costa",
+      "cosechas": 5,
+      "dato": "Sigue la línea de la costa buscando su alimento.",
+      "x": 86,
+      "y": 232,
+      "k": 1
+    },
+    "conchas": {
+      "nombre": "Conchas",
+      "lugar": "costa",
+      "cosechas": 3,
+      "dato": "El mar las trae a la orilla y las deja ahí, vacías y pulidas.",
+      "x": 262,
+      "y": 380,
+      "k": 1
+    },
+    "cactus": {
+      "nombre": "Cactus",
+      "lugar": "desierto",
+      "cosechas": 4,
+      "dato": "Guarda agua en su tallo para esperar las lluvias, que llegan pocas veces.",
+      "x": 64,
+      "y": 376,
+      "k": 1.1
+    },
+    "zorro": {
+      "nombre": "Zorro culpeo",
+      "lugar": "desierto",
+      "cosechas": 8,
+      "dato": "Es un zorro de Chile que recorre desiertos, cordillera y matorrales.",
+      "x": 290,
+      "y": 382,
+      "k": 1
+    }
   },
-  "montanas": {
-   "nombre": "Cordillera",
-   "precio": 120,
-   "dato": "Las montañas se ven grandes de lejos y se suben paso a paso."
-  },
-  "volcan": {
-   "nombre": "Volcán nevado",
-   "precio": 150,
-   "dato": "En el sur de Chile hay volcanes nevados que acompañan el paisaje por generaciones. Quietud por fuera, fuerza por dentro."
-  },
-  "costa": {
-   "nombre": "Costa del Pacífico",
-   "precio": 160,
-   "dato": "El mar abre el horizonte. Mirar lejos también descansa."
-  },
-  "desierto": {
-   "nombre": "Desierto florido",
-   "precio": 200,
-   "dato": "En años de buena lluvia, el desierto de Atacama se cubre de flores. Lo que parecía seco estaba esperando."
+  "frutos": {
+    "arbol_desde_dia": 22,
+    "planta_dias": 7,
+    "pendientes_max": 6,
+    "nota": "Segunda moneda (clave `cosechas` en el estado). El árbol da 1 fruto por ciclo al llegar al día 22 (etapa frondoso); cada flor plantada da 1 fruto cada 7 días. Se recogen tocándolos. Solo sirven para comprar `especiales`."
   }
- },
- "climas": {
-  "despejado": {
-   "nombre": "Despejado",
-   "precio": 25,
-   "dato": "Sol de día y luna de noche, según tu hora."
-  },
-  "nublado": {
-   "nombre": "Nublado",
-   "precio": 25,
-   "dato": "Los días grises también hacen crecer."
-  },
-  "lluvia": {
-   "nombre": "Lluvia suave",
-   "precio": 60,
-   "dato": "La lluvia cuida lo que no ves: las raíces."
-  },
-  "estrellas": {
-   "nombre": "Noche estrellada",
-   "precio": 80,
-   "dato": "Un cielo oscuro y limpio, para cerrar el día en calma."
-  },
-  "nieve": {
-   "nombre": "Nieve",
-   "precio": 100,
-   "dato": "Todo se detiene un rato. Descansar es parte del trabajo."
-  },
-  "arcoiris": {
-   "nombre": "Arcoíris",
-   "precio": 140,
-   "dato": "Después de la lluvia, la luz se abre en colores."
-  }
- }
 }

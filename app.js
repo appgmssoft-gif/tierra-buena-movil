@@ -112,6 +112,7 @@
         v.desbloqueados = Array.from(new Set([].concat(v.desbloqueados || [], o.desbloqueados || [])));
         ['plantas', 'aves'].forEach((g) => { v[g] = mezclaLista(v[g] || [], o[g] || []); });
         if (gana.gotas && otro.gotas) r.gotas.total = Math.max(+gana.gotas.total || 0, +otro.gotas.total || 0);
+        { const cg = gana.cosechas || {}, co = otro.cosechas || {}; r.cosechas = { total: Math.max(+cg.total || 0, +co.total || 0), pend: Array.isArray(cg.pend) ? cg.pend : [], ult: Object.assign({}, co.ult || {}, cg.ult || {}) }; }   // F959: los frutos recogidos nunca se pierden
         return r;
       }
       if (k === 'tb_movil_juegos' && loc && rem && typeof loc === 'object' && typeof rem === 'object') {
@@ -1350,18 +1351,31 @@
   ];
   function sembradorEstado() { const j = leer(K_JUEGOS) || { n: 0, p: {} }, s = j.sembrador || {}; return s.f === hoyTxt() ? s : { f: hoyTxt(), pasos: [], cosechas: s.cosechas || 0 }; }
   function sembradorGuardar(s) { const j = leer(K_JUEGOS) || { n: 0, p: {} }; j.sembrador = s; guardar(K_JUEGOS, j); }
+  // F957: pasos que se marcan solos con lo que la persona ya hizo hoy en la app (leer, dar un paso en «Hoy lo hago», escribir en «Mi oración»). «Pensé» sigue siendo personal.
+  function sembradorDetectar() {
+    const hoy = hoyTxt(), esHoy = (v) => { try { return !!v && diaTxt(new Date(v)) === hoy; } catch (e) { return false; } }, r = [];
+    try { if (leidosHoy() > 0) r.push('leer'); } catch (e) { /* sin lectura */ }
+    try { if (hacLista().some((x) => (x.est === 'hecho' || x.est === 'intente') && esHoy(x.fin))) r.push('hacer'); } catch (e) { /* sin acciones */ }
+    try { const o = leer(K_MIORACION); if (Array.isArray(o) && o.some((x) => esHoy(x.fecha))) r.push('orar'); } catch (e) { /* sin oración */ }
+    return r;
+  }
+  function sembradorRevisar(st, son) {   // guarda y, si los 4 terrenos están listos, da la cosecha del día (una sola vez)
+    if (st.pasos.length === 4 && !st.cosechado) { st.cosechado = true; st.cosechas = (st.cosechas || 0) + 1; sembradorGuardar(st); juegoTerminar('sembrador', 4, 4); son('logro'); } else sembradorGuardar(st);
+  }
   function vistaSembrador(volver) {
     const son = (n) => { try { if (window.TBSonido && window.TBSonido[n]) window.TBSonido[n](); } catch (e) { /* sin sonido */ } };
     const pintar = () => {
-      const s = sembradorEstado(), n = s.pasos.length;
-      $('#pantalla').innerHTML = `${cabecera('El Sembrador', 'Juegos')}<div class="ju">${JU_HERO(n)}<p class="suave">Una parábola de Jesús sobre la semilla y los cuatro terrenos (Mateo 13:3-9). Marca lo que hiciste hoy; cuando los cuatro terrenos están listos, tu campo da fruto. Es solo para ti: se marca con confianza, sin revisión.</p>
+      const s = sembradorEstado(), solos = sembradorDetectar(), nuevos = solos.filter((id) => !s.pasos.includes(id));
+      if (nuevos.length) { s.pasos.push(...nuevos); son('logro'); sembradorRevisar(s, son); }
+      const n = s.pasos.length;
+      $('#pantalla').innerHTML = `${cabecera('El Sembrador', 'Juegos')}<div class="ju">${JU_HERO(n)}<p class="suave">Una parábola de Jesús sobre la semilla y los cuatro terrenos (Mateo 13:3-9). Marca lo que hiciste hoy (lo que ya hiciste en la app se marca solo); cuando los cuatro terrenos están listos, tu campo da fruto. Es solo para ti: se marca con confianza, sin revisión.</p>
         <p class="ju-cuenta">Hoy: ${n} de 4 terrenos listos${s.cosechas ? ' · Cosechas: ' + Number(s.cosechas) : ''}</p>
-        ${SEMBRADOR_PASOS.map((p) => { const hecho = s.pasos.includes(p[0]); return `<button type="button" class="ju-modo se-paso${hecho ? ' hecho' : ''}" data-paso="${p[0]}" aria-pressed="${hecho}"><span><b>${esc(p[1])}: ${esc(p[2])}</b><small>${esc(p[3])}</small></span><span class="flecha" aria-hidden="true">${hecho ? '✓' : '›'}</span></button>`; }).join('')}
+        ${SEMBRADOR_PASOS.map((p) => { const hecho = s.pasos.includes(p[0]), solo = solos.includes(p[0]); return `<button type="button" class="ju-modo se-paso${hecho ? ' hecho' : ''}" data-paso="${p[0]}" aria-pressed="${hecho}"${solo ? ' data-solo="1"' : ''}><span><b>${esc(p[1])}: ${esc(p[2])}</b><small>${esc(p[3])}${solo ? ' · Se marcó solo con lo que hiciste hoy.' : ''}</small></span><span class="flecha" aria-hidden="true">${hecho ? '✓' : '›'}</span></button>`; }).join('')}
         ${n === 4 ? '<p class="ju-vered ok"><b>Tu campo dio fruto hoy.</b> Vuelve mañana para sembrar otra vez.</p>' : ''}</div>`;
       volverA('Juegos', volver);
       document.querySelectorAll('[data-paso]').forEach((b) => b.addEventListener('click', () => {
-        const st = sembradorEstado(), id = b.dataset.paso; if (st.pasos.includes(id)) st.pasos = st.pasos.filter((x) => x !== id); else { st.pasos.push(id); son('logro'); }
-        if (st.pasos.length === 4 && !st.cosechado) { st.cosechado = true; st.cosechas = (st.cosechas || 0) + 1; sembradorGuardar(st); juegoTerminar('sembrador', 4, 4); son('logro'); } else sembradorGuardar(st);
+        if (b.dataset.solo) return; const st = sembradorEstado(), id = b.dataset.paso; if (st.pasos.includes(id)) st.pasos = st.pasos.filter((x) => x !== id); else { st.pasos.push(id); son('logro'); }
+        sembradorRevisar(st, son);
         pintar();
       }));
     };

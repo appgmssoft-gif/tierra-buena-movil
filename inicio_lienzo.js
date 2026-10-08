@@ -167,7 +167,8 @@
     return ver.map((g) => '<button type="button" class="il-gota s-' + esc(g.casilla) + '" data-id="' + esc(g.id) + '" aria-label="Gota de rocío. Toca para recogerla">' + ic(IC.gota, 24) + '</button>').join('')
       + (mas > 0 ? '<button type="button" class="il-gota il-gota-grupo" data-id="todas" aria-label="Recoger ' + pe.length + ' gotas de rocío">' + ic(IC.gota, 30) + '<b>+' + mas + '</b></button>' : '');
   }
-  function gotasTexto(est) { const g = est.gotas || {}, n = (g.pendientes || []).length; return (g.saldo || g.total || n) ? ic(IC.gota, 16) + (g.saldo || 0) + (g.saldo === 1 ? ' gota guardada' : ' gotas guardadas') + (n ? ' · ' + n + ' por recoger' : '') : ''; }
+  function gotasTexto(est) { const b = gotasTexto0(est); let f = ''; try { const c = window.TBInicio.cosechas(); if (c.total) f = FRUTO_S + c.saldo + (c.saldo === 1 ? ' fruto' : ' frutos'); } catch (e) { /* sin frutos */ } return b && f ? b + ' · ' + f : b || f; }
+  function gotasTexto0(est) { const g = est.gotas || {}, n = (g.pendientes || []).length; return (g.saldo || g.total || n) ? ic(IC.gota, 16) + (g.saldo || 0) + (g.saldo === 1 ? ' gota guardada' : ' gotas guardadas') + (n ? ' · ' + n + ' por recoger' : '') : ''; }
   // F933: el Vivero con contenido visual. Cada semilla y ave tiene su dibujo, hay una vista previa grande de lo que se obtiene y el avance hacia su precio.
   // Todo se anima con transform/opacity y se queda quieto en «reducir movimiento»/Ahorro. Sin atributo style (CSP): los tamaños salen de clases y de atributos SVG.
   let vivAbierto = false, vivMsg = '', vivSel = null, vivTab = 'flores';
@@ -200,6 +201,34 @@
   const LUGAR = { cielo: 'Vuela alto, sobre las montañas', rama: 'Se posa en las ramas', suelo: 'Anda por el suelo, entre el pasto', flor: 'Se queda en el aire, junto a las flores' };
   const ave = (id, w) => { const q = AVES[id] || { vb: [48, 36], w: 30, dib: () => '' }, ww = Math.round(w || q.w); return '<svg viewBox="0 0 ' + q.vb[0] + ' ' + q.vb[1] + '" width="' + ww + '" height="' + Math.round(ww * q.vb[1] / q.vb[0]) + '" aria-hidden="true" focusable="false">' + q.dib() + '</svg>'; };
   const aveG = (id, k) => { const q = AVES[id]; return '<g transform="scale(' + ((q.w * k) / q.vb[0]).toFixed(3) + ')">' + q.dib() + '</g>'; };
+  // F959 · Contenido especial de «Tu paisaje» (se compra con frutos en el Vivero; cada uno vive en su paisaje). Cada dibujo ocupa una caja de 60×40 con la base abajo al centro.
+  const FRUTO = '<svg class="il-fr" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" focusable="false"><circle cx="12" cy="14" r="7" fill="#e8893a" stroke="#a9551a" stroke-width="1.2"/><path d="M12 7c0-3 2-4 4.5-4 0 3-1.8 4-4.5 4z" fill="#5fae6c"/></svg>';
+  const FRUTO_S = FRUTO.replace('width="26" height="26"', 'width="14" height="14"');
+  const ESP = {
+    nenufares: '<ellipse cx="14" cy="34" rx="12" ry="4" fill="#4f9a5e"/><ellipse cx="42" cy="31" rx="10" ry="3.5" fill="#5fae6c"/><ellipse cx="28" cy="37" rx="9" ry="3" fill="#468f56"/><circle cx="42" cy="27.5" r="3.2" fill="#f4b6c8"/><circle cx="42" cy="27.5" r="1.2" fill="#f6dd7a"/>',
+    cisne: '<ellipse cx="28" cy="33" rx="15" ry="6.5" fill="#f6f6f2"/><path d="M38 31C47 29 47 15 41 13" fill="none" stroke="#2b2b30" stroke-width="4" stroke-linecap="round"/><circle cx="41" cy="12" r="3.4" fill="#2b2b30"/><path d="M43.6 12 L49 14 L43.6 15Z" fill="#d94a4a"/><path d="M14 33 C8 31 8 27 12 27" fill="none" stroke="#e8e8e2" stroke-width="3" stroke-linecap="round"/>',
+    piedras: '<ellipse cx="18" cy="35" rx="14" ry="5" fill="#8d9296"/><ellipse cx="38" cy="33" rx="11" ry="6" fill="#a2a8ac"/><ellipse cx="30" cy="37" rx="9" ry="3.5" fill="#777c80"/><path d="M12 33 q4 -3 8 0" stroke="#b9bfc3" stroke-width="1.5" fill="none"/>',
+    sauce: '<path d="M30 40 L30 17" stroke="#6b4a2f" stroke-width="3.2" stroke-linecap="round"/><path d="M30 13C10 12 7 33 11 39M30 13C50 12 53 33 49 39M30 13C21 17 19 31 21 39M30 13C39 17 41 31 39 39" fill="none" stroke="#6fae5a" stroke-width="3" stroke-linecap="round"/>',
+    helechos: '<path d="M30 40C21 31 13 23 6 17M30 40C30 28 30 19 30 7M30 40C39 31 47 23 54 17M30 40C24 34 22 28 20 20M30 40C36 34 38 28 40 20" fill="none" stroke="#3f8a4a" stroke-width="3" stroke-linecap="round"/><path d="M30 40C26 33 24 30 22 28M30 40C34 33 36 30 38 28" fill="none" stroke="#6fae5a" stroke-width="2" stroke-linecap="round"/>',
+    tronco: '<rect x="5" y="27" width="50" height="12" rx="6" fill="#7a5233"/><ellipse cx="11" cy="33" rx="2.6" ry="5.2" fill="#a47a4d"/><path d="M30 27q4-9 9 0z" fill="#d9573f"/><path d="M42 27q3-6 7 0z" fill="#e8c06a"/><path d="M16 28q6-3 12 0" stroke="#5f7a3a" stroke-width="2" fill="none"/>',
+    guanaco: '<ellipse cx="27" cy="25" rx="14" ry="7" fill="#b98a58"/><path d="M37 23C42 16 42 12 44 9" fill="none" stroke="#b98a58" stroke-width="5" stroke-linecap="round"/><ellipse cx="46" cy="8" rx="5" ry="3.3" fill="#c99f70"/><path d="M44.5 5L43.5 1M47 5L48 1" stroke="#8a5f38" stroke-width="1.6" stroke-linecap="round"/><path d="M19 30v10M25 31v9M31 31v9M37 30v10" stroke="#8a5f38" stroke-width="2.2" stroke-linecap="round"/><path d="M14 23q-5 2-4 7" fill="none" stroke="#b98a58" stroke-width="3" stroke-linecap="round"/>',
+    flores_altura: '<path d="M12 40V24M24 40V18M36 40V22M48 40V28" stroke="#4d8f58" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="22" r="4" fill="#9b6fd6"/><circle cx="24" cy="16" r="4.6" fill="#f2d64a"/><circle cx="36" cy="20" r="4" fill="#e8798f"/><circle cx="48" cy="26" r="3.6" fill="#9b6fd6"/>',
+    rocas_volcanicas: '<path d="M4 40L10 24L22 20L30 30L36 18L50 26L56 40Z" fill="#3e3a3d"/><path d="M10 24L22 20L18 32ZM36 18L50 26L40 30Z" fill="#59535a"/><path d="M26 38l4-6 4 6z" fill="#c4532d"/>',
+    araucarias: '<path d="M16 40V15M42 40V22" stroke="#5a3d2a" stroke-width="2.6" stroke-linecap="round"/><path d="M4 14C10 7 22 7 28 14C22 11 10 11 4 14ZM30 21C35 15 49 15 54 21C48 18 36 18 30 21Z" fill="#3f7a46" stroke="#3f7a46" stroke-width="2" stroke-linejoin="round"/>',
+    gaviota: '<path d="M6 24Q17 8 30 22Q43 8 54 24" fill="none" stroke="#f5f5f2" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="30" cy="22" r="2.2" fill="#f5f5f2"/>',
+    conchas: '<path d="M8 38Q8 24 22 24Q36 24 36 38Z" fill="#f0c9b8"/><path d="M22 24V38M15 27L14 38M29 27L30 38" stroke="#d99f88" stroke-width="1.5" fill="none"/><ellipse cx="46" cy="35" rx="8" ry="4.5" fill="#f4e6d2"/><path d="M42 35q4-3 8 0" stroke="#d9bfa0" stroke-width="1.4" fill="none"/>',
+    cactus: '<rect x="24" y="6" width="13" height="34" rx="6.5" fill="#3f8a4f"/><rect x="10" y="16" width="9" height="15" rx="4.5" fill="#4a9a5a"/><rect x="12" y="27" width="14" height="7" rx="3.5" fill="#4a9a5a"/><rect x="42" y="12" width="9" height="14" rx="4.5" fill="#4a9a5a"/><rect x="35" y="22" width="12" height="7" rx="3.5" fill="#4a9a5a"/><path d="M30.5 12v24" stroke="#2f6e3d" stroke-width="1.2"/>',
+    zorro: '<path d="M16 29C4 26 3 38 10 38 15 38 16 34 18 32Z" fill="#8a5a3a"/><ellipse cx="28" cy="29" rx="13" ry="6" fill="#b9794a"/><path d="M37 25L47 23L45 31Z" fill="#c98a5a"/><path d="M38 25L40 18L43 24ZM43 24L47 18L47 24Z" fill="#a8663d"/><circle cx="43" cy="26" r="1" fill="#1d1d1d"/><path d="M20 33v7M26 34v6M32 34v6M38 33v7" stroke="#7a4a2d" stroke-width="2.2" stroke-linecap="round"/>'
+  };
+  const espSvg = (id, w) => '<svg viewBox="0 0 60 40" width="' + (w || 64) + '" height="' + Math.round((w || 64) * 2 / 3) + '" aria-hidden="true" focusable="false">' + (ESP[id] || '') + '</svg>';
+  function especialesEscena(est, fo) {                       // lo comprado que corresponde al paisaje elegido
+    const v = (est.vivero && est.vivero.desbloqueados) || [], E = (CAT && CAT.especiales) || {};
+    return Object.keys(E).filter((id) => E[id].lugar === fo && v.indexOf('esp_' + id) >= 0 && ESP[id]).map((id) => { const q = E[id], k = +q.k || 1; return '<g class="esp-it" transform="translate(' + (q.x - 30 * k) + ' ' + (q.y - 40 * k) + ') scale(' + k + ')">' + ESP[id] + '</g>'; }).join('');
+  }
+  function frutosHTML(est) {                                 // frutos maduros: se tocan para cosecharlos
+    const pe = (est.cosechas && est.cosechas.pend) || [];
+    return pe.map((f) => '<button type="button" class="il-fruto s-' + esc(f.casilla) + '" data-id="' + esc(f.id) + '" aria-label="Fruto maduro. Toca para cosecharlo">' + FRUTO + '</button>').join('');
+  }
   function vivEscena(est) {
     const v = est.vivero || {};
     return (v.plantas || []).map((q) => '<span class="il-planta p-' + esc(q.id) + ' s-' + esc(q.casilla) + '" aria-hidden="true">' + flor(q.id, 0.9) + '</span>').join('')
@@ -223,6 +252,7 @@
     return abre + cielo(false) + pasto + '<path d="M-10 70C60 62 120 60 190 52" fill="none" stroke="#7a5a3c" stroke-width="7" stroke-linecap="round"/><path d="M90 64c-10-14-26-18-40-16 8 10 22 18 40 16zM140 58c8-16 24-24 40-24-4 14-18 24-40 24zM30 66c-6-10-16-12-26-8 6 8 16 12 26 8z" fill="#5f9a62"/>' + pon(150 - bw / 2, 61 - bh, 'vv-posa') + '</svg>';
   }
   function vivPanel(est) {
+    if (vivSel && vivSel.tipo === 'esp') return vivPanelEsp(est);
     const v = est.vivero || { desbloqueados: [], plantas: [], aves: [] }, saldo = (est.gotas && est.gotas.saldo) || 0, tengo = (c) => v.desbloqueados.indexOf(c) >= 0;
     const sem = CAT.orden_semillas || Object.keys(CAT.semillas || {}), aves = Object.keys(CAT.aves || {});
     const plantada = (id) => (v.plantas || []).some((q) => q.id === id), activa = (id) => (v.aves || []).some((a) => a.id === id);
@@ -240,16 +270,36 @@
     else if (vivSel.tipo === 'ave') acc = '<button type="button" class="btn il-viv-bt il-viv-main" data-ac="ave" data-tipo="ave" data-id="' + esc(vivSel.id) + '">' + (activa(vivSel.id) ? 'Guardar el ave' : 'Llamar al árbol') + '</button>';
     else acc = plantada(vivSel.id) ? '<p class="il-viv-ok2">Ya está plantada en tu pasto.</p>' : '<button type="button" class="btn il-viv-bt il-viv-main" data-ac="plantar" data-tipo="semilla" data-id="' + esc(vivSel.id) + '">Plantar en mi pasto</button>';
     const nf = (v.plantas || []).length, na = (v.aves || []).length, esAve = vivSel.tipo === 'ave', rasgo = esAve ? ((AVES[vivSel.id] || {}).t || '') + ' · ' + (LUGAR[(AVES[vivSel.id] || {}).lugar] || '') : (TAM[vivSel.id] || '');
-    return '<div class="il-viv-cab"><h3>Vivero</h3><span class="il-viv-saldo">' + ic(IC.gota, 16) + saldo + (saldo === 1 ? ' gota' : ' gotas') + '</span></div>'
+    return '<div class="il-viv-cab"><h3>Vivero</h3><span class="il-viv-saldo">' + ic(IC.gota, 16) + saldo + (saldo === 1 ? ' gota' : ' gotas') + '</span>' + (() => { try { const c = window.TBInicio.cosechas(); return c.total ? '<span class="il-viv-saldo il-viv-cos">' + FRUTO_S + c.saldo + (c.saldo === 1 ? ' fruto' : ' frutos') + '</span>' : ''; } catch (e) { return ''; } })() + '</div>'
       + '<p class="il-viv-ay">Las gotas se ganan leyendo la Palabra y cumpliendo acciones en Vida. No vencen.</p>'
-      + '<div class="il-viv-tabs" role="group" aria-label="Tipo de elemento"><button type="button" class="il-viv-tab' + (esAve ? '' : ' on') + '" data-ac="tab" data-id="flores" aria-pressed="' + !esAve + '">Flores (' + sem.length + ')</button><button type="button" class="il-viv-tab' + (esAve ? ' on' : '') + '" data-ac="tab" data-id="aves" aria-pressed="' + esAve + '">Aves (' + aves.length + ')</button></div>'
+      + '<div class="il-viv-tabs" role="group" aria-label="Tipo de elemento"><button type="button" class="il-viv-tab' + (esAve ? '' : ' on') + '" data-ac="tab" data-id="flores" aria-pressed="' + !esAve + '">Flores (' + sem.length + ')</button><button type="button" class="il-viv-tab' + (esAve ? ' on' : '') + '" data-ac="tab" data-id="aves" aria-pressed="' + esAve + '">Aves (' + aves.length + ')</button><button type="button" class="il-viv-tab" data-ac="tab" data-id="paisaje" aria-pressed="false">Paisaje (' + Object.keys(CAT.especiales || {}).length + ')</button></div>'
       + '<div class="il-viv-car" role="list" aria-label="Desliza para ver más">' + (esAve ? aves : sem).map((i) => tile(esAve ? 'ave' : 'semilla', i)).join('') + '</div>'
       + '<div class="il-viv-vista pop" id="ilVivVista">' + vivVista(vivSel.tipo, vivSel.id) + '</div>'
       + '<div class="il-viv-ficha"><h4>' + esc(it.nombre) + '</h4><p class="il-viv-rasgo">' + esc(rasgo) + '</p><p class="il-viv-dato">' + esc(it.dato || '') + '</p><p class="il-viv-frase">' + esc(it.mensaje || '') + '</p>' + acc + '</div>'
       + '<p class="il-viv-jardin">Tu jardín: ' + nf + (nf === 1 ? ' flor' : ' flores') + ' y ' + na + (na === 1 ? ' ave' : ' aves') + ' (hasta 2 aves a la vez).</p>'
       + '<p class="il-viv-est" role="status" aria-live="polite">' + esc(vivMsg) + '</p>';
   }
-  const MOT = { 'faltan-gotas': 'Aún faltan gotas para esto.', 'sin-lugar': 'No queda lugar libre en el pasto.', 'maximo': 'Solo pueden estar 2 aves a la vez. Se puede guardar una para llamar a otra.', 'ya-tienes': 'Ya lo tienes.' };
+  function vivPanelEsp(est) {                                // F959 · pestaña «Paisaje»: contenido especial que se paga con frutos
+    const v = est.vivero || { desbloqueados: [] }, E = (CAT && CAT.especiales) || {}, L = (CAT && CAT.lugares) || {}, orden = Object.keys(L), ids = Object.keys(E).sort((a, b) => orden.indexOf(E[a].lugar) - orden.indexOf(E[b].lugar));
+    const tengo = (id) => v.desbloqueados.indexOf('esp_' + id) >= 0, lugarOk = (l) => v.desbloqueados.indexOf('lug_' + l) >= 0, nom = (l) => (L[l] && L[l].nombre) || l;
+    let fr = { total: 0, saldo: 0 }, saldoG = (est.gotas && est.gotas.saldo) || 0; try { fr = window.TBInicio.cosechas(); } catch (e) { /* sin frutos */ }
+    if (!E[vivSel.id]) vivSel = { tipo: 'esp', id: ids[0] };
+    const tile = (id) => { const q = E[id], mio = tengo(id), sel = vivSel.id === id, cerr = !mio && !lugarOk(q.lugar);
+      return '<button type="button" class="il-viv-tile' + (sel ? ' sel' : '') + (mio ? ' mio' : '') + '" role="listitem" data-ac="ver" data-tipo="esp" data-id="' + esc(id) + '" aria-pressed="' + sel + '"><span class="il-viv-arte">' + espSvg(id, 78) + '</span><b>' + esc(q.nombre) + '</b><small>' + esc(nom(q.lugar)) + '</small>'
+        + (mio ? '<span class="il-viv-chip ok">Tuyo</span>' : '<span class="il-viv-chip">' + FRUTO_S + q.cosechas + (cerr ? ' · falta el lugar' : '') + '</span>') + '</button>'; };
+    const q = E[vivSel.id], mio = tengo(vivSel.id), falta = Math.max(0, q.cosechas - fr.saldo); let acc;
+    if (mio) acc = '<p class="il-viv-ok2">Ya es tuyo. Se ve cuando eliges «' + esc(nom(q.lugar)) + '» en Tu paisaje.</p>';
+    else if (!lugarOk(q.lugar)) acc = '<p class="il-viv-pre">Primero necesitas el paisaje «' + esc(nom(q.lugar)) + '». Se obtiene en «Tu paisaje», con gotas.</p>';
+    else acc = '<p class="il-viv-pre">' + (falta ? 'Llevas ' + fr.saldo + ' de ' + q.cosechas + ' frutos. Faltan ' + falta + '.' : 'Ya tienes los frutos necesarios.') + '</p><button type="button" class="btn il-viv-bt il-viv-main" data-ac="comprar" data-tipo="esp" data-id="' + esc(vivSel.id) + '"' + (falta ? ' disabled' : '') + '>' + (falta ? 'Aún faltan frutos' : 'Obtener por ' + q.cosechas + ' frutos') + '</button>';
+    return '<div class="il-viv-cab"><h3>Vivero</h3><span class="il-viv-saldo">' + ic(IC.gota, 16) + saldoG + (saldoG === 1 ? ' gota' : ' gotas') + '</span><span class="il-viv-saldo il-viv-cos">' + FRUTO_S + fr.saldo + (fr.saldo === 1 ? ' fruto' : ' frutos') + '</span></div>'
+      + '<p class="il-viv-ay">Tu árbol y tus flores dan fruto cuando maduran: tócalos para cosecharlos. Los frutos sirven para llenar tus paisajes.</p>'
+      + '<div class="il-viv-tabs" role="group" aria-label="Tipo de elemento"><button type="button" class="il-viv-tab" data-ac="tab" data-id="flores" aria-pressed="false">Flores</button><button type="button" class="il-viv-tab" data-ac="tab" data-id="aves" aria-pressed="false">Aves</button><button type="button" class="il-viv-tab on" data-ac="tab" data-id="paisaje" aria-pressed="true">Paisaje (' + ids.length + ')</button></div>'
+      + '<div class="il-viv-car" role="list" aria-label="Desliza para ver más">' + ids.map(tile).join('') + '</div>'
+      + '<div class="il-viv-vista pop" id="ilVivVista"><div class="il-viv-esp">' + espSvg(vivSel.id, 150) + '</div></div>'
+      + '<div class="il-viv-ficha"><h4>' + esc(q.nombre) + '</h4><p class="il-viv-rasgo">' + esc(nom(q.lugar)) + '</p><p class="il-viv-dato">' + esc(q.dato || '') + '</p>' + acc + '</div>'
+      + '<p class="il-viv-est" role="status" aria-live="polite">' + esc(vivMsg) + '</p>';
+  }
+  const MOT = { 'faltan-frutos': 'Aún faltan frutos para esto.', 'falta-lugar': 'Primero hace falta ese paisaje.', 'faltan-gotas': 'Aún faltan gotas para esto.', 'sin-lugar': 'No queda lugar libre en el pasto.', 'maximo': 'Solo pueden estar 2 aves a la vez. Se puede guardar una para llamar a otra.', 'ya-tienes': 'Ya lo tienes.' };
   function ligarViv(cont, mi) {
     const T = window.TBInicio, bt = $('#ilVivBtn', cont), pn = $('#ilViv', cont); if (!bt || !pn) return;
     const pinta = (conservar) => { const car = $('.il-viv-car', pn), sl = car ? car.scrollLeft : 0; pn.innerHTML = vivPanel(T.cargar()); const c2 = $('.il-viv-car', pn); if (c2 && conservar) c2.scrollLeft = sl; };
@@ -257,9 +307,10 @@
     bt.onclick = () => { vivMsg = ''; abre(pn.hidden); };
     pn.onclick = (ev) => {
       const b = ev.target.closest('[data-ac]'); if (!b || b.disabled) return; const ac = b.getAttribute('data-ac'), tipo = b.getAttribute('data-tipo'), id = b.getAttribute('data-id'); let r;
+      if (ac === 'tab' && id === 'paisaje') { const ids = Object.keys(CAT.especiales || {}), v = (T.cargar().vivero || { desbloqueados: [] }).desbloqueados; vivSel = { tipo: 'esp', id: ids.find((i) => v.indexOf('esp_' + i) < 0) || ids[0] }; vivMsg = ''; pinta(false); sonido('suave'); return; }
       if (ac === 'tab') { const e = T.cargar(), v = e.vivero || { desbloqueados: [] }, lista = id === 'aves' ? Object.keys(CAT.aves || {}) : (CAT.orden_semillas || Object.keys(CAT.semillas || {})), pre = id === 'aves' ? 'ave_' : 'sem_', p1 = lista.find((i) => v.desbloqueados.indexOf(pre + i) < 0) || lista[0]; vivSel = { tipo: id === 'aves' ? 'ave' : 'semilla', id: p1 }; vivMsg = ''; pinta(false); sonido('suave'); return; }
       if (ac === 'ver') { vivSel = { tipo, id }; vivMsg = ''; pinta(true); sonido('suave'); try { const s = $('.il-viv-tile.sel', pn); if (s && s.scrollIntoView) s.scrollIntoView({ behavior: quieto() ? 'auto' : 'smooth', block: 'nearest', inline: 'center' }); } catch (e) { /* sin scroll */ } return; }
-      if (ac === 'comprar') { r = T.comprar(tipo, id); if (r.ok) vivMsg = 'Listo: ya es tuyo.'; }
+      if (ac === 'comprar') { r = tipo === 'esp' ? T.comprarEspecial(id) : T.comprar(tipo, id); if (r.ok) vivMsg = tipo === 'esp' ? 'Listo: ya está en tu paisaje.' : 'Listo: ya es tuyo.'; }
       else if (ac === 'plantar') { r = T.plantar(id); if (r.ok) vivMsg = 'Plantada en el pasto.'; }
       else { const act = (T.cargar().vivero.aves || []).some((a) => a.id === id); r = T.activarAve(id, !act); if (r.ok) vivMsg = act ? 'Se guardó el ave.' : 'El ave llegó al árbol.'; }
       if (!r.ok) { vivMsg = MOT[r.motivo] || 'No se pudo.'; pinta(true); return; }
@@ -279,9 +330,9 @@
       + '<g class="cap cap0">' + cielo(cl) + atras(fo) + '</g><g class="cap cap1"><path class="col c1" d="' + COL.c1 + '"/>' + fondo + '</g>'
       + '<g class="cap cap2"><path class="col c2" d="' + COL.c2 + '"/></g>'
       + '<g class="cap cap3"><path class="col c3" d="' + COL.c3 + '"/></g></g>'
-      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g><g class="cap cap3"><g class="mundo" transform="translate(180 344)">' + arbol(c.especie, et) + '</g></g><g class="clima">' + climaSvg(cl) + '</g></svg>'
+      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g><g class="esp">' + especialesEscena(est, fo) + '</g><g class="cap cap3"><g class="mundo" transform="translate(180 344)">' + arbol(c.especie, et) + '</g></g><g class="clima">' + climaSvg(cl) + '</g></svg>'
       + '<i class="il-anillo" id="ilAnillo" aria-hidden="true"></i>'
-      + '<button type="button" class="il-resp" id="ilResp" aria-label="Respirar con tu árbol. Toca para una pausa de unos 30 segundos"></button>' + mal + gotasHTML(est) + vivEscena(est) + '</div>';
+      + '<button type="button" class="il-resp" id="ilResp" aria-label="Respirar con tu árbol. Toca para una pausa de unos 30 segundos"></button>' + mal + gotasHTML(est) + frutosHTML(est) + vivEscena(est) + '</div>';
   }
 
   // ---------- Textos ----------
@@ -366,6 +417,13 @@
         const id = b.getAttribute('data-id'), n = T.recolectar(id); if (!n) return; sonido('gota'); luces(b);
         const quita = (x) => { x.classList.add('recoge'); later(() => { try { x.remove(); } catch (e) { /* ya quitada */ } }, quieto() ? 0 : 400); };
         if (id === 'todas') Array.prototype.forEach.call(cont.querySelectorAll('.il-gota'), quita); else quita(b);
+        const g = $('#ilGotas', cont); if (g) g.innerHTML = gotasTexto(T.cargar());
+      };
+    });
+    Array.prototype.forEach.call(cont.querySelectorAll('.il-fruto'), (b) => {
+      b.onclick = () => {
+        if (!T.recogerFruto(b.getAttribute('data-id'))) return; sonido('gota'); luces(b); b.classList.add('recoge');
+        later(() => { try { b.remove(); } catch (e) { /* ya quitado */ } }, quieto() ? 0 : 400);
         const g = $('#ilGotas', cont); if (g) g.innerHTML = gotasTexto(T.cargar());
       };
     });
