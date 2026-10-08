@@ -15,7 +15,7 @@
   const idc = (p) => p + Math.random().toString(36).slice(2, 7);
 
   const nuevo = () => ({ v: VERSION, ciclo: { n: 1, especie: null, inicio: null, diasCuidado: 0, ultimoDia: null, ultimaVisita: null, cerrado: false, diaPendiente: false },
-    eligiendo: true, paisaje: [], maleza: [], gotas: { saldo: 0, total: 0, pendientes: [], hoy: { fecha: null, lectura: 0, vida: 0 } },
+    eligiendo: true, tematica: null, paisaje: [], maleza: [], gotas: { saldo: 0, total: 0, pendientes: [], hoy: { fecha: null, lectura: 0, vida: 0 } },
     vivero: { desbloqueados: [], plantas: [], aves: [] }, cosechas: { total: 0, pend: [], ult: {} }, trivia: { fecha: null, i: null, ok: false, elegida: null } });
 
   function migrar(x) {                                      // dato dañado o de otra versión → se rescata lo que sirve; nunca error en pantalla
@@ -25,6 +25,7 @@
       b.ciclo = { n: tope(+c.n || 1, 1, 9999), especie: typeof c.especie === 'string' ? c.especie : null, inicio: c.inicio || null, diasCuidado: tope(+c.diasCuidado || 0, 0, 30),
         ultimoDia: c.ultimoDia || null, ultimaVisita: c.ultimaVisita || c.ultimoDia || null, cerrado: !!c.cerrado, diaPendiente: !!c.diaPendiente };
       b.eligiendo = x.eligiendo === undefined ? !b.ciclo.especie : !!x.eligiendo;
+      b.tematica = typeof x.tematica === 'string' ? x.tematica : null;   // F965: temática activa
       if (Array.isArray(x.paisaje)) b.paisaje = x.paisaje.filter((p) => p && p.especie).slice(-6);
       if (Array.isArray(x.maleza)) b.maleza = x.maleza.filter((m) => m && m.id && m.casilla).slice(0, 5);
       const g = x.gotas || {}; b.gotas = { saldo: Math.max(0, +g.saldo || 0), total: Math.max(0, +g.total || 0), pendientes: Array.isArray(g.pendientes) ? g.pendientes.filter((p) => p && p.id).slice(0, 30) : [],
@@ -116,7 +117,7 @@
     e.gotas.saldo += sel.length; e.gotas.total += sel.length; guardar(e); return sel.length;
   }
   // ---- Vivero ----
-  const PREF = { semilla: 'sem_', ave: 'ave_', lugar: 'lug_', clima: 'cli_' }, LISTA = { semilla: 'semillas', ave: 'aves', lugar: 'lugares', clima: 'climas' }, GRATIS = { lugar: 'colinas', clima: 'natural' };
+  const PREF = { semilla: 'sem_', ave: 'ave_', lugar: 'lug_', clima: 'cli_', tema: 'tem_' }, LISTA = { semilla: 'semillas', ave: 'aves', lugar: 'lugares', clima: 'climas', tema: 'tematicas' }, GRATIS = { lugar: 'colinas', clima: 'natural' };
   function tiene(tipo, id) { if (GRATIS[tipo] === id) return true; return cargar().vivero.desbloqueados.indexOf(PREF[tipo] + id) >= 0; }
   function comprar(tipo, id) {                             // tipo: 'semilla' | 'ave' | 'lugar' | 'clima'. Devuelve { ok, motivo }
     const e = cargar(), it = (cat()[LISTA[tipo]] || {})[id]; if (!it) return { ok: false, motivo: 'no-existe' };
@@ -126,11 +127,19 @@
   }
   function plantar(id) {                                   // planta una semilla ya desbloqueada en una casilla libre permitida
     const e = cargar(), it = cat().semillas[id]; if (!it || e.vivero.desbloqueados.indexOf('sem_' + id) < 0) return { ok: false, motivo: 'no-desbloqueada' };
+    if (it.habitat && it.habitat.indexOf(e.tematica) < 0) return { ok: false, motivo: 'otra-tematica' };   // F965: plantas de hábitat solo con su temática
     const cas = casillaLibre(e, 'pasto', it.casillas); if (!cas) return { ok: false, motivo: 'sin-lugar' };
     e.vivero.plantas.push({ id, casilla: cas, en: hoy() }); guardar(e); return { ok: true, casilla: cas };
   }
+  function elegirTematica(id) {                            // F965: usa una temática ya comprada; null la quita. Devuelve { ok, motivo }
+    const e = cargar(); if (id === null) { e.tematica = null; guardar(e); return { ok: true, motivo: null }; }
+    if (!(cat().tematicas || {})[id]) return { ok: false, motivo: 'no-existe' };
+    if (e.vivero.desbloqueados.indexOf('tem_' + id) < 0) return { ok: false, motivo: 'no-desbloqueada' };
+    e.tematica = id; guardar(e); return { ok: true, motivo: null };
+  }
   function activarAve(id, si) {                            // máximo 2 aves activas a la vez (cuidado de la batería)
     const e = cargar(); if (e.vivero.desbloqueados.indexOf('ave_' + id) < 0) return { ok: false, motivo: 'no-desbloqueada' };
+    const ave = (cat().aves || {})[id]; if (ave && ave.habitat && ave.habitat.indexOf(e.tematica) < 0 && si !== false) return { ok: false, motivo: 'otra-tematica' };   // F969: aves exóticas solo con su temática
     const i = e.vivero.aves.findIndex((a) => a.id === id);
     if (si === false) { if (i >= 0) e.vivero.aves.splice(i, 1); guardar(e); return { ok: true }; }
     if (i >= 0) return { ok: true };
@@ -192,6 +201,6 @@
     return { ok: true, acierto, correcta: ord.indexOf(q.c), explicacion: q.e, gotas: g };
   }
 
-  const api = { config(o) { if (o && o.catalogo) CAT = o.catalogo; if (o && o.hoy) HOY = o.hoy; if (o && o.almacen) ALM = o.almacen; }, cargar, guardar, estado: cargar, etapa, malezaPara, elegirPrimera, visita, sanar, ganar, recolectar, comprar, tiene, plantar, activarAve, mensajeActual, cosechas, recogerFruto, tieneEspecial, comprarEspecial, triviaHoy, responderTrivia, K };
+  const api = { config(o) { if (o && o.catalogo) CAT = o.catalogo; if (o && o.hoy) HOY = o.hoy; if (o && o.almacen) ALM = o.almacen; }, cargar, guardar, estado: cargar, etapa, malezaPara, elegirPrimera, visita, sanar, ganar, recolectar, comprar, tiene, plantar, activarAve, mensajeActual, cosechas, recogerFruto, tieneEspecial, comprarEspecial, triviaHoy, responderTrivia, elegirTematica, K };
   if (typeof window !== 'undefined') window.TBInicio = api; if (typeof module !== 'undefined') module.exports = api;
 })();

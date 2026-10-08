@@ -33,7 +33,7 @@ html:not([data-anim=off]) .cap{transition:transform .9s cubic-bezier(.22,.61,.36
 .tr-h{fill:var(--h)}.tr-h2{fill:var(--h2)}.tr-h3{fill:var(--h3,var(--h2))}
 .esp-araucaria{--h:#3d6b4a;--h2:#5c8f63}
 .esp-canelo{--h:#4f9a5b;--h2:#79c07a}
-.esp-quillay{--h:#6f8f3f;--h2:#98b45a}
+.esp-quillay{--h:#5d7f74;--h2:#8fb0a3}
 .esp-roble{--h:#5d8a3a;--h2:#8cb15a}
 .esp-alerce{--h:#3b6a52;--h2:#5b8d73}
 .esp-palma_chilena .tr-t.t4,.esp-palma_chilena .tr-t.t3{stroke:#4f8a3c}
@@ -292,3 +292,18 @@ html:not([data-anim=off]) .il-btn-msg.nuevo::after{animation:il-tri-lat 1.8s eas
 @keyframes il-tri-lat{0%,100%{box-shadow:0 0 0 0 rgba(63,167,150,.55)}50%{box-shadow:0 0 0 6px rgba(63,167,150,0)}}
 @media (prefers-reduced-motion:reduce){.il-tri-op.pop,.il-btn-msg.nuevo::after{animation:none!important}}
 html[data-eco="2"] .il-tri-op.pop,html[data-eco="2"] .il-btn-msg.nuevo::after{animation:none!important}
+
+/* F965 · temáticas del vivero */
+.il-tem{margin:10px 0 12px;display:grid;gap:10px}
+.il-tem-h{margin:0;font:600 .78rem/1.3 system-ui,sans-serif;letter-spacing:.05em;text-transform:uppercase;opacity:.8}
+.il-tem-card{position:relative;padding:12px 14px 14px;border-radius:16px;border:1px solid color-mix(in srgb,var(--suave) 24%,transparent);background:var(--vidrio,transparent)}
+.il-tem-card b{display:block;margin-bottom:4px;font-size:1rem}.il-tem-card p{margin:0 0 6px;font-size:.9rem;line-height:1.5}.il-tem-dato{opacity:.85}
+.il-tem-card.act{border-color:#3fa796;box-shadow:0 0 0 3px color-mix(in srgb,#3fa796 22%,transparent)}
+.il-tem-bt{min-height:44px;padding:8px 18px;border-radius:999px;border:0;background:#3fa796;color:#fff;font:inherit;font-weight:600;cursor:pointer}
+.il-tem-bt.sec{background:transparent;color:var(--tinta);border:1px solid color-mix(in srgb,#3fa796 60%,transparent)}
+.il-tem-bt:disabled{opacity:.55;cursor:default}
+.il-tem-card{}
+.il-tem-card{overflow:hidden;padding-top:0}
+.il-tem-arte{margin:0 -14px 10px;height:96px;overflow:hidden;position:relative}
+.il-tem-arte svg{display:block;width:100%;height:100%}
+.il-tem-card b{padding-top:0}

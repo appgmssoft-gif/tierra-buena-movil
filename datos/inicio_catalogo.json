@@ -1,5 +1,5 @@
 {
-  "_nota": "F929 · Catálogo del Inicio «Tierra Buena». Solo lectura; cambiar textos no toca el código. Cada árbol tiene `mensaje` (al elegirlo) y `vida`: mensajes (5 a 6) para la vida personal (uno distinto por día de cuidado). Datos VERIFICADOS el 7 oct (CONAF, SAG, Min. Medio Ambiente): araucaria, canelo, alerce. Por verificar: quillay, roble, palma chilena, cerezo, sauce, semillas y aves. Lenguaje: neutro y cordial. Los mensajes son de crecimiento personal y de cuidado de la naturaleza y el planeta (no religiosos). El jacarandá (F930) es la opción más colorida. F933: cada día se desbloquean 3 mensajes: `arbol` (+`arbol_comun`) = dato real; `planeta` (+`planeta_comun`) = respeto a la naturaleza; `vida` (+`vida_comun`) = crecer como personas y sociedad. Rotan solos por fecha. F934: datos VERIFICADOS el 7 oct con fuentes (CONAF/Árboles Nativos de Chile, SAG, Reforestemos, UC, prensa): quillay, roble, palma chilena, sauce chileno, jacarandá, cerezo (exportación), copihue, desierto florido, cóndor y Pando. Sin verificar aún: araucaria (parte), canelo (parte), lavanda, chucao, queltehue, picaflor, golondrina, gorrión y los bancos comunes de árbol/planeta (conocimiento general). F961: plantas nuevas (bonsái, loto, rafflesia, drago de Socotra, secuoya roja, bambú, welwitschia, planta fantasma, orquídea subterránea y pasto alto) y trivia diaria. Datos de estas plantas y de la trivia: conocimiento general, POR VERIFICAR con fuente antes de publicar.",
+  "_nota": "F929 · Catálogo del Inicio «Tierra Buena». Solo lectura; cambiar textos no toca el código. Cada árbol tiene `mensaje` (al elegirlo) y `vida`: mensajes (5 a 6) para la vida personal (uno distinto por día de cuidado). Datos VERIFICADOS el 7 oct (CONAF, SAG, Min. Medio Ambiente): araucaria, canelo, alerce. Por verificar: quillay, roble, palma chilena, cerezo, sauce, semillas y aves. Lenguaje: neutro y cordial. Los mensajes son de crecimiento personal y de cuidado de la naturaleza y el planeta (no religiosos). El jacarandá (F930) es la opción más colorida. F933: cada día se desbloquean 3 mensajes: `arbol` (+`arbol_comun`) = dato real; `planeta` (+`planeta_comun`) = respeto a la naturaleza; `vida` (+`vida_comun`) = crecer como personas y sociedad. Rotan solos por fecha. F934: datos VERIFICADOS el 7 oct con fuentes (CONAF/Árboles Nativos de Chile, SAG, Reforestemos, UC, prensa): quillay, roble, palma chilena, sauce chileno, jacarandá, cerezo (exportación), copihue, desierto florido, cóndor y Pando. Sin verificar aún: araucaria (parte), canelo (parte), lavanda, chucao, queltehue, picaflor, golondrina, gorrión y los bancos comunes de árbol/planeta (conocimiento general). F961: plantas nuevas (bonsái, loto, rafflesia, drago de Socotra, secuoya roja, bambú, welwitschia, planta fantasma, orquídea subterránea y pasto alto) y trivia diaria. Datos de estas plantas y de la trivia: conocimiento general, POR VERIFICAR con fuente antes de publicar. F965: temáticas (bosque nativo, desierto florido). Las plantas con `habitat` solo se plantan con esa temática activa; las demás son generales. Árboles principales por temática: pendiente (falta dibujar especies de desierto). Datos de temáticas: conocimiento general, por verificar. F966: decisión de coherencia: plantas de otros continentes solo en la temática «Jardín del mundo». Solo pasto alto queda general. Chile: bosque nativo y desierto florido. F968: verificados con fuentes picaflor (redobservadores, The Clinic, guía de campo) y gorrión (redobservadores, SciELO: especie introducida, no nativa). Lavanda: sin cambios. F969: el gorrión (exótico) solo puede activarse con la temática Jardín del mundo; las aves nativas son generales. F970: lavanda verificada (originaria del Mediterráneo; aromática; atrae abejas y mariposas). F971: temáticas Cordillera y Costa del Pacífico. Añañuca: desierto, cordillera y costa (el género tiene especies en las tres). Pata de guanaco: desierto y costa. Verificado con fichas de especies (MMA) y registros de Rhodophiala. F972: llareta (cordillera) y chagual (costa), verificadas con fichas MMA y fuentes botánicas. F973: notro y chilco (bosque nativo), verificados con fuentes (Smith-Ramírez & Armesto 1998, Revista Chilena de Historia Natural, Kew POWO, ficha de uso del chilco). F974: ulmo (bosque), garra de león (desierto y costa), chachacoma (cordillera). Regla: cada temática Chile con al menos 3 plantas propias o compartidas.",
   "ciclo": {
     "dias": 30,
     "etapas": [
@@ -480,7 +480,10 @@
       ],
       "mensaje": "La flor nacional crece enredada en otros árboles. Nadie florece del todo solo.",
       "dato": "Es la flor nacional desde el 24 de febrero de 1977 y solo crece en Chile. Florece en otoño y la polinizan picaflores, entre ellos el picaflor gigante.",
-      "dias": 2
+      "dias": 2,
+      "habitat": [
+        "bosque"
+      ]
     },
     "ananuca": {
       "nombre": "Añañuca",
@@ -501,7 +504,12 @@
       ],
       "mensaje": "Después de la sequía, algunas flores vuelven. Una pausa no es un final.",
       "dato": "La añañuca roja es una de las plantas del desierto florido: espera bajo tierra, como bulbo, hasta que las lluvias la despiertan.",
-      "dias": 2
+      "dias": 2,
+      "habitat": [
+        "desierto",
+        "cordillera",
+        "costa"
+      ]
     },
     "pata_de_guanaco": {
       "nombre": "Pata de guanaco",
@@ -522,7 +530,11 @@
       ],
       "mensaje": "La vida espera su momento. Hay etapas para cuidar sin ver todavía el resultado.",
       "dato": "Sus semillas pueden esperar años bajo la arena. Germinan cuando llueve lo suficiente y hubo frío previo, y tiñen de rosado el desierto cada varios años.",
-      "dias": 2
+      "dias": 2,
+      "habitat": [
+        "desierto",
+        "costa"
+      ]
     },
     "lavanda": {
       "nombre": "Lavanda",
@@ -542,8 +554,11 @@
         "pasto-12"
       ],
       "mensaje": "Lo que da calma a otros también calma a quien lo planta.",
-      "dato": "Es aromática y atrae a las abejas.",
-      "dias": 2
+      "dato": "Es originaria del Mediterráneo y muy aromática. Atrae a las abejas y las mariposas.",
+      "dias": 2,
+      "habitat": [
+        "jardin"
+      ]
     },
     "pasto_alto": {
       "nombre": "Pasto alto",
@@ -585,7 +600,10 @@
         "pasto-12"
       ],
       "mensaje": "Primero crece hacia adentro y luego se dispara hacia arriba. A veces el avance no se ve, pero está.",
-      "dato": "Algunas especies llegan a crecer cerca de un metro en un solo día. Es un pasto gigante, no un árbol, y su tallo es hueco y flexible."
+      "dato": "Algunas especies llegan a crecer cerca de un metro en un solo día. Es un pasto gigante, no un árbol, y su tallo es hueco y flexible.",
+      "habitat": [
+        "jardin"
+      ]
     },
     "flor_de_loto": {
       "nombre": "Flor de loto",
@@ -606,7 +624,10 @@
         "pasto-12"
       ],
       "mensaje": "Nace en aguas quietas y se abre limpia. Se puede florecer desde cualquier lugar.",
-      "dato": "Sus hojas repelen el agua y la suciedad. Se han hecho germinar semillas de loto de más de mil años de antigüedad."
+      "dato": "Sus hojas repelen el agua y la suciedad. Se han hecho germinar semillas de loto de más de mil años de antigüedad.",
+      "habitat": [
+        "jardin"
+      ]
     },
     "bonsai": {
       "nombre": "Bonsái",
@@ -627,7 +648,10 @@
         "pasto-12"
       ],
       "mensaje": "Cuidar con calma, un poco cada día, también es una forma de arte.",
-      "dato": "Es el arte de cultivar un árbol pequeño en una maceta mediante poda y cuidado constante. Algunos ejemplares superan los 400 años."
+      "dato": "Es el arte de cultivar un árbol pequeño en una maceta mediante poda y cuidado constante. Algunos ejemplares superan los 400 años.",
+      "habitat": [
+        "jardin"
+      ]
     },
     "planta_fantasma": {
       "nombre": "Planta fantasma",
@@ -648,7 +672,10 @@
         "pasto-12"
       ],
       "mensaje": "No todo lo que crece necesita sol. Hay fuerzas que sostienen en silencio.",
-      "dato": "Es blanca porque no tiene clorofila: no hace fotosíntesis y obtiene su alimento de hongos del suelo conectados a las raíces de árboles."
+      "dato": "Es blanca porque no tiene clorofila: no hace fotosíntesis y obtiene su alimento de hongos del suelo conectados a las raíces de árboles.",
+      "habitat": [
+        "jardin"
+      ]
     },
     "welwitschia": {
       "nombre": "Welwitschia",
@@ -669,7 +696,10 @@
         "pasto-12"
       ],
       "mensaje": "Resistir con lo justo también es crecer. Menos puede ser suficiente.",
-      "dato": "Vive en el desierto de Namibia y en toda su vida produce solo dos hojas que no dejan de crecer. Puede vivir más de mil años."
+      "dato": "Vive en el desierto de Namibia y en toda su vida produce solo dos hojas que no dejan de crecer. Puede vivir más de mil años.",
+      "habitat": [
+        "jardin"
+      ]
     },
     "dracaena_cinnabari": {
       "nombre": "Drago de Socotra",
@@ -690,7 +720,10 @@
         "pasto-12"
       ],
       "mensaje": "Quien se adapta, encuentra la forma de captar lo que le hace falta.",
-      "dato": "Crece solo en la isla de Socotra, en Yemen. Su copa en forma de paraguas atrapa la niebla y su savia es de color rojo intenso."
+      "dato": "Crece solo en la isla de Socotra, en Yemen. Su copa en forma de paraguas atrapa la niebla y su savia es de color rojo intenso.",
+      "habitat": [
+        "jardin"
+      ]
     },
     "orquidea_subterranea": {
       "nombre": "Orquídea subterránea",
@@ -711,7 +744,10 @@
         "pasto-12"
       ],
       "mensaje": "Hay vidas que florecen en lo escondido. No todo avance necesita verse.",
-      "dato": "Rhizanthella gardneri, de Australia, pasa toda su vida bajo tierra, incluso al florecer. No hace fotosíntesis y es una de las orquídeas más raras."
+      "dato": "Rhizanthella gardneri, de Australia, pasa toda su vida bajo tierra, incluso al florecer. No hace fotosíntesis y es una de las orquídeas más raras.",
+      "habitat": [
+        "jardin"
+      ]
     },
     "secuoya_roja": {
       "nombre": "Secuoya roja",
@@ -732,7 +768,10 @@
         "pasto-12"
       ],
       "mensaje": "Las alturas grandes empiezan con raíces que se entrelazan. Nadie crece del todo solo.",
-      "dato": "Es el árbol más alto del mundo: puede superar los 110 metros. Vive en la costa de California y algunas pasan los 2.000 años."
+      "dato": "Es el árbol más alto del mundo: puede superar los 110 metros. Vive en la costa de California y algunas pasan los 2.000 años.",
+      "habitat": [
+        "jardin"
+      ]
     },
     "rafflesia": {
       "nombre": "Rafflesia de Arnold",
@@ -753,7 +792,179 @@
         "pasto-12"
       ],
       "mensaje": "Lo extraordinario también existe y merece cuidado. Cada ser vivo tiene su lugar.",
-      "dato": "Es una de las flores más grandes del mundo: puede medir cerca de un metro. No tiene raíces, hojas ni tallo y vive como parásita de una liana en los bosques de Sumatra y Borneo."
+      "dato": "Es una de las flores más grandes del mundo: puede medir cerca de un metro. No tiene raíces, hojas ni tallo y vive como parásita de una liana en los bosques de Sumatra y Borneo.",
+      "habitat": [
+        "jardin"
+      ]
+    },
+    "llareta": {
+      "nombre": "Llareta",
+      "precio": 25,
+      "dias": 4,
+      "casillas": [
+        "pasto-1",
+        "pasto-2",
+        "pasto-3",
+        "pasto-4",
+        "pasto-5",
+        "pasto-6",
+        "pasto-7",
+        "pasto-8",
+        "pasto-9",
+        "pasto-10",
+        "pasto-11",
+        "pasto-12"
+      ],
+      "habitat": [
+        "cordillera"
+      ],
+      "mensaje": "Crece muy despacio y, aun así, cubre las laderas más altas. La paciencia también da forma a algo firme.",
+      "dato": "Es un cojín verde y compacto de la alta cordillera. Puede vivir más de mil años y está protegida por ley en Chile: se mira, no se corta."
+    },
+    "chagual": {
+      "nombre": "Chagual",
+      "precio": 30,
+      "dias": 3,
+      "casillas": [
+        "pasto-1",
+        "pasto-2",
+        "pasto-3",
+        "pasto-4",
+        "pasto-5",
+        "pasto-6",
+        "pasto-7",
+        "pasto-8",
+        "pasto-9",
+        "pasto-10",
+        "pasto-11",
+        "pasto-12"
+      ],
+      "habitat": [
+        "costa"
+      ],
+      "mensaje": "Pasa años reuniendo fuerzas para un solo momento. Cada etapa también cuenta.",
+      "dato": "Es endémico de Chile. Florece una sola vez en su vida, después de unos once años, y su flor alimenta a picaflores y a la mariposa del chagual."
+    },
+    "notro": {
+      "nombre": "Notro",
+      "precio": 20,
+      "dias": 3,
+      "casillas": [
+        "pasto-1",
+        "pasto-2",
+        "pasto-3",
+        "pasto-4",
+        "pasto-5",
+        "pasto-6",
+        "pasto-7",
+        "pasto-8",
+        "pasto-9",
+        "pasto-10",
+        "pasto-11",
+        "pasto-12"
+      ],
+      "habitat": [
+        "bosque"
+      ],
+      "mensaje": "Florece cuando el bosque todavía está despertando. Su rojo anuncia la primavera del sur.",
+      "dato": "Es propio de los bosques templados del sur de Sudamérica. Florece en noviembre y diciembre, y sus flores rojas las polinizan sobre todo las aves, como el picaflor."
+    },
+    "chilco": {
+      "nombre": "Chilco",
+      "precio": 15,
+      "dias": 2,
+      "casillas": [
+        "pasto-1",
+        "pasto-2",
+        "pasto-3",
+        "pasto-4",
+        "pasto-5",
+        "pasto-6",
+        "pasto-7",
+        "pasto-8",
+        "pasto-9",
+        "pasto-10",
+        "pasto-11",
+        "pasto-12"
+      ],
+      "habitat": [
+        "bosque"
+      ],
+      "mensaje": "Crece junto al agua, donde la sombra y la humedad la cuidan. Cerca de lo que fluye, todo florece mejor.",
+      "dato": "Sus flores colgantes son rojas con pétalos morados y las visitan picaflores. Sus frutos dulces, los chanchitos, eran comidos por pueblos originarios."
+    },
+    "ulmo": {
+      "nombre": "Ulmo",
+      "precio": 25,
+      "dias": 4,
+      "casillas": [
+        "pasto-1",
+        "pasto-2",
+        "pasto-3",
+        "pasto-4",
+        "pasto-5",
+        "pasto-6",
+        "pasto-7",
+        "pasto-8",
+        "pasto-9",
+        "pasto-10",
+        "pasto-11",
+        "pasto-12"
+      ],
+      "habitat": [
+        "bosque"
+      ],
+      "mensaje": "Llena el bosque de flores blancas cuando el verano empieza. Lo grande también nace de algo pequeño.",
+      "dato": "Es un árbol siempreverde del sur de Chile que puede superar los 12 metros. Sus flores blancas y perfumadas florecen en febrero y marzo, y de su néctar sale la miel de ulmo."
+    },
+    "garra_de_leon": {
+      "nombre": "Garra de león",
+      "precio": 35,
+      "dias": 4,
+      "casillas": [
+        "pasto-1",
+        "pasto-2",
+        "pasto-3",
+        "pasto-4",
+        "pasto-5",
+        "pasto-6",
+        "pasto-7",
+        "pasto-8",
+        "pasto-9",
+        "pasto-10",
+        "pasto-11",
+        "pasto-12"
+      ],
+      "habitat": [
+        "desierto",
+        "costa"
+      ],
+      "mensaje": "Aparece solo después de las lluvias poco comunes del desierto. Cuidarla es respetar el tiempo que tarda en volver.",
+      "dato": "Es endémica de la costa de Atacama y está en peligro de extinción. Solo florece con el desierto florido, por eso no se debe recolectar ni pisar."
+    },
+    "chachacoma": {
+      "nombre": "Chachacoma",
+      "precio": 20,
+      "dias": 3,
+      "casillas": [
+        "pasto-1",
+        "pasto-2",
+        "pasto-3",
+        "pasto-4",
+        "pasto-5",
+        "pasto-6",
+        "pasto-7",
+        "pasto-8",
+        "pasto-9",
+        "pasto-10",
+        "pasto-11",
+        "pasto-12"
+      ],
+      "habitat": [
+        "cordillera"
+      ],
+      "mensaje": "Crece donde el aire es más delgado y cada paso cuesta. Adaptarse también es una forma de florecer.",
+      "dato": "Crece sobre los 3.000 metros de altura. Desde hace mucho tiempo se usa en Chile como remedio tradicional contra el mal de altura."
     }
   },
   "aves": {
@@ -779,7 +990,7 @@
       "nombre": "Picaflor",
       "precio": 110,
       "mensaje": "Pequeñas visitas, hechas con constancia, mantienen viva una flor.",
-      "dato": "Se alimenta del néctar y poliniza las flores que visita."
+      "dato": "Es el picaflor más austral del continente americano. Se alimenta sobre todo de néctar y también de pequeños insectos; el macho tiene una mancha roja brillante en la frente."
     },
     "condor": {
       "nombre": "Cóndor",
@@ -791,7 +1002,10 @@
       "nombre": "Gorrión",
       "precio": 80,
       "mensaje": "Lo pequeño también es visto y cuidado. Nadie pasa inadvertido.",
-      "dato": "Vive cerca de las personas, en plazas, techos y jardines."
+      "dato": "No es nativo de Chile: llegó desde Europa hace más de un siglo y hoy vive cerca de las personas, en plazas, techos y jardines.",
+      "habitat": [
+        "jardin"
+      ]
     }
   },
   "economia": {
@@ -1132,12 +1346,19 @@
     "flor_de_loto",
     "ananuca",
     "bonsai",
+    "chilco",
     "lavanda",
+    "chachacoma",
     "copihue",
+    "notro",
     "planta_fantasma",
+    "llareta",
     "pata_de_guanaco",
+    "ulmo",
     "welwitschia",
+    "chagual",
     "dracaena_cinnabari",
+    "garra_de_leon",
     "orquidea_subterranea",
     "secuoya_roja",
     "rafflesia"
@@ -1443,5 +1664,42 @@
       "c": 1,
       "e": "Es una gramínea; algunas especies crecen casi un metro al día."
     }
-  ]
+  ],
+  "tematicas": {
+    "bosque": {
+      "nombre": "Bosque nativo",
+      "precio": 150,
+      "fondo": "bosque",
+      "mensaje": "El bosque nativo guarda especies que solo crecen en Chile. Cuidarlo es cuidar algo que tarda siglos en crecer.",
+      "dato": "Aquí se pueden plantar las especies del bosque nativo, como el copihue, la flor nacional."
+    },
+    "desierto": {
+      "nombre": "Desierto florido",
+      "precio": 150,
+      "fondo": "desierto",
+      "mensaje": "Tras unas lluvias poco comunes, el desierto se llena de color. Lo que espera bajo tierra también sabe volver.",
+      "dato": "En el desierto de Atacama, algunos años con lluvia suficiente cubren el suelo de flores, como la añañuca y la pata de guanaco."
+    },
+    "jardin": {
+      "nombre": "Jardín del mundo",
+      "precio": 150,
+      "fondo": "colinas",
+      "mensaje": "Plantas de distintos rincones del planeta reunidas en un mismo jardín. Cada una cuenta una forma distinta de crecer.",
+      "dato": "Aquí se pueden plantar especies de otros continentes, como el loto, el bambú, el bonsái, la secuoya roja o la rafflesia de Sumatra."
+    },
+    "cordillera": {
+      "nombre": "Cordillera",
+      "precio": 150,
+      "fondo": "montanas",
+      "mensaje": "En lo alto, la nieve guarda el agua que llega a todo el valle. Cuidar las alturas también es cuidar lo de abajo.",
+      "dato": "Aquí se pueden plantar especies de la zona cordillerana, como algunas añañucas que crecen entre rocas y laderas."
+    },
+    "costa": {
+      "nombre": "Costa del Pacífico",
+      "precio": 150,
+      "fondo": "costa",
+      "mensaje": "Entre el mar y los cerros hay flores que resisten la neblina y la sal. Cada una encuentra su manera de vivir cerca del agua.",
+      "dato": "Aquí se pueden plantar especies de la costa, como la añañuca rosada, que crece en quebradas y terrazas junto al mar del norte."
+    }
+  }
 }
