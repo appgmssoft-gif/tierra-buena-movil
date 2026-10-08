@@ -39,7 +39,9 @@
     "alerce",
     "palma_chilena",
     "cerezo",
-    "sauce"
+    "sauce",
+    "peumo",
+    "maiten"
   ],
   "especies": {
     "araucaria": {
@@ -457,6 +459,90 @@
         "Los árboles floridos de la ciudad alegran, dan sombra y refrescan. Cuidarlos es cuidar un bien de todos.",
         "Quemar hojas y ramas contamina el aire; dejarlas como abono devuelve nutrientes a la tierra.",
         "Reutilizar es mejor que botar: lo que no se compra tampoco se convierte en basura."
+      ]
+    },
+    "peumo": {
+      "nombre": "Peumo",
+      "otro": "",
+      "origen": "nativo de Chile",
+      "mensaje": "Da sombra todo el año, sin cambiar de color con las estaciones. Quien da cobijo sin pedir nada también enseña.",
+      "dato": "Es un árbol endémico de Chile, siempreverde y de la zona central. Sus flores atraen abejas y sus frutos, aves.",
+      "vida": [
+        {
+          "tema": "Naturaleza",
+          "texto": "Un bosque sano empieza por los árboles que dan sombra y alimento a otros seres vivos."
+        },
+        {
+          "tema": "Agua",
+          "texto": "Cuidar el agua también es cuidar el suelo donde crecen las raíces, los frutos y las flores."
+        },
+        {
+          "tema": "Constancia",
+          "texto": "Mantenerse firme todo el año enseña que la constancia también se nota en los días grises."
+        },
+        {
+          "tema": "Servicio",
+          "texto": "Dar sombra sin pedir nada a cambio es un buen modelo para la familia y para la comunidad."
+        },
+        {
+          "tema": "Estaciones",
+          "texto": "Cada estación trae su propio ritmo. Aceptarlo con calma ayuda a cuidar mejor lo que tenemos."
+        }
+      ],
+      "arbol": [
+        "Es un árbol siempreverde: conserva sus hojas durante todo el año.",
+        "Vive en la zona central de Chile, en quebradas y laderas sombrías, desde el nivel del mar hasta unos 1.500 metros.",
+        "Puede alcanzar unos 20 metros de altura y tiene un follaje denso y verde oscuro.",
+        "Sus frutos son drupas rojas que atraen aves, que ayudan a dispersar sus semillas.",
+        "Forma parte del bosque esclerófilo, un tipo de bosque característico de Chile central.",
+        "En la Región Metropolitana su hábitat está amenazado por el cambio en el uso del suelo."
+      ],
+      "planeta": [
+        "En la Región Metropolitana el peumo tiene problemas de conservación por el cambio en el uso del suelo. Conservar lo que queda es urgente.",
+        "Cada árbol nativo que se planta da refugio a insectos, aves y otros pequeños seres.",
+        "Plantar especies de la zona, en lugar de exóticas, ayuda a mantener el equilibrio de cada lugar."
+      ]
+    },
+    "maiten": {
+      "nombre": "Maitén",
+      "otro": "",
+      "origen": "nativo de Chile",
+      "mensaje": "Sus ramas caen como un velo y cubren lo que está debajo. A veces la ternura también protege.",
+      "dato": "Es un árbol nativo de Chile y Argentina: siempreverde, de copa redonda y ramas colgantes. Tolera la sequía y sus flores atraen abejas.",
+      "vida": [
+        {
+          "tema": "Refugio",
+          "texto": "Un árbol de copa densa ofrece refugio a otros seres. Pensar en quien necesita abrigo también es cuidar."
+        },
+        {
+          "tema": "Bosque",
+          "texto": "Los bosques nativos guardan una red de vida que no se ve a simple vista. Protegerla es responsabilidad de todos."
+        },
+        {
+          "tema": "Ternura",
+          "texto": "La ternura también protege. Una palabra amable o un gesto cuidadoso pueden cubrir a alguien en un mal día."
+        },
+        {
+          "tema": "Paciencia",
+          "texto": "Crecer con paciencia da una copa más fuerte. Lo que se hace sin prisa suele durar más."
+        },
+        {
+          "tema": "Naturaleza",
+          "texto": "Cuidar las especies nativas es cuidar la historia de la tierra en la que vivimos y de quienes vendrán."
+        }
+      ],
+      "arbol": [
+        "El maitén es siempreverde y tiene hojas de margen aserrado, de color verde claro.",
+        "Sus ramas largas y colgantes le dan una copa redondeada.",
+        "Se distribuye desde Coquimbo hasta Los Lagos, en tierras bajas, laderas y cerca de ríos.",
+        "Puede llegar a unos 15 a 20 metros de altura.",
+        "Tolera la sequía y la insolación, por eso se usa para recuperar zonas semiáridas.",
+        "Sus flores pequeñas, de color verde amarillento, atraen abejas."
+      ],
+      "planeta": [
+        "El maitén tolera la sequía y la insolación, y por eso ayuda a recuperar zonas semiáridas y mediterráneas.",
+        "Los suelos sin cobertura vegetal se erosionan más rápido; mantener árboles nativos ayuda a retenerlos.",
+        "Cuidar el bosque nativo es una forma concreta de cuidar la tierra y el agua."
       ]
     }
   },
@@ -975,28 +1061,40 @@
       "dato": "Mide unos 13,5 cm y atrapa insectos al vuelo. Anida en aleros y cavidades, y su canto anuncia la primavera en el sur de Chile."
     },
     "chucao": {
+      "habitat": [
+        "bosque"
+      ],
       "nombre": "Chucao",
       "precio": 80,
       "mensaje": "Es pequeño y se hace oír. Una voz sencilla también puede acompañar a un bosque entero.",
       "dato": "Mide unos 19 cm y vive casi siempre en el suelo del bosque. Según la creencia mapuche, oír su canto a la derecha anuncia un buen viaje. Necesita bosques de más de 100 hectáreas."
     },
     "queltehue": {
+      "habitat": [
+        "costa"
+      ],
       "nombre": "Queltehue",
       "precio": 100,
       "mensaje": "Avisa para cuidar a los demás. Estar atento a quien lo necesita también es una forma de servir.",
       "dato": "Es muy común en campos y plazas de Chile y defiende su nido con insistencia."
     },
     "picaflor": {
+      "habitat": [
+        "bosque"
+      ],
       "nombre": "Picaflor",
       "precio": 110,
       "mensaje": "Pequeñas visitas, hechas con constancia, mantienen viva una flor.",
       "dato": "Es el picaflor más austral del continente americano. Se alimenta sobre todo de néctar y también de pequeños insectos; el macho tiene una mancha roja brillante en la frente."
     },
     "condor": {
+      "habitat": [
+        "cordillera"
+      ],
       "nombre": "Cóndor",
       "precio": 150,
       "mensaje": "Hay momentos para mirar desde lo alto y recordar lo que importa. Se avanza mejor sin apuro.",
-      "dato": "Su envergadura llega a unos 3,3 metros y puede planear horas sin batir las alas. Pone uno o dos huevos cada dos años."
+      "dato": "Su envergadura llega a unos 3,3 metros y pasa muchas horas volando. Es Monumento Natural desde 2006 y está en el escudo de Chile."
     },
     "gorrion": {
       "nombre": "Gorrión",
@@ -1331,6 +1429,15 @@
       "dato": "Es un zorro de Chile que recorre desiertos, cordillera y matorrales.",
       "x": 290,
       "y": 382,
+      "k": 1
+    },
+    "huemul": {
+      "nombre": "Huemul",
+      "lugar": "montanas",
+      "cosechas": 9,
+      "dato": "Es un ciervo nativo de Chile y Argentina, uno de los más australes del mundo. Está en peligro de extinción y aparece en el escudo nacional junto al cóndor.",
+      "x": 226,
+      "y": 388,
       "k": 1
     }
   },

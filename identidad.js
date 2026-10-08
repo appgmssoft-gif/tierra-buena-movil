@@ -2,6 +2,8 @@
 //   1) TBEjemplos: historias de la vida real (FICTICIAS, pero creíbles) que enseñan a aprovechar bien la app. Hay para miembros y para pastores.
 //   2) TBJuntos: «Juntos hacemos el bien», el lugar para iniciar y sumarse a movimientos sociales.
 // CSP: sin atributo style en el HTML; los anchos de las barras se ponen con element.style.setProperty.
+const TB_ARTE = { '🙏': 'corazon', '🤝': 'gente', '📅': 'calendario', '🧱': 'bloques', '🌍': 'lugar', '👋': 'persona', '📣': 'altavoz', '⚙️': 'brote' };
+const tbArte = (e) => { const k = TB_ARTE[e]; try { return k && window.TBApp && window.TBApp.svg ? window.TBApp.svg(k, 56) : e; } catch (x) { return e; } };
 'use strict';
 (function () {
   const A = () => window.TBApp || {};
@@ -78,7 +80,7 @@
         <div class="tbej-cab"><span class="tbej-ic" aria-hidden="true">${actual === 'pastor' ? '🛡️' : '🌱'}</span><div><b>${dentroDeIglesia() ? (actual === 'pastor' ? 'Cómo cuida mejor a su iglesia un pastor' : 'Cómo aprovecha la app un miembro') : (actual === 'pastor' ? 'Ideas para organizar una iglesia' : 'Ideas para empezar hoy')}</b><small>${dentroDeIglesia() ? 'Historias inventadas, no son personas reales. Desliza y toca una para probarla.' : 'Historias inventadas, no son personas reales. Desliza y toca uno para probarlo.'}</small></div></div>
         ${rol === 'ambos' ? `<div class="tbej-seg" role="tablist" aria-label="Ver ejemplos para"><button type="button" role="tab" data-r="miembro" aria-selected="${actual === 'miembro'}">Soy miembro</button><button type="button" role="tab" data-r="pastor" aria-selected="${actual === 'pastor'}">Soy pastor</button></div>` : ''}
         <div class="tbej-car" role="region" aria-roledescription="carrusel" aria-label="Ejemplos de la vida real" tabindex="0">${L.map((e, i) => `<article class="tbej-card" data-i="${i}" data-hu="${(i * 37) % 360}" aria-label="${i + 1} de ${L.length}">
-          <div class="tbej-arte" aria-hidden="true"><span class="tbej-big">${e.ic}</span><i class="tbej-hoja a"></i><i class="tbej-hoja b"></i></div>
+          <div class="tbej-arte" aria-hidden="true"><span class="tbej-big">${tbArte(e.ic)}</span><i class="tbej-hoja a"></i><i class="tbej-hoja b"></i></div>
           <div class="tbej-txt"><span class="tbej-fic">Ejemplo ficticio</span><h3>${esc(e.t)}</h3><p class="tbej-q">${esc(e.quien)}</p><p class="tbej-esc">${esc(e.escena)}</p><details class="tbej-mas"><summary>Ver cómo se hace</summary><ol>${e.pasos.map((p) => `<li>${esc(p)}</li>`).join('')}</ol><p class="tbej-res">${esc(e.res)}</p></details><button type="button" class="tbej-go" data-i="${i}">${esc(e.btn)} ›</button></div></article>`).join('')}</div>
         <div class="tbej-ctl"><button type="button" class="tbej-fl2" data-d="-1" aria-label="Ejemplo anterior">‹</button><span class="tbej-pt" aria-live="polite"></span><button type="button" class="tbej-pa" aria-label="Pausar o seguir pasando solas">${auto ? '⏸' : '▶'}</button><button type="button" class="tbej-fl2" data-d="1" aria-label="Ejemplo siguiente">›</button></div></div>`;
       const car = $('.tbej-car', caja), pt = $('.tbej-pt', caja), pa = $('.tbej-pa', caja);

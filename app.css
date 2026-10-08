@@ -988,3 +988,6 @@ main h2.sep{margin:30px 2px 12px}.grid{gap:14px}
 
 /* F945 · Raíces */
 .card.ok{border-color:var(--verde);border-width:2px}.card.mal{border-style:dashed;opacity:.75}.card:disabled{cursor:default}
+
+/* F987 · Banda de identidad de Tierra Buena (Perfil y Mi iglesia) */
+.tb-banda{display:block;width:100%;height:auto;max-height:130px;margin:0 0 10px;border-radius:18px;overflow:hidden}

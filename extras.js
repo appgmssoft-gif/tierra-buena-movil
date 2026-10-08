@@ -180,7 +180,7 @@
   function filaSonido() {
     const d = document.createElement('div'); d.className = 'tbson';
     const on = () => !window.TBSonido || TBSonido.activo();
-    const pinta = () => { d.innerHTML = `<span class="tbson-ic" aria-hidden="true">🔔</span><span class="tbson-tx"><b>Sonidos de Tierra Buena</b><small>${on() ? 'Activados: toques, pestañas y logros suenan' : 'Silenciados'}</small></span><button type="button" class="tbson-p" id="tbSonP">Escuchar</button><button type="button" class="tbson-sw" role="switch" aria-checked="${on()}" aria-label="Sonidos"><i></i></button>`; };
+    const pinta = () => { d.innerHTML = `<span class="tbson-ic" aria-hidden="true">${(window.TBApp && TBApp.svg) ? TBApp.svg('campana', 22) : '🔔'}</span><span class="tbson-tx"><b>Sonidos de Tierra Buena</b><small>${on() ? 'Activados: toques, pestañas y logros suenan' : 'Silenciados'}</small></span><button type="button" class="tbson-p" id="tbSonP">Escuchar</button><button type="button" class="tbson-sw" role="switch" aria-checked="${on()}" aria-label="Sonidos"><i></i></button>`; };
     pinta();
     d.addEventListener('click', (e) => {
       const t = e.target && e.target.closest ? e.target : null; if (!t) return;

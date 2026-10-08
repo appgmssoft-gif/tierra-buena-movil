@@ -233,8 +233,32 @@
     lupa: '<g stroke="#5a3d24" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"><path d="M14.500 14.500L20.500 20.500" fill="none" stroke="#a8743f" stroke-width="2.800"/><circle cx="10" cy="10" r="6.500" fill="#f6ecd2"/><path d="M7.500 12.500c0-3 2-4.500 5-4.500 0 3-2 4.500-5 4.500z" fill="#7cc08a"/></g>',
     amanecer: '<g stroke="#5a3d24" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"><path d="M5.500 16.500a6.500 6.500 0 0 1 13 0z" fill="#f2b84b"/><path d="M2 16.500h20" fill="none"/><path d="M12 5V3M5 8.500L3.600 7.100M19 8.500l1.400-1.400" fill="none"/><path d="M5 20h14" fill="none" stroke="#4f8a5b"/></g>',
     baraja: '<g stroke="#5a3d24" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"><rect x="4" y="5" width="11" height="15" rx="2" fill="#f6ecd2" transform="rotate(-10 9.500 12.500)"/><rect x="9" y="4" width="11" height="15" rx="2" fill="#4f8a5b" transform="rotate(8 14.500 11.500)"/><path d="M14.500 14c0-2.400 1.800-3.600 3.800-3.200 0 2.400-1.600 3.600-3.800 3.200z" fill="#f6ecd2"/></g>',
+    compartir: "<g stroke=\"#5a3d24\" stroke-width=\"1.2\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"6\" cy=\"12\" r=\"3\" fill=\"#4f8a5b\"/><circle cx=\"18\" cy=\"6\" r=\"3\" fill=\"#f6ecd2\"/><circle cx=\"18\" cy=\"18\" r=\"3\" fill=\"#f6ecd2\"/><path d=\"M8.6 10.6 15.4 7.4M8.6 13.4l6.8 3.2\" fill=\"none\"/></g>",
+    x: "<g stroke=\"#5a3d24\" stroke-width=\"1.2\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"12\" cy=\"12\" r=\"9\" fill=\"#f6ecd2\"/><path d=\"M8.5 8.5l7 7M15.5 8.5l-7 7\" fill=\"none\" stroke=\"#c4604a\" stroke-width=\"2\"/></g>",
+    escudo: "<g stroke=\"#5a3d24\" stroke-width=\"1.2\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M12 2.8 19.5 5.6v5.7c0 4.6-3.2 8.3-7.5 9.9C7.7 19.6 4.5 15.9 4.5 11.3V5.6z\" fill=\"#4f8a5b\"/><path d=\"M12 19.5V11\" fill=\"none\" stroke=\"#f6ecd2\" stroke-width=\"1.4\"/><path d=\"M12 13.5c-2.6 0-4-1.6-4-3.8 2.6 0 4 1.6 4 3.8zM12 11.2c0-2.5 1.9-4 4.2-3.9-.1 2.4-1.9 3.9-4.2 3.9z\" fill=\"#f6ecd2\"/></g>",
+    chispas: "<g stroke=\"#5a3d24\" stroke-width=\"1.2\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6z\" fill=\"#f6ecd2\"/><path d=\"M18.5 15l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z\" fill=\"#c4604a\"/><path d=\"M5.5 16.5l.6 1.5 1.5.6-1.5.6-.6 1.5-.6-1.5-1.5-.6 1.5-.6z\" fill=\"#7cc08a\"/></g>",
+    texto: "<g stroke=\"#5a3d24\" stroke-width=\"1.2\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><rect x=\"4.5\" y=\"3.5\" width=\"15\" height=\"17\" rx=\"2\" fill=\"#f6ecd2\"/><path d=\"M7.5 8h9M7.5 11.5h9M7.5 15h5.5\" fill=\"none\"/><rect x=\"14\" y=\"13.5\" width=\"3.5\" height=\"4\" rx=\".8\" fill=\"#4f8a5b\"/></g>",
+    audifonos: "<g stroke=\"#5a3d24\" stroke-width=\"1.2\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M4.5 14v-2a7.5 7.5 0 0 1 15 0v2\" fill=\"none\" stroke-width=\"1.6\"/><rect x=\"3.2\" y=\"13.5\" width=\"4.3\" height=\"7\" rx=\"1.8\" fill=\"#4f8a5b\"/><rect x=\"16.5\" y=\"13.5\" width=\"4.3\" height=\"7\" rx=\"1.8\" fill=\"#4f8a5b\"/></g>",
+    check: "<g stroke=\"#5a3d24\" stroke-width=\"1.2\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"12\" cy=\"12\" r=\"9\" fill=\"#4f8a5b\"/><path d=\"M7.5 12.4l3 3 6-6.4\" fill=\"none\" stroke=\"#f6ecd2\" stroke-width=\"2.1\"/></g>",
+    play: "<g stroke=\"#5a3d24\" stroke-width=\"1.2\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"12\" cy=\"12\" r=\"9\" fill=\"#4f8a5b\"/><path d=\"M10 8.5v7l5.8-3.5z\" fill=\"#f6ecd2\"/></g>",
+    papelera: "<g stroke=\"#5a3d24\" stroke-width=\"1.2\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M5.5 7.5h13l-1.1 12.2a1.5 1.5 0 0 1-1.5 1.3H8.1a1.5 1.5 0 0 1-1.5-1.3z\" fill=\"#c4604a\"/><path d=\"M4 6.2h16M9.5 6.2V4.6h5v1.6\" fill=\"#f6ecd2\"/><path d=\"M10 11v6M14 11v6\" fill=\"none\" stroke=\"#f6ecd2\" stroke-width=\"1.3\"/></g>",
+    marcador: "<g stroke=\"#5a3d24\" stroke-width=\"1.2\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M6.5 3.5h11v17L12 16.5l-5.5 4z\" fill=\"#4f8a5b\"/><path d=\"M9.5 7.5c1.5-1 3.5-1 5 0\" fill=\"none\" stroke=\"#f6ecd2\" stroke-width=\"1.3\"/></g>",
+    mas: "<g stroke=\"#5a3d24\" stroke-width=\"1.2\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"12\" cy=\"12\" r=\"9\" fill=\"#4f8a5b\"/><path d=\"M12 7.5v9M7.5 12h9\" fill=\"none\" stroke=\"#f6ecd2\" stroke-width=\"2\"/></g>",
+    correo: "<g stroke=\"#5a3d24\" stroke-width=\"1.2\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><rect x=\"3\" y=\"5.5\" width=\"18\" height=\"13\" rx=\"2\" fill=\"#f6ecd2\"/><path d=\"M3.8 6.6 12 13l8.2-6.4\" fill=\"none\"/><path d=\"M3.8 17.2l5.6-5M20.2 17.2l-5.6-5\" fill=\"none\" stroke=\"#4f8a5b\" stroke-width=\"1\"/></g>",
+    bloques: "<g stroke=\"#5a3d24\" stroke-width=\"1.2\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><rect x=\"3.5\" y=\"13.5\" width=\"8\" height=\"6.5\" rx=\"1.5\" fill=\"#c4604a\"/><rect x=\"12.5\" y=\"13.5\" width=\"8\" height=\"6.5\" rx=\"1.5\" fill=\"#f6ecd2\"/><rect x=\"7.5\" y=\"5.5\" width=\"9\" height=\"6.5\" rx=\"1.5\" fill=\"#4f8a5b\"/></g>",
+    persona: "<g stroke=\"#5a3d24\" stroke-width=\"1.2\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"12\" cy=\"8\" r=\"4\" fill=\"#f6ecd2\"/><path d=\"M4.5 20.5c.8-4 3.8-6.2 7.5-6.2s6.7 2.2 7.5 6.2z\" fill=\"#4f8a5b\"/></g>",
+    paloma: "<g stroke=\"#5a3d24\" stroke-width=\"1.2\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M3.5 14.5 7.5 12.8 7.5 16.2z\" fill=\"#c4604a\"/><ellipse cx=\"11.2\" cy=\"13.5\" rx=\"6.6\" ry=\"4.6\" fill=\"#f6ecd2\"/><circle cx=\"16.8\" cy=\"9.2\" r=\"2.9\" fill=\"#f6ecd2\"/><path d=\"M19.5 9l2.2.9-2.2 1z\" fill=\"#c4604a\"/><path d=\"M7.2 12.6c2.3-3.6 5.5-4.2 8.6-2.4-2.4 1.5-4.2 3.5-4.6 6.4\" fill=\"#4f8a5b\"/></g>",
+    reloj: "<g stroke=\"#5a3d24\" stroke-width=\"1.2\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"12\" cy=\"12\" r=\"9\" fill=\"#f6ecd2\"/><path d=\"M12 7.5V12l3 2\" fill=\"none\"/><circle cx=\"12\" cy=\"12\" r=\"1.2\" fill=\"#4f8a5b\"/></g>",
+    telefono: "<g stroke=\"#5a3d24\" stroke-width=\"1.2\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><rect x=\"6.5\" y=\"2.8\" width=\"11\" height=\"18.4\" rx=\"2.4\" fill=\"#4f8a5b\"/><rect x=\"8.5\" y=\"5.6\" width=\"7\" height=\"11.2\" rx=\".8\" fill=\"#f6ecd2\"/><circle cx=\"12\" cy=\"19\" r=\".9\" fill=\"#f6ecd2\"/></g>",
+    lugar: "<g stroke=\"#5a3d24\" stroke-width=\"1.2\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M12 21.5s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z\" fill=\"#c4604a\"/><circle cx=\"12\" cy=\"10.5\" r=\"2.5\" fill=\"#f6ecd2\"/></g>",
+    copiar: "<g stroke=\"#5a3d24\" stroke-width=\"1.2\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><rect x=\"8\" y=\"8\" width=\"12\" height=\"12\" rx=\"2\" fill=\"#f6ecd2\"/><path d=\"M5 15.5V6.5a2 2 0 0 1 2-2h8\" fill=\"none\" stroke=\"#4f8a5b\" stroke-width=\"2\"/></g>",
+    ciclo: "<g stroke=\"#5a3d24\" stroke-width=\"1.2\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M19.5 9.5A8 8 0 0 0 5.2 8.2M4.5 14.5a8 8 0 0 0 14.3 1.3\" fill=\"none\" stroke=\"#4f8a5b\" stroke-width=\"2\"/><path d=\"M19.5 4.8v4.8h-4.8M4.5 19.2v-4.8h4.8\" fill=\"none\" stroke=\"#c4604a\" stroke-width=\"2\"/></g>",
+    ajustes: "<g stroke=\"#5a3d24\" stroke-width=\"1.2\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M4 7h16M4 17h16\" fill=\"none\" stroke=\"#4f8a5b\" stroke-width=\"1.8\"/><circle cx=\"9\" cy=\"7\" r=\"2.6\" fill=\"#f6ecd2\"/><circle cx=\"15.5\" cy=\"17\" r=\"2.6\" fill=\"#c4604a\"/></g>",
+    campana: "<g stroke=\"#5a3d24\" stroke-width=\"1.2\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M6.5 16.5V11a5.5 5.5 0 0 1 11 0v5.5l1.5 2H5z\" fill=\"#f6ecd2\"/><path d=\"M10 20.5a2.2 2.2 0 0 0 4 0\" fill=\"#4f8a5b\"/><circle cx=\"12\" cy=\"4.6\" r=\"1.4\" fill=\"#c4604a\"/></g>",
   };
   const svg = (k, tam) => PICTO[k] ? `<svg class="ic ic-color" viewBox="0 0 24 24" width="${tam || 24}" height="${tam || 24}" aria-hidden="true" focusable="false">${PICTO[k]}</svg>` : (SV[k] ? `<svg class="ic" viewBox="0 0 24 24" width="${tam || 24}" height="${tam || 24}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${SV[k]}</svg>` : '');
+  // F987 · Banda de identidad: escena de Tierra Buena (cielo, sol, colinas y brote). Va en Perfil y en Mi iglesia (pastor). SVG en línea, sin imágenes externas.
+  const bandaTB = () => '<svg class="tb-banda" viewBox="0 0 320 110" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><rect width="320" height="110" fill="#e4f0f6"/><rect width="320" height="70" fill="#f1f7ea"/><circle cx="262" cy="30" r="13" fill="#fbe8a6"/><path d="M0 72C60 52 110 60 160 56S270 48 320 62V110H0Z" fill="#a9cf9b"/><path d="M0 88C80 74 150 84 230 76S290 78 320 82V110H0Z" fill="#6aa86b"/><g transform="translate(132 22) scale(2.2)">' + PICTO.brote + '</g></svg>';
   const icono = (e, tam) => { const k = EMO[String(e).replace(/\uFE0F/g, '')]; return k ? svg(k, tam) : e; };
   const activa = (ico, titulo, ayuda, ir) => `<button type="button" class="card" data-ir="${ir}"><div class="t"><span aria-hidden="true">${icono(ico)}</span>${titulo}<span class="flecha" aria-hidden="true">›</span></div><p class="suave m0t">${ayuda}</p></button>`;
 
@@ -391,7 +415,7 @@
     const crear = modo === 'crear';
     $('#pantalla').innerHTML = `
       <button type="button" class="volver" id="atras">‹ Entrar</button>
-      <div class="cuenta-ico" aria-hidden="true">${crear ? '🌱' : '✉️'}</div>
+      <div class="cuenta-ico" aria-hidden="true">${crear ? svg('brote', 40) : svg('correo', 40)}</div>
       <h1>${crear ? 'Crear mi cuenta' : 'Entrar con mi correo'}</h1><div class="filete"></div>
       <div class="chips" role="group" aria-label="Elegir">
         <button type="button" class="chip${crear ? '' : ' on'}" data-modo="entrar" aria-pressed="${!crear}">Entrar</button>
@@ -532,7 +556,7 @@
     if (!box) return;
     if (yaInstalada()) { box.innerHTML = ''; return; }
     if (promptInstalar) {
-      box.innerHTML = `<button type="button" class="btn sec" id="instalarYa">📲 Instalar en este ${/ipad|tablet/i.test(NAV().userAgent || '') ? 'dispositivo' : 'teléfono'}</button>`;
+      box.innerHTML = `<button type="button" class="btn sec" id="instalarYa">${svg('telefono', 20)} Instalar en este ${/ipad|tablet/i.test(NAV().userAgent || '') ? 'dispositivo' : 'teléfono'}</button>`;
       $('#instalarYa').onclick = async () => { try { promptInstalar.prompt(); await promptInstalar.userChoice; } catch (e) { /* nada */ } promptInstalar = null; pintarInstalar(box); };
     } else if (esIOS()) {
       box.innerHTML = `<div class="card ayuda"><b>📲 Dejarla como app:</b> toca <b>Compartir</b> ⬆️ (abajo en Safari) y luego <b>«Agregar a pantalla de inicio»</b>.</div>`;
@@ -693,7 +717,7 @@
   function vistaMiembro(id) {
     const ig = leer(K_IG);
     $('#pantalla').innerHTML = `
-      <section class="saludo"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML(id.nombre, perfilLeer(), false)}<div><p class="suave m0">${saludoHora()}</p><h1>Hola, ${esc(id.nombre)}</h1><p class="suave m0">⛪ ${ig ? esc(ig.nombre) : 'Tu iglesia'}</p></div></section>
+      ${bandaTB()}<section class="saludo"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML(id.nombre, perfilLeer(), false)}<div><p class="suave m0">${saludoHora()}</p><h1>Hola, ${esc(id.nombre)}</h1><p class="suave m0">⛪ ${ig ? esc(ig.nombre) : 'Tu iglesia'}</p></div></section>
       <h2 class="sep">Pedir ayuda</h2>
       <div class="grid">${activa('🙏', 'Pedir oración', 'Cuéntale a tu pastor por qué orar.', 'oracion')}${activa('🤝', 'Pedir visita', 'Pide que tu pastor te visite.', 'visita')}</div>
       <h2 class="sep">Vivir con mi iglesia</h2>
@@ -1717,7 +1741,7 @@
     const ini = new Date(Date.UTC(t.getUTCFullYear(), 0, 1)); return t.getUTCFullYear() + '-S' + String(Math.ceil(((t - ini) / 86400000 + 1) / 7)).padStart(2, '0');
   };
   function vistaVida() {
-    $('#pantalla').innerHTML = `<h1>Vivir lo que aprendemos</h1><div class="filete"></div>
+    $('#pantalla').innerHTML = `${bandaTB()}<h1>Vivir lo que aprendemos</h1><div class="filete"></div>
       <div class="grid">${activa('✨', 'Hoy lo hago', 'Un paso pequeño hoy. Intentarlo ya cuenta.', 'hacer')}</div>
       <h2 class="sep">Con Dios y conmigo</h2><div class="grid">${activa('🕊️', 'Mi oración', 'Tu diario de peticiones, solo para ti.', 'mioracion')}${activa('🎵', 'Música', 'Letras para cantar y para leer en el culto.', 'musica')}${activa('🌱', 'Mi crecimiento', 'Pequeños pasos de cada semana.', 'crecimiento')}${activa('🧠', 'Salud mental', 'Respirar, un chequeo y dónde pedir ayuda.', 'salud')}</div>
       <h2 class="sep">Para aprender</h2><div class="grid">${activa('🎓', 'Aprender', 'Cursos gratuitos en internet para servir mejor, con tu avance.', 'aprender')}</div>`;
@@ -2170,7 +2194,7 @@
     if (!r.ok) { m.textContent = r.falta ? 'Los ministerios se están preparando en el servidor. Vuelve a intentarlo pronto.' : MOTIVOS['sin-internet']; return; }
     if (!r.lista.length) { m.innerHTML = 'Todavía no estás en ningún ministerio. Cuéntale a tu pastor en qué te gustaría servir: él te suma al grupo y aparecerá aquí.'; return; }
     m.textContent = 'Los grupos donde sirves con tu iglesia.';
-    $('#milista').innerHTML = r.lista.map((x) => `<div class="card min-card" data-mc="${esc(x.color)}"><div class="t"><span class="min-ico" aria-hidden="true">${esc(x.icono || '👥')}</span>${esc(x.nombre)}${x.es_lider ? '<span class="etiqueta">Líder</span>' : ''}</div><p class="suave m0t">${x.lideres ? 'Lideran: ' + esc(x.lideres) : 'Tu pastor aún no designó líder.'}</p></div>`).join('');
+    $('#milista').innerHTML = r.lista.map((x) => `<div class="card min-card" data-mc="${esc(x.color)}"><div class="t"><span class="min-ico" aria-hidden="true">${x.icono ? esc(x.icono) : svg('persona', 26)}</span>${esc(x.nombre)}${x.es_lider ? '<span class="etiqueta">Líder</span>' : ''}</div><p class="suave m0t">${x.lideres ? 'Lideran: ' + esc(x.lideres) : 'Tu pastor aún no designó líder.'}</p></div>`).join('');
     pintaColores();
   }
 
@@ -2185,7 +2209,7 @@
     const nombre = p.n || (id && id.nombre) || (cu && cu.correo && cu.correo.split('@')[0]) || 'Invitado';
     const desde = id && id.creadoEn ? mesAnio(id.creadoEn) : '';
     $('#pantalla').innerHTML = `
-      <section class="perfil-hero"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML(nombre, p, true)}
+      <section class="perfil-hero">${bandaTB()}<div class="perfil-aura" aria-hidden="true"></div>${avatarHTML(nombre, p, true)}
         <h1>${esc(nombre)}</h1>
         <p class="suave m0">${ig && ig.nombre ? '⛪ ' + esc(ig.nombre) : 'Aún sin iglesia'}${desde ? ' · desde ' + esc(desde) : ''}</p>
         ${cu ? `<p class="suave m0">✉️ ${esc(cu.correo)}</p>` : ''}
@@ -2215,7 +2239,7 @@
       <div class="card"><div class="av-sel" role="group" aria-label="Color del avatar">${[0, 1, 2, 3, 4, 5, 6, 7].map((i) => `<button type="button" class="avatar g${i}${p.g === i ? ' sel' : ''}" data-g="${i}" aria-label="Color ${i + 1}" aria-pressed="${p.g === i}"></button>`).join('')}</div>
         <div class="av-sel emo" role="group" aria-label="Símbolo">${['']. concat(AVATARES).map((e) => `<button type="button" class="av-emo${p.e === e ? ' sel' : ''}" data-e="${e}" aria-label="${e ? 'Símbolo ' + e.replace('svg:', '') : 'Mis iniciales'}" aria-pressed="${p.e === e}">${e ? (/^svg:/.test(e) ? svg(e.slice(4), 22) : e) : 'Aa'}</button>`).join('')}</div></div></details>
       <div class="temas-c" role="group" aria-label="Tema de color">${TEMAS.map((x) => `<button type="button" class="tema-c${p.t === x[0] ? ' sel' : ''}" data-tc="${x[0]}" data-mc="${x[3]}" aria-label="${esc(x[1])}" aria-pressed="${p.t === x[0]}"></button>`).join('')}<button type="button" class="tema-c mas" data-pf="temas" aria-label="Más opciones de apariencia">⋯</button></div>
-      <div class="lista">${fila('t2', '🎚️', 'Efectos y sonido', 'Sonidos, animaciones y cuidar el teléfono', 'rapido')}</div>
+      <div class="lista">${fila('t2', svg('ajustes', 26), 'Efectos y sonido', 'Sonidos, animaciones y cuidar el teléfono', 'rapido')}</div>
       <h2 class="sep">Cuenta</h2>
       <div class="lista">${cu ? fila('t2', '☁️', 'Sesión iniciada', esc(cu.correo), 'nada') + fila('t4', '↩️', 'Cerrar sesión', '', 'salir') : fila('t2', '✉️', 'Entrar o crear cuenta', 'Tu iglesia te sigue a cualquier teléfono', 'cuenta')}</div>
       ${cu ? '<p class="suave sinc-p" id="sincEstado"></p>' : ''}
@@ -2420,7 +2444,7 @@
     <label for="avx">Mensaje</label><textarea id="avx" rows="3" maxlength="600"></textarea>
     <label for="ava">Para quién</label><select id="ava">${alcanceOpc(mins, todaIglesia)}</select>
     <p id="averr" class="error" role="alert" hidden></p><button type="button" class="btn" id="avok">Publicar aviso</button></div>`;
-  const eventoHTML = (e, borrable) => `<div class="card item evento"><div class="ev-fecha" aria-hidden="true"><b>${esc(new Date(e.inicio).toLocaleDateString('es-CL', { day: 'numeric' }))}</b><small>${esc(new Date(e.inicio).toLocaleDateString('es-CL', { month: 'short' }))}</small></div><div class="ev-txt"><b>${esc(e.titulo)}</b><p class="suave m0">${esc(dtFmt(e.inicio))}${e.lugar ? ' · 📍 ' + esc(e.lugar) : ''}${e.ministerio ? ' · ' + esc(e.ministerio) : ''}</p>${e.detalle ? `<p class="m0t">${esc(e.detalle)}</p>` : ''}${borrable ? `<button type="button" class="enlace" data-bev="${esc(e.id)}">Quitar</button>` : ''}</div></div>`;
+  const eventoHTML = (e, borrable) => `<div class="card item evento"><div class="ev-fecha" aria-hidden="true"><b>${esc(new Date(e.inicio).toLocaleDateString('es-CL', { day: 'numeric' }))}</b><small>${esc(new Date(e.inicio).toLocaleDateString('es-CL', { month: 'short' }))}</small></div><div class="ev-txt"><b>${esc(e.titulo)}</b><p class="suave m0">${esc(dtFmt(e.inicio))}${e.lugar ? ' · ' + svg('lugar', 14) + ' ' + esc(e.lugar) : ''}${e.ministerio ? ' · ' + esc(e.ministerio) : ''}</p>${e.detalle ? `<p class="m0t">${esc(e.detalle)}</p>` : ''}${borrable ? `<button type="button" class="enlace" data-bev="${esc(e.id)}">Quitar</button>` : ''}</div></div>`;
   const avisoHTML = (a, borrable) => `<div class="card item aviso"><div class="t"><span aria-hidden="true">${svg('altavoz', 20)}</span>${esc(a.titulo)}${a.ministerio ? `<span class="etiqueta">${esc(a.ministerio)}</span>` : ''}</div><p class="m0t">${esc(a.texto)}</p><p class="suave m0t">${esc(fecha(a.creado_en))}${borrable ? ` · <button type="button" class="enlace" data-bav="${esc(a.id)}">Quitar</button>` : ''}</p></div>`;
 
   // Pantalla común (miembro/líder y pastor). modo: { pas, id, volverTxt, volverFn }
@@ -2646,7 +2670,7 @@
   async function vistaPastor() {
     const p = pastorLeer(); if (!p) return vistaPastorEntrar();
     const fil = (cls, ico, tit, sub, ir3, n) => `<button type="button" class="fila" data-pp="${ir3}"><span class="fila-ico ${cls}" aria-hidden="true">${ico}</span><span class="fila-txt">${tit}<small>${sub}</small></span><span class="insignia" id="n-${ir3}" hidden></span><span class="flecha" aria-hidden="true">›</span></button>`;
-    $('#pantalla').innerHTML = `<section class="saludo"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML('P', { g: perfilLeer().g, e: '🛡️' }, false)}<div><p class="suave m0">Modo pastor</p><h1 id="pIgl">Mi iglesia</h1><p class="suave m0">Código <b>${esc(p.codigo)}</b></p></div></section>
+    $('#pantalla').innerHTML = `${bandaTB()}<section class="saludo"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML('P', { g: perfilLeer().g, e: 'svg:escudo' }, false)}<div><p class="suave m0">Modo pastor</p><h1 id="pIgl">Mi iglesia</h1><p class="suave m0">Código <b>${esc(p.codigo)}</b></p></div></section>
       <h2 class="sep">Para atender hoy</h2><div class="lista">${fil('t1', svg('gente', 22), 'Solicitudes', 'Quién quiere unirse', 'sol')}${fil('t2', svg('corazon', 22), 'Oraciones', 'Peticiones recibidas', 'ora')}${fil('t3', svg('compartir', 22), 'Visitas', 'Quién pide que lo visites', 'vis')}</div>
       <h2 class="sep">Mi iglesia</h2><div class="lista">${fil('t4', svg('gente', 22), 'Miembros', 'Quiénes forman tu iglesia', 'mie')}${fil('t1', svg('iglesia', 22), 'Ministerios y líderes', 'Grupos, personas y líderes', 'min')}${fil('t2', svg('calendario', 22), 'Agenda', 'Actividades y reuniones', 'age')}${fil('t3', svg('altavoz', 22), 'Avisos', 'Mensajes para todos o un grupo', 'avi')}${fil('t4', svg('bloques', 22), 'Datos y código', 'Nombre, eslogan y código', 'dat')}</div>
       <div id="tbEjem" class="tb-ejem-caja"></div>
@@ -2868,8 +2892,10 @@
     const Nav = [nav, 'Navidad', 'Celebramos que la esperanza llegó a nuestro mundo.', 'Regala tiempo a alguien solo.'];
     const hoyC = new Date(); hoyC.setHours(0, 0, 0, 0);     // F898: Mes de la Biblia (todo septiembre) y fechas de Chile para todas las tradiciones
     const MesB = [(hoyC.getFullYear() === a && hoyC.getMonth() === 8) ? hoyC : new Date(a, 8, 1), 'Mes de la Biblia', 'Todo septiembre: un mes para leer y compartir la Palabra.', 'Lee un capítulo cada día y cuéntaselo a alguien.', 'mes'];
+    // F979 · Solsticio de invierno (hemisferio sur) según la media del año tropical; el día se toma en UTC, como en las fechas oficiales de 2021 a 2024.
+    const solsticioJunio = (y) => { const u = new Date((2451716.5677 + 365.24219 * (y - 2000) - 2440587.5) * 86400000); return new Date(y, 5, u.getUTCDate()); };
     const dom = (m, n) => { const p = new Date(a, m, 1); return new Date(a, m, 1 + (7 - p.getDay()) % 7 + 7 * (n - 1)); };
-    const chile = [[new Date(a, 0, 1), 'Año Nuevo', 'Empezamos un año con esperanza.', 'Escribe una meta pequeña para tu año.'], [new Date(a, 4, 1), 'Día del Trabajo', 'Valoramos el esfuerzo de cada persona.', 'Agradece a alguien por su trabajo.'], [dom(4, 2), 'Día de la Madre (Chile)', 'Honramos a quienes nos cuidaron.', 'Llama o abraza a una madre que admires.'], [dom(5, 3), 'Día del Padre (Chile)', 'Honramos a quienes nos guiaron.', 'Agradece a un padre o a quien hizo ese papel.'], [new Date(a, 6, 26), 'Día de los Abuelos (Chile)', 'Valoramos la sabiduría de nuestros mayores.', 'Visita o llama a una persona mayor.'], [dom(7, 2), 'Día del Niño (Chile)', 'Cuidamos a los más pequeños.', 'Dedica un rato a jugar con un niño.'], [new Date(a, 8, 18), 'Fiestas Patrias de Chile', 'Damos gracias por nuestra tierra y su gente.', 'Ora por Chile y comparte con tu vecindario.'], [new Date(a, 9, 31), 'Día de las Iglesias Evangélicas y Protestantes', 'Agradecemos la Palabra al alcance de todos.', 'Lee un pasaje con alguien o regala una Biblia.']];
+    const chile = [[new Date(a, 0, 1), 'Año Nuevo', 'Empezamos un año con esperanza.', 'Escribe una meta pequeña para tu año.'], [new Date(a, 4, 1), 'Día del Trabajo', 'Valoramos el esfuerzo de cada persona.', 'Agradece a alguien por su trabajo.'], [dom(4, 2), 'Día de la Madre (Chile)', 'Honramos a quienes nos cuidaron.', 'Llama o abraza a una madre que admires.'], [dom(5, 3), 'Día del Padre (Chile)', 'Honramos a quienes nos guiaron.', 'Agradece a un padre o a quien hizo ese papel.'], [new Date(a, 6, 26), 'Día de los Abuelos (Chile)', 'Valoramos la sabiduría de nuestros mayores.', 'Visita o llama a una persona mayor.'], [dom(7, 2), 'Día del Niño (Chile)', 'Cuidamos a los más pequeños.', 'Dedica un rato a jugar con un niño.'], [solsticioJunio(a), 'Día de los Pueblos Indígenas', 'Honramos la sabiduría de los pueblos originarios de nuestra tierra.', 'Conoce un pueblo originario de Chile y su lengua.'], [new Date(a, 8, 18), 'Fiestas Patrias de Chile', 'Damos gracias por nuestra tierra y su gente.', 'Ora por Chile y comparte con tu vecindario.'], [new Date(a, 9, 31), 'Día de las Iglesias Evangélicas y Protestantes', 'Agradecemos la Palabra al alcance de todos.', 'Lee un pasaje con alguien o regala una Biblia.']];
     let l;
     if (trad === 'evangelica') l = [MesB, Vie, Pas, Asc, Pen, Nav];
     else if (trad === 'catolica') l = [[new Date(a, 0, 1), 'Santa María, Madre de Dios', 'Empezamos el año confiando en Dios.', 'Escribe una intención para el año.'], Epi, Cen, Ram, Jue, Vie, Pas, Asc, Pen, [mas(60), 'Corpus Christi', 'Se celebra la presencia de Cristo en la comunidad.', 'Comparte tu mesa con alguien.'], [new Date(a, 7, 15), 'Asunción de la Virgen María', 'Se recuerda a María y su esperanza.', 'Llama a tu mamá o a una madre que admires.'], [new Date(a, 10, 1), 'Todos los Santos', 'Recordamos a quienes vivieron el bien.', 'Agradece a alguien que te enseñó a ser mejor.'], [new Date(a, 11, 8), 'Inmaculada Concepción', 'Fiesta de María en Adviento.', 'Haz un gesto de pureza de corazón: perdona.'], Adv, Nav];
@@ -3249,6 +3275,6 @@
     if (q && at[q] && haySesion() && !codigoDeEnlace()) setTimeout(() => { try { ir('palabra'); at[q](); } catch (e) { /* nada */ } }, 60);
   } catch (e) { /* sin atajo */ }
   const fechasProx = () => { try { const hoy = new Date(); hoy.setHours(0, 0, 0, 0); const a = hoy.getFullYear(); return fechasSantas(a, tradLeer()).concat(fechasSantas(a + 1, tradLeer())).filter((x) => x[0] >= hoy && x[4] !== 'mes').sort((x, y) => x[0] - y[0]).slice(0, 6).map((x) => ({ id: 's' + x[0].getTime(), t: x[1], fecha: x[0] })); } catch (e) { return []; } };
-  window.TBApp = { fechasProx, sb: SB, leer, guardar, esc, ir, vibra, svg, volverVida: () => ir('inicio'), guardarAjuste: (c) => { perfilGuardar(c); ajusteAplicar(); } };   // F901: lo usan identidad.js (ejemplos y Juntos)
+  window.TBApp = { fechasProx, sb: SB, leer, guardar, esc, ir, vibra, svg, volverVida: () => ir('inicio'), irA: (d) => { const m = { lectura: () => ir('palabra'), vida: () => ir('vida'), plan: () => { ir('palabra'); vistaPlanes(); }, oracion: () => { ir('vida'); vistaMiOracion(); }, juego: () => { ir('palabra'); vistaJuegos(); } }; if (m[d]) m[d](); }, guardarAjuste: (c) => { perfilGuardar(c); ajusteAplicar(); } };   // F901: lo usan identidad.js (ejemplos y Juntos)
   syncInicio();
 })();

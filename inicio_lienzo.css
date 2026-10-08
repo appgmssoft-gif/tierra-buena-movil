@@ -307,3 +307,22 @@ html[data-eco="2"] .il-tri-op.pop,html[data-eco="2"] .il-btn-msg.nuevo::after{an
 .il-tem-arte{margin:0 -14px 10px;height:96px;overflow:hidden;position:relative}
 .il-tem-arte svg{display:block;width:100%;height:100%}
 .il-tem-card b{padding-top:0}
+
+/* F975 · Vivero por temáticas y «Ganar gotas» */
+.il-viv-grp{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;margin:0 0 4px;scrollbar-width:none}
+.il-viv-grp::-webkit-scrollbar{display:none}
+.il-viv-grp-bt{flex:0 0 auto;position:relative;min-height:36px;padding:6px 14px;border-radius:999px;border:1px solid color-mix(in srgb,var(--suave) 26%,transparent);background:transparent;color:var(--suave);font:inherit;font-size:.9rem;cursor:pointer;transition:transform .2s ease,border-color .2s ease}
+.il-viv-grp-bt[aria-pressed="true"]{color:var(--tinta);border-color:var(--oro);background:color-mix(in srgb,var(--oro) 12%,transparent)}
+.il-viv-grp-bt:active{transform:scale(.97)}
+.il-viv-grp-uso{position:absolute;top:3px;right:5px;width:6px;height:6px;border-radius:50%;background:var(--oro)}
+.il-viv-gotas{display:grid;gap:12px;margin:0 0 12px}
+.il-viv-gota{display:grid;gap:8px;padding:14px 16px;border-radius:18px;border:1px solid color-mix(in srgb,var(--suave) 22%,transparent);background:color-mix(in srgb,var(--tinta) 3%,transparent);animation:ilGotaEntra .4s ease both}
+.il-viv-gota b{font-size:1.02rem}
+.il-viv-gota p{margin:0;color:var(--suave);font-size:.94rem;line-height:1.45}
+.il-viv-gota-pie{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;margin-top:4px}
+.il-viv-gota-pie small{flex:1 1 140px}
+.il-viv-gota-bt{min-height:44px;padding:10px 16px}
+.il-viv-gota:nth-child(2){animation-delay:.06s}.il-viv-gota:nth-child(3){animation-delay:.12s}.il-viv-gota:nth-child(4){animation-delay:.18s}.il-viv-gota:nth-child(5){animation-delay:.24s}.il-viv-gota:nth-child(6){animation-delay:.3s}
+@keyframes ilGotaEntra{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+[data-anim="off"] .il-viv-gota{animation:none}
+@media (prefers-reduced-motion:reduce){.il-viv-gota{animation:none}.il-viv-grp-bt{transition:none}}
