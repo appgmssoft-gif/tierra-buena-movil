@@ -51,6 +51,11 @@
     const escala = 0.78 + 0.22 * (d - 1) / (tot - 1);
     return { dia: d, total: tot, etapa: e, fraccion: Math.round(fraccion * 100) / 100, escala: Math.round(escala * 1000) / 1000 };
   }
+  // F1006 · Entorno que crece con el árbol: cuántos elementos comprados se ven según el día (todos al día 30).
+  function entornoVisible(total, dia) {
+    const tot = cat().ciclo.dias || 30; if (!total) return 0;
+    return Math.min(total, Math.max(1, Math.ceil(total * Math.min(Math.max(1, dia || 1), tot) / tot)));
+  }
   function etapa(dias) { const et = cat().ciclo.etapas; let r = null; if (dias >= 1) for (const s of et) if (dias >= s.desde) r = s.id; return r; }
   // Cuánta maleza corresponde a una ausencia (en días completos SIN entrar). 0 o 1 día sin entrar = ninguna (gracia).
   function malezaPara(ausencia) { let n = 0; for (const f of cat().maleza.tabla) if (ausencia >= f.ausencia) n = f.cantidad; return Math.min(n, cat().ciclo.maleza_max || 5); }
@@ -210,6 +215,6 @@
     return { ok: true, acierto, correcta: ord.indexOf(q.c), explicacion: q.e, gotas: g };
   }
 
-  const api = { avanceDiario, config(o) { if (o && o.catalogo) CAT = o.catalogo; if (o && o.hoy) HOY = o.hoy; if (o && o.almacen) ALM = o.almacen; }, cargar, guardar, estado: cargar, etapa, malezaPara, elegirPrimera, visita, sanar, ganar, recolectar, comprar, tiene, plantar, activarAve, mensajeActual, cosechas, recogerFruto, tieneEspecial, comprarEspecial, triviaHoy, responderTrivia, elegirTematica, K };
+  const api = { avanceDiario, entornoVisible, config(o) { if (o && o.catalogo) CAT = o.catalogo; if (o && o.hoy) HOY = o.hoy; if (o && o.almacen) ALM = o.almacen; }, cargar, guardar, estado: cargar, etapa, malezaPara, elegirPrimera, visita, sanar, ganar, recolectar, comprar, tiene, plantar, activarAve, mensajeActual, cosechas, recogerFruto, tieneEspecial, comprarEspecial, triviaHoy, responderTrivia, elegirTematica, K };
   if (typeof window !== 'undefined') window.TBInicio = api; if (typeof module !== 'undefined') module.exports = api;
 })();

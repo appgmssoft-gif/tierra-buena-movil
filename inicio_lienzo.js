@@ -421,7 +421,8 @@
   }
   function escena(est) {
     const c = est.ciclo, et = ETAPAS[window.TBInicio ? window.TBInicio.etapa(c.diasCuidado) : 'brote'] ? window.TBInicio.etapa(c.diasCuidado) : 'brote';
-    const fondo = (est.paisaje || []).map((q) => { const s = FONDO[q.casilla]; return s ? '<g transform="translate(' + s[0] + ' ' + s[1] + ') scale(' + s[2] + ')">' + arbol(q.especie, 'frondoso') + '</g>' : ''; }).join('');
+    const pais = est.paisaje || [], nPais = window.TBInicio.entornoVisible(pais.length, c.diasCuidado), escAv = window.TBInicio.avanceDiario(c.diasCuidado).escala;
+  const fondo = pais.slice(0, nPais).map((q) => { const s = FONDO[q.casilla]; return s ? '<g transform="translate(' + s[0] + ' ' + s[1] + ') scale(' + (s[2] * escAv) + ')">' + arbol(q.especie, 'frondoso') + '</g>' : ''; }).join('');
     const mal = (est.maleza || []).map((m) => '<button type="button" class="il-maleza s-' + esc(m.casilla) + '" data-id="' + esc(m.id) + '" aria-label="Quitar maleza (' + esc(MALEZA[m.tipo] || 'maleza') + '). Toca para limpiarla">' + malezaIcono(m.tipo) + '</button>').join('');
     const TM = est.tematica && CAT && CAT.tematicas && CAT.tematicas[est.tematica], fo = (TM && TM.fondo) || fondoActual(), cl = climaReal(climaActual());   // F965: la temática cambia el fondo
     return '<div class="il-escena' + ((est.maleza || []).length ? ' apagado' : '') + '" id="ilEscena" data-fondo="' + fo + '" data-clima="' + cl + '">'
