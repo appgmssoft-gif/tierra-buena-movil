@@ -2129,20 +2129,30 @@
     volverA('Vida', vistaVida);
     document.querySelectorAll('[data-planvida]').forEach((b) => b.addEventListener('click', () => vistaPlanVida(b.dataset.planvida)));
   }
+  // F1002 · Progreso neutral: siete puntos, sin rojos ni reproches. El botón lleva al primer día pendiente.
+  function planVidaAvance(pl, hechos) {
+    const total = pl.dias.length, hechas = hechos.size, primero = pl.dias.findIndex((x, k) => !hechos.has(k));
+    const puntos = pl.dias.map((x, k) => '<span class="pv-punto' + (hechos.has(k) ? ' on' : '') + '" aria-hidden="true"></span>').join('');
+    const txt = hechas === total ? 'Completaste el plan. Puedes repasarlo cuando quieras.' : hechas + ' de ' + total + ' días. Un día a la vez.';
+    const boton = hechas === total ? '' : '<button type="button" class="btn" id="pvSeguir" data-dia="' + (primero < 0 ? 0 : primero) + '">Seguir: día ' + ((primero < 0 ? 0 : primero) + 1) + '</button>';
+    return '<div class="pv-avance"><div class="pv-puntos" role="img" aria-label="' + esc(txt) + '">' + puntos + '</div><p class="suave m0">' + esc(txt) + '</p>' + boton + '</div>';
+  }
   function vistaPlanVida(id) {
     const pl = PLAN_VIDA.find((x) => x.id === id); if (!pl) return vistaPlanesVida();
     const hechos = new Set(planVidaHechos(id));
-    $('#pantalla').innerHTML = `${cabecera(pl.n, 'Planes de vida')}<div class="plan-foto plan-foto-svg" aria-hidden="true">${portadaPlanVida(id)}</div><p class="suave">${esc(pl.d)}</p><p class="plan-ctx">${esc(pl.ctx)}</p><p class="suave m0">${esc(pl.aviso)}</p>
+    $('#pantalla').innerHTML = `${cabecera(pl.n, 'Planes de vida')}<div class="plan-foto plan-foto-svg" aria-hidden="true">${portadaPlanVida(id)}</div><p class="suave">${esc(pl.d)}</p><p class="plan-ctx">${esc(pl.ctx)}</p><p class="suave m0">${esc(pl.aviso)}</p>${planVidaAvance(pl, hechos)}
       <div class="lista sep">${pl.dias.map((d, j) => `<button type="button" class="plan-leer${hechos.has(j) ? ' hecho' : ''}" data-vdia="${j}"><span class="plan-n">${hechos.has(j) ? svg('check', 16) : j + 1}</span><span>Día ${j + 1} · ${esc(d.t)}</span></button>`).join('')}</div>`;
     volverA('Planes de vida', vistaPlanesVida);
     document.querySelectorAll('[data-vdia]').forEach((b) => b.addEventListener('click', () => vistaDiaVida(id, Number(b.dataset.vdia))));
+    const ps = $('#pvSeguir'); if (ps) ps.onclick = () => vistaDiaVida(id, Number(ps.dataset.dia));
   }
   function vistaDiaVida(id, j) {
     const pl = PLAN_VIDA.find((x) => x.id === id); if (!pl || !pl.dias[j]) return vistaPlanesVida();
     const d = pl.dias[j], hecho = planVidaHechos(id).indexOf(j) >= 0;
-    $('#pantalla').innerHTML = `${cabecera('Día ' + (j + 1) + ' · ' + d.t, pl.n)}<p class="plan-ctx">${esc(d.r)}</p><div class="card"><b>Para hoy</b><p class="m0t">${esc(d.a)}</p></div><div class="card"><b>Para pensar</b><p class="m0t">${esc(d.p || '')}</p></div><p class="suave">Referencia: ${esc(d.v)}</p>${d.f ? '<p class="suave">Fuente de la idea: ' + esc(d.f) + '</p>' : ''}${d.h && d.h !== 'No aplica' ? '<div class="card"><b>Cuándo buscar ayuda</b><p class="m0t">' + esc(d.h) + '</p></div>' : ''}
-      <button type="button" class="btn ${hecho ? 'sec' : ''} sep" id="vdiaHecho" aria-pressed="${hecho}">${hecho ? 'Marcado como hecho (quitar)' : 'Lo hice'}</button>`;
+    $('#pantalla').innerHTML = `${cabecera('Día ' + (j + 1) + ' · ' + d.t, pl.n)}<p class="suave m0">Día ${j + 1} de ${pl.dias.length}</p><button type="button" class="btn ${hecho ? 'sec' : ''}" id="vdiaHecho" aria-pressed="${hecho}">${hecho ? 'Marcado como hecho (quitar)' : 'Lo hice'}</button><p class="plan-ctx">${esc(d.r)}</p><div class="card"><b>Para hoy</b><p class="m0t">${esc(d.a)}</p></div><div class="card"><b>Para pensar</b><p class="m0t">${esc(d.p || '')}</p></div><p class="suave">Referencia: ${esc(d.v)}</p>${d.f ? '<p class="suave">Fuente de la idea: ' + esc(d.f) + '</p>' : ''}${d.h && d.h !== 'No aplica' ? '<div class="card"><b>Cuándo buscar ayuda</b><p class="m0t">' + esc(d.h) + '</p></div>' : ''}
+      ${j + 1 < pl.dias.length ? `<button type="button" class="btn sec sep" id="vdiaSig">Siguiente día</button>` : `<p class="suave sep">Terminaste los ${pl.dias.length} días de este plan. Puedes volver a leerlos cuando quieras.</p>`}`;
     volverA(pl.n, () => vistaPlan2(id));
+    const vs = $('#vdiaSig'); if (vs) vs.onclick = () => vistaDiaVida(id, j + 1);
     $('#vdiaHecho').onclick = () => {
       const p = planVidaProg(), lista = new Set(Array.isArray(p[id]) ? p[id] : []);
       if (lista.has(j)) lista.delete(j); else { lista.add(j); vibra(); }
