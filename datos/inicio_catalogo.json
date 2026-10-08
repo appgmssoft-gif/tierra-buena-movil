@@ -1775,35 +1775,35 @@
   "tematicas": {
     "bosque": {
       "nombre": "Bosque nativo",
-      "precio": 150,
+      "precio": 200,
       "fondo": "bosque",
       "mensaje": "El bosque nativo guarda especies que solo crecen en Chile. Cuidarlo es cuidar algo que tarda siglos en crecer.",
       "dato": "Aquí se pueden plantar las especies del bosque nativo, como el copihue, la flor nacional."
     },
     "desierto": {
       "nombre": "Desierto florido",
-      "precio": 150,
+      "precio": 200,
       "fondo": "desierto",
       "mensaje": "Tras unas lluvias poco comunes, el desierto se llena de color. Lo que espera bajo tierra también sabe volver.",
       "dato": "En el desierto de Atacama, algunos años con lluvia suficiente cubren el suelo de flores, como la añañuca y la pata de guanaco."
     },
     "jardin": {
       "nombre": "Jardín del mundo",
-      "precio": 150,
+      "precio": 200,
       "fondo": "colinas",
       "mensaje": "Plantas de distintos rincones del planeta reunidas en un mismo jardín. Cada una cuenta una forma distinta de crecer.",
       "dato": "Aquí se pueden plantar especies de otros continentes, como el loto, el bambú, el bonsái, la secuoya roja o la rafflesia de Sumatra."
     },
     "cordillera": {
       "nombre": "Cordillera",
-      "precio": 150,
+      "precio": 200,
       "fondo": "montanas",
       "mensaje": "En lo alto, la nieve guarda el agua que llega a todo el valle. Cuidar las alturas también es cuidar lo de abajo.",
       "dato": "Aquí se pueden plantar especies de la zona cordillerana, como algunas añañucas que crecen entre rocas y laderas."
     },
     "costa": {
       "nombre": "Costa del Pacífico",
-      "precio": 150,
+      "precio": 200,
       "fondo": "costa",
       "mensaje": "Entre el mar y los cerros hay flores que resisten la neblina y la sal. Cada una encuentra su manera de vivir cerca del agua.",
       "dato": "Aquí se pueden plantar especies de la costa, como la añañuca rosada, que crece en quebradas y terrazas junto al mar del norte."

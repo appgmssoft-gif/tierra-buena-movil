@@ -292,7 +292,18 @@
   const gruposCon = (tipo) => ['general'].concat(Object.keys(CAT.tematicas || {})).filter((g) => listaDe(tipo).some((i) => enGrupo(tipo, i, g)));
   function tabsViv(on, n) {                                  // F975 · cuatro pestañas: plantas, aves, otros y cómo ganar gotas
     const t = (id, txt) => '<button type="button" class="il-viv-tab' + (on === id ? ' on' : '') + '" data-ac="tab" data-id="' + id + '" aria-pressed="' + (on === id) + '">' + txt + '</button>';
-    return '<div class="il-viv-tabs" role="group" aria-label="Qué mirar en el vivero">' + t('flores', 'Plantas (' + n.flores + ')') + t('aves', 'Aves (' + n.aves + ')') + t('paisaje', 'Otros (' + n.otros + ')') + t('gotas', 'Ganar gotas') + '</div>';
+    return '<div class="il-viv-tabs" role="group" aria-label="Qué mirar en el vivero">' + t('flores', 'Plantas') + t('aves', 'Aves') + t('paisaje', 'Ambiental') + '</div>';
+  }
+  // F1010 · Miniatura de cada hábitat como se ve en su día 30 (identidad propia; sin copiar otra app).
+  function habThumb(g) {
+    const P = { bosque: ['#cfe6d6', '#4f8a55', '#2f6b3f', '#c4604a'], desierto: ['#f6e2b3', '#e2b872', '#d1a05a', '#6aa86b'], cordillera: ['#d9e8f2', '#9fb4c7', '#8aa98a', '#fbe8a6'], costa: ['#cfe9ee', '#7fb9c8', '#e8d3a6', '#c4604a'], jardin: ['#f1f7ea', '#7cc08a', '#4f8a55', '#d86a9a'] };
+    const [cielo, c1, c2, acento] = P[g] || P.bosque;
+    let d = '<rect width="160" height="96" fill="' + cielo + '"/><circle cx="128" cy="24" r="11" fill="#fbe8a6"/><path d="M0 64C40 46 80 56 120 48S150 46 160 52V96H0Z" fill="' + c1 + '"/><path d="M0 78C50 66 110 74 160 66V96H0Z" fill="' + c2 + '"/>';
+    if (g === 'cordillera') d += '<path d="M10 60 50 18 90 60Z M60 60 100 14 150 60Z" fill="' + c1 + '"/><path d="M50 18 40 34 60 30Z M100 14 90 32 110 30Z" fill="#ffffff"/>';
+    else if (g === 'desierto') d += '<rect x="66" y="40" width="7" height="26" rx="3" fill="' + c2 + '"/><circle cx="42" cy="66" r="3" fill="' + acento + '"/><circle cx="96" cy="70" r="3" fill="' + acento + '"/>';
+    else if (g === 'costa') d += '<rect x="0" y="80" width="160" height="16" fill="' + c1 + '"/><path d="M20 84h30M90 88h40" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity=".7"/>';
+    else d += '<circle cx="46" cy="44" r="14" fill="' + c2 + '"/><circle cx="110" cy="40" r="16" fill="' + c2 + '"/><rect x="44" y="52" width="4" height="18" fill="#7a5a3c"/><rect x="108" y="52" width="4" height="18" fill="#7a5a3c"/><circle cx="48" cy="40" r="3" fill="' + acento + '"/>';
+    return '<svg class="viv-thumb" viewBox="0 0 160 96" aria-hidden="true" focusable="false">' + d + '</svg>';
   }
   function vivPanel(est) {
     if (vivSel && vivSel.tipo === 'esp') return vivPanelEsp(est);
@@ -302,35 +313,32 @@
     const plantada = (id) => (v.plantas || []).some((q) => q.id === id), activa = (id) => (v.aves || []).some((a) => a.id === id);
     if (!vivSel || !((vivSel.tipo === 'ave' ? CAT.aves : CAT.semillas) || {})[vivSel.id]) { const p1 = sem.find((i) => !tengo('sem_' + i)); vivSel = p1 ? { tipo: 'semilla', id: p1 } : { tipo: 'semilla', id: sem[0] }; }
     vivTab = vivSel.tipo === 'ave' ? 'aves' : 'flores';
-    const tipoV = vivSel.tipo === 'ave' ? 'ave' : 'semilla', grupos = gruposCon(tipoV);
-    if (!vivGrupo || grupos.indexOf(vivGrupo) < 0) vivGrupo = est.tematica && grupos.indexOf(est.tematica) >= 0 ? est.tematica : (grupos[0] || 'general');
-    if (!enGrupo(tipoV, vivSel.id, vivGrupo)) vivSel = { tipo: tipoV, id: listaDe(tipoV).filter((i) => enGrupo(tipoV, i, vivGrupo))[0] };
+    const tipoV = vivSel.tipo === 'ave' ? 'ave' : 'semilla', habs = Object.keys(CAT.tematicas || {});
+    if (!vivGrupo || habs.indexOf(vivGrupo) < 0) vivGrupo = est.tematica && habs.indexOf(est.tematica) >= 0 ? est.tematica : habs[0];
+    if (!enGrupo(tipoV, vivSel.id, vivGrupo)) { const pick = listaDe(tipoV).filter((i) => enGrupo(tipoV, i, vivGrupo))[0]; if (pick) vivSel = { tipo: tipoV, id: pick }; }
     const tile = (tipo, id) => { const it = (tipo === 'ave' ? CAT.aves : CAT.semillas)[id]; if (!it) return ''; const c = (tipo === 'ave' ? 'ave_' : 'sem_') + id, mio = tengo(c), sel = vivSel.tipo === tipo && vivSel.id === id;
-      const est2 = mio ? (tipo === 'ave' ? (activa(id) ? 'Con tu árbol' : 'Tuyo') : (plantada(id) ? 'Plantada' : 'Tuya')) : '';
+      const est2 = mio ? (tipo === 'ave' ? (activa(id) ? 'Con tu árbol' : 'Tuya') : (plantada(id) ? 'Plantada' : 'Tuya')) : '';
       const arte = tipo === 'ave' ? ave(id, Math.min(104, Math.round((AVES[id] || { w: 30 }).w * 1.5))) : flor(id, 1.05);
       return '<button type="button" class="il-viv-tile' + (sel ? ' sel' : '') + (mio ? ' mio' : '') + '" role="listitem" data-ac="ver" data-tipo="' + tipo + '" data-id="' + esc(id) + '" aria-pressed="' + sel + '"><span class="il-viv-arte">' + arte + '</span><b>' + esc(it.nombre) + '</b>'
         + (mio ? '<span class="il-viv-chip ok">' + est2 + '</span>' : '<span class="il-viv-chip">' + ic(IC.gota, 13) + it.precio + '</span>') + '</button>'; };
     const it = (vivSel.tipo === 'ave' ? CAT.aves : CAT.semillas)[vivSel.id], c = (vivSel.tipo === 'ave' ? 'ave_' : 'sem_') + vivSel.id, mio = tengo(c), falta = Math.max(0, it.precio - saldo), pct = Math.min(100, Math.round(100 * saldo / it.precio));
     let acc;
-    if (!mio) acc = '<div class="il-viv-prog" aria-hidden="true"><svg viewBox="0 0 100 6" preserveAspectRatio="none" width="100%" height="8"><rect width="100" height="6" rx="3" class="pg-f"/><rect width="' + pct + '" height="6" rx="3" class="pg-v"/></svg></div><p class="il-viv-pre">' + (falta ? 'Llevas ' + saldo + ' de ' + it.precio + ' gotas. Faltan ' + falta + '.' : 'Ya tienes las gotas necesarias.') + '</p>'
-      + '<button type="button" class="btn il-viv-bt il-viv-main" data-ac="comprar" data-tipo="' + vivSel.tipo + '" data-id="' + esc(vivSel.id) + '"' + (falta ? ' disabled' : '') + '>' + (falta ? 'Aún faltan gotas' : 'Obtener por ' + it.precio + ' gotas') + '</button>';
+    if (!mio) acc = '<p class="suave m0">' + (falta ? 'Te faltan ' + falta + ' gotas.' : 'Ya tienes las gotas necesarias.') + '</p><button type="button" class="btn il-viv-bt il-viv-main" data-ac="comprar" data-tipo="' + vivSel.tipo + '" data-id="' + esc(vivSel.id) + '"' + (falta ? ' disabled' : '') + '>' + (falta ? 'Aún faltan gotas' : 'Obtener por ' + it.precio + ' gotas') + '</button>';
     else if (vivSel.tipo === 'ave') acc = '<button type="button" class="btn il-viv-bt il-viv-main" data-ac="ave" data-tipo="ave" data-id="' + esc(vivSel.id) + '">' + (activa(vivSel.id) ? 'Guardar el ave' : 'Llamar al árbol') + '</button>';
     else acc = plantada(vivSel.id) ? '<p class="il-viv-ok2">Ya está plantada en tu pasto.</p>' : '<button type="button" class="btn il-viv-bt il-viv-main" data-ac="plantar" data-tipo="semilla" data-id="' + esc(vivSel.id) + '">Plantar en mi pasto</button>';
-    const nf = (v.plantas || []).length, na = (v.aves || []).length, esAve = vivSel.tipo === 'ave', rasgo = esAve ? ((AVES[vivSel.id] || {}).t || '') + ' · ' + (LUGAR[(AVES[vivSel.id] || {}).lugar] || '') : (TAM[vivSel.id] || '');
-    const tieneTema = (g) => g === 'general' || (est.vivero.desbloqueados || []).indexOf('tem_' + g) >= 0;
-    const chips = '<div class="viv-habitats" role="group" aria-label="Hábitats del Vivero">' + grupos.map((g) => {
-      const tiene = tieneTema(g), act = g === est.tematica, precio = ((CAT.tematicas || {})[g] || {}).precio || 0;
-      const estado = act ? 'Activo' : tiene ? 'Disponible' : 'Bloqueado · ' + precio + ' gotas';
-      return '<button type="button" class="viv-hab' + (act ? ' on' : '') + (tiene ? '' : ' bloq') + '" data-ac="' + (tiene ? 'habitat' : 'comprar-tema') + '" data-id="' + esc(g) + '"><b>' + esc(nomGrupo(g)) + '</b><span>' + esc(estado) + '</span></button>';
-    }).join('') + '</div>';
-    return '<div class="il-viv-cab viv-top"><h3 class="viv-titulo">Vivero</h3><div class="viv-pills"><button type="button" class="il-viv-saldo il-viv-saldo-bt" data-ac="tab" data-id="gotas" aria-label="Ver cómo ganar gotas">' + ic(IC.gota, 16) + saldo + (saldo === 1 ? ' gota' : ' gotas') + '</button>' + (() => { try { const c2 = window.TBInicio.cosechas(); return c2.total ? '<span class="il-viv-saldo il-viv-cos">' + FRUTO_S + c2.saldo + (c2.saldo === 1 ? ' fruto' : ' frutos') + '</span>' : ''; } catch (e) { return ''; } })() + '</div></div>'
-      + '<p class="il-viv-ay">Toca «Ganar gotas» para ver cómo sumar. No vencen.</p>'
-      + '<h4 class="viv-paso">1. Elige tu entorno (Hábitat)</h4>' + chips
-      + '<h4 class="viv-paso">2. Decoraciones para este entorno</h4>' + tabsViv(esAve ? 'aves' : 'flores', { flores: sem.length, aves: aves.length, otros: Object.keys(CAT.especiales || {}).length })
-      + '<div class="il-viv-car" role="list" aria-label="Desliza para ver más">' + (esAve ? aves : sem).filter((i) => enGrupo(tipoV, i, vivGrupo)).map((i) => tile(tipoV, i)).join('') + '</div>'
-      + '<div class="il-viv-vista pop" id="ilVivVista">' + vivVista(vivSel.tipo, vivSel.id) + '</div>'
-      + '<div class="il-viv-ficha"><h4>' + esc(it.nombre) + '</h4><p class="il-viv-rasgo">' + esc(rasgo) + '</p>' + acc + '<details class="il-viv-mas"><summary>Saber más</summary><p class="il-viv-dato">' + esc(it.dato || '') + '</p><p class="il-viv-frase">' + esc(it.mensaje || '') + '</p></details></div>'
-      + '<p class="il-viv-jardin">Tu jardín: ' + nf + (nf === 1 ? ' planta' : ' plantas') + ' y ' + na + (na === 1 ? ' ave' : ' aves') + ' (hasta 2 aves a la vez).</p>'
+    const lista = (vivTab === 'aves' ? aves : sem).filter((i) => enGrupo(tipoV, i, vivGrupo));
+    const haba = habs.map((g) => {
+      const tiene = tengo('tem_' + g), act = g === est.tematica, precio = ((CAT.tematicas || {})[g] || {}).precio || 0;
+      const nota = act ? '[Activo]' : tiene ? '' : precio + ' gotas';
+      return '<button type="button" class="viv-hab' + (act ? ' on' : '') + '" data-ac="' + (tiene ? 'habitat' : 'comprar-tema') + '" data-id="' + esc(g) + '" aria-pressed="' + act + '">' + habThumb(g) + '<b>' + esc(nomGrupo(g)) + '</b><span>' + esc(nota) + '</span></button>';
+    }).join('');
+    const pill = (id, txt) => '<button type="button" class="viv-pill' + (vivTab === id ? ' on' : '') + '" data-ac="tab" data-id="' + id + '" aria-pressed="' + (vivTab === id) + '">' + txt + '</button>';
+    const pillsG = '<button type="button" class="il-viv-saldo il-viv-saldo-bt" data-ac="tab" data-id="gotas" aria-label="Ver cómo ganar gotas">' + ic(IC.gota, 16) + saldo + (saldo === 1 ? ' gota' : ' gotas') + '</button>' + (() => { try { const c2 = window.TBInicio.cosechas(); return c2.total ? '<span class="il-viv-saldo il-viv-cos">' + FRUTO_S + c2.saldo + (c2.saldo === 1 ? ' fruto' : ' frutos') + '</span>' : ''; } catch (e) { return ''; } })();
+    return '<div class="il-viv-cab viv-top"><h3 class="viv-titulo">Vivero</h3><div class="viv-pills">' + pillsG + '</div></div>'
+      + '<h4 class="viv-paso">1. Elige tu entorno (Hábitat)</h4><div class="viv-habitats" role="group" aria-label="Hábitats del Vivero">' + haba + '</div>'
+      + '<h4 class="viv-paso">2. Decoraciones para este entorno</h4><div class="viv-filtros" role="group" aria-label="Tipo de decoración">' + pill('flores', 'Plantas') + pill('aves', 'Aves') + pill('paisaje', 'Ambiental') + '</div>'
+      + '<div class="il-viv-car viv-grid" role="list" aria-label="Decoraciones del entorno">' + lista.map((i) => tile(tipoV, i)).join('') + '</div>'
+      + '<div class="il-viv-ficha viv-accion"><h4>' + esc(it.nombre) + '</h4><p class="il-viv-rasgo">' + esc(vivSel.tipo === 'ave' ? ((AVES[vivSel.id] || {}).t || '') : (TAM[vivSel.id] || '')) + '</p>' + acc + '</div>'
       + '<p class="il-viv-est" role="status" aria-live="polite">' + esc(vivMsg) + '</p>';
   }
   function vivPanelGotas(est) {                              // F975 · «Ganar gotas»: cada origen de gotas lleva directo a su actividad

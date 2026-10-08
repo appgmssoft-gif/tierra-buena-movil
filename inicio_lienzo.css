@@ -344,3 +344,16 @@ html[data-eco="2"] .il-tri-op.pop,html[data-eco="2"] .il-btn-msg.nuevo::after{an
 .viv-hab.on{border-color:var(--oro);background:color-mix(in srgb,var(--oro) 12%,transparent)}
 .viv-hab.bloq{opacity:.8}
 .viv-hab span{font-size:.78rem;color:var(--suave)}
+
+/* F1010 · Vivero como la captura: hábitats en fila con miniatura, filtros en píldora y cuadrícula por entorno */
+.viv-habitats{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 10px;scroll-snap-type:x mandatory;scrollbar-width:none}
+.viv-habitats::-webkit-scrollbar{display:none}
+.viv-hab{flex:0 0 150px;scroll-snap-align:start;display:grid;gap:6px;text-align:left;padding:8px;border-radius:16px;border:1px solid color-mix(in srgb,var(--suave) 26%,transparent);background:color-mix(in srgb,var(--tinta) 4%,transparent);color:inherit;font:inherit;cursor:pointer}
+.viv-hab.on{border-color:var(--oro);box-shadow:0 0 0 1px var(--oro) inset}
+.viv-hab b{font-size:.95rem}.viv-hab span{font-size:.78rem;color:var(--oro);min-height:1em}
+.viv-thumb{width:100%;height:auto;border-radius:12px;display:block}
+.viv-filtros{display:flex;gap:8px;overflow-x:auto;padding:4px 0 8px;scrollbar-width:none}
+.viv-pill{flex:0 0 auto;min-height:40px;padding:8px 16px;border-radius:999px;border:1px solid color-mix(in srgb,var(--suave) 30%,transparent);background:transparent;color:var(--suave);font:inherit;cursor:pointer}
+.viv-pill.on{background:color-mix(in srgb,var(--verde) 35%,transparent);color:var(--tinta);border-color:var(--verde)}
+.viv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;overflow:visible}
+.viv-accion{margin-top:12px}
