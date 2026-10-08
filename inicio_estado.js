@@ -16,7 +16,7 @@
 
   const nuevo = () => ({ v: VERSION, ciclo: { n: 1, especie: null, inicio: null, diasCuidado: 0, ultimoDia: null, ultimaVisita: null, cerrado: false, diaPendiente: false },
     eligiendo: true, paisaje: [], maleza: [], gotas: { saldo: 0, total: 0, pendientes: [], hoy: { fecha: null, lectura: 0, vida: 0 } },
-    vivero: { desbloqueados: [], plantas: [], aves: [] }, cosechas: { total: 0, pend: [], ult: {} } });
+    vivero: { desbloqueados: [], plantas: [], aves: [] }, cosechas: { total: 0, pend: [], ult: {} }, trivia: { fecha: null, i: null, ok: false, elegida: null } });
 
   function migrar(x) {                                      // dato dañado o de otra versión → se rescata lo que sirve; nunca error en pantalla
     const b = nuevo(); if (!x || typeof x !== 'object') return b;
@@ -32,6 +32,7 @@
       const w = x.vivero || {}; b.vivero = { desbloqueados: Array.isArray(w.desbloqueados) ? w.desbloqueados.filter((s) => typeof s === 'string') : [],
         plantas: Array.isArray(w.plantas) ? w.plantas.filter((p) => p && p.id && p.casilla) : [], aves: Array.isArray(w.aves) ? w.aves.filter((p) => p && p.id) : [] };
       const q = x.cosechas || {}; b.cosechas = { total: Math.max(0, Math.floor(+q.total || 0)), pend: Array.isArray(q.pend) ? q.pend.filter((f) => f && f.id && f.casilla).slice(0, 12) : [], ult: q.ult && typeof q.ult === 'object' ? Object.keys(q.ult).slice(-60).reduce((o, k) => { if (typeof q.ult[k] === 'string') o[k] = q.ult[k]; return o; }, {}) : {} };   // F959: frutos
+      const t = x.trivia || {}; b.trivia = { fecha: typeof t.fecha === 'string' ? t.fecha : null, i: Number.isInteger(t.i) ? t.i : null, ok: !!t.ok, elegida: Number.isInteger(t.elegida) ? t.elegida : null };   // F961: trivia diaria
     } catch (e) { return nuevo(); }
     return b;
   }
@@ -143,11 +144,11 @@
   function cosechas() { return cosechasDe(cargar()); }
   // Madurez: el árbol da 1 fruto por ciclo al llegar al día `arbol_desde_dia`; cada flor plantada da 1 fruto cada `planta_dias` días (el reloj de cada flor vuelve a empezar al recogerlo).
   function madurar(e, h) {
-    const K = cat().frutos || { arbol_desde_dia: 22, planta_dias: 7, pendientes_max: 6 }, c = e.cosechas, ci = e.ciclo, max = K.pendientes_max || 6;
+    const K = cat().frutos || { arbol_desde_dia: 15, planta_dias: 2, pendientes_max: 10 }, c = e.cosechas, ci = e.ciclo, max = K.pendientes_max || 6;
     if (!e.eligiendo && ci.especie && ci.diasCuidado >= (K.arbol_desde_dia || 22) && !c.ult['arbol' + ci.n] && c.pend.length < max) { c.pend.push({ id: idc('f'), casilla: 'arbol', de: 'arbol' }); c.ult['arbol' + ci.n] = h; }
     e.vivero.plantas.forEach((p) => {
       const k = 'p_' + p.id + '_' + p.casilla; if (c.pend.length >= max || c.pend.some((f) => f.k === k)) return;
-      const desde = c.ult[k] || p.en; if (isFinite(dnum(desde)) && dif(h, desde) >= (K.planta_dias || 7)) c.pend.push({ id: idc('f'), casilla: p.casilla, de: 'sem_' + p.id, k });
+      const desde = c.ult[k] || p.en, sp = (cat().semillas || {})[p.id] || {}, dd = Math.max(1, +sp.dias || K.planta_dias || 2); if (isFinite(dnum(desde)) && dif(h, desde) >= dd) c.pend.push({ id: idc('f'), casilla: p.casilla, de: 'sem_' + p.id, k });
     });
   }
   function recogerFruto(id) {                              // toque en un fruto maduro; vale 1 en la segunda moneda. Devuelve 1 o 0
@@ -174,6 +175,23 @@
     const items = [ta ? { clave: 'arbol', titulo: 'Del árbol', texto: ta } : null, tp ? { clave: 'planeta', titulo: 'Para el planeta', texto: tp } : null, v ? { clave: 'vida', titulo: v.tema || 'Para crecer', texto: v.texto } : null].filter(Boolean);
     return { titulo: s.nombre + (s.otro ? ' · ' + s.otro : ''), mensaje: s.mensaje, dato: ta || s.dato, items, dia: d, como: K.como || null, vida: v ? { tema: v.tema, texto: v.texto, n: (d % Lv.length) + 1, de: Lv.length } : null }; }
 
-  const api = { config(o) { if (o && o.catalogo) CAT = o.catalogo; if (o && o.hoy) HOY = o.hoy; if (o && o.almacen) ALM = o.almacen; }, cargar, guardar, estado: cargar, etapa, malezaPara, elegirPrimera, visita, sanar, ganar, recolectar, comprar, tiene, plantar, activarAve, mensajeActual, cosechas, recogerFruto, tieneEspecial, comprarEspecial, K };
+  // ---- F961 · Trivia diaria de naturaleza (para todas las personas). Una pregunta por día que rota por la fecha; acertar da 3 gotas directas; fallar no castiga y muestra la respuesta. ----
+  const rot = (d) => ((d % 3) + 3) % 3;                                   // las opciones giran según el día para que la correcta no quede siempre en el mismo lugar
+  function triviaHoy() {
+    const L = (cat().trivia || []); if (!L.length) return null; const e = cargar(), h = hoy(), d = dnum(h), i = ((Math.floor(d) * 11) % L.length + L.length) % L.length, q = L[i], r = rot(d);
+    const ord = q.o.map((_, k) => (k + r) % q.o.length), hecha = e.trivia.fecha === h && e.trivia.i === i;
+    const o = { i, pregunta: q.p, opciones: ord.map((k) => q.o[k]), resuelta: hecha, gotas: (cat().economia.origenes.trivia || { gotas: 3 }).gotas, racha: 0 };
+    if (hecha) { o.ok = e.trivia.ok; o.elegida = e.trivia.elegida; o.correcta = ord.indexOf(q.c); o.explicacion = q.e; }
+    return o;
+  }
+  function responderTrivia(pos) {                                          // pos = posición mostrada (0..2). Devuelve { ok, correcta, explicacion, gotas } o { ok:false, motivo }
+    const t = triviaHoy(); if (!t) return { ok: false, motivo: 'sin-trivia' }; if (t.resuelta) return { ok: false, motivo: 'ya-respondida' };
+    const L = cat().trivia, q = L[t.i], r = rot(dnum(hoy())), ord = q.o.map((_, k) => (k + r) % q.o.length); if (!(pos >= 0 && pos < ord.length)) return { ok: false, motivo: 'opcion' };
+    const acierto = ord[pos] === q.c, e = cargar(), g = acierto ? t.gotas : 0;
+    e.trivia = { fecha: hoy(), i: t.i, ok: acierto, elegida: pos }; if (g) { e.gotas.saldo += g; e.gotas.total += g; } guardar(e);
+    return { ok: true, acierto, correcta: ord.indexOf(q.c), explicacion: q.e, gotas: g };
+  }
+
+  const api = { config(o) { if (o && o.catalogo) CAT = o.catalogo; if (o && o.hoy) HOY = o.hoy; if (o && o.almacen) ALM = o.almacen; }, cargar, guardar, estado: cargar, etapa, malezaPara, elegirPrimera, visita, sanar, ganar, recolectar, comprar, tiene, plantar, activarAve, mensajeActual, cosechas, recogerFruto, tieneEspecial, comprarEspecial, triviaHoy, responderTrivia, K };
   if (typeof window !== 'undefined') window.TBInicio = api; if (typeof module !== 'undefined') module.exports = api;
 })();
