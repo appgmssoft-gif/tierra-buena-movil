@@ -1,11 +1,1 @@
-Pon aquí una foto realista por plan (JPG, 1280x720, menos de 150 KB cada una). Si falta, la tarjeta muestra un fondo de color.
-calma.jpg   -> lago al amanecer / paz
-sermon.jpg  -> colina con gente sentada escuchando
-animo.jpg   -> manos escribiendo una carta
-juan.jpg    -> luz entrando en la oscuridad / pan
-prov.jpg    -> anciano y joven conversando
-marcos.jpg  -> orilla del mar de Galilea
-lucas.jpg   -> pastor con oveja
-hechos.jpg  -> grupo de personas orando juntas
-romanos.jpg -> manos abiertas recibiendo luz
-genesis.jpg -> amanecer sobre la tierra / estrellas
+Portadas de los planes de lectura (F994). Son ilustraciones SVG en el estilo de Tierra Buena (calma, sermon, animo, juan, prov, marcos, lucas, hechos, romanos, genesis). Para cambiar una por una foto con licencia: poner el JPG de 1280x720 (menos de 150 KB) y cambiar la extensión en planFoto() de app.js. Si falta un archivo, la tarjeta muestra un fondo de color.

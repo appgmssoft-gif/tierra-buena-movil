@@ -326,3 +326,6 @@ html[data-eco="2"] .il-tri-op.pop,html[data-eco="2"] .il-btn-msg.nuevo::after{an
 @keyframes ilGotaEntra{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 [data-anim="off"] .il-viv-gota{animation:none}
 @media (prefers-reduced-motion:reduce){.il-viv-gota{animation:none}.il-viv-grp-bt{transition:none}}
+
+/* F991 · Vivero: detalles de cada planta dentro de «Saber más» (la acción principal queda a la vista) */
+.il-viv-mas{margin:8px 0 0}.il-viv-mas summary{cursor:pointer;min-height:40px;display:flex;align-items:center;color:var(--suave);font-weight:600;list-style:none}.il-viv-mas summary::-webkit-details-marker{display:none}.il-viv-mas summary::after{content:"＋";margin-left:6px;color:var(--oro)}.il-viv-mas[open] summary::after{content:"－"}.il-viv-mas p{margin:6px 0}

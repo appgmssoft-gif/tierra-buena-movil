@@ -991,3 +991,12 @@ main h2.sep{margin:30px 2px 12px}.grid{gap:14px}
 
 /* F987 · Banda de identidad de Tierra Buena (Perfil y Mi iglesia) */
 .tb-banda{display:block;width:100%;height:auto;max-height:130px;margin:0 0 10px;border-radius:18px;overflow:hidden}
+
+/* F993 · Tamaño de letra (Perfil → Apariencia). La raíz escala y todo el texto en rem acompaña. */
+html[data-tam=g]{font-size:112.5%}
+html[data-tam=m]{font-size:125%}
+
+/* F995 · Portadas de planes de vida y de la Biblia */
+.plan-foto-svg{aspect-ratio:16/9}.plan-foto-svg svg{width:100%;height:100%;display:block}
+.plan-portada{width:100%;height:auto;display:block;border-radius:14px}
+.biblia-portada{display:block;width:100%;max-width:360px;height:auto;margin:0 auto 14px}

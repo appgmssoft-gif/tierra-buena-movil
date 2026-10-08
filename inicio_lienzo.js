@@ -134,6 +134,7 @@
   // Clima: sol, luna, nubes y caída suave. Solo se mueve con transform/opacity y se detiene con «reducir movimiento».
   function climaSvg(c0) {
     const c = climaReal(c0);
+    if (c0 === 'natural' && c === 'despejado' && (() => { const h = new Date().getHours(); return h >= 20 || h < 6; })()) return ''; // F990: de noche el modo natural no repite la luna del fondo
     const noche = (() => { const h = new Date().getHours(); return h >= 20 || h < 6; })();
     if (c === 'despejado') return noche ? '<g class="cl-luna"><circle cx="292" cy="168" r="15"/><circle class="hu" cx="299" cy="164" r="13"/></g>' : '<g class="cl-sol"><circle class="ha" cx="292" cy="168" r="30"/><circle cx="292" cy="168" r="15"/></g>';
     if (c === 'estrellas') return '<g class="cl-luna"><circle cx="60" cy="160" r="13"/><circle class="hu" cx="66" cy="156" r="11"/></g>';
@@ -318,12 +319,12 @@
     const nf = (v.plantas || []).length, na = (v.aves || []).length, esAve = vivSel.tipo === 'ave', rasgo = esAve ? ((AVES[vivSel.id] || {}).t || '') + ' · ' + (LUGAR[(AVES[vivSel.id] || {}).lugar] || '') : (TAM[vivSel.id] || '');
     const chips = '<div class="il-viv-grp" role="group" aria-label="Temáticas del vivero">' + grupos.map((g) => '<button type="button" class="il-viv-grp-bt" data-ac="grupo" data-id="' + esc(g) + '" aria-pressed="' + (g === vivGrupo) + '">' + esc(nomGrupo(g)) + (g === est.tematica ? '<span class="il-viv-grp-uso" aria-hidden="true"></span>' : '') + '</button>').join('') + '</div>';
     return '<div class="il-viv-cab"><h3>Vivero</h3><span class="il-viv-saldo">' + ic(IC.gota, 16) + saldo + (saldo === 1 ? ' gota' : ' gotas') + '</span>' + (() => { try { const c2 = window.TBInicio.cosechas(); return c2.total ? '<span class="il-viv-saldo il-viv-cos">' + FRUTO_S + c2.saldo + (c2.saldo === 1 ? ' fruto' : ' frutos') + '</span>' : ''; } catch (e) { return ''; } })() + '</div>'
-      + '<p class="il-viv-ay">Las gotas se ganan con la Palabra, Vida, los juegos y la trivia. La pestaña «Ganar gotas» te lleva a cada una. No vencen.</p>'
+      + '<p class="il-viv-ay">Toca «Ganar gotas» para ver cómo sumar. No vencen.</p>'
       + tabsViv(esAve ? 'aves' : 'flores', { flores: sem.length, aves: aves.length, otros: Object.keys(CAT.especiales || {}).length })
       + chips
       + '<div class="il-viv-car" role="list" aria-label="Desliza para ver más">' + (esAve ? aves : sem).filter((i) => enGrupo(tipoV, i, vivGrupo)).map((i) => tile(tipoV, i)).join('') + '</div>'
       + '<div class="il-viv-vista pop" id="ilVivVista">' + vivVista(vivSel.tipo, vivSel.id) + '</div>'
-      + '<div class="il-viv-ficha"><h4>' + esc(it.nombre) + '</h4><p class="il-viv-rasgo">' + esc(rasgo) + '</p><p class="il-viv-dato">' + esc(it.dato || '') + '</p><p class="il-viv-frase">' + esc(it.mensaje || '') + '</p>' + acc + '</div>'
+      + '<div class="il-viv-ficha"><h4>' + esc(it.nombre) + '</h4><p class="il-viv-rasgo">' + esc(rasgo) + '</p>' + acc + '<details class="il-viv-mas"><summary>Saber más</summary><p class="il-viv-dato">' + esc(it.dato || '') + '</p><p class="il-viv-frase">' + esc(it.mensaje || '') + '</p></details></div>'
       + '<p class="il-viv-jardin">Tu jardín: ' + nf + (nf === 1 ? ' planta' : ' plantas') + ' y ' + na + (na === 1 ? ' ave' : ' aves') + ' (hasta 2 aves a la vez).</p>'
       + '<p class="il-viv-est" role="status" aria-live="polite">' + esc(vivMsg) + '</p>';
   }
