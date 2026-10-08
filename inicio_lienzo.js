@@ -317,8 +317,13 @@
     else if (vivSel.tipo === 'ave') acc = '<button type="button" class="btn il-viv-bt il-viv-main" data-ac="ave" data-tipo="ave" data-id="' + esc(vivSel.id) + '">' + (activa(vivSel.id) ? 'Guardar el ave' : 'Llamar al árbol') + '</button>';
     else acc = plantada(vivSel.id) ? '<p class="il-viv-ok2">Ya está plantada en tu pasto.</p>' : '<button type="button" class="btn il-viv-bt il-viv-main" data-ac="plantar" data-tipo="semilla" data-id="' + esc(vivSel.id) + '">Plantar en mi pasto</button>';
     const nf = (v.plantas || []).length, na = (v.aves || []).length, esAve = vivSel.tipo === 'ave', rasgo = esAve ? ((AVES[vivSel.id] || {}).t || '') + ' · ' + (LUGAR[(AVES[vivSel.id] || {}).lugar] || '') : (TAM[vivSel.id] || '');
-    const chips = '<div class="il-viv-grp" role="group" aria-label="Temáticas del vivero">' + grupos.map((g) => '<button type="button" class="il-viv-grp-bt" data-ac="grupo" data-id="' + esc(g) + '" aria-pressed="' + (g === vivGrupo) + '">' + esc(nomGrupo(g)) + (g === est.tematica ? '<span class="il-viv-grp-act">Activo</span>' : '') + '</button>').join('') + '</div>';
-    return '<div class="il-viv-cab"><h3>Vivero</h3><button type="button" class="il-viv-saldo il-viv-saldo-bt" data-ac="tab" data-id="gotas" aria-label="Ver cómo ganar gotas">' + ic(IC.gota, 16) + saldo + (saldo === 1 ? ' gota' : ' gotas') + '</button>' + (() => { try { const c2 = window.TBInicio.cosechas(); return c2.total ? '<span class="il-viv-saldo il-viv-cos">' + FRUTO_S + c2.saldo + (c2.saldo === 1 ? ' fruto' : ' frutos') + '</span>' : ''; } catch (e) { return ''; } })() + '</div>'
+    const tieneTema = (g) => g === 'general' || (est.vivero.desbloqueados || []).indexOf('tem_' + g) >= 0;
+    const chips = '<div class="viv-habitats" role="group" aria-label="Hábitats del Vivero">' + grupos.map((g) => {
+      const tiene = tieneTema(g), act = g === est.tematica, precio = ((CAT.tematicas || {})[g] || {}).precio || 0;
+      const estado = act ? 'Activo' : tiene ? 'Disponible' : 'Bloqueado · ' + precio + ' gotas';
+      return '<button type="button" class="viv-hab' + (act ? ' on' : '') + (tiene ? '' : ' bloq') + '" data-ac="' + (tiene ? 'habitat' : 'comprar-tema') + '" data-id="' + esc(g) + '"><b>' + esc(nomGrupo(g)) + '</b><span>' + esc(estado) + '</span></button>';
+    }).join('') + '</div>';
+    return '<div class="il-viv-cab viv-top"><h3 class="viv-titulo">Vivero</h3><div class="viv-pills"><button type="button" class="il-viv-saldo il-viv-saldo-bt" data-ac="tab" data-id="gotas" aria-label="Ver cómo ganar gotas">' + ic(IC.gota, 16) + saldo + (saldo === 1 ? ' gota' : ' gotas') + '</button>' + (() => { try { const c2 = window.TBInicio.cosechas(); return c2.total ? '<span class="il-viv-saldo il-viv-cos">' + FRUTO_S + c2.saldo + (c2.saldo === 1 ? ' fruto' : ' frutos') + '</span>' : ''; } catch (e) { return ''; } })() + '</div></div>'
       + '<p class="il-viv-ay">Toca «Ganar gotas» para ver cómo sumar. No vencen.</p>'
       + '<h4 class="viv-paso">1. Elige tu entorno (Hábitat)</h4>' + chips
       + '<h4 class="viv-paso">2. Decoraciones para este entorno</h4>' + tabsViv(esAve ? 'aves' : 'flores', { flores: sem.length, aves: aves.length, otros: Object.keys(CAT.especiales || {}).length })
@@ -392,6 +397,8 @@
     bt.onclick = () => { vivMsg = ''; abre(pn.hidden); };
     pn.onclick = (ev) => {
       const b = ev.target.closest('[data-ac]'); if (!b || b.disabled) return; const ac = b.getAttribute('data-ac'), tipo = b.getAttribute('data-tipo'), id = b.getAttribute('data-id'); let r;
+      if (ac === 'habitat') { const r = window.TBInicio.elegirTematica(id === 'general' ? null : id); vivMsg = r && r.ok ? '' : 'No se pudo activar ese hábitat.'; vivGrupo = id; pinta(false); sonido('suave'); return; }
+      if (ac === 'comprar-tema') { const r = window.TBInicio.comprar('tema', id); if (r && r.ok) { vivMsg = '¡Hábitat desbloqueado! Ya puedes activarlo.'; sonido('logro'); } else { const m = { 'sin-gotas': 'Te faltan gotas para este hábitat. Toca «Ganar gotas» para sumar.', 'ya-tienes': 'Ya tienes este hábitat.' }; vivMsg = m[r && r.motivo] || 'No se pudo desbloquear ahora.'; } pinta(false); return; }
       if (ac === 'tab' && id === 'gotas') { vivSel = { tipo: 'gotas', id: 'gotas' }; vivMsg = ''; pinta(false); sonido('suave'); return; }
       if (ac === 'grupo') { vivGrupo = id; const tp = vivSel && vivSel.tipo === 'ave' ? 'ave' : 'semilla', p = listaDe(tp).filter((i) => enGrupo(tp, i, id))[0]; if (p) vivSel = { tipo: tp, id: p }; vivMsg = ''; pinta(false); sonido('suave'); return; }
       if (ac === 'ira') { if (id === 'trivia') { abre(false); const tt = $('#ilTriBtn', cont); if (tt) { tt.click(); try { tt.scrollIntoView({ behavior: quieto() ? 'auto' : 'smooth', block: 'center' }); } catch (e) { /* sin scroll */ } } return; } try { if (window.TBApp && window.TBApp.irA) window.TBApp.irA(id); } catch (e) { /* sin ir */ } return; }
