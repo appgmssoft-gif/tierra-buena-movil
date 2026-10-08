@@ -386,6 +386,24 @@
     try { history.replaceState(null, '', location.pathname); } catch (e) { /* nada */ }
     vistaUnirse();
   }
+  // F998 · Eliminar mi cuenta y mis datos (requisito de las tiendas). Pide escribir ELIMINAR. Borra en línea si el servicio está activo y siempre borra este teléfono.
+  async function eliminarCuentaTodo() {
+    const txt = prompt('Esto borra tu cuenta, tus notas, tus peticiones y todo lo guardado en este teléfono. No se puede deshacer.\n\nPara confirmar, escribe ELIMINAR:');
+    if (String(txt || '').trim().toUpperCase() !== 'ELIMINAR') { alert('No se eliminó nada.'); return; }
+    let enLinea = 'no-aplica';
+    if (hayAuth()) {
+      const r = await rpc('eliminar_mi_cuenta', {});
+      const d = r && r.data !== undefined ? r.data : r;
+      if (d && d.ok) enLinea = 'ok';
+      else if (d && d.mensaje === 'aal2') { alert('Primero confirma con tu segundo paso de seguridad y vuelve a intentarlo.'); return; }
+      else enLinea = (r && r.motivo) || (d && d.mensaje) || 'pendiente';
+    }
+    try { if (hayAuth()) await SB.auth.signOut(); } catch (e) { /* sin red: igual se borra aquí */ }
+    try { Object.keys(localStorage).filter((k) => k.indexOf('tb_') === 0).forEach((k) => localStorage.removeItem(k)); } catch (e) { /* nada */ }
+    try { sessionStorage.clear(); } catch (e) { /* nada */ }
+    alert(enLinea === 'ok' ? 'Tu cuenta y tus datos se eliminaron.' : 'Se borraron los datos de este teléfono y tu sesión. La eliminación en línea todavía no está activa: avisa al equipo para completarla.');
+    vistaUnirse();
+  }
   const copiaTexto = () => {   // F955: «Copia de seguridad» visible para la persona (la hace resguardo.js)
     try { const i = window.TBResguardo && window.TBResguardo.info && window.TBResguardo.info(); if (!i || !i.fecha) return 'Copia de seguridad: aún no hay una en este teléfono.'; const d = new Date(i.fecha); return 'Copia de seguridad en este teléfono: ' + d.toLocaleDateString('es-CL', { day: 'numeric', month: 'long' }) + ', ' + d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }) + '.'; } catch (e) { return ''; }
   };
@@ -806,8 +824,10 @@
       <h2 class="sep">Lo que puedes hacer</h2>
       ${cuenta ? `<div class="card"><div class="interruptor-fila"><div><b>Guardar mis avances en mi cuenta</b><p class="suave m0t" id="nubeTxt">${off ? 'Apagado: tus notas quedan solo en este teléfono.' : 'Encendido: las ves igual en tu otro teléfono o tablet.'}</p></div><button type="button" class="interruptor" id="nubeSw" role="switch" aria-checked="${!off}" aria-label="Guardar mis avances en mi cuenta"><i></i></button></div></div>` : ''}
       <div class="card"><div class="t"><span aria-hidden="true">📥</span>Descargar mis datos</div><p class="suave m0t">Un archivo con tu nombre, tus notas y tus peticiones. Sin tu llave.</p><button type="button" class="btn sec" id="privBaja">Descargar</button><p id="privMsg" class="ok" role="status" hidden></p></div>
+      <div class="card"><div class="t"><span aria-hidden="true">🗑️</span>Eliminar mi cuenta</div><p class="suave m0t">Borra tu cuenta, tus notas, tus peticiones y todo lo guardado en este teléfono. No se puede deshacer.</p><button type="button" class="btn sec" id="eliminarCuentaBtn">Eliminar mi cuenta y mis datos</button></div>
       <div class="card"><div class="t"><span aria-hidden="true">🚪</span>Salir de mi iglesia</div><p class="suave m0t">Se borra tu nombre de la lista de tu iglesia y de este teléfono. Puedes volver a unirte con el código cuando quieras. Está al final de «Mi iglesia».</p></div>`;
     alVolver();
+    const ec = $('#eliminarCuentaBtn'); if (ec) ec.onclick = eliminarCuentaTodo;
     const sw = $('#nubeSw');
     if (sw) sw.onclick = async () => {
       const m = metaLeer(), apagar = !m.off, pm = $('#privMsg');
@@ -2083,14 +2103,14 @@
   // F995 · Planes de vida (crecer como persona, sin Biblia) y portada de la Biblia.
   const K_PLANVIDA = 'tb_movil_planvida';
   const PLAN_VIDA = [
-    { id: 'yo', n: 'Mi relación conmigo', d: '7 días para conocerte, entenderte y tratarte con cariño', ctx: 'Tu relación contigo es la base de todas las demás. Cada día trae una idea pequeña y una acción concreta, sin prisa.', aviso: 'Este plan acompaña; no reemplaza a un profesional. Si llevas semanas muy triste, sin ganas de nada, o sientes que no puedes seguir, habla hoy con una persona de confianza o con un profesional. En Mi crecimiento, sección Salud Mental, hay herramientas para dar ese paso.', dias: [
-      { t: 'Conocerte', r: 'Conocerte empieza por notar lo que te hace bien y lo que te cansa. No hace falta tener todas las respuestas hoy.', a: 'Anota tres cosas que te dieron paz esta semana, aunque sean pequeñas.', v: 'Salmo 139:14' },
-      { t: 'Entenderte', r: 'Lo que sientes tiene un motivo, aunque no siempre lo veas al instante. Entenderte es preguntar antes de juzgar.', a: 'Elige una emoción de hoy y pregúntate qué la provocó. Escríbelo sin corregirlo.', v: 'Santiago 1:19' },
-      { t: 'Valorarte', r: 'Tu valor no depende de lo que produces ni de lo que otros opinan. Valerte es reconocer que eres importante aunque no estés al cien.', a: 'Escribe tres cualidades tuyas que nadie te pidió, pero que tienes.', v: 'Génesis 1:27' },
-      { t: 'Cuidarte', r: 'Cuidarte incluye el cuerpo, el descanso y los límites. No es egoísmo: es una forma de sostenerte.', a: 'Elige un cuidado concreto para hoy: beber agua, dormir un poco antes o decir no a algo que te sobrecarga.', v: 'Marcos 6:31' },
-      { t: 'Tratarte con cariño', r: 'La voz que llevas dentro suele ser más dura que la de un amigo. Puedes cambiarla por una más amable.', a: 'Recuerda una frase dura que te dijiste esta semana y reescríbela como se la dirías a alguien que quieres.', v: 'Mateo 22:39' },
-      { t: 'Sobrellevar los días difíciles', r: 'Hay días que pesan. Sobrellevarlos no es fracasar: se puede hacer paso a paso y pidiendo apoyo.', a: 'Prueba un minuto de respiración lenta (inhala cuatro segundos, exhala seis) y escribe a quién podrías llamar si el día se pone difícil.', v: 'Salmo 34:18' },
-      { t: 'Cuando hay pérdida', r: 'Una pérdida pide tiempo. Puedes recordar lo que perdiste, sentirlo y, a la vez, seguir viviendo.', a: 'Escribe algo que quisieras recordar de lo que perdiste, o una persona con quien puedas hablar hoy.', v: 'Eclesiastés 3:4' },
+    { id: 'yo', n: 'Mi relación conmigo', d: '7 días para conocerte, entenderte y tratarte con cariño', ctx: 'Tu relación contigo es la base de todas las demás. Cada día trae una idea breve, una acción pequeña y una pregunta para pensar.', aviso: 'Este plan acompaña; no reemplaza a un profesional. Si piensas en hacerte daño o en no seguir viviendo, llama de inmediato al Fono *4141 del Minsal (gratuito, 24 horas) o a emergencias. En Mi crecimiento, sección Salud Mental, hay más apoyo.', dias: [
+      { t: 'Conocerte', r: 'Tu valor no depende de lo que produces hoy. Conocerte empieza por observar tus pensamientos sin juzgarlos.', a: 'Dedica cinco minutos en silencio a observar tus pensamientos, recordando que tu valor no depende de tu productividad de hoy.', p: '¿Qué pensamiento se repite cuando te evalúas, y cómo cambiaría si te miraras con la misma paciencia con que miras a alguien que quieres?', v: 'Salmo 139:1-3', f: 'Kristin Neff, 2023 (autocompasión frente a autoestima que depende del rendimiento)', h: 'No aplica' },
+      { t: 'Entenderte', r: 'Nombrar lo que sientes con precisión, sin juzgarlo, ayuda a entenderte. Las emociones difíciles son respuestas humanas, no prueba de debilidad.', a: 'Escribe en un papel la emoción más intensa de esta semana y ponle un nombre claro, sin decidir si es buena o mala.', p: '¿Cómo te ayuda reconocer tu propia fragilidad para acompañar mejor a quienes te rodean?', v: 'Hebreos 4:15', f: 'Kristin Neff, 2023 (humanidad compartida); Henri Nouwen, El sanador herido', h: 'Si las emociones intensas dificultan tu vida diaria por más de dos semanas, habla con un profesional.' },
+      { t: 'Valorarte', r: 'Tu valor no depende del éxito ni de la comparación. Como persona creada a imagen de Dios, tienes un valor que no cambia según tu rendimiento.', a: 'Identifica un área donde te comparas con otros y agradece a Dios por tu propio ritmo.', p: '¿Qué pasaría con tu paz interior si hoy dejaras de competir para demostrar que eres suficiente?', v: 'Génesis 1:27', f: 'Kristin Neff, 2023; Henri Nouwen, Life of the Beloved', h: 'No aplica' },
+      { t: 'Cuidarte', r: 'Descanso, movimiento y alimentación protegen la salud emocional. Cuidar el cuerpo también es una forma de cuidar la vida que Dios te dio.', a: 'Haz hoy un cambio pequeño: una caminata de quince minutos o acostarte media hora antes.', p: '¿Qué hábito diario está gastando tu energía y cómo podrías ajustarlo esta semana, con realismo?', v: '1 Corintios 6:19', f: 'Organización Mundial de la Salud, directrices sobre actividad física, descanso y salud mental', h: 'Si tienes dolor físico persistente o problemas severos para dormir, consulta a un médico. Antes de un ejercicio intenso, consulta a tu médico.' },
+      { t: 'Tratarte con cariño', r: 'La voz interna suele ser más dura que la de un buen amigo. Esa dureza no motiva; la amabilidad hacia uno mismo ayuda a aprender y a seguir adelante.', a: 'Ante tu próximo error, háblate con las mismas palabras de ánimo y paciencia que usarías con un buen amigo.', p: '¿Por qué suele ser más fácil perdonar a un ser querido que perdonarte a ti mismo por una falta parecida?', v: 'Efesios 4:32', f: 'Kristin Neff, 2023 (autoamabilidad frente a autocrítica)', h: 'Si tu voz interna incluye ideas persistentes de hacerte daño o de que el mundo estaría mejor sin ti, llama de inmediato al Fono *4141 del Minsal.' },
+      { t: 'Sobrellevar los días difíciles', r: 'La resiliencia no es la ausencia de dolor, sino la capacidad de adaptarte con flexibilidad. Pasar días oscuros no es fracasar.', a: 'Escoge un versículo o frase de consuelo y léela en voz alta en el momento de mayor cansancio del día.', p: '¿Qué recursos personales, comunitarios o espirituales te han ayudado a recuperarte en el pasado?', v: 'Salmo 46:1', f: 'George Bonanno, investigación sobre resiliencia y flexibilidad regulatoria (cita exacta por verificar)', h: 'Si la desesperanza te impide hacer tareas básicas como comer, asearte o cuidar a tu familia, busca ayuda profesional hoy.' },
+      { t: 'Cuando hay pérdida', r: 'Una pérdida pide tiempo, y no hay un plazo correcto para el duelo. No existen etapas obligatorias: cada persona atraviesa el dolor a su manera.', a: 'Realiza un acto simbólico y privado, como encender una vela o escribir una carta de gratitud por lo que perdiste.', p: '¿De qué manera la gratitud por lo compartido puede, con el tiempo, darte fuerza para seguir adelante?', v: 'Mateo 5:4', f: 'George Bonanno, investigación longitudinal sobre el duelo', h: 'Si el dolor te paraliza más de un año después de la pérdida, busca apoyo profesional.' },
     ] },
   ];
   const planVidaProg = () => { const p = rg(K_PLANVIDA); return p && typeof p === 'object' ? p : {}; };
@@ -2120,7 +2140,7 @@
   function vistaDiaVida(id, j) {
     const pl = PLAN_VIDA.find((x) => x.id === id); if (!pl || !pl.dias[j]) return vistaPlanesVida();
     const d = pl.dias[j], hecho = planVidaHechos(id).indexOf(j) >= 0;
-    $('#pantalla').innerHTML = `${cabecera('Día ' + (j + 1) + ' · ' + d.t, pl.n)}<p class="plan-ctx">${esc(d.r)}</p><div class="card"><b>Para hoy</b><p class="m0t">${esc(d.a)}</p></div><p class="suave">Referencia: ${esc(d.v)}</p>
+    $('#pantalla').innerHTML = `${cabecera('Día ' + (j + 1) + ' · ' + d.t, pl.n)}<p class="plan-ctx">${esc(d.r)}</p><div class="card"><b>Para hoy</b><p class="m0t">${esc(d.a)}</p></div><div class="card"><b>Para pensar</b><p class="m0t">${esc(d.p || '')}</p></div><p class="suave">Referencia: ${esc(d.v)}</p>${d.f ? '<p class="suave">Fuente de la idea: ' + esc(d.f) + '</p>' : ''}${d.h && d.h !== 'No aplica' ? '<div class="card"><b>Cuándo buscar ayuda</b><p class="m0t">' + esc(d.h) + '</p></div>' : ''}
       <button type="button" class="btn ${hecho ? 'sec' : ''} sep" id="vdiaHecho" aria-pressed="${hecho}">${hecho ? 'Marcado como hecho (quitar)' : 'Lo hice'}</button>`;
     volverA(pl.n, () => vistaPlan2(id));
     $('#vdiaHecho').onclick = () => {

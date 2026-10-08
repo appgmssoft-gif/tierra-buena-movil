@@ -269,7 +269,7 @@
   }
   // Vista previa (320×120): pasto con la flor a su altura real, o el lugar propio del ave (cielo, rama, suelo o junto a una flor).
   function vivVista(tipo, id) {
-    const W = 320, H = 120, pasto = '<path d="M0 88c50-16 110-18 170-8 60 10 110 6 150-6v46H0z" fill="#a9cf9b"/><path d="M0 104c60-12 120-8 190 0 50 5 90 2 130-6v22H0z" fill="#86b97a"/>';
+    const W = 320, H = 120, pasto = '<path d="M0 88c50-16 110-18 170-8 60 10 110 6 150-6v46H0z" fill="#a9cf9b"/><path d="M0 104c60-12 120-8 190 0 50 5 90 2 130-6v22H0z" fill="#86b97a"/>' + hierbaTB(0, 320, 98, 70, 5);
     const cielo = (mont) => '<defs><linearGradient id="vvCielo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + (mont ? '#bcdcf0' : '#cfe6f4') + '"/><stop offset="1" stop-color="#eef6e8"/></linearGradient></defs><rect width="' + W + '" height="' + H + '" fill="url(#vvCielo)"/><circle cx="280" cy="24" r="12" fill="#fbe8a6" opacity=".85"/>';
     const abre = '<svg class="il-viv-svg" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Vista previa: así se vería en tu paisaje" focusable="false">';
     if (tipo === 'semilla') {
@@ -408,6 +408,17 @@
     };
     if (vivAbierto) abre(true);
   }
+  // F999 · Hierba: mechones con varios verdes sobre el suelo (determinista: el mismo dibujo siempre).
+  function hierbaTB(x0, x1, yb, n, seed) {
+    let k = seed || 11; const r = () => (k = (k * 9301 + 49297) % 233280) / 233280;
+    const tonos = ['#5f9a62', '#7cb36f', '#4f8a55', '#94c27f'];
+    let g = '';
+    for (let i = 0; i < n; i++) {
+      const x = x0 + r() * (x1 - x0), y = yb + r() * 7, h = 6 + r() * 11, lean = (r() - 0.5) * 9, col = tonos[Math.floor(r() * tonos.length)];
+      g += '<path d="M' + (x - 1.3).toFixed(1) + ' ' + y.toFixed(1) + ' Q' + (x + lean * 0.3).toFixed(1) + ' ' + (y - h * 0.55).toFixed(1) + ' ' + (x + lean).toFixed(1) + ' ' + (y - h).toFixed(1) + ' Q' + (x + lean * 0.3 + 1.3).toFixed(1) + ' ' + (y - h * 0.55).toFixed(1) + ' ' + (x + 1.3).toFixed(1) + ' ' + y.toFixed(1) + 'Z" fill="' + col + '"/>';
+    }
+    return g;
+  }
   function escena(est) {
     const c = est.ciclo, et = ETAPAS[window.TBInicio ? window.TBInicio.etapa(c.diasCuidado) : 'brote'] ? window.TBInicio.etapa(c.diasCuidado) : 'brote';
     const fondo = (est.paisaje || []).map((q) => { const s = FONDO[q.casilla]; return s ? '<g transform="translate(' + s[0] + ' ' + s[1] + ') scale(' + s[2] + ')">' + arbol(q.especie, 'frondoso') + '</g>' : ''; }).join('');
@@ -420,7 +431,7 @@
       + '<g class="cap cap0">' + cielo(cl) + atras(fo) + '</g><g class="cap cap1"><path class="col c1" d="' + COL.c1 + '"/>' + fondo + '</g>'
       + '<g class="cap cap2"><path class="col c2" d="' + COL.c2 + '"/></g>'
       + '<g class="cap cap3"><path class="col c3" d="' + COL.c3 + '"/></g></g>'
-      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g><g class="esp">' + especialesEscena(est, fo) + '</g><g class="cap cap3"><g class="mundo" transform="translate(180 344)">' + arbol(c.especie, et) + '</g></g><g class="clima">' + climaSvg(cl) + '</g></svg>'
+      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g><g class="esp">' + especialesEscena(est, fo) + '</g><g class="cap cap3"><g class="mundo" transform="translate(180 344)">' + arbol(c.especie, et) + '</g></g>' + '<g class="tb-hierba" aria-hidden="true">' + hierbaTB(0, 360, 392, 90, 17) + '</g><g class="clima">' + climaSvg(cl) + '</g></svg>'
       + '<i class="il-anillo" id="ilAnillo" aria-hidden="true"></i>'
       + '<button type="button" class="il-resp" id="ilResp" aria-label="Respirar con tu árbol. Toca para una pausa de unos 30 segundos"></button>' + mal + gotasHTML(est) + frutosHTML(est) + vivEscena(est) + '</div>';
   }
