@@ -963,6 +963,15 @@
       ${p.aprobada ? `<button type="button" class="btn sec chico" data-contestada="${esc(p.id)}" data-valor="${p.respondida ? '0' : '1'}">${p.respondida ? 'Quitar «contestada»' : svg('chispas', 16) + ' Marcar como contestada'}</button>` : ''}
       <button type="button" class="btn sec chico" data-borrar="${esc(p.id)}">🗑️ Borrar</button>
       ${p.respondida && p.respuesta !== undefined ? `<div class="respuesta"><label for="resp_${esc(p.id)}"><b>${svg('chispas', 16)} Cómo respondió Dios</b> <span class="suave">(solo lo ves tú)</span></label><textarea id="resp_${esc(p.id)}" rows="2" maxlength="400" placeholder="Si quieres, escribe aquí cómo viste la respuesta.">${esc(p.respuesta || '')}</textarea><button type="button" class="btn sec chico" data-guardarresp="${esc(p.id)}">Guardar</button></div>` : ''}</div>`).join('');
+    // F1049 · Estado de mi petición según mi pastor (recibida, en oración, atendida). Requiere 22_SQL_F1049_ESTADO_PETICION_MIEMBRO.sql.
+    const ESTADO_MI_PET = { recibida: 'Tu pastor la recibió', en_oracion: 'Tu pastor la está orando', atendida: 'Tu pastor la atendió' };
+    const qs = await rpcRaw('peticion_estado_miembro', { p_codigo: id.codigo, p_clave: id.clave, p_ids: l.map((x) => x.id).filter(Boolean) });
+    const estPet = {}; if (qs.ok) (qs.data || []).forEach((e) => { estPet[e.peticion_id] = e.estado; });
+    caja.querySelectorAll('.card.item').forEach((c, i) => {
+      const x = l[i]; if (!x || !estPet[x.id]) return;
+      const linea = document.createElement('p'); linea.className = 'suave m0t pet-est'; linea.textContent = '🙏 ' + ESTADO_MI_PET[estPet[x.id]];
+      c.appendChild(linea);
+    });
     caja.querySelectorAll('[data-contestada]').forEach((b) => b.addEventListener('click', async () => {
       const rr = await rpcRaw('peticion_respondida', { p_codigo: id.codigo, p_clave: id.clave, p_id: b.dataset.contestada, p_valor: b.dataset.valor === '1' });
       if (!rr.ok) return msg(errTxt(rr.error)); msg(''); if (b.dataset.valor === '1') gotaGanar('oracion'); oracionesMias(id);
@@ -3203,6 +3212,22 @@
     const l = r.data || []; m.textContent = l.length ? 'Peticiones nuevas. Al marcarlas, la persona ve que las viste.' : 'No hay peticiones nuevas.';
     $('#plista').innerHTML = l.map((x) => `<div class="card item"><div class="t"><span aria-hidden="true">${svg('paloma', 20)}</span>${x.anonima ? 'Anónima' : esc(x.nombre || 'Sin nombre')}${x.tipo ? `<span class="etiqueta">${esc(x.tipo)}</span>` : ''}</div><p class="m0t">${esc(x.texto)}</p><p class="suave m0t">${esc(fecha(x.creado_en))}${x.publica ? ' · quiere que se comparta en el muro' : ''}</p><div class="fab-acc"><button type="button" class="btn chico" data-vi="${esc(x.id)}">Ya la vi</button>${x.publica && !x.aprobada ? `<button type="button" class="btn sec chico" data-pu="${esc(x.id)}" data-an="${x.anonima ? 1 : 0}">Compartir en el muro</button>` : ''}</div></div>`).join('');
     document.querySelectorAll('[data-vi]').forEach((b) => b.addEventListener('click', async () => { await prpc('peticion_pastor_marcar_vista', p, { p_id: b.dataset.vi }); pOraciones(p); }));
+    // F1048 · Seguimiento de cada petición: recibida, en oración o atendida (lo ve solo el pastor). Requiere 21_SQL_F1048_PETICIONES_SEGUIMIENTO.sql.
+    const PET_ESTADOS = [['recibida', 'Recibida'], ['en_oracion', 'En oración'], ['atendida', 'Atendida']];
+    const qe = await prpc('peticion_seguimiento_listar', p);
+    const est = {}; if (qe.ok) (qe.data || []).forEach((e) => { est[e.peticion_id] = e.estado; });
+    document.querySelectorAll('#plista .card').forEach((c, i) => {
+      const x = l[i]; if (!x || !x.id) return;
+      const actual = est[x.id] || 'recibida';
+      const caja = document.createElement('div'); caja.className = 'pet-seg'; caja.setAttribute('role', 'group'); caja.setAttribute('aria-label', 'Seguimiento de la petición');
+      caja.innerHTML = PET_ESTADOS.map(([k, t]) => '<button type="button" class="chip' + (actual === k ? ' on' : '') + '" data-pes="' + k + '" data-pid="' + esc(x.id) + '" aria-pressed="' + (actual === k) + '">' + t + '</button>').join('');
+      c.appendChild(caja);
+    });
+    document.querySelectorAll('[data-pes]').forEach((b) => b.addEventListener('click', async () => {
+      const rr = await prpc('peticion_seguimiento_fijar', p, { p_peticion: b.dataset.pid, p_estado: b.dataset.pes });
+      const x = rr.ok ? primera(rr.data) : null;
+      if (x && x.ok) pOraciones(p); else m.textContent = 'No se pudo guardar el seguimiento. Revisa tu conexión.';
+    }));
     document.querySelectorAll('[data-pu]').forEach((b) => b.addEventListener('click', async () => { await prpc('peticion_pastor_publicar', p, { p_id: b.dataset.pu, p_ocultar_nombre: b.dataset.an === '1' }); await prpc('peticion_pastor_marcar_vista', p, { p_id: b.dataset.pu }); pOraciones(p); }));
   }
   const ESTADO_V = { solicitada: 'Nueva', aceptada: 'Aceptada', agendada: 'Agendada', realizada: 'Realizada', no_disponible: 'No disponible' };

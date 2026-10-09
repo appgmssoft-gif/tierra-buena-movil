@@ -1047,3 +1047,4 @@ html[data-contraste=alto] .card,html[data-contraste=alto] .chip,html[data-contra
 .hoy-fecha{min-height:44px}
 .av-emo{min-width:44px;min-height:44px}
 .rol-dia{margin-top:12px}
+.pet-seg{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
