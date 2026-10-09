@@ -7,7 +7,7 @@
   'use strict';
   // Huella SHA-256 de tu PIN de desarrollo. Se genera con herramientas/crear_pin_dev.html y se pega aquí.
   // Vacía = no se puede desbloquear la versión de desarrollo en el celular (solo funciona en localhost).
-  const DEV_HASH = 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f';
+  const DEV_HASH = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92';
   const KDEV = 'tb_dev_ok', KDIAS = 'tb_qa_dias_extra';
   const host = (typeof location !== 'undefined' && location.hostname) || '';
   const enLocal = host === 'localhost' || host === '127.0.0.1';

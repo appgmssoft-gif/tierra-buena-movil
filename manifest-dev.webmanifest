@@ -1,7 +1,7 @@
 {
-  "name": "Tierra Buena · Desarrollo",
-  "short_name": "TB Dev",
-  "description": "Vivir lo que aprendemos: tu iglesia en el celular.",
+  "name": "Tierra Buena DESARROLLADOR",
+  "short_name": "TB DESARROLLADOR",
+  "description": "Versión para el desarrollador: pruebas de todas las pantallas.",
   "lang": "es",
   "start_url": "./index.html?dev=1",
   "scope": "./",
