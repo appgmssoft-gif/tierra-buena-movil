@@ -2879,13 +2879,13 @@
       <p class="suave" id="pResumen" aria-live="polite">Revisando lo de hoy…</p>
       <h2 class="sep">Mi agenda</h2><div class="lista">${fil('t2', svg('calendario', 22), 'Mi calendario', 'Visitas, reuniones y descanso. Solo tú lo ves', 'mcal')}</div>
       <h2 class="sep">Para atender hoy</h2><div class="lista">${fil('t3', svg('compartir', 22), 'Visitas', 'Quién pide que lo visites', 'vis')}${fil('t2', svg('corazon', 22), 'Oraciones', 'Peticiones recibidas', 'ora')}${fil('t1', svg('gente', 22), 'Solicitudes', 'Quién quiere unirse', 'sol')}</div>
-      <h2 class="sep">Mi iglesia</h2><div class="lista">${fil('t4', svg('gente', 22), 'Miembros', 'Quiénes forman tu iglesia', 'mie')}${fil('t1', svg('gente', 22), 'Disponibilidad', 'Quiénes pueden servir y cuándo', 'disp')}${fil('t1', svg('iglesia', 22), 'Ministerios y líderes', 'Grupos, personas y líderes', 'min')}${fil('t2', svg('calendario', 22), 'Agenda', 'Actividades y reuniones', 'age')}${fil('t3', svg('altavoz', 22), 'Avisos', 'Mensajes para todos o un grupo', 'avi')}${fil('t4', svg('bloques', 22), 'Datos y código', 'Nombre, eslogan y código', 'dat')}</div>
+      <h2 class="sep">Mi iglesia</h2><div class="lista">${fil('t4', svg('brote', 22), 'Bienvenida', 'Primeras 4 semanas de quienes llegan', 'bien')}${fil('t4', svg('gente', 22), 'Miembros', 'Quiénes forman tu iglesia', 'mie')}${fil('t1', svg('gente', 22), 'Disponibilidad', 'Quiénes pueden servir y cuándo', 'disp')}${fil('t1', svg('iglesia', 22), 'Ministerios y líderes', 'Grupos, personas y líderes', 'min')}${fil('t2', svg('calendario', 22), 'Agenda', 'Actividades y reuniones', 'age')}${fil('t3', svg('altavoz', 22), 'Avisos', 'Mensajes para todos o un grupo', 'avi')}${fil('t4', svg('bloques', 22), 'Datos y código', 'Nombre, eslogan y código', 'dat')}</div>
       <div id="tbEjem" class="tb-ejem-caja"></div>
       <p class="suave sep16">${svg('escudo', 16)} Las finanzas se administran solo desde el computador.</p>
       <button type="button" class="btn sec sep16" id="pSalir">Salir del modo pastor</button>`;
     try { if (window.TBEjemplos && $('#tbEjem')) window.TBEjemplos.pintar($('#tbEjem'), 'pastor'); } catch (e) { /* sin ejemplos */ }
     document.querySelectorAll('[data-ir=juntos]').forEach((b) => b.addEventListener('click', abrirJuntos));
-    document.querySelectorAll('[data-pp]').forEach((b) => b.addEventListener('click', () => ({ sol: pSolicitudes, ora: pOraciones, vis: pVisitas, mie: pMiembros, min: pMinisterios, age: () => vistaAgenda(modoPastor(p)), avi: () => vistaAvisos(modoPastor(p)), mcal: () => pCalendario(p), disp: () => pDisponibilidad(p), dat: pDatos }[b.dataset.pp])(p)));
+    document.querySelectorAll('[data-pp]').forEach((b) => b.addEventListener('click', () => ({ sol: pSolicitudes, ora: pOraciones, vis: pVisitas, mie: pMiembros, min: pMinisterios, age: () => vistaAgenda(modoPastor(p)), avi: () => vistaAvisos(modoPastor(p)), mcal: () => pCalendario(p), disp: () => pDisponibilidad(p), bien: () => pBienvenida(p), dat: pDatos }[b.dataset.pp])(p)));
     $('#pSalir').onclick = () => { if (confirm('¿Salir del modo pastor en este teléfono? Tu llave se borra de aquí (sigue en tu computador).')) { borrar(K_PASTOR); borrar('tb_movil_juntos_cache'); barraRefrescar('perfil'); ir('perfil'); } };
     const ins = (k, n) => { const e = $('#n-' + k); if (e && n > 0) { e.textContent = n > 99 ? '99+' : String(n); e.hidden = false; } };
     // F1032 · Resumen del pastor: una frase con lo que requiere atención hoy (sin rankings ni cifras en rojo)
@@ -3056,6 +3056,48 @@
         ? `<div class="card item"><p class="m0"><b>${esc(new Date(e.inicio).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }))} · ${esc(e.titulo)}</b></p><p class="suave m0t">Sirve: <b>${esc(e.miembro)}</b></p></div>`
         : `<div class="card item"><p class="m0"><b>${esc(new Date(e.inicio).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }))} · ${esc(e.titulo)}</b></p><p class="suave m0t">${esc((CAL_TIPOS.find((t) => t[0] === e.tipo) || [0, 'Personal'])[1])}${e.detalle ? ' · ' + esc(e.detalle) : ''}</p></div>`).join('') : '<p class="suave">Nada agendado este día.</p>');
     }));
+  }
+  // F1046 · ATENDER NUEVOS MIEMBROS: seguimiento de las primeras 4 semanas (contacto, visita, grupo, oración). Requiere 20_SQL_F1046_BIENVENIDA.sql.
+  const BIEN_PASOS = [['contacto', 'Lo contacté'], ['visita', 'Lo visité'], ['grupo', 'Lo invité a un grupo'], ['oracion', 'Oré por él o ella']];
+  const BIEN_MOTIVO = { 'sin-permiso': 'No pudimos confirmar tu clave de pastor. Revisa tu conexión.', 'miembro-invalido': 'Elige a una persona de tu iglesia.', 'paso-invalido': 'Ese paso no existe.', 'demasiados': 'Agregaste muchas personas en poco tiempo. Espera una hora.', 'no-existe': 'Esa persona ya no está en el seguimiento.' };
+  async function pBienvenida(p) {
+    const msg = (t, ok) => { const m = $('#bieMsg'); if (m) { m.textContent = t; m.className = ok ? 'ok suave' : 'suave'; } };
+    $('#pantalla').innerHTML = `${cabecera('Bienvenida', 'Mi iglesia')}<p class="suave">Las primeras cuatro semanas importan. Marca lo que ya hiciste con cada persona nueva. Solo lo ves tú.</p>
+      <div class="card"><label for="bieM">Agregar a una persona nueva</label><select id="bieM"><option value="">Cargando personas…</option></select>
+        <button type="button" class="btn" id="bieAgregar">Empezar su seguimiento</button></div>
+      <p class="suave" id="bieMsg" role="status"></p>
+      <h2 class="sep">Seguimiento</h2><div id="bieLista" class="lista"><p class="suave">Cargando…</p></div>`;
+    volverA('Mi iglesia', vistaPastor);
+    const cargar = async () => {
+      const r = await prpc('bienvenida_listar', p);
+      const caja = $('#bieLista'); if (!caja) return;
+      if (!r.ok) { caja.innerHTML = '<p class="suave">No pudimos abrir el seguimiento. Revisa tu conexión.</p>'; return; }
+      const filas = r.data || [];
+      if (!filas.length) { caja.innerHTML = '<p class="suave">Todavía no empezaste el seguimiento de nadie. Elige a una persona nueva arriba.</p>'; return; }
+      caja.innerHTML = filas.map((f) => {
+        const dias = Math.floor((Date.now() - new Date(f.iniciado).getTime()) / 86400000);
+        const semana = Math.min(4, Math.floor(dias / 7) + 1);
+        const pasos = BIEN_PASOS.map((x) => { const on = !!f[x[0]]; return `<button type="button" class="chip${on ? ' on' : ''}" data-bpm="${esc(f.miembro_id)}" data-bpp="${x[0]}" data-bph="${on ? '0' : '1'}" aria-pressed="${on}">${esc(x[1])}</button>`; }).join('');
+        return `<div class="card item"><p class="m0"><b>${esc(f.nombre)}</b></p><p class="suave m0t">${dias > 28 ? 'Más de 4 semanas desde que llegó' : 'Semana ' + semana + ' de 4'}</p><div class="chips" role="group" aria-label="Pasos con ${esc(f.nombre)}">${pasos}</div></div>`;
+      }).join('');
+      caja.querySelectorAll('[data-bpm]').forEach((b) => b.addEventListener('click', async () => {
+        const rr = await prpc('bienvenida_marcar', p, { p_miembro: b.dataset.bpm, p_paso: b.dataset.bpp, p_hecho: b.dataset.bph === '1' });
+        const x = rr.ok ? primera(rr.data) : null;
+        if (x && x.ok) cargar(); else msg(BIEN_MOTIVO[x ? x.motivo : ''] || 'No se pudo guardar. Revisa tu conexión.', false);
+      }));
+    };
+    const personas = async () => {
+      const r = await prpc('miembros_servicio_listar', p); const sel = $('#bieM'); if (!sel) return;
+      const f = r.ok ? (r.data || []) : [];
+      sel.innerHTML = f.length ? '<option value="">Elige una persona</option>' + f.map((x) => `<option value="${esc(x.id)}">${esc(x.nombre)}</option>`).join('') : '<option value="">Aún no hay personas en tu iglesia</option>';
+    };
+    $('#bieAgregar').onclick = async () => {
+      const m = $('#bieM').value; if (!m) return msg('Elige a una persona.', false);
+      const rr = await prpc('bienvenida_iniciar', p, { p_miembro: m });
+      const x = rr.ok ? primera(rr.data) : null;
+      if (x && x.ok) { msg('Seguimiento empezado.', true); cargar(); } else msg(BIEN_MOTIVO[x ? x.motivo : ''] || 'No se pudo empezar. Revisa tu conexión.', false);
+    };
+    personas(); cargar();
   }
   // F1033 · Disponibilidad de los miembros, para organizar turnos. Requiere 16_SQL_F1033_DISPONIBILIDAD.sql.
   async function pDisponibilidad(p) {
