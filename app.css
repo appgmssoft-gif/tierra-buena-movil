@@ -4,7 +4,7 @@
   --sa-t:env(safe-area-inset-top,0px);--sa-b:env(safe-area-inset-bottom,0px);--sa-l:env(safe-area-inset-left,0px);--sa-r:env(safe-area-inset-right,0px)}
 @media (prefers-color-scheme:dark){:root{--papel:#17140f;--tinta:#f1e9d8;--suave:#b7a98f;--tarjeta:#201b14;--linea:#3a3224;--verde:#8fb487;--oro:#d4a959;--error:#e48a78}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;background:var(--papel);color:var(--tinta);font:17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+html,body{margin:0;height:100%;background:var(--papel);color:var(--tinta);font:1.0625rem/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 main{min-height:100%;padding:calc(18px + var(--sa-t)) calc(16px + var(--sa-r)) calc(96px + var(--sa-b)) calc(16px + var(--sa-l));max-width:880px;margin:0 auto;outline:none}
 h1,h2{font-family:Georgia,"Times New Roman",serif;font-weight:700;line-height:1.2;margin:0 0 6px}
 h1{font-size:1.7rem}h2{font-size:1.25rem}
@@ -471,7 +471,7 @@ h1{font-size:2.05rem}
 .can-letra p{margin:0}
 .can-bloque{margin:0 0 1.3em}
 .can-sec{font-family:Fraunces,Georgia,serif;font-size:.8em;letter-spacing:.06em;text-transform:uppercase;color:var(--oro);margin:0 0 .3em}
-.can-t14{font-size:14px}.can-t16{font-size:16px}.can-t18{font-size:18px}.can-t20{font-size:20px}.can-t22{font-size:22px}.can-t24{font-size:24px}.can-t26{font-size:26px}.can-t28{font-size:28px}.can-t30{font-size:30px}.can-t32{font-size:32px}.can-t34{font-size:34px}
+.can-t14{font-size:0.875rem}.can-t16{font-size:16px}.can-t18{font-size:1.125rem}.can-t20{font-size:1.25rem}.can-t22{font-size:1.375rem}.can-t24{font-size:1.5rem}.can-t26{font-size:1.625rem}.can-t28{font-size:1.75rem}.can-t30{font-size:1.875rem}.can-t32{font-size:2rem}.can-t34{font-size:2.125rem}
 .can-fila .etiqueta svg{vertical-align:-2px}
 .cf-pt{position:fixed;width:8px;height:8px;border-radius:50%;pointer-events:none;z-index:60;opacity:0}
 .cf-a{background:#ffd36b}.cf-b{background:var(--verde)}.cf-c{background:var(--oro)}.cf-d{background:#e48a78}
@@ -1024,3 +1024,16 @@ html[data-tam=m]{font-size:125%}
 
 /* F1023 · Cuidar al pastor y descanso del pastor */
 .cuidar-pastor,.pas-descanso{display:grid;gap:8px;margin:14px 0}
+/* F1025 · Contraste alto: textos y bordes más firmes (tarea de accesibilidad). Se activa en Perfil > Temas > Contraste. */
+html[data-contraste=alto]{--suave:color-mix(in srgb,var(--tinta) 82%,var(--papel));--linea:color-mix(in srgb,var(--tinta) 55%,var(--papel))}
+html[data-contraste=alto] .card,html[data-contraste=alto] .chip,html[data-contraste=alto] .btn.sec{border-width:2px}
+/* F1028 · Jardín de las bienaventuranzas: ocho parcelas con etapas (tierra, brote, planta, flor) */
+.jard-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:12px}
+.jard-p{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.jard-p>span:first-child{display:flex;flex-direction:column;gap:2px;min-width:0}
+.jard-p small{display:block}
+.jard-p:disabled{opacity:.62;cursor:default}
+.jard-et{display:flex;gap:4px;flex:0 0 auto}
+.jard-et i{width:10px;height:10px;border-radius:50%;background:var(--linea);display:block}
+.jard-et i.on{background:var(--verde)}
+.jard-p.hecho .jard-et i{background:var(--oro)}

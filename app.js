@@ -1246,12 +1246,47 @@
   // F944 · JUEGOS (fase A): entrada común. Cada juego se enchufa aquí con su vista y llama a juegoTerminar(id, aciertos, total).
   const K_JUEGOS = 'tb_movil_juegos';
   const JUEGOS = [
+    ['jardin', '🌸', 'Jardín de las bienaventuranzas', 'Ocho parcelas, una por cada bienaventuranza. Cada día riegas una con su gesto práctico; cuando florecen todas, se cosecha el jardín.'],
     ['sembrador', '🌱', 'El Sembrador', 'Cada capítulo que lees es una semilla. Prepara la tierra y mira crecer tu campo.'],
     ['raices', '📖', 'Raíces', 'Preguntas sobre lo que leíste, con el versículo que explica la respuesta.'],
     ['brotes', '✍️', 'Brotes', 'Completa el versículo y llévalo en la memoria. Usa los que tú resaltaste.'],
     ['sopa', '🔎', 'Sopa del Vivero', 'Letras grandes, sin tiempo y con pistas gratis.']
   ];
-  const JUEGOS_LISTOS = { raices: (v) => vistaRaices(v), brotes: (v) => vistaBrotes(v), sopa: (v) => vistaSopa(v), sembrador: (v) => vistaSembrador(v) };   // id -> función que abre el juego (cada fase nueva se registra aquí)
+  // F1028 · JARDÍN DE LAS BIENAVENTURANZAS: ocho parcelas (Mateo 5:3-10). Cada día se riega UNA; cada riego pasa a la etapa siguiente (tierra, brote, planta, flor). Con las ocho en flor se cosecha el jardín. Se guarda en K_JUEGOS (viaja a la cuenta).
+  const BIENAVENTURANZAS = [
+    ['pobres', 'Pobres en espíritu', 'Mateo 5:3', 'Reconoce hoy una necesidad tuya y ponla delante de Dios.'],
+    ['llorar', 'Los que lloran', 'Mateo 5:4', 'Acompaña a alguien que esté triste: escúchalo sin corregirlo.'],
+    ['mansos', 'Los mansos', 'Mateo 5:5', 'Responde hoy con suavidad a algo que te molestó.'],
+    ['justicia', 'Hambre de justicia', 'Mateo 5:6', 'Haz una acción justa aunque nadie lo note.'],
+    ['misericordia', 'Los misericordiosos', 'Mateo 5:7', 'Perdona o ayuda a alguien que te falló.'],
+    ['limpios', 'Limpios de corazón', 'Mateo 5:8', 'Pasa cinco minutos en silencio, sin pantallas.'],
+    ['pacificos', 'Los pacificadores', 'Mateo 5:9', 'Ayuda a calmar un conflicto cercano.'],
+    ['perseguidos', 'Perseguidos por la justicia', 'Mateo 5:10', 'Di con respeto lo que crees, sin burlarte de nadie.']
+  ];
+  const JARDIN_ETAPAS = ['Tierra', 'Brote', 'Planta', 'Flor'];
+  function jardinEstado() { const j = leer(K_JUEGOS) || {}; const g = j.jardin || {}; return { s: Array.isArray(g.s) && g.s.length === 8 ? g.s.map((x) => Math.min(3, Math.max(0, Number(x) || 0))) : [0, 0, 0, 0, 0, 0, 0, 0], f: typeof g.f === 'string' ? g.f : '', c: Number(g.c) || 0 }; }
+  function jardinGuardar(g) { const j = leer(K_JUEGOS) || { n: 0, p: {} }; j.jardin = g; guardar(K_JUEGOS, j); }
+  function vistaJardin(volver) {
+    const son = (n) => { try { if (window.TBSonido && window.TBSonido[n]) window.TBSonido[n](); } catch (e) { /* sin sonido */ } };
+    const pintar = () => {
+      const g = jardinEstado(), hoy = hoyTxt(), regado = g.f === hoy, flores = g.s.filter((x) => x >= 3).length, cosechado = flores === 8;
+      const mensaje = cosechado ? '<p class="ju-vered ok"><b>El jardín está en flor.</b> Cosechaste ' + (g.c || 1) + ' vez' + ((g.c || 1) > 1 ? 'es' : '') + '. Sigue regando para cuidarlo.</p>' : regado ? '<p class="ju-vered ok"><b>Hoy ya regaste.</b> Vuelve mañana para seguir creciendo.</p>' : '<p class="ju-cuenta">Hoy puedes regar una parcela. Elige la que más necesites.</p>';
+      $('#pantalla').innerHTML = `${cabecera('Jardín de las bienaventuranzas', 'Juegos')}<div class="ju">${JU_HERO(Math.min(4, Math.round(flores / 2)))}<p class="suave">Jesús enseñó en la colina ocho formas de vivir con el corazón de Dios. Cada parcela es una de ellas. Riega la que quieras hoy con su gesto práctico.</p><p class="ju-cuenta">En flor: ${flores} de 8${g.c ? ' · Cosechas: ' + g.c : ''}</p>${mensaje}
+        <div class="jard-grid">${BIENAVENTURANZAS.map((b, i) => { const et = g.s[i]; const bloqueada = regado || et >= 3; return `<button type="button" class="ju-modo jard-p${et >= 3 ? ' hecho' : ''}" data-par="${i}"${bloqueada ? ' disabled aria-disabled="true"' : ''}><span><b>${esc(b[1])}</b><small>${esc(b[2])} · ${JARDIN_ETAPAS[et]}</small><small>${esc(b[3])}</small></span><span class="jard-et" aria-hidden="true">${'<i' + (et >= 1 ? ' class="on"' : '') + '></i><i' + (et >= 2 ? ' class="on"' : '') + '></i><i' + (et >= 3 ? ' class="on"' : '') + '></i>'}</span></button>`; }).join('')}</div></div>`;
+      volverA('Juegos', volver);
+      document.querySelectorAll('[data-par]').forEach((b) => b.addEventListener('click', () => {
+        const st = jardinEstado(), i = Number(b.dataset.par), hoy2 = hoyTxt();
+        if (st.f === hoy2 || st.s[i] >= 3) return;
+        st.s[i] += 1; st.f = hoy2;
+        const florecidas = st.s.filter((x) => x >= 3).length;
+        if (florecidas === 8) st.c = (st.c || 0) + 1;
+        jardinGuardar(st); juegoTerminar('jardin', 1, 1); son(florecidas === 8 ? 'logro' : 'sana');
+        vibra(); pintar();
+      }));
+    };
+    pintar();
+  }
+  const JUEGOS_LISTOS = { jardin: (v) => vistaJardin(v), raices: (v) => vistaRaices(v), brotes: (v) => vistaBrotes(v), sopa: (v) => vistaSopa(v), sembrador: (v) => vistaSembrador(v) };   // id -> función que abre el juego (cada fase nueva se registra aquí)
   function juegoTerminar(id, aciertos, total) {   // guarda la partida y da una gota de rocío por jugar (con tope diario)
     const j = leer(K_JUEGOS) || { n: 0, p: {} }; j.n = (j.n || 0) + 1; j.p = j.p || {};
     const q = j.p[id] || { n: 0, mejor: 0 }; q.n++; q.mejor = Math.max(q.mejor, Number(aciertos) || 0); j.p[id] = q; guardar(K_JUEGOS, j);
@@ -2315,7 +2350,7 @@
   // ---------- F875 · Perfil, Ministerios y efectos ----------
   const K_PERFIL = 'tb_movil_perfil';
   const AVATARES = ['svg:brote', 'svg:hoja', 'svg:paloma', 'svg:llama', 'svg:corazon', 'svg:estrella', 'svg:iglesia', 'svg:libro', 'svg:viento', 'svg:gente', '🌿', '🕊️', '🌻', '⭐', '🔥', '🌊', '📖', '🦋', '🌸', '🌙', '☀️', '🍃', '🦁', '🐑', '🌈', '💎'];
-  const perfilLeer = () => { const p = leer(K_PERFIL) || {}; return { g: Number.isInteger(p.g) && p.g >= 0 && p.g < 8 ? p.g : 0, e: AVATARES.indexOf(p.e) >= 0 ? p.e : '', t: typeof p.t === 'string' ? p.t : 'auto', tl: typeof p.tl === 'string' ? p.tl : '', n: typeof p.n === 'string' ? p.n.slice(0, 30) : '', b: typeof p.b === 'string' ? p.b.slice(0, 140) : '', f: p.f === 'sans' ? 'sans' : 'serif', m: p.m === 'off' ? 'off' : 'on', meta: [1, 2, 3, 5].indexOf(p.meta) >= 0 ? p.meta : 1 }; };
+  const perfilLeer = () => { const p = leer(K_PERFIL) || {}; return { g: Number.isInteger(p.g) && p.g >= 0 && p.g < 8 ? p.g : 0, e: AVATARES.indexOf(p.e) >= 0 ? p.e : '', t: typeof p.t === 'string' ? p.t : 'auto', tl: typeof p.tl === 'string' ? p.tl : '', n: typeof p.n === 'string' ? p.n.slice(0, 30) : '', b: typeof p.b === 'string' ? p.b.slice(0, 140) : '', f: p.f === 'sans' ? 'sans' : 'serif', m: p.m === 'off' ? 'off' : 'on', ca: p.ca === true, meta: [1, 2, 3, 5].indexOf(p.meta) >= 0 ? p.meta : 1 }; };
   const iniciales = (n) => (String(n || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0]).join('') || '?').toUpperCase();
   const avatarHTML = (nombre, p, grande) => `<span class="avatar g${p.g}${grande ? ' grande' : ''}" aria-hidden="true">${p.e ? (/^svg:[a-z]+$/.test(p.e) ? svg(p.e.slice(4), grande ? 40 : 22) : esc(p.e)) : esc(iniciales(nombre))}</span>`;
   const saludoHora = () => { const h = new Date().getHours(); return h < 6 ? 'Buenas noches' : h < 13 ? 'Buenos días' : h < 20 ? 'Buenas tardes' : 'Buenas noches'; };
@@ -2468,7 +2503,7 @@
   let enLectura = false;
   const temaLectura = () => { const hay = !!document.getElementById('lectura'), q = perfilLeer(); enLectura = hay; temaAplicar(hay && q.tl ? q.tl : q.t); };
   try { const pn = document.getElementById('pantalla'); if (pn && window.MutationObserver) new MutationObserver(() => { if (!!document.getElementById('lectura') !== enLectura) temaLectura(); }).observe(pn, { childList: true }); } catch (e) { /* sin observador */ }
-  const ajusteAplicar = () => { try { const q = perfilLeer(), h = document.documentElement; h.setAttribute('data-fuente', q.f); h.setAttribute('data-anim', q.m); h.setAttribute('data-tam', q.z || 'n'); } catch (e) { /* nada */ } };
+  const ajusteAplicar = () => { try { const q = perfilLeer(), h = document.documentElement; h.setAttribute('data-fuente', q.f); h.setAttribute('data-anim', q.m); h.setAttribute('data-tam', q.z || 'n'); h.setAttribute('data-contraste', q.ca ? 'alto' : 'normal'); } catch (e) { /* nada */ } };
   ajusteAplicar();
   const perfilGuardar = (cambio) => guardar(K_PERFIL, Object.assign({}, perfilLeer(), cambio));
 
@@ -2558,9 +2593,11 @@
     $('#pantalla').innerHTML = `${cabecera('Temas', 'Perfil')}<p class="suave">Elige cómo se ve tu app. Se guarda en tu cuenta.</p>
       <h2 class="sep">Colores</h2><div class="temas">${TEMAS.map((x) => `<button type="button" class="tema${t === x[0] ? ' sel' : ''}" data-t="${x[0]}" aria-pressed="${t === x[0]}"><span class="tema-bola" data-mc="${x[3]}"></span><b>${esc(x[1])}</b><small>${esc(x[2])}</small></button>`).join('')}</div>
       <h2 class="sep">Letra para leer</h2><div class="chips" role="group" aria-label="Tipo de letra"><button type="button" class="chip${perfilLeer().f === 'serif' ? ' on' : ''}" data-fu="serif" aria-pressed="${perfilLeer().f === 'serif'}">Con serifa (libro)</button><button type="button" class="chip${perfilLeer().f === 'sans' ? ' on' : ''}" data-fu="sans" aria-pressed="${perfilLeer().f === 'sans'}">Clara (sin serifa)</button></div>
+      <h2 class="sep">Contraste</h2><div class="chips" role="group" aria-label="Contraste"><button type="button" class="chip${perfilLeer().ca ? ' on' : ''}" data-ca="on" aria-pressed="${perfilLeer().ca}">Alto (más fácil de leer)</button><button type="button" class="chip${perfilLeer().ca ? '' : ' on'}" data-ca="off" aria-pressed="${!perfilLeer().ca}">Normal</button></div>
       <h2 class="sep">Animaciones</h2><div class="chips" role="group" aria-label="Animaciones"><button type="button" class="chip${perfilLeer().m === 'on' ? ' on' : ''}" data-an="on" aria-pressed="${perfilLeer().m === 'on'}">Activadas</button><button type="button" class="chip${perfilLeer().m === 'off' ? ' on' : ''}" data-an="off" aria-pressed="${perfilLeer().m === 'off'}">Más tranquilo</button></div>`;
     volverA('Perfil', vistaPerfil); pintaColores();
     document.querySelectorAll('[data-fu]').forEach((b) => b.addEventListener('click', () => { perfilGuardar({ f: b.dataset.fu }); ajusteAplicar(); vibra(); vistaTemas(); }));
+    document.querySelectorAll('[data-ca]').forEach((b) => b.addEventListener('click', () => { perfilGuardar({ ca: b.dataset.ca === 'on' }); ajusteAplicar(); vibra(); vistaTemas(); }));
     document.querySelectorAll('[data-an]').forEach((b) => b.addEventListener('click', () => { perfilGuardar({ m: b.dataset.an }); ajusteAplicar(); vibra(); vistaTemas(); }));
     document.querySelectorAll('[data-t]').forEach((b) => b.addEventListener('click', () => { perfilGuardar({ t: b.dataset.t }); temaAplicar(b.dataset.t); vibra(); vistaTemas(); }));
   }

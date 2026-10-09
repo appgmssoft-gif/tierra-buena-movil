@@ -1,9 +1,90 @@
 {
   "_nota": "Sopa del Vivero. Palabras de 2 a 8 letras (cuadrícula de 8x8), sin tildes ni ñ: la app las busca tal cual. Cada partida usa 5 palabras de un tema.",
   "temas": [
-    { "id": "frutos", "titulo": "Frutos del Espíritu", "ayuda": "Gálatas 5:22-23", "palabras": ["AMOR", "GOZO", "PAZ", "BONDAD", "FE"] },
-    { "id": "discipulos", "titulo": "Los doce discípulos", "ayuda": "Nombres de los doce que acompañaron a Jesús", "palabras": ["PEDRO", "ANDRES", "JUAN", "FELIPE", "TOMAS", "MATEO", "SIMON", "TADEO", "SANTIAGO"] },
-    { "id": "libros", "titulo": "Libros de la Biblia", "ayuda": "Libros del Antiguo y del Nuevo Testamento", "palabras": ["GENESIS", "EXODO", "SALMOS", "JOB", "RUT", "MARCOS", "LUCAS", "HECHOS", "ROMANOS", "JUAN"] },
-    { "id": "vivero", "titulo": "Árboles y aves del Vivero", "ayuda": "Los que crecen en tu Inicio", "palabras": ["CANELO", "QUILLAY", "ROBLE", "ALERCE", "CEREZO", "CHUCAO", "CONDOR", "GORRION", "PICAFLOR"] }
+    {
+      "id": "frutos",
+      "titulo": "Frutos del Espíritu",
+      "ayuda": "Gálatas 5:22-23",
+      "palabras": [
+        "AMOR",
+        "GOZO",
+        "PAZ",
+        "BONDAD",
+        "FE"
+      ]
+    },
+    {
+      "id": "discipulos",
+      "titulo": "Los doce discípulos",
+      "ayuda": "Nombres de los doce que acompañaron a Jesús",
+      "palabras": [
+        "PEDRO",
+        "ANDRES",
+        "JUAN",
+        "FELIPE",
+        "TOMAS",
+        "MATEO",
+        "SIMON",
+        "TADEO",
+        "SANTIAGO"
+      ]
+    },
+    {
+      "id": "libros",
+      "titulo": "Libros de la Biblia",
+      "ayuda": "Libros del Antiguo y del Nuevo Testamento",
+      "palabras": [
+        "GENESIS",
+        "EXODO",
+        "SALMOS",
+        "JOB",
+        "RUT",
+        "MARCOS",
+        "LUCAS",
+        "HECHOS",
+        "ROMANOS",
+        "JUAN"
+      ]
+    },
+    {
+      "id": "vivero",
+      "titulo": "Árboles y aves del Vivero",
+      "ayuda": "Los que crecen en tu Inicio",
+      "palabras": [
+        "CANELO",
+        "QUILLAY",
+        "ROBLE",
+        "ALERCE",
+        "CEREZO",
+        "CHUCAO",
+        "CONDOR",
+        "GORRION",
+        "PICAFLOR"
+      ]
+    },
+    {
+      "id": "arca",
+      "titulo": "Animales del arca",
+      "ayuda": "Génesis 6-8: los animales que entraron con Noé",
+      "palabras": [
+        "PALOMA",
+        "CUERVO",
+        "OVEJA",
+        "CABRA",
+        "VACA"
+      ]
+    },
+    {
+      "id": "parabolas",
+      "titulo": "Parábolas de Jesús",
+      "ayuda": "Historias cortas que Jesús contaba para enseñar",
+      "palabras": [
+        "TESORO",
+        "PERLA",
+        "REDE",
+        "MOSTAZA",
+        "LEVADURA"
+      ]
+    }
   ]
 }
