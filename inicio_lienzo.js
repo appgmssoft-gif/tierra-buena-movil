@@ -20,7 +20,7 @@
   const sonido = (n, a) => { try { if (window.TBSonido && typeof window.TBSonido[n] === 'function') window.TBSonido[n](a); } catch (e) { /* sin sonido */ } };
 
   const ETAPAS = { brote: 'Brote', raiz: 'Echando raíces', ramas: 'Creciendo ramas', frondoso: 'Frondoso' };
-  const FORMA = { araucaria: 'paraguas', canelo: 'redondo', quillay: 'redondo', roble: 'redondo', cerezo: 'redondo', alerce: 'cono', sauce: 'cascada', palma_chilena: 'palma', jacaranda: 'florido', peumo: 'redondo', maiten: 'cascada' };
+  const FORMA = { araucaria: 'pewen', canelo: 'redondo', quillay: 'redondo', roble: 'redondo', cerezo: 'redondo', alerce: 'cono', sauce: 'cascada', palma_chilena: 'palma', jacaranda: 'florido', peumo: 'redondo', maiten: 'cascada' };
   const MALEZA = { hoja_seca: 'hoja seca', trebol_gris: 'trébol marchito', hierba_seca: 'hierba seca' };
   // Casillas del paisaje lejano: [x, y, escala] dentro del lienzo de 360 x 420.
   const FONDO = { 'fondo-1': [52, 296, 0.30], 'fondo-2': [110, 290, 0.26], 'fondo-3': [258, 292, 0.28], 'fondo-4': [312, 298, 0.32], 'fondo-5': [2, 300, 0.34], 'fondo-6': [356, 296, 0.30] };
@@ -30,6 +30,17 @@
   const ci = (cls, x, y, r) => '<circle class="' + cls + '" cx="' + x + '" cy="' + y + '" r="' + r + '"/>';
   const el = (cls, x, y, rx, ry, rot) => '<ellipse class="' + cls + '" cx="' + x + '" cy="' + y + '" rx="' + rx + '" ry="' + ry + '"' + (rot ? ' transform="rotate(' + rot + ' ' + x + ' ' + y + ')"' : '') + '/>';
 
+  // F1059 · El fondo crece cada día: matas y arbustos en el suelo, a los lados del árbol (nunca tapan el tronco).
+  function paisajeDelDia(dias) {
+    const n = Math.min(12, Math.floor((dias || 0) * 0.8)); let g = '';
+    for (let i = 0; i < n; i++) {
+      const x = 12 + ((i * 97) % 336), y = 300 + ((i * 53) % 18);
+      if (x > 140 && x < 220) continue;
+      const sc = (0.7 + ((i * 31) % 5) * 0.08).toFixed(2), tono = ['#5f9a62', '#7cb36f', '#4f8a55'][i % 3];
+      g += '<g transform="translate(' + x + ' ' + y + ') scale(' + sc + ')"><ellipse cx="-9" cy="0" rx="10" ry="7" fill="' + tono + '"/><ellipse cx="6" cy="-2" rx="12" ry="9" fill="' + tono + '"/><ellipse cx="0" cy="2" rx="8" ry="5" fill="#94c27f" opacity=".7"/></g>';
+    }
+    return g;
+  }
   function brote() { return p('tr-t t3', 'M0 0 C0 -10 1 -20 0 -30') + p('tr-h', 'M0 -26 C-14 -30 -22 -22 -24 -14 C-12 -12 -4 -16 0 -26Z') + p('tr-h2', 'M0 -30 C12 -38 24 -32 26 -24 C14 -20 4 -22 0 -30Z'); }
   function raiz() {
     return '<g class="tr-raices">' + p('tr-t t2', 'M0 0 C-6 10 -14 14 -24 22') + p('tr-t t2', 'M0 0 C0 12 2 20 0 32') + p('tr-t t2', 'M0 0 C6 10 14 14 24 20') + p('tr-t t1', 'M-6 8 C-12 14 -14 20 -12 26') + '</g>'
@@ -44,7 +55,22 @@
     return p('tr-t t8', 'M0 0 C-3 -30 3 -62 0 -96') + p('tr-t t4', 'M0 -58 C-14 -66 -26 -76 -34 -90') + p('tr-t t4', 'M0 -70 C14 -80 26 -88 36 -104') + p('tr-t t3', 'M0 -86 C-6 -100 -10 -110 -14 -122')
       + ci('tr-h', -34, -96, 11) + ci('tr-h', 36, -110, 12) + ci('tr-h2', -14, -128, 10) + ci('tr-h', 0, -104, 9) + ci('tr-h2', 20, -96, 8);
   }
-  function frondoso(forma, especie) {
+  function frondoso(forma, especie, dias) {
+    // F1058/F1059 · Pewén (araucaria): tronco grueso con corteza y copa cónica. Gana pisos de ramas con los días.
+    if (forma === 'pewen') {
+      const d = Math.max(4, dias || 11), n = Math.max(2, Math.min(6, Math.round(d / 3)));
+      // silueta cónica detrás de los pisos, textura de follaje en los bordes y pisos que se superponen (más cerca de la araucaria real)
+      let g = p('tr-t t12', 'M0 0 C-4 -60 4 -120 0 -196') + p('tr-t t6', 'M-3 0 C-7 -60 0 -120 -3 -190') + p('tr-t t3', 'M-2 -30 l4 -6 M3 -90 l-3 -7 M-3 -150 l5 -6')
+        + p('tr-h2', 'M0 -198 C-30 -150 -62 -92 -80 -46 C-40 -38 40 -38 80 -46 C62 -92 30 -150 0 -198Z');
+      for (let j = 0; j < 14; j++) { const a = (j * 53) % 90 / 90, yy = -70 - a * 110, xx = (j % 2 ? 1 : -1) * (20 + (1 - a) * 58); g += p('tr-t t3', 'M' + xx.toFixed(1) + ' ' + yy.toFixed(1) + ' l' + (j % 2 ? 6 : -6) + ' 4'); }
+      for (let i = 0; i < n; i++) {
+        const t = n === 1 ? 0 : i / (n - 1), y = -52 - i * (120 / n), rx = 80 - t * 66, ry = 16 - t * 7;
+        g += el('tr-h', 0, y, rx, ry) + el('tr-h2', 0, y - 6, rx * 0.7, ry * 0.45)
+          + el('tr-h2', -rx * 0.92, y + 4, rx * 0.22, ry * 0.4, -18) + el('tr-h2', rx * 0.92, y + 4, rx * 0.22, ry * 0.4, 18)
+          + p('tr-t t3', 'M' + (-rx * 0.7).toFixed(1) + ' ' + (y + 6) + ' l-7 5 M' + (rx * 0.4).toFixed(1) + ' ' + (y + 8) + ' l6 6');
+      }
+      return g + el('tr-h', 0, -58 - n * (124 / n) - 8, 9, 7);
+    }
     if (forma === 'paraguas') {
       return p('tr-t t10', 'M0 0 C-3 -60 3 -120 0 -168') + p('tr-t t3', 'M0 -58 L-15 -66') + p('tr-t t3', 'M0 -78 L15 -86') + p('tr-t t3', 'M0 -98 L-13 -104')
         + p('tr-t t4', 'M0 -150 C-24 -152 -44 -160 -60 -176') + p('tr-t t4', 'M0 -150 C24 -152 44 -160 60 -176') + p('tr-t t3', 'M0 -162 C-8 -172 -14 -182 -16 -192')
@@ -83,9 +109,9 @@
     return tronco + copa;
   }
   // Árbol de una especie en una etapa: dibujo con la base en (0,0). Si la especie o la etapa no se conocen, se usa el brote (nunca se rompe la pantalla).
-  function arbol(especie, etapa) {
+  function arbol(especie, etapa, dias) {
     const f = FORMA[especie] || 'redondo';
-    const cuerpo = etapa === 'frondoso' ? frondoso(f, especie) : etapa === 'ramas' ? ramas(f) : etapa === 'raiz' ? raiz() : brote();
+    const cuerpo = etapa === 'frondoso' ? frondoso(f, especie, dias) : (etapa === 'ramas' && f === 'pewen') ? frondoso('pewen', especie, 8) : etapa === 'ramas' ? ramas(f) : etapa === 'raiz' ? raiz() : brote();
     const bellotas = especie === 'roble' && etapa === 'frondoso' ? '<g fill="#b07a3e" stroke="#7a5024" stroke-width=".5">' + [[-30,-132],[-16,-120],[-2,-112],[14,-118],[28,-130],[-22,-150],[20,-152]].map((q) => '<ellipse cx="' + q[0] + '" cy="' + q[1] + '" rx="2.2" ry="2.8"/>').join('') + '</g>' : '';
     const flores = especie === 'canelo' && etapa === 'frondoso' ? '<g fill="#fbfbf4" stroke="#c9d6b8" stroke-width=".5">' + [[-22,-150],[-8,-168],[12,-160],[24,-142],[-30,-132],[2,-138],[-16,-150],[18,-172]].map((q) => '<circle cx="' + q[0] + '" cy="' + q[1] + '" r="2.6"/>').join('') + '</g>' : '';
     return '<g class="arbol esp-' + esc(especie || 'x') + '">' + cuerpo + flores + bellotas + '</g>';
@@ -111,7 +137,32 @@
     if (f === 'montanas') return '<g class="pa-mont"><path class="mo m2" d="M-60 292 L10 214 L52 252 L104 196 L170 276 L228 208 L284 262 L330 220 L430 292Z"/><path class="mo m1" d="M-40 296 L40 206 L84 256 L140 168 L206 270 L262 190 L318 258 L372 204 L440 296Z"/>'
       + '<path class="nv" d="M140 168 L124 188 L134 184 L142 194 L150 184 L158 188Z"/><path class="nv" d="M262 190 L248 208 L256 204 L264 212 L272 204 L278 208Z"/><path class="nv" d="M40 206 L28 222 L36 219 L42 226 L48 219 L54 222Z"/></g>';
     if (f === 'volcan') return '<g class="pa-volc"><path class="mo m2" d="M-60 292 L30 232 L90 262 L150 226 L210 278 L330 236 L430 292Z"/><path class="mo m1" d="M196 292 L258 196 C264 184 276 184 282 196 L346 292Z"/><path class="nv" d="M250 210 L258 196 C264 184 276 184 282 196 L290 212 C280 204 272 214 266 206 C260 214 254 206 250 210Z"/><ellipse class="humo" cx="272" cy="176" rx="9" ry="5"/><ellipse class="humo" cx="280" cy="164" rx="12" ry="6"/><ellipse class="humo" cx="292" cy="152" rx="15" ry="7"/></g>';
-    if (f === 'bosque') { let g = '<g class="pa-bosque">'; for (let i = 0; i < 12; i++) { const x = -20 + i * 34, y = 304 - (i % 3) * 3; g += i % 4 === 1 ? '<path class="bo tr2" d="M' + x + ' ' + (y + 4) + ' L' + x + ' ' + (y - 24) + '"/><ellipse class="bo b2" cx="' + x + '" cy="' + (y - 28) + '" rx="16" ry="5"/>' : i % 4 === 3 ? '<path class="bo tr2" d="M' + x + ' ' + (y + 4) + ' L' + x + ' ' + (y - 8) + '"/><ellipse class="bo b1" cx="' + x + '" cy="' + (y - 20) + '" rx="13" ry="15"/>' : '<path class="bo b1" d="M' + x + ' ' + (y - 50) + ' L' + (x - 11) + ' ' + (y + 4) + ' L' + (x + 11) + ' ' + (y + 4) + 'Z"/>'; } return g + '</g>'; }
+    if (f === 'bosque') {   // F1061 · Bosque nativo: dos capas de copas (lejana clara y cercana oscura) y pewenes altos. Posiciones fijas: siempre el mismo bosque.
+      let g = '<g class="pa-bosque">';
+      for (let i = 0; i < 18; i++) {                                   // capa lejana, con neblina
+        const x = -30 + i * 24 + ((i * 7) % 5), y = 250 + ((i * 11) % 6), r = 13 + ((i * 5) % 4);
+        g += '<ellipse cx="' + x + '" cy="' + y + '" rx="' + r + '" ry="' + (r * 0.85).toFixed(1) + '" fill="' + (i % 2 ? '#8fb49a' : '#7ea88b') + '" opacity=".85"/>';
+      }
+      for (let i = 0; i < 14; i++) {                                   // capa cercana: copas agrupadas sobre tronco corto
+        const x = -10 + i * 28 + ((i * 13) % 7), y = 262 + ((i * 7) % 5), r = 15 + ((i * 3) % 4);
+        const tono = i % 3 === 0 ? '#3f7a4c' : i % 3 === 1 ? '#4f8a55' : '#37703f';
+        g += '<rect x="' + (x - 1.6) + '" y="' + (y - 4) + '" width="3.2" height="12" fill="#6b4a2e"/>';
+        g += '<ellipse cx="' + x + '" cy="' + (y - 12) + '" rx="' + r + '" ry="' + (r * 0.8).toFixed(1) + '" fill="' + tono + '"/>';
+        g += '<ellipse cx="' + (x - r * 0.45).toFixed(1) + '" cy="' + (y - 16) + '" rx="' + (r * 0.5).toFixed(1) + '" ry="' + (r * 0.4).toFixed(1) + '" fill="#6aa86b" opacity=".7"/>';
+      }
+      for (const [x, h] of [[46, 92], [118, 104], [212, 88], [286, 100]]) {   // pewenes altos en el fondo, en forma de cono
+        g += '<path d="M' + x + ' ' + (266 - h) + ' L' + (x - 16) + ' 266 L' + (x + 16) + ' 266Z" fill="#2f5e47" opacity=".9"/>';
+        g += '<path d="M' + x + ' ' + (266 - h) + ' L' + (x - 8) + ' 266 L' + x + ' 266Z" fill="#244d39" opacity=".5"/>';
+      }
+      g += '</g>';
+      return g;
+    }
+    if (f === 'desierto') return '<g class="pa-desierto" aria-hidden="true">'   // F1056 · Desierto: dunas, una mesa lejana y dos cactus (fondo propio, no vacío)
+      + '<path class="mo m2" fill="#ecd29c" d="M-60 300 C20 262 80 270 130 286 S240 258 300 276 S380 262 430 290 L430 330 L-60 330Z"/>'
+      + '<path d="M40 268 L58 238 L112 238 L126 268Z" fill="#cf9f63"/><path d="M50 262 L62 244 L104 244 L116 262Z" fill="#dcae74"/>'
+      + '<path class="mo m1" fill="#dcb374" d="M-60 312 C40 290 110 298 170 306 S300 288 360 300 S410 306 430 302 L430 340 L-60 340Z"/>'
+      + '<g fill="#6f9a5b"><rect x="206" y="266" width="7" height="26" rx="3.5"/><rect x="197" y="276" width="6" height="10" rx="3"/><rect x="213" y="272" width="6" height="9" rx="3"/></g>'
+      + '<g fill="#7aa767"><rect x="300" y="278" width="5" height="18" rx="2.5"/><rect x="294" y="285" width="5" height="8" rx="2.5"/></g></g>';
     if (f === 'costa') return '<g class="pa-mar"><rect class="mar" x="-300" y="236" width="960" height="70"/><path class="ola" d="M20 252 q10 -5 20 0 t20 0 M150 262 q10 -5 20 0 t20 0 M270 250 q10 -5 20 0 t20 0 M80 276 q10 -5 20 0 t20 0 M220 280 q10 -5 20 0 t20 0"/><path class="velero" d="M300 244 L300 224 L314 242Z M296 246 L318 246 L312 252 L300 252Z"/></g>';
     return '';
   }
@@ -210,7 +261,7 @@
     llareta: () => '<ellipse cx="28" cy="37" rx="27" ry="4" fill="#2f4a33" opacity=".3"/><path d="M3 36C1 24 11 12 28 11C45 12 55 24 53 36C40 39 16 39 3 36Z" fill="#5f9d52"/>'+'<g fill="#86c16c"><ellipse cx="14" cy="22" rx="5" ry="3.4"/><ellipse cx="30" cy="18" rx="5.6" ry="3.6"/><ellipse cx="43" cy="26" rx="4.6" ry="3.2"/><ellipse cx="22" cy="30" rx="5" ry="3.2"/><ellipse cx="38" cy="33" rx="4.4" ry="2.8"/></g>'+'<g fill="#467f3f"><ellipse cx="8" cy="31" rx="3" ry="2"/><ellipse cx="48" cy="34" rx="3" ry="2"/><ellipse cx="30" cy="36" rx="4" ry="2"/></g>'+'<g fill="#e8c24a"><circle cx="20" cy="14" r=".9"/><circle cx="36" cy="14" r=".9"/><circle cx="27" cy="24" r=".8"/></g>',
     chagual: () => '<g fill="#9aa894" stroke="#6f7d6a" stroke-width=".4"><path d="M22 62L3 42L7 40L22 56Z"/><path d="M22 62L41 42L37 40L22 56Z"/><path d="M22 62L8 36L12 35L22 56Z"/><path d="M22 62L36 36L32 35L22 56Z"/><path d="M22 62L14 30L18 30L22 56Z"/><path d="M22 62L30 30L26 30L22 56Z"/></g>'+'<path d="M22 58V8" stroke="#7d8a72" stroke-width="1.8" stroke-linecap="round"/>'+'<g fill="#f0d24a" stroke="#c9a92e" stroke-width=".3"><circle cx="22" cy="8" r="2.2"/><circle cx="17" cy="14" r="2"/><circle cx="27" cy="14" r="2"/><circle cx="18" cy="22" r="1.8"/><circle cx="26" cy="22" r="1.8"/><circle cx="22" cy="30" r="1.6"/></g>',
     notro: () => '<path d="M20 64C20 52 19 40 20 26" stroke="#7a5a3c" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M20 40C15 34 12 30 9 22M20 34C25 29 28 24 31 16M20 28C18 22 17 18 16 12" stroke="#7a5a3c" stroke-width="1.6" fill="none" stroke-linecap="round"/><g fill="#3f7a4c"><ellipse cx="9" cy="46" rx="5" ry="2.6"/><ellipse cx="30" cy="46" rx="5" ry="2.6"/><ellipse cx="11" cy="56" rx="4" ry="2.2"/><ellipse cx="29" cy="56" rx="4" ry="2.2"/></g><g><rect x="10" y="18" width="2.6" height="6.4" rx="1.3" fill="#d8322a" transform="rotate(-30 10 18)"/><rect x="12" y="18" width="2.6" height="6.4" rx="1.3" fill="#d8322a" transform="rotate(-12 12 18)"/><rect x="8" y="20" width="2.6" height="6.4" rx="1.3" fill="#d8322a" transform="rotate(-50 8 20)"/><rect x="15" y="15" width="2.6" height="6.4" rx="1.3" fill="#d8322a" transform="rotate(6 15 15)"/><rect x="27" y="20" width="2.6" height="6.4" rx="1.3" fill="#d8322a" transform="rotate(30 27 20)"/><rect x="30" y="20" width="2.6" height="6.4" rx="1.3" fill="#d8322a" transform="rotate(12 30 20)"/><rect x="25" y="14" width="2.6" height="6.4" rx="1.3" fill="#d8322a" transform="rotate(44 25 14)"/><rect x="19" y="10" width="2.6" height="6.4" rx="1.3" fill="#d8322a" transform="rotate(-6 19 10)"/><rect x="17" y="21" width="2.6" height="6.4" rx="1.3" fill="#d8322a" transform="rotate(-24 17 21)"/><rect x="24" y="27" width="2.6" height="6.4" rx="1.3" fill="#d8322a" transform="rotate(20 24 27)"/><rect x="29" y="30" width="2.6" height="6.4" rx="1.3" fill="#d8322a" transform="rotate(46 29 30)"/><rect x="9" y="30" width="2.6" height="6.4" rx="1.3" fill="#d8322a" transform="rotate(-40 9 30)"/><rect x="13" y="31" width="2.6" height="6.4" rx="1.3" fill="#d8322a" transform="rotate(-14 13 31)"/><rect x="19" y="33" width="2.6" height="6.4" rx="1.3" fill="#d8322a" transform="rotate(8 19 33)"/><rect x="25" y="34" width="2.6" height="6.4" rx="1.3" fill="#d8322a" transform="rotate(-18 25 34)"/></g>',
-    chilco: () => '<path d="M4 40C10 30 16 22 22 14C26 10 32 8 36 10" stroke="#7a5a3c" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M6 42C14 36 22 30 30 26C34 24 36 20 38 16" stroke="#7a5a3c" stroke-width="1.3" fill="none" stroke-linecap="round"/><g fill="#4f8a55"><ellipse cx="12" cy="30" rx="3" ry="1.6" transform="rotate(-30 12 30)"/><ellipse cx="22" cy="20" rx="3" ry="1.6" transform="rotate(-25 22 20)"/><ellipse cx="30" cy="14" rx="3" ry="1.6" transform="rotate(-20 30 14)"/><ellipse cx="18" cy="34" rx="3" ry="1.6"/></g><g stroke="#8a4f5e" stroke-width=".6"><path d="M10 31V38M20 21V28M30 14V21M17 35V41"/></g><g><ellipse cx="10" cy="40" rx="2.2" ry="3" fill="#d8322a"/><ellipse cx="10" cy="44" rx="2.4" ry="2.4" fill="#7b3f8f"/><ellipse cx="20" cy="28" rx="2.2" ry="3" fill="#d8322a"/><ellipse cx="20" cy="32" rx="2.4" ry="2.4" fill="#7b3f8f"/><ellipse cx="30" cy="21" rx="2.2" ry="3" fill="#d8322a"/><ellipse cx="30" cy="25" rx="2.4" ry="2.4" fill="#7b3f8f"/><ellipse cx="17" cy="41" rx="2.2" ry="3" fill="#d8322a"/><ellipse cx="17" cy="45" rx="2.4" ry="2.4" fill="#7b3f8f"/></g>',
+    chilco: () => '<path d="M5 47 C9 36 13 27 21 20 C27 15 33 13 41 15" stroke="#6b4c30" stroke-width="1.7" fill="none" stroke-linecap="round"/><path d="M12 33 C18 29 24 28 31 30" stroke="#6b4c30" stroke-width="1.3" fill="none" stroke-linecap="round"/><g fill="#4f8a55"><ellipse cx="14" cy="27" rx="3.4" ry="1.8" transform="rotate(-32 14 27)"/><ellipse cx="23" cy="18" rx="3.4" ry="1.8" transform="rotate(-28 23 18)"/><ellipse cx="33" cy="14" rx="3.4" ry="1.8" transform="rotate(-18 33 14)"/><ellipse cx="38" cy="20" rx="3" ry="1.6" transform="rotate(14 38 20)"/><ellipse cx="22" cy="34" rx="3.2" ry="1.7" transform="rotate(-10 22 34)"/></g><g fill="#c8323e" opacity=".9"><ellipse cx="10" cy="39" rx="2.6" ry="3.6"/><ellipse cx="20" cy="30" rx="2.6" ry="3.6"/><ellipse cx="31" cy="22" rx="2.6" ry="3.6"/><ellipse cx="38" cy="18" rx="2.4" ry="3.4"/></g><g fill="#7b3f8f"><path d="M10 41 c-2 3 -1 6 1.6 6.2 c2.6 -.2 3.2 -3 1.8 -5.4z"/><path d="M20 32 c-2 3 -1 6 1.6 6.2 c2.6 -.2 3.2 -3 1.8 -5.4z"/><path d="M31 24 c-2 3 -1 6 1.6 6.2 c2.6 -.2 3.2 -3 1.8 -5.4z"/><path d="M38 20 c-2 2.6 -1 5.2 1.4 5.4 c2.2 -.2 2.8 -2.6 1.5 -4.6z"/></g><g stroke="#f2c14e" stroke-width=".7"><path d="M10 47v-3M20 37v-2M31 29v-2M38 25v-2"/></g>',
     ulmo: () => '<rect x="20" y="36" width="4" height="24" fill="#7a5a3c"/><ellipse cx="22" cy="22" rx="20" ry="17" fill="#2f6b44"/><ellipse cx="14" cy="14" rx="9" ry="7" fill="#3f7f52"/><ellipse cx="30" cy="18" rx="8" ry="6" fill="#3f7f52"/><g fill="#fbfbf5" stroke="#c9d6b8" stroke-width=".4"><circle cx="10" cy="20" r="2.2"/><circle cx="18" cy="10" r="2.2"/><circle cx="28" cy="8" r="2.2"/><circle cx="36" cy="16" r="2.2"/><circle cx="22" cy="26" r="2.2"/><circle cx="32" cy="28" r="2.2"/><circle cx="14" cy="30" r="2.2"/><circle cx="40" cy="26" r="2"/></g><g fill="#f2c94c"><circle cx="10" cy="20" r=".7"/><circle cx="18" cy="10" r=".7"/><circle cx="28" cy="8" r=".7"/><circle cx="36" cy="16" r=".7"/><circle cx="22" cy="26" r=".7"/><circle cx="32" cy="28" r=".7"/><circle cx="14" cy="30" r=".7"/></g>',
     garra_de_leon: () => '<path d="M20 40C18 34 19 30 20 26" stroke="#4f7a4a" stroke-width="1.4" fill="none"/><path d="M20 38C10 36 6 30 4 22C10 26 16 30 20 34ZM20 38C30 36 34 30 36 22C30 26 24 30 20 34Z" fill="#4f8a55"/><g fill="#c8322a" stroke="#8e2019" stroke-width=".4"><ellipse cx="14" cy="14" rx="4" ry="3" transform="rotate(-25 14 14)"/><ellipse cx="22" cy="10" rx="4" ry="3"/><ellipse cx="28" cy="15" rx="4" ry="3" transform="rotate(25 28 15)"/><ellipse cx="17" cy="20" rx="4" ry="3" transform="rotate(-10 17 20)"/><ellipse cx="25" cy="21" rx="4" ry="3" transform="rotate(12 25 21)"/><ellipse cx="21" cy="26" rx="4" ry="3"/></g><g fill="#7a1c17"><circle cx="14" cy="14" r=".7"/><circle cx="22" cy="10" r=".7"/><circle cx="28" cy="15" r=".7"/><circle cx="17" cy="20" r=".7"/><circle cx="25" cy="21" r=".7"/><circle cx="21" cy="26" r=".7"/></g>',
     chachacoma: () => '<path d="M4 38C10 30 26 30 32 38Z" fill="#8ea38f"/><path d="M6 36C12 26 28 26 30 36" fill="#a5b5a3"/><path d="M18 34V12M14 34V16M22 34V14" stroke="#7d8e72" stroke-width="1.4" fill="none" stroke-linecap="round"/><g fill="#f0c94a" stroke="#c79c2a" stroke-width=".4"><ellipse cx="18" cy="10" rx="3.2" ry="2.6"/><ellipse cx="14" cy="14" rx="2.8" ry="2.4" transform="rotate(-30 14 14)"/><ellipse cx="22" cy="12" rx="2.8" ry="2.4" transform="rotate(25 22 12)"/></g><circle cx="18" cy="10" r="1.2" fill="#b4801e"/><circle cx="14" cy="14" r=".9" fill="#b4801e"/><circle cx="22" cy="12" r=".9" fill="#b4801e"/>'
@@ -225,7 +276,7 @@
     golondrina: { vb: [48, 36], w: 34, lugar: 'rama', t: 'De 12 a 14 cm', habitat: null, dib: () => '<path d="M14 21 0 30l5.5-1.2L2 33l12-6.5z" fill="#1c3462"/><path d="M26 19C17 9 8 6 1 7c8 5 14 9 19 14z" fill="#1c3462"/><path d="M26 17C19 12 12 10 5 10c6 3.6 11 7 16 9z" fill="#2c4d86" opacity=".7"/><ellipse cx="23" cy="20" rx="11" ry="6.4" transform="rotate(-8 23 20)" fill="#2c4d86"/><path d="M13 23c4 4.4 12 5.2 20-1.6-1.2 4.4-5.2 6.2-10.2 6-4.4-.4-7.6-2-9.8-4.4z" fill="#f2e7d2"/><circle cx="34" cy="14.6" r="5.2" fill="#2c4d86"/><ellipse cx="36.4" cy="18.6" rx="3" ry="2.2" fill="#f2e7d2"/><path d="M38.5 13.8 43 15 38.5 16.2z" fill="#1a1a1a"/>' + ojo(35.2, 13.6) + '<path d="M22 27v3.4M26 27.4v3" stroke="#6e6556" stroke-width="1" stroke-linecap="round"/>' },
     chucao: { vb: [48, 36], w: 36, lugar: 'suelo', t: 'Unos 19 cm', dib: () => '<path d="M13 19 8 3.5l4.6-.8 5 16.2z" fill="#4b2d18"/><path d="M14 22c7-7 15-7 19-1-3 7-12 9-19 1z" fill="#6a4026"/><ellipse cx="22.5" cy="23" rx="10.5" ry="7.8" fill="#6a4026"/><ellipse cx="21.5" cy="26.6" rx="7.4" ry="4.2" fill="#c98a52"/><path d="M14.5 20.5c3.2-3.2 8.5-3.8 12-1.4-3.4 2.4-8.6 2.6-12 1.4z" fill="#4c2c18" opacity=".7"/><circle cx="32.2" cy="15" r="6" fill="#5e3a22"/><path d="M29.4 12.6c1.8-1.4 4.6-1.4 6.2.2" stroke="#e4c08f" stroke-width="1.1" fill="none" stroke-linecap="round"/><path d="M36.8 14.4 41 15.6 36.8 16.8z" fill="#2a2019"/>' + ojo(33.6, 14.4) + '<path d="M20.5 30.4v3M24.5 30.4v3" stroke="#7a6a5a" stroke-width="1.1" stroke-linecap="round"/>' },
     queltehue: { vb: [44, 48], w: 46, lugar: 'suelo', t: 'Unos 35 cm; de patas largas', dib: () => '<path d="M19.5 31v13.4M23.6 31v13.4" stroke="#d9675a" stroke-width="1.5" stroke-linecap="round"/><path d="M17 44.6h4.4M21.8 44.6h4.4" stroke="#d9675a" stroke-width="1.4" stroke-linecap="round"/><path d="M11 25 2.5 29.5l5.6.8L6 33z" fill="#3a3d42"/><ellipse cx="21" cy="24" rx="12" ry="7.4" transform="rotate(-6 21 24)" fill="#8d9298"/><path d="M10.5 23.5c5.6-4.6 13.4-4.2 17.4 1.4-4.6 3.4-12.2 4.4-17.4-1.4z" fill="#6c7279"/><ellipse cx="22.4" cy="29" rx="9.4" ry="4.4" fill="#f7f5ef"/><path d="M26.4 19.4c3 2 5.2 5.6 4.4 9.2-2.8-.4-5.2-2.4-6.2-5.6z" fill="#1d1d22"/><circle cx="31.2" cy="12.2" r="5.6" fill="#f7f5ef"/><path d="M25.8 11.4C27.6 6.6 34.4 5.6 36.8 10.4c-2.2-1-4.8-1-6.6-.2z" fill="#1d1d22"/><circle cx="35.4" cy="13.2" r="1.3" fill="#d6432f"/><path d="M35.6 11.4 41.2 12.2 35.8 13.6z" fill="#2a2a2e"/>' + ojo(32.8, 11.6) },
-    picaflor: { vb: [48, 36], w: 25, lugar: 'flor', t: 'Unos 11 cm; de las aves más pequeñas de Chile', dib: () => '<g class="av-ala"><ellipse cx="20" cy="9.5" rx="11" ry="4" transform="rotate(-38 20 9.5)" fill="#cdeee0" opacity=".7"/><ellipse cx="25" cy="8" rx="8" ry="3" transform="rotate(-62 25 8)" fill="#a7dcc4" opacity=".55"/></g><path d="M18 22 5.5 29.5l2.6-6.6-3-3.8z" fill="#22764f"/><ellipse cx="27" cy="20.4" rx="9" ry="5.4" transform="rotate(-16 27 20.4)" fill="#3c9e6c"/><ellipse cx="25.8" cy="23.6" rx="6" ry="2.8" transform="rotate(-16 25.8 23.6)" fill="#b9d9c0"/><circle cx="35.2" cy="15" r="4.6" fill="#2f8a5c"/><circle cx="36.6" cy="12.6" r="1.7" fill="#d8323a"/><ellipse cx="37.6" cy="17.6" rx="2.2" ry="1.7" fill="#1d4a3a"/><path d="M39.2 14.6 47 12.8" stroke="#1a1a1a" stroke-width="1" stroke-linecap="round"/>' + ojo(36.2, 14.4) },
+    picaflor: { vb: [48, 36], w: 25, lugar: 'flor', t: 'Unos 11 cm; de las aves más pequeñas de Chile', dib: () => '<g class="av-ala"><ellipse cx="18" cy="8" rx="12" ry="4.2" transform="rotate(-40 18 8)" fill="#d4f1e3" opacity=".75"/><ellipse cx="25" cy="7" rx="9" ry="3" transform="rotate(-66 25 7)" fill="#b4e3cc" opacity=".6"/></g>'+ '<path d="M16 20 4 27.5 6.2 22.6 2 19.4 9 20.6z" fill="#2a7a52"/><ellipse cx="25" cy="20.5" rx="10" ry="6" transform="rotate(-14 25 20.5)" fill="#3fa470"/><ellipse cx="22.5" cy="23.6" rx="7" ry="3" transform="rotate(-14 22.5 23.6)" fill="#c9e8d4" opacity=".8"/><circle cx="35" cy="14.6" r="5" fill="#2f8a5c"/><path d="M33.4 11.8 c2 -1.4 4.2 -.9 4.8 .7 c-2.1 .5 -3.8 .4 -4.8 -.7z" fill="#c8323e"/><path d="M39.4 14.2 L48 11.8" stroke="#1a1a1a" stroke-width="1.1" stroke-linecap="round"/>' + ojo(35.6, 13.8) },
     condor: { vb: [120, 44], w: 112, lugar: 'cielo', t: 'Más de 1 m de alto; alas de unos 3,3 m', dib: () => { const ala = '<path d="M55.5 19.5C44 13.6 24 11.4 3 13.2l1.8 2.6-2.6 1.6 2.8 1.6-2 2 3.2.9-1.4 1.8 3.4.1C24 22.2 40 27.6 56 30z" fill="#1f2024"/><path d="M38.6 16.8C32 15.8 25.4 15.8 19.4 17c6.2 1.6 12.6 3.6 19.2 5.2z" fill="#eeeee8"/>'; return '<g class="av-ala">' + ala + '</g><g transform="matrix(-1 0 0 1 120 0)"><g class="av-ala">' + ala + '</g></g><path d="M58 31 53.4 42l6.6-3.8 6.6 3.8L62 31z" fill="#1f2024"/><ellipse cx="60" cy="25.5" rx="7.2" ry="9.4" fill="#25262b"/><path d="M54.6 16.4c2.2 4.2 8.6 4.2 10.8 0l1.4 3.6c-3.6 3.8-13.6 3.8-17.4 0z" fill="#f1f1ec"/><circle cx="60" cy="11.4" r="3.9" fill="#c8553b"/><path d="M59 14.8h2v2.6h-2z" fill="#a9432e"/>' + ojo(61.4, 10.8); } },
     gorrion: { vb: [48, 36], w: 28, lugar: 'rama', t: 'Unos 15 cm', dib: () => '<path d="M12 22 1.6 27.4 2.6 23 1 21 12 19.4z" fill="#6b4424"/><ellipse cx="23" cy="21.6" rx="11" ry="7.4" fill="#a7794a"/><ellipse cx="24" cy="26.6" rx="8" ry="3.8" fill="#d7cbb4"/><path d="M12.6 20.4c4.4-4.2 11.4-4.2 15.6-.2-4.2 3.6-11.4 3.8-15.6.2z" fill="#7e5632"/><path d="M16 17.4l4 1.4M20.6 15.6l3.6 1.2M15 22.8l3.4 1" stroke="#5c3a20" stroke-width="1" stroke-linecap="round"/><circle cx="32.6" cy="14.6" r="5.4" fill="#8c9097"/><ellipse cx="32.2" cy="18.2" rx="3.6" ry="2.7" fill="#efe5cf"/><path d="M29.4 20.2c1.8 3 5.4 3.2 7.2.2-1.8 1.4-5.4 1.2-7.2-.2z" fill="#232323"/><path d="M37.2 13.6 42 14.8 37.2 17z" fill="#3b3b3b"/>' + ojo(34.2, 13.8) },
   };
@@ -265,7 +316,9 @@
   function vivEscena(est) {
     const v = est.vivero || {};
     return (v.plantas || []).map((q) => '<span class="il-planta p-' + esc(q.id) + ' s-' + esc(q.casilla) + '" aria-hidden="true">' + flor(q.id, 0.9) + '</span>').join('')
-      + (v.aves || []).slice(0, 2).map((a, i) => '<span class="il-ave n' + (i + 1) + ' a-' + esc(a.id) + ' l-' + esc((AVES[a.id] || {}).lugar || 'rama') + '" aria-hidden="true">' + ave(a.id) + '</span>').join('');
+      + (v.aves || []).slice(0, 2).map((a, i) => '<span class="il-ave n' + (i + 1) + ' a-' + esc(a.id) + ' l-' + esc((AVES[a.id] || {}).lugar || 'rama') + '" aria-hidden="true">' + ave(a.id) + '</span>').join('')
+      // F1055 · luciérnagas encendidas: seis luces que flotan en el cielo (la animación se apaga con movimiento reducido o en modo ahorro)
+      + ((v.ambientes || []).indexOf('luciernagas') >= 0 ? '<span class="il-luci-grupo" aria-hidden="true"><i class="il-luci k1"></i><i class="il-luci k2"></i><i class="il-luci k3"></i><i class="il-luci k4"></i><i class="il-luci k5"></i><i class="il-luci k6"></i></span>' : '');
   }
   // Vista previa (320×120): pasto con la flor a su altura real, o el lugar propio del ave (cielo, rama, suelo o junto a una flor).
   function vivVista(tipo, id) {
@@ -288,7 +341,9 @@
   let vivGrupo = null;
   const nomGrupo = (g) => (g === 'general' ? 'Generales' : ((CAT.tematicas || {})[g] || {}).nombre || g);
   const listaDe = (tipo) => (tipo === 'ave' ? Object.keys(CAT.aves || {}) : (CAT.orden_semillas || Object.keys(CAT.semillas || {})));
-  const enGrupo = (tipo, id, g) => { const it = ((tipo === 'ave' ? CAT.aves : CAT.semillas) || {})[id] || {}, h = it.habitat && it.habitat.length ? it.habitat : ['general']; return h.indexOf(g) >= 0; };
+  const DIAS = () => (CAT && CAT.ciclo && CAT.ciclo.dias) || 30;   // F1059: la duración del ciclo viene del catálogo
+  const catDe = (t) => (t === 'ave' ? CAT.aves : t === 'ambiente' ? CAT.ambientes : CAT.semillas) || {};   // F1055: catálogo según el tipo de decoración
+  const enGrupo = (tipo, id, g) => { const it = catDe(tipo)[id] || {}, h = it.habitat && it.habitat.length ? it.habitat : ['general']; return h.indexOf(g) >= 0; };
   const gruposCon = (tipo) => ['general'].concat(Object.keys(CAT.tematicas || {})).filter((g) => listaDe(tipo).some((i) => enGrupo(tipo, i, g)));
   function tabsViv(on, n) {                                  // F975 · cuatro pestañas: plantas, aves, otros y cómo ganar gotas
     const t = (id, txt) => '<button type="button" class="il-viv-tab' + (on === id ? ' on' : '') + '" data-ac="tab" data-id="' + id + '" aria-pressed="' + (on === id) + '">' + txt + '</button>';
@@ -310,24 +365,27 @@
     if (vivSel && vivSel.tipo === 'gotas') return vivPanelGotas(est);
     const v = est.vivero || { desbloqueados: [], plantas: [], aves: [] }, saldo = (est.gotas && est.gotas.saldo) || 0, tengo = (c) => v.desbloqueados.indexOf(c) >= 0;
     const sem = listaDe('semilla'), aves = listaDe('ave');
-    const plantada = (id) => (v.plantas || []).some((q) => q.id === id), activa = (id) => (v.aves || []).some((a) => a.id === id);
-    if (!vivSel || !((vivSel.tipo === 'ave' ? CAT.aves : CAT.semillas) || {})[vivSel.id]) { const p1 = sem.find((i) => !tengo('sem_' + i)); vivSel = p1 ? { tipo: 'semilla', id: p1 } : { tipo: 'semilla', id: sem[0] }; }
+    const plantada = (id) => (v.plantas || []).some((q) => q.id === id), activa = (id) => (v.aves || []).some((a) => a.id === id), ambActiva = (id) => (v.ambientes || []).indexOf(id) >= 0;
+    if (!vivSel || !catDe(vivSel.tipo)[vivSel.id]) { const p1 = sem.find((i) => !tengo('sem_' + i)); vivSel = p1 ? { tipo: 'semilla', id: p1 } : { tipo: 'semilla', id: sem[0] }; }
     const amb = vivTab === 'paisaje';
     if (!amb) vivTab = vivSel.tipo === 'ave' ? 'aves' : 'flores';
-    const tipoV = vivSel.tipo === 'ave' ? 'ave' : 'semilla', habs = Object.keys(CAT.tematicas || {});
+    if (!amb && vivSel.tipo === 'ambiente') vivSel = { tipo: 'semilla', id: sem[0] };   // F1055: fuera de «Ambiental», una semilla o ave
+    let tipoV = vivSel.tipo === 'ave' ? 'ave' : vivSel.tipo === 'ambiente' ? 'ambiente' : 'semilla', habs = Object.keys(CAT.tematicas || {});
     if (!vivGrupo || habs.indexOf(vivGrupo) < 0) vivGrupo = est.tematica && habs.indexOf(est.tematica) >= 0 ? est.tematica : habs[0];
-    if (!enGrupo(tipoV, vivSel.id, vivGrupo)) { const pick = listaDe(tipoV).filter((i) => enGrupo(tipoV, i, vivGrupo))[0]; if (pick) vivSel = { tipo: tipoV, id: pick }; }
-    const tile = (tipo, id) => { const it = (tipo === 'ave' ? CAT.aves : CAT.semillas)[id]; if (!it) return ''; const c = (tipo === 'ave' ? 'ave_' : 'sem_') + id, mio = tengo(c), sel = vivSel.tipo === tipo && vivSel.id === id;
-      const est2 = mio ? (tipo === 'ave' ? (activa(id) ? 'Con tu árbol' : 'Tuya') : (plantada(id) ? 'Plantada' : 'Tuya')) : '';
-      const arte = tipo === 'ave' ? ave(id, Math.min(104, Math.round((AVES[id] || { w: 30 }).w * 1.5))) : flor(id, 1.05);
+    if (amb && vivSel.tipo !== 'ambiente') { const a1 = Object.keys(CAT.ambientes || {}).find((i) => enGrupo('ambiente', i, vivGrupo)); if (a1) { vivSel = { tipo: 'ambiente', id: a1 }; tipoV = 'ambiente'; } }
+    if (!enGrupo(tipoV, vivSel.id, vivGrupo)) { const pick = (tipoV === 'ambiente' ? Object.keys(CAT.ambientes || {}) : listaDe(tipoV)).filter((i) => enGrupo(tipoV, i, vivGrupo))[0]; if (pick) vivSel = { tipo: tipoV, id: pick }; }
+    const tile = (tipo, id) => { const it = catDe(tipo)[id]; if (!it) return ''; const c = (tipo === 'ave' ? 'ave_' : tipo === 'ambiente' ? 'amb_' : 'sem_') + id, mio = tengo(c), sel = vivSel.tipo === tipo && vivSel.id === id;
+      const est2 = mio ? (tipo === 'ave' ? (activa(id) ? 'Con tu árbol' : 'Tuya') : tipo === 'ambiente' ? (ambActiva(id) ? 'Encendidas' : 'Tuya') : (plantada(id) ? 'Plantada' : 'Tuya')) : '';
+      const arte = tipo === 'ave' ? ave(id, Math.min(104, Math.round((AVES[id] || { w: 30 }).w * 1.5))) : tipo === 'ambiente' ? '<span class="il-luci-mini" aria-hidden="true"></span>' : flor(id, 1.05);
       return '<button type="button" class="il-viv-tile' + (sel ? ' sel' : '') + (mio ? ' mio' : '') + '" role="listitem" data-ac="ver" data-tipo="' + tipo + '" data-id="' + esc(id) + '" aria-pressed="' + sel + '"><span class="il-viv-arte">' + arte + '</span><b>' + esc(it.nombre) + '</b>'
         + (mio ? '<span class="il-viv-chip ok">' + est2 + '</span>' : '<span class="il-viv-chip">' + ic(IC.gota, 13) + it.precio + '</span>') + '</button>'; };
-    const it = (vivSel.tipo === 'ave' ? CAT.aves : CAT.semillas)[vivSel.id], c = (vivSel.tipo === 'ave' ? 'ave_' : 'sem_') + vivSel.id, mio = tengo(c), falta = Math.max(0, it.precio - saldo), pct = Math.min(100, Math.round(100 * saldo / it.precio));
+    const it = catDe(vivSel.tipo)[vivSel.id], c = (vivSel.tipo === 'ave' ? 'ave_' : vivSel.tipo === 'ambiente' ? 'amb_' : 'sem_') + vivSel.id, mio = tengo(c), falta = Math.max(0, it.precio - saldo), pct = Math.min(100, Math.round(100 * saldo / it.precio));
     let acc;
     if (!mio) acc = '<p class="suave m0">' + (falta ? 'Te faltan ' + falta + ' gotas.' : 'Ya tienes las gotas necesarias.') + '</p><button type="button" class="btn il-viv-bt il-viv-main" data-ac="comprar" data-tipo="' + vivSel.tipo + '" data-id="' + esc(vivSel.id) + '"' + (falta ? ' disabled' : '') + '>' + (falta ? 'Aún faltan gotas' : 'Obtener por ' + it.precio + ' gotas') + '</button>';
+    else if (vivSel.tipo === 'ambiente') acc = '<button type="button" class="btn il-viv-bt il-viv-main" data-ac="ambiente" data-tipo="ambiente" data-id="' + esc(vivSel.id) + '">' + (ambActiva(vivSel.id) ? 'Apagar las luciérnagas' : 'Encender las luciérnagas') + '</button>';
     else if (vivSel.tipo === 'ave') acc = '<button type="button" class="btn il-viv-bt il-viv-main" data-ac="ave" data-tipo="ave" data-id="' + esc(vivSel.id) + '">' + (activa(vivSel.id) ? 'Guardar el ave' : 'Llamar al árbol') + '</button>';
     else acc = plantada(vivSel.id) ? '<p class="il-viv-ok2">Ya está plantada en tu pasto.</p>' : '<button type="button" class="btn il-viv-bt il-viv-main" data-ac="plantar" data-tipo="semilla" data-id="' + esc(vivSel.id) + '">Plantar en mi pasto</button>';
-    const lista = amb ? [] : (vivTab === 'aves' ? aves : sem).filter((i) => enGrupo(tipoV, i, vivGrupo));
+    const lista = amb ? Object.keys(CAT.ambientes || {}).filter((i) => enGrupo('ambiente', i, vivGrupo)) : (vivTab === 'aves' ? aves : sem).filter((i) => enGrupo(tipoV, i, vivGrupo));
     const haba = habs.map((g) => {
       const tiene = tengo('tem_' + g), act = g === est.tematica, precio = ((CAT.tematicas || {})[g] || {}).precio || 0;
       const nota = act ? '[Activo]' : tiene ? '' : precio + ' gotas';
@@ -339,7 +397,7 @@
       + '<h4 class="viv-paso">1. Elige tu entorno (Hábitat)</h4><div class="viv-habitats" role="group" aria-label="Hábitats del Vivero">' + haba + '</div>'
       + '<h4 class="viv-paso">2. Decoraciones para este entorno</h4><div class="viv-filtros" role="group" aria-label="Tipo de decoración">' + pill('flores', 'Plantas') + pill('aves', 'Aves') + pill('paisaje', 'Ambiental') + '</div>'
       + '<div class="il-viv-car viv-grid" role="list" aria-label="Decoraciones del entorno">' + lista.map((i) => tile(tipoV, i)).join('') + '</div>'
-      + (amb ? '<p class="viv-vacio">Pronto habrá decoraciones para este espacio.</p>' : '<div class="il-viv-ficha viv-accion"><h4>' + esc(it.nombre) + '</h4><p class="il-viv-rasgo">' + esc(vivSel.tipo === 'ave' ? ((AVES[vivSel.id] || {}).t || '') : (TAM[vivSel.id] || '')) + '</p>' + acc + '</div>')
+      + (amb && !lista.length ? '<p class="viv-vacio">Pronto habrá decoraciones para este espacio.</p>' : '<div class="il-viv-ficha viv-accion"><h4>' + esc(it.nombre) + '</h4><p class="il-viv-rasgo">' + esc(vivSel.tipo === 'ave' ? ((AVES[vivSel.id] || {}).t || '') : vivSel.tipo === 'ambiente' ? ((catDe('ambiente')[vivSel.id] || {}).t || '') : (TAM[vivSel.id] || '')) + '</p>' + acc + '</div>')
       + '<p class="il-viv-est" role="status" aria-live="polite">' + esc(vivMsg) + '</p>';
   }
   // F1011 · Obtener gotas, como la captura: se abre desde la píldora de gotas del Vivero y vuelve con la misma píldora (lo que ya ganaste queda guardado).
@@ -418,6 +476,7 @@
       else if (ac === 'tema-usar') { r = T.elegirTematica(id); if (r.ok) { vivMsg = 'Temática activa.'; try { pintar(cont, mi, { repinta: true }); const b2 = $('#ilVivBtn', cont); if (b2) b2.click(); } catch (er) { /* sin repintar */ } return; } }
       else if (ac === 'comprar') { r = tipo === 'esp' ? T.comprarEspecial(id) : T.comprar(tipo, id); if (r.ok) vivMsg = tipo === 'esp' ? 'Listo: ya está en tu paisaje.' : 'Listo: ya es tuyo.'; }
       else if (ac === 'plantar') { r = T.plantar(id); if (r.ok) vivMsg = 'Plantada en el pasto.'; }
+      else if (ac === 'ambiente') { const act = ((T.cargar().vivero.ambientes) || []).indexOf(id) >= 0; r = T.activarAmbiente(id, !act); if (r.ok) vivMsg = act ? 'Las luciérnagas se apagaron.' : 'Las luciérnagas llegaron a tu paisaje.'; }
       else { const act = (T.cargar().vivero.aves || []).some((a) => a.id === id); r = T.activarAve(id, !act); if (r.ok) vivMsg = act ? 'Se guardó el ave.' : 'El ave llegó al árbol.'; }
       if (!r.ok) { vivMsg = MOT[r.motivo] || 'No se pudo.'; pinta(true); return; }
       sonido(ac === 'ave' ? 'suave' : 'semilla'); vivAbierto = true; pintar(cont, mi, { repinta: true });
@@ -461,14 +520,14 @@
       + '<g class="cap cap0">' + cielo(cl) + atras(fo) + '</g><g class="cap cap1"><path class="col c1" d="' + COL.c1 + '"/>' + fondo + '</g>'
       + '<g class="cap cap2"><path class="col c2" d="' + COL.c2 + '"/></g>'
       + '<g class="cap cap3"><path class="col c3" d="' + COL.c3 + '"/></g></g>'
-      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g><g class="esp">' + especialesEscena(est, fo) + '</g><g class="cap cap3"><g class="mundo" transform="translate(180 344) scale(' + window.TBInicio.avanceDiario(c.diasCuidado).escala + ')">' + arbol(c.especie, et) + hojasTB(window.TBInicio.avanceDiario(c.diasCuidado).hojas, et) + '</g></g>' + '<g class="tb-hierba" aria-hidden="true">' + hierbaTB(0, 360, 392, 90, 17) + '</g><g class="clima">' + climaSvg(cl) + '</g></svg>'
+      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g><g class="esp">' + especialesEscena(est, fo) + '</g><g class="pa-dia">' + paisajeDelDia(c.diasCuidado) + '</g><g class="cap cap3"><g class="mundo" transform="translate(180 344) scale(' + window.TBInicio.avanceDiario(c.diasCuidado).escala + ')">' + arbol(c.especie, et, c.diasCuidado) + hojasTB(window.TBInicio.avanceDiario(c.diasCuidado).hojas, et) + '</g></g>' + '<g class="tb-hierba" aria-hidden="true">' + hierbaTB(0, 360, 392, 90, 17) + '</g><g class="clima">' + climaSvg(cl) + '</g></svg>'
       + '<i class="il-anillo" id="ilAnillo" aria-hidden="true"></i>'
       + '<button type="button" class="il-resp" id="ilResp" aria-label="Respirar con tu árbol. Toca para una pausa de unos 30 segundos"></button>' + mal + gotasHTML(est) + frutosHTML(est) + vivEscena(est) + '</div>';
   }
 
   // ---------- Textos ----------
   function estadoTxt(est, r) {
-    const c = est.ciclo, e = window.TBInicio.etapa(c.diasCuidado), av = window.TBInicio.avanceDiario(c.diasCuidado), dia = 'Día ' + c.diasCuidado + ' de 30 · ' + (ETAPAS[e] || 'Brote') + ' · ' + Math.round(av.fraccion * 100) + '% de la etapa';
+    const c = est.ciclo, e = window.TBInicio.etapa(c.diasCuidado), av = window.TBInicio.avanceDiario(c.diasCuidado), dia = 'Día ' + c.diasCuidado + ' de ' + DIAS() + ' · ' + (ETAPAS[e] || 'Brote') + ' · ' + Math.round(av.fraccion * 100) + '% de la etapa';
     if (r && r.cicloNuevo) { const s = CAT && CAT.especies && CAT.especies[c.especie]; return 'Empieza un árbol nuevo' + (s ? ': ' + s.nombre : '') + '. El anterior ya forma parte del paisaje.'; }
     if (est.maleza.length) return 'Hay maleza en el pasto. Puedes tocarla para quitarla; así tu árbol sigue creciendo.';
     if (c.cerrado) return 'Día 30 de 30 · Tu árbol está completo. Mañana empieza uno nuevo.';
@@ -541,7 +600,7 @@
         luces(b); b.classList.add('sana'); later(() => { try { b.remove(); } catch (e) { /* ya quitada */ } }, quieto() ? 0 : 450);
         if (!x.quedan) { const es = $('#ilEscena', cont); if (es) { es.classList.remove('apagado'); if (!quieto()) { es.classList.add('brilla'); later(() => es.classList.remove('brilla'), 1800); } } }
         const est = T.cargar();
-        if (!x.quedan) { estado.textContent = 'Listo. Tu árbol sigue creciendo. ' + 'Día ' + est.ciclo.diasCuidado + ' de 30'; if (x.diaNuevo) later(() => pintar(cont, mi, { repinta: true, r: { diaNuevo: true } }), quieto() ? 0 : 700); }
+        if (!x.quedan) { estado.textContent = 'Listo. Tu árbol sigue creciendo. ' + 'Día ' + est.ciclo.diasCuidado + ' de ' + DIAS(); if (x.diaNuevo) later(() => pintar(cont, mi, { repinta: true, r: { diaNuevo: true } }), quieto() ? 0 : 700); }
       };
     });
     Array.prototype.forEach.call(cont.querySelectorAll('.il-gota'), (b) => {

@@ -1,0 +1,7 @@
+/* qa.css · Panel de control de calidad (solo localhost; qa.js lo carga). */
+.qa-caja{position:fixed;left:8px;bottom:86px;z-index:9999;font:12px system-ui,sans-serif}
+.qa-toggle{background:#1d2b3a;color:#fff;border:0;border-radius:999px;padding:6px 12px;opacity:.85}
+.qa-panel{margin-bottom:6px;background:#fff;color:#1d2b3a;border:1px solid #1d2b3a;border-radius:12px;padding:8px;width:190px;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+.qa-titulo{margin:0 0 6px;font-weight:700}
+.qa-btn{display:block;width:100%;margin:4px 0;padding:6px;border-radius:8px;border:1px solid #bcc7d2;background:#f4f7fa;text-align:left}
+.qa-pie{margin:6px 0 0;color:#5b6b7b;font-size:11px}

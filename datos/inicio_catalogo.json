@@ -1,7 +1,7 @@
 {
   "_nota": "F929 · Catálogo del Inicio «Tierra Buena». Solo lectura; cambiar textos no toca el código. Cada árbol tiene `mensaje` (al elegirlo) y `vida`: mensajes (5 a 6) para la vida personal (uno distinto por día de cuidado). Datos VERIFICADOS el 7 oct (CONAF, SAG, Min. Medio Ambiente): araucaria, canelo, alerce. Por verificar: quillay, roble, palma chilena, cerezo, sauce, semillas y aves. Lenguaje: neutro y cordial. Los mensajes son de crecimiento personal y de cuidado de la naturaleza y el planeta (no religiosos). El jacarandá (F930) es la opción más colorida. F933: cada día se desbloquean 3 mensajes: `arbol` (+`arbol_comun`) = dato real; `planeta` (+`planeta_comun`) = respeto a la naturaleza; `vida` (+`vida_comun`) = crecer como personas y sociedad. Rotan solos por fecha. F934: datos VERIFICADOS el 7 oct con fuentes (CONAF/Árboles Nativos de Chile, SAG, Reforestemos, UC, prensa): quillay, roble, palma chilena, sauce chileno, jacarandá, cerezo (exportación), copihue, desierto florido, cóndor y Pando. Sin verificar aún: araucaria (parte), canelo (parte), lavanda, chucao, queltehue, picaflor, golondrina, gorrión y los bancos comunes de árbol/planeta (conocimiento general). F961: plantas nuevas (bonsái, loto, rafflesia, drago de Socotra, secuoya roja, bambú, welwitschia, planta fantasma, orquídea subterránea y pasto alto) y trivia diaria. Datos de estas plantas y de la trivia: conocimiento general, POR VERIFICAR con fuente antes de publicar. F965: temáticas (bosque nativo, desierto florido). Las plantas con `habitat` solo se plantan con esa temática activa; las demás son generales. Árboles principales por temática: pendiente (falta dibujar especies de desierto). Datos de temáticas: conocimiento general, por verificar. F966: decisión de coherencia: plantas de otros continentes solo en la temática «Jardín del mundo». Solo pasto alto queda general. Chile: bosque nativo y desierto florido. F968: verificados con fuentes picaflor (redobservadores, The Clinic, guía de campo) y gorrión (redobservadores, SciELO: especie introducida, no nativa). Lavanda: sin cambios. F969: el gorrión (exótico) solo puede activarse con la temática Jardín del mundo; las aves nativas son generales. F970: lavanda verificada (originaria del Mediterráneo; aromática; atrae abejas y mariposas). F971: temáticas Cordillera y Costa del Pacífico. Añañuca: desierto, cordillera y costa (el género tiene especies en las tres). Pata de guanaco: desierto y costa. Verificado con fichas de especies (MMA) y registros de Rhodophiala. F972: llareta (cordillera) y chagual (costa), verificadas con fichas MMA y fuentes botánicas. F973: notro y chilco (bosque nativo), verificados con fuentes (Smith-Ramírez & Armesto 1998, Revista Chilena de Historia Natural, Kew POWO, ficha de uso del chilco). F974: ulmo (bosque), garra de león (desierto y costa), chachacoma (cordillera). Regla: cada temática Chile con al menos 3 plantas propias o compartidas.",
   "ciclo": {
-    "dias": 30,
+    "dias": 15,
     "etapas": [
       {
         "id": "brote",
@@ -9,15 +9,15 @@
       },
       {
         "id": "raiz",
-        "desde": 8
+        "desde": 4
       },
       {
         "id": "ramas",
-        "desde": 15
+        "desde": 8
       },
       {
         "id": "frondoso",
-        "desde": 22
+        "desde": 11
       }
     ],
     "gracia_dias": 1,
@@ -1442,10 +1442,10 @@
     }
   },
   "frutos": {
-    "arbol_desde_dia": 15,
+    "arbol_desde_dia": 8,
     "planta_dias": 2,
     "pendientes_max": 10,
-    "nota": "F961 · Cosecha más ágil: cada planta tiene su propio `dias` (1 a 4) para dar fruto; el árbol da fruto desde el día 15. Antes eran 7 días. Los frutos se acumulan hasta 10 sin vencer. Solo sirven para comprar `especiales`."
+    "nota": "F961 · Cosecha más ágil: cada planta tiene su propio `dias` (1 a 4) para dar fruto; el árbol da fruto desde el día 15. Antes eran 7 días. Los frutos se acumulan hasta 10 sin vencer. Solo sirven para comprar `especiales`. F1059: el ciclo es de 15 días (antes 30); la fruta llega desde el día 8."
   },
   "orden_semillas": [
     "pasto_alto",
@@ -1807,6 +1807,20 @@
       "fondo": "costa",
       "mensaje": "Entre el mar y los cerros hay flores que resisten la neblina y la sal. Cada una encuentra su manera de vivir cerca del agua.",
       "dato": "Aquí se pueden plantar especies de la costa, como la añañuca rosada, que crece en quebradas y terrazas junto al mar del norte."
+    }
+  },
+  "ambientes": {
+    "luciernagas": {
+      "nombre": "Luciérnagas",
+      "precio": 60,
+      "habitat": [
+        "bosque",
+        "jardin",
+        "costa"
+      ],
+      "t": "Pequeñas luces que aparecen al atardecer, como estrellas que bajan a jugar.",
+      "mensaje": "Una luz pequeña también guía. Cada gesto amable ilumina un poco el camino de los demás.",
+      "dato": "Las luciérnagas producen su luz con una reacción química en el abdomen, casi sin calor."
     }
   }
 }

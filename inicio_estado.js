@@ -16,7 +16,7 @@
 
   const nuevo = () => ({ v: VERSION, ciclo: { n: 1, especie: null, inicio: null, diasCuidado: 0, ultimoDia: null, ultimaVisita: null, cerrado: false, diaPendiente: false },
     eligiendo: true, tematica: null, paisaje: [], maleza: [], gotas: { saldo: 0, total: 0, pendientes: [], hoy: { fecha: null, lectura: 0, vida: 0 } },
-    vivero: { desbloqueados: [], plantas: [], aves: [] }, cosechas: { total: 0, pend: [], ult: {} }, trivia: { fecha: null, i: null, ok: false, elegida: null } });
+    vivero: { desbloqueados: [], plantas: [], aves: [], ambientes: [] }, cosechas: { total: 0, pend: [], ult: {} }, trivia: { fecha: null, i: null, ok: false, elegida: null } });
 
   function migrar(x) {                                      // dato dañado o de otra versión → se rescata lo que sirve; nunca error en pantalla
     const b = nuevo(); if (!x || typeof x !== 'object') return b;
@@ -31,7 +31,7 @@
       const g = x.gotas || {}; b.gotas = { saldo: Math.max(0, +g.saldo || 0), total: Math.max(0, +g.total || 0), pendientes: Array.isArray(g.pendientes) ? g.pendientes.filter((p) => p && p.id).slice(0, 30) : [],
         hoy: { fecha: (g.hoy && g.hoy.fecha) || null, lectura: +(g.hoy && g.hoy.lectura) || 0, vida: +(g.hoy && g.hoy.vida) || 0, plan: +(g.hoy && g.hoy.plan) || 0, oracion: +(g.hoy && g.hoy.oracion) || 0 } };
       const w = x.vivero || {}; b.vivero = { desbloqueados: Array.isArray(w.desbloqueados) ? w.desbloqueados.filter((s) => typeof s === 'string') : [],
-        plantas: Array.isArray(w.plantas) ? w.plantas.filter((p) => p && p.id && p.casilla) : [], aves: Array.isArray(w.aves) ? w.aves.filter((p) => p && p.id) : [] };
+        plantas: Array.isArray(w.plantas) ? w.plantas.filter((p) => p && p.id && p.casilla) : [], aves: Array.isArray(w.aves) ? w.aves.filter((p) => p && p.id) : [], ambientes: Array.isArray(w.ambientes) ? w.ambientes.filter((s) => typeof s === 'string').slice(0, 6) : [] };
       const q = x.cosechas || {}; b.cosechas = { total: Math.max(0, Math.floor(+q.total || 0)), pend: Array.isArray(q.pend) ? q.pend.filter((f) => f && f.id && f.casilla).slice(0, 12) : [], ult: q.ult && typeof q.ult === 'object' ? Object.keys(q.ult).slice(-60).reduce((o, k) => { if (typeof q.ult[k] === 'string') o[k] = q.ult[k]; return o; }, {}) : {} };   // F959: frutos
       const t = x.trivia || {}; b.trivia = { fecha: typeof t.fecha === 'string' ? t.fecha : null, i: Number.isInteger(t.i) ? t.i : null, ok: !!t.ok, elegida: Number.isInteger(t.elegida) ? t.elegida : null };   // F961: trivia diaria
     } catch (e) { return nuevo(); }
@@ -134,7 +134,7 @@
     e.gotas.saldo += sel.length; e.gotas.total += sel.length; guardar(e); return sel.length;
   }
   // ---- Vivero ----
-  const PREF = { semilla: 'sem_', ave: 'ave_', lugar: 'lug_', clima: 'cli_', tema: 'tem_' }, LISTA = { semilla: 'semillas', ave: 'aves', lugar: 'lugares', clima: 'climas', tema: 'tematicas' }, GRATIS = { lugar: 'colinas', clima: 'natural' };
+  const PREF = { semilla: 'sem_', ave: 'ave_', ambiente: 'amb_', lugar: 'lug_', clima: 'cli_', tema: 'tem_' }, LISTA = { semilla: 'semillas', ave: 'aves', ambiente: 'ambientes', lugar: 'lugares', clima: 'climas', tema: 'tematicas' }, GRATIS = { lugar: 'colinas', clima: 'natural' };
   function tiene(tipo, id) { if (GRATIS[tipo] === id) return true; return cargar().vivero.desbloqueados.indexOf(PREF[tipo] + id) >= 0; }
   function comprar(tipo, id) {                             // tipo: 'semilla' | 'ave' | 'lugar' | 'clima'. Devuelve { ok, motivo }
     const e = cargar(), it = (cat()[LISTA[tipo]] || {})[id]; if (!it) return { ok: false, motivo: 'no-existe' };
@@ -162,6 +162,15 @@
     if (i >= 0) return { ok: true };
     if (e.vivero.aves.length >= (cat().economia.aves_activas_max || 2)) return { ok: false, motivo: 'maximo' };
     e.vivero.aves.push({ id, desde: hoy() }); guardar(e); return { ok: true };
+  }
+  // F1055 · Ambientes (luciérnagas): se compran con gotas y se encienden o apagan. Sin límite de cantidad; solo con su hábitat activo.
+  function activarAmbiente(id, si) {
+    const e = cargar(); if (e.vivero.desbloqueados.indexOf('amb_' + id) < 0) return { ok: false, motivo: 'no-desbloqueada' };
+    const it = (cat().ambientes || {})[id]; if (it && it.habitat && it.habitat.indexOf(e.tematica) < 0 && si !== false) return { ok: false, motivo: 'otra-tematica' };
+    e.vivero.ambientes = e.vivero.ambientes || [];
+    const i = e.vivero.ambientes.indexOf(id);
+    if (si === false) { if (i >= 0) e.vivero.ambientes.splice(i, 1); guardar(e); return { ok: true }; }
+    if (i < 0) e.vivero.ambientes.push(id); guardar(e); return { ok: true };
   }
   // ---- F959 · Frutos (la segunda moneda, guardada como `cosechas`): árboles y flores dan fruto al madurar; se recogen tocándolos y sirven para llenar «Tu paisaje» (catálogo `especiales`). Las gotas no se tocan. ----
   // Lo gastado se calcula con los especiales ya desbloqueados («esp_<id>»): así, al juntar teléfono y nube, nunca se gasta dos veces ni se pierde lo ganado.
@@ -218,6 +227,6 @@
     return { ok: true, acierto, correcta: ord.indexOf(q.c), explicacion: q.e, gotas: g };
   }
 
-  const api = { avanceDiario, entornoVisible, config(o) { if (o && o.catalogo) CAT = o.catalogo; if (o && o.hoy) HOY = o.hoy; if (o && o.almacen) ALM = o.almacen; }, cargar, guardar, estado: cargar, etapa, malezaPara, elegirPrimera, visita, sanar, ganar, recolectar, comprar, tiene, plantar, activarAve, mensajeActual, cosechas, recogerFruto, tieneEspecial, comprarEspecial, triviaHoy, responderTrivia, elegirTematica, K };
+  const api = { avanceDiario, entornoVisible, config(o) { if (o && o.catalogo) CAT = o.catalogo; if (o && o.hoy) HOY = o.hoy; if (o && o.almacen) ALM = o.almacen; }, cargar, guardar, estado: cargar, etapa, malezaPara, elegirPrimera, visita, sanar, ganar, recolectar, comprar, tiene, plantar, activarAve, activarAmbiente, mensajeActual, cosechas, recogerFruto, tieneEspecial, comprarEspecial, triviaHoy, responderTrivia, elegirTematica, K };
   if (typeof window !== 'undefined') window.TBInicio = api; if (typeof module !== 'undefined') module.exports = api;
 })();
