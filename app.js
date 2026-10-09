@@ -750,6 +750,8 @@
       <h2 class="sep">Vivir con mi iglesia</h2>
       <div class="grid">${activa('📅', 'Agenda', 'Actividades de tu iglesia y de tus grupos.', 'agenda')}${activa('📣', 'Avisos', 'Mensajes de tu pastor y de los líderes.', 'avisos')}${activa('🕍', 'Mis ministerios', 'Los grupos donde sirves y quién los lidera.', 'ministerios')}${activa('🧱', 'Muro', 'Peticiones que tu pastor compartió, para orar juntos.', 'muro')}${activa('🌟', 'Acción del mes', 'Lo que viviremos juntos este mes.', 'accion')}${activa('🤲', 'Juntos hacemos el bien', 'Ideas y movimientos para servir con tu iglesia.', 'juntos')}</div>
       
+      <h2 class="sep">Mis turnos</h2><div class="card" id="misTurnos"><p class="suave m0">Cargando tus turnos…</p></div>
+      <div id="turLider"></div>
       <h2 class="sep">Mi servicio</h2>
       <div class="card"><b>¿Cuándo puedes servir?</b><p class="suave m0t">Marca lo que te sirve. Por ahora solo lo ves tú.</p>
         <div class="chips" role="group" aria-label="Mi disponibilidad">${DISP_OPC.map(([k, t]) => `<button type="button" class="chip${dispLeer().indexOf(k) >= 0 ? ' on' : ''}" data-disp="${k}" aria-pressed="${dispLeer().indexOf(k) >= 0}">${t}</button>`).join('')}</div>
@@ -781,6 +783,23 @@
       try { await navigator.clipboard.writeText(t.value); $('#llaveMsg').textContent = 'Llave copiada. Ahora pégala en tu otro dispositivo.'; }
       catch (e) { try { document.execCommand('copy'); $('#llaveMsg').textContent = 'Llave copiada.'; } catch (e2) { $('#llaveMsg').textContent = 'Mantén presionado el recuadro y elige «Copiar».'; } }
     };
+    // F1038 · Mis turnos: los servicios que el pastor me asignó en los próximos 14 días.
+    (async () => {
+      const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+      const r = await rpcRaw('turno_miembro_listar', { p_codigo: id.codigo, p_clave: id.clave, p_desde: hoy.toISOString(), p_hasta: new Date(hoy.getTime() + 14 * 86400000).toISOString() });
+      const c = $('#misTurnos'); if (!c) return;
+      if (!r.ok) { c.innerHTML = '<p class="suave m0">No pudimos cargar tus turnos. Revisa tu conexión.</p>'; return; }
+      const filas = r.data || [];
+      c.innerHTML = filas.length ? filas.map((t) => { const d = new Date(t.inicio); return '<p class="m0 t2"><b>' + esc(d.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' })) + ' · ' + esc(d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })) + '</b><br>' + esc(t.titulo) + '</p>'; }).join('<hr class="sep16">') : '<p class="suave m0">Por ahora no tienes turnos asignados en las próximas dos semanas.</p>';
+    })();
+    // F1039 · Si lidero un ministerio, veo «Turnos de mi ministerio» para asignar a mi gente.
+    misMinisterios(id).then((r) => {
+      const c = $('#turLider'); if (!c || !r.ok) return;
+      const ls = r.lista.filter((x) => x.es_lider && x.id);
+      if (!ls.length) return;
+      c.innerHTML = '<h2 class="sep">Turnos de mi ministerio</h2><div class="lista">' + ls.map((x) => '<button type="button" class="fila" data-tlid="' + esc(x.id) + '" data-tlnom="' + esc(x.nombre) + '"><span class="fila-txt">' + esc(x.nombre) + '<small>Asignar y revisar los turnos de este grupo</small></span><span class="flecha" aria-hidden="true">›</span></button>').join('') + '</div>';
+      c.querySelectorAll('[data-tlid]').forEach((b) => b.addEventListener('click', () => vistaTurnosLider(id, { id: b.dataset.tlid, nombre: b.dataset.tlnom })));
+    });
     document.querySelectorAll('[data-disp]').forEach((b) => b.addEventListener('click', () => {
       const act = dispLeer(), k = b.dataset.disp, nuevo = act.indexOf(k) >= 0 ? act.filter((x) => x !== k) : act.concat([k]);
       guardar(K_DISP, nuevo); vibra(); try { rpcRaw('disponibilidad_guardar', { p_codigo: id.codigo, p_clave: id.clave, p_franjas: nuevo }).catch(() => { /* sin red: queda en el teléfono */ }); } catch (e) { /* sin red */ } b.classList.toggle('on', nuevo.indexOf(k) >= 0); b.setAttribute('aria-pressed', String(nuevo.indexOf(k) >= 0));
@@ -2923,17 +2942,128 @@
     };
     cargar();
   }
+  // F1038 · TURNOS de servicio: el pastor asigna un servicio a un miembro. Requiere 17_SQL_F1038_TURNOS.sql.
+  const TURNO_MOTIVO = { 'sin-permiso': 'No pudimos confirmar tu clave de pastor. Revisa tu conexión.', 'titulo-invalido': 'Escribe un título de 2 a 80 letras.', 'fecha-invalida': 'Elige cuándo es el servicio.', 'miembro-invalido': 'Elige a una persona de tu iglesia.', 'demasiados': 'Asignaste muchos turnos en poco tiempo. Espera una hora.', 'no-existe': 'Ese turno ya no existe.' };
+  async function pTurnos(p) {
+    const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+    const hasta = new Date(hoy.getTime() + 14 * 86400000);
+    const etiqueta = (d) => d.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' });
+    const msg = (t, ok) => { const m = $('#turMsg'); if (m) { m.textContent = t; m.className = ok ? 'ok suave' : 'suave'; } };
+    $('#pantalla').innerHTML = `${cabecera('Turnos de servicio', 'Disponibilidad')}<p class="suave">Asigna un servicio a una persona de tu iglesia. Lo ve ella en su panel.</p>
+      <div class="card"><label for="turT">¿Qué servicio es?</label><input id="turT" type="text" maxlength="80" placeholder="Ej.: Sonido del culto del domingo">
+        <label for="turM">¿Quién sirve?</label><select id="turM"><option value="">Cargando personas…</option></select>
+        <label for="turI">Cuándo</label><input id="turI" type="datetime-local" value="${aLocal(new Date())}">
+        <button type="button" class="btn" id="turGuardar">Asignar turno</button></div>
+      <p class="suave" id="turMsg" role="status"></p>
+      <h2 class="sep">Próximos 14 días</h2><div id="turLista" class="lista"><p class="suave">Cargando…</p></div>`;
+    volverA('Disponibilidad', () => pDisponibilidad(p));
+    const cargarPersonas = async () => {
+      const r = await prpc('miembros_servicio_listar', p);
+      const sel = $('#turM'); if (!sel) return;
+      const filas = r.ok ? (r.data || []) : [];
+      sel.innerHTML = filas.length ? '<option value="">Elige una persona</option>' + filas.map((x) => `<option value="${esc(x.id)}">${esc(x.nombre)}</option>`).join('') : '<option value="">Aún no hay personas en tu iglesia</option>';
+    };
+    const cargar = async () => {
+      const r = await prpc('turno_pastor_listar', p, { p_desde: hoy.toISOString(), p_hasta: hasta.toISOString() });
+      const caja = $('#turLista'); if (!caja) return;
+      if (!r.ok) { caja.innerHTML = '<p class="suave">No pudimos abrir los turnos. Revisa tu conexión.</p>'; return; }
+      const filas = r.data || [];
+      if (!filas.length) { caja.innerHTML = '<p class="suave">Todavía no asignaste turnos en las próximas dos semanas.</p>'; return; }
+      let dia = '', html = '';
+      filas.forEach((t) => {
+        const d = new Date(t.inicio), clave = d.toDateString();
+        if (clave !== dia) { dia = clave; html += `<h3 class="sep">${esc(etiqueta(d))}</h3>`; }
+        const hora = d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+        html += `<div class="card item"><p class="m0"><b>${esc(hora)} · ${esc(t.titulo)}</b></p><p class="suave m0t">${esc(t.miembro)}</p><button type="button" class="btn sec chico" data-turdel="${esc(t.id)}">Quitar turno</button></div>`;
+      });
+      caja.innerHTML = html;
+      caja.querySelectorAll('[data-turdel]').forEach((b) => b.addEventListener('click', async () => {
+        if (!confirm('¿Quitar este turno?')) return;
+        const rr = await prpc('turno_borrar', p, { p_id: b.dataset.turdel });
+        const x = rr.ok ? primera(rr.data) : null;
+        if (x && x.ok) { msg('Turno quitado.', true); cargar(); } else msg(TURNO_MOTIVO[x ? x.motivo : ''] || 'No se pudo quitar. Revisa tu conexión.', false);
+      }));
+    };
+    $('#turGuardar').onclick = async () => {
+      const titulo = ($('#turT').value || '').trim(), miembro = $('#turM').value, inicio = $('#turI').value;
+      if (!titulo) return msg('Escribe qué servicio es.', false);
+      if (!miembro) return msg('Elige a una persona.', false);
+      if (!inicio) return msg('Elige cuándo es.', false);
+      const btn = $('#turGuardar'); btn.disabled = true;
+      const r = await prpc('turno_crear', p, { p_titulo: titulo, p_inicio: new Date(inicio).toISOString(), p_miembro: miembro });
+      btn.disabled = false;
+      const x = r.ok ? primera(r.data) : null;
+      if (x && x.ok) { $('#turT').value = ''; msg('Turno asignado.', true); cargar(); }
+      else msg(TURNO_MOTIVO[x ? x.motivo : ''] || 'No se pudo asignar. Revisa tu conexión.', false);
+    };
+    cargarPersonas(); cargar();
+  }
   // F1033 · Disponibilidad de los miembros, para organizar turnos. Requiere 16_SQL_F1033_DISPONIBILIDAD.sql.
   async function pDisponibilidad(p) {
     const NOMB = { entre: 'Entre semana', fin: 'Fines de semana', manana: 'Mañanas', tarde: 'Tardes', noche: 'Noches' };
-    $('#pantalla').innerHTML = `${cabecera('Disponibilidad', 'Panel')}<p class="suave">Quiénes pueden servir y cuándo. Lo marcan los miembros desde su panel.</p><div id="dispLista" class="lista"><p class="suave">Cargando…</p></div>`;
+    $('#pantalla').innerHTML = `${cabecera('Disponibilidad', 'Panel')}<p class="suave">Quiénes pueden servir y cuándo. Lo marcan los miembros desde su panel.</p><div id="dispLista" class="lista"><p class="suave">Cargando…</p></div><button type="button" class="btn sec sep16" id="verTurnos">Asignar turnos de servicio</button>`;
     volverA('Panel', vistaPastor);
+    $('#verTurnos').onclick = () => pTurnos(p);
     const r = await prpc('disponibilidad_pastor_listar', p);
     const caja = $('#dispLista'); if (!caja) return;
     if (!r.ok) { caja.innerHTML = '<p class="suave">No pudimos cargar la disponibilidad. Revisa tu conexión.</p>'; return; }
     const filas = r.data || [];
-    if (!filas.length) { caja.innerHTML = '<p class="suave">Todavía nadie marcó cuándo puede servir.</p>'; return; }
-    caja.innerHTML = filas.map((f) => `<div class="card item"><b>${esc(f.miembro)}</b><p class="suave m0t">${(f.franjas || []).map((x) => esc(NOMB[x] || x)).join(' · ')}</p></div>`).join('');
+    caja.innerHTML = filas.length ? filas.map((f) => `<div class="card item"><b>${esc(f.miembro)}</b><p class="suave m0t">${(f.franjas || []).map((x) => esc(NOMB[x] || x)).join(' · ')}</p></div>`).join('') : '<p class="suave">Todavía nadie marcó cuándo puede servir.</p>';
+  }
+  // F1039 · Turnos de un ministerio que yo lidero. Requiere 18_SQL_F1039_TURNOS_LIDERES.sql.
+  async function vistaTurnosLider(id, min) {
+    const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+    const hasta = new Date(hoy.getTime() + 14 * 86400000);
+    const etiqueta = (d) => d.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' });
+    const base = { p_codigo: id.codigo, p_clave: id.clave, p_ministerio: min.id };
+    const msg = (t, ok) => { const m = $('#tlMsg'); if (m) { m.textContent = t; m.className = ok ? 'ok suave' : 'suave'; } };
+    const MOT = { 'sin-permiso': 'Solo los líderes de este ministerio pueden hacerlo.', 'titulo-invalido': 'Escribe un título de 2 a 80 letras.', 'fecha-invalida': 'Elige cuándo es el servicio.', 'miembro-invalido': 'Elige a una persona de la iglesia.', 'demasiados': 'Asignaste muchos turnos en poco tiempo. Espera una hora.', 'no-existe': 'Ese turno ya no existe.' };
+    $('#pantalla').innerHTML = `${cabecera('Turnos · ' + min.nombre, 'Mi iglesia')}<p class="suave">Asigna un servicio a una persona de tu ministerio.</p>
+      <div class="card"><label for="tlT">¿Qué servicio es?</label><input id="tlT" type="text" maxlength="80" placeholder="Ej.: Ayudar en la entrada">
+        <label for="tlM">¿Quién sirve?</label><select id="tlM"><option value="">Cargando personas…</option></select>
+        <label for="tlI">Cuándo</label><input id="tlI" type="datetime-local" value="${aLocal(new Date())}">
+        <button type="button" class="btn" id="tlGuardar">Asignar turno</button></div>
+      <p class="suave" id="tlMsg" role="status"></p>
+      <h2 class="sep">Próximos 14 días</h2><div id="tlLista" class="lista"><p class="suave">Cargando…</p></div>`;
+    volverA('Mi iglesia', vistaIglesia);
+    const personas = async () => {
+      const r = await rpcRaw('miembros_turno_listar', base); const sel = $('#tlM'); if (!sel) return;
+      const f = r.ok ? (r.data || []) : [];
+      sel.innerHTML = f.length ? '<option value="">Elige una persona</option>' + f.map((x) => `<option value="${esc(x.id)}">${esc(x.nombre)}</option>`).join('') : '<option value="">No pudimos cargar las personas</option>';
+    };
+    const cargar = async () => {
+      const r = await rpcRaw('turno_lider_listar', Object.assign({}, base, { p_desde: hoy.toISOString(), p_hasta: hasta.toISOString() }));
+      const c = $('#tlLista'); if (!c) return;
+      if (!r.ok) { c.innerHTML = '<p class="suave">No pudimos abrir los turnos. Revisa tu conexión.</p>'; return; }
+      const f = r.data || [];
+      if (!f.length) { c.innerHTML = '<p class="suave">Todavía no hay turnos de este ministerio en las próximas dos semanas.</p>'; return; }
+      let dia = '', html = '';
+      f.forEach((t) => {
+        const d = new Date(t.inicio), clave = d.toDateString();
+        if (clave !== dia) { dia = clave; html += `<h3 class="sep">${esc(etiqueta(d))}</h3>`; }
+        html += `<div class="card item"><p class="m0"><b>${esc(d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }))} · ${esc(t.titulo)}</b></p><p class="suave m0t">${esc(t.miembro)}</p><button type="button" class="btn sec chico" data-tldel="${esc(t.id)}">Quitar turno</button></div>`;
+      });
+      c.innerHTML = html;
+      c.querySelectorAll('[data-tldel]').forEach((b) => b.addEventListener('click', async () => {
+        if (!confirm('¿Quitar este turno?')) return;
+        const rr = await rpcRaw('turno_lider_borrar', { p_codigo: id.codigo, p_clave: id.clave, p_id: b.dataset.tldel });
+        const x = rr.ok ? primera(rr.data) : null;
+        if (x && x.ok) { msg('Turno quitado.', true); cargar(); } else msg(MOT[x ? x.motivo : ''] || 'No se pudo quitar. Revisa tu conexión.', false);
+      }));
+    };
+    $('#tlGuardar').onclick = async () => {
+      const titulo = ($('#tlT').value || '').trim(), miembro = $('#tlM').value, inicio = $('#tlI').value;
+      if (!titulo) return msg('Escribe qué servicio es.', false);
+      if (!miembro) return msg('Elige a una persona.', false);
+      if (!inicio) return msg('Elige cuándo es.', false);
+      const btn = $('#tlGuardar'); btn.disabled = true;
+      const r = await rpcRaw('turno_lider_crear', Object.assign({}, base, { p_titulo: titulo, p_inicio: new Date(inicio).toISOString(), p_miembro: miembro }));
+      btn.disabled = false;
+      const x = r.ok ? primera(r.data) : null;
+      if (x && x.ok) { $('#tlT').value = ''; msg('Turno asignado.', true); cargar(); }
+      else msg(MOT[x ? x.motivo : ''] || 'No se pudo asignar. Revisa tu conexión.', false);
+    };
+    personas(); cargar();
   }
   const pCab = (tit, extra) => `${cabecera(tit, 'Panel')}${extra || ''}<p class="suave" id="pmsg">Cargando…</p><div id="plista"></div>`;
   async function pSolicitudes(p) {
