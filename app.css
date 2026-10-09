@@ -1041,3 +1041,9 @@ html[data-contraste=alto] .card,html[data-contraste=alto] .chip,html[data-contra
 .cal-cel.con{background:color-mix(in srgb,var(--verde) 14%,transparent)}
 .cal-pt{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:var(--oro);box-shadow:0 0 0 1px color-mix(in srgb,var(--tinta) 15%,transparent)}
 .cal-cel:focus-visible{outline:3px solid color-mix(in srgb,var(--oro) 70%,transparent);outline-offset:2px}
+/* F1044 · Pulido: áreas para tocar de al menos 44 px (guía de accesibilidad). No cambia el diseño, solo amplía la zona de toque. */
+.hoy-inst-x,.il-juntos,.tema-c,.tbson-sw,.btn.sec.chico,button.chip{min-width:44px;min-height:44px}
+.hoy-inst-x{display:inline-flex;align-items:center;justify-content:center}
+.hoy-fecha{min-height:44px}
+.av-emo{min-width:44px;min-height:44px}
+.rol-dia{margin-top:12px}

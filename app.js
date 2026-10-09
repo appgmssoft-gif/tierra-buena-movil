@@ -752,6 +752,7 @@
       
       <h2 class="sep">Mis turnos</h2><div class="card" id="misTurnos"><p class="suave m0">Cargando tus turnos…</p></div>
       <div id="turLider"></div>
+      <h2 class="sep">Quién sirve</h2><div class="card" id="quienSirve"><p class="suave m0">Cargando el rol de la iglesia…</p></div>
       <h2 class="sep">Mi servicio</h2>
       <div class="card"><b>¿Cuándo puedes servir?</b><p class="suave m0t">Marca lo que te sirve. Por ahora solo lo ves tú.</p>
         <div class="chips" role="group" aria-label="Mi disponibilidad">${DISP_OPC.map(([k, t]) => `<button type="button" class="chip${dispLeer().indexOf(k) >= 0 ? ' on' : ''}" data-disp="${k}" aria-pressed="${dispLeer().indexOf(k) >= 0}">${t}</button>`).join('')}</div>
@@ -791,6 +792,22 @@
       if (!r.ok) { c.innerHTML = '<p class="suave m0">No pudimos cargar tus turnos. Revisa tu conexión.</p>'; return; }
       const filas = r.data || [];
       c.innerHTML = filas.length ? filas.map((t) => { const d = new Date(t.inicio); return '<p class="m0 t2"><b>' + esc(d.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' })) + ' · ' + esc(d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })) + '</b><br>' + esc(t.titulo) + '</p>'; }).join('<hr class="sep16">') : '<p class="suave m0">Por ahora no tienes turnos asignados en las próximas dos semanas.</p>';
+    })();
+    // F1045 · Rol de la iglesia: quién sirve en los próximos 30 días (lo ve cualquier miembro). Requiere 19_SQL_F1045_ROL_IGLESIA.sql.
+    (async () => {
+      const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+      const r = await rpcRaw('turno_iglesia_listar', { p_codigo: id.codigo, p_clave: id.clave, p_desde: hoy.toISOString(), p_hasta: new Date(hoy.getTime() + 30 * 86400000).toISOString() });
+      const c = $('#quienSirve'); if (!c) return;
+      if (!r.ok) { c.innerHTML = '<p class="suave m0">Por ahora no pudimos cargar el rol. Revisa tu conexión.</p>'; return; }
+      const filas = r.data || [];
+      if (!filas.length) { c.innerHTML = '<p class="suave m0">Todavía no hay servicios asignados en los próximos 30 días.</p>'; return; }
+      let dia = '', html = '';
+      filas.forEach((t) => {
+        const d = new Date(t.inicio), clave = d.toDateString();
+        if (clave !== dia) { dia = clave; html += '<p class="m0 t2 rol-dia"><b>' + esc(d.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' })) + '</b></p>'; }
+        html += '<p class="m0 suave">' + esc(d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })) + ' · ' + esc(t.titulo) + ': <b>' + esc(t.miembro) + '</b>' + (t.ministerio ? ' <small>(' + esc(t.ministerio) + ')</small>' : '') + '</p>';
+      });
+      c.innerHTML = html;
     })();
     // F1039 · Si lidero un ministerio, veo «Turnos de mi ministerio» para asignar a mi gente.
     misMinisterios(id).then((r) => {
@@ -3014,9 +3031,12 @@
     $('#calAnt').onclick = () => pCalendarioMes(p, new Date(ref.getFullYear(), ref.getMonth() - 1, 1));
     $('#calSig').onclick = () => pCalendarioMes(p, new Date(ref.getFullYear(), ref.getMonth() + 1, 1));
     const r = await prpc('calendario_pastor_listar', p, { p_desde: primero.toISOString(), p_hasta: siguiente.toISOString() });
+    // F1043 · Calendario mensual de servicios: los turnos asignados del mes aparecen con el nombre de quien sirve.
+    const rt = await prpc('turno_pastor_listar', p, { p_desde: primero.toISOString(), p_hasta: siguiente.toISOString() });
     const eventos = r.ok ? (r.data || []) : [];
+    const turnos = rt.ok ? (rt.data || []).map((t) => ({ tipo: 'turno', titulo: t.titulo, inicio: t.inicio, miembro: t.miembro })) : [];
     const porDia = {};
-    eventos.forEach((e) => { const k = new Date(e.inicio).getDate(); (porDia[k] = porDia[k] || []).push(e); });
+    eventos.concat(turnos).forEach((e) => { const k = new Date(e.inicio).getDate(); (porDia[k] = porDia[k] || []).push(e); });
     const vacios = (primero.getDay() + 6) % 7;
     const hoy = new Date();
     let celdas = '';
@@ -3027,12 +3047,14 @@
       celdas += `<button type="button" class="cal-cel${n ? ' con' : ''}${esHoy ? ' hoy' : ''}" data-cald="${d}" aria-label="${d}${n ? ', ' + n + ' eventos' : ', sin eventos'}">${d}${n ? '<span class="cal-pt" aria-hidden="true"></span>' : ''}</button>`;
     }
     $('.cal-grid').insertAdjacentHTML('beforeend', celdas);
-    if (!r.ok) { $('#calDia').innerHTML = '<p class="suave">No pudimos abrir el mes. Revisa tu conexión.</p>'; return; }
+    if (!r.ok && !rt.ok) { $('#calDia').innerHTML = '<p class="suave">No pudimos abrir el mes. Revisa tu conexión.</p>'; return; }
     document.querySelectorAll('[data-cald]').forEach((b) => b.addEventListener('click', () => {
       const d = Number(b.dataset.cald), lista = porDia[d] || [];
       const fecha = new Date(ref.getFullYear(), ref.getMonth(), d);
       const etiq = fecha.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' });
-      $('#calDia').innerHTML = `<h3 class="sep">${esc(etiq)}</h3>` + (lista.length ? lista.map((e) => `<div class="card item"><p class="m0"><b>${esc(new Date(e.inicio).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }))} · ${esc(e.titulo)}</b></p><p class="suave m0t">${esc((CAL_TIPOS.find((t) => t[0] === e.tipo) || [0, 'Personal'])[1])}${e.detalle ? ' · ' + esc(e.detalle) : ''}</p></div>`).join('') : '<p class="suave">Nada agendado este día.</p>');
+      $('#calDia').innerHTML = `<h3 class="sep">${esc(etiq)}</h3>` + (lista.length ? lista.map((e) => e.tipo === 'turno'
+        ? `<div class="card item"><p class="m0"><b>${esc(new Date(e.inicio).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }))} · ${esc(e.titulo)}</b></p><p class="suave m0t">Sirve: <b>${esc(e.miembro)}</b></p></div>`
+        : `<div class="card item"><p class="m0"><b>${esc(new Date(e.inicio).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }))} · ${esc(e.titulo)}</b></p><p class="suave m0t">${esc((CAL_TIPOS.find((t) => t[0] === e.tipo) || [0, 'Personal'])[1])}${e.detalle ? ' · ' + esc(e.detalle) : ''}</p></div>`).join('') : '<p class="suave">Nada agendado este día.</p>');
     }));
   }
   // F1033 · Disponibilidad de los miembros, para organizar turnos. Requiere 16_SQL_F1033_DISPONIBILIDAD.sql.
