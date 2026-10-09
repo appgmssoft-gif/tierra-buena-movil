@@ -2893,7 +2893,7 @@
     const hasta = new Date(hoy.getTime() + 14 * 86400000);
     const etiqueta = (d) => d.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' });
     $('#pantalla').innerHTML = `${cabecera('Mi calendario', 'Panel')}<p class="suave">Tu agenda personal: visitas, reuniones, prédicas y descanso. Solo la ves tú.</p>
-      <button type="button" class="btn sec" id="calNuevo" aria-expanded="false" aria-controls="calForm">+ Agregar a mi calendario</button>
+      <div class="cr-acc"><button type="button" class="btn sec" id="calNuevo" aria-expanded="false" aria-controls="calForm">+ Agregar a mi calendario</button><button type="button" class="btn sec" id="calVerMes">Ver el mes</button></div>
       <div id="calForm" class="card" hidden>
         <label for="calT">¿Qué es?</label><input id="calT" type="text" maxlength="80" placeholder="Ej.: Visitar a la familia Soto">
         <label for="calTi">Tipo</label><select id="calTi">${CAL_TIPOS.map((t) => `<option value="${t[0]}">${t[1]}</option>`).join('')}</select>
@@ -2929,6 +2929,7 @@
       }));
     };
     $('#calNuevo').onclick = () => { const f = $('#calForm'), b = $('#calNuevo'); f.hidden = !f.hidden; b.setAttribute('aria-expanded', String(!f.hidden)); };
+    $('#calVerMes').onclick = () => pCalendarioMes(p, new Date());
     $('#calGuardar').onclick = async () => {
       const titulo = ($('#calT').value || '').trim(), inicio = $('#calI').value, fin = $('#calF').value;
       if (!titulo) return msg('Escribe qué es antes de guardar.', false);
@@ -2997,6 +2998,42 @@
       else msg(TURNO_MOTIVO[x ? x.motivo : ''] || 'No se pudo asignar. Revisa tu conexión.', false);
     };
     cargarPersonas(); cargar();
+  }
+  // F1042 · Mi calendario en vista de MES: cuadrícula con los días que tienen eventos. Al tocar un día, se ven sus eventos.
+  async function pCalendarioMes(p, ref) {
+    const primero = new Date(ref.getFullYear(), ref.getMonth(), 1);
+    const siguiente = new Date(ref.getFullYear(), ref.getMonth() + 1, 1);
+    const nombreMes = primero.toLocaleDateString('es-CL', { month: 'long' });
+    const mesTxt = nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1) + ' ' + primero.getFullYear();
+    const dias = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+    $('#pantalla').innerHTML = `${cabecera('Mes', 'Mi calendario')}
+      <div class="cal-mes-nav"><button type="button" class="btn sec chico" id="calAnt" aria-label="Mes anterior">‹</button><h2 class="cal-mes-tit">${esc(mesTxt)}</h2><button type="button" class="btn sec chico" id="calSig" aria-label="Mes siguiente">›</button></div>
+      <div class="cal-grid" role="grid" aria-label="${esc(mesTxt)}">${dias.map((d) => `<span class="cal-dia-n" aria-hidden="true">${d}</span>`).join('')}</div>
+      <div id="calDia" class="lista sep16"><p class="suave">Toca un día para ver lo que tienes agendado.</p></div>`;
+    volverA('Mi calendario', () => pCalendario(p));
+    $('#calAnt').onclick = () => pCalendarioMes(p, new Date(ref.getFullYear(), ref.getMonth() - 1, 1));
+    $('#calSig').onclick = () => pCalendarioMes(p, new Date(ref.getFullYear(), ref.getMonth() + 1, 1));
+    const r = await prpc('calendario_pastor_listar', p, { p_desde: primero.toISOString(), p_hasta: siguiente.toISOString() });
+    const eventos = r.ok ? (r.data || []) : [];
+    const porDia = {};
+    eventos.forEach((e) => { const k = new Date(e.inicio).getDate(); (porDia[k] = porDia[k] || []).push(e); });
+    const vacios = (primero.getDay() + 6) % 7;
+    const hoy = new Date();
+    let celdas = '';
+    for (let i = 0; i < vacios; i++) celdas += '<span class="cal-cel vacia" aria-hidden="true"></span>';
+    const total = new Date(ref.getFullYear(), ref.getMonth() + 1, 0).getDate();
+    for (let d = 1; d <= total; d++) {
+      const n = (porDia[d] || []).length, esHoy = hoy.getFullYear() === ref.getFullYear() && hoy.getMonth() === ref.getMonth() && hoy.getDate() === d;
+      celdas += `<button type="button" class="cal-cel${n ? ' con' : ''}${esHoy ? ' hoy' : ''}" data-cald="${d}" aria-label="${d}${n ? ', ' + n + ' eventos' : ', sin eventos'}">${d}${n ? '<span class="cal-pt" aria-hidden="true"></span>' : ''}</button>`;
+    }
+    $('.cal-grid').insertAdjacentHTML('beforeend', celdas);
+    if (!r.ok) { $('#calDia').innerHTML = '<p class="suave">No pudimos abrir el mes. Revisa tu conexión.</p>'; return; }
+    document.querySelectorAll('[data-cald]').forEach((b) => b.addEventListener('click', () => {
+      const d = Number(b.dataset.cald), lista = porDia[d] || [];
+      const fecha = new Date(ref.getFullYear(), ref.getMonth(), d);
+      const etiq = fecha.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' });
+      $('#calDia').innerHTML = `<h3 class="sep">${esc(etiq)}</h3>` + (lista.length ? lista.map((e) => `<div class="card item"><p class="m0"><b>${esc(new Date(e.inicio).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }))} · ${esc(e.titulo)}</b></p><p class="suave m0t">${esc((CAL_TIPOS.find((t) => t[0] === e.tipo) || [0, 'Personal'])[1])}${e.detalle ? ' · ' + esc(e.detalle) : ''}</p></div>`).join('') : '<p class="suave">Nada agendado este día.</p>');
+    }));
   }
   // F1033 · Disponibilidad de los miembros, para organizar turnos. Requiere 16_SQL_F1033_DISPONIBILIDAD.sql.
   async function pDisponibilidad(p) {

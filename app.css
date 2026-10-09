@@ -1030,3 +1030,14 @@ html[data-contraste=alto] .card,html[data-contraste=alto] .chip,html[data-contra
 /* F1031 · Mi crecimiento: un toque para «Lo hice», nota opcional, progreso neutral (referencias: Finch, Daylio) */
 .cr-acc{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}
 .cr-acc .btn{min-height:48px}
+/* F1042 · Calendario del pastor en vista de mes: cuadrícula lunes a domingo, días con eventos marcados con un punto dorado */
+.cal-mes-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px}
+.cal-mes-tit{margin:0;font-size:1.1rem;text-align:center;flex:1}
+.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-top:12px}
+.cal-dia-n{text-align:center;font-size:.78rem;letter-spacing:.06em;color:var(--suave);padding:4px 0}
+.cal-cel{position:relative;width:100%;min-width:0;aspect-ratio:1/1;min-height:44px;border-radius:14px;border:1px solid color-mix(in srgb,var(--tinta) 14%,transparent);background:color-mix(in srgb,var(--tinta) 5%,transparent);color:var(--tinta);font:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.95rem}
+.cal-cel.vacia{border:0;background:transparent;cursor:default}
+.cal-cel.hoy{border:2px solid var(--oro)}
+.cal-cel.con{background:color-mix(in srgb,var(--verde) 14%,transparent)}
+.cal-pt{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:var(--oro);box-shadow:0 0 0 1px color-mix(in srgb,var(--tinta) 15%,transparent)}
+.cal-cel:focus-visible{outline:3px solid color-mix(in srgb,var(--oro) 70%,transparent);outline-offset:2px}

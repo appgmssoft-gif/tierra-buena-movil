@@ -392,3 +392,23 @@ html[data-eco="2"] .il-tri-op.pop,html[data-eco="2"] .il-btn-msg.nuevo::after{an
 .og-h span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .og-card{width:100%}
 .og-trivia{width:100%}
+/* F1040 · Correcciones visibles de las capturas (DISENO_CAPAS_INICIO.md, «Errores visibles»):
+   etiquetas de gotas que no se cortan, botones de Inicio que no tapan la barra inferior, filtros del Vivero completos. */
+.og-h{min-width:0}
+.og-h>span,.og-h>b{min-width:0;overflow-wrap:anywhere}
+@media (max-width:360px){.og-h{letter-spacing:.02em;font-size:.72rem}}
+.il-fila{padding-bottom:28px}
+.il-fila .il-btn-msg{white-space:normal;text-align:center;line-height:1.25;max-width:100%}
+.viv-filtros{padding-right:16px;scroll-padding-inline:16px}
+.viv-filtros>*{flex:0 0 auto}
+/* F1040 · Barra inferior: «Mi iglesia» no se corta en teléfonos de 360 px */
+@media (max-width:380px){.tab{font-size:.66rem;letter-spacing:-.01em}.tab span,.tab b{white-space:nowrap}}
+/* F1041 · HUD de vidrio (DISENO_CAPAS_INICIO.md, punto 3): paneles translúcidos con borde dorado,
+   legibles sobre la escena. Con «Ahorro» (data-eco="2", rendimiento.js) quita el desenfoque para no calentar el teléfono. */
+.il-btn-msg,.il-gotas,.og-card,.og-trivia,.il-tri{
+  background:color-mix(in srgb,var(--tinta) 10%,transparent);
+  border:1px solid color-mix(in srgb,var(--oro) 42%,transparent);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.il-btn-msg{color:var(--tinta);box-shadow:0 2px 10px color-mix(in srgb,var(--tinta) 12%,transparent)}
+.il-btn-msg:focus-visible{outline:3px solid color-mix(in srgb,var(--oro) 70%,transparent);outline-offset:3px}
+html[data-eco="2"] .il-btn-msg,html[data-eco="2"] .il-gotas,html[data-eco="2"] .og-card,html[data-eco="2"] .og-trivia,html[data-eco="2"] .il-tri{-webkit-backdrop-filter:none;backdrop-filter:none;background:color-mix(in srgb,var(--papel) 92%,transparent)}
