@@ -1027,13 +1027,6 @@ html[data-tam=m]{font-size:125%}
 /* F1025 · Contraste alto: textos y bordes más firmes (tarea de accesibilidad). Se activa en Perfil > Temas > Contraste. */
 html[data-contraste=alto]{--suave:color-mix(in srgb,var(--tinta) 82%,var(--papel));--linea:color-mix(in srgb,var(--tinta) 55%,var(--papel))}
 html[data-contraste=alto] .card,html[data-contraste=alto] .chip,html[data-contraste=alto] .btn.sec{border-width:2px}
-/* F1028 · Jardín de las bienaventuranzas: ocho parcelas con etapas (tierra, brote, planta, flor) */
-.jard-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:12px}
-.jard-p{display:flex;justify-content:space-between;align-items:center;gap:12px}
-.jard-p>span:first-child{display:flex;flex-direction:column;gap:2px;min-width:0}
-.jard-p small{display:block}
-.jard-p:disabled{opacity:.62;cursor:default}
-.jard-et{display:flex;gap:4px;flex:0 0 auto}
-.jard-et i{width:10px;height:10px;border-radius:50%;background:var(--linea);display:block}
-.jard-et i.on{background:var(--verde)}
-.jard-p.hecho .jard-et i{background:var(--oro)}
+/* F1031 · Mi crecimiento: un toque para «Lo hice», nota opcional, progreso neutral (referencias: Finch, Daylio) */
+.cr-acc{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}
+.cr-acc .btn{min-height:48px}

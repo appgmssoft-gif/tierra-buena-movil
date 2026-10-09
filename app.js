@@ -58,7 +58,7 @@
   // ---------- F872 · Avances por cuenta (nube) ----------
   // Lo personal (oración, crecimiento, ideas, cursos, lectura, acción del mes) se guarda en el teléfono Y en la cuenta
   // (tabla public.avances_cuenta, solo la ve su dueño: docs/sql/SQL_AVANCES_CUENTA.sql). Sin sesión o sin la tabla, todo sigue local.
-  const SYNC_CLAVES = ['tb_movil_planvida', 'tb_movil_mi_oracion', 'tb_movil_crecimiento', 'tb_movil_ideas_fav', 'tb_movil_aprender', 'tb_movil_biblia_ultimo', 'tb_movil_accion_mes', 'tb_movil_perfil', 'tb_movil_racha', 'tb_movil_biblia_res', 'tb_movil_canciones_mias', 'tb_movil_canciones_fav', 'tb_movil_biblia_col', 'tb_movil_biblia_notas', 'tb_movil_biblia_marc', 'tb_movil_leidos', 'tb_movil_planes', 'tb_inicio_v1', 'tb_movil_juegos', 'tb_movil_acciones', 'tb_inicio_fondo', 'tb_inicio_clima'];   // F946: + Inicio (árbol, gotas, vivero), juegos, «Hoy lo hago», paisaje y clima
+  const SYNC_CLAVES = ['tb_movil_planvida', 'tb_movil_mi_oracion', 'tb_movil_crecimiento', 'tb_movil_ideas_fav', 'tb_movil_aprender', 'tb_movil_biblia_ultimo', 'tb_movil_accion_mes', 'tb_movil_perfil', 'tb_movil_racha', 'tb_movil_biblia_res', 'tb_movil_canciones_mias', 'tb_movil_canciones_fav', 'tb_movil_biblia_col', 'tb_movil_biblia_notas', 'tb_movil_biblia_marc', 'tb_movil_leidos', 'tb_movil_planes', 'tb_inicio_v1', 'tb_movil_juegos', 'tb_movil_disponibilidad', 'tb_movil_acciones', 'tb_inicio_fondo', 'tb_inicio_clima'];   // F946: + Inicio (árbol, gotas, vivero), juegos, «Hoy lo hago», paisaje y clima
   const K_SYNC = 'tb_movil_sync';
   const sync = { estado: 'local', cuando: null, timer: null, ocupado: false };   // estado: local | ok | pendiente | falta | error
   const metaLeer = () => { const m = leer(K_SYNC); return m && typeof m === 'object' ? { dueno: m.dueno || null, t: m.t || {}, d: m.d || {}, off: m.off === true } : { dueno: null, t: {}, d: {}, off: false }; };
@@ -737,6 +737,10 @@
     $('#can').onclick = () => { if (confirm('¿Cancelar tu solicitud?')) { borrar(K_SOL); borrar(K_IG); vistaUnirse(); } };
   }
 
+  // F1034 · Mi servicio: cuándo puede servir el miembro. Por ahora solo lo ve él; se comparte con el pastor cuando existan las tablas de turnos (SQL pendiente de confirmación).
+  const K_DISP = 'tb_movil_disponibilidad';
+  const DISP_OPC = [['entre', 'Entre semana'], ['fin', 'Fines de semana'], ['manana', 'Mañanas'], ['tarde', 'Tardes'], ['noche', 'Noches']];
+  const dispLeer = () => { const v = leer(K_DISP); return Array.isArray(v) ? v.filter((x) => DISP_OPC.some((o) => o[0] === x)) : []; };
   function vistaMiembro(id) {
     const ig = leer(K_IG);
     $('#pantalla').innerHTML = `
@@ -746,6 +750,10 @@
       <h2 class="sep">Vivir con mi iglesia</h2>
       <div class="grid">${activa('📅', 'Agenda', 'Actividades de tu iglesia y de tus grupos.', 'agenda')}${activa('📣', 'Avisos', 'Mensajes de tu pastor y de los líderes.', 'avisos')}${activa('🕍', 'Mis ministerios', 'Los grupos donde sirves y quién los lidera.', 'ministerios')}${activa('🧱', 'Muro', 'Peticiones que tu pastor compartió, para orar juntos.', 'muro')}${activa('🌟', 'Acción del mes', 'Lo que viviremos juntos este mes.', 'accion')}${activa('🤲', 'Juntos hacemos el bien', 'Ideas y movimientos para servir con tu iglesia.', 'juntos')}</div>
       
+      <h2 class="sep">Mi servicio</h2>
+      <div class="card"><b>¿Cuándo puedes servir?</b><p class="suave m0t">Marca lo que te sirve. Por ahora solo lo ves tú.</p>
+        <div class="chips" role="group" aria-label="Mi disponibilidad">${DISP_OPC.map(([k, t]) => `<button type="button" class="chip${dispLeer().indexOf(k) >= 0 ? ' on' : ''}" data-disp="${k}" aria-pressed="${dispLeer().indexOf(k) >= 0}">${t}</button>`).join('')}</div>
+        <p class="suave m0t" id="dispMsg" aria-live="polite"></p></div>
       <div id="tbEjem" class="tb-ejem-caja"></div>
       <section class="card cuidar-pastor"><b>Cuidar a tu pastor</b><p class="suave m0t">Tu pastor también es una persona. Estas son formas concretas de acompañarlo:</p><ul class="ayuda-pasos"><li>Ora por él y por su familia, por su nombre.</li><li>Agradécele con una palabra sincera, en persona o por escrito.</li><li>Respeta sus días de descanso: no todo es urgente.</li><li>Ofrece una ayuda concreta: un servicio, transporte o una compra para el aseo.</li><li>Si ves una carga que no puede con todo, dile que cuentas con él.</li></ul></section><h2 class="sep">Mis cosas</h2>
       <div class="grid">${activa('🕊️', 'Mi oración', 'Tu diario. Solo lo ves tú.', 'mioracion')}${activa('🌱', 'Mi crecimiento', 'Un paso por semana. Solo lo ves tú.', 'crec')}${activa('🔒', 'Mi privacidad', 'Qué ve tu pastor, descargar o borrar tus datos.', 'privacidad')}${activa('❓', 'Ayuda', 'Respuestas cortas a lo que más se pregunta.', 'ayuda')}</div>
@@ -773,6 +781,11 @@
       try { await navigator.clipboard.writeText(t.value); $('#llaveMsg').textContent = 'Llave copiada. Ahora pégala en tu otro dispositivo.'; }
       catch (e) { try { document.execCommand('copy'); $('#llaveMsg').textContent = 'Llave copiada.'; } catch (e2) { $('#llaveMsg').textContent = 'Mantén presionado el recuadro y elige «Copiar».'; } }
     };
+    document.querySelectorAll('[data-disp]').forEach((b) => b.addEventListener('click', () => {
+      const act = dispLeer(), k = b.dataset.disp, nuevo = act.indexOf(k) >= 0 ? act.filter((x) => x !== k) : act.concat([k]);
+      guardar(K_DISP, nuevo); vibra(); b.classList.toggle('on', nuevo.indexOf(k) >= 0); b.setAttribute('aria-pressed', String(nuevo.indexOf(k) >= 0));
+      const m = $('#dispMsg'); if (m) m.textContent = nuevo.length ? 'Guardado en tu cuenta.' : 'Puedes marcar cuando quieras.';
+    }));
     document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ juntos: abrirJuntos, oracion: vistaOracion, agenda: (i) => vistaAgenda(modoMiembro(i)), avisos: (i) => vistaAvisos(modoMiembro(i)), ministerios: vistaMinisterios, muro: vistaMuro, accion: vistaAccion, visita: vistaVisita, mioracion: () => vistaMiOracion(), crec: () => vistaCrecimiento(), privacidad: vistaPrivacidad, ayuda: () => vistaAyuda(id) }[b.dataset.ir] || vistaVisita)(id)));
     $('#salir').onclick = async () => {
       if (!confirm('¿Salir de esta iglesia? Se borrará tu nombre en la iglesia y en este teléfono.')) return;
@@ -1033,12 +1046,16 @@
     caja.innerHTML = mias.map((a) => `<div class="card item"><div class="fila"><b>${a.esDefault ? '🌟 ' : '✚ '}${esc(a.titulo)}</b>${a.esDefault ? '' : `<button type="button" class="btn sec chico" data-amdel="${esc(a.id)}" aria-label="Eliminar acción">🗑️</button>`}</div>
       <label class="suave" for="amt_${esc(a.id)}">¿Cómo te fue con esto? Cuéntalo en pocas palabras.</label>
       <textarea id="amt_${esc(a.id)}" rows="3" maxlength="600" placeholder="Escribe cómo te fue…">${esc(a.comoMeFue || '')}</textarea>
-      <button type="button" class="btn chico" data-amsave="${esc(a.id)}">✍️ Guardar cómo me fue</button></div>`).join('');
+      <div class="cr-acc"><button type="button" class="btn ${a.hecho ? 'sec' : ''} chico" data-amhecho="${esc(a.id)}" aria-pressed="${!!a.hecho}">${a.hecho ? '✓ Hecho este mes (quitar)' : 'Lo hice este mes'}</button><button type="button" class="btn sec chico" data-amsave="${esc(a.id)}">Guardar nota</button></div></div>`).join('');
     caja.querySelectorAll('[data-amsave]').forEach((b) => b.addEventListener('click', () => {
       const texto = ($('#amt_' + b.dataset.amsave).value || '').trim();
-      if (!texto) return msg('Cuéntanos algo antes de guardar, aunque sea breve.');
       const l = accTodas(); const it = l.find((x) => x.id === b.dataset.amsave); if (!it) return;
+      if (!texto) return msg(it.comoMeFue ? 'Tu nota anterior sigue guardada. Escribe algo nuevo para cambiarla.' : 'Puedes escribir una nota cuando quieras.', false);
       it.comoMeFue = texto.slice(0, 600); accGuardar(l); msg('Guardado en este teléfono.', true);
+    }));
+    caja.querySelectorAll('[data-amhecho]').forEach((b) => b.addEventListener('click', () => {
+      const l = accTodas(); const it = l.find((x) => x.id === b.dataset.amhecho); if (!it) return;
+      it.hecho = !it.hecho; accGuardar(l); vibra(); accionPintar();
     }));
     caja.querySelectorAll('[data-amdel]').forEach((b) => b.addEventListener('click', () => {
       if (!confirm('¿Eliminar esta acción?')) return;
@@ -1246,47 +1263,11 @@
   // F944 · JUEGOS (fase A): entrada común. Cada juego se enchufa aquí con su vista y llama a juegoTerminar(id, aciertos, total).
   const K_JUEGOS = 'tb_movil_juegos';
   const JUEGOS = [
-    ['jardin', '🌸', 'Jardín de las bienaventuranzas', 'Ocho parcelas, una por cada bienaventuranza. Cada día riegas una con su gesto práctico; cuando florecen todas, se cosecha el jardín.'],
-    ['sembrador', '🌱', 'El Sembrador', 'Cada capítulo que lees es una semilla. Prepara la tierra y mira crecer tu campo.'],
     ['raices', '📖', 'Raíces', 'Preguntas sobre lo que leíste, con el versículo que explica la respuesta.'],
     ['brotes', '✍️', 'Brotes', 'Completa el versículo y llévalo en la memoria. Usa los que tú resaltaste.'],
     ['sopa', '🔎', 'Sopa del Vivero', 'Letras grandes, sin tiempo y con pistas gratis.']
   ];
-  // F1028 · JARDÍN DE LAS BIENAVENTURANZAS: ocho parcelas (Mateo 5:3-10). Cada día se riega UNA; cada riego pasa a la etapa siguiente (tierra, brote, planta, flor). Con las ocho en flor se cosecha el jardín. Se guarda en K_JUEGOS (viaja a la cuenta).
-  const BIENAVENTURANZAS = [
-    ['pobres', 'Pobres en espíritu', 'Mateo 5:3', 'Reconoce hoy una necesidad tuya y ponla delante de Dios.'],
-    ['llorar', 'Los que lloran', 'Mateo 5:4', 'Acompaña a alguien que esté triste: escúchalo sin corregirlo.'],
-    ['mansos', 'Los mansos', 'Mateo 5:5', 'Responde hoy con suavidad a algo que te molestó.'],
-    ['justicia', 'Hambre de justicia', 'Mateo 5:6', 'Haz una acción justa aunque nadie lo note.'],
-    ['misericordia', 'Los misericordiosos', 'Mateo 5:7', 'Perdona o ayuda a alguien que te falló.'],
-    ['limpios', 'Limpios de corazón', 'Mateo 5:8', 'Pasa cinco minutos en silencio, sin pantallas.'],
-    ['pacificos', 'Los pacificadores', 'Mateo 5:9', 'Ayuda a calmar un conflicto cercano.'],
-    ['perseguidos', 'Perseguidos por la justicia', 'Mateo 5:10', 'Di con respeto lo que crees, sin burlarte de nadie.']
-  ];
-  const JARDIN_ETAPAS = ['Tierra', 'Brote', 'Planta', 'Flor'];
-  function jardinEstado() { const j = leer(K_JUEGOS) || {}; const g = j.jardin || {}; return { s: Array.isArray(g.s) && g.s.length === 8 ? g.s.map((x) => Math.min(3, Math.max(0, Number(x) || 0))) : [0, 0, 0, 0, 0, 0, 0, 0], f: typeof g.f === 'string' ? g.f : '', c: Number(g.c) || 0 }; }
-  function jardinGuardar(g) { const j = leer(K_JUEGOS) || { n: 0, p: {} }; j.jardin = g; guardar(K_JUEGOS, j); }
-  function vistaJardin(volver) {
-    const son = (n) => { try { if (window.TBSonido && window.TBSonido[n]) window.TBSonido[n](); } catch (e) { /* sin sonido */ } };
-    const pintar = () => {
-      const g = jardinEstado(), hoy = hoyTxt(), regado = g.f === hoy, flores = g.s.filter((x) => x >= 3).length, cosechado = flores === 8;
-      const mensaje = cosechado ? '<p class="ju-vered ok"><b>El jardín está en flor.</b> Cosechaste ' + (g.c || 1) + ' vez' + ((g.c || 1) > 1 ? 'es' : '') + '. Sigue regando para cuidarlo.</p>' : regado ? '<p class="ju-vered ok"><b>Hoy ya regaste.</b> Vuelve mañana para seguir creciendo.</p>' : '<p class="ju-cuenta">Hoy puedes regar una parcela. Elige la que más necesites.</p>';
-      $('#pantalla').innerHTML = `${cabecera('Jardín de las bienaventuranzas', 'Juegos')}<div class="ju">${JU_HERO(Math.min(4, Math.round(flores / 2)))}<p class="suave">Jesús enseñó en la colina ocho formas de vivir con el corazón de Dios. Cada parcela es una de ellas. Riega la que quieras hoy con su gesto práctico.</p><p class="ju-cuenta">En flor: ${flores} de 8${g.c ? ' · Cosechas: ' + g.c : ''}</p>${mensaje}
-        <div class="jard-grid">${BIENAVENTURANZAS.map((b, i) => { const et = g.s[i]; const bloqueada = regado || et >= 3; return `<button type="button" class="ju-modo jard-p${et >= 3 ? ' hecho' : ''}" data-par="${i}"${bloqueada ? ' disabled aria-disabled="true"' : ''}><span><b>${esc(b[1])}</b><small>${esc(b[2])} · ${JARDIN_ETAPAS[et]}</small><small>${esc(b[3])}</small></span><span class="jard-et" aria-hidden="true">${'<i' + (et >= 1 ? ' class="on"' : '') + '></i><i' + (et >= 2 ? ' class="on"' : '') + '></i><i' + (et >= 3 ? ' class="on"' : '') + '></i>'}</span></button>`; }).join('')}</div></div>`;
-      volverA('Juegos', volver);
-      document.querySelectorAll('[data-par]').forEach((b) => b.addEventListener('click', () => {
-        const st = jardinEstado(), i = Number(b.dataset.par), hoy2 = hoyTxt();
-        if (st.f === hoy2 || st.s[i] >= 3) return;
-        st.s[i] += 1; st.f = hoy2;
-        const florecidas = st.s.filter((x) => x >= 3).length;
-        if (florecidas === 8) st.c = (st.c || 0) + 1;
-        jardinGuardar(st); juegoTerminar('jardin', 1, 1); son(florecidas === 8 ? 'logro' : 'sana');
-        vibra(); pintar();
-      }));
-    };
-    pintar();
-  }
-  const JUEGOS_LISTOS = { jardin: (v) => vistaJardin(v), raices: (v) => vistaRaices(v), brotes: (v) => vistaBrotes(v), sopa: (v) => vistaSopa(v), sembrador: (v) => vistaSembrador(v) };   // id -> función que abre el juego (cada fase nueva se registra aquí)
+  const JUEGOS_LISTOS = { raices: (v) => vistaRaices(v), brotes: (v) => vistaBrotes(v), sopa: (v) => vistaSopa(v) };   // id -> función que abre el juego (cada fase nueva se registra aquí)
   function juegoTerminar(id, aciertos, total) {   // guarda la partida y da una gota de rocío por jugar (con tope diario)
     const j = leer(K_JUEGOS) || { n: 0, p: {} }; j.n = (j.n || 0) + 1; j.p = j.p || {};
     const q = j.p[id] || { n: 0, mejor: 0 }; q.n++; q.mejor = Math.max(q.mejor, Number(aciertos) || 0); j.p[id] = q; guardar(K_JUEGOS, j);
@@ -1425,45 +1406,6 @@
       pintar();
     };
     menu();
-  }
-  // F954 · «EL SEMBRADOR» (juego E, versión 1): la parábola de los cuatro terrenos como un hábito diario de cuatro pasos. Se guarda dentro de K_JUEGOS (ya viaja a la cuenta).
-  const SEMBRADOR_PASOS = [
-    ['leer', 'El camino', 'Leí un pasaje hoy', 'La semilla cae donde se la recibe con atención. Leer unos minutos, sin apuro, ya es sembrar.'],
-    ['pensar', 'El pedregal', 'Pensé en lo que leí', 'Para que la semilla eche raíz hace falta detenerse: ¿qué me dice este pasaje hoy?'],
-    ['hacer', 'Los espinos', 'Hice un paso concreto', 'Lo leído crece cuando se vive. Un gesto pequeño con alguien cuenta: escuchar, ayudar, perdonar.'],
-    ['orar', 'La buena tierra', 'Oré', 'Orar deja la tierra lista y da fruto. Puede ser una frase corta y sincera.']
-  ];
-  function sembradorEstado() { const j = leer(K_JUEGOS) || { n: 0, p: {} }, s = j.sembrador || {}; return s.f === hoyTxt() ? s : { f: hoyTxt(), pasos: [], cosechas: s.cosechas || 0 }; }
-  function sembradorGuardar(s) { const j = leer(K_JUEGOS) || { n: 0, p: {} }; j.sembrador = s; guardar(K_JUEGOS, j); }
-  // F957: pasos que se marcan solos con lo que la persona ya hizo hoy en la app (leer, dar un paso en «Hoy lo hago», escribir en «Mi oración»). «Pensé» sigue siendo personal.
-  function sembradorDetectar() {
-    const hoy = hoyTxt(), esHoy = (v) => { try { return !!v && diaTxt(new Date(v)) === hoy; } catch (e) { return false; } }, r = [];
-    try { if (leidosHoy() > 0) r.push('leer'); } catch (e) { /* sin lectura */ }
-    try { if (hacLista().some((x) => (x.est === 'hecho' || x.est === 'intente') && esHoy(x.fin))) r.push('hacer'); } catch (e) { /* sin acciones */ }
-    try { const o = leer(K_MIORACION); if (Array.isArray(o) && o.some((x) => esHoy(x.fecha))) r.push('orar'); } catch (e) { /* sin oración */ }
-    return r;
-  }
-  function sembradorRevisar(st, son) {   // guarda y, si los 4 terrenos están listos, da la cosecha del día (una sola vez)
-    if (st.pasos.length === 4 && !st.cosechado) { st.cosechado = true; st.cosechas = (st.cosechas || 0) + 1; sembradorGuardar(st); juegoTerminar('sembrador', 4, 4); son('logro'); } else sembradorGuardar(st);
-  }
-  function vistaSembrador(volver) {
-    const son = (n) => { try { if (window.TBSonido && window.TBSonido[n]) window.TBSonido[n](); } catch (e) { /* sin sonido */ } };
-    const pintar = () => {
-      const s = sembradorEstado(), solos = sembradorDetectar(), nuevos = solos.filter((id) => !s.pasos.includes(id));
-      if (nuevos.length) { s.pasos.push(...nuevos); son('logro'); sembradorRevisar(s, son); }
-      const n = s.pasos.length;
-      $('#pantalla').innerHTML = `${cabecera('El Sembrador', 'Juegos')}<div class="ju">${JU_HERO(n)}<p class="suave">Una parábola de Jesús sobre la semilla y los cuatro terrenos (Mateo 13:3-9). Marca lo que hiciste hoy (lo que ya hiciste en la app se marca solo); cuando los cuatro terrenos están listos, tu campo da fruto. Es solo para ti: se marca con confianza, sin revisión.</p>
-        <p class="ju-cuenta">Hoy: ${n} de 4 terrenos listos${s.cosechas ? ' · Cosechas: ' + Number(s.cosechas) : ''}</p>
-        ${SEMBRADOR_PASOS.map((p) => { const hecho = s.pasos.includes(p[0]), solo = solos.includes(p[0]); return `<button type="button" class="ju-modo se-paso${hecho ? ' hecho' : ''}" data-paso="${p[0]}" aria-pressed="${hecho}"${solo ? ' data-solo="1"' : ''}><span><b>${esc(p[1])}: ${esc(p[2])}</b><small>${esc(p[3])}${solo ? ' · Se marcó solo con lo que hiciste hoy.' : ''}</small></span><span class="flecha" aria-hidden="true">${hecho ? '✓' : '›'}</span></button>`; }).join('')}
-        ${n === 4 ? '<p class="ju-vered ok"><b>Tu campo dio fruto hoy.</b> Vuelve mañana para sembrar otra vez.</p>' : ''}</div>`;
-      volverA('Juegos', volver);
-      document.querySelectorAll('[data-paso]').forEach((b) => b.addEventListener('click', () => {
-        if (b.dataset.solo) return; const st = sembradorEstado(), id = b.dataset.paso; if (st.pasos.includes(id)) st.pasos = st.pasos.filter((x) => x !== id); else { st.pasos.push(id); son('logro'); }
-        sembradorRevisar(st, son);
-        pintar();
-      }));
-    };
-    pintar();
   }
   function vistaJuegos() {
     const j = leer(K_JUEGOS) || { n: 0 };
@@ -1979,9 +1921,10 @@
         <button type="button" class="btn sec chico" id="cracc">${accMes.length ? 'Contar cómo me fue' : 'Abrir la Acción del mes'} ›</button></div>` : '';
     $('#pantalla').innerHTML = `${cabecera('Mi crecimiento', 'Vivir lo que aprendemos')}
       <h2>Mi paso de esta semana</h2><p id="msg" role="alert" hidden></p>
+      <p class="suave m0">${todos.filter((x) => x.hecho).length ? 'Semanas con un paso cumplido: ' + todos.filter((x) => x.hecho).length + '. Un paso a la vez.' : 'Un paso pequeño basta. No hay prisa.'}</p>
       ${actual ? `<div class="card item"><p class="m0"><b>${esc(actual.icono || '🌱')} ${esc(actual.titulo)}</b></p>
           <label for="crnota">¿Cómo te fue con esto? Cuéntalo en pocas palabras.</label><textarea id="crnota" rows="3" maxlength="600" placeholder="Escribe cómo te fue…">${esc(actual.nota || '')}</textarea>
-          <button type="button" class="btn chico" id="crsave">✍️ Guardar cómo me fue</button></div>`
+          <div class="cr-acc"><button type="button" class="btn ${actual.hecho ? 'sec' : ''} chico" id="crhecho" aria-pressed="${!!actual.hecho}">${actual.hecho ? '✓ Hecho esta semana (quitar)' : 'Lo hice esta semana'}</button><button type="button" class="btn sec chico" id="crsave">Guardar nota</button></div></div>`
         : '<p class="suave">Todavía no elegiste un paso para esta semana. Elige una idea abajo y pruébala con calma: uno pequeño basta.</p>'}
       ${cardAccion}
       <h2 class="sep">${actual ? 'Cambiar mi paso' : 'Elegir una idea'}</h2>
@@ -1991,8 +1934,14 @@
     document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => vistaAreaCrec(b.dataset.ir)));
     if (cardAccion) $('#cracc').onclick = () => vistaAccion(leer(K_ID));
     if (actual) $('#crsave').onclick = () => {
-      const t = $('#crnota').value.trim(); if (!t) return msg('Cuéntanos algo antes de guardar, aunque sea breve.');
-      const l = lista(K_CREC); const it = l.find((x) => x.sem === sem); if (it) { it.nota = t.slice(0, 600); guardar(K_CREC, l); msg('Guardado en este teléfono.', true); }
+      const t = $('#crnota').value.trim();
+      const l = lista(K_CREC); const it = l.find((x) => x.sem === sem); if (!it) return;
+      if (!t) return msg(it.nota ? 'Tu nota anterior sigue guardada. Escribe algo nuevo para cambiarla.' : 'Puedes escribir una nota cuando quieras.', false);
+      it.nota = t.slice(0, 600); guardar(K_CREC, l); msg('Guardado en este teléfono.', true);
+    };
+    if (actual) $('#crhecho').onclick = () => {
+      const l = lista(K_CREC); const it = l.find((x) => x.sem === sem);
+      if (it) { it.hecho = !it.hecho; guardar(K_CREC, l); vibra(); vistaCrecimiento(); }
     };
   }
   async function vistaAreaCrec(area) {
@@ -2168,6 +2117,42 @@
       { t: "Mirar a una persona amable", r: "Quienes te escuchan casi siempre quieren que te vaya bien. Hablarle a una persona amable a la vez ayuda.", a: "En tu próxima intervención, busca a una persona amable y háblale a ella, no al grupo entero.", p: "¿Cómo cambiaría tu charla si pensaras que quieren escucharte?", v: "Colosenses 4:6", f: "Comunicación interpersonal (principios generales)", h: "No aplica" },
       { t: "Celebrar el paso dado", r: "La seguridad se construye con pasos pequeños que se reconocen.", a: "Anota un avance concreto de esta semana y agradece a Dios por él.", p: "¿Qué te gustaría practicar la próxima semana?", v: "2 Corintios 12:9", f: "Refuerzo positivo y metas pequeñas", h: "No aplica" },
     ] },
+    { id: "trabajo", n: "Mi trabajo con sentido", d: "7 días para trabajar con propósito y descanso", ctx: "El trabajo ocupa buena parte de la vida. Estos días te ayudan a ordenar tus tareas, cuidar tu energía y dar valor a lo que haces.", aviso: "Este plan acompaña; no reemplaza la orientación laboral ni legal. Si sufres acoso o un despido que consideras injusto, busca asesoría en la Dirección del Trabajo (dt.gob.cl).", dias: [
+      { t: "Tu trabajo hoy", r: "Ver tu trabajo como una forma de servir ayuda a darle sentido a lo que haces, incluso en tareas sencillas.", a: "Escribe en una frase para qué sirve tu trabajo a las personas.", p: "¿Quién se beneficia de lo que haces cada día?", v: "Colosenses 3:23", f: "Psicología del sentido en el trabajo (principios generales)", h: "No aplica" },
+      { t: "Priorizar lo importante", r: "No todo lo urgente es importante. Elegir tres prioridades reduce el agobio.", a: "Elige tres tareas para mañana y deja el resto para después.", p: "¿Qué tarea se repite sin avanzar, y por qué?", v: "Proverbios 16:3", f: "Gestión del tiempo por prioridades (principios generales)", h: "No aplica" },
+      { t: "Pausas que cuentan", r: "El descanso breve mejora la concentración y el ánimo.", a: "Toma una pausa de cinco minutos, sin pantalla, cada dos horas de trabajo.", p: "¿Qué te ayudaría a parar antes de llegar al cansancio?", v: "Eclesiastés 4:6", f: "Pausas y productividad (principios generales)", h: "No aplica" },
+      { t: "Pedir ayuda", r: "Pedir ayuda a tiempo evita errores y desgaste. No es señal de debilidad.", a: "Pide ayuda o una aclaración sobre una tarea que te tiene detenido.", p: "¿A quién de tu entorno laboral podrías acudir?", v: "Eclesiastés 4:9-10", f: "Trabajo en equipo y apoyo social (principios generales)", h: "No aplica" },
+      { t: "Límites razonables", r: "Decir que no a lo que excede tu tiempo protege tu salud y tu trabajo.", a: "Esta semana responde con una frase amable cuando te pidan algo fuera de tu alcance.", p: "¿Qué te cuesta más: decir sí o decir no?", v: "Gálatas 6:5", f: "Asertividad laboral (principios generales)", h: "Si el trabajo te causa angustia constante, busca apoyo profesional (Ayuda y contactos)." },
+      { t: "Aprender algo nuevo", r: "Seguir aprendiendo abre puertas y devuelve la sensación de avance.", a: "Dedica quince minutos a aprender una habilidad útil para tu trabajo.", p: "¿Qué habilidad te gustaría fortalecer en los próximos meses?", v: "Proverbios 1:5", f: "Aprendizaje continuo (principios generales)", h: "No aplica" },
+      { t: "Trabajar con gratitud", r: "La gratitud por lo que tienes disminuye la comparación y el agobio.", a: "Anota tres cosas de tu trabajo que agradeces esta semana.", p: "¿Qué cambiaría si miraras tu trabajo como un regalo y no solo como una obligación?", v: "Colosenses 3:17", f: "Práctica de gratitud (principios generales)", h: "No aplica" }
+    ] },
+    { id: "entorno", n: "Cuidar mi entorno", d: "7 días para cuidar tu casa, tu barrio y tu seguridad", ctx: "El lugar donde vives influye en tu salud y en tu tranquilidad. Estos días te ayudan a mirar tu entorno con cuidado y a actuar en lo pequeño.", aviso: "Este plan acompaña. Si hay peligro inmediato, llama primero: Carabineros (133), Bomberos (132) o Ambulancia (131).", dias: [
+      { t: "Mirar tu espacio", r: "Un espacio ordenado y limpio ayuda a sentirse más tranquilo.", a: "Elige un rincón de tu casa y ordénalo durante diez minutos.", p: "¿Qué lugar de tu casa te daría más calma si estuviera ordenado?", v: "Proverbios 24:3-4", f: "Psicología ambiental (principios generales)", h: "No aplica" },
+      { t: "Lo que te rodea", r: "El entorno cercano influye en el ánimo: ruido, luz, orden y compañía.", a: "Anota tres cosas de tu entorno que te suman y tres que te restan.", p: "¿Qué cambio pequeño haría más agradable tu día?", v: "Salmo 121:1-2", f: "Ambientes y bienestar (principios generales)", h: "No aplica" },
+      { t: "Cuidar lo común", r: "Cuidar los espacios compartidos es una forma de amar al prójimo.", a: "Recoge un residuo de un lugar común o saluda a un vecino.", p: "¿Qué espacio compartido de tu barrio te gustaría cuidar?", v: "Mateo 22:39", f: "Convivencia y vida comunitaria (principios generales)", h: "No aplica" },
+      { t: "Seguridad en casa", r: "Revisar lo básico de seguridad en el hogar previene accidentes.", a: "Revisa que los números de emergencia estén a la vista y que tengas una linterna que funcione.", p: "¿Quién en tu casa sabría qué hacer en una emergencia?", v: "Salmo 91:11", f: "Prevención de accidentes domésticos (recomendaciones generales)", h: "Si hay violencia o miedo en tu hogar, tu seguridad es lo primero: busca ayuda de inmediato (Ayuda y contactos)." },
+      { t: "Agua y basura", r: "Usar el agua con cuidado y separar residuos son hábitos sencillos con impacto real.", a: "Hoy cierra bien la llave al lavarte los dientes y separa un tipo de residuo reciclable.", p: "¿Qué hábito de consumo podrías reducir esta semana?", v: "Génesis 2:15", f: "Hábitos de cuidado ambiental (principios generales)", h: "No aplica" },
+      { t: "Plantas que crecen", r: "Cuidar una planta enseña paciencia y conecta con la vida.", a: "Riega una planta que tengas, o planta una semilla en una maceta.", p: "¿Qué te enseña el crecimiento de una planta sobre el tiempo?", v: "Salmo 1:3", f: "Beneficios del contacto con la naturaleza (principios generales)", h: "No aplica" },
+      { t: "Un entorno para todos", r: "Pensar en quienes viven cerca, incluidos los mayores y los niños, hace el lugar más seguro y acogedor.", a: "Pregunta a un vecino mayor si necesita algo esta semana.", p: "¿Quién cerca de ti podría necesitar un poco de compañía?", v: "Levítico 19:34", f: "Vida comunitaria y cuidado de personas mayores (principios generales)", h: "No aplica" }
+    ] },
+    { id: "social", n: "Conectar con personas", d: "7 días para construir vínculos y sentirte acompañado", ctx: "Las relaciones sostienen la salud. Estos días te ayudan a acercarte a otros, a animar a quien está solo y a sentirte parte de una comunidad.", aviso: "Este plan acompaña; no reemplaza el apoyo profesional. Si te sientes aislado por semanas o piensas en no seguir viviendo, busca ayuda de inmediato (Ayuda y contactos).", dias: [
+      { t: "Quién te acompaña", r: "Reconocer tus apoyos reales fortalece la sensación de pertenencia.", a: "Escribe los nombres de tres personas que te acompañan en momentos difíciles.", p: "¿Qué te gustaría que supieran de ti esas personas?", v: "Eclesiastés 4:12", f: "Redes de apoyo social (principios generales)", h: "No aplica" },
+      { t: "Un mensaje amable", r: "Un gesto pequeño puede abrir una conversación.", a: "Envía hoy un mensaje a alguien con quien hace tiempo no hablas.", p: "¿Qué te frena para escribirle a alguien?", v: "Proverbios 17:17", f: "Vínculos y bienestar (principios generales)", h: "No aplica" },
+      { t: "Escuchar de verdad", r: "Escuchar sin interrumpir hace que el otro se sienta valorado.", a: "En tu próxima conversación, haz una pregunta y escucha la respuesta completa.", p: "¿Cómo te sientes cuando alguien te escucha sin apuro?", v: "Santiago 1:19", f: "Escucha activa (principios generales)", h: "No aplica" },
+      { t: "Participar", r: "Unirse a una actividad de interés común crea vínculos naturales.", a: "Busca un grupo, club, voluntariado o actividad de tu comunidad y anota una fecha para ir.", p: "¿Qué actividad te gustaría compartir con otras personas?", v: "Hebreos 10:24-25", f: "Participación social y salud mental (principios generales)", h: "No aplica" },
+      { t: "Ayudar a otro", r: "Servir a otros fortalece el propio ánimo y las relaciones.", a: "Ofrece ayuda concreta a alguien: llevar algo, acompañar un trámite o cocinar para otro.", p: "¿Qué habilidad tuya podría servirle a alguien cerca?", v: "Gálatas 6:2", f: "Ayuda mutua y bienestar (principios generales)", h: "No aplica" },
+      { t: "Pedir compañía", r: "Pedir compañía no es una carga: muchas personas agradecen poder ayudar.", a: "Pide a alguien de confianza que te acompañe a caminar o a tomar algo esta semana.", p: "¿Qué te impide pedir compañía con naturalidad?", v: "Eclesiastés 4:9", f: "Apoyo social (principios generales)", h: "No aplica" },
+      { t: "Comunidad que sostiene", r: "Una comunidad se construye día a día, con pequeños gestos de presencia.", a: "Agradece a una persona que estuvo contigo en algo importante, en persona o por escrito.", p: "¿Qué cambiaría en tu semana si cada día tuvieras un vínculo que te anime?", v: "Romanos 12:15", f: "Vínculos y sentido de pertenencia (principios generales)", h: "No aplica" }
+    ] },
+    { id: "inversion", n: "Aprender a invertir con calma", d: "7 días de educación financiera general, sin recomendar productos", ctx: "Invertir es una herramienta, no una promesa. Estos días te enseñan conceptos básicos para decidir con calma, sin prisa ni presión.", aviso: "Esta es educación financiera general. No es asesoría de inversión ni recomienda productos. Antes de invertir, consulta a un asesor autorizado por la CMF (cmfchile.cl) y revisa tus deudas y tu fondo de emergencia.", dias: [
+      { t: "Antes de invertir", r: "Antes de invertir conviene tener un fondo de emergencia y no tener deudas caras.", a: "Anota tus gastos fijos del último mes y cuánto te queda libre.", p: "¿Tienes un colchón para tres meses de gastos fijos?", v: "Proverbios 21:5", f: "Educación financiera general (principios de planificación)", h: "Si tienes deudas difíciles de pagar, busca orientación gratuita (Ayuda y contactos)." },
+      { t: "Riesgo y plazo", r: "Lo que promete más rentabilidad suele conllevar más riesgo, y el plazo cambia lo que conviene.", a: "Escribe para qué necesitarías el dinero: en un mes, en tres años o en veinte.", p: "¿Cuánto tiempo puedes esperar sin necesitar ese dinero?", v: "Eclesiastés 11:2", f: "Conceptos básicos de riesgo y plazo (educación financiera general)", h: "No aplica" },
+      { t: "Repartir el riesgo", r: "No poner todo en un solo lugar reduce el impacto de una mala decisión.", a: "Revisa cómo distribuyes tus ahorros hoy y anota una idea para repartirlos mejor.", p: "¿Qué pasaría si perdieras una parte de tus ahorros hoy?", v: "Eclesiastés 11:2", f: "Diversificación (educación financiera general)", h: "No aplica" },
+      { t: "El tiempo a favor", r: "El interés compuesto hace que el tiempo trabaje a favor del ahorro constante.", a: "Calcula con una planilla simple qué pasaría con un ahorro mensual pequeño en cinco años.", p: "¿Qué gasto pequeño podrías convertir en ahorro?", v: "Proverbios 13:11", f: "Interés compuesto (educación financiera general)", h: "No aplica" },
+      { t: "Desconfiar de promesas", r: "Las ofertas de ganancias altas y sin riesgo suelen ser una señal de alerta.", a: "Si te ofrecen un rendimiento alto sin riesgo, pide la información por escrito y consúltala con un asesor autorizado.", p: "¿Qué señales te harían dudar de una oferta?", v: "Proverbios 28:20", f: "Señales de fraude financiero (educación del consumidor)", h: "Si ya perdiste dinero en una estafa, denuncia en la policía y busca orientación." },
+      { t: "Decidir antes de gastar", r: "Decidir antes de gastar, con una meta clara, da calma y control.", a: "Asigna una parte de tu ingreso a un propósito antes de gastar el resto.", p: "¿Qué meta pondrías primero en tu presupuesto?", v: "Lucas 14:28", f: "Presupuesto por propósitos (principios generales)", h: "No aplica" },
+      { t: "Tu ruta a seguir", r: "Un plan simple, revisado cada cierto tiempo, vale más que una decisión impulsiva.", a: "Escribe tres pasos para tu próximo mes financiero y revísalos con alguien de confianza.", p: "¿Qué paso puedes dar esta semana, sin prisa?", v: "Proverbios 16:9", f: "Planificación financiera (educación general)", h: "Consulta a un asesor autorizado por la CMF antes de cualquier inversión." }
+    ] },
   ].filter(Boolean);   // F1025: una entrada vacía no tumba la sección
   const planVidaProg = () => { const p = rg(K_PLANVIDA); return p && typeof p === 'object' ? p : {}; };
   const planVidaHechos = (id) => { const h = planVidaProg()[id]; return Array.isArray(h) ? h : []; };
@@ -2183,6 +2168,13 @@
       hablar: cielo('#f5e6c8', '#e9efe0') + '<rect x="420" y="470" width="440" height="40" rx="8" fill="#8c6a46"/><rect x="500" y="380" width="280" height="90" rx="10" fill="#c9a77a"/><ellipse cx="640" cy="300" rx="160" ry="90" fill="#fbe8a6" opacity=".35"/>' + [[220, 600], [330, 620], [950, 610], [1060, 630]].map(([x, y]) => '<circle cx="' + x + '" cy="' + y + '" r="24" fill="#7a5a3c"/><rect x="' + (x - 26) + '" y="' + (y + 22) + '" width="52" height="80" rx="20" fill="#4f8a55"/>').join('') + '',
       mente: cielo('#e9e4f2', '#f3ead2') + '<circle cx="960" cy="200" r="70" fill="#fbf1d6" opacity=".9"/><rect y="500" width="1280" height="220" fill="#8ec3cf" opacity=".85"/><path d="M0 500C200 470 400 520 640 500S1000 470 1280 500" fill="none" stroke="#ffffff" stroke-width="5" opacity=".6"/><path d="M0 540C220 510 420 560 640 540S1000 510 1280 540" fill="none" stroke="#ffffff" stroke-width="4" opacity=".45"/><path d="M0 580C240 552 440 600 640 580S1000 552 1280 580" fill="none" stroke="#ffffff" stroke-width="3" opacity=".3"/>'
     };
+    const esc3 = {
+      trabajo: cielo('#f5e6c8', '#e4f0f6') + '<circle cx="1000" cy="170" r="66" fill="#fbe8a6"/><rect x="380" y="300" width="300" height="260" rx="6" fill="#f6ecd2" stroke="#5a3d24" stroke-width="2"/><rect x="420" y="250" width="220" height="60" rx="6" fill="#c9a77a" stroke="#5a3d24" stroke-width="2"/>' + [[430, 340], [520, 340], [610, 340], [430, 420], [520, 420], [610, 420]].map(([x, y]) => '<rect x="' + x + '" y="' + y + '" width="50" height="50" rx="6" fill="#b8dbe4" stroke="#5a3d24" stroke-width="1.5"/>').join('') + '<rect y="560" width="1280" height="160" fill="#a9cf9b"/>',
+      entorno: cielo('#fbe7c4', '#e9efe2') + '<circle cx="1040" cy="180" r="60" fill="#fbe8a6"/><rect y="520" width="1280" height="200" fill="#8fbf82"/><rect x="520" y="470" width="240" height="20" rx="8" fill="#c9a77a"/><rect x="540" y="490" width="10" height="60" fill="#5a3d24"/><rect x="710" y="490" width="10" height="60" fill="#5a3d24"/><circle cx="260" cy="430" r="90" fill="#4f8a55"/><rect x="250" y="500" width="20" height="90" fill="#8c6a46"/><circle cx="1010" cy="420" r="80" fill="#6aa86b"/><rect x="1000" y="480" width="20" height="110" fill="#8c6a46"/>',
+      social: cielo('#fbe3bd', '#e9efe2') + '<circle cx="640" cy="200" r="70" fill="#fbe8a6" opacity=".7"/><rect y="540" width="1280" height="180" fill="#a9cf9b"/>' + [[480, 470, '#7cc08a'], [580, 450, '#c4604a'], [700, 450, '#fbe8a6'], [800, 470, '#b8dbe4']].map(([x, y, c]) => '<circle cx="' + x + '" cy="' + (y - 60) + '" r="26" fill="#e8b58c"/><path d="M' + (x - 42) + ' ' + (y + 60) + ' Q' + (x - 44) + ' ' + (y - 20) + ' ' + x + ' ' + (y - 18) + ' Q' + (x + 44) + ' ' + (y - 20) + ' ' + (x + 42) + ' ' + (y + 60) + 'Z" fill="' + c + '" stroke="#5a3d24" stroke-width="1.2"/>').join('') + '<path d="M640 300 Q600 260 610 230 Q640 250 640 300 Q640 250 670 230 Q680 260 640 300Z" fill="#c4604a"/>',
+      inversion: cielo('#f5efd9', '#e9efe0') + '<rect y="560" width="1280" height="160" fill="#a9cf9b"/>' + [[400, 560], [520, 560], [640, 560]].map(([x, y], k) => '<ellipse cx="' + x + '" cy="' + (y - 40 - k * 30) + '" rx="60" ry="16" fill="#d9b65c" stroke="#5a3d24" stroke-width="1.2"/><ellipse cx="' + x + '" cy="' + (y - 30 - k * 30) + '" rx="60" ry="16" fill="#e8c76a" stroke="#5a3d24" stroke-width="1.2"/>').join('') + '<path d="M900 560V400" stroke="#4f8a55" stroke-width="8" stroke-linecap="round"/><ellipse cx="880" cy="390" rx="30" ry="15" fill="#7cc08a"/><ellipse cx="924" cy="380" rx="30" ry="15" fill="#4f8a55"/>',
+    };
+    Object.assign(esc2, esc3);
     const cuerpo = esc2[pl.id] || esc2.yo;
     return '<svg class="plan-portada" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid slice" role="img" aria-label="' + esc(pl.n) + '">' + cuerpo + '</svg>';
   };
@@ -2848,7 +2840,8 @@
     const p = pastorLeer(); if (!p) return vistaPastorEntrar();
     const fil = (cls, ico, tit, sub, ir3, n) => `<button type="button" class="fila" data-pp="${ir3}"><span class="fila-ico ${cls}" aria-hidden="true">${ico}</span><span class="fila-txt">${tit}<small>${sub}</small></span><span class="insignia" id="n-${ir3}" hidden></span><span class="flecha" aria-hidden="true">›</span></button>`;
     $('#pantalla').innerHTML = `${bandaTB('comunidad')}<section class="saludo"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML('P', { g: perfilLeer().g, e: 'svg:escudo' }, false)}<div><p class="suave m0">Modo pastor</p><h1 id="pIgl">Mi iglesia</h1><p class="suave m0">Código <b>${esc(p.codigo)}</b></p></div></section>
-      <h2 class="sep">Para atender hoy</h2><div class="lista">${fil('t1', svg('gente', 22), 'Solicitudes', 'Quién quiere unirse', 'sol')}${fil('t2', svg('corazon', 22), 'Oraciones', 'Peticiones recibidas', 'ora')}${fil('t3', svg('compartir', 22), 'Visitas', 'Quién pide que lo visites', 'vis')}</div>
+      <p class="suave" id="pResumen" aria-live="polite">Revisando lo de hoy…</p>
+      <h2 class="sep">Para atender hoy</h2><div class="lista">${fil('t3', svg('compartir', 22), 'Visitas', 'Quién pide que lo visites', 'vis')}${fil('t2', svg('corazon', 22), 'Oraciones', 'Peticiones recibidas', 'ora')}${fil('t1', svg('gente', 22), 'Solicitudes', 'Quién quiere unirse', 'sol')}</div>
       <h2 class="sep">Mi iglesia</h2><div class="lista">${fil('t4', svg('gente', 22), 'Miembros', 'Quiénes forman tu iglesia', 'mie')}${fil('t1', svg('iglesia', 22), 'Ministerios y líderes', 'Grupos, personas y líderes', 'min')}${fil('t2', svg('calendario', 22), 'Agenda', 'Actividades y reuniones', 'age')}${fil('t3', svg('altavoz', 22), 'Avisos', 'Mensajes para todos o un grupo', 'avi')}${fil('t4', svg('bloques', 22), 'Datos y código', 'Nombre, eslogan y código', 'dat')}</div>
       <div id="tbEjem" class="tb-ejem-caja"></div>
       <p class="suave sep16">${svg('escudo', 16)} Las finanzas se administran solo desde el computador.</p>
@@ -2858,10 +2851,18 @@
     document.querySelectorAll('[data-pp]').forEach((b) => b.addEventListener('click', () => ({ sol: pSolicitudes, ora: pOraciones, vis: pVisitas, mie: pMiembros, min: pMinisterios, age: () => vistaAgenda(modoPastor(p)), avi: () => vistaAvisos(modoPastor(p)), dat: pDatos }[b.dataset.pp])(p)));
     $('#pSalir').onclick = () => { if (confirm('¿Salir del modo pastor en este teléfono? Tu llave se borra de aquí (sigue en tu computador).')) { borrar(K_PASTOR); borrar('tb_movil_juntos_cache'); barraRefrescar('perfil'); ir('perfil'); } };
     const ins = (k, n) => { const e = $('#n-' + k); if (e && n > 0) { e.textContent = n > 99 ? '99+' : String(n); e.hidden = false; } };
+    // F1032 · Resumen del pastor: una frase con lo que requiere atención hoy (sin rankings ni cifras en rojo)
+    const cuentas = { sol: 0, ora: 0, vis: 0 };
+    const pintaResumen = () => {
+      const e = $('#pResumen'); if (!e) return;
+      const t = cuentas.sol + cuentas.ora + cuentas.vis, pl = (n, a, b) => (n === 1 ? a : b);
+      e.textContent = t ? 'Hoy tienes ' + cuentas.vis + ' ' + pl(cuentas.vis, 'visita pedida', 'visitas pedidas') + ', ' + cuentas.ora + ' ' + pl(cuentas.ora, 'oración recibida', 'oraciones recibidas') + ' y ' + cuentas.sol + ' ' + pl(cuentas.sol, 'solicitud', 'solicitudes') + ' por revisar.' : 'Nada urgente por hoy. Un momento de oración por tu iglesia siempre ayuda.';
+    };
+    setTimeout(() => { const e = $('#pResumen'); if (e && /Revisando/.test(e.textContent)) e.textContent = 'No pudimos revisar lo de hoy. Revisa tu conexión y vuelve a abrir esta pantalla.'; }, 8000);
     rpc('iglesia_perfil', { p_codigo: p.codigo }).then((r) => { const h = $('#pIgl'); if (h && r.ok && r.data && r.data.nombre) h.textContent = r.data.nombre; });
-    prpc('solicitud_pastor_listar', p).then((r) => r.ok && ins('sol', (r.data || []).length));
-    prpc('peticion_pastor_listar_v2', p).then((r) => (r.ok ? r : prpc('peticion_pastor_listar', p))).then((r) => r.ok && ins('ora', (r.data || []).length));
-    prpc('visita_pastor_listar', p).then((r) => r.ok && ins('vis', (r.data || []).filter((v) => v.estado === 'solicitada').length));
+    prpc('solicitud_pastor_listar', p).then((r) => { if (r.ok) { cuentas.sol = (r.data || []).length; ins('sol', cuentas.sol); pintaResumen(); } });
+    prpc('peticion_pastor_listar_v2', p).then((r) => (r.ok ? r : prpc('peticion_pastor_listar', p))).then((r) => { if (r.ok) { cuentas.ora = (r.data || []).length; ins('ora', cuentas.ora); pintaResumen(); } });
+    prpc('visita_pastor_listar', p).then((r) => { if (r.ok) { cuentas.vis = (r.data || []).filter((v) => v.estado === 'solicitada').length; ins('vis', cuentas.vis); pintaResumen(); } });
   }
   const pCab = (tit, extra) => `${cabecera(tit, 'Panel')}${extra || ''}<p class="suave" id="pmsg">Cargando…</p><div id="plista"></div>`;
   async function pSolicitudes(p) {
