@@ -1021,3 +1021,6 @@ html[data-tam=m]{font-size:125%}
 
 /* F1022 · Etiqueta del área de miembro */
 .area-tag-miembro{color:var(--verde);margin:4px 2px 10px}
+
+/* F1023 · Cuidar al pastor y descanso del pastor */
+.cuidar-pastor,.pas-descanso{display:grid;gap:8px;margin:14px 0}
