@@ -1006,3 +1006,18 @@ html[data-tam=m]{font-size:125%}
 
 /* F1017 · Ayuda y contactos */
 .ayuda-bloque{display:grid;gap:10px}.ayuda-t{margin:0;font-size:1rem}.ayuda-lista,.ayuda-pasos{margin:0;padding-left:18px;display:grid;gap:10px}.ayuda-num{font-weight:700;color:var(--oro)}
+
+/* F1018 · Separación de bloques en Vida */
+.vida-ayuda{margin-bottom:22px}
+
+/* F1021 · Áreas premium de pastor y de miembro: paneles con identidad, jerarquía clara y tono propio */
+.area{border-radius:24px;padding:18px 16px 20px;margin:14px 0;position:relative}
+.area-pastor{background:linear-gradient(160deg,color-mix(in srgb,#d9b65c 16%,transparent),transparent 70%),color-mix(in srgb,var(--tinta) 6%,transparent);border:1px solid color-mix(in srgb,#d9b65c 42%,transparent);box-shadow:0 12px 32px rgba(0,0,0,.14)}
+.area-cab{display:grid;gap:4px;margin-bottom:14px}
+.area-tag{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:#d9b65c;font-weight:700}
+.area-t{margin:0;font:600 1.3rem/1.25 Fraunces,Georgia,serif}
+.area-pastor .card{border-color:color-mix(in srgb,#d9b65c 32%,transparent);box-shadow:0 4px 14px rgba(0,0,0,.10)}
+.saludo{padding:16px;border-radius:22px;background:color-mix(in srgb,var(--verde) 10%,transparent);border:1px solid color-mix(in srgb,var(--verde) 30%,transparent)}
+
+/* F1022 · Etiqueta del área de miembro */
+.area-tag-miembro{color:var(--verde);margin:4px 2px 10px}

@@ -79,7 +79,6 @@
   //   p = [texto, destino, pestaña?]  ·  destino: RegExp = botón o fila con ese texto · '.clase' = bajar hasta ese bloque · { h: RegExp } = bajar hasta ese título
   const SLIDES = {
     palabra: [
-      { k: 'sol', c: 'c1', t: 'Hoy lo hago', d: 'Convierte lo que lees en un paso real, pequeño y fácil.', p: [['Elegir una acción de pocos minutos', /Hoy lo hago/], ['Marcarla como hecha y ver tu avance', /Hoy lo hago/], ['Llevarlo a tu casa, tu barrio o tu iglesia', /Juntos hacemos/, 'vida']], b: 'Abrir «Hoy lo hago»' },
       { k: 'libro', c: 'c2', t: 'La Biblia en español', d: 'Elige tu versión y lee, incluso sin internet.', p: [['Cambiar de versión cuando quieras', /Leer la Biblia/], ['Resaltar, anotar y guardar versículos', /Mi Biblia/], ['Seguir leyendo donde te quedaste', /Leer la Biblia/]], b: 'Abrir la Biblia' },
       { k: 'audio', c: 'c3', t: 'Escúchala', d: 'El audio lee la versión que elegiste.', p: [['Escuchar el capítulo mientras caminas', /Leer la Biblia/], ['Cambiar la velocidad de la voz', /Leer la Biblia/], ['Pasar solo al capítulo siguiente', /Leer la Biblia/]], b: 'Abrir la Biblia' },
       { k: 'pergamino', c: 'c4', t: 'Fábula del mes', d: 'Un relato corto para practicar, capítulo a capítulo.', p: [['Abrir un capítulo a la vez', /F[áa]bula del mes/], ['Marcar tu práctica de la semana', /F[áa]bula del mes/], ['Conversarla con tu familia', /F[áa]bula del mes/]], b: 'Leer la fábula' },

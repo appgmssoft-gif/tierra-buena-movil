@@ -406,7 +406,7 @@
     bt.onclick = () => { vivMsg = ''; abre(pn.hidden); };
     pn.onclick = (ev) => {
       const b = ev.target.closest('[data-ac]'); if (!b || b.disabled) return; const ac = b.getAttribute('data-ac'), tipo = b.getAttribute('data-tipo'), id = b.getAttribute('data-id'); let r;
-      if (ac === 'habitat') { const r = window.TBInicio.elegirTematica(id === 'general' ? null : id); vivMsg = r && r.ok ? '' : 'No se pudo activar ese hábitat.'; vivGrupo = id; pinta(false); sonido('suave'); return; }
+      if (ac === 'habitat') { const r = window.TBInicio.elegirTematica(id === 'general' ? null : id); vivMsg = r && r.ok ? '' : 'No se pudo activar ese hábitat.'; vivGrupo = id; pinta(false); sonido('suave'); try { const act = $('.viv-hab.on', pn); if (act && act.scrollIntoView) act.scrollIntoView({ behavior: quieto() ? 'auto' : 'smooth', block: 'nearest', inline: 'center' }); } catch (e) { /* sin desplazamiento */ } return; }
       if (ac === 'comprar-tema') { vivGrupo = id; const r = window.TBInicio.comprar('tema', id); if (r && r.ok) { vivMsg = '¡Hábitat desbloqueado! Ya puedes activarlo.'; sonido('logro'); } else { const m = { 'sin-gotas': 'Te faltan gotas para este hábitat. Toca «Ganar gotas» para sumar.', 'ya-tienes': 'Ya tienes este hábitat.' }; vivMsg = m[r && r.motivo] || 'No se pudo desbloquear ahora.'; } pinta(false); return; }
       if (ac === 'tab' && id === 'gotas') { vivSel = { tipo: 'gotas', id: 'gotas' }; vivMsg = ''; pinta(false); sonido('suave'); return; }
       if (ac === 'grupo') { vivGrupo = id; const tp = vivSel && vivSel.tipo === 'ave' ? 'ave' : 'semilla', p = listaDe(tp).filter((i) => enGrupo(tp, i, id))[0]; if (p) vivSel = { tipo: tp, id: p }; vivMsg = ''; pinta(false); sonido('suave'); return; }
@@ -436,10 +436,13 @@
     return g;
   }
   // F1015 · Hojas de la copa: aparecen una por una cada día, en posiciones fijas (siempre igual), con tres verdes.
-  function hojasTB(n) {
+  function hojasTB(n, etapa) {
+    // Copa de cada etapa: centro y radio. Las hojas caen dentro de la copa, nunca en el aire.
+    const COPA = { brote: [0, -34, 14, 4], raiz: [0, -70, 30, 12], ramas: [0, -112, 50, 26], frondoso: [0, -150, 74, 42] }[etapa] || [0, -150, 74, 42];
+    const [cx, cy, R, tope] = COPA; n = Math.min(n, tope);
     let g = ''; const tonos = ['#5f9a62', '#7cb36f', '#4f8a55'];
     for (let i = 0; i < n; i++) {
-      const a = i * 2.39996, r = 74 * Math.sqrt((i + 0.5) / 42), x = Math.cos(a) * r * 1.05, y = -150 + Math.sin(a) * r * 0.9;
+      const a = i * 2.39996, r = R * Math.sqrt((i + 0.5) / tope), x = cx + Math.cos(a) * r * 1.05, y = cy + Math.sin(a) * r * 0.9;
       const s = 4 + (i % 4), rot = (i * 47) % 180;
       g += '<ellipse cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" rx="' + s + '" ry="' + (s * 0.5).toFixed(1) + '" transform="rotate(' + rot + ' ' + x.toFixed(1) + ' ' + y.toFixed(1) + ')" fill="' + tonos[i % 3] + '"/>';
     }
@@ -458,7 +461,7 @@
       + '<g class="cap cap0">' + cielo(cl) + atras(fo) + '</g><g class="cap cap1"><path class="col c1" d="' + COL.c1 + '"/>' + fondo + '</g>'
       + '<g class="cap cap2"><path class="col c2" d="' + COL.c2 + '"/></g>'
       + '<g class="cap cap3"><path class="col c3" d="' + COL.c3 + '"/></g></g>'
-      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g><g class="esp">' + especialesEscena(est, fo) + '</g><g class="cap cap3"><g class="mundo" transform="translate(180 344) scale(' + window.TBInicio.avanceDiario(c.diasCuidado).escala + ')">' + arbol(c.especie, et) + hojasTB(window.TBInicio.avanceDiario(c.diasCuidado).hojas) + '</g></g>' + '<g class="tb-hierba" aria-hidden="true">' + hierbaTB(0, 360, 392, 90, 17) + '</g><g class="clima">' + climaSvg(cl) + '</g></svg>'
+      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g><g class="esp">' + especialesEscena(est, fo) + '</g><g class="cap cap3"><g class="mundo" transform="translate(180 344) scale(' + window.TBInicio.avanceDiario(c.diasCuidado).escala + ')">' + arbol(c.especie, et) + hojasTB(window.TBInicio.avanceDiario(c.diasCuidado).hojas, et) + '</g></g>' + '<g class="tb-hierba" aria-hidden="true">' + hierbaTB(0, 360, 392, 90, 17) + '</g><g class="clima">' + climaSvg(cl) + '</g></svg>'
       + '<i class="il-anillo" id="ilAnillo" aria-hidden="true"></i>'
       + '<button type="button" class="il-resp" id="ilResp" aria-label="Respirar con tu árbol. Toca para una pausa de unos 30 segundos"></button>' + mal + gotasHTML(est) + frutosHTML(est) + vivEscena(est) + '</div>';
   }
@@ -585,7 +588,7 @@
       const m = T.mensajeActual(0); if (!m || !m.items || !m.items.length) { mc.textContent = 'Este árbol aún no tiene mensajes.'; return; }
       const tarj = m.items.map((x, i) => '<article class="il-mc il-mc-' + x.clave + ' d' + i + '"><header>' + ic(ICM[x.clave] || IC.hoja, 20) + '<span>' + esc(ETQ[x.clave] || x.titulo) + '</span></header>'
         + (x.clave === 'vida' && x.titulo ? '<p class="il-tema">' + esc(x.titulo) + '</p>' : '') + '<p class="il-vida">' + esc(x.texto) + '</p>'
-        + (typeof navigator !== 'undefined' && navigator.share ? '<button type="button" class="il-mini" data-i="' + i + '" aria-label="Compartir este mensaje">' + ic(IC.compartir, 16) + 'Compartir</button>' : '') + '</article>').join('');
+        + '</article>').join('');
       mc.innerHTML = '<div class="il-msg-cab"><h3>' + esc(m.titulo) + '</h3><p class="il-fecha">' + esc(fecha()) + ' · tres mensajes de hoy</p></div>' + tarj
         + '<p class="il-como">' + esc(m.como || 'Cuidar este árbol se parece a cuidarnos: un poco cada día, con paciencia y sin exigencias.') + '</p><p class="il-manana">Mañana se abren tres mensajes nuevos.</p>';
       Array.prototype.forEach.call(mc.querySelectorAll('.il-mini'), (b) => { b.onclick = () => { const x = m.items[+b.getAttribute('data-i')]; try { navigator.share({ title: m.titulo, text: x.texto }); } catch (e) { /* no compartido */ } }; });
