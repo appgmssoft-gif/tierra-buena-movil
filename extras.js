@@ -26,7 +26,7 @@
   }
   function escenaVida() {
     let t = '', l = '';
-    for (let i = 0; i < 26; i++) { const x = 8 + i * 15.5, h = 60 + ((i * 37) % 55), y = 720 - ((i * 23) % 40); t += `<g class="fv-tg"><path class="fv-tallo" d="M${x} ${y + 80}q${i % 2 ? 6 : -6} -${h * .5} 0 -${h}"/><path class="fv-hoja" d="M${x} ${y + 80 - h * .6}q${i % 2 ? 14 : -14} -10 ${i % 2 ? 22 : -22} -2q-${i % 2 ? 12 : -12} 10 -${i % 2 ? 22 : -22} 2z"/></g>`; }
+    for (let i = 0; i < 26; i++) { const x = 8 + i * 15.5, h = 60 + ((i * 37) % 55), y = 720 - ((i * 23) % 40), sg = i % 2 ? 1 : -1; t += `<g class="fv-tg"><path class="fv-tallo" d="M${x} ${y + 80}q${i % 2 ? 6 : -6} -${h * .5} 0 -${h}"/><path class="fv-hoja" d="M${x} ${y + 80 - h * .6}q${sg * 14} -10 ${sg * 22} -2q${-sg * 12} 10 ${-sg * 22} 2z"/></g>`; }
     for (let i = 0; i < 14; i++) l += `<circle class="fv-luci" cx="${R(20, 380).toFixed(0)}" cy="${R(480, 740).toFixed(0)}" r="${(2 + (i % 3)).toFixed(0)}"/>`;
     return `<svg class="fv-esc fv-vida" viewBox="0 0 400 800" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
       <defs><linearGradient id="fvVc" x1="0" y1="0" x2="0" y2="1"><stop class="fv-v0" offset="0"/><stop class="fv-v1" offset=".75"/><stop class="fv-v2" offset="1"/></linearGradient><radialGradient id="fvVs" cx=".5" cy=".5" r=".5"><stop class="fv-vs0" offset="0"/><stop class="fv-vs1" offset="1"/></radialGradient></defs>
