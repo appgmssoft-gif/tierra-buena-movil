@@ -1048,3 +1048,4 @@ html[data-contraste=alto] .card,html[data-contraste=alto] .chip,html[data-contra
 .av-emo{min-width:44px;min-height:44px}
 .rol-dia{margin-top:12px}
 .pet-seg{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chat-hilo{display:flex;flex-direction:column;gap:10px;margin:12px 0}.chat-msg{padding:12px 14px;border-radius:18px;background:color-mix(in srgb,var(--tinta) 6%,transparent);border:1px solid color-mix(in srgb,var(--oro) 30%,transparent)}.chat-msg.mio{background:color-mix(in srgb,var(--verde) 14%,transparent)}.chat-msg.oculto{opacity:.7}.chat-quien{margin:0 0 4px;font-size:.9rem}.chat-txt{margin:0;line-height:1.45;overflow-wrap:anywhere}.chat-normas{margin-top:12px}.chat-escribir{margin-top:12px}

@@ -753,6 +753,7 @@
       <h2 class="sep">Mis turnos</h2><div class="card" id="misTurnos"><p class="suave m0">Cargando tus turnos…</p></div>
       <div id="turLider"></div>
       <h2 class="sep">Quién sirve</h2><div class="card" id="quienSirve"><p class="suave m0">Cargando el rol de la iglesia…</p></div>
+      <h2 class="sep">Conversar</h2><div class="lista"><button type="button" class="fila" data-chat="1"><span class="fila-txt">Chat de mi iglesia<small>Bendecir, unirnos y organizar. Sin conflictos en público.</small></span><span class="flecha" aria-hidden="true">›</span></button></div>
       <h2 class="sep">Mi servicio</h2>
       <div class="card"><b>¿Cuándo puedes servir?</b><p class="suave m0t">Marca lo que te sirve. Por ahora solo lo ves tú.</p>
         <div class="chips" role="group" aria-label="Mi disponibilidad">${DISP_OPC.map(([k, t]) => `<button type="button" class="chip${dispLeer().indexOf(k) >= 0 ? ' on' : ''}" data-disp="${k}" aria-pressed="${dispLeer().indexOf(k) >= 0}">${t}</button>`).join('')}</div>
@@ -793,6 +794,7 @@
       const filas = r.data || [];
       c.innerHTML = filas.length ? filas.map((t) => { const d = new Date(t.inicio); return '<p class="m0 t2"><b>' + esc(d.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' })) + ' · ' + esc(d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })) + '</b><br>' + esc(t.titulo) + '</p>'; }).join('<hr class="sep16">') : '<p class="suave m0">Por ahora no tienes turnos asignados en las próximas dos semanas.</p>';
     })();
+    document.querySelectorAll('[data-chat]').forEach((b) => b.addEventListener('click', () => vistaChat({ rol: 'miembro', codigo: id.codigo, clave: id.clave, nombre: id.nombre })));
     // F1045 · Rol de la iglesia: quién sirve en los próximos 30 días (lo ve cualquier miembro). Requiere 19_SQL_F1045_ROL_IGLESIA.sql.
     (async () => {
       const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
@@ -2888,13 +2890,13 @@
       <p class="suave" id="pResumen" aria-live="polite">Revisando lo de hoy…</p>
       <h2 class="sep">Mi agenda</h2><div class="lista">${fil('t2', svg('calendario', 22), 'Mi calendario', 'Visitas, reuniones y descanso. Solo tú lo ves', 'mcal')}</div>
       <h2 class="sep">Para atender hoy</h2><div class="lista">${fil('t3', svg('compartir', 22), 'Visitas', 'Quién pide que lo visites', 'vis')}${fil('t2', svg('corazon', 22), 'Oraciones', 'Peticiones recibidas', 'ora')}${fil('t1', svg('gente', 22), 'Solicitudes', 'Quién quiere unirse', 'sol')}</div>
-      <h2 class="sep">Mi iglesia</h2><div class="lista">${fil('t4', svg('brote', 22), 'Bienvenida', 'Primeras 4 semanas de quienes llegan', 'bien')}${fil('t4', svg('gente', 22), 'Miembros', 'Quiénes forman tu iglesia', 'mie')}${fil('t1', svg('gente', 22), 'Disponibilidad', 'Quiénes pueden servir y cuándo', 'disp')}${fil('t1', svg('iglesia', 22), 'Ministerios y líderes', 'Grupos, personas y líderes', 'min')}${fil('t2', svg('calendario', 22), 'Agenda', 'Actividades y reuniones', 'age')}${fil('t3', svg('altavoz', 22), 'Avisos', 'Mensajes para todos o un grupo', 'avi')}${fil('t4', svg('bloques', 22), 'Datos y código', 'Nombre, eslogan y código', 'dat')}</div>
+      <h2 class="sep">Mi iglesia</h2><div class="lista">${fil('t2', svg('compartir', 22), 'Chat', 'Iglesia, pastor y líderes, y conversaciones', 'chat')}${fil('t4', svg('brote', 22), 'Bienvenida', 'Primeras 4 semanas de quienes llegan', 'bien')}${fil('t4', svg('gente', 22), 'Miembros', 'Quiénes forman tu iglesia', 'mie')}${fil('t1', svg('gente', 22), 'Disponibilidad', 'Quiénes pueden servir y cuándo', 'disp')}${fil('t1', svg('iglesia', 22), 'Ministerios y líderes', 'Grupos, personas y líderes', 'min')}${fil('t2', svg('calendario', 22), 'Agenda', 'Actividades y reuniones', 'age')}${fil('t3', svg('altavoz', 22), 'Avisos', 'Mensajes para todos o un grupo', 'avi')}${fil('t4', svg('bloques', 22), 'Datos y código', 'Nombre, eslogan y código', 'dat')}</div>
       <div id="tbEjem" class="tb-ejem-caja"></div>
       <p class="suave sep16">${svg('escudo', 16)} Las finanzas se administran solo desde el computador.</p>
       <button type="button" class="btn sec sep16" id="pSalir">Salir del modo pastor</button>`;
     try { if (window.TBEjemplos && $('#tbEjem')) window.TBEjemplos.pintar($('#tbEjem'), 'pastor'); } catch (e) { /* sin ejemplos */ }
     document.querySelectorAll('[data-ir=juntos]').forEach((b) => b.addEventListener('click', abrirJuntos));
-    document.querySelectorAll('[data-pp]').forEach((b) => b.addEventListener('click', () => ({ sol: pSolicitudes, ora: pOraciones, vis: pVisitas, mie: pMiembros, min: pMinisterios, age: () => vistaAgenda(modoPastor(p)), avi: () => vistaAvisos(modoPastor(p)), mcal: () => pCalendario(p), disp: () => pDisponibilidad(p), bien: () => pBienvenida(p), dat: pDatos }[b.dataset.pp])(p)));
+    document.querySelectorAll('[data-pp]').forEach((b) => b.addEventListener('click', () => ({ sol: pSolicitudes, ora: pOraciones, vis: pVisitas, mie: pMiembros, min: pMinisterios, age: () => vistaAgenda(modoPastor(p)), avi: () => vistaAvisos(modoPastor(p)), mcal: () => pCalendario(p), disp: () => pDisponibilidad(p), bien: () => pBienvenida(p), chat: () => vistaChat({ rol: 'pastor', codigo: p.codigo, secreto: p.secreto }), dat: pDatos }[b.dataset.pp])(p)));
     $('#pSalir').onclick = () => { if (confirm('¿Salir del modo pastor en este teléfono? Tu llave se borra de aquí (sigue en tu computador).')) { borrar(K_PASTOR); borrar('tb_movil_juntos_cache'); barraRefrescar('perfil'); ir('perfil'); } };
     const ins = (k, n) => { const e = $('#n-' + k); if (e && n > 0) { e.textContent = n > 99 ? '99+' : String(n); e.hidden = false; } };
     // F1032 · Resumen del pastor: una frase con lo que requiere atención hoy (sin rankings ni cifras en rojo)
@@ -3107,6 +3109,116 @@
       if (x && x.ok) { msg('Seguimiento empezado.', true); cargar(); } else msg(BIEN_MOTIVO[x ? x.motivo : ''] || 'No se pudo empezar. Revisa tu conexión.', false);
     };
     personas(); cargar();
+  }
+  // F1051 · CHAT de la iglesia: tres espacios (iglesia completa, pastor y lideres, directo pastor-miembro). Requiere 23_SQL_F1051_CHAT_IGLESIA.sql.
+  const CHAT_CAT = [['preguntas', 'Pregunta'], ['oracion', 'Oración'], ['ayuda', 'Ayuda'], ['servicio', 'Servicio'], ['avisos', 'Aviso'], ['reunion', 'Reunión']];
+  const CHAT_MOT = { 'sin-permiso': 'Tu acceso a este espacio no lo permite.', 'texto-invalido': 'Escribe un mensaje de 1 a 1000 letras.', 'categoria-invalida': 'Elige una categoría.', 'demasiados': 'Has enviado muchos mensajes en poco tiempo. Espera un momento.', 'no-existe': 'Eso ya no está disponible.', 'titulo-invalido': 'Escribe un título de 2 a 80 letras.', 'fecha-invalida': 'Elige cuándo es la reunión.', 'miembro-invalido': 'Elige a una persona de tu iglesia.' };
+  const chatQ = (x) => (x.rol === 'pastor' ? { p_codigo: x.codigo, p_clave: null, p_secreto: x.secreto } : { p_codigo: x.codigo, p_clave: x.clave, p_secreto: null });
+  const chatSala = (sala) => 'https://meet.jit.si/' + encodeURIComponent(sala);
+  const chatMot = (r) => { const x = r && r.ok ? primera(r.data) : null; return x && x.ok ? null : (CHAT_MOT[x ? x.motivo : ''] || 'No se pudo completar. Revisa tu conexión.'); };
+  async function vistaChat(x, canal) {
+    const q = chatQ(x), esPastor = x.rol === 'pastor';
+    if (!esPastor && x.esLider === undefined) {   // el miembro que lidera un ministerio puede crear reuniones con el pastor
+      const mm = await misMinisterios({ codigo: x.codigo, clave: x.clave });
+      x.esLider = !!(mm.ok && mm.lista.some((z) => z.es_lider));
+    }
+    if (!canal) {
+      const volver = esPastor ? vistaPastor : vistaIglesia;
+      $('#pantalla').innerHTML = `${cabecera('Chat de mi iglesia', esPastor ? 'Panel' : 'Mi iglesia')}<p class="suave">Un espacio para bendecir, unirnos y organizar. Aquí no se resuelven conflictos: para eso, habla en persona o en privado con el pastor.</p>
+        <div id="chMsg" class="suave" role="status"></div><div id="chLista" class="lista"><p class="suave">Cargando…</p></div>
+        ${esPastor ? '<button type="button" class="btn sec" id="chNuevo">Nueva conversación con una persona</button><div id="chPersona" class="lista" hidden></div>' : '<button type="button" class="btn sec" id="chPrivado">Hablar en privado con mi pastor</button>'}`;
+      volverA(esPastor ? 'Panel' : 'Mi iglesia', volver);
+      const abrir = (c) => vistaChat(x, c);
+      const r = await rpcRaw('chat_canales_listar', q);
+      const caja = $('#chLista'); if (!caja) return;
+      if (!r.ok) { caja.innerHTML = '<p class="suave">No pudimos abrir el chat. Revisa tu conexión.</p>'; }
+      else {
+        const c = r.data || [];
+        caja.innerHTML = c.length ? c.map((k) => `<button type="button" class="fila" data-chc="${esc(k.id)}"><span class="fila-txt">${esc(k.tipo === 'directo' ? k.directo_nombre || k.nombre : k.nombre)}<small>${k.tipo === 'iglesia' ? 'Toda la iglesia' : k.tipo === 'lideres' ? 'Pastor y líderes: reuniones y organización' : 'Conversación privada'}</small></span><span class="flecha" aria-hidden="true">›</span></button>`).join('') : '<p class="suave">Aún no hay conversaciones.</p>';
+        caja.querySelectorAll('[data-chc]').forEach((b) => b.addEventListener('click', () => abrir(c.find((k) => k.id === b.dataset.chc))));
+      }
+      const pv = $('#chPrivado');
+      if (pv) pv.onclick = async () => { const rr = await rpcRaw('chat_directo_abrir', Object.assign({}, q, { p_miembro: null })); const e = chatMot(rr); if (e) { $('#chMsg').textContent = e; return; } const ok = primera(rr.data); const c2 = await rpcRaw('chat_canales_listar', q); const k = (c2.data || []).find((z) => z.id === ok.canal_id); if (k) abrir(k); };
+      const nv = $('#chNuevo');
+      if (nv) nv.onclick = async () => {
+        const box = $('#chPersona'); box.hidden = false; box.innerHTML = '<p class="suave">Cargando personas…</p>';
+        const rp = await rpcRaw('miembros_servicio_listar', { p_codigo: x.codigo, p_secreto: x.secreto });
+        box.innerHTML = (rp.ok ? (rp.data || []) : []).map((m) => `<button type="button" class="fila" data-chm="${esc(m.id)}"><span class="fila-txt">${esc(m.nombre)}</span><span class="flecha" aria-hidden="true">›</span></button>`).join('') || '<p class="suave">No hay personas para mostrar.</p>';
+        box.querySelectorAll('[data-chm]').forEach((b) => b.addEventListener('click', async () => {
+          const rr = await rpcRaw('chat_directo_abrir', Object.assign({}, q, { p_miembro: b.dataset.chm }));
+          const e = chatMot(rr); if (e) { $('#chMsg').textContent = e; return; }
+          const c2 = await rpcRaw('chat_canales_listar', q); const k = (c2.data || []).find((z) => z.id === primera(rr.data).canal_id); if (k) abrir(k);
+        }));
+      };
+      return;
+    }
+    // ----- dentro de un canal -----
+    const puedeVideo = esPastor ? canal.tipo !== 'iglesia' : (x.esLider && canal.tipo === 'lideres');
+    const normas = canal.normas ? `<div class="card chat-normas"><b>Normas de este espacio</b><p class="m0t">${esc(canal.normas)}</p></div>` : '';
+    const privadoBtn = (!esPastor && canal.tipo === 'iglesia') ? '<button type="button" class="btn sec chico" id="chDirecto">Hablar en privado con mi pastor</button>' : '';
+    const pastorTools = esPastor ? `<div class="cr-acc"><button type="button" class="btn sec chico" id="chNormas">Editar normas</button><button type="button" class="btn sec chico" id="chLimpiar">Limpiar historial</button><button type="button" class="btn sec chico" id="chDenuncias">Ver denuncias</button></div><div id="chPanel" hidden></div>` : '';
+    const videoBox = puedeVideo ? `<div class="cr-acc"><button type="button" class="btn sec chico" id="chVideo">Crear reunión por video</button></div><div id="chVideoForm" class="card" hidden><label for="chVT">Título de la reunión</label><input id="chVT" type="text" maxlength="80"><label for="chVI">Cuándo</label><input id="chVI" type="datetime-local" value="${aLocal(new Date())}"><button type="button" class="btn" id="chVG">Crear y compartir</button></div><div id="chReuniones" class="lista"></div>` : '';
+    $('#pantalla').innerHTML = `${cabecera(canal.tipo === 'directo' ? (canal.directo_nombre || canal.nombre) : canal.nombre, 'Chat')}${normas}${privadoBtn}${pastorTools}${videoBox}
+      <p class="suave" id="chMsg" role="status"></p><div id="chHilo" class="chat-hilo" aria-live="polite"><p class="suave">Cargando mensajes…</p></div>
+      <div class="card chat-escribir"><label for="chCat">Tipo de mensaje</label><select id="chCat">${CHAT_CAT.map((c) => `<option value="${c[0]}">${c[1]}</option>`).join('')}</select>
+        <label for="chTxt">Escribe con cariño</label><textarea id="chTxt" rows="2" maxlength="1000"></textarea><button type="button" class="btn" id="chEnviar">Enviar</button></div>`;
+    volverA('Chat', () => vistaChat(x));
+    const msg = (t, ok) => { const m = $('#chMsg'); if (m) { m.textContent = t; m.className = ok ? 'ok suave' : 'suave'; } };
+    const cargarHilo = async () => {
+      const r = await rpcRaw('chat_mensajes_listar', Object.assign({}, q, { p_canal: canal.id }));
+      const h = $('#chHilo'); if (!h) return;
+      if (!r.ok) { h.innerHTML = '<p class="suave">No pudimos cargar los mensajes.</p>'; return; }
+      const l = r.data || [];
+      h.innerHTML = l.length ? l.map((m) => `<article class="chat-msg${m.es_mio ? ' mio' : ''}${m.oculto ? ' oculto' : ''}"><p class="chat-quien"><b>${esc(m.autor_nombre)}</b> <span class="etiqueta">${esc(m.autor_rol === 'pastor' ? 'Pastor' : m.autor_rol === 'lider' ? 'Líder' : 'Miembro')}</span> <small class="suave">${esc(new Date(m.creado_en).toLocaleString('es-CL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }))}</small></p><p class="chat-txt">${m.texto === null ? '<em>Mensaje oculto por el pastor.</em>' : esc(m.texto)}</p><div class="cr-acc">${!m.es_mio ? `<button type="button" class="btn sec chico" data-denu="${esc(m.id)}">Denunciar</button>` : ''}${esPastor ? `<button type="button" class="btn sec chico" data-ocu="${esc(m.id)}" data-val="${m.oculto ? '0' : '1'}">${m.oculto ? 'Mostrar' : 'Ocultar'}</button>` : ''}</div></article>`).join('') : '<p class="suave">Todavía no hay mensajes. Sé el primero en bendecir.</p>';
+      h.querySelectorAll('[data-denu]').forEach((b) => b.addEventListener('click', async () => {
+        const motivo = prompt('¿Qué pasó? (opcional, una frase)') || '';
+        const rr = await rpcRaw('chat_reportar', Object.assign({}, q, { p_mensaje: b.dataset.denu, p_motivo: motivo }));
+        msg(chatMot(rr) || 'Gracias. Tu denuncia llegó al pastor.', !chatMot(rr));
+      }));
+      h.querySelectorAll('[data-ocu]').forEach((b) => b.addEventListener('click', async () => {
+        const rr = await rpcRaw('chat_mensaje_ocultar', { p_codigo: x.codigo, p_secreto: x.secreto, p_mensaje: b.dataset.ocu, p_ocultar: b.dataset.val === '1' });
+        if (chatMot(rr)) msg(chatMot(rr)); else cargarHilo();
+      }));
+    };
+    $('#chEnviar').onclick = async () => {
+      const t = ($('#chTxt').value || '').trim();
+      if (!t) return msg('Escribe un mensaje antes de enviar.');
+      const btn = $('#chEnviar'); btn.disabled = true;
+      const rr = await rpcRaw('chat_mensajes_enviar', Object.assign({}, q, { p_canal: canal.id, p_categoria: $('#chCat').value, p_texto: t }));
+      btn.disabled = false;
+      const e = chatMot(rr);
+      if (e) return msg(e);
+      $('#chTxt').value = ''; msg('Enviado.', true); cargarHilo();
+    };
+    const dc = $('#chDirecto');
+    if (dc) dc.onclick = async () => { const rr = await rpcRaw('chat_directo_abrir', Object.assign({}, q, { p_miembro: null })); if (chatMot(rr)) return msg(chatMot(rr)); const c2 = await rpcRaw('chat_canales_listar', q); const k = (c2.data || []).find((z) => z.id === primera(rr.data).canal_id); if (k) vistaChat(x, k); };
+    if (esPastor) {
+      $('#chNormas').onclick = () => { const pn = $('#chPanel'); pn.hidden = false; pn.innerHTML = `<label for="chN">Normas de este espacio (400 letras)</label><textarea id="chN" rows="3" maxlength="400">${esc(canal.normas || '')}</textarea><button type="button" class="btn" id="chNG">Guardar normas</button>`; $('#chNG').onclick = async () => { const rr = await rpcRaw('chat_normas_fijar', { p_codigo: x.codigo, p_secreto: x.secreto, p_canal: canal.id, p_normas: $('#chN').value }); if (chatMot(rr)) msg(chatMot(rr)); else { canal.normas = $('#chN').value.trim() || null; msg('Normas guardadas.', true); vistaChat(x, canal); } }; };
+      $('#chLimpiar').onclick = async () => { if (!confirm('¿Borrar todo el historial de este espacio? Esto no se puede deshacer.')) return; const rr = await rpcRaw('chat_historial_limpiar', { p_codigo: x.codigo, p_secreto: x.secreto, p_canal: canal.id }); if (chatMot(rr)) msg(chatMot(rr)); else { msg('Historial borrado.', true); cargarHilo(); } };
+      $('#chDenuncias').onclick = async () => {
+        const pn = $('#chPanel'); pn.hidden = false; pn.innerHTML = '<p class="suave">Cargando denuncias…</p>';
+        const rr = await rpcRaw('chat_reportes_listar', { p_codigo: x.codigo, p_secreto: x.secreto });
+        const l = rr.ok ? (rr.data || []) : [];
+        pn.innerHTML = l.length ? l.map((d) => `<div class="card item"><p class="m0"><b>${esc(d.autor_nombre)}</b>: ${esc(d.texto || '(mensaje oculto)')}</p><p class="suave m0t">${d.motivo ? 'Motivo: ' + esc(d.motivo) : 'Sin motivo'} · ${d.revisado ? 'Revisada' : 'Pendiente'}</p>${d.revisado ? '' : `<button type="button" class="btn sec chico" data-rev="${esc(d.id)}">Marcar como revisada</button>`}</div>`).join('') : '<p class="suave">No hay denuncias.</p>';
+        pn.querySelectorAll('[data-rev]').forEach((b) => b.addEventListener('click', async () => { await rpcRaw('chat_reporte_revisar', { p_codigo: x.codigo, p_secreto: x.secreto, p_reporte: b.dataset.rev }); $('#chDenuncias').click(); }));
+      };
+    }
+    if (puedeVideo) {
+      const cargarReuniones = async () => { const r = await rpcRaw('chat_llamadas_listar', Object.assign({}, q, { p_canal: canal.id })); const c = $('#chReuniones'); if (!c) return; const l = r.ok ? (r.data || []) : []; c.innerHTML = l.length ? l.map((k) => `<div class="card item"><p class="m0"><b>${esc(k.titulo)}</b></p><p class="suave m0t">${esc(new Date(k.inicio).toLocaleString('es-CL', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }))} · ${esc(k.creado_por)}</p><button type="button" class="btn sec chico" data-entrar="${esc(chatSala(k.sala))}">Entrar a la reunión</button></div>`).join('') : '<p class="suave">No hay reuniones próximas.</p>'; c.querySelectorAll('[data-entrar]').forEach((b) => b.addEventListener('click', () => window.open(b.dataset.entrar, '_blank', 'noopener'))); };
+      $('#chVideo').onclick = () => { const f = $('#chVideoForm'); f.hidden = !f.hidden; };
+      $('#chVG').onclick = async () => {
+        const rr = await rpcRaw('chat_llamada_crear', Object.assign({}, q, { p_canal: canal.id, p_titulo: $('#chVT').value.trim(), p_inicio: $('#chVI').value ? new Date($('#chVI').value).toISOString() : null }));
+        const e = chatMot(rr); if (e) return msg(e);
+        const sala = primera(rr.data).sala; const link = chatSala(sala);
+        $('#chVideoForm').hidden = true; msg('Reunión creada. Compártela en este espacio para que llegue a todos.', true);
+        const enlaceTxt = `Reunión por video: ${$('#chVT').value.trim() || 'reunión'}. Entrar: ${link}`;
+        if (navigator.share) { try { await navigator.share({ title: 'Reunión', text: enlaceTxt }); } catch (e2) { /* cancelado */ } }
+        else { try { await navigator.clipboard.writeText(enlaceTxt); msg('Reunión creada. El enlace se copió: pégalo en el chat para compartirlo.', true); } catch (e3) { msg('Reunión creada. Enlace: ' + link, true); } }
+        cargarReuniones();
+      };
+      cargarReuniones();
+    }
+    cargarHilo();
   }
   // F1033 · Disponibilidad de los miembros, para organizar turnos. Requiere 16_SQL_F1033_DISPONIBILIDAD.sql.
   async function pDisponibilidad(p) {
