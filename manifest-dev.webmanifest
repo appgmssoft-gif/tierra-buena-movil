@@ -1,0 +1,79 @@
+{
+  "name": "Tierra Buena · Desarrollo",
+  "short_name": "TB Dev",
+  "description": "Vivir lo que aprendemos: tu iglesia en el celular.",
+  "lang": "es",
+  "start_url": "./index.html?dev=1",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#faf5ea",
+  "theme_color": "#7a3d3a",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "id": "./index.html?dev=1",
+  "categories": [
+    "lifestyle",
+    "education"
+  ],
+  "dir": "ltr",
+  "shortcuts": [
+    {
+      "name": "Versículo de hoy",
+      "short_name": "Versículo",
+      "url": "./index.html?dev=1&ir=versiculo",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Leer la Biblia",
+      "short_name": "Biblia",
+      "url": "./index.html?dev=1&ir=biblia",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Calendario santo",
+      "short_name": "Calendario",
+      "url": "./index.html?dev=1&ir=calendario",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}
