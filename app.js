@@ -783,7 +783,7 @@
     };
     document.querySelectorAll('[data-disp]').forEach((b) => b.addEventListener('click', () => {
       const act = dispLeer(), k = b.dataset.disp, nuevo = act.indexOf(k) >= 0 ? act.filter((x) => x !== k) : act.concat([k]);
-      guardar(K_DISP, nuevo); vibra(); b.classList.toggle('on', nuevo.indexOf(k) >= 0); b.setAttribute('aria-pressed', String(nuevo.indexOf(k) >= 0));
+      guardar(K_DISP, nuevo); vibra(); try { rpcRaw('disponibilidad_guardar', { p_codigo: id.codigo, p_clave: id.clave, p_franjas: nuevo }).catch(() => { /* sin red: queda en el teléfono */ }); } catch (e) { /* sin red */ } b.classList.toggle('on', nuevo.indexOf(k) >= 0); b.setAttribute('aria-pressed', String(nuevo.indexOf(k) >= 0));
       const m = $('#dispMsg'); if (m) m.textContent = nuevo.length ? 'Guardado en tu cuenta.' : 'Puedes marcar cuando quieras.';
     }));
     document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ juntos: abrirJuntos, oracion: vistaOracion, agenda: (i) => vistaAgenda(modoMiembro(i)), avisos: (i) => vistaAvisos(modoMiembro(i)), ministerios: vistaMinisterios, muro: vistaMuro, accion: vistaAccion, visita: vistaVisita, mioracion: () => vistaMiOracion(), crec: () => vistaCrecimiento(), privacidad: vistaPrivacidad, ayuda: () => vistaAyuda(id) }[b.dataset.ir] || vistaVisita)(id)));
@@ -2841,14 +2841,15 @@
     const fil = (cls, ico, tit, sub, ir3, n) => `<button type="button" class="fila" data-pp="${ir3}"><span class="fila-ico ${cls}" aria-hidden="true">${ico}</span><span class="fila-txt">${tit}<small>${sub}</small></span><span class="insignia" id="n-${ir3}" hidden></span><span class="flecha" aria-hidden="true">›</span></button>`;
     $('#pantalla').innerHTML = `${bandaTB('comunidad')}<section class="saludo"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML('P', { g: perfilLeer().g, e: 'svg:escudo' }, false)}<div><p class="suave m0">Modo pastor</p><h1 id="pIgl">Mi iglesia</h1><p class="suave m0">Código <b>${esc(p.codigo)}</b></p></div></section>
       <p class="suave" id="pResumen" aria-live="polite">Revisando lo de hoy…</p>
+      <h2 class="sep">Mi agenda</h2><div class="lista">${fil('t2', svg('calendario', 22), 'Mi calendario', 'Visitas, reuniones y descanso. Solo tú lo ves', 'mcal')}</div>
       <h2 class="sep">Para atender hoy</h2><div class="lista">${fil('t3', svg('compartir', 22), 'Visitas', 'Quién pide que lo visites', 'vis')}${fil('t2', svg('corazon', 22), 'Oraciones', 'Peticiones recibidas', 'ora')}${fil('t1', svg('gente', 22), 'Solicitudes', 'Quién quiere unirse', 'sol')}</div>
-      <h2 class="sep">Mi iglesia</h2><div class="lista">${fil('t4', svg('gente', 22), 'Miembros', 'Quiénes forman tu iglesia', 'mie')}${fil('t1', svg('iglesia', 22), 'Ministerios y líderes', 'Grupos, personas y líderes', 'min')}${fil('t2', svg('calendario', 22), 'Agenda', 'Actividades y reuniones', 'age')}${fil('t3', svg('altavoz', 22), 'Avisos', 'Mensajes para todos o un grupo', 'avi')}${fil('t4', svg('bloques', 22), 'Datos y código', 'Nombre, eslogan y código', 'dat')}</div>
+      <h2 class="sep">Mi iglesia</h2><div class="lista">${fil('t4', svg('gente', 22), 'Miembros', 'Quiénes forman tu iglesia', 'mie')}${fil('t1', svg('gente', 22), 'Disponibilidad', 'Quiénes pueden servir y cuándo', 'disp')}${fil('t1', svg('iglesia', 22), 'Ministerios y líderes', 'Grupos, personas y líderes', 'min')}${fil('t2', svg('calendario', 22), 'Agenda', 'Actividades y reuniones', 'age')}${fil('t3', svg('altavoz', 22), 'Avisos', 'Mensajes para todos o un grupo', 'avi')}${fil('t4', svg('bloques', 22), 'Datos y código', 'Nombre, eslogan y código', 'dat')}</div>
       <div id="tbEjem" class="tb-ejem-caja"></div>
       <p class="suave sep16">${svg('escudo', 16)} Las finanzas se administran solo desde el computador.</p>
       <button type="button" class="btn sec sep16" id="pSalir">Salir del modo pastor</button>`;
     try { if (window.TBEjemplos && $('#tbEjem')) window.TBEjemplos.pintar($('#tbEjem'), 'pastor'); } catch (e) { /* sin ejemplos */ }
     document.querySelectorAll('[data-ir=juntos]').forEach((b) => b.addEventListener('click', abrirJuntos));
-    document.querySelectorAll('[data-pp]').forEach((b) => b.addEventListener('click', () => ({ sol: pSolicitudes, ora: pOraciones, vis: pVisitas, mie: pMiembros, min: pMinisterios, age: () => vistaAgenda(modoPastor(p)), avi: () => vistaAvisos(modoPastor(p)), dat: pDatos }[b.dataset.pp])(p)));
+    document.querySelectorAll('[data-pp]').forEach((b) => b.addEventListener('click', () => ({ sol: pSolicitudes, ora: pOraciones, vis: pVisitas, mie: pMiembros, min: pMinisterios, age: () => vistaAgenda(modoPastor(p)), avi: () => vistaAvisos(modoPastor(p)), mcal: () => pCalendario(p), disp: () => pDisponibilidad(p), dat: pDatos }[b.dataset.pp])(p)));
     $('#pSalir').onclick = () => { if (confirm('¿Salir del modo pastor en este teléfono? Tu llave se borra de aquí (sigue en tu computador).')) { borrar(K_PASTOR); borrar('tb_movil_juntos_cache'); barraRefrescar('perfil'); ir('perfil'); } };
     const ins = (k, n) => { const e = $('#n-' + k); if (e && n > 0) { e.textContent = n > 99 ? '99+' : String(n); e.hidden = false; } };
     // F1032 · Resumen del pastor: una frase con lo que requiere atención hoy (sin rankings ni cifras en rojo)
@@ -2863,6 +2864,76 @@
     prpc('solicitud_pastor_listar', p).then((r) => { if (r.ok) { cuentas.sol = (r.data || []).length; ins('sol', cuentas.sol); pintaResumen(); } });
     prpc('peticion_pastor_listar_v2', p).then((r) => (r.ok ? r : prpc('peticion_pastor_listar', p))).then((r) => { if (r.ok) { cuentas.ora = (r.data || []).length; ins('ora', cuentas.ora); pintaResumen(); } });
     prpc('visita_pastor_listar', p).then((r) => { if (r.ok) { cuentas.vis = (r.data || []).filter((v) => v.estado === 'solicitada').length; ins('vis', cuentas.vis); pintaResumen(); } });
+  }
+  // F1033 · CALENDARIO PERSONAL del pastor (solo lo ve él). Requiere 15_SQL_F1033_CALENDARIO_PASTOR.sql.
+  const CAL_TIPOS = [['visita', 'Visita'], ['reunion', 'Reunión'], ['predica', 'Prédica'], ['personal', 'Personal'], ['descanso', 'Descanso']];
+  const CAL_MOTIVO = { 'sin-permiso': 'No pudimos confirmar tu clave de pastor. Revisa tu conexión.', 'titulo-invalido': 'Escribe un título de 2 a 80 letras.', 'tipo-invalido': 'Elige un tipo.', 'fecha-invalida': 'Revisa la fecha de inicio y la de fin.', 'demasiados': 'Guardaste muchas cosas en poco tiempo. Espera una hora.', 'no-existe': 'Ese evento ya no existe.' };
+  const aLocal = (d) => { const z = (n) => String(n).padStart(2, '0'); return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate()) + 'T' + z(d.getHours()) + ':' + z(d.getMinutes()); };
+  async function pCalendario(p) {
+    const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+    const hasta = new Date(hoy.getTime() + 14 * 86400000);
+    const etiqueta = (d) => d.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' });
+    $('#pantalla').innerHTML = `${cabecera('Mi calendario', 'Panel')}<p class="suave">Tu agenda personal: visitas, reuniones, prédicas y descanso. Solo la ves tú.</p>
+      <button type="button" class="btn sec" id="calNuevo" aria-expanded="false" aria-controls="calForm">+ Agregar a mi calendario</button>
+      <div id="calForm" class="card" hidden>
+        <label for="calT">¿Qué es?</label><input id="calT" type="text" maxlength="80" placeholder="Ej.: Visitar a la familia Soto">
+        <label for="calTi">Tipo</label><select id="calTi">${CAL_TIPOS.map((t) => `<option value="${t[0]}">${t[1]}</option>`).join('')}</select>
+        <label for="calI">Comienza</label><input id="calI" type="datetime-local" value="${aLocal(new Date())}">
+        <label for="calF">Termina (opcional)</label><input id="calF" type="datetime-local">
+        <label for="calD">Detalle (opcional)</label><textarea id="calD" rows="2" maxlength="400"></textarea>
+        <button type="button" class="btn" id="calGuardar">Guardar</button>
+      </div>
+      <p class="suave" id="calMsg" role="status"></p>
+      <div id="calLista" class="lista"><p class="suave">Cargando…</p></div>`;
+    volverA('Panel', vistaPastor);
+    const msg = (t, ok) => { const m = $('#calMsg'); if (m) { m.textContent = t; m.className = ok ? 'ok suave' : 'suave'; } };
+    const cargar = async () => {
+      const r = await prpc('calendario_pastor_listar', p, { p_desde: hoy.toISOString(), p_hasta: hasta.toISOString() });
+      const caja = $('#calLista'); if (!caja) return;
+      if (!r.ok) { caja.innerHTML = '<p class="suave">No pudimos abrir tu calendario. Revisa tu conexión y vuelve a intentarlo.</p>'; return; }
+      const evs = r.data || [];
+      if (!evs.length) { caja.innerHTML = '<p class="suave">No tienes nada agendado en las próximas dos semanas. Un espacio libre también es parte del servicio.</p>'; return; }
+      let dia = '', html = '';
+      evs.forEach((e) => {
+        const d = new Date(e.inicio), clave = d.toDateString();
+        if (clave !== dia) { dia = clave; html += `<h3 class="sep">${esc(etiqueta(d))}</h3>`; }
+        const hora = d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+        const tipo = (CAL_TIPOS.find((t) => t[0] === e.tipo) || [0, 'Personal'])[1];
+        html += `<div class="card item"><p class="m0"><b>${esc(hora)} · ${esc(e.titulo)}</b></p><p class="suave m0t">${esc(tipo)}${e.detalle ? ' · ' + esc(e.detalle) : ''}</p><button type="button" class="btn sec chico" data-caldel="${esc(e.id)}">Quitar</button></div>`;
+      });
+      caja.innerHTML = html;
+      caja.querySelectorAll('[data-caldel]').forEach((b) => b.addEventListener('click', async () => {
+        if (!confirm('¿Quitar este evento de tu calendario?')) return;
+        const rr = await prpc('calendario_pastor_borrar', p, { p_id: b.dataset.caldel });
+        const x = rr.ok ? primera(rr.data) : null;
+        if (x && x.ok) { msg('Evento quitado.', true); cargar(); } else msg(CAL_MOTIVO[x ? x.motivo : ''] || 'No se pudo quitar. Revisa tu conexión.', false);
+      }));
+    };
+    $('#calNuevo').onclick = () => { const f = $('#calForm'), b = $('#calNuevo'); f.hidden = !f.hidden; b.setAttribute('aria-expanded', String(!f.hidden)); };
+    $('#calGuardar').onclick = async () => {
+      const titulo = ($('#calT').value || '').trim(), inicio = $('#calI').value, fin = $('#calF').value;
+      if (!titulo) return msg('Escribe qué es antes de guardar.', false);
+      if (!inicio) return msg('Elige cuándo comienza.', false);
+      const btn = $('#calGuardar'); btn.disabled = true;
+      const r = await prpc('calendario_pastor_crear', p, { p_titulo: titulo, p_tipo: $('#calTi').value, p_inicio: new Date(inicio).toISOString(), p_fin: fin ? new Date(fin).toISOString() : null, p_detalle: ($('#calD').value || '').trim() || null });
+      btn.disabled = false;
+      const x = r.ok ? primera(r.data) : null;
+      if (x && x.ok) { $('#calT').value = ''; $('#calD').value = ''; $('#calF').value = ''; msg('Guardado en tu calendario.', true); cargar(); }
+      else msg(CAL_MOTIVO[x ? x.motivo : ''] || 'No se pudo guardar. Revisa tu conexión.', false);
+    };
+    cargar();
+  }
+  // F1033 · Disponibilidad de los miembros, para organizar turnos. Requiere 16_SQL_F1033_DISPONIBILIDAD.sql.
+  async function pDisponibilidad(p) {
+    const NOMB = { entre: 'Entre semana', fin: 'Fines de semana', manana: 'Mañanas', tarde: 'Tardes', noche: 'Noches' };
+    $('#pantalla').innerHTML = `${cabecera('Disponibilidad', 'Panel')}<p class="suave">Quiénes pueden servir y cuándo. Lo marcan los miembros desde su panel.</p><div id="dispLista" class="lista"><p class="suave">Cargando…</p></div>`;
+    volverA('Panel', vistaPastor);
+    const r = await prpc('disponibilidad_pastor_listar', p);
+    const caja = $('#dispLista'); if (!caja) return;
+    if (!r.ok) { caja.innerHTML = '<p class="suave">No pudimos cargar la disponibilidad. Revisa tu conexión.</p>'; return; }
+    const filas = r.data || [];
+    if (!filas.length) { caja.innerHTML = '<p class="suave">Todavía nadie marcó cuándo puede servir.</p>'; return; }
+    caja.innerHTML = filas.map((f) => `<div class="card item"><b>${esc(f.miembro)}</b><p class="suave m0t">${(f.franjas || []).map((x) => esc(NOMB[x] || x)).join(' · ')}</p></div>`).join('');
   }
   const pCab = (tit, extra) => `${cabecera(tit, 'Panel')}${extra || ''}<p class="suave" id="pmsg">Cargando…</p><div id="plista"></div>`;
   async function pSolicitudes(p) {
