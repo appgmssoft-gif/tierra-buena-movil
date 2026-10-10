@@ -180,6 +180,17 @@
     if (si === false) { if (i >= 0) e.vivero.ambientes.splice(i, 1); guardar(e); return { ok: true }; }
     if (i < 0) e.vivero.ambientes.push(id); guardar(e); return { ok: true };
   }
+  // F1074 · Primera elección: el lugar del jardín (bosque, desierto o costa). Compra el hábitat, lo activa y su árbol emblemático es el primero.
+  const HABITATS_INICIALES = ['bosque', 'desierto', 'costa'];
+  function elegirHabitatInicial(h) {
+    const e = cargar(); if (!e.eligiendo || HABITATS_INICIALES.indexOf(h) < 0) return false;
+    const t = (cat().tematicas || {})[h] || {}, em = t.arbol && (cat().especies || {})[t.arbol] ? t.arbol : null;
+    if (!em) return false;
+    const c = 'tem_' + h; if (e.vivero.desbloqueados.indexOf(c) < 0) e.vivero.desbloqueados.push(c);
+    const hoyS = hoy(); e.tematica = h;
+    e.ciclo = { n: 1, especie: em, inicio: hoyS, diasCuidado: 1, ultimoDia: hoyS, ultimaVisita: hoyS, cerrado: false, diaPendiente: false };
+    e.eligiendo = false; guardar(e); return true;
+  }
   function tieneEspecial(id) { return cargar().vivero.desbloqueados.indexOf('esp_' + id) >= 0; }
   function comprarEspecial(id) {                           // contenido de «Tu paisaje»: se paga solo con frutos y requiere tener ese paisaje. Devuelve { ok, motivo }
     const e = cargar(), it = (cat().especiales || {})[id]; if (!it) return { ok: false, motivo: 'no-existe' };
@@ -217,6 +228,6 @@
     return { ok: true, acierto, correcta: ord.indexOf(q.c), explicacion: q.e, gotas: g };
   }
 
-  const api = { visibleEn, avanceDiario, entornoVisible, config(o) { if (o && o.catalogo) CAT = o.catalogo; if (o && o.hoy) HOY = o.hoy; if (o && o.almacen) ALM = o.almacen; }, cargar, guardar, estado: cargar, etapa, malezaPara, elegirPrimera, visita, sanar, ganar, recolectar, comprar, tiene, plantar, activarAve, activarAmbiente, mensajeActual, tieneEspecial, comprarEspecial, triviaHoy, responderTrivia, elegirTematica, K };
+  const api = { elegirHabitatInicial, visibleEn, avanceDiario, entornoVisible, config(o) { if (o && o.catalogo) CAT = o.catalogo; if (o && o.hoy) HOY = o.hoy; if (o && o.almacen) ALM = o.almacen; }, cargar, guardar, estado: cargar, etapa, malezaPara, elegirPrimera, visita, sanar, ganar, recolectar, comprar, tiene, plantar, activarAve, activarAmbiente, mensajeActual, tieneEspecial, comprarEspecial, triviaHoy, responderTrivia, elegirTematica, K };
   if (typeof window !== 'undefined') window.TBInicio = api; if (typeof module !== 'undefined') module.exports = api;
 })();

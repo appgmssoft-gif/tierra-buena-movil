@@ -589,19 +589,19 @@
   function nombreArbol(est) { const s = CAT && CAT.especies && CAT.especies[est.ciclo.especie]; return s ? esc(s.nombre) + (s.otro ? ' <span>· ' + esc(s.otro) + '</span>' : '') : 'Tu árbol'; }
 
   // ---------- Primera semilla ----------
-  function vistaEleccion(cont, mi) {
+  function vistaEleccion(cont, mi) {   // F1074: primero se elige el lugar (hábitat); su árbol emblemático es el primero
     if (cont.parentNode && cont.parentNode.classList) cont.parentNode.classList.add('il-eligiendo');
-    const ids = (CAT.primera_eleccion || []).filter((i) => CAT.especies && CAT.especies[i]);
-    cont.innerHTML = '<div class="il-elige"><h2>Elige el árbol que vas a cuidar</h2>'
-      + '<p class="il-elige-sub">Crece un poco cada día que entras. Si faltas un día, no pasa nada: solo espera y sigue después.</p>'
-      + '<div class="il-semillas" role="radiogroup" aria-label="Árboles para elegir">' + ids.map((i) => { const s = CAT.especies[i];
-        return '<button type="button" class="il-semilla" role="radio" aria-checked="false" data-id="' + esc(i) + '"><svg class="il-mini" viewBox="-72 -215 144 240" aria-hidden="true" focusable="false">' + arbol(i, 'frondoso') + '</svg>'
-          + '<span class="il-sem-tx"><b>' + esc(s.nombre) + '</b><em>' + esc(s.otro || '') + '</em><small>' + esc(s.mensaje) + '</small></span></button>'; }).join('') + '</div>'
-      + '<button type="button" class="btn il-plantar" id="ilPlantar" disabled>Elige un árbol para continuar</button></div>';
+    const hs = ['bosque', 'desierto', 'costa'].filter((h) => CAT.tematicas && CAT.tematicas[h]);
+    cont.innerHTML = '<div class="il-elige"><h2>Elige el lugar de tu jardín</h2>'
+      + '<p class="il-elige-sub">Cada lugar tiene su árbol y sus rasgos. Lo que plantes aquí se queda aquí.</p>'
+      + '<div class="il-semillas" role="radiogroup" aria-label="Lugares para elegir">' + hs.map((h) => { const t = CAT.tematicas[h], s = CAT.especies[t.arbol];
+        return '<button type="button" class="il-semilla" role="radio" aria-checked="false" data-id="' + esc(h) + '"><svg class="il-mini" viewBox="-72 -215 144 240" aria-hidden="true" focusable="false">' + (s ? arbol(t.arbol, 'frondoso') : '') + '</svg>'
+          + '<span class="il-sem-tx"><b>' + esc(t.nombre) + '</b><em>Árbol: ' + esc(s ? s.nombre : 'ninguno') + '</em><small>Rasgos: ' + esc((t.rasgos || []).join(', ')) + '</small></span></button>'; }).join('') + '</div>'
+      + '<button type="button" class="btn il-plantar" id="ilPlantar" disabled>Elige un lugar para continuar</button></div>';
     let sel = '';
     const bots = Array.prototype.slice.call(cont.querySelectorAll('.il-semilla')), pl = $('#ilPlantar', cont);
-    bots.forEach((b) => { b.onclick = () => { sel = b.getAttribute('data-id'); bots.forEach((x) => { const on = x === b; x.setAttribute('aria-checked', String(on)); x.classList.toggle('on', on); }); pl.disabled = false; pl.textContent = 'Plantar ' + CAT.especies[sel].nombre; sonido('suave'); }; });
-    pl.onclick = () => { if (!sel || !window.TBInicio.elegirPrimera(sel)) return; sonido('semilla'); window.TBInicio.visita(); pintar(cont, mi, { plantado: true }); };
+    bots.forEach((b) => { b.onclick = () => { sel = b.getAttribute('data-id'); bots.forEach((x) => { const on = x === b; x.setAttribute('aria-checked', String(on)); x.classList.toggle('on', on); }); pl.disabled = false; pl.textContent = 'Empezar en ' + CAT.tematicas[sel].nombre; }; });
+    pl.onclick = () => { if (!sel || !window.TBInicio.elegirHabitatInicial(sel)) return; sonido('semilla'); window.TBInicio.visita(); pintar(cont, mi, { plantado: true }); };
   }
 
   // ---------- Jardín ----------

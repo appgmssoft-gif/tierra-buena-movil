@@ -1780,7 +1780,12 @@
       "fondo": "bosque",
       "mensaje": "El bosque nativo guarda especies que solo crecen en Chile. Cuidarlo es cuidar algo que tarda siglos en crecer.",
       "dato": "Aquí se pueden plantar las especies del bosque nativo, como el copihue, la flor nacional.",
-      "arbol": "araucaria"
+      "arbol": "araucaria",
+      "rasgos": [
+        "Copihue",
+        "Helechos",
+        "Chucao"
+      ]
     },
     "desierto": {
       "nombre": "Desierto florido",
@@ -1788,7 +1793,12 @@
       "fondo": "desierto",
       "mensaje": "Tras unas lluvias poco comunes, el desierto se llena de color. Lo que espera bajo tierra también sabe volver.",
       "dato": "En el desierto de Atacama, algunos años con lluvia suficiente cubren el suelo de flores, como la añañuca y la pata de guanaco.",
-      "arbol": "chanar"
+      "arbol": "chanar",
+      "rasgos": [
+        "Añañuca",
+        "Guanaco",
+        "Zorro"
+      ]
     },
     "jardin": {
       "nombre": "Jardín del mundo",
@@ -1810,7 +1820,12 @@
       "fondo": "costa",
       "mensaje": "Entre el mar y los cerros hay flores que resisten la neblina y la sal. Cada una encuentra su manera de vivir cerca del agua.",
       "dato": "Aquí se pueden plantar especies de la costa, como la añañuca rosada, que crece en quebradas y terrazas junto al mar del norte.",
-      "arbol": "palma_chilena"
+      "arbol": "palma_chilena",
+      "rasgos": [
+        "Chagual",
+        "Conchas",
+        "Gaviota"
+      ]
     }
   },
   "ambientes": {
