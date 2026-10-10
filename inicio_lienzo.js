@@ -59,7 +59,7 @@
     if (!hab || !ids.length) return '';
     return ids.map((id, k) => {
       const ini = 10 * k + 1; if (d < ini) return '';
-      const f = Math.min(1, (d - ini + 1) / 10), s = (0.9 * (0.5 + 0.5 * f)).toFixed(2), xy = RASGO_SLOTS[k];
+      const f = Math.min(1, (d - ini + 1) / 10), tam = AVES[id] ? 1.7 : (['guanaco', 'zorro', 'gaviota'].indexOf(id) >= 0 ? 1.35 : 0.9), s = (tam * (0.5 + 0.5 * f)).toFixed(2), xy = RASGO_SLOTS[k];   // F1077: animales más visibles
       return '<g class="ras-it" transform="translate(' + xy[0] + ' ' + xy[1] + ') scale(' + s + ')">' + rasgoDibujo(id) + '</g>';
     }).join('');
   }
@@ -125,9 +125,16 @@
     if (forma === 'cono') {
       return p('tr-t t8', 'M0 0 C-2 -50 2 -100 0 -150') + el('tr-h', 0, -84, 58, 16) + el('tr-h2', 0, -92, 40, 8) + el('tr-h', 0, -108, 46, 14) + el('tr-h2', 0, -116, 30, 7) + el('tr-h', 0, -130, 34, 12) + el('tr-h', 0, -150, 22, 10) + el('tr-h2', 0, -164, 10, 8);
     }
-    if (forma === 'palma') {
-      return p('tr-t t10', 'M0 0 C-4 -50 4 -100 0 -140') + p('tr-t t4', 'M0 -140 C-30 -160 -54 -150 -70 -128') + p('tr-t t4', 'M0 -140 C30 -160 54 -150 70 -128') + p('tr-t t4', 'M0 -140 C-24 -176 -52 -176 -64 -160')
-        + p('tr-t t4', 'M0 -140 C24 -176 52 -176 64 -160') + p('tr-t t4', 'M0 -140 C-6 -172 -4 -190 0 -198') + p('tr-t t3', 'M0 -140 C-40 -138 -62 -122 -74 -100') + p('tr-t t3', 'M0 -140 C40 -138 62 -122 74 -100');
+    if (forma === 'palma') {   // F1077 · Palma chilena: tronco grueso con anillos y una corona de frondas anchas que se arquean (formas rellenas, no líneas)
+      let g = p('tr-t t10', 'M0 0 C-3 -50 3 -100 0 -140');
+      for (let y = -18; y > -134; y -= 17) g += p('tr-t t1', 'M-6 ' + y + ' q6 -2.5 12 0');
+      for (let i = 0; i < 9; i++) {
+        const a = (-80 + i * 20) * Math.PI / 180, len = i % 2 ? 62 : 74, cls = i % 2 ? 'tr-h2' : 'tr-h';
+        const tx = Math.sin(a) * len, ty = -140 - Math.cos(a) * len * 0.7 + len * 0.3;
+        const mx = tx * 0.5, my = (-140 + ty) / 2, nx = Math.cos(a) * 9, ny = Math.sin(a) * 9;
+        g += p(cls, 'M0 -140 Q' + (mx + nx).toFixed(1) + ' ' + (my + ny - 6).toFixed(1) + ' ' + tx.toFixed(1) + ' ' + ty.toFixed(1) + ' Q' + (mx - nx * 0.4).toFixed(1) + ' ' + (my - ny * 0.4 + 4).toFixed(1) + ' 0 -140Z');
+      }
+      return g + ci('tr-h3', 0, -142, 8);
     }
     if (forma === 'florido') {   // F930: copa ancha y suelta con tres colores (lila, rosa y violeta) y pétalos que caen
       return p('tr-t t10', 'M0 0 C-4 -28 5 -58 0 -88') + p('tr-t t4', 'M0 -56 C-18 -66 -34 -78 -44 -96') + p('tr-t t4', 'M0 -66 C18 -78 34 -88 46 -104') + p('tr-t t3', 'M0 -84 C-6 -98 -8 -110 -12 -124')
@@ -184,29 +191,19 @@
     if (f === 'montanas') return '<g class="pa-mont"><path class="mo m2" d="M-60 292 L10 214 L52 252 L104 196 L170 276 L228 208 L284 262 L330 220 L430 292Z"/><path class="mo m1" d="M-40 296 L40 206 L84 256 L140 168 L206 270 L262 190 L318 258 L372 204 L440 296Z"/>'
       + '<path class="nv" d="M140 168 L124 188 L134 184 L142 194 L150 184 L158 188Z"/><path class="nv" d="M262 190 L248 208 L256 204 L264 212 L272 204 L278 208Z"/><path class="nv" d="M40 206 L28 222 L36 219 L42 226 L48 219 L54 222Z"/></g>';
     if (f === 'volcan') return '<g class="pa-volc"><path class="mo m2" d="M-60 292 L30 232 L90 262 L150 226 L210 278 L330 236 L430 292Z"/><path class="mo m1" d="M196 292 L258 196 C264 184 276 184 282 196 L346 292Z"/><path class="nv" d="M250 210 L258 196 C264 184 276 184 282 196 L290 212 C280 204 272 214 266 206 C260 214 254 206 250 210Z"/><ellipse class="humo" cx="272" cy="176" rx="9" ry="5"/><ellipse class="humo" cx="280" cy="164" rx="12" ry="6"/><ellipse class="humo" cx="292" cy="152" rx="15" ry="7"/></g>';
-    if (f === 'bosque') {   // F1061 · Bosque nativo: dos capas de copas (lejana clara y cercana oscura) y pewenes altos. Posiciones fijas: siempre el mismo bosque.
+    if (f === 'bosque') {   // F1078 · Bosque nativo: una franja de copas en dos tonos, sin conos (los conos parecían pinos). Posiciones fijas.
       let g = '<g class="pa-bosque">';
-      for (let i = 0; i < 18; i++) {                                   // capa lejana, con neblina
-        const x = -30 + i * 24 + ((i * 7) % 5), y = 250 + ((i * 11) % 6), r = 13 + ((i * 5) % 4);
-        g += '<ellipse cx="' + x + '" cy="' + y + '" rx="' + r + '" ry="' + (r * 0.85).toFixed(1) + '" fill="' + (i % 2 ? '#8fb49a' : '#7ea88b') + '" opacity=".85"/>';
-      }
-      for (let i = 0; i < 14; i++) {                                   // capa cercana: copas agrupadas sobre tronco corto
-        const x = -10 + i * 28 + ((i * 13) % 7), y = 262 + ((i * 7) % 5), r = 15 + ((i * 3) % 4);
-        const tono = i % 3 === 0 ? '#3f7a4c' : i % 3 === 1 ? '#4f8a55' : '#37703f';
+      for (let i = 0; i < 11; i++) {
+        const x = -10 + i * 34 + ((i * 5) % 3) * 4, y = 258 + ((i * 7) % 3) * 2, r = 16 + ((i * 3) % 2) * 2;
+        const tono = i % 2 ? '#4f8a55' : '#3f7a4c';
         g += '<rect x="' + (x - 1.6) + '" y="' + (y - 4) + '" width="3.2" height="12" fill="#6b4a2e"/>';
         g += '<ellipse cx="' + x + '" cy="' + (y - 12) + '" rx="' + r + '" ry="' + (r * 0.8).toFixed(1) + '" fill="' + tono + '"/>';
-        g += '<ellipse cx="' + (x - r * 0.45).toFixed(1) + '" cy="' + (y - 16) + '" rx="' + (r * 0.5).toFixed(1) + '" ry="' + (r * 0.4).toFixed(1) + '" fill="#6aa86b" opacity=".7"/>';
       }
-      for (const [x, h] of [[46, 92], [118, 104], [212, 88], [286, 100]]) {   // pewenes altos en el fondo, en forma de cono
-        g += '<path d="M' + x + ' ' + (266 - h) + ' L' + (x - 16) + ' 266 L' + (x + 16) + ' 266Z" fill="#2f5e47" opacity=".9"/>';
-        g += '<path d="M' + x + ' ' + (266 - h) + ' L' + (x - 8) + ' 266 L' + x + ' 266Z" fill="#244d39" opacity=".5"/>';
-      }
-      g += '</g>';
-      return g;
+      return g + '</g>';
     }
     if (f === 'desierto') return '<g class="pa-desierto" aria-hidden="true">'   // F1056 · Desierto: dunas, una mesa lejana y dos cactus (fondo propio, no vacío)
       + '<path class="mo m2" fill="#ecd29c" d="M-60 300 C20 262 80 270 130 286 S240 258 300 276 S380 262 430 290 L430 330 L-60 330Z"/>'
-      + '<path d="M40 268 L58 238 L112 238 L126 268Z" fill="#cf9f63"/><path d="M50 262 L62 244 L104 244 L116 262Z" fill="#dcae74"/>'
+      + '<path d="M30 290 L46 252 Q52 242 66 242 L110 242 Q122 242 128 252 L140 290Z" fill="#cf9f63"/><path d="M46 252 Q52 242 66 242 L110 242 Q122 242 128 252 L120 256 L56 256Z" fill="#e2b47a"/>'
       + '<path class="mo m1" fill="#dcb374" d="M-60 312 C40 290 110 298 170 306 S300 288 360 300 S410 306 430 302 L430 340 L-60 340Z"/>'
       + '<g fill="#6f9a5b"><rect x="206" y="266" width="7" height="26" rx="3.5"/><rect x="197" y="276" width="6" height="10" rx="3"/><rect x="213" y="272" width="6" height="9" rx="3"/></g>'
       + '<g fill="#7aa767"><rect x="300" y="278" width="5" height="18" rx="2.5"/><rect x="294" y="285" width="5" height="8" rx="2.5"/></g></g>';
