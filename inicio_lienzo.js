@@ -48,7 +48,7 @@
     if (FLORES[id]) { const d = DIM[id] || [24, 24]; return '<g transform="translate(' + (-d[0] / 2) + ' ' + (-d[1]) + ')">' + FLORES[id]() + '</g>'; }
     return '';
   }
-  // F1076 · Los días del suelo se leen sobre 30 días (el doble de la escala anterior). Sin repetir los rasgos y como máximo 6 elementos: no se sobrecarga el inicio.
+  // F1076 · Los días del suelo se leen sobre 30 días (el doble de la escala anterior). Sin repetir los rasgos y como máximo 3 elementos: no se sobrecarga el inicio.
   const RASGO_SLOTS = [[44, 350], [316, 350], [210, 386]];
   // F1083 · Sombreado automático en dos tonos: cada figura rellena recibe una copia más oscura desplazada abajo-derecha (luz arriba-izquierda).
   // Se aplica a los dibujos de rasgos y suelo sin reescribirlos a mano.
@@ -87,7 +87,7 @@
   }
   function paisajeDelDia(dias, hab) {
     const rs = (((CAT && CAT.tematicas) || {})[hab] || {}).rasgos_ids || [];
-    const L = (PAISAJE_HAB[hab] || PAISAJE_HAB.general).filter((it) => rs.indexOf(it[1]) < 0).slice(0, 6), d = Math.max(0, Math.floor(dias || 0)); let g = '';
+    const L = (PAISAJE_HAB[hab] || PAISAJE_HAB.general).filter((it) => rs.indexOf(it[1]) < 0).slice(0, 3), d = Math.max(0, Math.floor(dias || 0)); let g = '';   // F1087: menos es más: como máximo 3 decoraciones de suelo
     L.forEach((it) => {
       if (d < it[0] * 2) return;
       const xy = SLOTS_DIA[it[2]], k = (it[3] * (0.55 + 0.45 * Math.min(1, (d - it[0] * 2 + 1) / 6))).toFixed(2);
