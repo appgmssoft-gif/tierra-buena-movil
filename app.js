@@ -423,9 +423,9 @@
     vistaUnirse();
   }
   const copiaTexto = () => {   // F955: «Copia de seguridad» visible para la persona (la hace resguardo.js)
-    try { const i = window.TBResguardo && window.TBResguardo.info && window.TBResguardo.info(); if (!i || !i.fecha) return 'Copia de seguridad: aún no hay una en este teléfono.'; const d = new Date(i.fecha); return 'Copia de seguridad en este teléfono: ' + d.toLocaleDateString('es-CL', { day: 'numeric', month: 'long' }) + ', ' + d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }) + '.'; } catch (e) { return ''; }
+    try { const i = window.TBResguardo && window.TBResguardo.info && window.TBResguardo.info(); if (!i || !i.fecha) return 'Copia de seguridad: aún no hay una en este teléfono.'; const d = new Date(i.fecha); return 'Copia de seguridad en este teléfono: ' + d.toLocaleDateString('es-CL', { day: 'numeric', month: 'long' }) + ', ' + d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }).replace(/\.$/, '') + '.'; } catch (e) { return ''; }
   };
-  const cuentaBarra = () => { const c = leer(K_CUENTA); return c ? `<p class="suave" id="cuentaBarra">Sesión iniciada: <b>${esc(c.correo)}</b> · <button type="button" class="enlace" id="cuentaSalir">Cerrar sesión</button><br><span id="sincEstado" class="sinc">${esc(syncTexto())}</span><br><span id="copiaEstado" class="sinc">${esc(copiaTexto())}</span></p>` : ''; };
+  const cuentaBarra = () => { const c = leer(K_CUENTA); return c ? `<p class="suave" id="cuentaBarra">Sesión iniciada: <b>${esc(c.correo)}</b><br><button type=\"button\" class=\"enlace\" id=\"cuentaSalir">Cerrar sesión</button><br><span id="sincEstado" class="sinc">${esc(syncTexto())}</span><br><span id="copiaEstado" class="sinc">${esc(copiaTexto())}</span></p>` : ''; };
   // ---------- F873 · Revisar la conexión con las cuentas y reenviar el correo de confirmación ----------
   async function diagnosticoNube() {
     const L = [], cab = { apikey: SUPABASE_ANON_KEY };
@@ -668,7 +668,7 @@
     $('#pantalla').innerHTML = `
       <div class="ent-top">${icoPastorHTML()}${icoCodigoHTML()}</div>
       <div class="hero hero-viva"><span class="hv-caja" aria-hidden="true"><i></i><i></i><i></i><i></i></span><div class="hero-ico" aria-hidden="true">${svg('iglesia', 38)}</div><h1>Tu iglesia te espera</h1>
-      <p>¿Eres miembro? Toca <b>Mi código</b>. ¿Cuidas una iglesia? Toca <b>Soy pastor</b>.</p></div>
+      <p>¿Eres miembro? Toca <b>Mi&nbsp;código</b>. ¿Cuidas una iglesia? Toca <b>Soy&nbsp;pastor</b>.</p></div>
       ${cuentaBarra()}
       <div id="tbEjem" class="tb-ejem-caja"></div>
       ${bloqueInstalar()}`;
