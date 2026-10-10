@@ -44,7 +44,7 @@
     Object.keys(C.semillas || {}).forEach((k) => out.push({ id: 'planta_' + k, nombre: C.semillas[k].nombre || k, kind: 'semilla', habitat: C.semillas[k].habitat || null, precio: C.semillas[k].precio || 0 }));
     Object.keys(C.especiales || {}).forEach((k) => {
       const e = C.especiales[k];
-      out.push({ id: 'esp_' + k, nombre: e.nombre || k, kind: FAUNA.indexOf(k) >= 0 ? 'fauna' : 'semilla', lugar: e.lugar, habitat: null, precio: e.cosechas || 0 });
+      out.push({ id: 'esp_' + k, nombre: e.nombre || k, kind: FAUNA.indexOf(k) >= 0 ? 'fauna' : 'semilla', lugar: e.lugar, habitat: null, precio: e.precio || 0 });
     });
     return out;
   }

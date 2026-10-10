@@ -26,7 +26,7 @@ html:not([data-anim=off]) .cap{transition:transform .9s cubic-bezier(.22,.61,.36
 
 /* ---- Árbol: color por especie ---- */
 .tr-t{fill:none;stroke:#6b4a2f;stroke-linecap:round;stroke-linejoin:round}
-.t1{stroke-width:1.5}.t2{stroke-width:2}.t3{stroke-width:3}.t4{stroke-width:4}.t8{stroke-width:8}.t10{stroke-width:10}
+.t1{stroke-width:1.5}.t2{stroke-width:2}.t3{stroke-width:3}.t4{stroke-width:4}.t8{stroke-width:8}.t10{stroke-width:10}.t5{stroke-width:5}.t6{stroke-width:6}.t12{stroke-width:12}   /* F1066: grosores que usa el pewén (antes faltaban y el tronco salía de 1 px) */
 .tr-raices{opacity:.55}
 .tr-hebra{fill:none;stroke-width:3;stroke-linecap:round;stroke:#9ab654;opacity:.9}
 .arbol{--h:#4f9a5b;--h2:#79c07a}
@@ -428,3 +428,9 @@ html[data-eco="2"] .il-luci{animation:none;opacity:.85}
 
 /* F1060 · Hábitat bosque nativo: el título del Vivero queda debajo de los botones superiores (no se tapa) */
 #ilViv .viv-top{margin-top:54px}
+/* F1067 · Cámara: al plantar o llamar un ave, la escena se acerca al punto y vuelve (sin movimiento con «reducir movimiento» o ahorro, ver quieto() en inicio_lienzo.js). */
+.il-escena.camara .il-svg{transform-origin:var(--ox,50%) var(--oy,50%);animation:il-cam 1.8s ease both}
+@keyframes il-cam{0%,100%{transform:scale(1)}35%,70%{transform:scale(1.28)}}
+html[data-eco="2"] .il-escena.camara .il-svg{animation:none}
+/* F1067 · La ficha de acción del Vivero (plantar, llamar, poner de fondo) se queda a la vista mientras se recorren las opciones */
+.viv-accion{position:sticky;bottom:6px;z-index:3;background:var(--tarjeta,#fff);border-radius:14px;box-shadow:0 8px 18px -10px rgba(0,0,0,.35);padding:10px 12px}

@@ -976,7 +976,7 @@
     });
     caja.querySelectorAll('[data-contestada]').forEach((b) => b.addEventListener('click', async () => {
       const rr = await rpcRaw('peticion_respondida', { p_codigo: id.codigo, p_clave: id.clave, p_id: b.dataset.contestada, p_valor: b.dataset.valor === '1' });
-      if (!rr.ok) return msg(errTxt(rr.error)); msg(''); if (b.dataset.valor === '1') gotaGanar('oracion'); oracionesMias(id);
+      if (!rr.ok) return msg(errTxt(rr.error)); msg(''); oracionesMias(id);   // F1067: las oraciones no dan gotas (decisión del usuario)
     }));
     caja.querySelectorAll('[data-guardarresp]').forEach((b) => b.addEventListener('click', async () => {
       const t = $('#resp_' + b.dataset.guardarresp);
@@ -1315,10 +1315,11 @@
     ['sopa', '🔎', 'Sopa del Vivero', 'Letras grandes, sin tiempo y con pistas gratis.']
   ];
   const JUEGOS_LISTOS = { raices: (v) => vistaRaices(v), brotes: (v) => vistaBrotes(v), sopa: (v) => vistaSopa(v) };   // id -> función que abre el juego (cada fase nueva se registra aquí)
-  function juegoTerminar(id, aciertos, total) {   // guarda la partida y da una gota de rocío por jugar (con tope diario)
+  function juegoTerminar(id, aciertos, total) {   // guarda la partida; una gota de rocío al terminar con al menos 60 % de aciertos (tope diario)
     const j = leer(K_JUEGOS) || { n: 0, p: {} }; j.n = (j.n || 0) + 1; j.p = j.p || {};
     const q = j.p[id] || { n: 0, mejor: 0 }; q.n++; q.mejor = Math.max(q.mejor, Number(aciertos) || 0); j.p[id] = q; guardar(K_JUEGOS, j);
-    if (aciertos > 0) gotaGanar('juego'); return q;
+    // F1069: una gota al terminar, solo si se acertó al menos el 60 % de las preguntas (decisión del usuario)
+    if (total > 0 && aciertos / total >= 0.6) gotaGanar('juego'); return q;
   }
   // F945 · «RAÍCES» (juego B): preguntas con el versículo que explica la respuesta. Reto del día = 5 fijas por fecha; «Otras 5» = al azar.
   function raicesElegir(bank, diario) {

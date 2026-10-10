@@ -30,17 +30,34 @@
   const ci = (cls, x, y, r) => '<circle class="' + cls + '" cx="' + x + '" cy="' + y + '" r="' + r + '"/>';
   const el = (cls, x, y, rx, ry, rot) => '<ellipse class="' + cls + '" cx="' + x + '" cy="' + y + '" rx="' + rx + '" ry="' + ry + '"' + (rot ? ' transform="rotate(' + rot + ' ' + x + ' ' + y + ')"' : '') + '/>';
 
-  // F1059 · El fondo crece cada día: matas y arbustos en el suelo, a los lados del árbol (nunca tapan el tronco).
-  function paisajeDelDia(dias) {
-    const n = Math.min(12, Math.floor((dias || 0) * 0.8)); let g = '';
-    for (let i = 0; i < n; i++) {
-      const x = 12 + ((i * 97) % 336), y = 300 + ((i * 53) % 18);
-      if (x > 140 && x < 220) continue;
-      const sc = (0.7 + ((i * 31) % 5) * 0.08).toFixed(2), tono = ['#5f9a62', '#7cb36f', '#4f8a55'][i % 3];
-      g += '<g transform="translate(' + x + ' ' + y + ') scale(' + sc + ')"><ellipse cx="-9" cy="0" rx="10" ry="7" fill="' + tono + '"/><ellipse cx="6" cy="-2" rx="12" ry="9" fill="' + tono + '"/><ellipse cx="0" cy="2" rx="8" ry="5" fill="#94c27f" opacity=".7"/></g>';
-    }
+  // F1067 · Suelo por hábitat: cada hábitat tiene su propio suelo (solo lo que le corresponde) y crece por días hasta un ambiente completo.
+  // Posiciones fijas (SLOTS_DIA): a los lados y delante del árbol, nunca sobre el tronco ni la copa.
+  const SLOTS_DIA = [[14, 338], [346, 338], [70, 334], [120, 392], [44, 350], [316, 350], [262, 362], [296, 334], [96, 362], [26, 372], [334, 372], [290, 330], [236, 396], [150, 404], [210, 386], [6, 344]];
+  // Formato: [día en que aparece, id (dibujo de FLORES o de ESP), índice de SLOTS_DIA, escala]
+  const PAISAJE_HAB = {
+    bosque: [[2, 'helechos', 0, 0.9], [3, 'piedras', 1, 0.8], [4, 'copihue', 2, 0.9], [5, 'helechos', 4, 0.8], [6, 'chilco', 5, 0.8], [7, 'pasto_alto', 8, 0.9], [9, 'copihue', 3, 0.85], [10, 'piedras', 7, 0.7], [11, 'helechos', 9, 0.9], [12, 'chilco', 11, 0.8], [13, 'pasto_alto', 12, 0.95], [15, 'helechos', 14, 0.8]],
+    desierto: [[2, 'pata_de_guanaco', 0, 1.0], [3, 'piedras', 1, 0.8], [4, 'cactus', 2, 0.8], [5, 'garra_de_leon', 4, 0.7], [6, 'cactus', 5, 0.9], [8, 'pata_de_guanaco', 6, 0.9], [9, 'piedras', 7, 0.7], [10, 'cactus', 9, 1.0], [11, 'ananuca', 10, 0.8], [12, 'garra_de_leon', 11, 0.8], [14, 'cactus', 14, 0.9], [15, 'pata_de_guanaco', 12, 1.0]],
+    costa: [[2, 'conchas', 0, 0.9], [3, 'piedras', 1, 0.8], [4, 'garra_de_leon', 2, 0.8], [5, 'conchas', 4, 0.7], [6, 'pata_de_guanaco', 5, 0.9], [8, 'chagual', 6, 0.5], [9, 'piedras', 8, 0.7], [10, 'garra_de_leon', 9, 0.8], [12, 'conchas', 13, 0.8], [13, 'chagual', 7, 0.5], [15, 'pata_de_guanaco', 14, 0.9]],
+    cordillera: [[2, 'piedras', 0, 0.9], [3, 'llareta', 1, 0.8], [4, 'piedras', 2, 0.8], [5, 'chachacoma', 4, 0.9], [7, 'llareta', 5, 0.9], [8, 'ananuca', 6, 0.8], [9, 'piedras', 7, 0.7], [11, 'chachacoma', 9, 0.9], [12, 'llareta', 10, 0.8], [13, 'piedras', 11, 0.7], [14, 'chachacoma', 13, 0.8], [15, 'llareta', 12, 0.9]],
+    jardin: [[2, 'pasto_alto', 0, 0.9], [3, 'lavanda', 1, 0.7], [4, 'bonsai', 2, 0.7], [5, 'lavanda', 4, 0.8], [6, 'bambu', 5, 0.7], [8, 'lavanda', 6, 0.9], [9, 'bonsai', 7, 0.7], [10, 'bambu', 9, 0.7], [12, 'pasto_alto', 13, 0.9], [13, 'lavanda', 10, 0.8], [15, 'bonsai', 14, 0.9]],
+    general: [[2, 'pasto_alto', 0, 0.9], [4, 'piedras', 2, 0.8], [7, 'pasto_alto', 4, 0.8], [10, 'piedras', 7, 0.7], [13, 'pasto_alto', 9, 0.9]]
+  };
+  // Dibujo con la base en (0,0): ESP (60×40) o FLORES (caja DIM)
+  function sueloDibujo(id) {
+    if (ESP[id]) return '<g transform="translate(-30 -40)">' + ESP[id] + '</g>';
+    if (FLORES[id]) { const d = DIM[id] || [24, 24]; return '<g transform="translate(' + (-d[0] / 2) + ' ' + (-d[1]) + ')">' + FLORES[id]() + '</g>'; }
+    return '';
+  }
+  function paisajeDelDia(dias, hab) {
+    const L = PAISAJE_HAB[hab] || PAISAJE_HAB.general, d = Math.max(0, Math.floor(dias || 0)); let g = '';
+    L.forEach((it) => {
+      if (d < it[0]) return;
+      const xy = SLOTS_DIA[it[2]], k = (it[3] * (0.55 + 0.45 * Math.min(1, (d - it[0] + 1) / 3))).toFixed(2);
+      g += '<g class="pa-it" transform="translate(' + xy[0] + ' ' + xy[1] + ') scale(' + k + ')">' + sueloDibujo(it[1]) + '</g>';
+    });
     return g;
   }
+
   function brote() { return p('tr-t t3', 'M0 0 C0 -10 1 -20 0 -30') + p('tr-h', 'M0 -26 C-14 -30 -22 -22 -24 -14 C-12 -12 -4 -16 0 -26Z') + p('tr-h2', 'M0 -30 C12 -38 24 -32 26 -24 C14 -20 4 -22 0 -30Z'); }
   function raiz() {
     return '<g class="tr-raices">' + p('tr-t t2', 'M0 0 C-6 10 -14 14 -24 22') + p('tr-t t2', 'M0 0 C0 12 2 20 0 32') + p('tr-t t2', 'M0 0 C6 10 14 14 24 20') + p('tr-t t1', 'M-6 8 C-12 14 -14 20 -12 26') + '</g>'
@@ -55,22 +72,35 @@
     return p('tr-t t8', 'M0 0 C-3 -30 3 -62 0 -96') + p('tr-t t4', 'M0 -58 C-14 -66 -26 -76 -34 -90') + p('tr-t t4', 'M0 -70 C14 -80 26 -88 36 -104') + p('tr-t t3', 'M0 -86 C-6 -100 -10 -110 -14 -122')
       + ci('tr-h', -34, -96, 11) + ci('tr-h', 36, -110, 12) + ci('tr-h2', -14, -128, 10) + ci('tr-h', 0, -104, 9) + ci('tr-h2', 20, -96, 8);
   }
-  function frondoso(forma, especie, dias) {
-    // F1058/F1059 · Pewén (araucaria): tronco grueso con corteza y copa cónica. Gana pisos de ramas con los días.
-    if (forma === 'pewen') {
-      const d = Math.max(4, dias || 11), n = Math.max(2, Math.min(6, Math.round(d / 3)));
-      // silueta cónica detrás de los pisos, textura de follaje en los bordes y pisos que se superponen (más cerca de la araucaria real)
-      let g = p('tr-t t12', 'M0 0 C-4 -60 4 -120 0 -196') + p('tr-t t6', 'M-3 0 C-7 -60 0 -120 -3 -190') + p('tr-t t3', 'M-2 -30 l4 -6 M3 -90 l-3 -7 M-3 -150 l5 -6')
-        + p('tr-h2', 'M0 -198 C-30 -150 -62 -92 -80 -46 C-40 -38 40 -38 80 -46 C62 -92 30 -150 0 -198Z');
-      for (let j = 0; j < 14; j++) { const a = (j * 53) % 90 / 90, yy = -70 - a * 110, xx = (j % 2 ? 1 : -1) * (20 + (1 - a) * 58); g += p('tr-t t3', 'M' + xx.toFixed(1) + ' ' + yy.toFixed(1) + ' l' + (j % 2 ? 6 : -6) + ' 4'); }
-      for (let i = 0; i < n; i++) {
-        const t = n === 1 ? 0 : i / (n - 1), y = -52 - i * (120 / n), rx = 80 - t * 66, ry = 16 - t * 7;
-        g += el('tr-h', 0, y, rx, ry) + el('tr-h2', 0, y - 6, rx * 0.7, ry * 0.45)
-          + el('tr-h2', -rx * 0.92, y + 4, rx * 0.22, ry * 0.4, -18) + el('tr-h2', rx * 0.92, y + 4, rx * 0.22, ry * 0.4, 18)
-          + p('tr-t t3', 'M' + (-rx * 0.7).toFixed(1) + ' ' + (y + 6) + ' l-7 5 M' + (rx * 0.4).toFixed(1) + ' ' + (y + 8) + ' l6 6');
+  // F1066 · Pewén (araucaria) como la especie real: tronco largo y recto, ramas gruesas en verticilos que se curvan hacia arriba
+  // y, en cada punta, una mata densa de hojas punzantes. Entre verticilos se ve el tronco: no es un pino de pisos continuos.
+  function pewenBrazo(x0, y0, x1, y1, w) {
+    const s = x1 < 0 ? -1 : 1, mx = x0 + (x1 - x0) * 0.5;
+    return p('tr-t t' + w, 'M' + x0 + ' ' + y0 + ' C' + mx.toFixed(1) + ' ' + (y0 + 5) + ' ' + (x1 - s * 12).toFixed(1) + ' ' + (y1 + 9).toFixed(1) + ' ' + x1 + ' ' + y1);
+  }
+  function pewenMata(x, y, r, s) {                          // mata de follaje densa, alargada en la dirección de la rama (sin púas)
+    const a = s === 0 ? 0 : -s * 24;
+    return el('tr-h', x, y, r * 1.08, r * 0.7, a) + el('tr-h2', x + s * r * 0.22, y - r * 0.3, r * 0.74, r * 0.42, a)
+      + el('tr-h', x - s * r * 0.4, y + r * 0.28, r * 0.5, r * 0.36, a) + el('tr-h3', x + s * r * 0.3, y + r * 0.1, r * 0.25, r * 0.16, a);
+  }
+  function pewen(n) {
+    const m = Math.max(2, Math.min(6, n));
+    let g = p('tr-t t12', 'M0 0 C-3 -60 3 -130 0 -200') + p('tr-t t4', 'M-4 -6 C-6 -60 -2 -120 -4 -186');
+    for (let i = 0; i < m; i++) {
+      const t = m === 1 ? 0 : i / (m - 1), y = -40 - t * 126, L = 62 - t * 22, yt = y - 10 - t * 10, r = 15 - t * 3;
+      g += p('tr-t t1', 'M-5 ' + (y + 1).toFixed(1) + ' q5 -2.5 10 0');                    // cicatriz del verticilo en la corteza
+      for (const s of [-1, 1]) {
+        g += pewenBrazo(0, y, s * L, yt, 6) + pewenMata(s * L, yt, r, s);                 // rama gruesa que se curva hacia arriba
+        g += pewenBrazo(0, y + 5, s * L * 0.5, y + 24, 3) + pewenMata(s * L * 0.5, y + 24, 9 - t * 1.5, s);   // rama baja, colgante
       }
-      return g + el('tr-h', 0, -58 - n * (124 / n) - 8, 9, 7);
     }
+    // copa superior: ancha y plana, formada por varias matas juntas
+    return g + el('tr-h', 0, -186, 30, 12) + el('tr-h2', -10, -193, 16, 8) + el('tr-h2', 12, -195, 14, 7)
+      + el('tr-h', -22, -176, 13, 7, -20) + el('tr-h', 22, -176, 13, 7, 20);
+  }
+  function frondoso(forma, especie, dias) {
+    // F1058/F1059/F1066 · Pewén: copa en verticilos (ver pewen()); gana verticilos con los días.
+    if (forma === 'pewen') return pewen(Math.round(Math.max(4, dias || 11) / 3));
     if (forma === 'paraguas') {
       return p('tr-t t10', 'M0 0 C-3 -60 3 -120 0 -168') + p('tr-t t3', 'M0 -58 L-15 -66') + p('tr-t t3', 'M0 -78 L15 -86') + p('tr-t t3', 'M0 -98 L-13 -104')
         + p('tr-t t4', 'M0 -150 C-24 -152 -44 -160 -60 -176') + p('tr-t t4', 'M0 -150 C24 -152 44 -160 60 -176') + p('tr-t t3', 'M0 -162 C-8 -172 -14 -182 -16 -192')
@@ -230,7 +260,7 @@
     return ver.map((g) => '<button type="button" class="il-gota s-' + esc(g.casilla) + '" data-id="' + esc(g.id) + '" aria-label="Gota de rocío. Toca para recogerla">' + ic(IC.gota, 24) + '</button>').join('')
       + (mas > 0 ? '<button type="button" class="il-gota il-gota-grupo" data-id="todas" aria-label="Recoger ' + pe.length + ' gotas de rocío">' + ic(IC.gota, 30) + '<b>+' + mas + '</b></button>' : '');
   }
-  function gotasTexto(est) { const b = gotasTexto0(est); let f = ''; try { const c = window.TBInicio.cosechas(); if (c.total) f = FRUTO_S + c.saldo + (c.saldo === 1 ? ' fruto' : ' frutos'); } catch (e) { /* sin frutos */ } return b && f ? b + ' · ' + f : b || f; }
+  function gotasTexto(est) { return gotasTexto0(est); }   // F1070: sin frutos
   function gotasTexto0(est) { const g = est.gotas || {}, n = (g.pendientes || []).length; return (g.saldo || g.total || n) ? ic(IC.gota, 16) + (g.saldo || 0) + (g.saldo === 1 ? ' gota guardada' : ' gotas guardadas') + (n ? ' · ' + n + ' por recoger' : '') : ''; }
   // F933: el Vivero con contenido visual. Cada semilla y ave tiene su dibujo, hay una vista previa grande de lo que se obtiene y el avance hacia su precio.
   // Todo se anima con transform/opacity y se queda quieto en «reducir movimiento»/Ahorro. Sin atributo style (CSP): los tamaños salen de clases y de atributos SVG.
@@ -309,16 +339,13 @@
     const v = (est.vivero && est.vivero.desbloqueados) || [], E = (CAT && CAT.especiales) || {};
     return Object.keys(E).filter((id) => E[id].lugar === fo && v.indexOf('esp_' + id) >= 0 && ESP[id]).map((id) => { const q = E[id], k = +q.k || 1; return '<g class="esp-it" transform="translate(' + (q.x - 30 * k) + ' ' + (q.y - 40 * k) + ') scale(' + k + ')">' + ESP[id] + '</g>'; }).join('');
   }
-  function frutosHTML(est) {                                 // frutos maduros: se tocan para cosecharlos
-    const pe = (est.cosechas && est.cosechas.pend) || [];
-    return pe.map((f) => '<button type="button" class="il-fruto s-' + esc(f.casilla) + '" data-id="' + esc(f.id) + '" aria-label="Fruto maduro. Toca para cosecharlo">' + FRUTO + '</button>').join('');
-  }
+  const vis = (tipo, id, est) => !window.TBInicio || window.TBInicio.visibleEn(tipo, id, est.tematica);   // F1067
   function vivEscena(est) {
     const v = est.vivero || {};
-    return (v.plantas || []).map((q) => '<span class="il-planta p-' + esc(q.id) + ' s-' + esc(q.casilla) + '" aria-hidden="true">' + flor(q.id, 0.9) + '</span>').join('')
-      + (v.aves || []).slice(0, 2).map((a, i) => '<span class="il-ave n' + (i + 1) + ' a-' + esc(a.id) + ' l-' + esc((AVES[a.id] || {}).lugar || 'rama') + '" aria-hidden="true">' + ave(a.id) + '</span>').join('')
+    return (v.plantas || []).filter((q) => vis('semilla', q.id, est)).map((q) => '<span class="il-planta p-' + esc(q.id) + ' s-' + esc(q.casilla) + '" aria-hidden="true">' + flor(q.id, 0.9) + '</span>').join('')
+      + (v.aves || []).filter((a) => vis('ave', a.id, est)).slice(0, 2).map((a, i) => '<span class="il-ave n' + (i + 1) + ' a-' + esc(a.id) + ' l-' + esc((AVES[a.id] || {}).lugar || 'rama') + '" aria-hidden="true">' + ave(a.id) + '</span>').join('')
       // F1055 · luciérnagas encendidas: seis luces que flotan en el cielo (la animación se apaga con movimiento reducido o en modo ahorro)
-      + ((v.ambientes || []).indexOf('luciernagas') >= 0 ? '<span class="il-luci-grupo" aria-hidden="true"><i class="il-luci k1"></i><i class="il-luci k2"></i><i class="il-luci k3"></i><i class="il-luci k4"></i><i class="il-luci k5"></i><i class="il-luci k6"></i></span>' : '');
+      + ((v.ambientes || []).indexOf('luciernagas') >= 0 && vis('ambiente', 'luciernagas', est) ? '<span class="il-luci-grupo" aria-hidden="true"><i class="il-luci k1"></i><i class="il-luci k2"></i><i class="il-luci k3"></i><i class="il-luci k4"></i><i class="il-luci k5"></i><i class="il-luci k6"></i></span>' : '');
   }
   // Vista previa (320×120): pasto con la flor a su altura real, o el lugar propio del ave (cielo, rama, suelo o junto a una flor).
   function vivVista(tipo, id) {
@@ -357,6 +384,7 @@
     if (g === 'cordillera') d += '<path d="M10 60 50 18 90 60Z M60 60 100 14 150 60Z" fill="' + c1 + '"/><path d="M50 18 40 34 60 30Z M100 14 90 32 110 30Z" fill="#ffffff"/>';
     else if (g === 'desierto') d += '<rect x="66" y="40" width="7" height="26" rx="3" fill="' + c2 + '"/><circle cx="42" cy="66" r="3" fill="' + acento + '"/><circle cx="96" cy="70" r="3" fill="' + acento + '"/>';
     else if (g === 'costa') d += '<rect x="0" y="80" width="160" height="16" fill="' + c1 + '"/><path d="M20 84h30M90 88h40" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity=".7"/>';
+    else if (g === 'jardin') d += [34, 58, 84, 112, 134].map((x, i) => '<path d="M' + x + ' 82V54" stroke="#4f8a55" stroke-width="2"/><ellipse cx="' + x + '" cy="' + (46 + (i % 2) * 4) + '" rx="3.2" ry="9" fill="' + (i % 2 ? '#a583e3' : '#8a63cf') + '"/>').join('');
     else d += '<circle cx="46" cy="44" r="14" fill="' + c2 + '"/><circle cx="110" cy="40" r="16" fill="' + c2 + '"/><rect x="44" y="52" width="4" height="18" fill="#7a5a3c"/><rect x="108" y="52" width="4" height="18" fill="#7a5a3c"/><circle cx="48" cy="40" r="3" fill="' + acento + '"/>';
     return '<svg class="viv-thumb" viewBox="0 0 160 96" aria-hidden="true" focusable="false">' + d + '</svg>';
   }
@@ -384,7 +412,13 @@
     if (!mio) acc = '<p class="suave m0">' + (falta ? 'Te faltan ' + falta + ' gotas.' : 'Ya tienes las gotas necesarias.') + '</p><button type="button" class="btn il-viv-bt il-viv-main" data-ac="comprar" data-tipo="' + vivSel.tipo + '" data-id="' + esc(vivSel.id) + '"' + (falta ? ' disabled' : '') + '>' + (falta ? 'Aún faltan gotas' : 'Obtener por ' + it.precio + ' gotas') + '</button>';
     else if (vivSel.tipo === 'ambiente') acc = '<button type="button" class="btn il-viv-bt il-viv-main" data-ac="ambiente" data-tipo="ambiente" data-id="' + esc(vivSel.id) + '">' + (ambActiva(vivSel.id) ? 'Apagar las luciérnagas' : 'Encender las luciérnagas') + '</button>';
     else if (vivSel.tipo === 'ave') acc = '<button type="button" class="btn il-viv-bt il-viv-main" data-ac="ave" data-tipo="ave" data-id="' + esc(vivSel.id) + '">' + (activa(vivSel.id) ? 'Guardar el ave' : 'Llamar al árbol') + '</button>';
-    else acc = plantada(vivSel.id) ? '<p class="il-viv-ok2">Ya está plantada en tu pasto.</p>' : '<button type="button" class="btn il-viv-bt il-viv-main" data-ac="plantar" data-tipo="semilla" data-id="' + esc(vivSel.id) + '">Plantar en mi pasto</button>';
+    else {
+      const hs = it.habitat || [], hOk = !hs.length || hs.indexOf(est.tematica) >= 0, hOwn = hs.filter((h) => tengo('tem_' + h))[0];
+      if (plantada(vivSel.id)) acc = '<p class="il-viv-ok2">Ya está plantada en tu pasto.</p>';
+      else if (hOk) acc = '<button type="button" class="btn il-viv-bt il-viv-main" data-ac="plantar" data-tipo="semilla" data-id="' + esc(vivSel.id) + '">Plantar en mi jardín</button>';
+      else if (hOwn) acc = '<button type="button" class="btn il-viv-bt il-viv-main" data-ac="fondoyplantar" data-tipo="semilla" data-id="' + esc(vivSel.id) + '" data-h="' + esc(hOwn) + '">Poner «' + esc(nomHab(hOwn)) + '» de fondo y plantar</button>';
+      else acc = '<p class="il-viv-pre">Esta planta es del hábitat «' + esc(nomHab(hs[0])) + '». Obtenlo primero en el Vivero.</p>';
+    }
     const lista = amb ? Object.keys(CAT.ambientes || {}).filter((i) => enGrupo('ambiente', i, vivGrupo)) : (vivTab === 'aves' ? aves : sem).filter((i) => enGrupo(tipoV, i, vivGrupo));
     const haba = habs.map((g) => {
       const tiene = tengo('tem_' + g), act = g === est.tematica, precio = ((CAT.tematicas || {})[g] || {}).precio || 0;
@@ -392,9 +426,11 @@
       return '<button type="button" class="viv-hab' + (act ? ' on' : '') + '" data-ac="' + (tiene ? 'habitat' : 'comprar-tema') + '" data-id="' + esc(g) + '" aria-pressed="' + act + '">' + habThumb(g) + '<b>' + esc(nomGrupo(g)) + '</b><span>' + esc(nota) + '</span></button>';
     }).join('');
     const pill = (id, txt) => '<button type="button" class="viv-pill' + (vivTab === id ? ' on' : '') + '" data-ac="tab" data-id="' + id + '" aria-pressed="' + (vivTab === id) + '">' + txt + '</button>';
-    const pillsG = '<button type="button" class="il-viv-saldo il-viv-saldo-bt" data-ac="tab" data-id="gotas" aria-label="Ver cómo ganar gotas">' + ic(IC.gota, 16) + saldo + (saldo === 1 ? ' gota' : ' gotas') + '</button>' + (() => { try { const c2 = window.TBInicio.cosechas(); return c2.total ? '<span class="il-viv-saldo il-viv-cos">' + FRUTO_S + c2.saldo + (c2.saldo === 1 ? ' fruto' : ' frutos') + '</span>' : ''; } catch (e) { return ''; } })();
+    const hab = vivGrupo, fondoOk = tengo('tem_' + hab), fondoAct = est.tematica === hab;
+    const linFondo = !fondoOk ? '' : fondoAct ? '<p class="il-viv-ok2">Tu jardín es <b>' + esc(nomHab(hab)) + '</b>. Lo que plantes y llames aquí se queda aquí.</p>' : '<button type="button" class="btn sec" data-ac="fondo" data-id="' + esc(hab) + '">Poner este fondo en mi jardín</button>';
+    const pillsG = '<button type="button" class="il-viv-saldo il-viv-saldo-bt" data-ac="tab" data-id="gotas" aria-label="Ver cómo ganar gotas">' + ic(IC.gota, 16) + saldo + (saldo === 1 ? ' gota' : ' gotas') + '</button>'
     return '<div class="il-viv-cab viv-top"><h3 class="viv-titulo">Vivero</h3><div class="viv-pills">' + pillsG + '</div></div>'
-      + '<h4 class="viv-paso">1. Elige tu entorno (Hábitat)</h4><div class="viv-habitats" role="group" aria-label="Hábitats del Vivero">' + haba + '</div>'
+      + '<h4 class="viv-paso">1. Elige tu entorno (Hábitat)</h4><div class="viv-habitats" role="group" aria-label="Hábitats del Vivero">' + haba + '</div>' + linFondo
       + '<h4 class="viv-paso">2. Decoraciones para este entorno</h4><div class="viv-filtros" role="group" aria-label="Tipo de decoración">' + pill('flores', 'Plantas') + pill('aves', 'Aves') + pill('paisaje', 'Ambiental') + '</div>'
       + '<div class="il-viv-car viv-grid" role="list" aria-label="Decoraciones del entorno">' + lista.map((i) => tile(tipoV, i)).join('') + '</div>'
       + (amb && !lista.length ? '<p class="viv-vacio">Pronto habrá decoraciones para este espacio.</p>' : '<div class="il-viv-ficha viv-accion"><h4>' + esc(it.nombre) + '</h4><p class="il-viv-rasgo">' + esc(vivSel.tipo === 'ave' ? ((AVES[vivSel.id] || {}).t || '') : vivSel.tipo === 'ambiente' ? ((catDe('ambiente')[vivSel.id] || {}).t || '') : (TAM[vivSel.id] || '')) + '</p>' + acc + '</div>')
@@ -409,7 +445,6 @@
     const CATS = [
       { k: 'lectura', t: 'Lectura bíblica', n: 'Lectura bíblica', d: 'Lee un capítulo con calma y a tu ritmo.', bt: 'Ir a leer', to: 'lectura' },
       { k: 'vida', t: 'Prácticas', n: 'Prácticas de vida', d: 'Haz un paso diario de «Vivir lo que aprendemos».', bt: 'Ir a Vida', to: 'vida' },
-      { k: 'oracion', t: 'Oración', n: 'Mi oración', d: 'Agrega o responde una oración de la comunidad.', bt: 'Ir a Mi oración', to: 'oracion' },
     ];
     const tarjeta = (c) => '<article class="og-card"><header class="og-h"><span>' + esc(c.t) + '</span><em>+' + gotasDe(c.k) + (gotasDe(c.k) === 1 ? ' gota' : ' gotas') + '</em></header><b>' + esc(c.n) + '</b><p>' + esc(c.d) + '</p><small class="og-hoy">' + ic(IC.gota, 13) + ' Hoy: ' + hoyDe(c.k) + '</small><button type="button" class="btn og-bt" data-ac="ira" data-id="' + c.to + '">' + esc(c.bt) + '</button></article>';
     const trivia = '<section class="og-trivia"><div><b>Trivia de hoy</b><em>+' + gotasDe('trivia') + (gotasDe('trivia') === 1 ? ' gota' : ' gotas') + '</em><p>' + (tri && tri.resuelta ? 'Ya respondiste la trivia de hoy.' : 'Responde la trivia del día.') + '</p></div><button type="button" class="btn og-bt og-jugar" data-ac="ira" data-id="trivia"' + (tri && tri.resuelta ? ' disabled' : '') + '>Jugar</button></section>';
@@ -424,7 +459,7 @@
     costa: '<svg viewBox="0 0 320 96" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><defs><linearGradient id="taCs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d6ecf6"/><stop offset="1" stop-color="#f4f8f0"/></linearGradient></defs><rect width="320" height="96" fill="url(#taCs)"/><circle cx="58" cy="20" r="9" fill="#f7d98a"/><path d="M0 52 H320 V66 H0Z" fill="#7bb8c9"/><path d="M0 60 q16 -4 32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0" fill="none" stroke="#e9f6fb" stroke-width="2"/><path d="M0 70 C80 62 160 74 240 66 S300 66 320 64 V96 H0Z" fill="#e8d3a6"/><path d="M226 96 C232 80 250 72 270 74 C300 76 320 84 320 96Z" fill="#7a6e62"/><path d="M250 92 C254 84 264 80 276 82 C264 86 258 90 250 92Z" fill="#94877a"/><g fill="#5f9a62"><ellipse cx="100" cy="82" rx="6" ry="3"/><ellipse cx="128" cy="84" rx="5" ry="2.6"/></g><g fill="#c25b3c"><path d="M98 80 q-2 -6 0 -10 q2 4 0 10z"/></g></svg>',
     bosque: '<svg viewBox="0 0 320 96" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><defs><linearGradient id="taBo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfe6f4"/><stop offset="1" stop-color="#eef6e8"/></linearGradient></defs><rect width="320" height="96" fill="url(#taBo)"/><path d="M0 58 C40 34 80 40 120 30 S200 36 240 26 S300 34 320 30 V96 H0Z" fill="#8fb88a"/><g fill="#4f8a55"><ellipse cx="42" cy="48" rx="20" ry="16"/><ellipse cx="78" cy="44" rx="16" ry="14"/><ellipse cx="236" cy="46" rx="20" ry="16"/><ellipse cx="272" cy="42" rx="16" ry="14"/><ellipse cx="304" cy="50" rx="14" ry="12"/></g><g fill="#2f6040"><ellipse cx="128" cy="40" rx="11" ry="20"/><ellipse cx="160" cy="34" rx="13" ry="24"/><ellipse cx="192" cy="42" rx="11" ry="18"/></g><g fill="#7a5a3c"><rect x="40" y="62" width="4" height="22"/><rect x="77" y="58" width="4" height="26"/><rect x="235" y="62" width="4" height="22"/><rect x="271" y="58" width="4" height="26"/><rect x="158" y="56" width="4" height="30"/></g><path d="M0 84 C80 78 160 82 240 80 S300 82 320 80 V96 H0Z" fill="#6f9e68"/><g fill="#d98cb3"><circle cx="100" cy="82" r="2"/><circle cx="210" cy="84" r="2"/></g></svg>',
     desierto: '<svg viewBox="0 0 320 96" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><defs><linearGradient id="taDe" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7dcb0"/><stop offset="1" stop-color="#fbeed6"/></linearGradient></defs><rect width="320" height="96" fill="url(#taDe)"/><circle cx="268" cy="22" r="11" fill="#f5c46a" opacity=".9"/><path d="M0 62 C60 46 120 56 170 48 S270 52 320 44 V96 H0Z" fill="#e6b97a"/><path d="M0 80 C90 70 170 78 250 72 S300 74 320 70 V96 H0Z" fill="#d4a062"/><g fill="#c25b3c"><path d="M52 72 q-4 -10 0 -18 q4 8 0 18z"/><path d="M58 72 q4 -8 10 -10 q-6 6 -10 10z"/></g><g fill="#e7749a"><circle cx="110" cy="66" r="3.4"/><circle cx="118" cy="64" r="3.2"/><circle cx="126" cy="67" r="3.4"/></g><g stroke="#3f7a4c" stroke-width="2.2" stroke-linecap="round"><path d="M110 72 V80"/><path d="M118 70 V80"/><path d="M126 73 V80"/></g><g fill="#5f9a62"><rect x="220" y="58" width="6" height="22" rx="3"/><rect x="226" y="62" width="4" height="10" rx="2"/><rect x="210" y="64" width="4" height="8" rx="2"/></g></svg>',
-    jardin: '<svg viewBox="0 0 320 96" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><defs><linearGradient id="taJa" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d8efe4"/><stop offset="1" stop-color="#f1f7e6"/></linearGradient></defs><rect width="320" height="96" fill="url(#taJa)"/><circle cx="46" cy="22" r="10" fill="#fbe8a6"/><path d="M0 60 C60 42 110 52 160 44 S260 50 320 40 V96 H0Z" fill="#9cc78d"/><ellipse cx="180" cy="80" rx="72" ry="9" fill="#7bb8c9" opacity=".6"/><g fill="#5f9a62"><ellipse cx="150" cy="78" rx="12" ry="3.4"/><ellipse cx="200" cy="79" rx="10" ry="3"/></g><g fill="#f6bfd6" stroke="#e48fb4" stroke-width=".6"><ellipse cx="176" cy="70" rx="3.6" ry="8" transform="rotate(-30 176 78)"/><ellipse cx="176" cy="68" rx="3.6" ry="8.5"/><ellipse cx="184" cy="70" rx="3.6" ry="8" transform="rotate(30 184 78)"/></g><g fill="#6aa86b" stroke="#4f8a45" stroke-width=".4"><rect x="268" y="40" width="5" height="42" rx="2.4" fill="#86b35e"/><rect x="278" y="34" width="4.4" height="48" rx="2.2" fill="#74a352"/><ellipse cx="274" cy="44" rx="6" ry="1.8" transform="rotate(-25 274 44)"/><ellipse cx="282" cy="40" rx="5" ry="1.6" transform="rotate(20 282 40)"/></g><g fill="#4f8a55"><ellipse cx="60" cy="58" rx="14" ry="11"/><ellipse cx="76" cy="54" rx="11" ry="9"/></g><rect x="56" y="66" width="4" height="14" fill="#7a5a3c"/></svg>'
+    jardin: '<svg viewBox="0 0 320 96" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><defs><linearGradient id="taJa" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d8efe4"/><stop offset="1" stop-color="#f1f7e6"/></linearGradient></defs><rect width="320" height="96" fill="url(#taJa)"/><circle cx="46" cy="22" r="10" fill="#fbe8a6"/><path d="M0 60 C60 42 110 52 160 44 S260 50 320 40 V96 H0Z" fill="#9cc78d"/><ellipse cx="180" cy="80" rx="72" ry="9" fill="#7bb8c9" opacity=".6"/><g fill="#5f9a62"><ellipse cx="150" cy="78" rx="12" ry="3.4"/><ellipse cx="200" cy="79" rx="10" ry="3"/></g><g fill="#f6bfd6" stroke="#e48fb4" stroke-width=".6"><ellipse cx="176" cy="70" rx="3.6" ry="8" transform="rotate(-30 176 78)"/><ellipse cx="176" cy="68" rx="3.6" ry="8.5"/><ellipse cx="184" cy="70" rx="3.6" ry="8" transform="rotate(30 184 78)"/></g><g fill="#6aa86b" stroke="#4f8a45" stroke-width=".4"><rect x="268" y="40" width="5" height="42" rx="2.4" fill="#86b35e"/><rect x="278" y="34" width="4.4" height="48" rx="2.2" fill="#74a352"/><ellipse cx="274" cy="44" rx="6" ry="1.8" transform="rotate(-25 274 44)"/><ellipse cx="282" cy="40" rx="5" ry="1.6" transform="rotate(20 282 40)"/></g><g fill="#7a5fd0"><ellipse cx="60" cy="62" rx="4" ry="14"/><ellipse cx="72" cy="64" rx="4" ry="12"/></g><g fill="#a583e3"><ellipse cx="66" cy="56" rx="3.4" ry="11"/></g></svg>'
   };
   function temasHTML(est) {                                 // F965 · temáticas del vivero: se compran con gotas y cambian el fondo y las plantas permitidas
     const TM = (CAT && CAT.tematicas) || {}, ids = Object.keys(TM), v = est.vivero || { desbloqueados: [] }, saldo = (est.gotas && est.gotas.saldo) || 0;
@@ -439,24 +474,35 @@
   function vivPanelEsp(est) {                                // F959 · pestaña «Paisaje»: contenido especial que se paga con frutos
     const v = est.vivero || { desbloqueados: [] }, E = (CAT && CAT.especiales) || {}, L = (CAT && CAT.lugares) || {}, orden = Object.keys(L), ids = Object.keys(E).sort((a, b) => orden.indexOf(E[a].lugar) - orden.indexOf(E[b].lugar));
     const tengo = (id) => v.desbloqueados.indexOf('esp_' + id) >= 0, lugarOk = (l) => v.desbloqueados.indexOf('lug_' + l) >= 0, nom = (l) => (L[l] && L[l].nombre) || l;
-    let fr = { total: 0, saldo: 0 }, saldoG = (est.gotas && est.gotas.saldo) || 0; try { fr = window.TBInicio.cosechas(); } catch (e) { /* sin frutos */ }
+    const saldoG = (est.gotas && est.gotas.saldo) || 0;   // F1070: los paisajes se pagan con gotas
     if (!E[vivSel.id]) vivSel = { tipo: 'esp', id: ids[0] };
     const tile = (id) => { const q = E[id], mio = tengo(id), sel = vivSel.id === id, cerr = !mio && !lugarOk(q.lugar);
       return '<button type="button" class="il-viv-tile' + (sel ? ' sel' : '') + (mio ? ' mio' : '') + '" role="listitem" data-ac="ver" data-tipo="esp" data-id="' + esc(id) + '" aria-pressed="' + sel + '"><span class="il-viv-arte">' + espSvg(id, 78) + '</span><b>' + esc(q.nombre) + '</b><small>' + esc(nom(q.lugar)) + '</small>'
-        + (mio ? '<span class="il-viv-chip ok">Tuyo</span>' : '<span class="il-viv-chip">' + FRUTO_S + q.cosechas + (cerr ? ' · falta el lugar' : '') + '</span>') + '</button>'; };
-    const q = E[vivSel.id], mio = tengo(vivSel.id), falta = Math.max(0, q.cosechas - fr.saldo); let acc;
+        + (mio ? '<span class="il-viv-chip ok">Tuyo</span>' : '<span class="il-viv-chip">' + ic(IC.gota, 13) + q.precio + (cerr ? ' · falta el lugar' : '') + '</span>') + '</button>'; };
+    const q = E[vivSel.id], mio = tengo(vivSel.id), falta = Math.max(0, q.precio - saldoG); let acc;
     if (mio) acc = '<p class="il-viv-ok2">Ya es tuyo. Se ve cuando eliges «' + esc(nom(q.lugar)) + '» en Tu paisaje.</p>';
     else if (!lugarOk(q.lugar)) acc = '<p class="il-viv-pre">Primero necesitas el paisaje «' + esc(nom(q.lugar)) + '». Se obtiene en «Tu paisaje», con gotas.</p>';
-    else acc = '<p class="il-viv-pre">' + (falta ? 'Llevas ' + fr.saldo + ' de ' + q.cosechas + ' frutos. Faltan ' + falta + '.' : 'Ya tienes los frutos necesarios.') + '</p><button type="button" class="btn il-viv-bt il-viv-main" data-ac="comprar" data-tipo="esp" data-id="' + esc(vivSel.id) + '"' + (falta ? ' disabled' : '') + '>' + (falta ? 'Aún faltan frutos' : 'Obtener por ' + q.cosechas + ' frutos') + '</button>';
-    return '<div class="il-viv-cab"><h3>Vivero</h3><span class="il-viv-saldo">' + ic(IC.gota, 16) + saldoG + (saldoG === 1 ? ' gota' : ' gotas') + '</span><span class="il-viv-saldo il-viv-cos">' + FRUTO_S + fr.saldo + (fr.saldo === 1 ? ' fruto' : ' frutos') + '</span></div>'
-      + '<p class="il-viv-ay">Tu árbol y tus plantas dan fruto en pocos días: tócalos para cosecharlos. Los frutos sirven para llenar tus paisajes.</p>'
+    else acc = '<p class="il-viv-pre">' + (falta ? 'Te faltan ' + falta + ' gotas.' : 'Ya tienes las gotas necesarias.') + '</p><button type="button" class="btn il-viv-bt il-viv-main" data-ac="comprar" data-tipo="esp" data-id="' + esc(vivSel.id) + '"' + (falta ? ' disabled' : '') + '>' + (falta ? 'Aún faltan gotas' : 'Obtener por ' + q.precio + ' gotas') + '</button>';
+    return '<div class="il-viv-cab"><h3>Vivero</h3><span class="il-viv-saldo">' + ic(IC.gota, 16) + saldoG + (saldoG === 1 ? ' gota' : ' gotas') + '</span></div>'
+      + '<p class="il-viv-ay">Cada paisaje se compra con gotas. Lo que obtengas se ve en tu Inicio.</p>'
       + tabsViv('paisaje', { flores: listaDe('semilla').length, aves: listaDe('ave').length, otros: ids.length })
       + temasHTML(est) + '<div class="il-viv-car" role="list" aria-label="Desliza para ver más">' + ids.map(tile).join('') + '</div>'
       + '<div class="il-viv-vista pop" id="ilVivVista"><div class="il-viv-esp">' + espSvg(vivSel.id, 150) + '</div></div>'
       + '<div class="il-viv-ficha"><h4>' + esc(q.nombre) + '</h4><p class="il-viv-rasgo">' + esc(nom(q.lugar)) + '</p><p class="il-viv-dato">' + esc(q.dato || '') + '</p>' + acc + '</div>'
       + '<p class="il-viv-est" role="status" aria-live="polite">' + esc(vivMsg) + '</p>';
   }
-  const MOT = { 'otra-tematica': 'Esta planta crece en otra temática. Activa la temática que le corresponde.', 'no-desbloqueada': 'Primero obtén esta temática.', 'faltan-frutos': 'Aún faltan frutos para esto.', 'falta-lugar': 'Primero hace falta ese paisaje.', 'faltan-gotas': 'Aún faltan gotas para esto.', 'sin-lugar': 'No queda lugar libre en el pasto.', 'maximo': 'Solo pueden estar 2 aves a la vez. Se puede guardar una para llamar a otra.', 'ya-tienes': 'Ya lo tienes.' };
+  const MOT = { 'otra-tematica': 'Primero obtén el hábitat de esta planta.', 'no-desbloqueada': 'Primero obtén esta temática.', 'faltan-frutos': 'Aún faltan frutos para esto.', 'falta-lugar': 'Primero hace falta ese paisaje.', 'faltan-gotas': 'Aún faltan gotas para esto.', 'sin-lugar': 'No queda lugar libre en el pasto.', 'maximo': 'Solo pueden estar 2 aves a la vez. Se puede guardar una para llamar a otra.', 'ya-tienes': 'Ya lo tienes.' };
+  const nomHab = (h) => ((CAT && CAT.tematicas && CAT.tematicas[h]) || {}).nombre || h;
+  // F1067 · Cámara: el escenario se acerca al punto donde se plantó o llamó un ave, y vuelve. Con «reducir movimiento» no se mueve.
+  function camara(cont, sel) {
+    const es = $('#ilEscena', cont), el = es && $(sel, es); if (!el || quieto()) return;
+    const eb = es.getBoundingClientRect(), b = el.getBoundingClientRect(); if (!eb.width) return;
+    es.style.setProperty('--ox', (((b.left + b.width / 2 - eb.left) / eb.width) * 100).toFixed(1) + '%');
+    es.style.setProperty('--oy', (((b.top + b.height / 2 - eb.top) / eb.height) * 100).toFixed(1) + '%');
+    es.classList.remove('camara'); void es.offsetWidth; es.classList.add('camara');
+    try { es.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) { /* sin desplazamiento */ }
+    later(() => es.classList.remove('camara'), 1900);
+  }
   function ligarViv(cont, mi) {
     const T = window.TBInicio, bt = $('#ilVivBtn', cont), pn = $('#ilViv', cont); if (!bt || !pn) return;
     const pinta = (conservar) => { const car = $('.il-viv-car', pn), sl = car ? car.scrollLeft : 0; pn.innerHTML = vivPanel(T.cargar()); const c2 = $('.il-viv-car', pn); if (c2 && conservar) c2.scrollLeft = sl; };
@@ -464,7 +510,9 @@
     bt.onclick = () => { vivMsg = ''; abre(pn.hidden); };
     pn.onclick = (ev) => {
       const b = ev.target.closest('[data-ac]'); if (!b || b.disabled) return; const ac = b.getAttribute('data-ac'), tipo = b.getAttribute('data-tipo'), id = b.getAttribute('data-id'); let r;
-      if (ac === 'habitat') { const r = window.TBInicio.elegirTematica(id === 'general' ? null : id); vivMsg = r && r.ok ? '' : 'No se pudo activar ese hábitat.'; vivGrupo = id; pinta(false); sonido('suave'); try { const act = $('.viv-hab.on', pn); if (act && act.scrollIntoView) act.scrollIntoView({ behavior: quieto() ? 'auto' : 'smooth', block: 'nearest', inline: 'center' }); } catch (e) { /* sin desplazamiento */ } return; }
+      if (ac === 'fondo') { const r = window.TBInicio.elegirTematica(id); if (!r.ok) { vivMsg = 'No se pudo cambiar el fondo.'; pinta(true); return; } vivMsg = 'Tu jardín ahora es el de ' + nomHab(id) + '.'; sonido('suave'); pintar(cont, mi, { repinta: true }); return; }
+      // F1066: tocar un hábitat solo lo muestra; el fondo cambia únicamente con el botón «Poner este fondo»
+      if (ac === 'habitat') { vivGrupo = id; vivMsg = ''; pinta(false); sonido('suave'); try { const act = $('.viv-hab.on', pn); if (act && act.scrollIntoView) act.scrollIntoView({ behavior: quieto() ? 'auto' : 'smooth', block: 'nearest', inline: 'center' }); } catch (e) { /* sin desplazamiento */ } return; }
       if (ac === 'comprar-tema') { vivGrupo = id; const r = window.TBInicio.comprar('tema', id); if (r && r.ok) { vivMsg = '¡Hábitat desbloqueado! Ya puedes activarlo.'; sonido('logro'); } else { const m = { 'sin-gotas': 'Te faltan gotas para este hábitat. Toca «Ganar gotas» para sumar.', 'ya-tienes': 'Ya tienes este hábitat.' }; vivMsg = m[r && r.motivo] || 'No se pudo desbloquear ahora.'; } pinta(false); return; }
       if (ac === 'tab' && id === 'gotas') { vivSel = { tipo: 'gotas', id: 'gotas' }; vivMsg = ''; pinta(false); sonido('suave'); return; }
       if (ac === 'grupo') { vivGrupo = id; const tp = vivSel && vivSel.tipo === 'ave' ? 'ave' : 'semilla', p = listaDe(tp).filter((i) => enGrupo(tp, i, id))[0]; if (p) vivSel = { tipo: tp, id: p }; vivMsg = ''; pinta(false); sonido('suave'); return; }
@@ -473,13 +521,17 @@
       if (ac === 'tab') { const e = T.cargar(), v = e.vivero || { desbloqueados: [] }, lista = id === 'aves' ? Object.keys(CAT.aves || {}) : (CAT.orden_semillas || Object.keys(CAT.semillas || {})), pre = id === 'aves' ? 'ave_' : 'sem_', p1 = lista.find((i) => v.desbloqueados.indexOf(pre + i) < 0) || lista[0]; vivSel = { tipo: id === 'aves' ? 'ave' : 'semilla', id: p1 }; vivTab = id === 'aves' ? 'aves' : 'flores'; vivMsg = ''; pinta(false); sonido('suave'); return; }
       if (ac === 'ver') { vivSel = { tipo, id }; vivMsg = ''; pinta(true); sonido('suave'); try { const s = $('.il-viv-tile.sel', pn); if (s && s.scrollIntoView) s.scrollIntoView({ behavior: quieto() ? 'auto' : 'smooth', block: 'nearest', inline: 'center' }); } catch (e) { /* sin scroll */ } return; }
       if (ac === 'tema-comprar') { r = T.comprar('tema', id); if (r.ok) vivMsg = 'Listo: ya tienes esta temática. Úsala para cambiar el paisaje.'; }
-      else if (ac === 'tema-usar') { r = T.elegirTematica(id); if (r.ok) { vivMsg = 'Temática activa.'; try { pintar(cont, mi, { repinta: true }); const b2 = $('#ilVivBtn', cont); if (b2) b2.click(); } catch (er) { /* sin repintar */ } return; } }
+      else if (ac === 'tema-usar') { r = T.elegirTematica(id); if (r.ok) { vivMsg = 'Temática activa.'; try { pintar(cont, mi, { repinta: true }); } catch (er) { /* sin repintar */ } return; } }
       else if (ac === 'comprar') { r = tipo === 'esp' ? T.comprarEspecial(id) : T.comprar(tipo, id); if (r.ok) vivMsg = tipo === 'esp' ? 'Listo: ya está en tu paisaje.' : 'Listo: ya es tuyo.'; }
       else if (ac === 'plantar') { r = T.plantar(id); if (r.ok) vivMsg = 'Plantada en el pasto.'; }
+      else if (ac === 'fondoyplantar') { const r1 = T.elegirTematica(b.getAttribute('data-h')); r = r1.ok ? T.plantar(id) : r1; if (r.ok) vivMsg = 'Plantada. Tu jardín ahora es el de ' + nomHab(b.getAttribute('data-h')) + '.'; }
       else if (ac === 'ambiente') { const act = ((T.cargar().vivero.ambientes) || []).indexOf(id) >= 0; r = T.activarAmbiente(id, !act); if (r.ok) vivMsg = act ? 'Las luciérnagas se apagaron.' : 'Las luciérnagas llegaron a tu paisaje.'; }
       else { const act = (T.cargar().vivero.aves || []).some((a) => a.id === id); r = T.activarAve(id, !act); if (r.ok) vivMsg = act ? 'Se guardó el ave.' : 'El ave llegó al árbol.'; }
       if (!r.ok) { vivMsg = MOT[r.motivo] || 'No se pudo.'; pinta(true); return; }
       sonido(ac === 'ave' ? 'suave' : 'semilla'); vivAbierto = true; pintar(cont, mi, { repinta: true });
+      // F1067 · La cámara acompaña la acción: se acerca a lo que se plantó o llamó
+      if (ac === 'plantar' || ac === 'fondoyplantar') camara(cont, '.il-planta.p-' + id);
+      else if (ac === 'ave' && (T.cargar().vivero.aves || []).some((a) => a.id === id)) camara(cont, '.il-ave.a-' + id);
     };
     if (vivAbierto) abre(true);
   }
@@ -520,9 +572,9 @@
       + '<g class="cap cap0">' + cielo(cl) + atras(fo) + '</g><g class="cap cap1"><path class="col c1" d="' + COL.c1 + '"/>' + fondo + '</g>'
       + '<g class="cap cap2"><path class="col c2" d="' + COL.c2 + '"/></g>'
       + '<g class="cap cap3"><path class="col c3" d="' + COL.c3 + '"/></g></g>'
-      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g><g class="esp">' + especialesEscena(est, fo) + '</g><g class="pa-dia">' + paisajeDelDia(c.diasCuidado) + '</g><g class="cap cap3"><g class="mundo" transform="translate(180 344) scale(' + window.TBInicio.avanceDiario(c.diasCuidado).escala + ')">' + arbol(c.especie, et, c.diasCuidado) + hojasTB(window.TBInicio.avanceDiario(c.diasCuidado).hojas, et) + '</g></g>' + '<g class="tb-hierba" aria-hidden="true">' + hierbaTB(0, 360, 392, 90, 17) + '</g><g class="clima">' + climaSvg(cl) + '</g></svg>'
+      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g><g class="esp">' + especialesEscena(est, fo) + '</g><g class="pa-dia">' + paisajeDelDia(c.diasCuidado, est.tematica) + '</g><g class="cap cap3"><g class="mundo" transform="translate(180 344) scale(' + window.TBInicio.avanceDiario(c.diasCuidado).escala + ')">' + arbol(c.especie, et, c.diasCuidado) + hojasTB(window.TBInicio.avanceDiario(c.diasCuidado).hojas, et) + '</g></g>' + '<g class="tb-hierba" aria-hidden="true">' + hierbaTB(0, 360, 392, 90, 17) + '</g><g class="clima">' + climaSvg(cl) + '</g></svg>'
       + '<i class="il-anillo" id="ilAnillo" aria-hidden="true"></i>'
-      + '<button type="button" class="il-resp" id="ilResp" aria-label="Respirar con tu árbol. Toca para una pausa de unos 30 segundos"></button>' + mal + gotasHTML(est) + frutosHTML(est) + vivEscena(est) + '</div>';
+      + '<button type="button" class="il-resp" id="ilResp" aria-label="Respirar con tu árbol. Toca para una pausa de unos 30 segundos"></button>' + mal + gotasHTML(est)  + vivEscena(est) + '</div>';
   }
 
   // ---------- Textos ----------
@@ -611,13 +663,6 @@
         const g = $('#ilGotas', cont); if (g) g.innerHTML = gotasTexto(T.cargar());
       };
     });
-    Array.prototype.forEach.call(cont.querySelectorAll('.il-fruto'), (b) => {
-      b.onclick = () => {
-        if (!T.recogerFruto(b.getAttribute('data-id'))) return; sonido('gota'); luces(b); b.classList.add('recoge');
-        later(() => { try { b.remove(); } catch (e) { /* ya quitado */ } }, quieto() ? 0 : 400);
-        const g = $('#ilGotas', cont); if (g) g.innerHTML = gotasTexto(T.cargar());
-      };
-    });
     ligarViv(cont, mi);
     const tb = $('#ilTriBtn', cont), tc = $('#ilTri', cont);                   // F961 · Trivia diaria de naturaleza
     if (tb && tc) {
@@ -695,6 +740,6 @@
     });
   }
 
-  const api = { paisajeHoja, montar, soltar, arbol, escena, estadoTxt, ETAPAS, FORMA, FONDO, config(c) { CAT = c; } };
+  const api = { paisajeHoja, montar, soltar, arbol, escena, estadoTxt, ETAPAS, FORMA, FONDO, paisaje: paisajeDelDia, paisajeHab: PAISAJE_HAB, slotsDia: SLOTS_DIA, config(c) { CAT = c; } };
   if (typeof window !== 'undefined') window.TBLienzo = api; if (typeof module !== 'undefined') module.exports = api;
 })();

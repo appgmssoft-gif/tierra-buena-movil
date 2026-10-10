@@ -1,7 +1,7 @@
 {
   "_nota": "F929 · Catálogo del Inicio «Tierra Buena». Solo lectura; cambiar textos no toca el código. Cada árbol tiene `mensaje` (al elegirlo) y `vida`: mensajes (5 a 6) para la vida personal (uno distinto por día de cuidado). Datos VERIFICADOS el 7 oct (CONAF, SAG, Min. Medio Ambiente): araucaria, canelo, alerce. Por verificar: quillay, roble, palma chilena, cerezo, sauce, semillas y aves. Lenguaje: neutro y cordial. Los mensajes son de crecimiento personal y de cuidado de la naturaleza y el planeta (no religiosos). El jacarandá (F930) es la opción más colorida. F933: cada día se desbloquean 3 mensajes: `arbol` (+`arbol_comun`) = dato real; `planeta` (+`planeta_comun`) = respeto a la naturaleza; `vida` (+`vida_comun`) = crecer como personas y sociedad. Rotan solos por fecha. F934: datos VERIFICADOS el 7 oct con fuentes (CONAF/Árboles Nativos de Chile, SAG, Reforestemos, UC, prensa): quillay, roble, palma chilena, sauce chileno, jacarandá, cerezo (exportación), copihue, desierto florido, cóndor y Pando. Sin verificar aún: araucaria (parte), canelo (parte), lavanda, chucao, queltehue, picaflor, golondrina, gorrión y los bancos comunes de árbol/planeta (conocimiento general). F961: plantas nuevas (bonsái, loto, rafflesia, drago de Socotra, secuoya roja, bambú, welwitschia, planta fantasma, orquídea subterránea y pasto alto) y trivia diaria. Datos de estas plantas y de la trivia: conocimiento general, POR VERIFICAR con fuente antes de publicar. F965: temáticas (bosque nativo, desierto florido). Las plantas con `habitat` solo se plantan con esa temática activa; las demás son generales. Árboles principales por temática: pendiente (falta dibujar especies de desierto). Datos de temáticas: conocimiento general, por verificar. F966: decisión de coherencia: plantas de otros continentes solo en la temática «Jardín del mundo». Solo pasto alto queda general. Chile: bosque nativo y desierto florido. F968: verificados con fuentes picaflor (redobservadores, The Clinic, guía de campo) y gorrión (redobservadores, SciELO: especie introducida, no nativa). Lavanda: sin cambios. F969: el gorrión (exótico) solo puede activarse con la temática Jardín del mundo; las aves nativas son generales. F970: lavanda verificada (originaria del Mediterráneo; aromática; atrae abejas y mariposas). F971: temáticas Cordillera y Costa del Pacífico. Añañuca: desierto, cordillera y costa (el género tiene especies en las tres). Pata de guanaco: desierto y costa. Verificado con fichas de especies (MMA) y registros de Rhodophiala. F972: llareta (cordillera) y chagual (costa), verificadas con fichas MMA y fuentes botánicas. F973: notro y chilco (bosque nativo), verificados con fuentes (Smith-Ramírez & Armesto 1998, Revista Chilena de Historia Natural, Kew POWO, ficha de uso del chilco). F974: ulmo (bosque), garra de león (desierto y costa), chachacoma (cordillera). Regla: cada temática Chile con al menos 3 plantas propias o compartidas.",
   "ciclo": {
-    "dias": 15,
+    "dias": 30,
     "etapas": [
       {
         "id": "brote",
@@ -9,15 +9,15 @@
       },
       {
         "id": "raiz",
-        "desde": 4
-      },
-      {
-        "id": "ramas",
         "desde": 8
       },
       {
+        "id": "ramas",
+        "desde": 15
+      },
+      {
         "id": "frondoso",
-        "desde": 11
+        "desde": 22
       }
     ],
     "gracia_dias": 1,
@@ -1121,8 +1121,8 @@
         "tope_dia": 3
       },
       "oracion": {
-        "gotas": 3,
-        "tope_dia": 3
+        "gotas": 0,
+        "tope_dia": 0
       },
       "juego": {
         "gotas": 1,
@@ -1308,144 +1308,138 @@
     "nenufares": {
       "nombre": "Nenúfares",
       "lugar": "lago",
-      "cosechas": 4,
       "dato": "Sus hojas flotan sobre el agua tranquila y sus flores se abren con la luz del día.",
       "x": 92,
       "y": 336,
-      "k": 1
+      "k": 1,
+      "precio": 40
     },
     "cisne": {
       "nombre": "Cisne de cuello negro",
       "lugar": "lago",
-      "cosechas": 8,
       "dato": "Vive en lagos y humedales de Chile y se reconoce por su cuello negro y su cuerpo blanco.",
       "x": 262,
       "y": 334,
-      "k": 1
+      "k": 1,
+      "precio": 80
     },
     "piedras": {
       "nombre": "Piedras del río",
       "lugar": "rio",
-      "cosechas": 3,
       "dato": "El agua las va puliendo con los años.",
       "x": 300,
       "y": 372,
-      "k": 1
+      "k": 1,
+      "precio": 30
     },
     "sauce": {
       "nombre": "Sauce",
       "lugar": "rio",
-      "cosechas": 6,
       "dato": "Le gusta crecer cerca del agua, y sus ramas cuelgan hacia ella.",
       "x": 62,
       "y": 372,
-      "k": 1.1
+      "k": 1.1,
+      "precio": 60
     },
     "helechos": {
       "nombre": "Helechos",
       "lugar": "bosque",
-      "cosechas": 4,
       "dato": "Crecen en la sombra húmeda del bosque, bajo los árboles grandes.",
       "x": 66,
       "y": 378,
-      "k": 1
+      "k": 1,
+      "precio": 40
     },
     "tronco": {
       "nombre": "Tronco caído",
       "lugar": "bosque",
-      "cosechas": 6,
       "dato": "Un tronco caído se vuelve casa de hongos, insectos y musgos.",
       "x": 288,
       "y": 382,
-      "k": 1
+      "k": 1,
+      "precio": 60
     },
     "guanaco": {
       "nombre": "Guanaco",
       "lugar": "montanas",
-      "cosechas": 8,
       "dato": "Vive en grupos y recorre las alturas de la cordillera.",
       "x": 76,
       "y": 376,
-      "k": 1
+      "k": 1,
+      "precio": 80
     },
     "flores_altura": {
       "nombre": "Flores de altura",
       "lugar": "montanas",
-      "cosechas": 4,
       "dato": "Aun entre las rocas y el frío, algunas flores encuentran dónde abrirse.",
       "x": 292,
       "y": 386,
-      "k": 1
+      "k": 1,
+      "precio": 40
     },
     "rocas_volcanicas": {
       "nombre": "Rocas volcánicas",
       "lugar": "volcan",
-      "cosechas": 3,
       "dato": "Las rocas oscuras guardan la memoria de erupciones muy antiguas.",
       "x": 70,
       "y": 380,
-      "k": 1
+      "k": 1,
+      "precio": 30
     },
     "araucarias": {
       "nombre": "Araucarias jóvenes",
       "lugar": "volcan",
-      "cosechas": 7,
       "dato": "Las araucarias crecen en la cordillera del sur de Chile, no lejos de los volcanes.",
       "x": 290,
       "y": 376,
-      "k": 1
+      "k": 1,
+      "precio": 70
     },
     "gaviota": {
       "nombre": "Gaviota",
       "lugar": "costa",
-      "cosechas": 5,
       "dato": "Sigue la línea de la costa buscando su alimento.",
       "x": 86,
       "y": 232,
-      "k": 1
+      "k": 1,
+      "precio": 50
     },
     "conchas": {
       "nombre": "Conchas",
       "lugar": "costa",
-      "cosechas": 3,
       "dato": "El mar las trae a la orilla y las deja ahí, vacías y pulidas.",
       "x": 262,
       "y": 380,
-      "k": 1
+      "k": 1,
+      "precio": 30
     },
     "cactus": {
       "nombre": "Cactus",
       "lugar": "desierto",
-      "cosechas": 4,
       "dato": "Guarda agua en su tallo para esperar las lluvias, que llegan pocas veces.",
       "x": 64,
       "y": 376,
-      "k": 1.1
+      "k": 1.1,
+      "precio": 40
     },
     "zorro": {
       "nombre": "Zorro culpeo",
       "lugar": "desierto",
-      "cosechas": 8,
       "dato": "Es un zorro de Chile que recorre desiertos, cordillera y matorrales.",
       "x": 290,
       "y": 382,
-      "k": 1
+      "k": 1,
+      "precio": 80
     },
     "huemul": {
       "nombre": "Huemul",
       "lugar": "montanas",
-      "cosechas": 9,
       "dato": "Es un ciervo nativo de Chile y Argentina, uno de los más australes del mundo. Está en peligro de extinción y aparece en el escudo nacional junto al cóndor.",
       "x": 226,
       "y": 388,
-      "k": 1
+      "k": 1,
+      "precio": 90
     }
-  },
-  "frutos": {
-    "arbol_desde_dia": 8,
-    "planta_dias": 2,
-    "pendientes_max": 10,
-    "nota": "F961 · Cosecha más ágil: cada planta tiene su propio `dias` (1 a 4) para dar fruto; el árbol da fruto desde el día 15. Antes eran 7 días. Los frutos se acumulan hasta 10 sin vencer. Solo sirven para comprar `especiales`. F1059: el ciclo es de 15 días (antes 30); la fruta llega desde el día 8."
   },
   "orden_semillas": [
     "pasto_alto",
@@ -1775,35 +1769,35 @@
   "tematicas": {
     "bosque": {
       "nombre": "Bosque nativo",
-      "precio": 200,
+      "precio": 150,
       "fondo": "bosque",
       "mensaje": "El bosque nativo guarda especies que solo crecen en Chile. Cuidarlo es cuidar algo que tarda siglos en crecer.",
       "dato": "Aquí se pueden plantar las especies del bosque nativo, como el copihue, la flor nacional."
     },
     "desierto": {
       "nombre": "Desierto florido",
-      "precio": 200,
+      "precio": 150,
       "fondo": "desierto",
       "mensaje": "Tras unas lluvias poco comunes, el desierto se llena de color. Lo que espera bajo tierra también sabe volver.",
       "dato": "En el desierto de Atacama, algunos años con lluvia suficiente cubren el suelo de flores, como la añañuca y la pata de guanaco."
     },
     "jardin": {
       "nombre": "Jardín del mundo",
-      "precio": 200,
+      "precio": 150,
       "fondo": "colinas",
       "mensaje": "Plantas de distintos rincones del planeta reunidas en un mismo jardín. Cada una cuenta una forma distinta de crecer.",
       "dato": "Aquí se pueden plantar especies de otros continentes, como el loto, el bambú, el bonsái, la secuoya roja o la rafflesia de Sumatra."
     },
     "cordillera": {
       "nombre": "Cordillera",
-      "precio": 200,
+      "precio": 150,
       "fondo": "montanas",
       "mensaje": "En lo alto, la nieve guarda el agua que llega a todo el valle. Cuidar las alturas también es cuidar lo de abajo.",
       "dato": "Aquí se pueden plantar especies de la zona cordillerana, como algunas añañucas que crecen entre rocas y laderas."
     },
     "costa": {
       "nombre": "Costa del Pacífico",
-      "precio": 200,
+      "precio": 150,
       "fondo": "costa",
       "mensaje": "Entre el mar y los cerros hay flores que resisten la neblina y la sal. Cada una encuentra su manera de vivir cerca del agua.",
       "dato": "Aquí se pueden plantar especies de la costa, como la añañuca rosada, que crece en quebradas y terrazas junto al mar del norte."
