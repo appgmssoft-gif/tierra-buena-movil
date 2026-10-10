@@ -48,11 +48,27 @@
     if (FLORES[id]) { const d = DIM[id] || [24, 24]; return '<g transform="translate(' + (-d[0] / 2) + ' ' + (-d[1]) + ')">' + FLORES[id]() + '</g>'; }
     return '';
   }
+  // F1076 · Los días del suelo se leen sobre 30 días (el doble de la escala anterior). Sin repetir los rasgos y como máximo 6 elementos: no se sobrecarga el inicio.
+  const RASGO_SLOTS = [[44, 350], [316, 350], [210, 386]];
+  function rasgoDibujo(id) {
+    if (AVES[id] && AVES[id].dib) return '<g transform="translate(' + (-AVES[id].vb[0] / 2) + ' ' + (-AVES[id].vb[1]) + ')">' + AVES[id].dib() + '</g>';
+    return sueloDibujo(id);
+  }
+  function rasgosEscena(est) {
+    const hab = est.tematica, ids = (((CAT && CAT.tematicas) || {})[hab] || {}).rasgos_ids || [], d = est.habDias || 0;
+    if (!hab || !ids.length) return '';
+    return ids.map((id, k) => {
+      const ini = 10 * k + 1; if (d < ini) return '';
+      const f = Math.min(1, (d - ini + 1) / 10), s = (0.9 * (0.5 + 0.5 * f)).toFixed(2), xy = RASGO_SLOTS[k];
+      return '<g class="ras-it" transform="translate(' + xy[0] + ' ' + xy[1] + ') scale(' + s + ')">' + rasgoDibujo(id) + '</g>';
+    }).join('');
+  }
   function paisajeDelDia(dias, hab) {
-    const L = PAISAJE_HAB[hab] || PAISAJE_HAB.general, d = Math.max(0, Math.floor(dias || 0)); let g = '';
+    const rs = (((CAT && CAT.tematicas) || {})[hab] || {}).rasgos_ids || [];
+    const L = (PAISAJE_HAB[hab] || PAISAJE_HAB.general).filter((it) => rs.indexOf(it[1]) < 0).slice(0, 6), d = Math.max(0, Math.floor(dias || 0)); let g = '';
     L.forEach((it) => {
-      if (d < it[0]) return;
-      const xy = SLOTS_DIA[it[2]], k = (it[3] * (0.55 + 0.45 * Math.min(1, (d - it[0] + 1) / 3))).toFixed(2);
+      if (d < it[0] * 2) return;
+      const xy = SLOTS_DIA[it[2]], k = (it[3] * (0.55 + 0.45 * Math.min(1, (d - it[0] * 2 + 1) / 6))).toFixed(2);
       g += '<g class="pa-it" transform="translate(' + xy[0] + ' ' + xy[1] + ') scale(' + k + ')">' + sueloDibujo(it[1]) + '</g>';
     });
     return g;
@@ -144,7 +160,8 @@
     const cuerpo = etapa === 'frondoso' ? frondoso(f, especie, dias) : (etapa === 'ramas' && f === 'pewen') ? frondoso('pewen', especie, 8) : etapa === 'ramas' ? ramas(f) : etapa === 'raiz' ? raiz() : brote();
     const bellotas = especie === 'roble' && etapa === 'frondoso' ? '<g fill="#b07a3e" stroke="#7a5024" stroke-width=".5">' + [[-30,-132],[-16,-120],[-2,-112],[14,-118],[28,-130],[-22,-150],[20,-152]].map((q) => '<ellipse cx="' + q[0] + '" cy="' + q[1] + '" rx="2.2" ry="2.8"/>').join('') + '</g>' : '';
     const flores = especie === 'canelo' && etapa === 'frondoso' ? '<g fill="#fbfbf4" stroke="#c9d6b8" stroke-width=".5">' + [[-22,-150],[-8,-168],[12,-160],[24,-142],[-30,-132],[2,-138],[-16,-150],[18,-172]].map((q) => '<circle cx="' + q[0] + '" cy="' + q[1] + '" r="2.6"/>').join('') + '</g>' : '';
-    return '<g class="arbol esp-' + esc(especie || 'x') + '">' + cuerpo + flores + bellotas + '</g>';
+    const espinas = especie === 'chanar' ? '<g fill="none" stroke="#5a4a2a" stroke-width="1.6" stroke-linecap="round">' + [[-3, -66], [3, -92], [-3, -132], [3, -156]].map((q) => '<path d="M' + q[0] + ' ' + q[1] + ' l' + (q[0] < 0 ? -6 : 6) + ' -3"/>').join('') + '</g>' : '';
+    return '<g class="arbol esp-' + esc(especie || 'x') + '">' + cuerpo + flores + bellotas + espinas + '</g>';
   }
   function malezaIcono(tipo) {
     const s = d => '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + d + '</svg>';
@@ -572,7 +589,7 @@
       + '<g class="cap cap0">' + cielo(cl) + atras(fo) + '</g><g class="cap cap1"><path class="col c1" d="' + COL.c1 + '"/>' + fondo + '</g>'
       + '<g class="cap cap2"><path class="col c2" d="' + COL.c2 + '"/></g>'
       + '<g class="cap cap3"><path class="col c3" d="' + COL.c3 + '"/></g></g>'
-      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g><g class="esp">' + especialesEscena(est, fo) + '</g><g class="pa-dia">' + paisajeDelDia(c.diasCuidado, est.tematica) + '</g><g class="cap cap3"><g class="mundo" transform="translate(180 344) scale(' + window.TBInicio.avanceDiario(c.diasCuidado).escala + ')">' + arbol(c.especie, et, c.diasCuidado) + hojasTB(window.TBInicio.avanceDiario(c.diasCuidado).hojas, et) + '</g></g>' + '<g class="tb-hierba" aria-hidden="true">' + hierbaTB(0, 360, 392, 90, 17) + '</g><g class="clima">' + climaSvg(cl) + '</g></svg>'
+      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g><g class="esp">' + especialesEscena(est, fo) + '</g><g class="pa-dia">' + paisajeDelDia(est.habDias || 0, est.tematica) + rasgosEscena(est) + '</g><g class="cap cap3"><g class="mundo" transform="translate(180 344) scale(' + window.TBInicio.avanceDiario(c.diasCuidado).escala + ')">' + arbol(c.especie, et, c.diasCuidado) + hojasTB(window.TBInicio.avanceDiario(c.diasCuidado).hojas, et) + '</g></g>' + '<g class="tb-hierba" aria-hidden="true">' + hierbaTB(0, 360, 392, 90, 17) + '</g><g class="clima">' + climaSvg(cl) + '</g></svg>'
       + '<i class="il-anillo" id="ilAnillo" aria-hidden="true"></i>'
       + '<button type="button" class="il-resp" id="ilResp" aria-label="Respirar con tu árbol. Toca para una pausa de unos 30 segundos"></button>' + mal + gotasHTML(est)  + vivEscena(est) + '</div>';
   }
@@ -589,13 +606,19 @@
   function nombreArbol(est) { const s = CAT && CAT.especies && CAT.especies[est.ciclo.especie]; return s ? esc(s.nombre) + (s.otro ? ' <span>· ' + esc(s.otro) + '</span>' : '') : 'Tu árbol'; }
 
   // ---------- Primera semilla ----------
+  // F1076 · Tarjeta de lugar: paisaje del hábitat + su árbol emblemático encima, para reconocerlo de inmediato
+  function lugarIlustracion(h) {
+    const base = habThumb(h), t = (CAT.tematicas || {})[h] || {}, em = t.arbol;
+    if (!em || !(CAT.especies || {})[em]) return base;
+    return base.replace('</svg>', '<g transform="translate(80 94) scale(0.2)">' + arbol(em, 'frondoso') + '</g></svg>');
+  }
   function vistaEleccion(cont, mi) {   // F1074: primero se elige el lugar (hábitat); su árbol emblemático es el primero
     if (cont.parentNode && cont.parentNode.classList) cont.parentNode.classList.add('il-eligiendo');
     const hs = ['bosque', 'desierto', 'costa'].filter((h) => CAT.tematicas && CAT.tematicas[h]);
     cont.innerHTML = '<div class="il-elige"><h2>Elige el lugar de tu jardín</h2>'
       + '<p class="il-elige-sub">Cada lugar tiene su árbol y sus rasgos. Lo que plantes aquí se queda aquí.</p>'
       + '<div class="il-semillas" role="radiogroup" aria-label="Lugares para elegir">' + hs.map((h) => { const t = CAT.tematicas[h], s = CAT.especies[t.arbol];
-        return '<button type="button" class="il-semilla il-lugar" role="radio" aria-checked="false" data-id="' + esc(h) + '">' + habThumb(h)
+        return '<button type="button" class="il-semilla il-lugar" role="radio" aria-checked="false" data-id="' + esc(h) + '">' + lugarIlustracion(h)
           + '<span class="il-sem-tx"><b>' + esc(t.nombre) + '</b><em>Árbol: ' + esc(s ? s.nombre : 'ninguno') + '</em><small>Rasgos: ' + esc((t.rasgos || []).join(', ')) + '</small></span></button>'; }).join('') + '</div>'
       + '<button type="button" class="btn il-plantar" id="ilPlantar" disabled>Elige un lugar para continuar</button></div>';
     let sel = '';

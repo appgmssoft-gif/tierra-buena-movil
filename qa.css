@@ -7,3 +7,6 @@
 .qa-pie{margin:6px 0 0;color:#5b6b7b;font-size:11px}
 /* F1075 · Tarjetas de lugar: la imagen del hábitat ocupa el ancho de la tarjeta para que se reconozca de inmediato */
 .il-lugar .viv-thumb{width:100%;height:auto;border-radius:10px;display:block}
+
+/* F1076 · Chañar: corteza verde (su tronco no es marrón como el pewén) */
+.esp-chanar .tr-t{stroke:#7d8f4e}

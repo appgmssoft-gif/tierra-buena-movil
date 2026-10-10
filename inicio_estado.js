@@ -15,17 +15,18 @@
   const idc = (p) => p + Math.random().toString(36).slice(2, 7);
 
   const nuevo = () => ({ v: VERSION, ciclo: { n: 1, especie: null, inicio: null, diasCuidado: 0, ultimoDia: null, ultimaVisita: null, cerrado: false, diaPendiente: false },
-    eligiendo: true, tematica: null, paisaje: [], maleza: [], gotas: { saldo: 0, total: 0, pendientes: [], hoy: { fecha: null, lectura: 0, vida: 0 } },
+    eligiendo: true, tematica: null, habDias: 0, paisaje: [], maleza: [], gotas: { saldo: 0, total: 0, pendientes: [], hoy: { fecha: null, lectura: 0, vida: 0 } },
     vivero: { desbloqueados: [], plantas: [], aves: [], ambientes: [] }, cosechas: { total: 0, pend: [], ult: {} }, trivia: { fecha: null, i: null, ok: false, elegida: null } });
 
   function migrar(x) {                                      // dato dañado o de otra versión → se rescata lo que sirve; nunca error en pantalla
     const b = nuevo(); if (!x || typeof x !== 'object') return b;
     try {
       const c = x.ciclo || {};
-      b.ciclo = { n: tope(+c.n || 1, 1, 9999), especie: typeof c.especie === 'string' ? c.especie : null, inicio: c.inicio || null, diasCuidado: tope(+c.diasCuidado || 0, 0, 30),
+      b.ciclo = { n: tope(+c.n || 1, 1, 9999), especie: typeof c.especie === 'string' ? c.especie : null, inicio: c.inicio || null, diasCuidado: tope(+c.diasCuidado || 0, 0, (cat().ciclo && cat().ciclo.dias) || 10),
         ultimoDia: c.ultimoDia || null, ultimaVisita: c.ultimaVisita || c.ultimoDia || null, cerrado: !!c.cerrado, diaPendiente: !!c.diaPendiente };
       b.eligiendo = x.eligiendo === undefined ? !b.ciclo.especie : !!x.eligiendo;
       b.tematica = typeof x.tematica === 'string' ? x.tematica : null;   // F965: temática activa
+      b.habDias = tope(+x.habDias || 0, 0, (cat().ciclo && cat().ciclo.habitat_dias) || 30);   // F1076: días del hábitat (30)
       if (Array.isArray(x.paisaje)) b.paisaje = x.paisaje.filter((p) => p && p.especie).slice(-6);
       if (Array.isArray(x.maleza)) b.maleza = x.maleza.filter((m) => m && m.id && m.casilla).slice(0, 5);
       const g = x.gotas || {}; b.gotas = { saldo: Math.max(0, +g.saldo || 0), total: Math.max(0, +g.total || 0), pendientes: Array.isArray(g.pendientes) ? g.pendientes.filter((p) => p && p.id).slice(0, 30) : [],
@@ -93,10 +94,6 @@
     if (e.eligiendo) { guardar(e); return r; }
     if (c.ultimaVisita && dif(h, c.ultimaVisita) < 0) { r.pausado = e.maleza.length > 0 || c.diaPendiente; return r; }   // reloj del teléfono hacia atrás: no se toca nada
     const ausencia = c.ultimaVisita ? Math.max(0, dif(h, c.ultimaVisita) - 1) : 0, antes = etapa(c.diasCuidado);
-    if (c.cerrado && h !== c.ultimoDia) {                  // el árbol maduro pasa al paisaje y empieza otro mes con otra especie
-      paisajeNuevo(e); const n = c.n + 1; e.ciclo = { n, especie: siguienteEspecie(e), inicio: h, diasCuidado: 0, ultimoDia: null, ultimaVisita: c.ultimaVisita, cerrado: false, diaPendiente: false };
-      r.cicloNuevo = true; r.panoramica = true;
-    }
     const cc = e.ciclo;
     if (ausencia >= 2) {                                   // ausencia: aparece maleza (sin superar el tope; lo que ya había se conserva)
       const objetivo = malezaPara(ausencia), tipos = cat().maleza.tipos;
@@ -105,7 +102,7 @@
     cc.ultimaVisita = h;
     if (h !== cc.ultimoDia) {
       if (e.maleza.length > 0) { cc.diaPendiente = true; r.pausado = true; }   // con maleza el crecimiento queda en pausa hasta sanar
-      else { cc.diasCuidado = Math.min(cat().ciclo.dias, cc.diasCuidado + 1); cc.ultimoDia = h; cc.diaPendiente = false; r.diaNuevo = true; if (cc.diasCuidado >= cat().ciclo.dias) cc.cerrado = true; }
+      else { cc.diasCuidado = Math.min(cat().ciclo.dias, cc.diasCuidado + 1); cc.ultimoDia = h; cc.diaPendiente = false; r.diaNuevo = true; e.habDias = Math.min(HAB_DIAS(), (e.habDias || 0) + 1); if (cc.diasCuidado >= cat().ciclo.dias) cc.cerrado = true; }
     } else if (e.maleza.length > 0) r.pausado = true;
     r.maleza = e.maleza.length; r.etapa = etapa(cc.diasCuidado); r.etapaCambio = r.etapa !== antes; guardar(e); return r;
   }
@@ -114,7 +111,7 @@
   function sanar(id) {
     const e = cargar(), i = e.maleza.findIndex((m) => m.id === id); if (i < 0) return { ok: false, quedan: e.maleza.length, diaNuevo: false };
     e.maleza.splice(i, 1); let diaNuevo = false; const c = e.ciclo;
-    if (e.maleza.length === 0 && c.diaPendiente) { c.diaPendiente = false; c.ultimoDia = hoy(); c.diasCuidado = Math.min(cat().ciclo.dias, c.diasCuidado + 1); diaNuevo = true; if (c.diasCuidado >= cat().ciclo.dias) c.cerrado = true; }
+    if (e.maleza.length === 0 && c.diaPendiente) { c.diaPendiente = false; c.ultimoDia = hoy(); c.diasCuidado = Math.min(cat().ciclo.dias, c.diasCuidado + 1); diaNuevo = true; e.habDias = Math.min(HAB_DIAS(), (e.habDias || 0) + 1); if (c.diasCuidado >= cat().ciclo.dias) c.cerrado = true; }
     guardar(e); return { ok: true, quedan: e.maleza.length, diaNuevo };
   }
 
@@ -182,6 +179,7 @@
   }
   // F1074 · Primera elección: el lugar del jardín (bosque, desierto o costa). Compra el hábitat, lo activa y su árbol emblemático es el primero.
   const HABITATS_INICIALES = ['bosque', 'desierto', 'costa'];
+  const HAB_DIAS = () => (cat().ciclo && cat().ciclo.habitat_dias) || 30;   // F1076: el hábitat se completa en 30 días (tres rasgos de 10)
   function elegirHabitatInicial(h) {
     const e = cargar(); if (!e.eligiendo || HABITATS_INICIALES.indexOf(h) < 0) return false;
     const t = (cat().tematicas || {})[h] || {}, em = t.arbol && (cat().especies || {})[t.arbol] ? t.arbol : null;
@@ -189,7 +187,7 @@
     const c = 'tem_' + h; if (e.vivero.desbloqueados.indexOf(c) < 0) e.vivero.desbloqueados.push(c);
     const hoyS = hoy(); e.tematica = h;
     e.ciclo = { n: 1, especie: em, inicio: hoyS, diasCuidado: 1, ultimoDia: hoyS, ultimaVisita: hoyS, cerrado: false, diaPendiente: false };
-    e.eligiendo = false; guardar(e); return true;
+    e.habDias = 1; e.eligiendo = false; guardar(e); return true;
   }
   function tieneEspecial(id) { return cargar().vivero.desbloqueados.indexOf('esp_' + id) >= 0; }
   function comprarEspecial(id) {                           // contenido de «Tu paisaje»: se paga solo con frutos y requiere tener ese paisaje. Devuelve { ok, motivo }
