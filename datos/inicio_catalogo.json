@@ -544,6 +544,13 @@
         "Los suelos sin cobertura vegetal se erosionan más rápido; mantener árboles nativos ayuda a retenerlos.",
         "Cuidar el bosque nativo es una forma concreta de cuidar la tierra y el agua."
       ]
+    },
+    "chanar": {
+      "nombre": "Chañar",
+      "otro": "Geoffroea decorticans",
+      "origen": "nativo de Chile (norte)",
+      "mensaje": "En el desierto, quien sabe guardar agua en sus raíces y ramas florece cuando llega la lluvia.",
+      "dato": "El chañar crece en el desierto del norte de Chile, junto a los valles de los ríos. Su corteza verde guarda agua y en primavera se cubre de flores amarillas."
     }
   },
   "semillas": {
@@ -1772,14 +1779,16 @@
       "precio": 150,
       "fondo": "bosque",
       "mensaje": "El bosque nativo guarda especies que solo crecen en Chile. Cuidarlo es cuidar algo que tarda siglos en crecer.",
-      "dato": "Aquí se pueden plantar las especies del bosque nativo, como el copihue, la flor nacional."
+      "dato": "Aquí se pueden plantar las especies del bosque nativo, como el copihue, la flor nacional.",
+      "arbol": "araucaria"
     },
     "desierto": {
       "nombre": "Desierto florido",
       "precio": 150,
       "fondo": "desierto",
       "mensaje": "Tras unas lluvias poco comunes, el desierto se llena de color. Lo que espera bajo tierra también sabe volver.",
-      "dato": "En el desierto de Atacama, algunos años con lluvia suficiente cubren el suelo de flores, como la añañuca y la pata de guanaco."
+      "dato": "En el desierto de Atacama, algunos años con lluvia suficiente cubren el suelo de flores, como la añañuca y la pata de guanaco.",
+      "arbol": "chanar"
     },
     "jardin": {
       "nombre": "Jardín del mundo",
@@ -1800,7 +1809,8 @@
       "precio": 150,
       "fondo": "costa",
       "mensaje": "Entre el mar y los cerros hay flores que resisten la neblina y la sal. Cada una encuentra su manera de vivir cerca del agua.",
-      "dato": "Aquí se pueden plantar especies de la costa, como la añañuca rosada, que crece en quebradas y terrazas junto al mar del norte."
+      "dato": "Aquí se pueden plantar especies de la costa, como la añañuca rosada, que crece en quebradas y terrazas junto al mar del norte.",
+      "arbol": "palma_chilena"
     }
   },
   "ambientes": {

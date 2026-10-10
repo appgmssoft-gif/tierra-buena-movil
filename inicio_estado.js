@@ -64,6 +64,8 @@
   function malezaPara(ausencia) { let n = 0; for (const f of cat().maleza.tabla) if (ausencia >= f.ausencia) n = f.cantidad; return Math.min(n, cat().ciclo.maleza_max || 5); }
   // Siguiente especie del ciclo: la primera del orden que aún no se ha vivido; si ya se vivieron todas, se repite el orden.
   function siguienteEspecie(e) {
+    const t = e.tematica && (cat().tematicas || {})[e.tematica], em = t && t.arbol;   // F1071: el árbol sale del emblema del hábitat activo
+    if (em && (cat().especies || {})[em]) return em;
     const orden = cat().orden_especies, vividas = e.paisaje.map((p) => p.especie).concat(e.ciclo.especie ? [e.ciclo.especie] : []);
     const libre = orden.find((s) => vividas.indexOf(s) < 0); if (libre) return libre;
     const k = vividas.length ? orden.indexOf(vividas[vividas.length - 1]) : -1; return orden[(k + 1) % orden.length];
