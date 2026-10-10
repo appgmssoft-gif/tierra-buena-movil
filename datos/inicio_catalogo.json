@@ -1257,7 +1257,7 @@
     },
     "bosque": {
       "nombre": "Bosque nativo",
-      "precio": 130,
+      "precio": 150,
       "dato": "Entre los árboles de fondo hay araucarias, alerces y robles: cada uno con su forma, ninguno igual al otro."
     },
     "montanas": {
@@ -1272,12 +1272,12 @@
     },
     "costa": {
       "nombre": "Costa del Pacífico",
-      "precio": 160,
+      "precio": 150,
       "dato": "El mar abre el horizonte. Mirar lejos también descansa."
     },
     "desierto": {
       "nombre": "Desierto florido",
-      "precio": 200,
+      "precio": 150,
       "dato": "En años de buena lluvia, el desierto de Atacama se cubre de flores. Lo que parecía seco estaba esperando."
     }
   },

@@ -434,3 +434,9 @@ html[data-eco="2"] .il-luci{animation:none;opacity:.85}
 html[data-eco="2"] .il-escena.camara .il-svg{animation:none}
 /* F1067 · La ficha de acción del Vivero (plantar, llamar, poner de fondo) se queda a la vista mientras se recorren las opciones */
 .viv-accion{position:sticky;bottom:6px;z-index:3;background:var(--tarjeta,#fff);border-radius:14px;box-shadow:0 8px 18px -10px rgba(0,0,0,.35);padding:10px 12px}
+/* F1079 · Araucaria: ramas verdes-pardas (el pewén joven tiene el palo verde), sin el marrón del tronco */
+.tr-ram{fill:none;stroke:#7a8a45;stroke-linecap:round;stroke-linejoin:round}
+@media (prefers-color-scheme:dark){.tr-ram{stroke:#9aa864}}
+
+/* F1081 · Sombra de las matas de follaje (técnica de sombreado en dos tonos) */
+.tr-sombra{fill:#2a5a38}

@@ -67,7 +67,10 @@
   function probarHabitat(h) {
     const T = window.TBInicio; if (!T) return;
     const EMBLEMA = { bosque: 'araucaria', desierto: 'chanar', costa: 'palma_chilena' };   // mismo emblema que el catálogo (F1071)
-    const e = T.cargar(); if (e.eligiendo) { e.eligiendo = false; if (!e.ciclo.especie) { e.ciclo.especie = EMBLEMA[h] || 'araucaria'; e.ciclo.inicio = iso(new Date()); e.ciclo.diasCuidado = 1; e.ciclo.ultimoDia = e.ciclo.ultimaVisita = iso(new Date()); } }
+    const e = T.cargar();
+    if (e.eligiendo || (EMBLEMA[h] && e.ciclo.especie !== EMBLEMA[h])) {   // F1079: al probar un lugar, su árbol emblemático siempre es el que crece
+      const hoyS = iso(new Date()); e.eligiendo = false; e.habDias = 1; e.tematica = h; e.ciclo = { n: 1, especie: EMBLEMA[h] || e.ciclo.especie || 'araucaria', inicio: hoyS, diasCuidado: 1, ultimoDia: hoyS, ultimaVisita: hoyS, cerrado: false, diaPendiente: false };
+    }
     const c = 'tem_' + h; if (e.vivero.desbloqueados.indexOf(c) < 0) e.vivero.desbloqueados.push(c);
     e.tematica = h; T.guardar(e); location.reload();
   }

@@ -145,7 +145,11 @@
     const e = cargar(), it = (cat()[LISTA[tipo]] || {})[id]; if (!it) return { ok: false, motivo: 'no-existe' };
     const clave = PREF[tipo] + id; if (e.vivero.desbloqueados.indexOf(clave) >= 0) return { ok: false, motivo: 'ya-tienes' };
     if (e.gotas.saldo < it.precio) return { ok: false, motivo: 'faltan-gotas' };
-    e.gotas.saldo -= it.precio; e.vivero.desbloqueados.push(clave); guardar(e); return { ok: true, motivo: null };
+    e.gotas.saldo -= it.precio; e.vivero.desbloqueados.push(clave);
+    // F1086 · Un hábitat y su paisaje son una sola compra: comprar uno da también el otro
+    if (tipo === 'tema' && cat().lugares && cat().lugares[id]) { const l = 'lug_' + id; if (e.vivero.desbloqueados.indexOf(l) < 0) e.vivero.desbloqueados.push(l); }
+    if (tipo === 'lugar' && cat().tematicas && cat().tematicas[id]) { const t = 'tem_' + id; if (e.vivero.desbloqueados.indexOf(t) < 0) e.vivero.desbloqueados.push(t); }
+    guardar(e); return { ok: true, motivo: null };
   }
   function plantar(id) {                                   // planta una semilla ya desbloqueada en una casilla libre permitida
     const e = cargar(), it = cat().semillas[id]; if (!it || e.vivero.desbloqueados.indexOf('sem_' + id) < 0) return { ok: false, motivo: 'no-desbloqueada' };
