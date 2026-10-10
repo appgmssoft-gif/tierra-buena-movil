@@ -5,3 +5,5 @@
 .qa-titulo{margin:0 0 6px;font-weight:700}
 .qa-btn{display:block;width:100%;margin:4px 0;padding:6px;border-radius:8px;border:1px solid #bcc7d2;background:#f4f7fa;text-align:left}
 .qa-pie{margin:6px 0 0;color:#5b6b7b;font-size:11px}
+/* F1075 · Tarjetas de lugar: la imagen del hábitat ocupa el ancho de la tarjeta para que se reconozca de inmediato */
+.il-lugar .viv-thumb{width:100%;height:auto;border-radius:10px;display:block}

@@ -595,7 +595,7 @@
     cont.innerHTML = '<div class="il-elige"><h2>Elige el lugar de tu jardín</h2>'
       + '<p class="il-elige-sub">Cada lugar tiene su árbol y sus rasgos. Lo que plantes aquí se queda aquí.</p>'
       + '<div class="il-semillas" role="radiogroup" aria-label="Lugares para elegir">' + hs.map((h) => { const t = CAT.tematicas[h], s = CAT.especies[t.arbol];
-        return '<button type="button" class="il-semilla" role="radio" aria-checked="false" data-id="' + esc(h) + '"><svg class="il-mini" viewBox="-72 -215 144 240" aria-hidden="true" focusable="false">' + (s ? arbol(t.arbol, 'frondoso') : '') + '</svg>'
+        return '<button type="button" class="il-semilla il-lugar" role="radio" aria-checked="false" data-id="' + esc(h) + '">' + habThumb(h)
           + '<span class="il-sem-tx"><b>' + esc(t.nombre) + '</b><em>Árbol: ' + esc(s ? s.nombre : 'ninguno') + '</em><small>Rasgos: ' + esc((t.rasgos || []).join(', ')) + '</small></span></button>'; }).join('') + '</div>'
       + '<button type="button" class="btn il-plantar" id="ilPlantar" disabled>Elige un lugar para continuar</button></div>';
     let sel = '';
