@@ -766,19 +766,19 @@
       <h2 class="sep">Pedir ayuda</h2>
       <div class="grid">${activa('🙏', 'Pedir oración', 'Cuéntale a tu pastor por qué orar.', 'oracion')}${activa('🤝', 'Pedir visita', 'Pide que tu pastor te visite.', 'visita')}</div>
       <h2 class="sep">Vivir con mi iglesia</h2>
-      <div class="grid">${activa('📅', 'Agenda', 'Actividades de tu iglesia y de tus grupos.', 'agenda')}${activa('📣', 'Avisos', 'Mensajes de tu pastor y de los líderes.', 'avisos')}${activa('🕍', 'Mis ministerios', 'Los grupos donde sirves y quién los lidera.', 'ministerios')}${activa('🧱', 'Muro', 'Peticiones que tu pastor compartió, para orar juntos.', 'muro')}${activa('🌟', 'Acción del mes', 'Lo que viviremos juntos este mes.', 'accion')}${activa('🤲', 'Juntos hacemos el bien', 'Ideas y movimientos para servir con tu iglesia.', 'juntos')}</div>
-      
+      <div class="grid">${activa('📅', 'Agenda', 'Actividades de tu iglesia y de tus grupos.', 'agenda')}${activa('📣', 'Avisos', 'Mensajes de tu pastor y de los líderes.', 'avisos')}${activa('🧱', 'Muro', 'Peticiones que tu pastor compartió, para orar juntos.', 'muro')}${activa('🌟', 'Acción del mes', 'Lo que viviremos juntos este mes.', 'accion')}</div>
+      <h2 class="sep">Conversar</h2><div class="lista"><button type="button" class="fila" data-chat="1"><span class="fila-txt">Chat de mi iglesia<small>Bendecir, unirnos y organizar. Sin conflictos en público.</small></span><span class="flecha" aria-hidden="true">›</span></button></div>
+      <h2 class="sep">Servir</h2>
+      <div class="grid">${activa('🕍', 'Mis ministerios', 'Los grupos donde sirves y quién los lidera.', 'ministerios')}${activa('🤲', 'Juntos hacemos el bien', 'Ideas y movimientos para servir con tu iglesia.', 'juntos')}</div>
       <h2 class="sep">Mis turnos</h2><div class="card" id="misTurnos"><p class="suave m0">Cargando tus turnos…</p></div>
       <div id="turLider"></div>
       <h2 class="sep">Quién sirve</h2><div class="card" id="quienSirve"><p class="suave m0">Cargando el rol de la iglesia…</p></div>
-      <h2 class="sep">Conversar</h2><div class="lista"><button type="button" class="fila" data-chat="1"><span class="fila-txt">Chat de mi iglesia<small>Bendecir, unirnos y organizar. Sin conflictos en público.</small></span><span class="flecha" aria-hidden="true">›</span></button></div>
-      <h2 class="sep">Mi servicio</h2>
       <div class="card"><b>¿Cuándo puedes servir?</b><p class="suave m0t">Marca lo que te sirve. Por ahora solo lo ves tú.</p>
         <div class="chips" role="group" aria-label="Mi disponibilidad">${DISP_OPC.map(([k, t]) => `<button type="button" class="chip${dispLeer().indexOf(k) >= 0 ? ' on' : ''}" data-disp="${k}" aria-pressed="${dispLeer().indexOf(k) >= 0}">${t}</button>`).join('')}</div>
         <p class="suave m0t" id="dispMsg" aria-live="polite"></p></div>
       <div id="tbEjem" class="tb-ejem-caja"></div>
-      <section class="card cuidar-pastor"><b>Cuidar a tu pastor</b><p class="suave m0t">Tu pastor también es una persona. Estas son formas concretas de acompañarlo:</p><ul class="ayuda-pasos"><li>Ora por él y por su familia, por su nombre.</li><li>Agradécele con una palabra sincera, en persona o por escrito.</li><li>Respeta sus días de descanso: no todo es urgente.</li><li>Ofrece una ayuda concreta: un servicio, transporte o una compra para el aseo.</li><li>Si ves una carga que no puede con todo, dile que cuentas con él.</li></ul></section><h2 class="sep">Mis cosas</h2>
-      <div class="grid">${activa('🕊️', 'Mi oración', 'Tu diario. Solo lo ves tú.', 'mioracion')}${activa('🌱', 'Mi crecimiento', 'Un paso por semana. Solo lo ves tú.', 'crec')}${activa('🔒', 'Mi privacidad', 'Qué ve tu pastor, descargar o borrar tus datos.', 'privacidad')}${activa('❓', 'Ayuda', 'Respuestas cortas a lo que más se pregunta.', 'ayuda')}</div>
+      <section class="card cuidar-pastor"><b>Cuidar a tu pastor</b><p class="suave m0t">Tu pastor también es una persona. Estas son formas concretas de acompañarlo:</p><ul class="ayuda-pasos"><li>Ora por él y por su familia, por su nombre.</li><li>Agradécele con una palabra sincera, en persona o por escrito.</li><li>Respeta sus días de descanso: no todo es urgente.</li><li>Ofrece una ayuda concreta: un servicio, transporte o una compra para el aseo.</li><li>Si ves una carga que no puede con todo, dile que cuentas con él.</li></ul></section><h2 class="sep">Privacidad y ayuda</h2>
+      <div class="grid">${activa('🔒', 'Mi privacidad', 'Qué ve tu pastor, descargar o borrar tus datos.', 'privacidad')}${activa('❓', 'Preguntas frecuentes', 'Respuestas cortas sobre cómo usar la app.', 'ayuda')}</div>
       <h2 class="sep">Mi cuenta</h2>
       ${leer(K_CUENTA)
         ? `<div class="card"><div class="t"><span aria-hidden="true">✉️</span>Sesión iniciada</div><p class="suave m0t">${esc(leer(K_CUENTA).correo)}. Tu iglesia queda guardada en tu cuenta: en otro teléfono entras solo con tu correo y contraseña.</p><button type="button" class="btn sec" id="cuentaSalir">Cerrar sesión</button></div>`
@@ -842,7 +842,7 @@
       guardar(K_DISP, nuevo); vibra(); try { rpcRaw('disponibilidad_guardar', { p_codigo: id.codigo, p_clave: id.clave, p_franjas: nuevo }).catch(() => { /* sin red: queda en el teléfono */ }); } catch (e) { /* sin red */ } b.classList.toggle('on', nuevo.indexOf(k) >= 0); b.setAttribute('aria-pressed', String(nuevo.indexOf(k) >= 0));
       const m = $('#dispMsg'); if (m) m.textContent = nuevo.length ? 'Guardado en tu cuenta.' : 'Puedes marcar cuando quieras.';
     }));
-    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ juntos: abrirJuntos, oracion: vistaOracion, agenda: (i) => vistaAgenda(modoMiembro(i)), avisos: (i) => vistaAvisos(modoMiembro(i)), ministerios: vistaMinisterios, muro: vistaMuro, accion: vistaAccion, visita: vistaVisita, mioracion: () => vistaMiOracion(), crec: () => vistaCrecimiento(), privacidad: vistaPrivacidad, ayuda: () => vistaAyuda(id) }[b.dataset.ir] || vistaVisita)(id)));
+    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ juntos: abrirJuntos, oracion: vistaOracion, agenda: (i) => vistaAgenda(modoMiembro(i)), avisos: (i) => vistaAvisos(modoMiembro(i)), ministerios: vistaMinisterios, muro: vistaMuro, accion: vistaAccion, visita: vistaVisita, mioracion: () => vistaMiOracion(), crec: () => vistaCrecimiento(), privacidad: vistaPrivacidad, ayuda: () => vistaPreguntas(id) }[b.dataset.ir] || vistaVisita)(id)));
     $('#salir').onclick = async () => {
       if (!confirm('¿Salir de esta iglesia? Se borrará tu nombre en la iglesia y en este teléfono.')) return;
       await rpc('miembro_eliminar', { p_codigo: id.codigo, p_clave: id.clave });
@@ -883,7 +883,7 @@
     const u = await syncUsuario(); if (!u) return false;
     try { const r = await SB.from('avances_cuenta').delete().eq('user_id', u.id); return !r.error; } catch (e) { return false; }
   }
-  function vistaPrivacidad(id) {
+  function vistaPrivacidad(id, atras) {
     const cuenta = !!leer(K_CUENTA), off = metaLeer().off;
     $('#pantalla').innerHTML = `${volver()}<h1>Mi privacidad</h1><div class="filete"></div>
       <p class="suave">Tus datos son tuyos. Así de claro: qué ve cada persona y qué puedes hacer tú.</p>
@@ -895,7 +895,7 @@
       <div class="card"><div class="t"><span aria-hidden="true">📥</span>Descargar mis datos</div><p class="suave m0t">Un archivo con tu nombre, tus notas y tus peticiones. Sin tu llave.</p><button type="button" class="btn sec" id="privBaja">Descargar</button><p id="privMsg" class="ok" role="status" hidden></p></div>
       <div class="card"><div class="t"><span aria-hidden="true">🗑️</span>Eliminar mi cuenta</div><p class="suave m0t">Borra tu cuenta, tus notas, tus peticiones y todo lo guardado en este teléfono. No se puede deshacer.</p><button type="button" class="btn sec" id="eliminarCuentaBtn">Eliminar mi cuenta y mis datos</button></div>
       <div class="card"><div class="t"><span aria-hidden="true">🚪</span>Salir de mi iglesia</div><p class="suave m0t">Se borra tu nombre de la lista de tu iglesia y de este teléfono. Puedes volver a unirte con el código cuando quieras. Está al final de «Mi iglesia».</p></div>`;
-    alVolver();
+    if (atras === 'perfil') volverA('Perfil', vistaPerfil); else alVolver();
     const ec = $('#eliminarCuentaBtn'); if (ec) ec.onclick = eliminarCuentaTodo;
     const sw = $('#nubeSw');
     if (sw) sw.onclick = async () => {
@@ -923,14 +923,22 @@
     ['📴', '¿Qué sirve sin internet?', 'La Biblia que ya abriste, el versículo, tu diario, tu crecimiento y los cursos que ya viste. Pedir oración o visita y el muro necesitan internet.'],
     ['🔑', 'Olvidé mi contraseña', 'En «Entrar con mi correo» toca «¿Olvidaste tu contraseña?». Te llega un correo con un enlace; revisa también «spam».'],
     ['🛠️', 'No puedo entrar o crear mi cuenta', 'En esa pantalla toca «¿No funciona? Revisar la conexión»: te dice qué falla. Si el correo de confirmación no llega, usa «Reenviar el correo de confirmación».'],
-    ['🗑️', '¿Cómo borro mis datos?', 'En «Mi privacidad» puedes descargarlos, apagar y borrar la copia de tu cuenta, o salir de la iglesia para borrar tu nombre de su lista.', 'privacidad']
+    ['🗑️', '¿Cómo borro mis datos?', 'En «Mi privacidad» puedes descargarlos, apagar y borrar la copia de tu cuenta, o salir de la iglesia para borrar tu nombre de su lista.', 'privacidad'],
+    ['🌳', '¿Qué es el Inicio y cómo crece mi árbol?', 'Es tu lugar tranquilo. Al empezar eliges un lugar (bosque nativo, desierto florido o costa del Pacífico) y su árbol crece mientras lees y vives la Palabra: madura en 10 días. El lugar se completa en 30 días, con tres detalles que van apareciendo de 10 en 10. Si pasas varios días sin entrar, puede aparecer maleza en tu jardín.'],
+    ['💧', '¿Qué son las gotas de rocío y cómo las gano?', 'Las ganas al leer un capítulo, al hacer un paso de «Hoy lo hago», al avanzar un día de un plan, al jugar (con 6 aciertos de cada 10) y con la trivia diaria. Hay un máximo por día. No vencen, no se compran con dinero y las usas en tu Inicio.'],
+    ['📖', '¿Cómo cambio la versión de la Biblia?', 'En Palabra toca «Leer la Biblia» y elige la versión que prefieras. Los libros que vas leyendo quedan guardados para leer sin internet.'],
+    ['🗓', '¿Cómo sigo un plan de lectura?', 'En Palabra toca «Plan de lectura», elige uno y marca cada día cuando lo leas. Mientras tengas uno en curso, esa tarjeta dice «Mi plan» y te lleva al día que toca.'],
+    ['🙏', '¿Dónde pido ayuda si lo necesito hoy?', 'En Vida toca «Ayuda y contactos»: ahí están las emergencias, las líneas de apoyo en Chile y a quién acudir en tu iglesia. Si hay peligro inmediato, llama primero.'],
+    ['📲', '¿Cómo instalo la app en mi teléfono?', 'Toca «Instalar la app» en el aviso de Palabra o en el menú y sigue los pasos que aparecen. Así se abre como cualquier otra app, desde tu pantalla de inicio.'],
+    ['🗑', '¿Puedo descargar o borrar mis datos?', 'Sí. En «Mi privacidad» puedes descargar tus datos o eliminar tu cuenta y todo lo guardado. Se llega desde Perfil, en la sección Cuenta.', 'privacidad']
   ];
-  function vistaAyuda(id) {
-    $('#pantalla').innerHTML = `${volver()}<h1>Ayuda</h1><div class="filete"></div>
+  function vistaPreguntas(id, atras) {   // F1094: antes se llamaba vistaAyuda y la pisaba «Ayuda y contactos»; ahora cada una abre lo que dice su tarjeta
+    const dePerfil = atras === 'perfil';
+    $('#pantalla').innerHTML = `${dePerfil ? cabecera('Preguntas frecuentes', 'Perfil') : `${volver()}<h1>Preguntas frecuentes</h1><div class="filete"></div>`}
       <p class="suave">Toca una pregunta para ver la respuesta.</p>
       <div class="ayuda-lista">${AYUDA.map((a, i) => `<details class="card ayuda-it"><summary><span aria-hidden="true">${a[0]}</span>${esc(a[1])}</summary><p>${esc(a[2])}</p>${a[3] ? `<button type="button" class="btn sec chico" data-ayuda-ir="${a[3]}">Abrir «Mi privacidad»</button>` : ''}</details>`).join('')}</div>`;
-    alVolver();
-    document.querySelectorAll('[data-ayuda-ir]').forEach((b) => b.addEventListener('click', () => vistaPrivacidad(id)));
+    if (dePerfil) volverA('Perfil', vistaPerfil); else alVolver();
+    document.querySelectorAll('[data-ayuda-ir]').forEach((b) => b.addEventListener('click', () => vistaPrivacidad(id, dePerfil ? 'perfil' : undefined)));
   }
 
   // ---------- Pedir oración (MOV2b) ----------
@@ -1343,7 +1351,8 @@
   function raicesElegir(bank, diario) {
     let sem = 0; const f = diario ? hoyTxt() : String(Date.now()); for (let i = 0; i < f.length; i++) sem = (sem * 31 + f.charCodeAt(i)) >>> 0;
     const azar = () => { sem = (sem * 1664525 + 1013904223) >>> 0; return sem / 4294967296; };
-    const ult = leer(K_BIB), a = bank.slice().sort(() => azar() - 0.5);
+    const ult = leer(K_BIB), vistas = diario ? [] : ((leer(K_JUEGOS) || {}).vistas_raices || []);   // F1093: «Otras cinco» prefiere preguntas que aún no viste
+    const a = bank.slice().sort(() => azar() - 0.5).sort((x, y) => (vistas.includes(x.id) ? 1 : 0) - (vistas.includes(y.id) ? 1 : 0));
     const del = ult ? a.filter((q) => q.cod === ult.cod) : [];   // primero las del libro que leíste por última vez
     return del.slice(0, 2).concat(a.filter((q) => !del.slice(0, 2).includes(q))).slice(0, 5);
   }
@@ -1352,37 +1361,42 @@
   const JU_HERO = (n) => `<svg class="ju-hero" viewBox="0 0 320 96" aria-hidden="true" focusable="false"><path class="ju-suelo" d="M0 70 Q80 58 160 68 T320 62 V96 H0z"/><g class="ju-raiz"><path d="M160 68 C150 78 138 82 124 90 M160 68 C162 80 170 86 176 94 M160 68 C172 76 188 80 204 88"/></g><g class="ju-planta"><path class="ju-tallo" d="M160 68 V${Math.max(22, 62 - n * 8)}"/><path class="ju-hoja h1" d="M160 ${Math.max(40, 62 - n * 5)} c-18-2-28-12-30-24 18 0 30 8 30 24z"/><path class="ju-hoja h2" d="M160 ${Math.max(34, 54 - n * 5)} c18-2 28-12 30-24-18 0-30 8-30 24z"/>${n >= 3 ? '<circle class="ju-flor" cx="160" cy="18" r="7"/><circle class="ju-flor2" cx="160" cy="18" r="3"/>' : ''}</g></svg>`;
   function juegoCorrer(cfg) {   // motor común de preguntas con opciones: cfg = { id, titulo, volver, items: [{ p, o, c, ver: async () => ({ html }) }], otra }
     const son = (n) => { try { if (window.TBSonido && window.TBSonido[n]) window.TBSonido[n](); } catch (e) { /* sin sonido */ } };
-    const qs = cfg.items; let i = 0, ac = 0; const marcas = [];
+    const qs = cfg.items; let i = 0, ac = 0, racha = 0; const marcas = [];   // F1093: racha suave (sin vidas ni castigo) y repaso de lo fallado
     const pregunta = () => {
       const q = qs[i], ord = q.o.map((t, k) => k).sort(() => Math.random() - 0.5);
       const prog = qs.map((x, k) => `<i class="ju-h${k < i ? (marcas[k] ? ' bien' : ' mal') : k === i ? ' ahora' : ''}"></i>`).join('');
       $('#pantalla').innerHTML = `${cabecera(cfg.titulo, 'Juegos')}<div class="ju"><div class="ju-prog" role="img" aria-label="Pregunta ${i + 1} de ${qs.length}">${prog}</div>
-        <p class="ju-cuenta">Pregunta ${i + 1} de ${qs.length}</p><h2 class="ju-p">${esc(limpiaTexto(q.p))}</h2>
+        <p class="ju-cuenta">${cfg.repaso ? 'Repaso · ' : ''}Pregunta ${i + 1} de ${qs.length}${racha >= 2 ? `<span class="ju-racha"> · ${racha} seguidas</span>` : ''}</p><h2 class="ju-p">${esc(limpiaTexto(q.p))}</h2>
         <div class="ju-ops">${ord.map((k, n) => `<button type="button" class="ju-op" data-k="${k}"><span class="ju-l" aria-hidden="true">${'ABCD'[n]}</span><span class="ju-t">${esc(limpiaTexto(q.o[k]))}</span></button>`).join('')}</div><div id="rzRes"></div></div>`;
       volverA('Juegos', cfg.volver);
       document.querySelectorAll('[data-k]').forEach((b) => b.addEventListener('click', async () => {
-        const bien = Number(b.dataset.k) === q.c; if (bien) ac++; marcas[i] = bien; son(bien ? 'logro' : 'suave');
+        const bien = Number(b.dataset.k) === q.c; if (bien) { ac++; racha++; } else racha = 0; marcas[i] = bien; son(bien ? 'logro' : 'suave');
         document.querySelectorAll('[data-k]').forEach((x) => { x.disabled = true; if (Number(x.dataset.k) === q.c) x.classList.add('ok'); else if (x === b) x.classList.add('mal'); });
-        $('#rzRes').innerHTML = `<p class="ju-vered ${bien ? 'ok' : ''}"><b>${bien ? 'Correcto.' : 'Casi. La respuesta correcta está marcada.'}</b></p><div class="ju-ver" id="rzVer"><span class="esqueleto"></span></div>
+        $('#rzRes').innerHTML = `<p class="ju-vered ${bien ? 'ok' : ''}"><b>${bien ? (racha >= 3 ? 'Correcto. ' + racha + ' seguidas.' : 'Correcto.') : 'Casi. La respuesta correcta está marcada.'}</b></p><div class="ju-ver" id="rzVer"><span class="esqueleto"></span></div>
           <button type="button" class="ju-sig" id="rzSig">${i + 1 < qs.length ? 'Siguiente' : 'Ver resultado'} <span aria-hidden="true">›</span></button>`;
         $('#rzSig').onclick = () => { i++; if (i < qs.length) pregunta(); else fin(); }; $('#rzSig').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
         try { const r = await q.ver(), el = $('#rzVer'); if (el) el.innerHTML = r.html; } catch (e) { const el = $('#rzVer'); if (el) el.innerHTML = '<p class="suave m0">Sin internet: no se pudo mostrar el versículo.</p>'; }
       }));
     };
     const fin = () => {
-      juegoTerminar(cfg.id, ac, qs.length); son('logro');
-      $('#pantalla').innerHTML = `${cabecera(cfg.titulo, 'Juegos')}<div class="ju">${JU_HERO(ac)}<h2 class="ju-fin">${ac} de ${qs.length}</h2><p class="suave">${ac >= 4 ? 'Muy buen repaso de la Palabra.' : ac >= 2 ? 'Buen avance. Cada repaso deja algo.' : 'Lo importante es volver a leer. Puedes intentarlo otra vez.'}${ac > 0 ? ' Una gota de rocío te espera en el Inicio.' : ''}</p>
-        <button type="button" class="ju-sig" id="rzOtra">Jugar otra vez <span aria-hidden="true">›</span></button></div>`;
+      if (!cfg.repaso) juegoTerminar(cfg.id, ac, qs.length);   // el repaso no cuenta como partida ni da gota (evita repetir para ganar)
+      son('logro');
+      const falladas = qs.filter((x, k) => !marcas[k]);
+      const msg = cfg.repaso ? (ac === qs.length ? 'Ya las tienes. Lo que fallaste, ahora lo sabes.' : 'Cada repaso deja algo. Puedes repetirlo cuando quieras.') : (ac >= 4 ? 'Muy buen repaso de la Palabra.' : ac >= 2 ? 'Buen avance. Cada repaso deja algo.' : 'Lo importante es volver a leer. Puedes intentarlo otra vez.');
+      $('#pantalla').innerHTML = `${cabecera(cfg.titulo, 'Juegos')}<div class="ju">${JU_HERO(ac)}<h2 class="ju-fin">${ac} de ${qs.length}</h2><p class="suave">${msg}${!cfg.repaso && ac > 0 ? ' Una gota de rocío te espera en el Inicio.' : ''}</p>
+        ${falladas.length ? `<button type="button" class="ju-sig" id="rzRepaso">Repasar lo que fallé (${falladas.length}) <span aria-hidden="true">›</span></button>` : ''}
+        <button type="button" class="ju-sig${falladas.length ? ' ju-sec' : ''}" id="rzOtra">Jugar otra vez <span aria-hidden="true">›</span></button></div>`;
       volverA('Juegos', cfg.volver); $('#rzOtra').onclick = () => cfg.otra();
+      if (falladas.length) $('#rzRepaso').onclick = () => juegoCorrer(Object.assign({}, cfg, { items: falladas, repaso: true }));
     };
     pregunta();
   }
   const juVerHtml = (txt, ref, resaltar) => { const t = esc(limpiaTexto(txt)); return `<blockquote class="ju-bq">«${resaltar ? t.replace(new RegExp('(' + esc(resaltar).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'i'), '<mark>$1</mark>') : t}»</blockquote><p class="ju-ref">${esc(ref)}</p>`; };
   async function vistaRaices(volver) {
     let bank; try { bank = (await datoCargar('juego_raices')).preguntas; } catch (e) { $('#pantalla').innerHTML = `${cabecera('Raíces', 'Juegos')}<p class="suave">${SIN_DATOS}</p>`; volverA('Juegos', volver); return; }
-    const jugar = (qs) => juegoCorrer({ id: 'raices', titulo: 'Raíces', volver, otra: () => jugar(raicesElegir(bank, false)), items: qs.map((q) => ({ p: q.p, o: q.o, c: q.c, ver: async () => {
+    const jugar = (qs) => { const j = leer(K_JUEGOS) || { n: 0, p: {} }; j.vistas_raices = (j.vistas_raices || []).concat(qs.map((q) => q.id)).slice(-30); guardar(K_JUEGOS, j); return juegoCorrer({ id: 'raices', titulo: 'Raíces', volver, otra: () => jugar(raicesElegir(bank, false)), items: qs.map((q) => ({ p: q.p, o: q.o, c: q.c, ver: async () => {
       const inf = libroInfo(q.cod), ref = `${inf ? inf[1] : q.cod} ${q.cap}:${q.v}`; let t = ''; try { const lib = await libroCargar(q.cod, verActual()); t = lib[q.cap - 1] && lib[q.cap - 1][q.v - 1]; } catch (e) { /* sin internet */ }
-      return { html: t ? juVerHtml(t, ref) : `<p class="ju-ref">${esc(ref)}</p>` }; } })) });
+      return { html: t ? juVerHtml(t, ref) : `<p class="ju-ref">${esc(ref)}</p>` }; } })) }); };
     $('#pantalla').innerHTML = `${cabecera('Raíces', 'Juegos')}<div class="ju">${JU_HERO(2)}<p class="suave">Cinco preguntas. Después de cada respuesta aparece el versículo que la explica.</p>
       <button type="button" class="ju-modo" id="rzDia"><span class="ju-mi" aria-hidden="true">${svg('amanecer', 26)}</span><span><b>Reto de hoy</b><small>Las mismas cinco preguntas durante todo el día.</small></span><span class="flecha" aria-hidden="true">›</span></button>
       <button type="button" class="ju-modo" id="rzMas"><span class="ju-mi" aria-hidden="true">${svg('baraja', 26)}</span><span><b>Otras cinco</b><small>Preguntas distintas cada vez.</small></span><span class="flecha" aria-hidden="true">›</span></button></div>`;
@@ -1443,6 +1457,7 @@
       const pintar = () => {
         $('#pantalla').innerHTML = `${cabecera('Sopa del Vivero', 'Juegos')}<div class="ju"><h2 class="ju-p">${esc(tema.titulo)}</h2>
           <div class="so-lista" aria-label="Palabras por encontrar">${lista.map((w) => `<span class="so-pal${halladas.has(w) ? ' hecha' : ''}">${w}</span>`).join('')}</div>
+          <p class="so-cuenta" aria-live="polite">${halladas.size} de ${lista.length} encontradas</p>
           <div class="so-grid" role="grid" aria-label="Sopa de letras">${g.map((fila, f) => fila.map((l, c) => { const i = f * N + c; return `<button type="button" role="gridcell" class="so-c${ok.has(i) ? ' ok' : ''}${ini === i ? ' sel' : ''}${pista === i ? ' pista' : ''}" data-i="${i}" aria-label="${l}, fila ${f + 1}, columna ${c + 1}">${l}</button>`; }).join('')).join('')}</div>
           <p class="so-aviso" role="status" aria-live="polite">${esc(aviso)}</p>
           <button type="button" class="ju-sig" id="soPista">Pista gratis <span aria-hidden="true">›</span></button></div>`;
@@ -1493,7 +1508,8 @@
       <h1>Hoy</h1><div class="hoy-verso" id="hoyVerso"><span class="esqueleto"></span><span class="esqueleto corto"></span></div>
       ${racha ? `<p class="hoy-racha">${svg('llama', 18)}<span>${racha === 1 ? '1 día leyendo la Palabra' : racha + ' días seguidos leyendo la Palabra'}</span></p>` : ''}${fechaCercanaChip()}${instalarChip()}</div>
       <h2 class="sep">Tu Palabra</h2>
-      <div class="grid">${(planAct ? activa('🗓', 'Mi plan: ' + esc(planAct.pl.n || 'lectura'), 'Día ' + (planAct.n + 1) + ' de ' + planAct.pl.dias.length + ' · sigue donde ibas.', 'plan') : activa('🗓', 'Plan de lectura', 'Elige uno y lee un poquito cada día, con tu avance.', 'planes')).replace('class="card"', 'class="card tbplan"')}${inf ? activa('▶️', 'Seguir leyendo', esc(inf[1]) + ' ' + Number(ult.cap) + ' · donde te quedaste', 'seguir') : ''}${activa('📖', 'Leer la Biblia', 'Biblia en español: elige tu versión. Los libros que lees quedan para leer sin internet.', 'biblia')}${activa('🔖', 'Mi Biblia', 'Tus resaltes, notas y versículos guardados.', 'mibiblia')}${activa('✨', 'Versículo de hoy', 'Una frase para empezar el día.', 'versiculo')}${activa('📜', 'Fábula del mes', 'Un relato corto para practicar, capítulo a capítulo.', 'fabula')}${activa('🌱', 'Juegos', 'Repasa la Palabra jugando: sin anuncios, sin monedas y sin internet.', 'juegos')}</div>`;
+      <div class="grid">${(planAct ? activa('🗓', 'Mi plan: ' + esc(planAct.pl.n || 'lectura'), 'Día ' + (planAct.n + 1) + ' de ' + planAct.pl.dias.length + ' · sigue donde ibas.', 'plan') : activa('🗓', 'Plan de lectura', 'Elige uno y lee un poquito cada día, con tu avance.', 'planes')).replace('class="card"', 'class="card tbplan"')}${inf ? activa('▶️', 'Seguir leyendo', esc(inf[1]) + ' ' + Number(ult.cap) + ' · donde te quedaste', 'seguir') : ''}${activa('📖', 'Leer la Biblia', 'Biblia en español: elige tu versión. Los libros que lees quedan para leer sin internet.', 'biblia')}${activa('🔖', 'Mi Biblia', 'Tus resaltes, notas y versículos guardados.', 'mibiblia')}${activa('✨', 'Versículo de hoy', 'Una frase para empezar el día.', 'versiculo')}</div>
+      <h2 class="sep">Practicar</h2><div class="grid">${activa('📜', 'Fábula del mes', 'Un relato corto para practicar, capítulo a capítulo.', 'fabula')}${activa('🔀', 'Juegos', 'Repasa la Palabra jugando. Sin anuncios y sin tiempo.', 'juegos')}</div>`;
     document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => {
       const k = b.dataset.ir;
       if (k === 'hacer') vistaHacer(); else if (k === 'juegos') vistaJuegos(); else if (k === 'biblia') vistaBiblia(); else if (k === 'versiculo') vistaVersiculo(); else if (k === 'fabula') vistaFabula(); else if (k === 'mibiblia') vistaMiBiblia(); else if (k === 'planes') vistaPlanes(); else if (k === 'plan' && planAct) vistaPlan(planAct.pl.id); else if (k === 'cal') vistaCalendario(); else if (k === 'inst') instalarUnToque(); else if (k === 'instno') { try { localStorage.setItem('tb_movil_inst_no', String(new Date().getMonth())); } catch (e) { /* nada */ } b.closest('.hoy-inst').remove(); } else if (k === 'seguir' && inf) vistaCapitulo(ult.cod, Number(ult.cap));
@@ -1811,9 +1827,9 @@
   };
   function vistaVida() {
     $('#pantalla').innerHTML = `${bandaTB('crecer')}<h1>Vivir lo que aprendemos</h1><div class="filete"></div><div class="grid vida-ayuda">${activa('🙏', 'Ayuda y contactos', 'Emergencias, líneas de apoyo, cuidados y tu iglesia.', 'ayuda')}</div>
-      <div class="grid">${activa('✨', 'Hoy lo hago', 'Un paso pequeño hoy. Intentarlo ya cuenta.', 'hacer')}</div>
-      <h2 class="sep">Planes de vida</h2><div class="grid">${activa('🌱', 'Planes de vida', 'Un tema a la vez para crecer como persona.', 'planvida')}</div><h2 class="sep">Con Dios y conmigo</h2><div class="grid">${activa('🕊️', 'Mi oración', 'Tu diario de peticiones, solo para ti.', 'mioracion')}${activa('🎵', 'Música', 'Letras para cantar y para leer en el culto.', 'musica')}${activa('🌱', 'Mi crecimiento', 'Pequeños pasos de cada semana.', 'crecimiento')}${activa('🧠', 'Salud mental', 'Respirar, un chequeo y dónde pedir ayuda.', 'salud')}</div>
-      <h2 class="sep">Para aprender</h2><div class="grid">${activa('🎓', 'Aprender', 'Cursos gratuitos en internet para servir mejor, con tu avance.', 'aprender')}</div>`;
+      <div class="grid">${activa('✨', 'Hoy lo hago', 'Un paso pequeño para hoy. Intentarlo ya cuenta.', 'hacer')}</div>
+      <h2 class="sep">Con Dios y conmigo</h2><div class="grid">${activa('🕊️', 'Mi oración', 'Tu diario de peticiones, solo para ti.', 'mioracion')}${activa('🎵', 'Música', 'Letras para cantar y para leer en el culto.', 'musica')}${activa('🧠', 'Salud mental', 'Respirar, un chequeo y dónde pedir ayuda.', 'salud')}</div>
+      <h2 class="sep">Para crecer</h2><div class="grid">${activa('🌱', 'Planes de vida', 'Un tema por varios días, con un paso cada día.', 'planvida')}${activa('🌿', 'Mi crecimiento', 'Tu paso de la semana y cómo vas.', 'crecimiento')}${activa('🎓', 'Aprender', 'Cursos gratuitos en internet para servir mejor, con tu avance.', 'aprender')}</div>`;
     document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ hacer: () => vistaHacer(), planvida: () => seguro(vistaPlanesVida), ayuda: vistaAyuda, juntos: vistaJuntosVida, musica: vistaMusica, mioracion: vistaMiOracion, crecimiento: vistaCrecimiento, salud: vistaSalud, aprender: vistaAprender }[b.dataset.ir] || vistaVida)()));
   }
 
@@ -2461,7 +2477,7 @@
       <button type="button" class="card invita" data-pf="invitar"><span class="invita-ic" aria-hidden="true">${svg('compartir', 26)}</span><span class="invita-txt"><b>Invita a un amigo</b><small>Regálale un momento de paz con la Palabra</small></span><span class="flecha" aria-hidden="true">›</span></button>
       ${pastorLeer() ? `${bandaTB('pastor')}<section class="area area-pastor" aria-label="Panel del pastor"><div class="area-cab"><span class="area-tag">Panel del pastor</span><h2 class="area-t">Cuidar a tu iglesia</h2><p class="suave m0">Todo lo que necesitas para guiar, orar y servir con tu comunidad, en un solo lugar.</p></div><div class="card pas-descanso"><b>Tu descanso también cuenta</b><p class="suave m0t">Guiar a una iglesia exige mucho. Aparta tiempo para ti y para tu familia, y busca un par con quien hablar.</p></div><div class="grid">${[['🧱', 'Muro', 'Peticiones que compartiste y cuántas personas oran.', 'muro'], ['📅', 'Agenda', 'Actividades y reuniones de tu iglesia.', 'agenda'], ['📣', 'Avisos', 'Mensajes para todos o para un grupo.', 'avisos'], ['🕍', 'Ministerios', 'Grupos, personas y líderes.', 'ministerios'], ['🤲', 'Juntos hacemos el bien', 'Ideas y movimientos para servir con tu iglesia.', 'juntos'], ['🙏', 'Oraciones', 'Peticiones recibidas.', 'oraciones']].map((x) => activa(x[0], x[1], x[2], x[3]).replace('data-ir=', 'data-pas=')).join('')}</div></section>` : ''}
       ${id ? '' : `<h2 class="sep">Empieza</h2><div class="lista">${fila('t1', '⛪', 'Unirme a mi iglesia', 'Con el código de tu pastor', 'unir')}${fila('t2', '🔑', 'Recuperar mi iglesia', 'Con la llave de otro teléfono', 'llave')}</div>`}
-      <h2 class="sep">Mi plan</h2><div class="lista">${fila('t2', '🧭', 'Cambiar mi plan', esc(planResumen()), 'plan')}</div>
+      <h2 class="sep">Mi lectura</h2><div class="lista">${fila('t2', '🧭', 'Cambiar mi plan de lectura', esc(planResumen()), 'plan')}</div>
       <h2 class="sep">Apariencia</h2>
       <details class="perfil-det"><summary><span aria-hidden="true">${svg('pluma', 18)}</span> Editar mi perfil <i class="flecha" aria-hidden="true">›</i></summary>
       <h2 class="sep">Sobre mí</h2>
@@ -2472,9 +2488,9 @@
       <div class="card"><div class="av-sel" role="group" aria-label="Color del avatar">${[0, 1, 2, 3, 4, 5, 6, 7].map((i) => `<button type="button" class="avatar g${i}${p.g === i ? ' sel' : ''}" data-g="${i}" aria-label="Color ${i + 1}" aria-pressed="${p.g === i}"></button>`).join('')}</div>
         <div class="av-sel emo" role="group" aria-label="Símbolo">${['']. concat(AVATARES).map((e) => `<button type="button" class="av-emo${p.e === e ? ' sel' : ''}" data-e="${e}" aria-label="${e ? 'Símbolo ' + e.replace('svg:', '') : 'Mis iniciales'}" aria-pressed="${p.e === e}">${e ? (/^svg:/.test(e) ? svg(e.slice(4), 22) : e) : 'Aa'}</button>`).join('')}</div></div></details>
       <div class="temas-c" role="group" aria-label="Tema de color">${TEMAS.map((x) => `<button type="button" class="tema-c${p.t === x[0] ? ' sel' : ''}" data-tc="${x[0]}" data-mc="${x[3]}" aria-label="${esc(x[1])}" aria-pressed="${p.t === x[0]}"></button>`).join('')}<button type="button" class="tema-c mas" data-pf="temas" aria-label="Más opciones de apariencia">⋯</button></div>
-      <div class="lista">${fila('t2', svg('ajustes', 26), 'Efectos y sonido', 'Sonidos, animaciones y cuidar el teléfono', 'rapido')}</div>
+      <div class="lista">${fila('t2', svg('ajustes', 26), 'Efectos y sonido', 'Sonidos, animaciones y cuidar el teléfono', 'rapido')}${fila('t2', svg('ayuda', 26), 'Preguntas frecuentes', 'Respuestas cortas sobre cómo usar la app', 'ayu')}</div>
       <h2 class="sep">Cuenta</h2>
-      <div class="lista">${cu ? fila('t2', '☁️', 'Sesión iniciada', esc(cu.correo), 'nada') + fila('t4', '↩️', 'Cerrar sesión', '', 'salir') : fila('t2', '✉️', 'Entrar o crear cuenta', 'Tu iglesia te sigue a cualquier teléfono', 'cuenta')}</div>
+      <div class="lista">${cu ? fila('t2', '☁️', 'Sesión iniciada', esc(cu.correo), 'nada') + fila('t4', '↩️', 'Cerrar sesión', '', 'salir') : fila('t2', '✉️', 'Entrar o crear cuenta', 'Tu iglesia te sigue a cualquier teléfono', 'cuenta')}${fila('t2', '🔒', 'Mi privacidad y mis datos', 'Qué ve cada persona, descargar o borrar', 'priv')}</div>
       ${cu ? '<p class="suave sinc-p" id="sincEstado"></p>' : ''}
       ${apoyarFila()}
       ${bloqueInstalar()}`;
@@ -2487,7 +2503,7 @@
     document.querySelectorAll('[data-e]').forEach((b) => b.addEventListener('click', () => { const q = perfilLeer(); perfilGuardar({ e: b.dataset.e }); vibra(); vistaPerfil(); }));
     document.querySelectorAll('[data-pas]').forEach((b) => b.addEventListener('click', () => { const pas = pastorLeer(); if (!pas) return vistaPastorEntrar(); const volverPerfil = (f) => { f(); volverA('Perfil', vistaPerfil); }; ({ muro: () => pMuro(pas), agenda: () => vistaAgenda(modoPastor(pas)), avisos: () => vistaAvisos(modoPastor(pas)), ministerios: () => pMinisterios(pas), juntos: abrirJuntos, oraciones: () => pOraciones(pas) }[b.dataset.pas] || (() => {}))(); }));
     document.querySelectorAll('[data-pf]').forEach((b) => b.addEventListener('click', () => ({
-      min: () => vistaMinisterios(id), ora: () => vistaOracion(id), priv: () => vistaPrivacidad(id), ayu: () => vistaAyuda(id), logros: logrosAbrir, rapido: () => { if (window.TBRendimiento) window.TBRendimiento.abrir(); },
+      min: () => vistaMinisterios(id), ora: () => vistaOracion(id), priv: () => vistaPrivacidad(id, 'perfil'), ayu: () => vistaPreguntas(id, 'perfil'), logros: logrosAbrir, rapido: () => { if (window.TBRendimiento) window.TBRendimiento.abrir(); },
       hacer: () => vistaHacer(null, vistaPerfil), plan: planRehacer, invitar: invitarHoja, temas: vistaTemas, apoyar: vistaApoyar, pastor: () => (pastorLeer() ? ir('pastor') : vistaPastorEntrar()), unir: () => codigoHoja(), llave: vistaLlave, cuenta: () => vistaCuenta('entrar'), nada: () => {},
       salir: () => { if (confirm('¿Cerrar sesión? Tus notas personales quedan guardadas en tu cuenta y vuelven cuando entres.')) cerrarSesionCuenta(); }
     }[b.dataset.pf] || (() => {}))()));
@@ -3576,7 +3592,7 @@
       <div class="cj-lista">
         ${yaInstalada() ? '' : it('inst', 'compartir', 'Instalar la app', 'Un toque y queda en tu pantalla')}
         ${it('jun', 'brote', 'Juntos hacemos el bien', 'Ideas y movimientos de tu iglesia')}
-        ${it('plan', 'brote', 'Personalizar la app', 'Cambiar mis respuestas iniciales')}
+        ${it('plan', 'brote', 'Personalizar mi lectura', 'Cambiar mis respuestas iniciales')}
         ${it('info', 'ayuda', 'Cómo usar la app', 'Guía rápida de cada sección')}
         ${it('cal', 'calendario', 'Fechas importantes', 'Fiestas cristianas y actividades de tu iglesia')}
         ${it('comp', 'compartir', 'Compartir la app', 'Invita a alguien que quieras')}

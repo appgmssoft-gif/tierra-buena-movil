@@ -86,11 +86,11 @@
     ],
     vida: [
       { k: 'sol', c: 'c1', t: 'Hoy lo hago', d: 'Un paso pequeño hoy. Intentarlo ya cuenta.', p: [['Elegir una acción sencilla', /Hoy lo hago/], ['Hacerla y marcarla', /Hoy lo hago/], ['Sumar tus días de práctica', /Hoy lo hago/]], b: 'Abrir «Hoy lo hago»' },
-      { k: 'gente', c: 'c3', t: 'Juntos hacemos el bien', d: 'Ideas y movimientos para que tu iglesia ayude en acción.', p: [['Elegir una idea para tu iglesia', /Juntos hacemos/], ['Ponerle fecha, lugar y líderes', /Juntos hacemos/], ['Invitar a tu congregación', /Juntos hacemos/]], b: 'Entrar a Juntos' },
       { k: 'corazon', c: 'c4', t: 'Mi oración', d: 'Tu diario de peticiones, solo para ti.', p: [['Escribir tus peticiones', /Mi oraci[óo]n/], ['Ver cuáles ya fueron respondidas', /Mi oraci[óo]n/], ['Mantener todo privado', /Mi oraci[óo]n/]], b: 'Abrir Mi oración' },
       { k: 'nota', c: 'c5', t: 'Música', d: 'Letras para cantar y para leer en el culto.', p: [['Buscar una canción', /M[úu]sica/], ['Leer la letra grande', /M[úu]sica/], ['Cantar en familia', /M[úu]sica/]], b: 'Abrir Música' },
       { k: 'brote', c: 'c2', t: 'Mi crecimiento', d: 'Pequeños pasos de cada semana.', p: [['Elegir un hábito', /Mi crecimiento/], ['Ver cómo crece tu avance', /Mi crecimiento/], ['Celebrar cada logro', /Mi crecimiento/]], b: 'Abrir Mi crecimiento' },
-      { k: 'gente', c: 'c3', t: 'Servir a otros', d: 'Ideas y proyectos listos para tu comunidad.', p: [['Encontrar una idea cerca de ti', /Ideas y proyectos/], ['Ver lugar, presupuesto y personas', /Proyectos listos/], ['Invitar a otros a sumarse', /Juntos hacemos/]], b: 'Ver ideas y proyectos' }
+      { k: 'brote', c: 'c2', t: 'Planes de vida', d: 'Un tema por varios días, con un paso cada día.', p: [['Elegir un plan', /Planes de vida/], ['Hacer el paso del día', /Planes de vida/], ['Ver cuántos días llevas', /Planes de vida/]], b: 'Abrir Planes de vida' },
+      { k: 'escudo', c: 'c1', t: 'Ayuda y contactos', d: 'A quién acudir cuando lo necesitas.', p: [['Ver emergencias y líneas de apoyo', /Ayuda y contactos/], ['Cuidarte hoy con pasos simples', /Ayuda y contactos/], ['Saber qué puede hacer tu iglesia', /Ayuda y contactos/]], b: 'Abrir Ayuda y contactos' }
     ],
     iglesia: [
       { k: 'casa', c: 'c2', t: 'Tu iglesia', d: 'Todo lo que se vive en comunidad, en un solo lugar.', p: [['Ver los grupos donde sirves', /Mis ministerios/], ['Ver agenda y avisos', /Agenda/], ['Conocer a quienes sirven', /Mis ministerios/]], b: 'Ver mis ministerios' },
@@ -109,7 +109,7 @@
       { k: 'brote', c: 'c2', t: 'Tu camino', d: 'Tu racha, tus logros y tu avance.', p: [['Ver tus días seguidos', '.stats'], ['Desbloquear logros', { h: /Mis logros/ }], ['Seguir creciendo con pasos de acción', /Pasos de acci[óo]n/]], b: 'Ver mis días seguidos' },
       { k: 'estrella', c: 'c5', t: 'Tu estilo', d: 'Temas de color y apariencia para leer cómodo.', p: [['Elegir entre muchos temas', '[data-pf="temas"]'], ['Cambiar tamaño y fondo', () => { const b = $('#pantalla [data-pf="temas"]'); if (!b) return false; b.click(); return true; }], ['Quitar o dejar el movimiento y los sonidos', '.tbson']], b: 'Elegir mi tema' },
       { k: 'gente', c: 'c3', t: 'Invita a un amigo', d: 'Comparte la app con un mensaje listo.', p: [['Enviar por WhatsApp o correo', /Invita a un amigo/], ['Editar el mensaje', /Invita a un amigo/], ['No se guarda ningún contacto', /Invita a un amigo/]], b: 'Invitar a un amigo' },
-      { k: 'escudo', c: 'c1', t: 'Tu plan', d: 'La app se adapta a lo que más buscas.', p: [['Ver tu plan actual', { h: /Mi plan/i }], ['Cambiar tu plan cuando quieras', /Cambiar mi plan/i], ['Empezar en tu pestaña favorita', /Cambiar mi plan/i]], b: 'Ver mi plan' }
+      { k: 'escudo', c: 'c1', t: 'Tu lectura', d: 'La app se adapta a lo que más buscas.', p: [['Ver tu plan de lectura actual', { h: /Mi lectura/i }], ['Cambiar tu plan cuando quieras', /Cambiar mi plan/i], ['Empezar en tu pestaña favorita', /Cambiar mi plan/i]], b: 'Ver mi lectura' }
     ]
   };
   const buscar = (re) => { if (!re || !(re instanceof RegExp)) return null; return $$('#pantalla [data-ir], #pantalla [data-pp], #pantalla [data-pf], #pantalla button.card, #pantalla .fila').find((b) => re.test(b.textContent || '')) || null; };

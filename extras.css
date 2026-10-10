@@ -258,3 +258,7 @@ html:not([data-anim=off]) .ju-planta{animation:ju-brota 1.1s cubic-bezier(.2,.9,
 .se-paso.hecho{border-color:var(--brote,#7fae5a);background:color-mix(in srgb,var(--brote,#b9d79a) 22%,var(--tarjeta))}
 .se-paso.hecho .flecha{font-weight:800}
 
+/* F1093 · juegos: racha suave, repaso de lo fallado y contador de Sopa (sin vidas ni castigo) */
+.ju-racha{font-weight:700;color:var(--verde)}
+.ju-sec{background:transparent;color:inherit;border:2px solid #58a06b;margin-top:10px}
+.so-cuenta{margin:0 0 8px;font-size:.9rem;opacity:.75}
