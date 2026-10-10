@@ -50,7 +50,7 @@
   }
   // F1076 · Los días del suelo se leen sobre 30 días (el doble de la escala anterior). Sin repetir los rasgos y como máximo 3 elementos: no se sobrecarga el inicio.
   const RASGO_SLOTS = [[44, 350], [316, 350], [210, 386]];
-  const RASGO_SLOTS_DESIERTO = [[66, 352], [246, 366], [160, 402]];   // F1089: el desierto con espacio entre sus rasgos
+  const RASGO_SLOTS_DESIERTO = [[56, 338], [276, 360], [150, 404]];   // F1090: más espacio entre rasgos   // F1089: el desierto con espacio entre sus rasgos
   // F1083 · Sombreado automático en dos tonos: cada figura rellena recibe una copia más oscura desplazada abajo-derecha (luz arriba-izquierda).
   // Se aplica a los dibujos de rasgos y suelo sin reescribirlos a mano.
   function oscurecer(hex, k) { const n = parseInt(hex.slice(1), 16); const c = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => Math.round(v * k)); return '#' + c.map((v) => v.toString(16).padStart(2, '0')).join(''); }
@@ -148,7 +148,7 @@
   }
   function pewen(n) {
     const m = Math.max(2, Math.min(6, n));
-    let g = p('tr-tronco t12', 'M0 0 C-3 -60 3 -130 0 -200') + p('tr-tronco t4', 'M-4 -6 C-6 -60 -2 -120 -4 -186');
+    let g = '<path d="M0 0 C-3 -60 3 -130 0 -200" fill="none" stroke="#5f7a3a" stroke-width="12" stroke-linecap="round"/><path d="M-4 -6 C-6 -60 -2 -120 -4 -186" fill="none" stroke="#84a05a" stroke-width="4" stroke-linecap="round"/>';   // F1090: tronco verde explícito
     for (let y = -12; y > -190; y -= 14) g += p('tr-h2', 'M-5 ' + y + ' L-11 ' + (y - 5) + ' L-4 ' + (y - 7) + 'Z M5 ' + (y - 4) + ' L11 ' + (y - 9) + ' L4 ' + (y - 11) + 'Z');   // F1088: bordes en punta del tronco verde
     for (let i = 0; i < m; i++) {
       const t = m === 1 ? 0 : i / (m - 1), y = -40 - t * 126, L = 62 - t * 22, yt = y - 10 - t * 10, r = 15 - t * 3;
@@ -279,7 +279,7 @@
       + '</g>';
     if (f === 'lago') return '<g class="cap cap2"><path class="agua" d="M-20 318 C50 306 150 312 200 311 S330 306 400 318 L400 342 C300 334 100 337 -20 342Z"/><path class="brillo" d="M40 322 h34 M120 328 h44 M230 321 h40 M300 330 h30"/><path class="junco" d="M24 342 l-2 -16 M30 342 l2 -13 M338 340 l-2 -16 M344 340 l3 -12"/></g>';
     if (f === 'rio') return '<g class="cap cap3"><path class="agua" d="M262 296 C250 316 292 326 272 348 C254 370 332 390 318 424 L376 424 C388 390 322 372 338 348 C354 328 304 316 314 296Z"/><path class="brillo" d="M280 320 h14 M296 352 h18 M318 392 h20"/></g>';
-    if (f === 'desierto') return '<g class="cap cap2 pa-flores"><circle class="fl a" cx="40" cy="326" r="3"/><circle class="fl b" cx="78" cy="334" r="3"/><circle class="fl a" cx="124" cy="330" r="2.6"/><circle class="fl c" cx="236" cy="332" r="3"/><circle class="fl a" cx="282" cy="326" r="3"/><circle class="fl b" cx="322" cy="334" r="2.6"/><circle class="fl c" cx="352" cy="328" r="3"/></g>';
+    if (f === 'desierto') return '';   // F1090: sin puntos de color sueltos en el fondo
     return '';
   }
   // F978 · Clima «Según la estación» (Chile, hemisferio sur): cada estación tiene su cielo. Usa climas ya conocidos; no regala ninguno.
@@ -646,7 +646,7 @@
       + '<g class="cap cap0">' + cielo(cl) + atras(fo) + '</g><g class="cap cap1"><path class="col c1" d="' + COL.c1 + '"/>' + fondo + '</g>'
       + '<g class="cap cap2"><path class="col c2" d="' + COL.c2 + '"/></g>'
       + '<g class="cap cap3"><path class="col c3" d="' + COL.c3 + '"/></g></g>'
-      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g><g class="esp">' + especialesEscena(est, fo) + '</g><g class="pa-dia">' + paisajeDelDia(est.habDias || 0, est.tematica) + rasgosEscena(est) + '</g><g class="cap cap3"><g class="mundo" transform="translate(180 344) scale(' + window.TBInicio.avanceDiario(c.diasCuidado).escala + ')">' + (est.tematica === 'desierto' ? '<g transform="translate(138 -36) scale(1.1)">' + sueloDibujo('cactus') + '</g>' : est.tematica === 'costa' ? '' : arbol(c.especie, et, c.diasCuidado) + hojasTB(window.TBInicio.avanceDiario(c.diasCuidado).hojas, et)) + '</g></g>' + '<g class="tb-hierba" aria-hidden="true">' + (est.tematica === 'desierto' || est.tematica === 'costa' ? '' : hierbaTB(0, 360, 392, 90, 17)) + '</g><g class="clima">' + climaSvg(cl) + '</g></svg>'
+      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g><g class="esp">' + especialesEscena(est, fo) + '</g><g class="pa-dia">' + paisajeDelDia(est.habDias || 0, est.tematica) + rasgosEscena(est) + '</g><g class="cap cap3"><g class="mundo" transform="translate(180 344) scale(' + window.TBInicio.avanceDiario(c.diasCuidado).escala + ')">' + (est.tematica === 'desierto' ? '<g transform="translate(158 -44) scale(0.9)">' + sueloDibujo('cactus') + '</g>' : est.tematica === 'costa' ? '' : arbol(c.especie, et, c.diasCuidado) + hojasTB(window.TBInicio.avanceDiario(c.diasCuidado).hojas, et)) + '</g></g>' + '<g class="tb-hierba" aria-hidden="true">' + (est.tematica === 'desierto' || est.tematica === 'costa' ? '' : hierbaTB(0, 360, 392, 90, 17)) + '</g><g class="clima">' + climaSvg(cl) + '</g></svg>'
       + '<i class="il-anillo" id="ilAnillo" aria-hidden="true"></i>'
       + '<button type="button" class="il-resp" id="ilResp" aria-label="Respirar con tu árbol. Toca para una pausa de unos 30 segundos"></button>' + mal + gotasHTML(est)  + vivEscena(est) + '</div>';
   }
@@ -656,11 +656,12 @@
     const c = est.ciclo, e = window.TBInicio.etapa(c.diasCuidado), av = window.TBInicio.avanceDiario(c.diasCuidado), dia = 'Día ' + c.diasCuidado + ' de ' + DIAS() + ' · ' + (ETAPAS[e] || 'Brote') + ' · ' + Math.round(av.fraccion * 100) + '% de la etapa';
     if (r && r.cicloNuevo) { const s = CAT && CAT.especies && CAT.especies[c.especie]; return 'Empieza un árbol nuevo' + (s ? ': ' + s.nombre : '') + '. El anterior ya forma parte del paisaje.'; }
     if (est.maleza.length) return 'Hay maleza en el pasto. Puedes tocarla para quitarla; así tu árbol sigue creciendo.';
-    if (c.cerrado) return 'Día 30 de 30 · Tu árbol está completo. Mañana empieza uno nuevo.';
+    if (c.cerrado) return 'Tu árbol está completo. Tu lugar va en el día ' + (est.habDias || 0) + ' de 30.';   // F1090: el árbol madura en 10 días
     if (r && r.diaNuevo) return 'Hoy tu árbol creció un día más. ' + dia;
     return dia;
   }
-  function nombreArbol(est) { const s = CAT && CAT.especies && CAT.especies[est.ciclo.especie]; return s ? esc(s.nombre) + (s.otro ? ' <span>· ' + esc(s.otro) + '</span>' : '') : 'Tu árbol'; }
+  function nombreArbol(est) { if (est.tematica === 'costa') return esc((CAT.tematicas.costa || {}).nombre || 'Costa del Pacífico');   // F1090: en la playa no se dibuja árbol
+    const s = CAT && CAT.especies && CAT.especies[est.ciclo.especie]; return s ? esc(s.nombre) + (s.otro ? ' <span>· ' + esc(s.otro) + '</span>' : '') : 'Tu árbol'; }
 
   // ---------- Primera semilla ----------
   // F1076 · Tarjeta de lugar: paisaje del hábitat + su árbol emblemático encima, para reconocerlo de inmediato
