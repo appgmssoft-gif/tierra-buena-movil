@@ -49,9 +49,19 @@
   // F1072 · Reinicio completo: el Inicio vuelve a la primera elección (en el teléfono y en la nube de la cuenta), con los días simulados en cero.
   function reiniciar() {
     if (!window.confirm('¿Empezar de nuevo el Inicio como la primera vez? Se borra el progreso del Inicio (también en la nube) y los días simulados.')) return;
-    const hecho = () => { localStorage.removeItem(KDIAS); location.reload(); };
-    const TA = window.TBApp; const p = TA && TA.reiniciarInicio ? TA.reiniciarInicio() : Promise.resolve(true);
-    p.then(hecho, hecho);
+    // 1) En este teléfono, siempre y de inmediato (no depende de internet).
+    ['tb_inicio_v1', 'tb_inicio_fondo', 'tb_inicio_clima', 'tb_inicio_guia', 'tb_inicio_pantalla'].forEach((k) => localStorage.removeItem(k));
+    localStorage.removeItem(KDIAS);
+    // 2) En la nube de la cuenta, con límite de tiempo. Luego se recarga siempre.
+    const TA = window.TBApp, nube = TA && TA.reiniciarInicio ? TA.reiniciarInicio() : Promise.resolve('sin-cuenta');
+    nube.then((estado) => {
+      if (estado === 'fallo' || estado === 'lento') window.alert('Se borró en este teléfono, pero la copia de la nube ' + (estado === 'lento' ? 'tardó demasiado.' : 'no se pudo borrar.') + ' Con buena conexión, vuelve a tocar «Empezar de nuevo» antes de cerrar la app.');
+      location.reload();
+    }, () => location.reload());
+  }
+  // F1073 · Versión que está corriendo de verdad (caché activa), para saber si el teléfono ya tiene la última versión.
+  function versionActiva(alTerminar) {
+    try { caches.keys().then((ks) => alTerminar(ks.filter((k) => /^tb-movil-/.test(k)).join(', ') || 'sin caché')); } catch (e) { alTerminar('desconocida'); }
   }
   // F1072 · Atajo: deja el Inicio con un hábitat ya comprado y elegido, para probar sin gastar gotas.
   function probarHabitat(h) {
@@ -91,6 +101,8 @@
     const panel = document.createElement('div'); panel.className = 'qa-panel'; panel.hidden = true;
     const titulo = document.createElement('p'); titulo.className = 'qa-titulo'; titulo.textContent = 'Desarrollo · +' + diasExtra() + ' días';
     const estado = document.createElement('p'); estado.className = 'qa-pie'; estado.textContent = resumen(); panel.appendChild(estado);
+    const version = document.createElement('p'); version.className = 'qa-pie'; version.textContent = 'Versión: buscando…'; panel.appendChild(version);
+    versionActiva((v) => { version.textContent = 'Versión: ' + v; });
     const acc = [['+1 día', () => avanzar(1)], ['+7 días', () => avanzar(7)], ['+30 días', () => avanzar(30)], ['+500 gotas', () => { darGotas(500); location.reload(); }], ['Desbloquear todo', desbloquearTodo],
       ['Probar bosque', () => probarHabitat('bosque')], ['Probar desierto', () => probarHabitat('desierto')], ['Probar costa', () => probarHabitat('costa')],
       ['Ver como usuario', () => verComo('usuario')], ['Ver como miembro', () => verComo('miembro')], ['Ver como pastor', () => verComo('pastor')], ['Empezar de nuevo (primera vez)', reiniciar]];

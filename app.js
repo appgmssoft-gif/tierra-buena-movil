@@ -148,13 +148,22 @@
   }
   async function syncInicio() { const u = await syncUsuario(); if (u && leer(K_CUENTA)) syncBajar(u); }
   // F1072 · Panel de desarrollo: borra el Inicio en este teléfono y también en la nube de la cuenta (si hay sesión). Sin esto, al recargar se restauraba el progreso viejo.
+  // Devuelve 'sin-cuenta' | 'ok' | 'lento' | 'fallo'. Nunca se queda esperando: cada llamada a la nube tiene 3,5 s como máximo.
   async function reiniciarInicioNube() {
     const claves = ['tb_inicio_v1', 'tb_inicio_fondo', 'tb_inicio_clima'];
-    const u = await syncUsuario();
-    if (u && SB.from) { for (const k of claves) { try { const r = await SB.from('avances_cuenta').delete().eq('user_id', u.id).eq('clave', k); if (r && r.error) throw r.error; } catch (e) { /* sin conexión: el borrado de la nube no se pudo; se intenta de nuevo al reiniciar */ } } }
     claves.concat(['tb_inicio_guia', 'tb_inicio_pantalla']).forEach((k) => crudoGuardar(k, null));
     const m = metaLeer(); claves.forEach((k) => { delete m.t[k]; delete m.d[k]; }); metaGuardar(m);
-    return true;
+    let estado = 'sin-cuenta';
+    const u = await syncUsuario();
+    if (u && SB.from) {
+      estado = 'ok';
+      for (const k of claves) {
+        const r = await Promise.race([SB.from('avances_cuenta').delete().eq('user_id', u.id).eq('clave', k).then((x) => x, (x) => ({ error: x || true })), new Promise((res) => setTimeout(() => res({ lento: true }), 3500))]);
+        if (r && r.lento) { estado = 'lento'; break; }
+        if (r && r.error) { estado = 'fallo'; break; }
+      }
+    }
+    return estado;
   }
   async function syncCerrar() {                  // antes de cerrar sesión: sube lo pendiente y, si quedó todo en la nube, limpia el teléfono
     try { await Promise.race([syncSubir(), new Promise((r) => setTimeout(r, 4000))]); } catch (e) { /* sin red */ }
