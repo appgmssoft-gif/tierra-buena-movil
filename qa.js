@@ -46,9 +46,27 @@
       .forEach(([grupo, pre]) => Object.keys(cat[grupo] || {}).forEach((k) => { const c = pre + k; if (e.vivero.desbloqueados.indexOf(c) < 0) e.vivero.desbloqueados.push(c); }));
     T.guardar(e); location.reload();
   }
+  // F1072 · Reinicio completo: el Inicio vuelve a la primera elección (en el teléfono y en la nube de la cuenta), con los días simulados en cero.
   function reiniciar() {
-    if (!window.confirm('¿Reiniciar el progreso del Inicio y los días simulados?')) return;
-    localStorage.removeItem('tb_inicio_v1'); localStorage.removeItem(KDIAS); location.reload();
+    if (!window.confirm('¿Empezar de nuevo el Inicio como la primera vez? Se borra el progreso del Inicio (también en la nube) y los días simulados.')) return;
+    const hecho = () => { localStorage.removeItem(KDIAS); location.reload(); };
+    const TA = window.TBApp; const p = TA && TA.reiniciarInicio ? TA.reiniciarInicio() : Promise.resolve(true);
+    p.then(hecho, hecho);
+  }
+  // F1072 · Atajo: deja el Inicio con un hábitat ya comprado y elegido, para probar sin gastar gotas.
+  function probarHabitat(h) {
+    const T = window.TBInicio; if (!T) return;
+    const EMBLEMA = { bosque: 'araucaria', desierto: 'chanar', costa: 'palma_chilena' };   // mismo emblema que el catálogo (F1071)
+    const e = T.cargar(); if (e.eligiendo) { e.eligiendo = false; if (!e.ciclo.especie) { e.ciclo.especie = EMBLEMA[h] || 'araucaria'; e.ciclo.inicio = iso(new Date()); e.ciclo.diasCuidado = 1; e.ciclo.ultimoDia = e.ciclo.ultimaVisita = iso(new Date()); } }
+    const c = 'tem_' + h; if (e.vivero.desbloqueados.indexOf(c) < 0) e.vivero.desbloqueados.push(c);
+    e.tematica = h; T.guardar(e); location.reload();
+  }
+  // F1072 · Resumen del estado actual, para saber en qué punto está la prueba.
+  function resumen() {
+    const T = window.TBInicio; if (!T) return 'Inicio sin cargar';
+    const e = T.cargar(), dia = e.eligiendo ? 'sin elegir árbol' : 'día ' + e.ciclo.diasCuidado;
+    const hab = e.tematica || 'sin hábitat';
+    return dia + ' · ' + hab + ' · ' + ((e.gotas && e.gotas.saldo) || 0) + ' gotas';
   }
 
   // Cambiar de vista: usuario normal, miembro o pastor. Las credenciales de prueba se piden una sola vez y quedan en tu teléfono.
@@ -72,8 +90,10 @@
     const boton = document.createElement('button'); boton.type = 'button'; boton.className = 'qa-toggle'; boton.textContent = 'DEV';
     const panel = document.createElement('div'); panel.className = 'qa-panel'; panel.hidden = true;
     const titulo = document.createElement('p'); titulo.className = 'qa-titulo'; titulo.textContent = 'Desarrollo · +' + diasExtra() + ' días';
+    const estado = document.createElement('p'); estado.className = 'qa-pie'; estado.textContent = resumen(); panel.appendChild(estado);
     const acc = [['+1 día', () => avanzar(1)], ['+7 días', () => avanzar(7)], ['+30 días', () => avanzar(30)], ['+500 gotas', () => { darGotas(500); location.reload(); }], ['Desbloquear todo', desbloquearTodo],
-      ['Ver como usuario', () => verComo('usuario')], ['Ver como miembro', () => verComo('miembro')], ['Ver como pastor', () => verComo('pastor')], ['Volver a empezar', reiniciar]];
+      ['Probar bosque', () => probarHabitat('bosque')], ['Probar desierto', () => probarHabitat('desierto')], ['Probar costa', () => probarHabitat('costa')],
+      ['Ver como usuario', () => verComo('usuario')], ['Ver como miembro', () => verComo('miembro')], ['Ver como pastor', () => verComo('pastor')], ['Empezar de nuevo (primera vez)', reiniciar]];
     panel.appendChild(titulo);
     acc.forEach(([txt, fn]) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'qa-btn'; b.textContent = txt; b.addEventListener('click', () => fn()); panel.appendChild(b); });
     const pie = document.createElement('p'); pie.className = 'qa-pie'; pie.textContent = (enLocal ? 'Computadora' : 'Celular (desarrollo)') + ' · día simulado ' + fechaSimulada();

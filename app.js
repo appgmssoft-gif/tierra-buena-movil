@@ -147,6 +147,15 @@
     await syncSubir();
   }
   async function syncInicio() { const u = await syncUsuario(); if (u && leer(K_CUENTA)) syncBajar(u); }
+  // F1072 · Panel de desarrollo: borra el Inicio en este teléfono y también en la nube de la cuenta (si hay sesión). Sin esto, al recargar se restauraba el progreso viejo.
+  async function reiniciarInicioNube() {
+    const claves = ['tb_inicio_v1', 'tb_inicio_fondo', 'tb_inicio_clima'];
+    const u = await syncUsuario();
+    if (u && SB.from) { for (const k of claves) { try { const r = await SB.from('avances_cuenta').delete().eq('user_id', u.id).eq('clave', k); if (r && r.error) throw r.error; } catch (e) { /* sin conexión: el borrado de la nube no se pudo; se intenta de nuevo al reiniciar */ } } }
+    claves.concat(['tb_inicio_guia', 'tb_inicio_pantalla']).forEach((k) => crudoGuardar(k, null));
+    const m = metaLeer(); claves.forEach((k) => { delete m.t[k]; delete m.d[k]; }); metaGuardar(m);
+    return true;
+  }
   async function syncCerrar() {                  // antes de cerrar sesión: sube lo pendiente y, si quedó todo en la nube, limpia el teléfono
     try { await Promise.race([syncSubir(), new Promise((r) => setTimeout(r, 4000))]); } catch (e) { /* sin red */ }
     const m = metaLeer(); if (m.off || SYNC_CLAVES.some((k) => m.d[k]) || sync.estado === 'falta' || sync.estado === 'error') return false;
@@ -3898,6 +3907,6 @@
     if (q && at[q] && haySesion() && !codigoDeEnlace()) setTimeout(() => { try { ir('palabra'); at[q](); } catch (e) { /* nada */ } }, 60);
   } catch (e) { /* sin atajo */ }
   const fechasProx = () => { try { const hoy = new Date(); hoy.setHours(0, 0, 0, 0); const a = hoy.getFullYear(); return fechasSantas(a, tradLeer()).concat(fechasSantas(a + 1, tradLeer())).filter((x) => x[0] >= hoy && x[4] !== 'mes').sort((x, y) => x[0] - y[0]).slice(0, 6).map((x) => ({ id: 's' + x[0].getTime(), t: x[1], fecha: x[0] })); } catch (e) { return []; } };
-  window.TBApp = { fechasProx, sb: SB, leer, guardar, esc, ir, vibra, svg, volverVida: () => ir('inicio'), irA: (d) => { const m = { lectura: () => { ir('palabra'); vistaBiblia(); }, vida: () => ir('vida'), plan: () => { ir('palabra'); vistaPlanes(); }, oracion: () => { ir('vida'); vistaMiOracion(); }, juego: () => { ir('palabra'); vistaJuegos(); } }; if (m[d]) m[d](); }, guardarAjuste: (c) => { perfilGuardar(c); ajusteAplicar(); } };   // F901: lo usan identidad.js (ejemplos y Juntos)
+  window.TBApp = { reiniciarInicio: reiniciarInicioNube, fechasProx, sb: SB, leer, guardar, esc, ir, vibra, svg, volverVida: () => ir('inicio'), irA: (d) => { const m = { lectura: () => { ir('palabra'); vistaBiblia(); }, vida: () => ir('vida'), plan: () => { ir('palabra'); vistaPlanes(); }, oracion: () => { ir('vida'); vistaMiOracion(); }, juego: () => { ir('palabra'); vistaJuegos(); } }; if (m[d]) m[d](); }, guardarAjuste: (c) => { perfilGuardar(c); ajusteAplicar(); } };   // F901: lo usan identidad.js (ejemplos y Juntos)
   syncInicio();
 })();
