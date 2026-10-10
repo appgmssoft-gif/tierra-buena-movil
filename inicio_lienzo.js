@@ -71,7 +71,7 @@
     if (!hab || !ids.length) return '';
     return ids.map((id, k) => {
       const ini = 10 * k + 1; if (d < ini) return '';
-      const xy = RASGO_SLOTS[k], dd = Math.min(10, d - ini + 1);
+      const xy = (est.tematica === 'costa' && k === 2) ? [250, 214] : RASGO_SLOTS[k], dd = Math.min(10, d - ini + 1);   // F1088: la gaviota vuela sobre el mar
       const esAnimal = !!AVES[id] || ['guanaco', 'zorro', 'gaviota'].indexOf(id) >= 0;
       if (!esAnimal) {   // plantas: crecen dentro de su bloque
         const f = Math.min(1, dd / 10), s = (0.9 * (0.5 + 0.5 * f)).toFixed(2);
@@ -87,7 +87,8 @@
   }
   function paisajeDelDia(dias, hab) {
     const rs = (((CAT && CAT.tematicas) || {})[hab] || {}).rasgos_ids || [];
-    const L = (PAISAJE_HAB[hab] || PAISAJE_HAB.general).filter((it) => rs.indexOf(it[1]) < 0).slice(0, 3), d = Math.max(0, Math.floor(dias || 0)); let g = '';   // F1087: menos es más: como máximo 3 decoraciones de suelo
+    // F1088: decoración fuera de los lugares de los rasgos
+    const L = (PAISAJE_HAB[hab] || PAISAJE_HAB.general).filter((it) => rs.indexOf(it[1]) < 0 && [4, 5, 14].indexOf(it[2]) < 0).slice(0, 3), d = Math.max(0, Math.floor(dias || 0)); let g = '';   // F1087: menos es más: como máximo 3 decoraciones de suelo
     L.forEach((it) => {
       if (d < it[0] * 2) return;
       const xy = SLOTS_DIA[it[2]], k = (it[3] * (0.55 + 0.45 * Math.min(1, (d - it[0] * 2 + 1) / 6))).toFixed(2);
@@ -146,7 +147,8 @@
   }
   function pewen(n) {
     const m = Math.max(2, Math.min(6, n));
-    let g = p('tr-t t12', 'M0 0 C-3 -60 3 -130 0 -200') + p('tr-t t4', 'M-4 -6 C-6 -60 -2 -120 -4 -186');
+    let g = p('tr-tronco t12', 'M0 0 C-3 -60 3 -130 0 -200') + p('tr-tronco t4', 'M-4 -6 C-6 -60 -2 -120 -4 -186');
+    for (let y = -12; y > -190; y -= 14) g += p('tr-h2', 'M-5 ' + y + ' L-11 ' + (y - 5) + ' L-4 ' + (y - 7) + 'Z M5 ' + (y - 4) + ' L11 ' + (y - 9) + ' L4 ' + (y - 11) + 'Z');   // F1088: bordes en punta del tronco verde
     for (let i = 0; i < m; i++) {
       const t = m === 1 ? 0 : i / (m - 1), y = -40 - t * 126, L = 62 - t * 22, yt = y - 10 - t * 10, r = 15 - t * 3;
       g += p('tr-t t1', 'M-5 ' + (y + 1).toFixed(1) + ' q5 -2.5 10 0');                    // cicatriz del verticilo en la corteza
@@ -252,7 +254,7 @@
     if (f === 'volcan') return '<g class="pa-volc"><path class="mo m2" d="M-60 292 L30 232 L90 262 L150 226 L210 278 L330 236 L430 292Z"/><path class="mo m1" d="M196 292 L258 196 C264 184 276 184 282 196 L346 292Z"/><path class="nv" d="M250 210 L258 196 C264 184 276 184 282 196 L290 212 C280 204 272 214 266 206 C260 214 254 206 250 210Z"/><ellipse class="humo" cx="272" cy="176" rx="9" ry="5"/><ellipse class="humo" cx="280" cy="164" rx="12" ry="6"/><ellipse class="humo" cx="292" cy="152" rx="15" ry="7"/></g>';
     if (f === 'bosque') {   // F1078 · Bosque nativo: una franja de copas en dos tonos, sin conos (los conos parecían pinos). Posiciones fijas.
       let g = '<g class="pa-bosque">';
-      for (let i = 0; i < 11; i++) {
+      for (let i = 0; i < 0; i++) {   // F1088: se quita el fondo de árboles del bosque (pedido del usuario)
         const x = -10 + i * 34 + ((i * 5) % 3) * 4, y = 262, r = 16 + ((i * 3) % 2) * 2;   // F1079: todas sobre la misma línea de suelo
         const tono = i % 2 ? '#4f8a55' : '#3f7a4c';
         g += '<rect x="' + (x - 1.6) + '" y="' + (y - 4) + '" width="3.2" height="12" fill="#6b4a2e"/>';
@@ -650,7 +652,7 @@
       + '<g class="cap cap0">' + cielo(cl) + atras(fo) + '</g><g class="cap cap1"><path class="col c1" d="' + COL.c1 + '"/>' + fondo + '</g>'
       + '<g class="cap cap2"><path class="col c2" d="' + COL.c2 + '"/></g>'
       + '<g class="cap cap3"><path class="col c3" d="' + COL.c3 + '"/></g></g>'
-      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g><g class="esp">' + especialesEscena(est, fo) + '</g><g class="pa-dia">' + paisajeDelDia(est.habDias || 0, est.tematica) + rasgosEscena(est) + '</g><g class="cap cap3"><g class="mundo" transform="translate(180 344) scale(' + window.TBInicio.avanceDiario(c.diasCuidado).escala + ')">' + arbol(c.especie, et, c.diasCuidado) + hojasTB(window.TBInicio.avanceDiario(c.diasCuidado).hojas, et) + '</g></g>' + '<g class="tb-hierba" aria-hidden="true">' + (est.tematica === 'desierto' || est.tematica === 'costa' ? '' : hierbaTB(0, 360, 392, 90, 17)) + '</g><g class="clima">' + climaSvg(cl) + '</g></svg>'
+      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g><g class="esp">' + especialesEscena(est, fo) + '</g><g class="pa-dia">' + paisajeDelDia(est.habDias || 0, est.tematica) + rasgosEscena(est) + '</g><g class="cap cap3"><g class="mundo" transform="translate(180 344) scale(' + window.TBInicio.avanceDiario(c.diasCuidado).escala + ')">' + (est.tematica === 'desierto' ? '<g transform="scale(4)">' + sueloDibujo('cactus') + '</g>' : est.tematica === 'costa' ? '' : arbol(c.especie, et, c.diasCuidado) + hojasTB(window.TBInicio.avanceDiario(c.diasCuidado).hojas, et)) + '</g></g>' + '<g class="tb-hierba" aria-hidden="true">' + (est.tematica === 'desierto' || est.tematica === 'costa' ? '' : hierbaTB(0, 360, 392, 90, 17)) + '</g><g class="clima">' + climaSvg(cl) + '</g></svg>'
       + '<i class="il-anillo" id="ilAnillo" aria-hidden="true"></i>'
       + '<button type="button" class="il-resp" id="ilResp" aria-label="Respirar con tu árbol. Toca para una pausa de unos 30 segundos"></button>' + mal + gotasHTML(est)  + vivEscena(est) + '</div>';
   }
@@ -670,7 +672,8 @@
   // F1076 · Tarjeta de lugar: paisaje del hábitat + su árbol emblemático encima, para reconocerlo de inmediato
   function lugarIlustracion(h) {
     const base = habThumb(h), t = (CAT.tematicas || {})[h] || {}, em = t.arbol;
-    if (!em || !(CAT.especies || {})[em]) return base;
+    if (h === 'desierto') return base.replace('</svg>', '<g transform="translate(80 92) scale(0.5)">' + sueloDibujo('cactus') + '</g></svg>');   // F1088: el cactus es el emblema visible del desierto
+    if (h === 'costa' || !em || !(CAT.especies || {})[em]) return base;
     return base.replace('</svg>', '<g transform="translate(80 94) scale(0.2)">' + arbol(em, 'frondoso') + '</g></svg>');
   }
   function vistaEleccion(cont, mi) {   // F1074: primero se elige el lugar (hábitat); su árbol emblemático es el primero
