@@ -36,8 +36,8 @@
   // Formato: [día en que aparece, id (dibujo de FLORES o de ESP), índice de SLOTS_DIA, escala]
   const PAISAJE_HAB = {
     bosque: [[2, 'helechos', 0, 0.9], [3, 'piedras', 1, 0.8], [4, 'copihue', 2, 0.9], [5, 'helechos', 4, 0.8], [6, 'chilco', 5, 0.8], [7, 'pasto_alto', 8, 0.9], [9, 'copihue', 3, 0.85], [10, 'piedras', 7, 0.7], [11, 'helechos', 9, 0.9], [12, 'chilco', 11, 0.8], [13, 'pasto_alto', 12, 0.95], [15, 'helechos', 14, 0.8]],
-    desierto: [[2, 'pata_de_guanaco', 0, 1.0], [3, 'piedras', 1, 0.8], [4, 'cactus', 2, 0.8], [5, 'garra_de_leon', 4, 0.7], [6, 'cactus', 5, 0.9], [8, 'pata_de_guanaco', 6, 0.9], [9, 'piedras', 7, 0.7], [10, 'cactus', 9, 1.0], [11, 'ananuca', 10, 0.8], [12, 'garra_de_leon', 11, 0.8], [14, 'cactus', 14, 0.9], [15, 'pata_de_guanaco', 12, 1.0]],
-    costa: [[2, 'conchas', 0, 0.9], [3, 'piedras', 1, 0.8], [4, 'garra_de_leon', 2, 0.8], [5, 'conchas', 4, 0.7], [6, 'pata_de_guanaco', 5, 0.9], [8, 'chagual', 6, 0.5], [9, 'piedras', 8, 0.7], [10, 'garra_de_leon', 9, 0.8], [12, 'conchas', 13, 0.8], [13, 'chagual', 7, 0.5], [15, 'pata_de_guanaco', 14, 0.9]],
+    desierto: [],   // F1089: el desierto respira: sin decoración de suelo
+    costa: [[2, 'piedras', 0, 0.6]],   // F1089: la playa solo lleva una piedra suave; conchas y gaviota ya son rasgos
     cordillera: [[2, 'piedras', 0, 0.9], [3, 'llareta', 1, 0.8], [4, 'piedras', 2, 0.8], [5, 'chachacoma', 4, 0.9], [7, 'llareta', 5, 0.9], [8, 'ananuca', 6, 0.8], [9, 'piedras', 7, 0.7], [11, 'chachacoma', 9, 0.9], [12, 'llareta', 10, 0.8], [13, 'piedras', 11, 0.7], [14, 'chachacoma', 13, 0.8], [15, 'llareta', 12, 0.9]],
     jardin: [[2, 'pasto_alto', 0, 0.9], [3, 'lavanda', 1, 0.7], [4, 'bonsai', 2, 0.7], [5, 'lavanda', 4, 0.8], [6, 'bambu', 5, 0.7], [8, 'lavanda', 6, 0.9], [9, 'bonsai', 7, 0.7], [10, 'bambu', 9, 0.7], [12, 'pasto_alto', 13, 0.9], [13, 'lavanda', 10, 0.8], [15, 'bonsai', 14, 0.9]],
     general: [[2, 'pasto_alto', 0, 0.9], [4, 'piedras', 2, 0.8], [7, 'pasto_alto', 4, 0.8], [10, 'piedras', 7, 0.7], [13, 'pasto_alto', 9, 0.9]]
@@ -50,6 +50,7 @@
   }
   // F1076 · Los días del suelo se leen sobre 30 días (el doble de la escala anterior). Sin repetir los rasgos y como máximo 3 elementos: no se sobrecarga el inicio.
   const RASGO_SLOTS = [[44, 350], [316, 350], [210, 386]];
+  const RASGO_SLOTS_DESIERTO = [[66, 352], [246, 366], [160, 402]];   // F1089: el desierto con espacio entre sus rasgos
   // F1083 · Sombreado automático en dos tonos: cada figura rellena recibe una copia más oscura desplazada abajo-derecha (luz arriba-izquierda).
   // Se aplica a los dibujos de rasgos y suelo sin reescribirlos a mano.
   function oscurecer(hex, k) { const n = parseInt(hex.slice(1), 16); const c = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => Math.round(v * k)); return '#' + c.map((v) => v.toString(16).padStart(2, '0')).join(''); }
@@ -71,7 +72,7 @@
     if (!hab || !ids.length) return '';
     return ids.map((id, k) => {
       const ini = 10 * k + 1; if (d < ini) return '';
-      const xy = (est.tematica === 'costa' && k === 2) ? [250, 214] : RASGO_SLOTS[k], dd = Math.min(10, d - ini + 1);   // F1088: la gaviota vuela sobre el mar
+      const xy = (est.tematica === 'costa' && k === 2) ? [250, 214] : (est.tematica === 'desierto' ? RASGO_SLOTS_DESIERTO[k] : RASGO_SLOTS[k]), dd = Math.min(10, d - ini + 1);   // F1088: la gaviota vuela sobre el mar
       const esAnimal = !!AVES[id] || ['guanaco', 'zorro', 'gaviota'].indexOf(id) >= 0;
       if (!esAnimal) {   // plantas: crecen dentro de su bloque
         const f = Math.min(1, dd / 10), s = (0.9 * (0.5 + 0.5 * f)).toFixed(2);
@@ -88,7 +89,7 @@
   function paisajeDelDia(dias, hab) {
     const rs = (((CAT && CAT.tematicas) || {})[hab] || {}).rasgos_ids || [];
     // F1088: decoración fuera de los lugares de los rasgos
-    const L = (PAISAJE_HAB[hab] || PAISAJE_HAB.general).filter((it) => rs.indexOf(it[1]) < 0 && [4, 5, 14].indexOf(it[2]) < 0).slice(0, 3), d = Math.max(0, Math.floor(dias || 0)); let g = '';   // F1087: menos es más: como máximo 3 decoraciones de suelo
+    const L = (PAISAJE_HAB[hab] || PAISAJE_HAB.general).filter((it) => rs.indexOf(it[1]) < 0 && [4, 5, 14].indexOf(it[2]) < 0).slice(0, 2), d = Math.max(0, Math.floor(dias || 0)); let g = '';   // F1087: menos es más: como máximo 3 decoraciones de suelo
     L.forEach((it) => {
       if (d < it[0] * 2) return;
       const xy = SLOTS_DIA[it[2]], k = (it[3] * (0.55 + 0.45 * Math.min(1, (d - it[0] * 2 + 1) / 6))).toFixed(2);
@@ -254,21 +255,14 @@
     if (f === 'volcan') return '<g class="pa-volc"><path class="mo m2" d="M-60 292 L30 232 L90 262 L150 226 L210 278 L330 236 L430 292Z"/><path class="mo m1" d="M196 292 L258 196 C264 184 276 184 282 196 L346 292Z"/><path class="nv" d="M250 210 L258 196 C264 184 276 184 282 196 L290 212 C280 204 272 214 266 206 C260 214 254 206 250 210Z"/><ellipse class="humo" cx="272" cy="176" rx="9" ry="5"/><ellipse class="humo" cx="280" cy="164" rx="12" ry="6"/><ellipse class="humo" cx="292" cy="152" rx="15" ry="7"/></g>';
     if (f === 'bosque') {   // F1078 · Bosque nativo: una franja de copas en dos tonos, sin conos (los conos parecían pinos). Posiciones fijas.
       let g = '<g class="pa-bosque">';
-      for (let i = 0; i < 0; i++) {   // F1088: se quita el fondo de árboles del bosque (pedido del usuario)
-        const x = -10 + i * 34 + ((i * 5) % 3) * 4, y = 262, r = 16 + ((i * 3) % 2) * 2;   // F1079: todas sobre la misma línea de suelo
-        const tono = i % 2 ? '#4f8a55' : '#3f7a4c';
-        g += '<rect x="' + (x - 1.6) + '" y="' + (y - 4) + '" width="3.2" height="12" fill="#6b4a2e"/>';
-        g += '<ellipse cx="' + x + '" cy="' + (y - 12) + '" rx="' + r + '" ry="' + (r * 0.8).toFixed(1) + '" fill="' + tono + '"/>';
-      }
+      // F1088: el bosque ya no lleva fondo de árboles (pedido del usuario)
       return g + '</g>';
     }
     if (f === 'desierto') return '<g class="pa-desierto" aria-hidden="true">'   // F1056 · Desierto: dunas, una mesa lejana y dos cactus (fondo propio, no vacío)
       + '<path class="mo m2" fill="#ecd29c" d="M-60 300 C20 262 80 270 130 286 S240 258 300 276 S380 262 430 290 L430 330 L-60 330Z"/>'
       + '<path d="M30 290 L46 252 Q52 242 66 242 L110 242 Q122 242 128 252 L140 290Z" fill="#cf9f63"/><path d="M46 252 Q52 242 66 242 L110 242 Q122 242 128 252 L120 256 L56 256Z" fill="#e2b47a"/>'
-      + '<path class="mo m1" fill="#dcb374" d="M-60 312 C40 290 110 298 170 306 S300 288 360 300 S410 306 430 302 L430 340 L-60 340Z"/>'
-      + '<g fill="#6f9a5b"><rect x="206" y="266" width="7" height="26" rx="3.5"/><rect x="197" y="276" width="6" height="10" rx="3"/><rect x="213" y="272" width="6" height="9" rx="3"/></g>'
-      + '<g fill="#7aa767"><rect x="300" y="278" width="5" height="18" rx="2.5"/><rect x="294" y="285" width="5" height="8" rx="2.5"/></g></g>';
-    if (f === 'costa') return '<g class="pa-mar"><rect class="mar" x="-300" y="236" width="960" height="70"/><path class="ola" d="M20 252 q10 -5 20 0 t20 0 M150 262 q10 -5 20 0 t20 0 M270 250 q10 -5 20 0 t20 0 M80 276 q10 -5 20 0 t20 0 M220 280 q10 -5 20 0 t20 0"/><path class="velero" d="M300 244 L300 224 L314 242Z M296 246 L318 246 L312 252 L300 252Z"/></g>';
+      + '<path class="mo m1" fill="#dcb374" d="M-60 312 C40 290 110 298 170 306 S300 288 360 300 S410 306 430 302 L430 340 L-60 340Z"/></g>';   // F1089: sin cactus repetidos de fondo
+    if (f === 'costa') return '<g class="pa-mar"><path class="mar" d="M-300 240 C-170 226 -60 252 60 238 S250 224 380 242 S560 254 700 236 L700 306 L-300 306Z"/><path class="ola" d="M24 258 q9 -4 18 0 t18 0 M168 266 q9 -4 18 0 t18 0 M296 252 q9 -4 18 0 t18 0 M92 282 q9 -4 18 0 t18 0"/></g>';   // F1089: mar con oleaje irregular, sin velero
     return '';
   }
   function cielo(c) {
@@ -652,7 +646,7 @@
       + '<g class="cap cap0">' + cielo(cl) + atras(fo) + '</g><g class="cap cap1"><path class="col c1" d="' + COL.c1 + '"/>' + fondo + '</g>'
       + '<g class="cap cap2"><path class="col c2" d="' + COL.c2 + '"/></g>'
       + '<g class="cap cap3"><path class="col c3" d="' + COL.c3 + '"/></g></g>'
-      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g><g class="esp">' + especialesEscena(est, fo) + '</g><g class="pa-dia">' + paisajeDelDia(est.habDias || 0, est.tematica) + rasgosEscena(est) + '</g><g class="cap cap3"><g class="mundo" transform="translate(180 344) scale(' + window.TBInicio.avanceDiario(c.diasCuidado).escala + ')">' + (est.tematica === 'desierto' ? '<g transform="scale(4)">' + sueloDibujo('cactus') + '</g>' : est.tematica === 'costa' ? '' : arbol(c.especie, et, c.diasCuidado) + hojasTB(window.TBInicio.avanceDiario(c.diasCuidado).hojas, et)) + '</g></g>' + '<g class="tb-hierba" aria-hidden="true">' + (est.tematica === 'desierto' || est.tematica === 'costa' ? '' : hierbaTB(0, 360, 392, 90, 17)) + '</g><g class="clima">' + climaSvg(cl) + '</g></svg>'
+      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g><g class="esp">' + especialesEscena(est, fo) + '</g><g class="pa-dia">' + paisajeDelDia(est.habDias || 0, est.tematica) + rasgosEscena(est) + '</g><g class="cap cap3"><g class="mundo" transform="translate(180 344) scale(' + window.TBInicio.avanceDiario(c.diasCuidado).escala + ')">' + (est.tematica === 'desierto' ? '<g transform="translate(138 -36) scale(1.1)">' + sueloDibujo('cactus') + '</g>' : est.tematica === 'costa' ? '' : arbol(c.especie, et, c.diasCuidado) + hojasTB(window.TBInicio.avanceDiario(c.diasCuidado).hojas, et)) + '</g></g>' + '<g class="tb-hierba" aria-hidden="true">' + (est.tematica === 'desierto' || est.tematica === 'costa' ? '' : hierbaTB(0, 360, 392, 90, 17)) + '</g><g class="clima">' + climaSvg(cl) + '</g></svg>'
       + '<i class="il-anillo" id="ilAnillo" aria-hidden="true"></i>'
       + '<button type="button" class="il-resp" id="ilResp" aria-label="Respirar con tu árbol. Toca para una pausa de unos 30 segundos"></button>' + mal + gotasHTML(est)  + vivEscena(est) + '</div>';
   }
