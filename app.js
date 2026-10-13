@@ -283,7 +283,7 @@
   const BANDA_ESCENAS = { union: '<circle cx="160" cy="40" r="70" fill="#fff6d6" opacity=".35"/><circle cx="160" cy="36" r="26" fill="#5f9a62"/><circle cx="138" cy="46" r="16" fill="#7cb36f"/><circle cx="182" cy="46" r="16" fill="#7cb36f"/><rect x="157" y="56" width="6" height="24" rx="2" fill="#7a5a3c"/><circle cx="52" cy="84" r="6" fill="#e8b58c"/><path d="M42 110 Q42 92 52 92 Q62 92 62 110Z" fill="#c4604a"/><circle cx="100" cy="84" r="6" fill="#e8b58c"/><path d="M90 110 Q90 92 100 92 Q110 92 110 110Z" fill="#7a5a3c"/><circle cx="220" cy="84" r="6" fill="#e8b58c"/><path d="M210 110 Q210 92 220 92 Q230 92 230 110Z" fill="#4f8a55"/><circle cx="268" cy="84" r="6" fill="#e8b58c"/><path d="M258 110 Q258 92 268 92 Q278 92 278 110Z" fill="#c98a5e"/><path d="M62 100 Q81 96 90 100 M110 100 Q160 94 210 100" stroke="#e8b58c" stroke-width="3" fill="none" stroke-linecap="round"/>', pastor: '<circle cx="640" cy="210" r="250" fill="#fff6d6" opacity=".4"/><path d="M520 720 610 430 670 430 760 720Z" fill="#e8d3a6"/><path d="M640 430V250" stroke="#5a3d24" stroke-width="10" stroke-linecap="round"/><path d="M600 250h80" stroke="#5a3d24" stroke-width="8" stroke-linecap="round"/><rect x="620" y="200" width="40" height="50" rx="8" fill="#fbe8a6" stroke="#5a3d24" stroke-width="4"/><circle cx="640" cy="225" r="110" fill="#fbe8a6" opacity=".22"/>', palabra: '<circle cx="250" cy="34" r="14" fill="#fbe8a6"/><path d="M160 96C138 84 118 82 96 86V52C118 48 140 50 160 60Z" fill="#f6ecd2" stroke="#5a3d24" stroke-width="1.4" stroke-linejoin="round"/><path d="M160 96C182 84 202 82 224 86V52C202 48 180 50 160 60Z" fill="#f6ecd2" stroke="#5a3d24" stroke-width="1.4" stroke-linejoin="round"/><path d="M160 60V96" stroke="#5a3d24" stroke-width="1.4"/><path d="M104 62c10 0 19 1 30 6M184 68c11-5 20-6 30-6" stroke="#c4604a" stroke-width="1.2" fill="none" stroke-linecap="round"/><g transform="translate(152 40) scale(.6)">' + PICTO.brote + '</g>', camino: '<circle cx="200" cy="52" r="16" fill="#fbe8a6"/><path d="M140 110 192 66 202 66 178 110Z" fill="#e8d3a6"/><rect x="58" y="60" width="5" height="24" fill="#7a5a3c"/><circle cx="60" cy="52" r="13" fill="#4f8a55"/><circle cx="50" cy="58" r="9" fill="#4f8a55"/><circle cx="71" cy="58" r="9" fill="#4f8a55"/>', comunidad: '<rect x="155" y="14" width="10" height="16" fill="#f6ecd2"/><path d="M153 14 160 4 167 14Z" fill="#c4604a"/><path d="M122 56 160 28 198 56Z" fill="#c4604a"/><rect x="128" y="54" width="64" height="40" fill="#f6ecd2"/><rect x="152" y="74" width="16" height="20" fill="#7a5a3c"/><circle cx="160" cy="64" r="4" fill="#fbe8a6"/><rect x="77" y="70" width="5" height="18" fill="#7a5a3c"/><circle cx="80" cy="66" r="16" fill="#4f8a55"/><rect x="238" y="72" width="5" height="16" fill="#7a5a3c"/><circle cx="240" cy="68" r="14" fill="#4f8a55"/>', crecer: BANDA_CRECER };
   const bandaTB = (tipo) => { const t = BANDA_ESCENAS[tipo] ? tipo : 'camino'; return '<svg class="tb-banda" viewBox="0 0 320 110" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">' + BANDA_BASE + (t === 'crecer' ? '' : BANDA_COLINAS) + BANDA_ESCENAS[t] + '</svg>'; };
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1102';
+  const APP_VERSION = 'F1103';
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
   const BANDA_POR_VOLVER = { 'Mi iglesia': 'union', 'Palabra': 'palabra', 'Vida': 'crecer', 'Vivir lo que aprendemos': 'crecer', 'Perfil': 'camino', 'Panel': 'pastor' };
   const bandaMini = (tipo) => bandaTB(tipo).replace('class="tb-banda"', 'class="tb-banda tb-banda-mini"');
@@ -1456,47 +1456,83 @@
     for (let f = 0; f < N; f++) for (let c = 0; c < N; c++) if (!g[f][c]) g[f][c] = L[azar(L.length)];
     return { g, pos };
   }
+  // F1103 · SOPA DEL VIVERO (rediseñada): se marca letra por letra (8 direcciones, también al revés), se puede deshacer y borrar, tablero de 10×10 y hasta 8 palabras por partida
   async function vistaSopa(volver) {
     let datos; try { datos = await datoCargar('juego_sopa'); } catch (e) { $('#pantalla').innerHTML = `${cabecera('Sopa del Vivero', 'Juegos')}<p class="suave">${SIN_DATOS}</p>`; volverA('Juegos', volver); return; }
     const son = (n) => { try { if (window.TBSonido && window.TBSonido[n]) window.TBSonido[n](); } catch (e) { /* sin sonido */ } };
+    const N = 10, ABC = 'ABCDEFGHIJLMNOPQRSTUVXYZ', DIRS = [[0, 1], [1, 0], [1, 1], [1, -1], [0, -1], [-1, 0], [-1, -1], [-1, 1]];
+    const norma = (s) => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().replace(/[^A-Z]/g, '');
+    const azar = (n) => Math.floor(Math.random() * n);
     const menu = () => {
-      $('#pantalla').innerHTML = `${cabecera('Sopa del Vivero', 'Juegos')}<div class="ju">${JU_HERO(3)}<p class="suave">Elige un tema. Las palabras están de izquierda a derecha o de arriba hacia abajo. No hay tiempo y las pistas son gratis.</p>
-        ${datos.temas.map((t) => `<button type="button" class="ju-modo" data-tema="${esc(t.id)}"><span><b>${esc(t.titulo)}</b><small>${esc(t.ayuda)}</small></span><span class="flecha" aria-hidden="true">›</span></button>`).join('')}</div>`;
+      $('#pantalla').innerHTML = `${cabecera('Sopa del Vivero', 'Juegos')}<div class="ju">${JU_HERO(3)}<p class="suave">Toca una letra y luego la siguiente, en línea recta, para formar una palabra. Puede ir en cualquier dirección, también al revés. Sin tiempo, con pistas gratis.</p>
+        ${datos.temas.map((t) => `<button type="button" class="ju-modo so-tema" data-tema="${esc(t.id)}"><span><b>${esc(t.titulo)}</b><small>${esc(t.ayuda)} · ${t.palabras.length} palabras</small></span><span class="flecha" aria-hidden="true">›</span></button>`).join('')}</div>`;
       volverA('Juegos', volver);
       document.querySelectorAll('[data-tema]').forEach((b) => b.addEventListener('click', () => jugar(datos.temas.find((t) => t.id === b.dataset.tema))));
     };
+    // Coloca las palabras en el tablero (cualquier dirección, pueden cruzarse si coinciden las letras)
+    const colocar = (palabras) => {
+      const g = Array.from({ length: N }, () => Array(N).fill('')), pos = {};
+      palabras.slice().sort((a, b) => b.length - a.length).forEach((w) => {
+        for (let t = 0; t < 400; t++) {
+          const [dr, dc] = DIRS[azar(DIRS.length)], f = azar(N), c = azar(N);
+          const fin = [f + dr * (w.length - 1), c + dc * (w.length - 1)];
+          if (fin[0] < 0 || fin[0] >= N || fin[1] < 0 || fin[1] >= N) continue;
+          let ok = true;
+          for (let k = 0; k < w.length && ok; k++) { const x = g[f + dr * k][c + dc * k]; if (x && x !== w[k]) ok = false; }
+          if (!ok) continue;
+          for (let k = 0; k < w.length; k++) g[f + dr * k][c + dc * k] = w[k];
+          pos[w] = { f, c, dr, dc }; return;
+        }
+      });
+      for (let f = 0; f < N; f++) for (let c = 0; c < N; c++) if (!g[f][c]) g[f][c] = ABC[azar(ABC.length)];
+      return { g, pos };
+    };
     const jugar = (tema) => {
-      const lista = tema.palabras.slice().sort(() => Math.random() - 0.5).slice(0, 5); let tab = sopaArmar(lista); for (let r = 0; r < 20 && lista.some((w) => !tab.pos[w]); r++) tab = sopaArmar(lista);
-      const { g, pos } = tab, N = g.length;
-      const halladas = new Set(), ok = new Set(); let ini = null, pista = null, aviso = 'Toca la primera letra de una palabra y luego la última.';
-      const celdasDe = (w) => { const p = pos[w], r = []; for (let k = 0; k < w.length; k++) r.push((p.f + (p.dir ? k : 0)) * N + p.c + (p.dir ? 0 : k)); return r; };
+      const lista = tema.palabras.map(norma).filter((w) => w.length >= 3 && w.length <= N).sort(() => Math.random() - 0.5).slice(0, 8);
+      let tab = colocar(lista); for (let r = 0; r < 20 && lista.some((w) => !tab.pos[w]); r++) tab = colocar(lista);
+      const { g, pos } = tab, colocadas = lista.filter((w) => pos[w]);
+      const halladas = new Set(), ok = new Set(); let sel = [], pista = null, aviso = 'Toca la primera letra de una palabra.';
+      const celdasDe = (w) => { const p = pos[w], r = []; for (let k = 0; k < w.length; k++) r.push((p.f + p.dr * k) * N + p.c + p.dc * k); return r; };
+      const cadena = () => sel.map((i) => g[Math.floor(i / N)][i % N]).join('');
       const pintar = () => {
-        $('#pantalla').innerHTML = `${cabecera('Sopa del Vivero', 'Juegos')}<div class="ju"><h2 class="ju-p">${esc(tema.titulo)}</h2>
-          <div class="so-lista" aria-label="Palabras por encontrar">${lista.map((w) => `<span class="so-pal${halladas.has(w) ? ' hecha' : ''}">${w}</span>`).join('')}</div>
-          <p class="so-cuenta" aria-live="polite">${halladas.size} de ${lista.length} encontradas</p>
-          <div class="so-grid" role="grid" aria-label="Sopa de letras">${g.map((fila, f) => fila.map((l, c) => { const i = f * N + c; return `<button type="button" role="gridcell" class="so-c${ok.has(i) ? ' ok' : ''}${ini === i ? ' sel' : ''}${pista === i ? ' pista' : ''}" data-i="${i}" aria-label="${l}, fila ${f + 1}, columna ${c + 1}">${l}</button>`; }).join('')).join('')}</div>
-          <p class="so-aviso" role="status" aria-live="polite">${esc(aviso)}</p>
-          <button type="button" class="ju-sig" id="soPista">Pista gratis <span aria-hidden="true">›</span></button></div>`;
+        const marcas = colocadas.map((w) => `<li class="${halladas.has(w) ? 'hecha' : ''}">${halladas.has(w) ? '✓ ' : ''}${esc(w)}</li>`).join('');
+        $('#pantalla').innerHTML = `${cabecera('Sopa del Vivero', 'Juegos')}<div class="ju so-ju">
+          <h2 class="ju-p">${esc(tema.titulo)}</h2>
+          <p class="so-cuenta" aria-live="polite">${halladas.size} de ${colocadas.length} encontradas</p>
+          <div class="so-tablero"><div class="so-grid" role="grid" aria-label="Sopa de letras">${g.map((fila, f) => fila.map((l, c) => { const i = f * N + c; const cls = ok.has(i) ? ' ok' : sel.includes(i) ? ' sel' : pista === i ? ' pista' : ''; return `<button type="button" class="so-c${cls}" data-i="${i}" aria-label="${esc(l)}, fila ${f + 1}, columna ${c + 1}">${esc(l)}</button>`; }).join('')).join('')}</div></div>
+          <p class="so-cadena" aria-live="polite">${sel.length ? esc(cadena()) : '&nbsp;'}</p>
+          <p class="so-aviso" role="status">${esc(aviso)}</p>
+          <div class="so-acciones"><button type="button" class="btn sec chico" id="soDeshacer" ${sel.length ? '' : 'disabled'}>Quitar la última</button><button type="button" class="btn sec chico" id="soBorrar" ${sel.length ? '' : 'disabled'}>Borrar selección</button><button type="button" class="btn sec chico" id="soPista">Pista gratis</button></div>
+          <ul class="so-lista" aria-label="Palabras a encontrar">${marcas}</ul></div>`;
         volverA('Juegos', menu);
         document.querySelectorAll('.so-c').forEach((b) => b.addEventListener('click', () => tocar(Number(b.dataset.i))));
-        $('#soPista').onclick = () => { const w = lista.find((x) => !halladas.has(x)); if (!w) return; pista = celdasDe(w)[0]; ini = null; aviso = 'La palabra «' + w + '» empieza en la letra marcada.'; pintar(); };
+        $('#soDeshacer').onclick = () => { sel.pop(); aviso = sel.length ? 'Sigue con la siguiente letra.' : 'Toca la primera letra de una palabra.'; pintar(); };
+        $('#soBorrar').onclick = () => { sel = []; aviso = 'Selección borrada. Empieza de nuevo.'; pintar(); };
+        $('#soPista').onclick = () => { const w = colocadas.find((x) => !halladas.has(x)); if (!w) return; pista = celdasDe(w)[0]; aviso = 'La palabra «' + w + '» empieza en la letra marcada.'; pintar(); };
       };
       const tocar = (i) => {
         pista = null;
-        if (ini === null) { ini = i; aviso = 'Ahora toca la última letra de la palabra.'; pintar(); return; }
-        const a = ini, f1 = Math.floor(a / N), c1 = a % N, f2 = Math.floor(i / N), c2 = i % N; ini = null;
-        let w = null;
-        if (f1 === f2 && c2 >= c1) w = g[f1].slice(c1, c2 + 1).join('');
-        else if (c1 === c2 && f2 >= f1) w = g.slice(f1, f2 + 1).map((r) => r[c1]).join('');
-        if (w && lista.includes(w) && !halladas.has(w)) {
-          halladas.add(w); celdasDe(w).forEach((x) => ok.add(x)); son('logro'); aviso = '¡Encontraste «' + w + '»!';
-          if (halladas.size === lista.length) { fin(); return; }
-        } else { son('suave'); aviso = 'Esas letras no forman una palabra de la lista. Puedes intentar de nuevo.'; }
+        if (sel.length && sel[sel.length - 1] === i) { sel.pop(); aviso = sel.length ? 'Quitaste una letra.' : 'Toca la primera letra de una palabra.'; pintar(); return; }
+        if (!sel.length) { sel = [i]; aviso = 'Sigue en línea recta: la siguiente letra debe estar junto a esta.'; pintar(); return; }
+        const a = sel[sel.length - 1], dif = sel.length >= 2 ? sel[sel.length - 1] - sel[sel.length - 2] : null;
+        const f1 = Math.floor(a / N), c1 = a % N, f2 = Math.floor(i / N), c2 = i % N, df = f2 - f1, dc = c2 - c1;
+        const adyacente = Math.abs(df) <= 1 && Math.abs(dc) <= 1;
+        const enLinea = sel.length === 1 ? adyacente : adyacente && dif !== null && (df * N + dc) === dif;
+        if (!enLinea) { sel = [i]; son('suave'); aviso = 'Esa letra no sigue la línea. Empezamos desde ahí.'; pintar(); return; }
+        sel.push(i);
+        const s = cadena(), rev = s.split('').reverse().join('');
+        const w = colocadas.find((x) => !halladas.has(x) && (x === s || x === rev));
+        if (w) {
+          halladas.add(w); celdasDe(w).forEach((x) => ok.add(x)); sel = []; son('logro');
+          try { confeti(document.querySelector('.so-tablero')); } catch (e) { /* sin confeti */ }   // F1103: celebración al encontrar cada palabra
+          aviso = '¡Encontraste «' + w + '»!';
+          if (halladas.size === colocadas.length) { fin(); return; }
+        } else { aviso = 'Sigue: «' + s + '»'; son('tic'); }
         pintar();
       };
       const fin = () => {
-        juegoTerminar('sopa', lista.length, lista.length);
-        $('#pantalla').innerHTML = `${cabecera('Sopa del Vivero', 'Juegos')}<div class="ju">${JU_HERO(5)}<h2 class="ju-fin">Encontraste las ${lista.length} palabras</h2><p class="suave">${lista.map((w) => esc(w)).join(' · ')}</p>
+        juegoTerminar('sopa', colocadas.length, colocadas.length);
+        $('#pantalla').innerHTML = `${cabecera('Sopa del Vivero', 'Juegos')}<div class="ju">${JU_HERO(5)}<h2 class="ju-fin">Encontraste las ${colocadas.length} palabras</h2><p class="suave">${colocadas.map((w) => esc(w)).join(' · ')}</p>
           <button type="button" class="ju-sig" id="soOtra">Jugar otra vez <span aria-hidden="true">›</span></button></div>`;
         volverA('Juegos', menu); $('#soOtra').onclick = () => jugar(tema);
       };

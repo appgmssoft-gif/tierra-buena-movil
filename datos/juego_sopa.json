@@ -85,6 +85,38 @@
         "MOSTAZA",
         "LEVADURA"
       ]
+    },
+    {
+      "id": "ciudades",
+      "titulo": "Ciudades de la Biblia",
+      "ayuda": "Lugares donde ocurrieron historias de la Biblia.",
+      "palabras": [
+        "JERICO",
+        "BELEN",
+        "NAZARET",
+        "BABILONIA",
+        "SAMARIA",
+        "DAMASCO",
+        "EFESO",
+        "CESAREA",
+        "HEBRON",
+        "JERUSALEN"
+      ]
+    },
+    {
+      "id": "jueces",
+      "titulo": "Jueces de Israel",
+      "ayuda": "Líderes que guiaron al pueblo antes de los reyes.",
+      "palabras": [
+        "OTONIEL",
+        "EHUD",
+        "DEBORA",
+        "GEDEON",
+        "JEFTE",
+        "SANSON",
+        "SAMUEL",
+        "ELI"
+      ]
     }
   ]
 }
