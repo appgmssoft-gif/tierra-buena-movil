@@ -10,7 +10,7 @@ h1,h2{font-family:Georgia,"Times New Roman",serif;font-weight:700;line-height:1.
 h1{font-size:1.7rem}h2{font-size:1.25rem}
 .filete{height:3px;width:56px;background:var(--oro);border-radius:2px;margin:10px 0 18px}
 p{margin:0 0 12px}.suave{color:var(--suave);font-size:.95rem}
-.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
 .card{background:var(--tarjeta);border:1px solid var(--linea);border-radius:16px;padding:16px;min-height:48px}
 .card.pronto{border-style:dashed;opacity:.9}
 .card .t{display:flex;gap:10px;align-items:center;font-weight:700;font-size:1.05rem}
