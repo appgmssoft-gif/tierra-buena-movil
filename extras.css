@@ -264,13 +264,31 @@ html:not([data-anim=off]) .ju-planta{animation:ju-brota 1.1s cubic-bezier(.2,.9,
 .so-cuenta{margin:0 0 8px;font-size:.9rem;opacity:.75}
 
 /* F1096 · Tarjetas de acción con el efecto translúcido del saludo de «Mi iglesia». F1097: fondo totalmente transparente (sin tinte); queda el borde fino y el desenfoque. */
-.grid>button.card:not(.plan-card):not(.versiculo){position:relative;overflow:hidden;border-radius:22px;background-color:transparent;border:1px solid color-mix(in srgb,var(--verde) 30%,transparent);box-shadow:none;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.grid>button.card:not(.plan-card):not(.versiculo){position:relative;overflow:hidden;border-radius:22px;background:transparent;border:1px solid color-mix(in srgb,var(--verde) 30%,transparent);box-shadow:none;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 .grid>button.card:not(.plan-card):not(.versiculo)::before{content:"";position:absolute;z-index:0;left:-30px;top:-46px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--oro) 26%,transparent),transparent 70%);pointer-events:none}
 .grid>button.card:not(.plan-card):not(.versiculo)>*{position:relative;z-index:1}
-.grid>button.card:not(.plan-card):not(.versiculo):active{box-shadow:none;background-color:color-mix(in srgb,var(--verde) 7%,transparent)}
+.grid>button.card:not(.plan-card):not(.versiculo):active{box-shadow:none;background:color-mix(in srgb,var(--verde) 7%,transparent)}
 /* Banda ilustrada baja para las subpantallas */
 .tb-banda-mini{max-height:68px;margin:6px 0 4px;border-radius:16px}
 .ver-app{margin:18px 0 6px;text-align:center;font-size:.8rem;opacity:.7}
 
 /* F1099 · Aviso para quien lee sin cuenta: tarjeta suave, con el mismo borde dorado de la identidad */
 .sin-cuenta{display:block;width:100%;text-align:left;margin:4px 0 16px;padding:14px 16px;border-radius:18px;background:rgba(18,26,22,.42);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px dashed color-mix(in srgb,var(--oro) 70%,transparent);color:#fff;font:inherit;font-size:.95rem;line-height:1.45;cursor:pointer}
+
+/* F1100 · Se nota en todas las pantallas: íconos rellenos (el corazón de Ayuda salía invisible), listas y bloques con el mismo vidrio translúcido de las tarjetas */
+[class*="ic-color"] > path:not([fill]):not([stroke]){fill:currentColor}
+.card.item{background:transparent!important;border:1px solid color-mix(in srgb,var(--verde) 28%,transparent)!important;box-shadow:none!important;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.tbej-btn{background:transparent!important;border:1px solid color-mix(in srgb,var(--verde) 30%,transparent)!important;box-shadow:none!important;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.tbson{display:flex!important;flex-wrap:wrap;align-items:center;gap:12px;background:transparent!important;border:1px solid color-mix(in srgb,var(--verde) 30%,transparent)!important;box-shadow:none!important;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.tbson-tx{flex:1 1 170px;min-width:0}
+.tbson>button,.tbson>label,.tbson>input{flex:0 0 auto}
+
+/* F1100 · Íconos dentro de texto alineados con la letra */
+p svg.ic,b svg.ic,.suave svg.ic{display:inline-block;vertical-align:-3px}
+
+/* F1101 · Atmósfera por área: cada pestaña tiene su color de fondo y las tarjetas de vidrio lo dejan ver */
+#fondoVivo::before{content:"";position:absolute;inset:0;transition:opacity .4s ease}
+#fondoVivo[data-lugar=palabra]::before{background:radial-gradient(130% 62% at 50% -12%,rgba(236,186,72,.7),transparent 64%),radial-gradient(95% 55% at 100% 100%,rgba(150,176,108,.5),transparent 72%),linear-gradient(180deg,#f3dc9c 0%,#e2c27a 100%)}
+#fondoVivo[data-lugar=vida]::before{background:radial-gradient(130% 62% at 50% -12%,rgba(110,182,108,.7),transparent 64%),radial-gradient(95% 55% at 0% 100%,rgba(230,190,96,.5),transparent 72%),linear-gradient(180deg,#c4e5ad 0%,#9ccb84 100%)}
+#fondoVivo[data-lugar=iglesia]::before{background:radial-gradient(130% 62% at 50% -12%,rgba(212,118,80,.7),transparent 64%),radial-gradient(95% 55% at 100% 100%,rgba(232,190,104,.5),transparent 72%),linear-gradient(180deg,#f2c6a6 0%,#dc9c7a 100%)}
+#fondoVivo[data-lugar=perfil]::before{background:radial-gradient(130% 62% at 50% -12%,rgba(96,156,196,.6),transparent 64%),radial-gradient(95% 55% at 0% 100%,rgba(160,144,194,.4),transparent 72%),linear-gradient(180deg,#e6f1f7 0%,#cfe3ee 100%)}
