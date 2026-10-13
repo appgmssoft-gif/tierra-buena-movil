@@ -781,7 +781,7 @@
   function vistaMiembro(id) {
     const ig = leer(K_IG);
     $('#pantalla').innerHTML = `
-      ${areaHero('area-iglesia')}${bandaTB('union')}<p class="area-tag area-tag-miembro">Tu comunidad</p><section class="saludo"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML(id.nombre, perfilLeer(), false)}<div><p class="suave m0">${saludoHora()}</p><h1>Hola, ${esc(id.nombre)}</h1><p class="suave m0">⛪ ${ig ? esc(ig.nombre) : 'Tu iglesia'}</p></div></section>
+      ${areaHero('area-iglesia')}<p class="area-tag area-tag-miembro">Tu comunidad</p><section class="saludo"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML(id.nombre, perfilLeer(), false)}<div><p class="suave m0">${saludoHora()}</p><h1>Hola, ${esc(id.nombre)}</h1><p class="suave m0">⛪ ${ig ? esc(ig.nombre) : 'Tu iglesia'}</p></div></section>
       <h2 class="sep">Pedir ayuda</h2>
       <div class="grid">${activa('🙏', 'Pedir oración', 'Cuéntale a tu pastor por qué orar.', 'oracion')}${activa('🤝', 'Pedir visita', 'Pide que tu pastor te visite.', 'visita')}</div>
       <h2 class="sep">Vivir con mi iglesia</h2>
@@ -1680,7 +1680,7 @@
     let planAct = null; try { for (const pl of PLANES) { const e = planEstado(pl.id); if (e && e.h.length < PD(pl).length) { planAct = { pl, n: e.h.length }; break; } } } catch (e) { planAct = null; }   // F915: plan en curso (si hay)
     const hora = new Date().getHours(), fase = faseDelDia(hora), saludo = hora < 12 ? 'Buenos días' : hora < 19 ? 'Buenas tardes' : 'Buenas noches';
     const id = leer(K_ID), nom = perfilLeer().n ? perfilLeer().n.split(/\s+/)[0] : (id && id.nombre ? String(id.nombre).trim().split(/\s+/)[0] : ''), racha = rachaActual();
-    $('#pantalla').innerHTML = `${areaHero('area-palabra')}${bandaTB('palabra')}<div class="hoy fase-${fase}">${escenaHoy(fase)}<p class="hoy-saludo">${esc(saludo)}${nom ? ', ' + esc(nom) : ''}</p>
+    $('#pantalla').innerHTML = `${areaHero('area-palabra')}<div class="hoy fase-${fase}">${escenaHoy(fase)}<p class="hoy-saludo">${esc(saludo)}${nom ? ', ' + esc(nom) : ''}</p>
       ${haySesion() ? '' : '<button type="button" class="sin-cuenta" id="sinCuentaBan"><b>Lees sin cuenta.</b> Lo que subrayas y anotas queda en este teléfono. Entra con tu correo para llevarlo a todos tus equipos.</button>'}
       <h1>Hoy</h1><div class="hoy-verso" id="hoyVerso"><span class="esqueleto"></span><span class="esqueleto corto"></span></div>
       ${racha ? `<p class="hoy-racha">${svg('llama', 18)}<span>${racha === 1 ? '1 día leyendo la Palabra' : racha + ' días seguidos leyendo la Palabra'}</span></p>` : ''}${fechaCercanaChip()}${instalarChip()}</div>
@@ -2003,7 +2003,7 @@
     const ini = new Date(Date.UTC(t.getUTCFullYear(), 0, 1)); return t.getUTCFullYear() + '-S' + String(Math.ceil(((t - ini) / 86400000 + 1) / 7)).padStart(2, '0');
   };
   function vistaVida() {
-    $('#pantalla').innerHTML = `${areaHero('area-vida')}${bandaTB('crecer')}<h1>Vivir lo que aprendemos</h1><div class="filete"></div><div class="grid vida-ayuda">${activa('🙏', 'Ayuda y contactos', 'Emergencias, líneas de apoyo, cuidados y tu iglesia.', 'ayuda')}</div>
+    $('#pantalla').innerHTML = `${areaHero('area-vida')}<h1>Vivir lo que aprendemos</h1><div class="filete"></div><div class="grid vida-ayuda">${activa('🙏', 'Ayuda y contactos', 'Emergencias, líneas de apoyo, cuidados y tu iglesia.', 'ayuda')}</div>
       <div class="grid">${activa('✨', 'Hoy lo hago', 'Un paso pequeño para hoy. Intentarlo ya cuenta.', 'hacer')}</div>
       <h2 class="sep">Con Dios y conmigo</h2><p class="suave sep-d">Oración, música y tu bienestar.</p><div class="grid">${activa('🕊️', 'Mi oración', 'Tu diario de peticiones, solo para ti.', 'mioracion')}${activa('🎵', 'Música', 'Letras para cantar y para leer en el culto.', 'musica')}${activa('🧠', 'Salud mental', 'Respirar, un chequeo y dónde pedir ayuda.', 'salud')}</div>
       <h2 class="sep">Para crecer</h2><p class="suave sep-d">Planes, pasos y aprendizaje.</p><div class="grid">${activa('🌱', 'Planes de vida', 'Un tema por varios días, con un paso cada día.', 'planvida')}${activa('🌿', 'Mi crecimiento', 'Tu paso de la semana y cómo vas.', 'crecimiento')}${activa('🎓', 'Aprender', 'Cursos gratuitos en internet para servir mejor, con tu avance.', 'aprender')}</div>`;
@@ -2636,7 +2636,7 @@
     const desde = id && id.creadoEn ? mesAnio(id.creadoEn) : '';
     $('#pantalla').innerHTML = `
       ${areaHero('area-perfil')}
-      <section class="perfil-hero">${bandaTB('camino')}<div class="perfil-aura" aria-hidden="true"></div>${avatarHTML(nombre, p, true)}
+      <section class="perfil-hero"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML(nombre, p, true)}
         <h1>${esc(nombre)}</h1>
         <p class="suave m0">${ig && ig.nombre ? '⛪ ' + esc(ig.nombre) : 'Aún sin iglesia'}${desde ? ' · desde ' + esc(desde) : ''}</p>
         ${cu ? `<p class="suave m0">${svg('correo', 16)} ${esc(cu.correo)}</p>` : ''}
@@ -3100,7 +3100,7 @@
   async function vistaPastor() {
     const p = pastorLeer(); if (!p) return vistaPastorEntrar();
     const fil = (cls, ico, tit, sub, ir3, n) => `<button type="button" class="fila" data-pp="${ir3}"><span class="fila-ico ${cls}" aria-hidden="true">${ico}</span><span class="fila-txt">${tit}<small>${sub}</small></span><span class="insignia" id="n-${ir3}" hidden></span><span class="flecha" aria-hidden="true">›</span></button>`;
-    $('#pantalla').innerHTML = `${areaHero('area-pastor')}${bandaTB('comunidad')}<section class="saludo"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML('P', { g: perfilLeer().g, e: 'svg:escudo' }, false)}<div><p class="suave m0">Modo pastor</p><h1 id="pIgl">Mi iglesia</h1><p class="suave m0">Código <b>${esc(p.codigo)}</b></p></div></section>
+    $('#pantalla').innerHTML = `${areaHero('area-pastor')}<section class="saludo"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML('P', { g: perfilLeer().g, e: 'svg:escudo' }, false)}<div><p class="suave m0">Modo pastor</p><h1 id="pIgl">Mi iglesia</h1><p class="suave m0">Código <b>${esc(p.codigo)}</b></p></div></section>
       <p class="suave" id="pResumen" aria-live="polite">Revisando lo de hoy…</p>
       <h2 class="sep">Mi agenda</h2><div class="lista">${fil('t2', svg('calendario', 22), 'Mi calendario', 'Visitas, reuniones y descanso. Solo tú lo ves', 'mcal')}</div>
       <h2 class="sep">Para atender hoy</h2><div class="lista">${fil('t3', svg('compartir', 22), 'Visitas', 'Quién pide que lo visites', 'vis')}${fil('t2', svg('corazon', 22), 'Oraciones', 'Peticiones recibidas', 'ora')}${fil('t1', svg('gente', 22), 'Solicitudes', 'Quién quiere unirse', 'sol')}</div>
