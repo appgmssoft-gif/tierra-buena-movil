@@ -282,8 +282,10 @@
   const BANDA_CRECER = (() => { let g = '<circle cx="282" cy="26" r="11" fill="#fbe8a6"/><rect x="0" y="86" width="320" height="24" fill="#6aa86b"/>'; [[52, 16], [104, 26], [160, 38], [216, 48], [268, 30]].forEach(([x, h]) => { const y1 = 88 - h * 0.6, y2 = 88 - h * 0.7; g += '<path d="M' + x + ' 88V' + (88 - h) + '" stroke="#4f8a55" stroke-width="2.4" stroke-linecap="round"/><ellipse cx="' + (x - 6) + '" cy="' + y1 + '" rx="6" ry="3.2" transform="rotate(-30 ' + (x - 6) + ' ' + y1 + ')" fill="#7cc08a"/><ellipse cx="' + (x + 6) + '" cy="' + y2 + '" rx="6" ry="3.2" transform="rotate(30 ' + (x + 6) + ' ' + y2 + ')" fill="#7cc08a"/><circle cx="' + x + '" cy="' + (88 - h) + '" r="3" fill="#4f8a55"/>'; }); return g; })();
   const BANDA_ESCENAS = { union: '<circle cx="160" cy="40" r="70" fill="#fff6d6" opacity=".35"/><circle cx="160" cy="36" r="26" fill="#5f9a62"/><circle cx="138" cy="46" r="16" fill="#7cb36f"/><circle cx="182" cy="46" r="16" fill="#7cb36f"/><rect x="157" y="56" width="6" height="24" rx="2" fill="#7a5a3c"/><circle cx="52" cy="84" r="6" fill="#e8b58c"/><path d="M42 110 Q42 92 52 92 Q62 92 62 110Z" fill="#c4604a"/><circle cx="100" cy="84" r="6" fill="#e8b58c"/><path d="M90 110 Q90 92 100 92 Q110 92 110 110Z" fill="#7a5a3c"/><circle cx="220" cy="84" r="6" fill="#e8b58c"/><path d="M210 110 Q210 92 220 92 Q230 92 230 110Z" fill="#4f8a55"/><circle cx="268" cy="84" r="6" fill="#e8b58c"/><path d="M258 110 Q258 92 268 92 Q278 92 278 110Z" fill="#c98a5e"/><path d="M62 100 Q81 96 90 100 M110 100 Q160 94 210 100" stroke="#e8b58c" stroke-width="3" fill="none" stroke-linecap="round"/>', pastor: '<circle cx="640" cy="210" r="250" fill="#fff6d6" opacity=".4"/><path d="M520 720 610 430 670 430 760 720Z" fill="#e8d3a6"/><path d="M640 430V250" stroke="#5a3d24" stroke-width="10" stroke-linecap="round"/><path d="M600 250h80" stroke="#5a3d24" stroke-width="8" stroke-linecap="round"/><rect x="620" y="200" width="40" height="50" rx="8" fill="#fbe8a6" stroke="#5a3d24" stroke-width="4"/><circle cx="640" cy="225" r="110" fill="#fbe8a6" opacity=".22"/>', palabra: '<circle cx="250" cy="34" r="14" fill="#fbe8a6"/><path d="M160 96C138 84 118 82 96 86V52C118 48 140 50 160 60Z" fill="#f6ecd2" stroke="#5a3d24" stroke-width="1.4" stroke-linejoin="round"/><path d="M160 96C182 84 202 82 224 86V52C202 48 180 50 160 60Z" fill="#f6ecd2" stroke="#5a3d24" stroke-width="1.4" stroke-linejoin="round"/><path d="M160 60V96" stroke="#5a3d24" stroke-width="1.4"/><path d="M104 62c10 0 19 1 30 6M184 68c11-5 20-6 30-6" stroke="#c4604a" stroke-width="1.2" fill="none" stroke-linecap="round"/><g transform="translate(152 40) scale(.6)">' + PICTO.brote + '</g>', camino: '<circle cx="200" cy="52" r="16" fill="#fbe8a6"/><path d="M140 110 192 66 202 66 178 110Z" fill="#e8d3a6"/><rect x="58" y="60" width="5" height="24" fill="#7a5a3c"/><circle cx="60" cy="52" r="13" fill="#4f8a55"/><circle cx="50" cy="58" r="9" fill="#4f8a55"/><circle cx="71" cy="58" r="9" fill="#4f8a55"/>', comunidad: '<rect x="155" y="14" width="10" height="16" fill="#f6ecd2"/><path d="M153 14 160 4 167 14Z" fill="#c4604a"/><path d="M122 56 160 28 198 56Z" fill="#c4604a"/><rect x="128" y="54" width="64" height="40" fill="#f6ecd2"/><rect x="152" y="74" width="16" height="20" fill="#7a5a3c"/><circle cx="160" cy="64" r="4" fill="#fbe8a6"/><rect x="77" y="70" width="5" height="18" fill="#7a5a3c"/><circle cx="80" cy="66" r="16" fill="#4f8a55"/><rect x="238" y="72" width="5" height="16" fill="#7a5a3c"/><circle cx="240" cy="68" r="14" fill="#4f8a55"/>', crecer: BANDA_CRECER };
   const bandaTB = (tipo) => { const t = BANDA_ESCENAS[tipo] ? tipo : 'camino'; return '<svg class="tb-banda" viewBox="0 0 320 110" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">' + BANDA_BASE + (t === 'crecer' ? '' : BANDA_COLINAS) + BANDA_ESCENAS[t] + '</svg>'; };
+  // F1113 · cabecera ilustrada de cada área (16:9, representa lo que contiene la sección)
+  const areaHero = (id) => `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1112';
+  const APP_VERSION = 'F1113';
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
   const BANDA_POR_VOLVER = { 'Mi iglesia': 'union', 'Palabra': 'palabra', 'Vida': 'crecer', 'Vivir lo que aprendemos': 'crecer', 'Perfil': 'camino', 'Panel': 'pastor' };
   const bandaMini = (tipo) => bandaTB(tipo).replace('class="tb-banda"', 'class="tb-banda tb-banda-mini"');
@@ -778,7 +780,7 @@
   function vistaMiembro(id) {
     const ig = leer(K_IG);
     $('#pantalla').innerHTML = `
-      ${bandaTB('union')}<p class="area-tag area-tag-miembro">Tu comunidad</p><section class="saludo"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML(id.nombre, perfilLeer(), false)}<div><p class="suave m0">${saludoHora()}</p><h1>Hola, ${esc(id.nombre)}</h1><p class="suave m0">⛪ ${ig ? esc(ig.nombre) : 'Tu iglesia'}</p></div></section>
+      ${areaHero('area-iglesia')}${bandaTB('union')}<p class="area-tag area-tag-miembro">Tu comunidad</p><section class="saludo"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML(id.nombre, perfilLeer(), false)}<div><p class="suave m0">${saludoHora()}</p><h1>Hola, ${esc(id.nombre)}</h1><p class="suave m0">⛪ ${ig ? esc(ig.nombre) : 'Tu iglesia'}</p></div></section>
       <h2 class="sep">Pedir ayuda</h2>
       <div class="grid">${activa('🙏', 'Pedir oración', 'Cuéntale a tu pastor por qué orar.', 'oracion')}${activa('🤝', 'Pedir visita', 'Pide que tu pastor te visite.', 'visita')}</div>
       <h2 class="sep">Vivir con mi iglesia</h2>
@@ -1677,7 +1679,7 @@
     let planAct = null; try { for (const pl of PLANES) { const e = planEstado(pl.id); if (e && e.h.length < PD(pl).length) { planAct = { pl, n: e.h.length }; break; } } } catch (e) { planAct = null; }   // F915: plan en curso (si hay)
     const hora = new Date().getHours(), fase = faseDelDia(hora), saludo = hora < 12 ? 'Buenos días' : hora < 19 ? 'Buenas tardes' : 'Buenas noches';
     const id = leer(K_ID), nom = perfilLeer().n ? perfilLeer().n.split(/\s+/)[0] : (id && id.nombre ? String(id.nombre).trim().split(/\s+/)[0] : ''), racha = rachaActual();
-    $('#pantalla').innerHTML = `${bandaTB('palabra')}<div class="hoy fase-${fase}">${escenaHoy(fase)}<p class="hoy-saludo">${esc(saludo)}${nom ? ', ' + esc(nom) : ''}</p>
+    $('#pantalla').innerHTML = `${areaHero('area-palabra')}${bandaTB('palabra')}<div class="hoy fase-${fase}">${escenaHoy(fase)}<p class="hoy-saludo">${esc(saludo)}${nom ? ', ' + esc(nom) : ''}</p>
       ${haySesion() ? '' : '<button type="button" class="sin-cuenta" id="sinCuentaBan"><b>Lees sin cuenta.</b> Lo que subrayas y anotas queda en este teléfono. Entra con tu correo para llevarlo a todos tus equipos.</button>'}
       <h1>Hoy</h1><div class="hoy-verso" id="hoyVerso"><span class="esqueleto"></span><span class="esqueleto corto"></span></div>
       ${racha ? `<p class="hoy-racha">${svg('llama', 18)}<span>${racha === 1 ? '1 día leyendo la Palabra' : racha + ' días seguidos leyendo la Palabra'}</span></p>` : ''}${fechaCercanaChip()}${instalarChip()}</div>
@@ -2000,7 +2002,7 @@
     const ini = new Date(Date.UTC(t.getUTCFullYear(), 0, 1)); return t.getUTCFullYear() + '-S' + String(Math.ceil(((t - ini) / 86400000 + 1) / 7)).padStart(2, '0');
   };
   function vistaVida() {
-    $('#pantalla').innerHTML = `${bandaTB('crecer')}<h1>Vivir lo que aprendemos</h1><div class="filete"></div><div class="grid vida-ayuda">${activa('🙏', 'Ayuda y contactos', 'Emergencias, líneas de apoyo, cuidados y tu iglesia.', 'ayuda')}</div>
+    $('#pantalla').innerHTML = `${areaHero('area-vida')}${bandaTB('crecer')}<h1>Vivir lo que aprendemos</h1><div class="filete"></div><div class="grid vida-ayuda">${activa('🙏', 'Ayuda y contactos', 'Emergencias, líneas de apoyo, cuidados y tu iglesia.', 'ayuda')}</div>
       <div class="grid">${activa('✨', 'Hoy lo hago', 'Un paso pequeño para hoy. Intentarlo ya cuenta.', 'hacer')}</div>
       <h2 class="sep">Con Dios y conmigo</h2><p class="suave sep-d">Oración, música y tu bienestar.</p><div class="grid">${activa('🕊️', 'Mi oración', 'Tu diario de peticiones, solo para ti.', 'mioracion')}${activa('🎵', 'Música', 'Letras para cantar y para leer en el culto.', 'musica')}${activa('🧠', 'Salud mental', 'Respirar, un chequeo y dónde pedir ayuda.', 'salud')}</div>
       <h2 class="sep">Para crecer</h2><p class="suave sep-d">Planes, pasos y aprendizaje.</p><div class="grid">${activa('🌱', 'Planes de vida', 'Un tema por varios días, con un paso cada día.', 'planvida')}${activa('🌿', 'Mi crecimiento', 'Tu paso de la semana y cómo vas.', 'crecimiento')}${activa('🎓', 'Aprender', 'Cursos gratuitos en internet para servir mejor, con tu avance.', 'aprender')}</div>`;
@@ -2513,7 +2515,7 @@
   const RITMOS = [1, 2, 3, 5];
   const planDias = (pl, r) => { const n = Number(r) || 1; if (n <= 1) return pl.dias; const f = [].concat.apply([], pl.dias), o = []; for (let i = 0; i < f.length; i += n) o.push(f.slice(i, i + n)); return o; };
   const PD = (pl) => { const e = rg(K_PLANES)[pl.id]; return planDias(pl, e && e.r); };
-  const planFoto = (pl) => `<div class="plan-foto" aria-hidden="true"><img src="img/planes/${pl.id}.svg" alt="" loading="lazy" onerror="this.parentNode.classList.add('sin')"></div>`;
+  const planFoto = (pl) => `<div class="plan-foto" aria-hidden="true"><img src="img/planes/${pl.id}.webp" alt="" loading="lazy" decoding="async" onerror="if(!this.dataset.r){this.dataset.r=1;this.src='img/planes/${pl.id}.svg'}else{this.parentNode.classList.add('sin')}"></div>`;
   const planEstado = (id) => { const e = rg(K_PLANES)[id]; return e && Array.isArray(e.h) ? e : null; };
   const planTxt = (pl, i) => PD(pl)[i].map((x) => libroInfo(x[0])[1] + ' ' + x[1]).join(' y ');
   function planAuto(cod, cap) {
@@ -2632,6 +2634,7 @@
     const nombre = p.n || (id && id.nombre) || (cu && cu.correo && cu.correo.split('@')[0]) || 'Invitado';
     const desde = id && id.creadoEn ? mesAnio(id.creadoEn) : '';
     $('#pantalla').innerHTML = `
+      ${areaHero('area-perfil')}
       <section class="perfil-hero">${bandaTB('camino')}<div class="perfil-aura" aria-hidden="true"></div>${avatarHTML(nombre, p, true)}
         <h1>${esc(nombre)}</h1>
         <p class="suave m0">${ig && ig.nombre ? '⛪ ' + esc(ig.nombre) : 'Aún sin iglesia'}${desde ? ' · desde ' + esc(desde) : ''}</p>
@@ -3096,7 +3099,7 @@
   async function vistaPastor() {
     const p = pastorLeer(); if (!p) return vistaPastorEntrar();
     const fil = (cls, ico, tit, sub, ir3, n) => `<button type="button" class="fila" data-pp="${ir3}"><span class="fila-ico ${cls}" aria-hidden="true">${ico}</span><span class="fila-txt">${tit}<small>${sub}</small></span><span class="insignia" id="n-${ir3}" hidden></span><span class="flecha" aria-hidden="true">›</span></button>`;
-    $('#pantalla').innerHTML = `${bandaTB('comunidad')}<section class="saludo"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML('P', { g: perfilLeer().g, e: 'svg:escudo' }, false)}<div><p class="suave m0">Modo pastor</p><h1 id="pIgl">Mi iglesia</h1><p class="suave m0">Código <b>${esc(p.codigo)}</b></p></div></section>
+    $('#pantalla').innerHTML = `${areaHero('area-pastor')}${bandaTB('comunidad')}<section class="saludo"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML('P', { g: perfilLeer().g, e: 'svg:escudo' }, false)}<div><p class="suave m0">Modo pastor</p><h1 id="pIgl">Mi iglesia</h1><p class="suave m0">Código <b>${esc(p.codigo)}</b></p></div></section>
       <p class="suave" id="pResumen" aria-live="polite">Revisando lo de hoy…</p>
       <h2 class="sep">Mi agenda</h2><div class="lista">${fil('t2', svg('calendario', 22), 'Mi calendario', 'Visitas, reuniones y descanso. Solo tú lo ves', 'mcal')}</div>
       <h2 class="sep">Para atender hoy</h2><div class="lista">${fil('t3', svg('compartir', 22), 'Visitas', 'Quién pide que lo visites', 'vis')}${fil('t2', svg('corazon', 22), 'Oraciones', 'Peticiones recibidas', 'ora')}${fil('t1', svg('gente', 22), 'Solicitudes', 'Quién quiere unirse', 'sol')}</div>

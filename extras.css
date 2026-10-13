@@ -372,3 +372,8 @@ html[data-anim=off] .so-nodo:not(.bloq):not(.hecho){animation:none}
 .so-mapa-foto img{width:100%;height:100%;object-fit:cover;display:block}
 .so-mapa-foto.sin{display:none}
 @media (prefers-reduced-motion:no-preference){.so-mapa-foto img{transition:transform .6s ease}.so-mapa:hover .so-mapa-foto img{transform:scale(1.02)}}
+
+/* F1113 · Cabecera ilustrada de cada área y portadas de planes con ilustración propia (16:9) */
+.area-hero{position:relative;width:100%;aspect-ratio:16/9;border-radius:18px;overflow:hidden;margin:0 0 14px;border:1px solid color-mix(in srgb,var(--verde,#4f8a55) 35%,transparent);box-shadow:0 8px 20px -12px rgba(43,34,24,.5);background:color-mix(in srgb,var(--verde,#4f8a55) 14%,#faf5ea)}
+.area-hero img{width:100%;height:100%;object-fit:cover;display:block}
+.area-hero.sin{display:none}
