@@ -366,3 +366,9 @@ html[data-anim=off] .so-nodo:not(.bloq):not(.hecho){animation:none}
 @media (min-width:700px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (min-width:900px){main{max-width:960px}}
 #pantalla button:not(.so-c){min-height:44px}
+
+/* F1112 · Ilustración de cada día dentro de su mapa: mismo borde del mapa, esquinas suaves y sombra cálida; si falta la imagen, desaparece sin dejar hueco */
+.so-mapa-foto{position:relative;width:100%;aspect-ratio:16/9;border-radius:16px;overflow:hidden;margin:0 0 12px;border:1px solid color-mix(in srgb,var(--mc,#8dc466) 45%,transparent);box-shadow:0 6px 16px -10px rgba(43,34,24,.45);background:color-mix(in srgb,var(--mc,#8dc466) 14%,#faf5ea)}
+.so-mapa-foto img{width:100%;height:100%;object-fit:cover;display:block}
+.so-mapa-foto.sin{display:none}
+@media (prefers-reduced-motion:no-preference){.so-mapa-foto img{transition:transform .6s ease}.so-mapa:hover .so-mapa-foto img{transform:scale(1.02)}}
