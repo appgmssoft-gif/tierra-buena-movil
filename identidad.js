@@ -104,7 +104,7 @@ const tbArte = (e) => { const k = TB_ARTE[e]; try { return k && window.TBApp && 
   function pintarEjemplos(caja, rol) {
     if (!caja) return;
     const cerrado = () => {
-      caja.innerHTML = '<button type="button" class="tbej-btn" aria-expanded="false"><span class="tbej-btn-ic" aria-hidden="true">💡</span><span class="tbej-btn-tx"><b>Ejemplos de uso</b><small>Historias inventadas para entender cómo se usa. No son personas reales.</small></span><i aria-hidden="true">›</i></button>';
+      caja.innerHTML = '<button type="button" class="tbej-btn" aria-expanded="false"><span class="tbej-btn-ic" aria-hidden="true">' + ((window.TBApp && TBApp.svg) ? TBApp.svg('foco', 20) : '💡') + '</span><span class="tbej-btn-tx"><b>Ejemplos de uso</b><small>Historias inventadas para entender cómo se usa. No son personas reales.</small></span><i aria-hidden="true">›</i></button>';
       $('.tbej-btn', caja).onclick = abierto;
     };
     const abierto = () => {
