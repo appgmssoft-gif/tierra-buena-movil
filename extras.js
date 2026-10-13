@@ -197,6 +197,7 @@
       ponerFondo();
       const pant = $('#pantalla'); if (!pant || $('.tbcar', pant)) return;
       if ($('.volver', pant) || $('#fabCard', pant)) return;                      // solo pantallas raíz (sin botón «volver»)
+      if ($('.hero-viva', pant)) return;                                          // F1097: la puerta de entrada no lleva carrusel (antes se pegaba la Palabra encima)
       if (!($('.grid .card', pant) || $('.perfil-hero', pant) || $('.lista .fila[data-pp]', pant))) return;   // la portada, la entrada y las preguntas quedan intactas
       const tab = tabActual(), car = carrusel(tab); if (!car) return;
       const ancla = $('.hoy', pant) || $('.perfil-hero', pant) || $('.saludo', pant) || $('.filete', pant);

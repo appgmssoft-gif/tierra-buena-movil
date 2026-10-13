@@ -282,6 +282,22 @@
   const BANDA_CRECER = (() => { let g = '<circle cx="282" cy="26" r="11" fill="#fbe8a6"/><rect x="0" y="86" width="320" height="24" fill="#6aa86b"/>'; [[52, 16], [104, 26], [160, 38], [216, 48], [268, 30]].forEach(([x, h]) => { const y1 = 88 - h * 0.6, y2 = 88 - h * 0.7; g += '<path d="M' + x + ' 88V' + (88 - h) + '" stroke="#4f8a55" stroke-width="2.4" stroke-linecap="round"/><ellipse cx="' + (x - 6) + '" cy="' + y1 + '" rx="6" ry="3.2" transform="rotate(-30 ' + (x - 6) + ' ' + y1 + ')" fill="#7cc08a"/><ellipse cx="' + (x + 6) + '" cy="' + y2 + '" rx="6" ry="3.2" transform="rotate(30 ' + (x + 6) + ' ' + y2 + ')" fill="#7cc08a"/><circle cx="' + x + '" cy="' + (88 - h) + '" r="3" fill="#4f8a55"/>'; }); return g; })();
   const BANDA_ESCENAS = { union: '<circle cx="160" cy="40" r="70" fill="#fff6d6" opacity=".35"/><circle cx="160" cy="36" r="26" fill="#5f9a62"/><circle cx="138" cy="46" r="16" fill="#7cb36f"/><circle cx="182" cy="46" r="16" fill="#7cb36f"/><rect x="157" y="56" width="6" height="24" rx="2" fill="#7a5a3c"/><circle cx="52" cy="84" r="6" fill="#e8b58c"/><path d="M42 110 Q42 92 52 92 Q62 92 62 110Z" fill="#c4604a"/><circle cx="100" cy="84" r="6" fill="#e8b58c"/><path d="M90 110 Q90 92 100 92 Q110 92 110 110Z" fill="#7a5a3c"/><circle cx="220" cy="84" r="6" fill="#e8b58c"/><path d="M210 110 Q210 92 220 92 Q230 92 230 110Z" fill="#4f8a55"/><circle cx="268" cy="84" r="6" fill="#e8b58c"/><path d="M258 110 Q258 92 268 92 Q278 92 278 110Z" fill="#c98a5e"/><path d="M62 100 Q81 96 90 100 M110 100 Q160 94 210 100" stroke="#e8b58c" stroke-width="3" fill="none" stroke-linecap="round"/>', pastor: '<circle cx="640" cy="210" r="250" fill="#fff6d6" opacity=".4"/><path d="M520 720 610 430 670 430 760 720Z" fill="#e8d3a6"/><path d="M640 430V250" stroke="#5a3d24" stroke-width="10" stroke-linecap="round"/><path d="M600 250h80" stroke="#5a3d24" stroke-width="8" stroke-linecap="round"/><rect x="620" y="200" width="40" height="50" rx="8" fill="#fbe8a6" stroke="#5a3d24" stroke-width="4"/><circle cx="640" cy="225" r="110" fill="#fbe8a6" opacity=".22"/>', palabra: '<circle cx="250" cy="34" r="14" fill="#fbe8a6"/><path d="M160 96C138 84 118 82 96 86V52C118 48 140 50 160 60Z" fill="#f6ecd2" stroke="#5a3d24" stroke-width="1.4" stroke-linejoin="round"/><path d="M160 96C182 84 202 82 224 86V52C202 48 180 50 160 60Z" fill="#f6ecd2" stroke="#5a3d24" stroke-width="1.4" stroke-linejoin="round"/><path d="M160 60V96" stroke="#5a3d24" stroke-width="1.4"/><path d="M104 62c10 0 19 1 30 6M184 68c11-5 20-6 30-6" stroke="#c4604a" stroke-width="1.2" fill="none" stroke-linecap="round"/><g transform="translate(152 40) scale(.6)">' + PICTO.brote + '</g>', camino: '<circle cx="200" cy="52" r="16" fill="#fbe8a6"/><path d="M140 110 192 66 202 66 178 110Z" fill="#e8d3a6"/><rect x="58" y="60" width="5" height="24" fill="#7a5a3c"/><circle cx="60" cy="52" r="13" fill="#4f8a55"/><circle cx="50" cy="58" r="9" fill="#4f8a55"/><circle cx="71" cy="58" r="9" fill="#4f8a55"/>', comunidad: '<rect x="155" y="14" width="10" height="16" fill="#f6ecd2"/><path d="M153 14 160 4 167 14Z" fill="#c4604a"/><path d="M122 56 160 28 198 56Z" fill="#c4604a"/><rect x="128" y="54" width="64" height="40" fill="#f6ecd2"/><rect x="152" y="74" width="16" height="20" fill="#7a5a3c"/><circle cx="160" cy="64" r="4" fill="#fbe8a6"/><rect x="77" y="70" width="5" height="18" fill="#7a5a3c"/><circle cx="80" cy="66" r="16" fill="#4f8a55"/><rect x="238" y="72" width="5" height="16" fill="#7a5a3c"/><circle cx="240" cy="68" r="14" fill="#4f8a55"/>', crecer: BANDA_CRECER };
   const bandaTB = (tipo) => { const t = BANDA_ESCENAS[tipo] ? tipo : 'camino'; return '<svg class="tb-banda" viewBox="0 0 320 110" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">' + BANDA_BASE + (t === 'crecer' ? '' : BANDA_COLINAS) + BANDA_ESCENAS[t] + '</svg>'; };
+  // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
+  const APP_VERSION = 'F1097';
+  // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
+  const BANDA_POR_VOLVER = { 'Mi iglesia': 'union', 'Palabra': 'palabra', 'Vida': 'crecer', 'Vivir lo que aprendemos': 'crecer', 'Perfil': 'camino', 'Panel': 'pastor' };
+  const bandaMini = (tipo) => bandaTB(tipo).replace('class="tb-banda"', 'class="tb-banda tb-banda-mini"');
+  function bandasSubpantallas() {
+    const p = typeof document.getElementById === 'function' ? document.getElementById('pantalla') : null; if (!p || typeof MutationObserver === 'undefined') return;
+    let ocupado = false;
+    new MutationObserver(() => {
+      if (ocupado) return;
+      const v = p.querySelector('#volver'); if (!v || p.querySelector('.tb-banda, .hero, .plan-foto')) return;
+      const tipo = BANDA_POR_VOLVER[String(v.textContent || '').replace('‹', '').trim()]; if (!tipo) return;
+      ocupado = true; try { v.insertAdjacentHTML('afterend', bandaMini(tipo)); } finally { ocupado = false; }
+    }).observe(p, { childList: true });
+  }
+  try { if (document.readyState === 'loading' && document.addEventListener) document.addEventListener('DOMContentLoaded', bandasSubpantallas); else bandasSubpantallas(); } catch (e) { /* sin bandas: la app funciona igual */ }
   const icono = (e, tam) => { const k = EMO[String(e).replace(/\uFE0F/g, '')]; return k ? svg(k, tam) : e; };
   const activa = (ico, titulo, ayuda, ir) => `<button type="button" class="card" data-ir="${ir}"><div class="t"><span aria-hidden="true">${icono(ico)}</span>${titulo}<span class="flecha" aria-hidden="true">›</span></div><p class="suave m0t">${ayuda}</p></button>`;
 
@@ -651,7 +667,7 @@
     entrandoPon(false); try { onbParar(); } catch (e) { /* nada */ }
     $('#pantalla').innerHTML = `
       <div class="hero hero-viva"><span class="hv-caja" aria-hidden="true"><i></i><i></i><i></i><i></i></span><div class="hero-ico" aria-hidden="true">${svg('hoja', 38)}</div><h1>Bienvenido a Tierra Buena</h1>
-      <p>Para ver la Palabra, tu iglesia y tu jardín, primero inicia sesión con tu correo. Es gratis y toma un minuto.</p></div>
+      <p>La Biblia se lee sin cuenta. Para tu iglesia, tu jardín y tus planes, inicia sesión con tu correo: es gratis y toma un minuto.</p></div>
       <div class="grid grid-ent">
         ${activa('✉️', 'Entrar con mi correo', 'Si ya tienes cuenta, aquí entras. Es la misma del computador.', 'cuenta')}
         ${activa('🌱', 'Crear mi cuenta', 'Si es tu primera vez, la creas aquí con tu correo.', 'crear')}
@@ -736,7 +752,7 @@
   function vistaPendiente(sol) {
     const ig = leer(K_IG);
     $('#pantalla').innerHTML = `
-      <h1>Mi iglesia</h1><div class="filete"></div>
+      ${bandaTB('union')}<h1>Mi iglesia</h1><div class="filete"></div>
       <div class="card bienvenida"><h2>Solicitud enviada</h2>
         <p>Hola, ${esc(sol.nombre)}. Tu pastor${ig ? ' de <b>' + esc(ig.nombre) + '</b>' : ''} tiene que aceptarte. Cuando lo haga, aquí se abre tu iglesia.</p></div>
       <p id="msg" class="suave" role="status"></p>
@@ -2493,7 +2509,8 @@
       <div class="lista">${cu ? fila('t2', '☁️', 'Sesión iniciada', esc(cu.correo), 'nada') + fila('t4', '↩️', 'Cerrar sesión', '', 'salir') : fila('t2', '✉️', 'Entrar o crear cuenta', 'Tu iglesia te sigue a cualquier teléfono', 'cuenta')}${fila('t2', '🔒', 'Mi privacidad y mis datos', 'Qué ve cada persona, descargar o borrar', 'priv')}</div>
       ${cu ? '<p class="suave sinc-p" id="sincEstado"></p>' : ''}
       ${apoyarFila()}
-      ${bloqueInstalar()}`;
+      ${bloqueInstalar()}
+      <p class="suave ver-app">Versión de la app: ${APP_VERSION}</p>`;
     pintarInstalar($('[data-instalar-box]')); syncPintar();
     document.querySelectorAll('[data-meta]').forEach((b) => b.addEventListener('click', () => { perfilGuardar({ meta: Number(b.dataset.meta) }); vibra(); vistaPerfil(); }));
     const pok = $('#pfok'); if (pok) pok.onclick = () => { perfilGuardar({ n: $('#pfn').value.trim().slice(0, 30), b: $('#pfb').value.trim().slice(0, 140) }); toastBib('Perfil guardado'); confeti(pok); vistaPerfil(); };
@@ -3647,8 +3664,8 @@
     const botones = dentro
       ? `<button type="button" class="btn" id="onbEmpezar">Entrar</button>`
       : ya
-      ? `<button type="button" class="btn" id="onbEmpezar">Entrar a mi cuenta</button><p class="ent-links"><button type="button" class="enlace" id="onbCrear">Crear una cuenta nueva</button></p>`
-      : `<button type="button" class="btn" id="onbEmpezar">Empezar</button><p class="ent-links"><button type="button" class="enlace" id="onbYaTengo">Ya tengo cuenta</button></p>`;   // F888: la primera vez solo ofrece «Empezar»; «Ya tengo cuenta» aparece al final de las preguntas
+      ? `<button type="button" class="btn" id="onbEmpezar">Entrar a mi cuenta</button><p class="ent-links"><button type="button" class="enlace" id="onbCrear">Crear una cuenta nueva</button></p><p class=\"ent-links\"><button type=\"button\" class=\"enlace\" id=\"onbSinCuenta\">Leer la Biblia sin cuenta</button></p>`
+      : `<button type="button" class="btn" id="onbEmpezar">Empezar</button><p class="ent-links"><button type="button" class="enlace" id="onbYaTengo">Ya tengo cuenta</button></p><p class=\"ent-links\"><button type=\"button\" class=\"enlace\" id=\"onbSinCuenta\">Leer la Biblia sin cuenta</button></p>`;   // F888: la primera vez solo ofrece «Empezar»; «Ya tengo cuenta» aparece al final de las preguntas
     $('#pantalla').innerHTML = `<section class="ent ent-splash ent-port" data-i="0"><div class="pt-vista" id="ptVista"><div class="pt-pista">${sl}${fin}</div></div><div class="pt-pie"><div class="pt-pts">${pts}</div>${botones}</div></section>`;
     ligaCodigo();
     const sec = $('.ent-port'); let i = 0;
@@ -3671,6 +3688,7 @@
     $('#onbEmpezar').onclick = () => { quieta(); if (dentro) { onbParar(); entrandoPon(false); ir(tabInicio()); } else if (ya) onbCuentaIr('entrar'); else onbPregunta(0); };
     if (!dentro && !ya) $('#onbYaTengo').onclick = () => { quieta(); onbCuentaIr('entrar'); };
     if (ya) { $('#onbCrear').onclick = () => onbCuentaIr('crear'); }
+    if (!dentro) $('#onbSinCuenta').onclick = () => { quieta(); onbParar(); entrandoPon(false); ir('palabra'); };   // F1097: la Biblia se lee sin cuenta
   }
   function onbPregunta(i) {
     onbParar(); entrandoPon(true);
@@ -3752,6 +3770,7 @@
       </div>
       <label class="chk"><input type="checkbox" id="onbPlan"${onbEstado.plan ? ' checked' : ''}><span>Empezar «${esc(pl.n)}» al entrar</span></label>
       <button type="button" class="btn" id="onbSig">${onbEstado.cambiar ? 'Guardar mi nuevo plan' : 'Crear mi cuenta'}</button>
+      ${onbEstado.cambiar ? '' : '<button type="button" class="btn sec" id="onbLeer">Leer la Biblia primero</button>'}
       <button type="button" class="btn sec" id="onbCambiar">Cambiar mis respuestas</button>
       ${onbEstado.cambiar ? '<p class="ent-links"><button type="button" class="enlace" id="onbCancelar">Dejar mi plan como estaba</button></p>' : '<p class="ent-links"><button type="button" class="enlace" id="onbYa">Ya tengo cuenta</button></p>'}</section>`;
     (async () => {                                         // el versículo sale de la Biblia que ya está en el teléfono
@@ -3762,6 +3781,7 @@
     $('#onbCambiar').onclick = () => onbPregunta(0);
     $('#onbPlan').addEventListener('change', (e) => { onbEstado.plan = !!(e && e.target ? e.target.checked : $('#onbPlan').checked); });
     $('#onbSig').onclick = () => { onbGuardar(false); if (onbEstado.cambiar) { onbEstado.cambiar = false; entrandoPon(false); ir('perfil'); toastBib('Tu nuevo plan está listo'); } else onbCuentaIr('crear'); };
+    const onbLeerB = $('#onbLeer'); if (onbLeerB) onbLeerB.onclick = () => { onbParar(); entrandoPon(false); ir('palabra'); };
     if (onbEstado.cambiar) $('#onbCancelar').onclick = () => { onbEstado.cambiar = false; entrandoPon(false); ir('perfil'); };
     else $('#onbYa').onclick = () => onbCuentaIr('entrar');
   }
@@ -3817,7 +3837,7 @@
     } catch (e) { /* sin animación */ }
   }
   function ir(tab, directo) {
-    if (!haySesion()) return puerta();                       // F936: sin sesión no se abre ninguna sección
+    if (!haySesion() && tab !== 'palabra') return puerta();   // F936: sin sesión solo se abre la Palabra (F1097: se lee sin cuenta)
     const sentido = ORDEN_TAB.indexOf(tab) < ORDEN_TAB.indexOf(tabPrev) ? 'atras' : 'adelante'; tabPrev = tab;
     const tabMarca = tab === 'pastor' ? 'iglesia' : tab;
     document.querySelectorAll('.tab').forEach((b) => { if (b.dataset.tab === tabMarca) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
@@ -3925,7 +3945,7 @@
   // F892: sin cuenta, ni iglesia, ni solicitud (primera vez o quien dijo «solo quiero leer») se abre la portada animada cada vez; con cuenta o iglesia, directo a la app
   const portadaYaVista = () => { try { if (sessionStorage.getItem('tb_movil_portada') === '1') return true; sessionStorage.setItem('tb_movil_portada', '1'); return false; } catch (e) { return true; } };   // una vez por apertura (no en cada recarga); si no hay dónde anotarlo, no molesta
   marcaDentro();
-  if (!haySesion() ? (!hayOnb() || !portadaYaVista()) : (!codigoDeEnlace() && (!hayOnb() || !portadaYaVista()))) onbSplash(); else ir(tabInicio());   // F936: sin sesión, la portada y luego la puerta   // F893: la portada sale al abrir la app para todos (una vez por apertura)
+  if (!haySesion() ? (!hayOnb() || !portadaYaVista()) : (!codigoDeEnlace() && (!hayOnb() || !portadaYaVista()))) onbSplash(); else ir(haySesion() ? tabInicio() : 'palabra');   // F936 · F1097: sin sesión se entra directo a la Palabra: sin sesión, la portada y luego la puerta   // F893: la portada sale al abrir la app para todos (una vez por apertura)
   try {   // F898: atajos del ícono instalado (manifest → shortcuts)
     const q = new URLSearchParams(String((window.location && window.location.search) || '').slice(1)).get('ir');
     const at = { versiculo: vistaVersiculo, biblia: vistaBiblia, calendario: vistaCalendario };
