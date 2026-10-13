@@ -292,3 +292,10 @@ p svg.ic,b svg.ic,.suave svg.ic{display:inline-block;vertical-align:-3px}
 #fondoVivo[data-lugar=vida]::before{background:radial-gradient(130% 62% at 50% -12%,rgba(110,182,108,.7),transparent 64%),radial-gradient(95% 55% at 0% 100%,rgba(230,190,96,.5),transparent 72%),linear-gradient(180deg,#c4e5ad 0%,#9ccb84 100%)}
 #fondoVivo[data-lugar=iglesia]::before{background:radial-gradient(130% 62% at 50% -12%,rgba(212,118,80,.7),transparent 64%),radial-gradient(95% 55% at 100% 100%,rgba(232,190,104,.5),transparent 72%),linear-gradient(180deg,#f2c6a6 0%,#dc9c7a 100%)}
 #fondoVivo[data-lugar=perfil]::before{background:radial-gradient(130% 62% at 50% -12%,rgba(96,156,196,.6),transparent 64%),radial-gradient(95% 55% at 0% 100%,rgba(160,144,194,.4),transparent 72%),linear-gradient(180deg,#e6f1f7 0%,#cfe3ee 100%)}
+
+/* F1102 · Orden y lectura: descripción bajo cada sección, «Ayuda y contactos» destacada (es la sección urgente) y el chip de instalar legible sobre el fondo oscuro de Palabra */
+.sep-d{margin:-4px 2px 12px;font-size:.92rem}
+.grid>button.card[data-ir="ayuda"]{border-color:color-mix(in srgb,#b5563a 60%,transparent)!important;box-shadow:0 0 0 1px color-mix(in srgb,#b5563a 18%,transparent) inset}
+.hoy .hoy-fecha{color:#fff;background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.42)}
+.hoy .hoy-fecha svg{color:#f1c76a}
+.hoy .hoy-inst-x{color:rgba(255,255,255,.85)}
