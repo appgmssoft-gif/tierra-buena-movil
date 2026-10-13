@@ -283,9 +283,10 @@
   const BANDA_ESCENAS = { union: '<circle cx="160" cy="40" r="70" fill="#fff6d6" opacity=".35"/><circle cx="160" cy="36" r="26" fill="#5f9a62"/><circle cx="138" cy="46" r="16" fill="#7cb36f"/><circle cx="182" cy="46" r="16" fill="#7cb36f"/><rect x="157" y="56" width="6" height="24" rx="2" fill="#7a5a3c"/><circle cx="52" cy="84" r="6" fill="#e8b58c"/><path d="M42 110 Q42 92 52 92 Q62 92 62 110Z" fill="#c4604a"/><circle cx="100" cy="84" r="6" fill="#e8b58c"/><path d="M90 110 Q90 92 100 92 Q110 92 110 110Z" fill="#7a5a3c"/><circle cx="220" cy="84" r="6" fill="#e8b58c"/><path d="M210 110 Q210 92 220 92 Q230 92 230 110Z" fill="#4f8a55"/><circle cx="268" cy="84" r="6" fill="#e8b58c"/><path d="M258 110 Q258 92 268 92 Q278 92 278 110Z" fill="#c98a5e"/><path d="M62 100 Q81 96 90 100 M110 100 Q160 94 210 100" stroke="#e8b58c" stroke-width="3" fill="none" stroke-linecap="round"/>', pastor: '<circle cx="640" cy="210" r="250" fill="#fff6d6" opacity=".4"/><path d="M520 720 610 430 670 430 760 720Z" fill="#e8d3a6"/><path d="M640 430V250" stroke="#5a3d24" stroke-width="10" stroke-linecap="round"/><path d="M600 250h80" stroke="#5a3d24" stroke-width="8" stroke-linecap="round"/><rect x="620" y="200" width="40" height="50" rx="8" fill="#fbe8a6" stroke="#5a3d24" stroke-width="4"/><circle cx="640" cy="225" r="110" fill="#fbe8a6" opacity=".22"/>', palabra: '<circle cx="250" cy="34" r="14" fill="#fbe8a6"/><path d="M160 96C138 84 118 82 96 86V52C118 48 140 50 160 60Z" fill="#f6ecd2" stroke="#5a3d24" stroke-width="1.4" stroke-linejoin="round"/><path d="M160 96C182 84 202 82 224 86V52C202 48 180 50 160 60Z" fill="#f6ecd2" stroke="#5a3d24" stroke-width="1.4" stroke-linejoin="round"/><path d="M160 60V96" stroke="#5a3d24" stroke-width="1.4"/><path d="M104 62c10 0 19 1 30 6M184 68c11-5 20-6 30-6" stroke="#c4604a" stroke-width="1.2" fill="none" stroke-linecap="round"/><g transform="translate(152 40) scale(.6)">' + PICTO.brote + '</g>', camino: '<circle cx="200" cy="52" r="16" fill="#fbe8a6"/><path d="M140 110 192 66 202 66 178 110Z" fill="#e8d3a6"/><rect x="58" y="60" width="5" height="24" fill="#7a5a3c"/><circle cx="60" cy="52" r="13" fill="#4f8a55"/><circle cx="50" cy="58" r="9" fill="#4f8a55"/><circle cx="71" cy="58" r="9" fill="#4f8a55"/>', comunidad: '<rect x="155" y="14" width="10" height="16" fill="#f6ecd2"/><path d="M153 14 160 4 167 14Z" fill="#c4604a"/><path d="M122 56 160 28 198 56Z" fill="#c4604a"/><rect x="128" y="54" width="64" height="40" fill="#f6ecd2"/><rect x="152" y="74" width="16" height="20" fill="#7a5a3c"/><circle cx="160" cy="64" r="4" fill="#fbe8a6"/><rect x="77" y="70" width="5" height="18" fill="#7a5a3c"/><circle cx="80" cy="66" r="16" fill="#4f8a55"/><rect x="238" y="72" width="5" height="16" fill="#7a5a3c"/><circle cx="240" cy="68" r="14" fill="#4f8a55"/>', crecer: BANDA_CRECER };
   const bandaTB = (tipo) => { const t = BANDA_ESCENAS[tipo] ? tipo : 'camino'; return '<svg class="tb-banda" viewBox="0 0 320 110" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">' + BANDA_BASE + (t === 'crecer' ? '' : BANDA_COLINAS) + BANDA_ESCENAS[t] + '</svg>'; };
   // F1113 · cabecera ilustrada de cada área (16:9, representa lo que contiene la sección)
+  const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda' };   // F1114
   const areaHero = (id) => `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1113';
+  const APP_VERSION = 'F1114';
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
   const BANDA_POR_VOLVER = { 'Mi iglesia': 'union', 'Palabra': 'palabra', 'Vida': 'crecer', 'Vivir lo que aprendemos': 'crecer', 'Perfil': 'camino', 'Panel': 'pastor' };
   const bandaMini = (tipo) => bandaTB(tipo).replace('class="tb-banda"', 'class="tb-banda tb-banda-mini"');
@@ -1989,7 +1990,7 @@
   const K_MIORACION = 'tb_movil_mi_oracion', K_CREC = 'tb_movil_crecimiento';
   const lista = (k) => { const l = leer(k); return Array.isArray(l) ? l : []; };
   const nuevoId = () => 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-  const cabecera = (titulo, atras) => `<button type="button" class="volver" id="volver">‹ ${esc(atras)}</button><h1>${esc(titulo)}</h1><div class="filete"></div>`;
+  const cabecera = (titulo, atras) => `<button type="button" class="volver" id="volver">‹ ${esc(atras)}</button>${HERO_CAB[titulo] ? areaHero(HERO_CAB[titulo]) : ''}<h1>${esc(titulo)}</h1><div class="filete"></div>`;
   const datosCache = {};
   async function datoCargar(nombre) {
     if (datosCache[nombre]) return datosCache[nombre];
@@ -2030,7 +2031,7 @@
     const delMes = todas.filter((x) => x.est !== 'pend' && String(x.fin || '').slice(0, 7) === mes);
     let tipo = (pre && pre.tipo) || 'otros';
     const volverFn = atras || vistaVida;
-    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ ${atras ? 'Volver' : 'Vida'}</button><section class="hac-hero"><span class="hac-h-a" aria-hidden="true"></span><span class="hac-h-b" aria-hidden="true"></span><p class="hac-sello">Un paso a la vez</p><h1>Hoy lo hago</h1>
+    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ ${atras ? 'Volver' : 'Vida'}</button>${areaHero('hoy-lo-hago')}<section class="hac-hero"><span class="hac-h-a" aria-hidden="true"></span><span class="hac-h-b" aria-hidden="true"></span><p class="hac-sello">Un paso a la vez</p><h1>Hoy lo hago</h1>
         <p class="hac-lema">Leer es el principio. Aquí damos el paso: algo pequeño, hoy, que mejora tu vida y la de los demás. Intentarlo ya cuenta.</p></section>
       <div class="stats hac-stats"><div class="stat"><span class="stat-ic">${svg('check', 22)}</span><b>${delMes.length}</b><small>pasos este mes</small></div><div class="stat"><span class="stat-ic">${svg('trofeo', 22)}</span><b>${nHechas()}</b><small>en total</small></div></div>
       <div class="card hac-nueva"><h3 class="m0">${pre && pre.ref ? 'Lo que leí en ' + esc(pre.ref) + ': ¿qué haré?' : '¿Qué vas a hacer hoy?'}</h3>
@@ -2515,7 +2516,7 @@
   const RITMOS = [1, 2, 3, 5];
   const planDias = (pl, r) => { const n = Number(r) || 1; if (n <= 1) return pl.dias; const f = [].concat.apply([], pl.dias), o = []; for (let i = 0; i < f.length; i += n) o.push(f.slice(i, i + n)); return o; };
   const PD = (pl) => { const e = rg(K_PLANES)[pl.id]; return planDias(pl, e && e.r); };
-  const planFoto = (pl) => `<div class="plan-foto" aria-hidden="true"><img src="img/planes/${pl.id}.webp" alt="" loading="lazy" decoding="async" onerror="if(!this.dataset.r){this.dataset.r=1;this.src='img/planes/${pl.id}.svg'}else{this.parentNode.classList.add('sin')}"></div>`;
+  const planFoto = (pl) => `<div class="plan-foto" aria-hidden="true"><img src="img/planes/${pl.id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   const planEstado = (id) => { const e = rg(K_PLANES)[id]; return e && Array.isArray(e.h) ? e : null; };
   const planTxt = (pl, i) => PD(pl)[i].map((x) => libroInfo(x[0])[1] + ' ' + x[1]).join(' y ');
   function planAuto(cod, cap) {
