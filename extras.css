@@ -317,3 +317,6 @@ p svg.ic,b svg.ic,.suave svg.ic{display:inline-block;vertical-align:-3px}
 .so-lista li.hecha{background:color-mix(in srgb,#8dc466 35%,transparent);border-color:#8dc466;color:#17300c;text-decoration:none}
 .so-tema{border-left:4px solid #8dc466}
 @media (prefers-reduced-motion:reduce){.so-c,.so-c.sel{transition:none}}
+
+/* F1104 · Orden: separación entre grupos de Perfil (Mi lectura, Mi perfil, Mi avatar, Cuenta y ayuda) */
+h2.sep.grupo-fin{margin-top:34px}
