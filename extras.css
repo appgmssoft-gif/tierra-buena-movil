@@ -320,3 +320,49 @@ p svg.ic,b svg.ic,.suave svg.ic{display:inline-block;vertical-align:-3px}
 
 /* F1104 · Orden: separación entre grupos de Perfil (Mi lectura, Mi perfil, Mi avatar, Cuenta y ayuda) */
 h2.sep.grupo-fin{margin-top:34px}
+
+/* F1106 · Sopa por caminos: cada mapa tiene su color, sus niveles en fila de nodos y estrellas bajo cada nivel */
+[data-mapa=semillero]{--mc:#8dc466}[data-mapa=brote]{--mc:#4fa3a5}[data-mapa=bosque]{--mc:#b8893a}
+.so-mapa{margin:0 0 18px;padding:14px 12px 16px;border-radius:22px;background:transparent;border:1px solid color-mix(in srgb,var(--mc,#8dc466) 45%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.so-mapa-cab{display:flex;flex-direction:column;gap:2px;margin:0 2px 12px}
+.so-mapa-cab b{font-family:Georgia,serif;font-size:1.25rem;color:var(--tinta)}
+.so-mapa-cab small{color:var(--suave)}
+.so-camino{display:grid;grid-template-columns:repeat(3,1fr);gap:14px 10px;justify-items:center}
+.so-nodo{width:76px;height:76px;border-radius:50%;border:2px solid color-mix(in srgb,var(--mc,#8dc466) 70%,#fff);background:radial-gradient(circle at 35% 30%,#fffdf5 0%,color-mix(in srgb,var(--mc,#8dc466) 22%,#fff) 100%);color:var(--tinta);display:grid;place-items:center;align-content:center;gap:0;cursor:pointer;box-shadow:0 4px 0 color-mix(in srgb,var(--mc,#8dc466) 45%,transparent),0 10px 18px -12px rgba(40,24,10,.5);transition:transform .15s ease}
+.so-nodo:active{transform:translateY(2px) scale(.97)}
+.so-nodo span{font:800 1.45rem/1 Georgia,serif}
+.so-nodo small{font-size:.7rem;letter-spacing:.08em;color:#b8893a;line-height:1;margin-top:2px}
+.so-nodo.hecho{background:radial-gradient(circle at 35% 30%,#fffdf5 0%,color-mix(in srgb,var(--mc,#8dc466) 45%,#fff) 100%)}
+.so-nodo.bloq{opacity:.5;cursor:not-allowed;box-shadow:none;border-style:dashed}
+.so-nivel{text-align:center;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mc,#8dc466);margin:0 0 4px}
+.so-estrellas{font-size:2.2rem;text-align:center;letter-spacing:.2em;color:#d9a441;margin:8px 0}
+@media (min-width:600px){.so-camino{grid-template-columns:repeat(6,1fr)}}
+
+/* F1107 · Caminos de todos los juegos y Jardín del principio: un color por día de la creación (paleta de IDENTIDAD_ILUSTRACION.md) */
+[data-mapa=dia1]{--mc:#e2b553}[data-mapa=dia2]{--mc:#5f8fb0}[data-mapa=dia3]{--mc:#8dc466}
+[data-mapa=dia4]{--mc:#e9a633}[data-mapa=dia5]{--mc:#4fa3a5}[data-mapa=dia6]{--mc:#d4764f}
+.jard-tarjeta{display:flex;gap:14px;align-items:flex-start;padding:14px 16px;margin:0 0 12px;border-radius:20px;background:transparent;border:1px solid color-mix(in srgb,var(--mc,#8dc466) 45%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.jard-tarjeta b{display:block;font-family:Georgia,serif;font-size:1.15rem;color:var(--tinta)}
+.jard-tarjeta small{color:var(--suave)}
+.jard-tarjeta p{margin:6px 0 0;line-height:1.45}
+.jard-tarjeta.ok{background:color-mix(in srgb,var(--mc,#8dc466) 14%,transparent)}
+.jard-n{flex:0 0 auto;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font:800 1.2rem/1 Georgia,serif;background:color-mix(in srgb,var(--mc,#8dc466) 35%,#fff);color:var(--tinta)}
+
+/* F1108 · Fluidez y decoración de los caminos: sendero de puntos detrás de los niveles, pulso suave en el nivel disponible y respuesta al tocar */
+.so-camino{position:relative;padding:8px 0;background-image:radial-gradient(circle,color-mix(in srgb,var(--mc,#8dc466) 40%,transparent) 1.6px,transparent 2.2px);background-size:16px 16px;background-position:center;border-radius:18px}
+.so-nodo{transition:transform .18s ease,box-shadow .2s ease,background-color .2s ease}
+.so-nodo:hover:not(:disabled){transform:translateY(-2px)}
+.so-nodo:not(.bloq):not(.hecho){animation:nodo-pulso 2.8s ease-in-out infinite}
+@keyframes nodo-pulso{0%,100%{box-shadow:0 4px 0 color-mix(in srgb,var(--mc,#8dc466) 45%,transparent),0 0 0 0 color-mix(in srgb,var(--mc,#8dc466) 35%,transparent)}50%{box-shadow:0 4px 0 color-mix(in srgb,var(--mc,#8dc466) 45%,transparent),0 0 0 9px transparent}}
+.so-c{transition:transform .12s ease,background-color .18s ease,box-shadow .18s ease,color .18s ease}
+.so-c:hover{transform:translateY(-1px)}
+@media (prefers-reduced-motion:reduce){.so-nodo,.so-nodo:not(.bloq):not(.hecho){animation:none;transition:none}}
+html[data-anim=off] .so-nodo:not(.bloq):not(.hecho){animation:none}
+
+/* F1111 · Puntos 2, 4 y 6 de la referencia: tarjetas uniformes, tablet con dos columnas y áreas de toque de al menos 44 px */
+.card,.lista,.grid>button.card{border-radius:22px}
+.btn,button.card,.so-nodo,.ju-op,.ju-modo{min-height:44px}
+.ju-op{min-height:48px}
+@media (min-width:700px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:900px){main{max-width:960px}}
+#pantalla button:not(.so-c){min-height:44px}

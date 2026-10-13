@@ -283,7 +283,7 @@
   const BANDA_ESCENAS = { union: '<circle cx="160" cy="40" r="70" fill="#fff6d6" opacity=".35"/><circle cx="160" cy="36" r="26" fill="#5f9a62"/><circle cx="138" cy="46" r="16" fill="#7cb36f"/><circle cx="182" cy="46" r="16" fill="#7cb36f"/><rect x="157" y="56" width="6" height="24" rx="2" fill="#7a5a3c"/><circle cx="52" cy="84" r="6" fill="#e8b58c"/><path d="M42 110 Q42 92 52 92 Q62 92 62 110Z" fill="#c4604a"/><circle cx="100" cy="84" r="6" fill="#e8b58c"/><path d="M90 110 Q90 92 100 92 Q110 92 110 110Z" fill="#7a5a3c"/><circle cx="220" cy="84" r="6" fill="#e8b58c"/><path d="M210 110 Q210 92 220 92 Q230 92 230 110Z" fill="#4f8a55"/><circle cx="268" cy="84" r="6" fill="#e8b58c"/><path d="M258 110 Q258 92 268 92 Q278 92 278 110Z" fill="#c98a5e"/><path d="M62 100 Q81 96 90 100 M110 100 Q160 94 210 100" stroke="#e8b58c" stroke-width="3" fill="none" stroke-linecap="round"/>', pastor: '<circle cx="640" cy="210" r="250" fill="#fff6d6" opacity=".4"/><path d="M520 720 610 430 670 430 760 720Z" fill="#e8d3a6"/><path d="M640 430V250" stroke="#5a3d24" stroke-width="10" stroke-linecap="round"/><path d="M600 250h80" stroke="#5a3d24" stroke-width="8" stroke-linecap="round"/><rect x="620" y="200" width="40" height="50" rx="8" fill="#fbe8a6" stroke="#5a3d24" stroke-width="4"/><circle cx="640" cy="225" r="110" fill="#fbe8a6" opacity=".22"/>', palabra: '<circle cx="250" cy="34" r="14" fill="#fbe8a6"/><path d="M160 96C138 84 118 82 96 86V52C118 48 140 50 160 60Z" fill="#f6ecd2" stroke="#5a3d24" stroke-width="1.4" stroke-linejoin="round"/><path d="M160 96C182 84 202 82 224 86V52C202 48 180 50 160 60Z" fill="#f6ecd2" stroke="#5a3d24" stroke-width="1.4" stroke-linejoin="round"/><path d="M160 60V96" stroke="#5a3d24" stroke-width="1.4"/><path d="M104 62c10 0 19 1 30 6M184 68c11-5 20-6 30-6" stroke="#c4604a" stroke-width="1.2" fill="none" stroke-linecap="round"/><g transform="translate(152 40) scale(.6)">' + PICTO.brote + '</g>', camino: '<circle cx="200" cy="52" r="16" fill="#fbe8a6"/><path d="M140 110 192 66 202 66 178 110Z" fill="#e8d3a6"/><rect x="58" y="60" width="5" height="24" fill="#7a5a3c"/><circle cx="60" cy="52" r="13" fill="#4f8a55"/><circle cx="50" cy="58" r="9" fill="#4f8a55"/><circle cx="71" cy="58" r="9" fill="#4f8a55"/>', comunidad: '<rect x="155" y="14" width="10" height="16" fill="#f6ecd2"/><path d="M153 14 160 4 167 14Z" fill="#c4604a"/><path d="M122 56 160 28 198 56Z" fill="#c4604a"/><rect x="128" y="54" width="64" height="40" fill="#f6ecd2"/><rect x="152" y="74" width="16" height="20" fill="#7a5a3c"/><circle cx="160" cy="64" r="4" fill="#fbe8a6"/><rect x="77" y="70" width="5" height="18" fill="#7a5a3c"/><circle cx="80" cy="66" r="16" fill="#4f8a55"/><rect x="238" y="72" width="5" height="16" fill="#7a5a3c"/><circle cx="240" cy="68" r="14" fill="#4f8a55"/>', crecer: BANDA_CRECER };
   const bandaTB = (tipo) => { const t = BANDA_ESCENAS[tipo] ? tipo : 'camino'; return '<svg class="tb-banda" viewBox="0 0 320 110" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">' + BANDA_BASE + (t === 'crecer' ? '' : BANDA_COLINAS) + BANDA_ESCENAS[t] + '</svg>'; };
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1104';
+  const APP_VERSION = 'F1111';
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
   const BANDA_POR_VOLVER = { 'Mi iglesia': 'union', 'Palabra': 'palabra', 'Vida': 'crecer', 'Vivir lo que aprendemos': 'crecer', 'Perfil': 'camino', 'Panel': 'pastor' };
   const bandaMini = (tipo) => bandaTB(tipo).replace('class="tb-banda"', 'class="tb-banda tb-banda-mini"');
@@ -1352,11 +1352,12 @@
   // F944 · JUEGOS (fase A): entrada común. Cada juego se enchufa aquí con su vista y llama a juegoTerminar(id, aciertos, total).
   const K_JUEGOS = 'tb_movil_juegos';
   const JUEGOS = [
-    ['raices', '📖', 'Raíces', 'Preguntas sobre lo que leíste, con el versículo que explica la respuesta.'],
-    ['brotes', '✍️', 'Brotes', 'Completa el versículo y llévalo en la memoria. Usa los que tú resaltaste.'],
-    ['sopa', '🔎', 'Sopa del Vivero', 'Letras grandes, sin tiempo y con pistas gratis.']
+    ['raices', '📖', 'Preguntas de la Palabra', 'Preguntas sobre lo que leíste, con el versículo que explica la respuesta.'],
+    ['brotes', '✍️', 'Completa el versículo', 'Completa el versículo y llévalo en la memoria. Usa los que tú resaltaste.'],
+    ['sopa', '🔎', 'Sopa del Vivero', 'Letras grandes, sin tiempo y con pistas gratis.'],
+    ['jardin', '🌱', 'Jardín del principio', 'Seis días de la creación, con mapas y un cuaderno para lo que descubres.']
   ];
-  const JUEGOS_LISTOS = { raices: (v) => vistaRaices(v), brotes: (v) => vistaBrotes(v), sopa: (v) => vistaSopa(v) };   // id -> función que abre el juego (cada fase nueva se registra aquí)
+  const JUEGOS_LISTOS = { raices: (v) => vistaRaices(v), brotes: (v) => vistaBrotesCamino(v), jardin: (v) => vistaJardin(v), sopa: (v) => vistaSopa(v) };   // id -> función que abre el juego (cada fase nueva se registra aquí)
   function juegoTerminar(id, aciertos, total) {   // guarda la partida; una gota de rocío al terminar con al menos 60 % de aciertos (tope diario)
     const j = leer(K_JUEGOS) || { n: 0, p: {} }; j.n = (j.n || 0) + 1; j.p = j.p || {};
     const q = j.p[id] || { n: 0, mejor: 0 }; q.n++; q.mejor = Math.max(q.mejor, Number(aciertos) || 0); j.p[id] = q; guardar(K_JUEGOS, j);
@@ -1395,6 +1396,7 @@
       }));
     };
     const fin = () => {
+      if (cfg.alFinal) { try { cfg.alFinal(ac, qs.length); } catch (e) { /* sin progreso */ } }   // F1107
       if (!cfg.repaso) juegoTerminar(cfg.id, ac, qs.length);   // el repaso no cuenta como partida ni da gota (evita repetir para ganar)
       son('logro');
       const falladas = qs.filter((x, k) => !marcas[k]);
@@ -1408,35 +1410,105 @@
     pregunta();
   }
   const juVerHtml = (txt, ref, resaltar) => { const t = esc(limpiaTexto(txt)); return `<blockquote class="ju-bq">«${resaltar ? t.replace(new RegExp('(' + esc(resaltar).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'i'), '<mark>$1</mark>') : t}»</blockquote><p class="ju-ref">${esc(ref)}</p>`; };
+  // F1107 · CAMINO GENÉRICO para los juegos por niveles: mapas temáticos × 6 niveles; cada nivel se abre al terminar el anterior; estrellas por juego
+  const estrellasDe = (ac, tot) => (ac >= tot ? 3 : ac >= tot - 1 ? 2 : 1);
+  const caminoLeer = (id) => { try { return leer('tb_movil_camino_' + id) || {}; } catch (e) { return {}; } };
+  const caminoGuardar = (id, p) => { try { guardar('tb_movil_camino_' + id, p); } catch (e) { /* sin guardar */ } };
+  const caminoAbierto = (id, idx) => idx === 0 || (caminoLeer(id)[idx - 1] || 0) > 0;
+  const caminoMarcar = (id, idx, ac, tot) => { const p = caminoLeer(id); p[idx] = Math.max(p[idx] || 0, estrellasDe(ac, tot)); caminoGuardar(id, p); };
+  const rngSeed = (seed) => { let t = seed >>> 0; return () => { t += 0x6D2B79F5; let r = Math.imul(t ^ (t >>> 15), 1 | t); r ^= r + Math.imul(r ^ (r >>> 7), 61 | r); return ((r ^ (r >>> 14)) >>> 0) / 4294967296; }; };
+  const barajar = (arr, rnd) => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  function juegoCamino(cfg) {
+    const id = cfg.id;
+    const pintar = () => {
+      const prog = caminoLeer(id);
+      const html = cfg.mapas.map((m, mi) => {
+        const nodos = [0, 1, 2, 3, 4, 5].map((k) => {
+          const idx = mi * 6 + k, est = prog[idx] || 0, ok = caminoAbierto(id, idx);
+          return `<button type="button" class="so-nodo${est ? ' hecho' : ''}${ok ? '' : ' bloq'}" data-nivel="${idx}" ${ok ? '' : 'disabled'} aria-label="Nivel ${k + 1} de ${esc(m.nombre)}${est ? ', ' + est + (est === 1 ? ' estrella' : ' estrellas') : ''}${ok ? '' : ', bloqueado'}"><span>${k + 1}</span><small aria-hidden="true">${est ? '★'.repeat(est) + '☆'.repeat(3 - est) : ok ? '' : '🔒'}</small></button>`;
+        }).join('');
+        return `<section class="so-mapa" data-mapa="${m.clase}"><header class="so-mapa-cab"><b>${esc(m.nombre)}</b><small>${esc(m.ayuda)}</small></header><div class="so-camino">${nodos}</div></section>`;
+      }).join('');
+      $('#pantalla').innerHTML = `${cabecera(cfg.titulo, 'Juegos')}<div class="ju so-ju">${JU_HERO(cfg.hero || 3)}<p class="suave">${esc(cfg.intro)}</p>${html}${cfg.extra || ''}</div>`;
+      volverA('Juegos', cfg.volver);
+      document.querySelectorAll('[data-nivel]').forEach((b) => b.addEventListener('click', () => cfg.jugar(Number(b.dataset.nivel), pintar)));
+      const ex = $('#caminoExtra'); if (ex && cfg.alExtra) ex.onclick = cfg.alExtra;
+    };
+    pintar();
+    return pintar;
+  }
+  const RAICES_MAPAS = [
+    { nombre: 'Primeros pasos', ayuda: 'Tres opciones por pregunta.', clase: 'semillero', opc: 3 },
+    { nombre: 'Camino de lectura', ayuda: 'Cuatro opciones por pregunta.', clase: 'brote', opc: 4 },
+    { nombre: 'Palabra guardada', ayuda: 'Cuatro opciones y preguntas más pensadas.', clase: 'bosque', opc: 4 }
+  ];
+  const BROTES_MAPAS = [
+    { nombre: 'Primeras palabras', ayuda: 'Tres opciones por versículo.', clase: 'semillero', opc: 3 },
+    { nombre: 'Con más memoria', ayuda: 'Cuatro opciones por versículo.', clase: 'brote', opc: 4 },
+    { nombre: 'Versículo guardado', ayuda: 'Cuatro opciones y nombres más difíciles.', clase: 'bosque', opc: 4 }
+  ];
+  function raicesJugar(bank, idx, volverCamino) {
+    const mi = Math.floor(idx / 6), opc = RAICES_MAPAS[mi].opc, rnd = rngSeed(4000 + idx * 31);
+    const vistas = (leer(K_JUEGOS) || {}).vistas_raices || [];   // F1107: primero las preguntas que aún no has visto
+    const elegidas = barajar(bank, rnd).sort((a, b) => (vistas.includes(a.id) ? 1 : 0) - (vistas.includes(b.id) ? 1 : 0)).slice(0, 4);
+    const j0 = leer(K_JUEGOS) || { n: 0, p: {} }; j0.vistas_raices = (j0.vistas_raices || []).concat(elegidas.map((q) => q.id)).slice(-30); guardar(K_JUEGOS, j0);
+    const items = elegidas.map((q) => {
+      const otras = barajar(q.o.map((_, j) => j).filter((j) => j !== q.c), rnd).slice(0, opc - 1);
+      return { p: q.p, o: [q.c].concat(otras).map((j) => q.o[j]), c: 0, ver: async () => { const inf = libroInfo(q.cod), ref = `${inf ? inf[1] : q.cod} ${q.cap}:${q.v}`; let t = ''; try { const lib = await libroCargar(q.cod, verActual()); t = lib[q.cap - 1] && lib[q.cap - 1][q.v - 1]; } catch (e) { /* sin internet */ } return { html: t ? juVerHtml(t, ref) : `<p class="ju-ref">${esc(ref)}</p>` }; } };
+    });
+    juegoCorrer({ id: 'raices', titulo: 'Preguntas de la Palabra', volver: volverCamino, items, otra: () => raicesJugar(bank, idx, volverCamino), alFinal: (ac, tot) => caminoMarcar('raices', idx, ac, tot) });
+  }
   async function vistaRaices(volver) {
-    let bank; try { bank = (await datoCargar('juego_raices')).preguntas; } catch (e) { $('#pantalla').innerHTML = `${cabecera('Raíces', 'Juegos')}<p class="suave">${SIN_DATOS}</p>`; volverA('Juegos', volver); return; }
-    const jugar = (qs) => { const j = leer(K_JUEGOS) || { n: 0, p: {} }; j.vistas_raices = (j.vistas_raices || []).concat(qs.map((q) => q.id)).slice(-30); guardar(K_JUEGOS, j); return juegoCorrer({ id: 'raices', titulo: 'Raíces', volver, otra: () => jugar(raicesElegir(bank, false)), items: qs.map((q) => ({ p: q.p, o: q.o, c: q.c, ver: async () => {
-      const inf = libroInfo(q.cod), ref = `${inf ? inf[1] : q.cod} ${q.cap}:${q.v}`; let t = ''; try { const lib = await libroCargar(q.cod, verActual()); t = lib[q.cap - 1] && lib[q.cap - 1][q.v - 1]; } catch (e) { /* sin internet */ }
-      return { html: t ? juVerHtml(t, ref) : `<p class="ju-ref">${esc(ref)}</p>` }; } })) }); };
-    $('#pantalla').innerHTML = `${cabecera('Raíces', 'Juegos')}<div class="ju">${JU_HERO(2)}<p class="suave">Cinco preguntas. Después de cada respuesta aparece el versículo que la explica.</p>
-      <button type="button" class="ju-modo" id="rzDia"><span class="ju-mi" aria-hidden="true">${svg('amanecer', 26)}</span><span><b>Reto de hoy</b><small>Las mismas cinco preguntas durante todo el día.</small></span><span class="flecha" aria-hidden="true">›</span></button>
-      <button type="button" class="ju-modo" id="rzMas"><span class="ju-mi" aria-hidden="true">${svg('baraja', 26)}</span><span><b>Otras cinco</b><small>Preguntas distintas cada vez.</small></span><span class="flecha" aria-hidden="true">›</span></button></div>`;
-    volverA('Juegos', volver); $('#rzDia').onclick = () => jugar(raicesElegir(bank, true)); $('#rzMas').onclick = () => jugar(raicesElegir(bank, false));
+    let bank; try { bank = (await datoCargar('juego_raices')).preguntas; } catch (e) { $('#pantalla').innerHTML = `${cabecera('Preguntas de la Palabra', 'Juegos')}<p class="suave">${SIN_DATOS}</p>`; volverA('Juegos', volver); return; }
+    juegoCamino({ id: 'raices', titulo: 'Preguntas de la Palabra', volver, intro: 'Elige una respuesta. Después aparece el versículo que la explica. Cuatro preguntas por nivel.', mapas: RAICES_MAPAS, jugar: (idx, vc) => raicesJugar(bank, idx, vc) });
+  }
+  async function vistaBrotesCamino(volver) {
+    juegoCamino({ id: 'brotes', titulo: 'Completa el versículo', volver, intro: 'Completa el versículo con el nombre o el lugar que falta. Usa los que tú resaltaste.', mapas: BROTES_MAPAS, jugar: (idx, vc) => { const mi = Math.floor(idx / 6); vistaBrotes(vc, { n: 5, opc: BROTES_MAPAS[mi].opc, alFinal: (ac, tot) => caminoMarcar('brotes', idx, ac, tot) }); } });
+  }
+  async function vistaJardin(volver) {
+    let datos; try { datos = await datoCargar('jardin_creacion'); } catch (e) { $('#pantalla').innerHTML = `${cabecera('Jardín del principio', 'Juegos')}<p class="suave">${SIN_DATOS}</p>`; volverA('Juegos', volver); return; }
+    const mapas = datos.dias.map((d, i) => ({ nombre: d.titulo, ayuda: d.subtitulo, clase: 'dia' + (i + 1) }));
+    const extra = `<button type="button" class="ju-modo" id="caminoExtra"><span class="ju-mi" aria-hidden="true">${svg('libro', 26)}</span><span><b>Cuaderno de la creación</b><small>Lo que has descubierto, día por día.</small></span><span class="flecha" aria-hidden="true">›</span></button>`;
+    let camino = null;
+    camino = juegoCamino({ id: 'jardin', titulo: 'Jardín del principio', volver, intro: 'Seis días de la creación. Completa un nivel para abrir el siguiente.', mapas, extra, alExtra: () => jardinCuaderno(datos, () => camino()), jugar: (idx, vc) => jardinJugar(datos, idx, vc) });
+  }
+  function jardinJugar(datos, idx, volverCamino) {
+    const d = datos.dias[Math.floor(idx / 6)], opc = (idx % 6) < 3 ? 3 : 4, rnd = rngSeed(9100 + idx * 17);
+    const items = barajar(d.preguntas, rnd).slice(0, 4).map((q) => {
+      const otras = barajar(q.o.map((_, j) => j).filter((j) => j !== q.c), rnd).slice(0, opc - 1);
+      return { p: q.p, o: [q.c].concat(otras).map((j) => q.o[j]), c: 0, ver: async () => ({ html: `<p class="ju-ref">${esc(d.ref)}</p>` }) };
+    });
+    juegoCorrer({ id: 'jardin', titulo: d.titulo, volver: volverCamino, items, otra: () => jardinJugar(datos, idx, volverCamino), alFinal: (ac, tot) => caminoMarcar('jardin', idx, ac, tot) });
+  }
+  function jardinCuaderno(datos, volverCamino) {
+    const prog = caminoLeer('jardin');
+    const tarjetas = datos.dias.map((d, i) => {
+      const hechos = [0, 1, 2, 3, 4, 5].filter((k) => (prog[i * 6 + k] || 0) > 0).length, completo = hechos === 6;
+      return `<article class="jard-tarjeta${completo ? ' ok' : ''}" data-mapa="dia${i + 1}"><span class="jard-n">${i + 1}</span><div><b>${esc(d.titulo)}</b><small>${hechos} de 6 niveles</small>${completo ? `<p>${d.creaciones.map((c) => esc(c)).join(' · ')}</p>` : '<p class="suave">Completa el mapa para descubrir lo creado.</p>'}</div></article>`;
+    }).join('');
+    $('#pantalla').innerHTML = `${cabecera('Cuaderno de la creación', 'Jardín del principio')}<div class="ju so-ju">${tarjetas}</div>`;
+    volverA('Jardín del principio', volverCamino);
   }
   // F947 · «BROTES» (juego C): completa el versículo. Usa los versículos que resaltaste y, si faltan, los del día.
-  async function vistaBrotes(volver) {
-    $('#pantalla').innerHTML = `${cabecera('Brotes', 'Juegos')}<div class="ju">${JU_HERO(1)}<p class="suave">Preparando versículos…</p></div>`; volverA('Juegos', volver);
+  async function vistaBrotes(volver, nivel) {
+    $('#pantalla').innerHTML = `${cabecera('Completa el versículo', 'Juegos')}<div class="ju">${JU_HERO(1)}<p class="suave">Preparando versículos…</p></div>`; volverA('Juegos', volver);
     const jugar = async () => {
       const mios = []; const rs = rg(K_RES); Object.keys(rs).forEach((k) => { const [c, cap] = k.split('.'); (rs[k] || []).forEach((v) => mios.push(c + '.' + cap + '.' + v)); });
       const mezcla = (a) => a.slice().sort(() => Math.random() - 0.5), pool = mezcla(mios).slice(0, 6).concat(mezcla(VERSICULOS)).filter((x, k, a) => a.indexOf(x) === k).slice(0, 12);
       const vs = [];
       for (const r of pool) { if (vs.length >= 8) break; const [c, cap, v] = r.split('.'); try { const lib = await libroCargar(c); const t = limpiaTexto((lib[cap - 1] || [])[v - 1] || ''); if (t.split(' ').length >= 6) vs.push({ c, cap: +cap, v: +v, t, mio: mios.indexOf(r) >= 0 }); } catch (e) { break; } }
-      if (vs.length < 4) { $('#pantalla').innerHTML = `${cabecera('Brotes', 'Juegos')}<div class="ju"><p class="suave">Brotes necesita abrir la Biblia al menos una vez con internet para tener los versículos. Puedes volver cuando la hayas leído.</p></div>`; volverA('Juegos', volver); return; }
+      if (vs.length < 4) { $('#pantalla').innerHTML = `${cabecera('Completa el versículo', 'Juegos')}<div class="ju"><p class="suave">Completa el versículo necesita abrir la Biblia al menos una vez con internet para tener los versículos. Puedes volver cuando la hayas leído.</p></div>`; volverA('Juegos', volver); return; }
       const palabras = (t) => (t.match(/[A-Za-záéíóúñÁÉÍÓÚÑ]{5,}/g) || []);
       const todas = vs.reduce((a, x) => a.concat(palabras(x.t)), []);
-      const items = vs.slice(0, 5).map((x) => {
-        const cand = palabras(x.t).filter((w) => w.toLowerCase() !== x.t.split(' ')[0].toLowerCase()); const clave = cand.sort((a, b) => b.length - a.length)[Math.floor(Math.random() * Math.min(3, cand.length))] || cand[0];
-        const malas = mezcla(todas.filter((w) => w.toLowerCase() !== clave.toLowerCase() && !x.t.toLowerCase().includes(w.toLowerCase()))).filter((w, k, a) => a.findIndex((z) => z.toLowerCase() === w.toLowerCase()) === k).slice(0, 3);
+      const items = vs.slice(0, nivel ? nivel.n : 5).map((x) => {
+        const nombres = palabras(x.t).filter((w) => /^[A-ZÁÉÍÓÚÑ]/.test(w) && w.toLowerCase() !== x.t.split(' ')[0].toLowerCase());   // F1106: se prefieren nombres propios (no cambian entre traducciones)
+        const cand = nombres.length ? nombres : palabras(x.t).filter((w) => w.toLowerCase() !== x.t.split(' ')[0].toLowerCase()); const clave = cand.sort((a, b) => b.length - a.length)[Math.floor(Math.random() * Math.min(3, cand.length))] || cand[0];
+        const malas = mezcla(todas.filter((w) => w.toLowerCase() !== clave.toLowerCase() && !x.t.toLowerCase().includes(w.toLowerCase()))).filter((w, k, a) => a.findIndex((z) => z.toLowerCase() === w.toLowerCase()) === k).slice(0, nivel ? nivel.opc - 1 : 3);
         const o = [clave].concat(malas); const inf = libroInfo(x.c), ref = `${inf ? inf[1] : x.c} ${x.cap}:${x.v}`;
         return { p: x.t.replace(new RegExp('\\b' + clave + '\\b'), '______'), o, c: 0, ver: async () => ({ html: juVerHtml(x.t, ref + (x.mio ? ' · uno de tus resaltes' : ''), clave) }) };
       }).filter((q) => q.o.length >= 3);
-      if (items.length < 3) { $('#pantalla').innerHTML = `${cabecera('Brotes', 'Juegos')}<div class="ju"><p class="suave">No se pudieron armar las preguntas. Intenta de nuevo en un momento.</p></div>`; volverA('Juegos', volver); return; }
-      juegoCorrer({ id: 'brotes', titulo: 'Brotes', volver, items, otra: () => vistaBrotes(volver) });
+      if (items.length < 3) { $('#pantalla').innerHTML = `${cabecera('Completa el versículo', 'Juegos')}<div class="ju"><p class="suave">No se pudieron armar las preguntas. Intenta de nuevo en un momento.</p></div>`; volverA('Juegos', volver); return; }
+      juegoCorrer({ id: 'brotes', titulo: 'Completa el versículo', volver, items, otra: () => vistaBrotes(volver, nivel), alFinal: nivel ? nivel.alFinal : undefined });
     };
     jugar();
   }
@@ -1456,25 +1528,46 @@
     for (let f = 0; f < N; f++) for (let c = 0; c < N; c++) if (!g[f][c]) g[f][c] = L[azar(L.length)];
     return { g, pos };
   }
-  // F1103 · SOPA DEL VIVERO (rediseñada): se marca letra por letra (8 direcciones, también al revés), se puede deshacer y borrar, tablero de 10×10 y hasta 8 palabras por partida
+  // F1106 · SOPA DEL VIVERO por caminos: 3 mapas temáticos × 6 niveles. Cada nivel se desbloquea al completar el anterior. Estrellas según pistas y deshacer.
+  const SOPA_MAPAS = [
+    { id: 'semillero', nombre: 'Semillero', ayuda: 'Letras rectas, para empezar.', color: '#8dc466', N: 8, n: 4, min: 3, max: 6, dirs: [[0, 1], [1, 0]] },
+    { id: 'brote', nombre: 'Brote', ayuda: 'Diagonales y palabras más largas.', color: '#4fa3a5', N: 10, n: 6, min: 4, max: 8, dirs: [[0, 1], [1, 0], [1, 1], [1, -1]] },
+    { id: 'bosque', nombre: 'Bosque', ayuda: 'Todas las direcciones, también al revés.', color: '#b8893a', N: 10, n: 8, min: 5, max: 10, dirs: [[0, 1], [1, 0], [1, 1], [1, -1], [0, -1], [-1, 0], [-1, -1], [-1, 1]] }
+  ];
+  const K_CAMINO_SOPA = 'tb_movil_camino_sopa';
   async function vistaSopa(volver) {
     let datos; try { datos = await datoCargar('juego_sopa'); } catch (e) { $('#pantalla').innerHTML = `${cabecera('Sopa del Vivero', 'Juegos')}<p class="suave">${SIN_DATOS}</p>`; volverA('Juegos', volver); return; }
     const son = (n) => { try { if (window.TBSonido && window.TBSonido[n]) window.TBSonido[n](); } catch (e) { /* sin sonido */ } };
-    const N = 10, ABC = 'ABCDEFGHIJLMNOPQRSTUVXYZ', DIRS = [[0, 1], [1, 0], [1, 1], [1, -1], [0, -1], [-1, 0], [-1, -1], [-1, 1]];
+    const N_MAX = 10, ABC = 'ABCDEFGHIJLMNOPQRSTUVXYZ', DIRS = [[0, 1], [1, 0], [1, 1], [1, -1], [0, -1], [-1, 0], [-1, -1], [-1, 1]];
     const norma = (s) => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().replace(/[^A-Z]/g, '');
     const azar = (n) => Math.floor(Math.random() * n);
-    const menu = () => {
-      $('#pantalla').innerHTML = `${cabecera('Sopa del Vivero', 'Juegos')}<div class="ju">${JU_HERO(3)}<p class="suave">Toca una letra y luego la siguiente, en línea recta, para formar una palabra. Puede ir en cualquier dirección, también al revés. Sin tiempo, con pistas gratis.</p>
-        ${datos.temas.map((t) => `<button type="button" class="ju-modo so-tema" data-tema="${esc(t.id)}"><span><b>${esc(t.titulo)}</b><small>${esc(t.ayuda)} · ${t.palabras.length} palabras</small></span><span class="flecha" aria-hidden="true">›</span></button>`).join('')}</div>`;
+    const progreso = () => { try { return leer(K_CAMINO_SOPA) || {}; } catch (e) { return {}; } };
+    const guardarProgreso = (p) => { try { guardar(K_CAMINO_SOPA, p); } catch (e) { /* sin guardar */ } };
+    const todasLas = datos.temas.reduce((a, t) => a.concat(t.palabras.map(norma)), []).filter((w, i, a) => w.length >= 3 && w.length <= N_MAX && a.indexOf(w) === i);
+    // Nivel global: mapa*6 + nivel. El primero siempre está abierto; los demás se abren al terminar el anterior.
+    const abierto = (idx) => idx === 0 || (progreso()[idx - 1] || 0) > 0;
+    const mapa = (m) => SOPA_MAPAS[m];
+    const nPalabras = (m, k) => Math.min(8, mapa(m).n + (k >= 3 ? 1 : 0));
+
+    const camino = () => {
+      let html = '';
+      SOPA_MAPAS.forEach((m, mi) => {
+        const nodos = [0, 1, 2, 3, 4, 5].map((k) => {
+          const idx = mi * 6 + k, est = progreso()[idx] || 0, ok = abierto(idx);
+          return `<button type="button" class="so-nodo${est ? ' hecho' : ''}${ok ? '' : ' bloq'}" data-nivel="${idx}" ${ok ? '' : 'disabled'} aria-label="Nivel ${k + 1} de ${m.nombre}${est ? ', ' + est + (est === 1 ? ' estrella' : ' estrellas') : ''}${ok ? '' : ', bloqueado'}"><span>${k + 1}</span><small aria-hidden="true">${est ? '★'.repeat(est) + '☆'.repeat(3 - est) : ok ? '' : '🔒'}</small></button>`;
+        }).join('');
+        html += `<section class="so-mapa" data-mapa="${m.id}"><header class="so-mapa-cab"><b>${esc(m.nombre)}</b><small>${esc(m.ayuda)}</small></header><div class="so-camino">${nodos}</div></section>`;
+      });
+      $('#pantalla').innerHTML = `${cabecera('Sopa del Vivero', 'Juegos')}<div class="ju so-ju">${JU_HERO(3)}<p class="suave">Toca una letra y luego la siguiente, en línea recta. Completa un nivel para abrir el siguiente.</p>${html}</div>`;
       volverA('Juegos', volver);
-      document.querySelectorAll('[data-tema]').forEach((b) => b.addEventListener('click', () => jugar(datos.temas.find((t) => t.id === b.dataset.tema))));
+      document.querySelectorAll('[data-nivel]').forEach((b) => b.addEventListener('click', () => jugarNivel(Number(b.dataset.nivel))));
     };
-    // Coloca las palabras en el tablero (cualquier dirección, pueden cruzarse si coinciden las letras)
-    const colocar = (palabras) => {
+
+    const colocar = (palabras, N, dirs) => {
       const g = Array.from({ length: N }, () => Array(N).fill('')), pos = {};
       palabras.slice().sort((a, b) => b.length - a.length).forEach((w) => {
         for (let t = 0; t < 400; t++) {
-          const [dr, dc] = DIRS[azar(DIRS.length)], f = azar(N), c = azar(N);
+          const [dr, dc] = dirs[azar(dirs.length)], f = azar(N), c = azar(N);
           const fin = [f + dr * (w.length - 1), c + dc * (w.length - 1)];
           if (fin[0] < 0 || fin[0] >= N || fin[1] < 0 || fin[1] >= N) continue;
           let ok = true;
@@ -1487,28 +1580,44 @@
       for (let f = 0; f < N; f++) for (let c = 0; c < N; c++) if (!g[f][c]) g[f][c] = ABC[azar(ABC.length)];
       return { g, pos };
     };
-    const jugar = (tema) => {
-      const lista = tema.palabras.map(norma).filter((w) => w.length >= 3 && w.length <= N).sort(() => Math.random() - 0.5).slice(0, 8);
-      let tab = colocar(lista); for (let r = 0; r < 20 && lista.some((w) => !tab.pos[w]); r++) tab = colocar(lista);
-      const { g, pos } = tab, colocadas = lista.filter((w) => pos[w]);
-      const halladas = new Set(), ok = new Set(); let sel = [], pista = null, aviso = 'Toca la primera letra de una palabra.';
-      const celdasDe = (w) => { const p = pos[w], r = []; for (let k = 0; k < w.length; k++) r.push((p.f + p.dr * k) * N + p.c + p.dc * k); return r; };
+
+    const jugarNivel = (idx) => {
+      const mi = Math.floor(idx / 6), k = idx % 6, m = mapa(mi), cfg = { N: m.N, dirs: m.dirs, min: m.min, max: m.max, n: nPalabras(mi, k) };
+      const pool = todasLas.filter((w) => w.length >= cfg.min && w.length <= cfg.max).sort(() => Math.random() - 0.5);
+      let lista = pool.slice(0, cfg.n);
+      let tab = colocar(lista, cfg.N, cfg.dirs);
+      for (let r = 0; r < 25 && lista.some((w) => !tab.pos[w]); r++) { lista = pool.slice().sort(() => Math.random() - 0.5).slice(0, cfg.n); tab = colocar(lista, cfg.N, cfg.dirs); }
+      const { g, pos } = tab, colocadas = lista.filter((w) => pos[w]), N = cfg.N;
+      const halladas = new Set(), ok = new Set(); let sel = [], pista = null, aviso = 'Toca la primera letra de una palabra.', pistas = 0, deshaceres = 0;
+      const celdasDe = (w) => { const p = pos[w], r = []; for (let q = 0; q < w.length; q++) r.push((p.f + p.dr * q) * N + p.c + p.dc * q); return r; };
       const cadena = () => sel.map((i) => g[Math.floor(i / N)][i % N]).join('');
+      // F1108 · Fluidez: la pantalla se arma una sola vez; al tocar una letra solo cambian sus clases y los textos (sin parpadeo)
+      let montado = false;
       const pintar = () => {
-        const marcas = colocadas.map((w) => `<li class="${halladas.has(w) ? 'hecha' : ''}">${halladas.has(w) ? '✓ ' : ''}${esc(w)}</li>`).join('');
-        $('#pantalla').innerHTML = `${cabecera('Sopa del Vivero', 'Juegos')}<div class="ju so-ju">
-          <h2 class="ju-p">${esc(tema.titulo)}</h2>
-          <p class="so-cuenta" aria-live="polite">${halladas.size} de ${colocadas.length} encontradas</p>
-          <div class="so-tablero"><div class="so-grid" role="grid" aria-label="Sopa de letras">${g.map((fila, f) => fila.map((l, c) => { const i = f * N + c; const cls = ok.has(i) ? ' ok' : sel.includes(i) ? ' sel' : pista === i ? ' pista' : ''; return `<button type="button" class="so-c${cls}" data-i="${i}" aria-label="${esc(l)}, fila ${f + 1}, columna ${c + 1}">${esc(l)}</button>`; }).join('')).join('')}</div></div>
-          <p class="so-cadena" aria-live="polite">${sel.length ? esc(cadena()) : '&nbsp;'}</p>
-          <p class="so-aviso" role="status">${esc(aviso)}</p>
-          <div class="so-acciones"><button type="button" class="btn sec chico" id="soDeshacer" ${sel.length ? '' : 'disabled'}>Quitar la última</button><button type="button" class="btn sec chico" id="soBorrar" ${sel.length ? '' : 'disabled'}>Borrar selección</button><button type="button" class="btn sec chico" id="soPista">Pista gratis</button></div>
-          <ul class="so-lista" aria-label="Palabras a encontrar">${marcas}</ul></div>`;
-        volverA('Juegos', menu);
-        document.querySelectorAll('.so-c').forEach((b) => b.addEventListener('click', () => tocar(Number(b.dataset.i))));
-        $('#soDeshacer').onclick = () => { sel.pop(); aviso = sel.length ? 'Sigue con la siguiente letra.' : 'Toca la primera letra de una palabra.'; pintar(); };
-        $('#soBorrar').onclick = () => { sel = []; aviso = 'Selección borrada. Empieza de nuevo.'; pintar(); };
-        $('#soPista').onclick = () => { const w = colocadas.find((x) => !halladas.has(x)); if (!w) return; pista = celdasDe(w)[0]; aviso = 'La palabra «' + w + '» empieza en la letra marcada.'; pintar(); };
+        if (!montado) {
+          montado = true;
+          $('#pantalla').innerHTML = `${cabecera('Sopa del Vivero', 'Juegos')}<div class="ju so-ju" data-mapa="${m.id}">
+            <p class="so-nivel">${esc(m.nombre)} · nivel ${k + 1} de 6</p>
+            <p class="so-cuenta" aria-live="polite"></p>
+            <div class="so-tablero"><div class="so-grid" role="grid" aria-label="Sopa de letras">${g.map((fila, f) => fila.map((l, c) => `<button type="button" class="so-c" data-i="${f * N + c}" aria-label="${esc(l)}, fila ${f + 1}, columna ${c + 1}">${esc(l)}</button>`).join('')).join('')}</div></div>
+            <p class="so-cadena" aria-live="polite">&nbsp;</p>
+            <p class="so-aviso" role="status"></p>
+            <div class="so-acciones"><button type="button" class="btn sec chico" id="soDeshacer">Quitar la última</button><button type="button" class="btn sec chico" id="soBorrar">Borrar selección</button><button type="button" class="btn sec chico" id="soPista">Pista</button></div>
+            <ul class="so-lista" aria-label="Palabras a encontrar"></ul></div>`;
+          volverA('Juegos', camino);
+          $('.so-grid').style.setProperty('--n', N);   // columnas por CSSOM (el atributo style del HTML está bloqueado)
+          $('.so-grid').addEventListener('click', (e) => { const c = e.target.closest('.so-c'); if (c) tocar(Number(c.dataset.i)); });
+          $('#soDeshacer').onclick = () => { sel.pop(); deshaceres++; aviso = sel.length ? 'Sigue con la siguiente letra.' : 'Toca la primera letra de una palabra.'; pintar(); };
+          $('#soBorrar').onclick = () => { sel = []; aviso = 'Selección borrada. Empieza de nuevo.'; pintar(); };
+          $('#soPista').onclick = () => { const w = colocadas.find((x) => !halladas.has(x)); if (!w) return; pistas++; pista = celdasDe(w)[0]; aviso = 'La palabra «' + w + '» empieza en la letra marcada.'; pintar(); };
+        }
+        const celdas = document.querySelectorAll('.so-c');
+        celdas.forEach((c) => { const i = Number(c.dataset.i); c.classList.toggle('ok', ok.has(i)); c.classList.toggle('sel', sel.includes(i)); c.classList.toggle('pista', pista === i); });
+        $('.so-cuenta').textContent = `${halladas.size} de ${colocadas.length} encontradas`;
+        $('.so-cadena').textContent = sel.length ? cadena() : '\u00a0';
+        $('.so-aviso').textContent = aviso;
+        $('#soDeshacer').disabled = !sel.length; $('#soBorrar').disabled = !sel.length;
+        $('.so-lista').innerHTML = colocadas.map((w) => `<li class="${halladas.has(w) ? 'hecha' : ''}">${halladas.has(w) ? '✓ ' : ''}${esc(w)}</li>`).join('');
       };
       const tocar = (i) => {
         pista = null;
@@ -1524,21 +1633,30 @@
         const w = colocadas.find((x) => !halladas.has(x) && (x === s || x === rev));
         if (w) {
           halladas.add(w); celdasDe(w).forEach((x) => ok.add(x)); sel = []; son('logro');
-          try { confeti(document.querySelector('.so-tablero')); } catch (e) { /* sin confeti */ }   // F1103: celebración al encontrar cada palabra
+          try { confeti(document.querySelector('.so-tablero')); } catch (e) { /* sin confeti */ }
           aviso = '¡Encontraste «' + w + '»!';
           if (halladas.size === colocadas.length) { fin(); return; }
         } else { aviso = 'Sigue: «' + s + '»'; son('tic'); }
         pintar();
       };
       const fin = () => {
+        const est = (pistas + deshaceres) === 0 ? 3 : (pistas + deshaceres) <= 2 ? 2 : 1;
+        const p = progreso(); p[idx] = Math.max(p[idx] || 0, est); guardarProgreso(p);
         juegoTerminar('sopa', colocadas.length, colocadas.length);
-        $('#pantalla').innerHTML = `${cabecera('Sopa del Vivero', 'Juegos')}<div class="ju">${JU_HERO(5)}<h2 class="ju-fin">Encontraste las ${colocadas.length} palabras</h2><p class="suave">${colocadas.map((w) => esc(w)).join(' · ')}</p>
-          <button type="button" class="ju-sig" id="soOtra">Jugar otra vez <span aria-hidden="true">›</span></button></div>`;
-        volverA('Juegos', menu); $('#soOtra').onclick = () => jugar(tema);
+        const sig = idx + 1 < SOPA_MAPAS.length * 6 ? idx + 1 : null;
+        $('#pantalla').innerHTML = `${cabecera('Sopa del Vivero', 'Juegos')}<div class="ju so-ju" data-mapa="${m.id}">${JU_HERO(5)}<h2 class="ju-fin">Nivel ${k + 1} completo</h2>
+          <p class="so-estrellas" aria-label="${est} estrellas">${'★'.repeat(est)}${'☆'.repeat(3 - est)}</p>
+          <p class="suave">${est === 3 ? 'Sin pistas. ¡Muy bien!' : 'Puedes repetir el nivel para ganar más estrellas.'}</p>
+          ${sig !== null && abierto(sig) ? `<button type="button" class="ju-sig" id="soSig">Siguiente nivel <span aria-hidden="true">›</span></button>` : ''}
+          <button type="button" class="btn sec" id="soVolver">Volver al camino</button>
+          <button type="button" class="btn sec" id="soOtra">Repetir este nivel</button></div>`;
+        volverA('Juegos', camino);
+        const s = $('#soSig'); if (s) s.onclick = () => jugarNivel(sig);
+        $('#soVolver').onclick = camino; $('#soOtra').onclick = () => jugarNivel(idx);
       };
       pintar();
     };
-    menu();
+    camino();
   }
   function vistaJuegos() {
     const j = leer(K_JUEGOS) || { n: 0 };
@@ -3952,6 +4070,36 @@
     } catch (e) { /* sin orden: el Perfil se ve como antes */ }
   }
   try { if (window.MutationObserver && $('#pantalla')) new MutationObserver(pfOrdenar).observe($('#pantalla'), { childList: true }); } catch (e) { /* nada */ }
+  // F1111 · Palabra ordenada (punto 1): «Hoy» queda a la vista y cada sección (h2) se pliega; «Tu Palabra» abierta por defecto
+  const palabraAbierta = new Set(['Tu Palabra']);
+  function palabraOrdenar() {
+    try {
+      const p = $('#pantalla'); if (!p || p.querySelector('.pal-grupo') || !/^Hoy$/.test(((p.querySelector('h1') || {}).textContent || '').trim())) return;
+      Array.from(p.querySelectorAll(':scope > h2')).forEach((h) => {
+        const nombre = h.textContent.trim(), d = document.createElement('details'), sm = document.createElement('summary');
+        d.className = 'pf-grupo pal-grupo'; d.open = palabraAbierta.has(nombre); sm.textContent = nombre; d.appendChild(sm);
+        h.parentNode.insertBefore(d, h);
+        let x = h.nextSibling; while (x && !(x.nodeType === 1 && x.matches && x.matches('h2'))) { const nx = x.nextSibling; d.appendChild(x); x = nx; }
+        h.remove(); d.addEventListener('toggle', () => { if (d.open) palabraAbierta.add(nombre); else palabraAbierta.delete(nombre); });
+      });
+    } catch (e) { /* sin orden: Palabra se ve como antes */ }
+  }
+  try { if (window.MutationObserver && $('#pantalla')) new MutationObserver(palabraOrdenar).observe($('#pantalla'), { childList: true }); } catch (e) { /* nada */ }
+  // F1109 · Vida ordenada: cada sección (h2) se pliega con su contenido; «Con Dios y conmigo» queda abierta. Igual que el Perfil: los botones siguen funcionando.
+  const vidaAbierta = new Set(['Con Dios y conmigo']);
+  function vidaOrdenar() {
+    try {
+      const p = $('#pantalla'); if (!p || p.querySelector('.vida-grupo') || !/Vivir lo que aprendemos/.test((p.querySelector('h1') || {}).textContent || '')) return;
+      Array.from(p.querySelectorAll(':scope > h2.sep')).forEach((h) => {
+        const nombre = h.textContent.trim(), d = document.createElement('details'), sm = document.createElement('summary');
+        d.className = 'pf-grupo vida-grupo'; d.open = vidaAbierta.has(nombre); sm.textContent = nombre; d.appendChild(sm);
+        h.parentNode.insertBefore(d, h);
+        let x = h.nextSibling; while (x && !(x.nodeType === 1 && x.matches && x.matches('h2.sep'))) { const nx = x.nextSibling; d.appendChild(x); x = nx; }
+        h.remove(); d.addEventListener('toggle', () => { if (d.open) vidaAbierta.add(nombre); else vidaAbierta.delete(nombre); });
+      });
+    } catch (e) { /* sin orden: Vida se ve como antes */ }
+  }
+  try { if (window.MutationObserver && $('#pantalla')) new MutationObserver(vidaOrdenar).observe($('#pantalla'), { childList: true }); } catch (e) { /* nada */ }
   (function arranque() {                                    // la pantalla de apertura (HTML + CSS) se quita sola; la 2.ª vez en la misma sesión ni se ve
     try {
       const el = $('#arranque'); if (!el) return;

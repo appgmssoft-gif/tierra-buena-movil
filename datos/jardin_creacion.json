@@ -1,0 +1,553 @@
+{
+  "_nota": "Preguntas conceptuales basadas en Génesis 1. El texto bíblico no se cita; cada pregunta remite a su pasaje.",
+  "dias": [
+    {
+      "titulo": "Luz",
+      "subtitulo": "Primer día: luz y oscuridad",
+      "ref": "Génesis 1:3-5",
+      "creaciones": [
+        "La luz",
+        "El día y la noche"
+      ],
+      "preguntas": [
+        {
+          "p": "¿Qué creó Dios el primer día?",
+          "o": [
+            "La luz",
+            "Las plantas",
+            "Los peces",
+            "Los animales"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Qué separó Dios el primer día?",
+          "o": [
+            "La luz de la oscuridad",
+            "El cielo de la tierra",
+            "El mar de la tierra seca",
+            "El sol de la luna"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Qué nombres dio Dios a la luz y a la oscuridad?",
+          "o": [
+            "Día a la luz y noche a la oscuridad",
+            "Cielo a la luz y mar a la oscuridad",
+            "Vida a la luz y muerte a la oscuridad",
+            "Tierra a la luz y agua a la oscuridad"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Qué dijo el relato al final del primer día?",
+          "o": [
+            "Hubo tarde y mañana: el primer día",
+            "Descansó Dios",
+            "Hizo el hombre",
+            "Llegó el diluvio"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Cuál NO se creó el primer día?",
+          "o": [
+            "La luz",
+            "La separación de la luz y la oscuridad",
+            "Las aves",
+            "El día y la noche"
+          ],
+          "c": 2
+        },
+        {
+          "p": "¿Con qué habló Dios para crear la luz?",
+          "o": [
+            "Con su palabra",
+            "Con una lluvia fuerte",
+            "Con un temblor",
+            "Con un viento muy fuerte"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Qué hizo Dios al ver la luz?",
+          "o": [
+            "Vio que era buena",
+            "La apagó",
+            "La guardó en una caja",
+            "La mandó a la noche"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Qué creó Dios al principio de todo, según Génesis 1:1?",
+          "o": [
+            "Los cielos y la tierra",
+            "Al ser humano",
+            "El mar",
+            "Las plantas"
+          ],
+          "c": 0
+        }
+      ]
+    },
+    {
+      "titulo": "Cielos y aguas",
+      "subtitulo": "Segundo día: el firmamento",
+      "ref": "Génesis 1:6-8",
+      "creaciones": [
+        "El firmamento o cielo",
+        "Las aguas separadas"
+      ],
+      "preguntas": [
+        {
+          "p": "¿Qué creó Dios el segundo día?",
+          "o": [
+            "El firmamento, o cielo",
+            "Los peces",
+            "El ser humano",
+            "Las plantas"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Qué separó Dios el segundo día?",
+          "o": [
+            "Las aguas de arriba y las de abajo",
+            "La luz de la noche",
+            "La tierra del cielo",
+            "El sol de la luna"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Cómo llamó Dios al firmamento?",
+          "o": [
+            "Cielo",
+            "Mar",
+            "Tierra",
+            "Luz"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Qué dijo el relato al final del segundo día?",
+          "o": [
+            "Hubo tarde y mañana: el segundo día",
+            "Hubo fuego y viento",
+            "Descansó Dios",
+            "Llovió cuarenta días"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Cuál NO sucedió el segundo día?",
+          "o": [
+            "Se separaron las aguas",
+            "Se hizo el firmamento",
+            "Aparecieron las plantas",
+            "Se llamó cielo al firmamento"
+          ],
+          "c": 2
+        },
+        {
+          "p": "¿Dónde quedaron las aguas separadas por el firmamento?",
+          "o": [
+            "Unas arriba y otras abajo",
+            "Todas en un mismo lago",
+            "En las montañas",
+            "En el desierto"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Cuántos días de creación menciona el relato en total?",
+          "o": [
+            "Siete",
+            "Cinco",
+            "Diez",
+            "Tres"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Qué dio Dios el segundo día?",
+          "o": [
+            "Un firmamento o espacio",
+            "Una montaña",
+            "Un desierto",
+            "Un río"
+          ],
+          "c": 0
+        }
+      ]
+    },
+    {
+      "titulo": "Tierra y plantas",
+      "subtitulo": "Tercer día: tierra seca y vida verde",
+      "ref": "Génesis 1:9-13",
+      "creaciones": [
+        "La tierra seca",
+        "Los mares",
+        "Las plantas y los árboles"
+      ],
+      "preguntas": [
+        {
+          "p": "¿Qué apareció el tercer día?",
+          "o": [
+            "La tierra seca",
+            "El sol",
+            "Las aves",
+            "Los animales"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Cómo se llamaron las aguas reunidas el tercer día?",
+          "o": [
+            "Mares",
+            "Nubes",
+            "Ríos del cielo",
+            "Lagos del desierto"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Qué hizo brotar la tierra el tercer día?",
+          "o": [
+            "Hierba, plantas y árboles",
+            "Peces",
+            "Estrellas",
+            "Aves"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Qué tipo de árboles menciona el relato?",
+          "o": [
+            "Árboles que dan fruto",
+            "Árboles de metal",
+            "Árboles que hablan",
+            "Árboles sin semilla"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Cuál NO apareció el tercer día?",
+          "o": [
+            "La tierra seca",
+            "Los mares",
+            "Las plantas",
+            "El sol"
+          ],
+          "c": 3
+        },
+        {
+          "p": "¿Qué dijo el relato al final del tercer día?",
+          "o": [
+            "Hubo tarde y mañana: el tercer día",
+            "Hubo lluvia cuarenta días",
+            "Se fue el mar",
+            "Se apagó la luz"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Cómo se producían las plantas según el relato?",
+          "o": [
+            "Con semilla según su especie",
+            "Con flores de plástico",
+            "Con frutas de vidrio",
+            "Con piedras pintadas"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Qué hizo Dios al ver lo que había creado ese día?",
+          "o": [
+            "Vio que era bueno",
+            "Lo destruyó",
+            "Lo escondió",
+            "Se fue"
+          ],
+          "c": 0
+        }
+      ]
+    },
+    {
+      "titulo": "Sol, luna y estrellas",
+      "subtitulo": "Cuarto día: las luminarias",
+      "ref": "Génesis 1:14-19",
+      "creaciones": [
+        "El sol",
+        "La luna",
+        "Las estrellas"
+      ],
+      "preguntas": [
+        {
+          "p": "¿Qué creó Dios el cuarto día?",
+          "o": [
+            "El sol, la luna y las estrellas",
+            "Los peces",
+            "Las plantas",
+            "Los animales"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Para qué sirven las luminarias según el relato?",
+          "o": [
+            "Separar el día de la noche y marcar tiempos",
+            "Hacer llover",
+            "Guardar el agua",
+            "Dar frutos"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Qué luz gobierna el día?",
+          "o": [
+            "La luz mayor, el sol",
+            "La luna sola",
+            "Las estrellas",
+            "Las nubes"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Qué luz gobierna la noche?",
+          "o": [
+            "La luz menor, la luna",
+            "El sol",
+            "Los peces",
+            "El viento"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Cuál NO se creó el cuarto día?",
+          "o": [
+            "El sol",
+            "La luna",
+            "Las estrellas",
+            "Las aves"
+          ],
+          "c": 3
+        },
+        {
+          "p": "¿Qué marcan las luminarias según el relato?",
+          "o": [
+            "Señales, estaciones, días y años",
+            "Colores del mar",
+            "Sonidos del viento",
+            "Olas del río"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Qué dijo el relato al final del cuarto día?",
+          "o": [
+            "Hubo tarde y mañana: el cuarto día",
+            "Hubo un diluvio",
+            "Se cerró el cielo",
+            "Descansó el mar"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Qué dijo Dios al ver las luminarias?",
+          "o": [
+            "Que eran buenas",
+            "Que se apagaran",
+            "Que se escondieran",
+            "Que se volvieran piedra"
+          ],
+          "c": 0
+        }
+      ]
+    },
+    {
+      "titulo": "Aves y peces",
+      "subtitulo": "Quinto día: el mar y el cielo",
+      "ref": "Génesis 1:20-23",
+      "creaciones": [
+        "Los peces",
+        "Las aves"
+      ],
+      "preguntas": [
+        {
+          "p": "¿Qué creó Dios el quinto día?",
+          "o": [
+            "Peces en el mar y aves en el cielo",
+            "Animales de la tierra",
+            "Plantas",
+            "Personas"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Qué llenaron las aguas el quinto día?",
+          "o": [
+            "Seres vivientes: peces",
+            "Estrellas",
+            "Montañas",
+            "Nubes de fuego"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Qué volaba el quinto día?",
+          "o": [
+            "Las aves",
+            "Los peces",
+            "Las plantas",
+            "Las piedras"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Qué bendición recibieron los seres del quinto día?",
+          "o": [
+            "Ser fecundos y multiplicarse",
+            "Volar sin parar",
+            "Vivir sin agua",
+            "Nunca morir"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Cuál NO se creó el quinto día?",
+          "o": [
+            "Los peces",
+            "Las aves",
+            "Los animales de la tierra",
+            "Los seres del mar"
+          ],
+          "c": 2
+        },
+        {
+          "p": "¿Qué dijo el relato al final del quinto día?",
+          "o": [
+            "Hubo tarde y mañana: el quinto día",
+            "Hubo un eclipse",
+            "Se secó el mar",
+            "Llovió sin parar"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿En qué lugares viven los seres del quinto día?",
+          "o": [
+            "En el mar y en el cielo",
+            "En la tierra seca",
+            "En las cuevas",
+            "En el desierto"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Qué hizo Dios al ver a los seres del quinto día?",
+          "o": [
+            "Vio que era bueno",
+            "Los escondió",
+            "Los destruyó",
+            "Los dejó sin nombre"
+          ],
+          "c": 0
+        }
+      ]
+    },
+    {
+      "titulo": "Animales y personas",
+      "subtitulo": "Sexto día: la tierra llena de vida",
+      "ref": "Génesis 1:24-31",
+      "creaciones": [
+        "Los animales de la tierra",
+        "El ser humano"
+      ],
+      "preguntas": [
+        {
+          "p": "¿Qué creó Dios el sexto día?",
+          "o": [
+            "Animales de la tierra y al ser humano",
+            "Peces",
+            "Luces del cielo",
+            "Plantas"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Qué tipos de animales terrestres menciona el relato?",
+          "o": [
+            "Ganado, reptiles y animales salvajes",
+            "Solo peces",
+            "Solo aves",
+            "Solo insectos del mar"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿A imagen de quién fue creado el ser humano?",
+          "o": [
+            "A imagen de Dios",
+            "A imagen del sol",
+            "A imagen de un animal",
+            "A imagen del mar"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Qué responsabilidad recibió el ser humano?",
+          "o": [
+            "Cuidar la creación",
+            "Construir un barco",
+            "Hacer un castillo",
+            "Subir montañas"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Cuál NO se creó el sexto día?",
+          "o": [
+            "Los animales de la tierra",
+            "El ser humano",
+            "Las luminarias",
+            "El ganado"
+          ],
+          "c": 2
+        },
+        {
+          "p": "¿Cómo fueron creados el hombre y la mujer según el relato?",
+          "o": [
+            "Varón y mujer",
+            "Dos ángeles",
+            "Un árbol",
+            "Una piedra"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Qué dijo el relato al ver todo lo creado?",
+          "o": [
+            "Que era muy bueno",
+            "Que se acabó la luz",
+            "Que llovió",
+            "Que se terminó la tierra"
+          ],
+          "c": 0
+        },
+        {
+          "p": "¿Qué alimento se dio a personas y animales según el relato?",
+          "o": [
+            "Plantas y frutos",
+            "Peces asados",
+            "Piedras",
+            "Viento"
+          ],
+          "c": 0
+        }
+      ]
+    }
+  ]
+}

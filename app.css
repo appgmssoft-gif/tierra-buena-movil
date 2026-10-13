@@ -1,6 +1,6 @@
 /* app.css — F856 (MOV2a). Criterios de docs/IDEAS_CONEXION_MINISTERIO_IGLESIA.md §12:
    táctil (>=48px), letra >=16px en campos, zona segura, sin :hover, movimiento discreto. */
-:root{--papel:#faf5ea;--tinta:#2b2218;--suave:#6b5d4a;--oro:#b8893a;--verde:#3f5d3a;--tarjeta:#fffdf7;--linea:#e6dcc4;--error:#a33a2a;
+:root{--papel:#faf5ea;--tinta:#2b2218;--suave:#5c5040;--oro:#b8893a;--verde:#3f5d3a;--tarjeta:#fffdf7;--linea:#e6dcc4;--error:#a33a2a;
   --sa-t:env(safe-area-inset-top,0px);--sa-b:env(safe-area-inset-bottom,0px);--sa-l:env(safe-area-inset-left,0px);--sa-r:env(safe-area-inset-right,0px)}
 @media (prefers-color-scheme:dark){:root{--papel:#17140f;--tinta:#f1e9d8;--suave:#b7a98f;--tarjeta:#201b14;--linea:#3a3224;--verde:#8fb487;--oro:#d4a959;--error:#e48a78}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
