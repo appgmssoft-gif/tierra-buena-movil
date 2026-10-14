@@ -9,15 +9,15 @@ body.tb-full #pantalla { padding-bottom: 0; }
 .tbl-top { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
 .tbl-top .volver { margin: 0; white-space: nowrap; flex-shrink: 0; }
 .tbl-tit { display: flex; align-items: center; gap: 8px; min-width: 0; }
-.tbl-tit b { display: block; font-size: 1rem; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.tbl-tit small { display: block; font-size: .78rem; opacity: .85; }
+.tbl-tit b { display: block; font-size: 1.12rem; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tbl-tit small { display: block; font-size: .92rem; opacity: .9; }
 .tbl-icono { font-size: 26px; line-height: 1; }
 .tbl-luces { display: flex; gap: 6px; justify-content: center; margin: 6px 0 2px; flex-shrink: 0; }
 .tbl-luz { width: 12px; height: 12px; border-radius: 50%; background: #6b5b48; opacity: .35; box-shadow: inset 0 0 0 1px rgba(0,0,0,.2); transition: opacity .4s, box-shadow .4s; }
 .tbl-luz.on { background: radial-gradient(circle, #fff6c4, #ffc94a); opacity: 1; box-shadow: 0 0 10px #ffd65a; }
 .tbl *, .tbl-confeti span { box-sizing: border-box; }
-.tbl-estado { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; font-size: .85rem; margin: 4px 0 6px; flex-shrink: 0; }
-.tbl-chip { background: color-mix(in srgb, var(--tb-madera) 14%, transparent); border-radius: 999px; padding: 4px 10px; font-weight: 600; }
+.tbl-estado { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; font-size: 1rem; margin: 4px 0 6px; flex-shrink: 0; }
+.tbl-chip { background: color-mix(in srgb, var(--tb-madera) 14%, transparent); border-radius: 999px; padding: 5px 12px; font-weight: 700; font-size: 1rem; }
 .tbl-chip.pulso { animation: tblPulso .6s ease; }
 
 /* Bola de cristal: cuenta lo que pasó en la última casilla */
@@ -25,19 +25,20 @@ body.tb-full #pantalla { padding-bottom: 0; }
   background: radial-gradient(circle at 30% 24%, rgba(255,255,255,.55), rgba(120,190,220,.22) 26%, rgba(18,48,70,.92) 62%, #0b1d2b);
   box-shadow: inset 0 0 30px rgba(180,230,255,.45), 0 0 0 5px #5a3d22, 0 0 0 8px var(--tb-oro), 0 0 36px color-mix(in srgb, var(--tb-aura-b) 55%, transparent); }
 /* Magia: un anillo de luz que gira y una neblina que se mueve, todo dentro del círculo */
-.tbl-bola::before { content: ""; position: absolute; inset: 0; z-index: 0; border-radius: 50%; pointer-events: none;
+.tbl-bola::before { content: ""; position: absolute; inset: 0; z-index: 0; border-radius: 50%; pointer-events: none; overflow: hidden;
   background: conic-gradient(from 0deg, transparent 0 8%, var(--tb-aura-b) 16%, transparent 26% 52%, #ffffff 62%, transparent 72% 100%);
   -webkit-mask: radial-gradient(circle closest-side, transparent 84%, #000 90%, #000 97%, transparent 100%); mask: radial-gradient(circle closest-side, transparent 84%, #000 90%, #000 97%, transparent 100%);
   opacity: .8; animation: tblAura 7s linear infinite; }
-.tbl-bola::after { content: ""; position: absolute; inset: -20%; z-index: 0; pointer-events: none; opacity: .5; mix-blend-mode: screen;
-  background: radial-gradient(circle at 35% 60%, color-mix(in srgb, var(--tb-aura-b) 70%, transparent), transparent 42%), radial-gradient(circle at 68% 34%, rgba(255,255,255,.6), transparent 36%);
+.tbl-bola::after { content: ""; position: absolute; inset: 0; z-index: 0; border-radius: 50%; pointer-events: none; opacity: .5;
+  background: radial-gradient(circle closest-side at 35% 60%, color-mix(in srgb, var(--tb-aura-b) 70%, transparent), transparent 70%), radial-gradient(circle closest-side at 68% 34%, rgba(255,255,255,.6), transparent 60%);
   animation: tblNiebla 9s ease-in-out infinite alternate; }
-.tbl-aura { position: absolute; inset: 0; z-index: 0; border-radius: 50%; pointer-events: none; background: radial-gradient(circle at 50% 50%, transparent 55%, color-mix(in srgb, var(--tb-aura-b) 35%, transparent) 80%, transparent 100%); }
-.tbl-bola p { margin: 0; position: relative; z-index: 2; max-height: 100%; display: -webkit-box; -webkit-line-clamp: 9; -webkit-box-orient: vertical; overflow: hidden; }
+.tbl-aura { position: absolute; inset: 0; z-index: 0; border-radius: 50%; pointer-events: none; background: radial-gradient(circle closest-side, transparent 60%, color-mix(in srgb, var(--tb-aura-b) 40%, transparent) 88%, transparent 100%); animation: tblRespira 3.2s ease-in-out infinite; }
+@keyframes tblRespira { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+.tbl-bola p { margin: 0; position: relative; z-index: 2; max-height: 100%; display: -webkit-box; -webkit-line-clamp: 8; -webkit-box-orient: vertical; overflow: hidden; }
 .tbl-destello { position: absolute; left: var(--x); top: var(--y); width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%; background: #fff; z-index: 1; pointer-events: none; opacity: 0;
   box-shadow: 0 0 8px var(--tb-aura-b), 0 0 3px #fff; animation: tblDestella 1.4s ease-in-out forwards; }
-.tbl-bola b { display: block; color: #ffe9a8; font-size: .86rem; line-height: 1.2; margin-bottom: 3px; text-shadow: 0 1px 3px #000, 0 0 10px rgba(0,0,0,.6); }
-.tbl-bola span { display: block; font-size: .7rem; line-height: 1.25; text-shadow: 0 1px 3px #000; }
+.tbl-bola b { display: block; color: #ffe9a8; font-size: 1.1rem; line-height: 1.2; margin-bottom: 3px; text-shadow: 0 1px 3px #000, 0 0 10px rgba(0,0,0,.6); }
+.tbl-bola span { display: block; font-size: .98rem; line-height: 1.3; text-shadow: 0 1px 3px #000; }
 .tbl-bola.salta::after { opacity: .9; }
 .tbl-bola.salta { animation: tblSalta .5s ease; }
 
@@ -83,7 +84,7 @@ body.tb-full #pantalla { padding-bottom: 0; }
 .tbl-aviso[hidden] { display: none; }
 .tbl-aviso-caja { background: #fbf4df; color: var(--tb-tinta); border-radius: 18px; padding: 18px; text-align: center; display: grid; gap: 8px; justify-items: center; max-width: 320px; animation: tblEntra .5s cubic-bezier(.2,.9,.3,1.15); }
 .tbl-aviso-caja b { font-size: 1.15rem; }
-.tbl-aviso-caja p { margin: 0; font-size: .92rem; }
+.tbl-aviso-caja p { margin: 0; font-size: 1.05rem; line-height: 1.4; }
 
 /* Dados 3D: cubo con seis caras, sombra que se encoge al saltar */
 .tbl-bandeja { display: flex; gap: 18px; justify-content: center; align-items: flex-end; margin: 4px 0 2px; min-height: 66px; flex-shrink: 0; }
@@ -109,21 +110,21 @@ body.tb-full #pantalla { padding-bottom: 0; }
 .tbl-panel { display: grid; gap: 10px; justify-items: center; margin-top: 4px; flex-shrink: 0; max-height: 30dvh; overflow-y: auto; animation: tblEntra .4s ease both; }
 .tbl-panel[data-modo="pregunta"] { justify-items: stretch; max-height: 52dvh; }
 .tbl-acciones { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
-.tbl-btn { appearance: none; border: 0; border-radius: 16px; padding: 12px 20px; min-height: 48px; font: inherit; font-size: 1rem; font-weight: 700; color: var(--tb-tinta); cursor: pointer;
+.tbl-btn { appearance: none; border: 0; border-radius: 16px; padding: 14px 22px; min-height: 52px; font: inherit; font-size: 1.12rem; font-weight: 700; color: var(--tb-tinta); cursor: pointer;
   background: linear-gradient(180deg, #ffe9a8, #d9a441); box-shadow: 0 5px 0 #9c7140, 0 10px 18px rgba(0,0,0,.25); transition: transform .1s ease, box-shadow .1s ease; }
 .tbl-btn:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 #9c7140; }
 .tbl-btn:disabled { opacity: .45; cursor: default; }
 .tbl-btn.sec { background: linear-gradient(180deg, #d8efd0, #7cc08a); box-shadow: 0 5px 0 #4f8a55, 0 10px 18px rgba(0,0,0,.25); }
 .tbl-btn.sec.elegida { outline: 3px solid var(--tb-oro); }
-.tbl-nota { margin: 0; font-size: .8rem; opacity: .8; text-align: center; }
+.tbl-nota { margin: 0; font-size: .95rem; opacity: .85; text-align: center; }
 .tbl-preg { display: grid; gap: 10px; background: color-mix(in srgb, var(--tb-madera) 10%, transparent); border-radius: 18px; padding: 14px; transition: box-shadow .3s ease; }
 .tbl-preg.ok { animation: tblBien .7s ease; }
 .tbl-preg.mal { animation: tblMal .45s ease; }
-.tbl-preg-cab { margin: 0; font-size: .8rem; opacity: .8; }
-.tbl-preg-txt { margin: 0; font-weight: 700; font-size: 1.05rem; }
+.tbl-preg-cab { margin: 0; font-size: 1rem; opacity: .85; line-height: 1.35; }
+.tbl-preg-txt { margin: 0; font-weight: 700; font-size: 1.22rem; line-height: 1.35; }
 .tbl-opc { display: grid; gap: 8px; }
-.tbl-opc .tbl-btn { width: 100%; font-size: .95rem; text-align: left; }
-.tbl-preg-res { margin: 0; font-size: .95rem; }
+.tbl-opc .tbl-btn { width: 100%; font-size: 1.08rem; line-height: 1.3; text-align: left; padding: 14px 16px; }
+.tbl-preg-res { margin: 0; font-size: 1.05rem; line-height: 1.4; }
 .tbl-preg .tbl-btn:not(.sec) { justify-self: center; margin-top: 4px; }
 
 /* Confeti */
@@ -158,7 +159,7 @@ body.tb-full #pantalla { padding-bottom: 0; }
 /* Minijuegos (capa sobre el tablero) */
 .tbl-mini { position: absolute; inset: 12px; z-index: 7; border-radius: 20px; background: rgba(12,22,18,.97); color: #f7f3e6; padding: 14px; display: flex; flex-direction: column; gap: 8px; align-items: center; text-align: center; }
 .tbl-mini > b { font-size: 1.05rem; color: #ffe9a8; }
-.tbl-mini > small { font-size: .85rem; opacity: .9; }
+.tbl-mini > small { font-size: 1rem; opacity: .95; }
 .tbl-mem { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; width: 100%; max-width: 360px; margin: 6px 0; }
 .tbl-carta { position: relative; aspect-ratio: 1; border: 0; border-radius: 12px; font-size: 22px; color: #f7f3e6; cursor: pointer; background: linear-gradient(160deg, #6f8a5f, #3f5a3a); box-shadow: 0 3px 0 #1d2a19; transition: background .3s; }
 .tbl-carta-c { display: none; }
@@ -169,7 +170,7 @@ body.tb-full #pantalla { padding-bottom: 0; }
 .tbl-cosecha { position: relative; flex: 1; width: 100%; min-height: 200px; overflow: hidden; border-radius: 14px; background: rgba(255,255,255,.06); }
 .tbl-caida { position: absolute; top: -12%; background: none; border: 0; font-size: 30px; padding: 0; cursor: pointer; animation-name: tblCaeItem; animation-timing-function: linear; animation-fill-mode: forwards; }
 @keyframes tblCaeItem { to { top: 104%; } }
-.tbl-marca { margin: 0; font-weight: 700; min-height: 1.4em; }
+.tbl-marca { margin: 0; font-weight: 700; font-size: 1.05rem; min-height: 1.4em; }
 .tbl-mini .tbl-btn { margin-top: 4px; }
 
 /* F1127 · Arreo de ovejas */
@@ -187,7 +188,7 @@ body.tb-full #pantalla { padding-bottom: 0; }
 /* F1128 · Con una pregunta: el tablero se encoge, los dados se ocultan y el panel se desplaza por dentro (todo cabe en la pantalla) */
 .tbl.en-pregunta .tbl-bandeja { display: none; }
 .tbl.en-pregunta .tbl-mesa { flex: 1 1 0; min-height: 96px; }
-.tbl.en-pregunta .tbl-panel[data-modo="pregunta"] { max-height: 58dvh; flex: 0 0 auto; }
+.tbl.en-pregunta .tbl-panel[data-modo="pregunta"] { max-height: 55dvh; flex: 0 0 auto; }
 
 /* F1128 · Con una pregunta: se muestra solo una franja con la bola (sin casillas) para que quepa la pregunta */
 .tbl.en-pregunta .tbl-mesa { flex: 0 0 auto; height: 108px; min-height: 0; margin: 2px auto; }
@@ -199,3 +200,9 @@ body.tb-full #pantalla { padding-bottom: 0; }
 /* F1128 · Símbolos ilustrados de la interfaz */
 .tbl-ico { width: 18px; height: 18px; display: inline-block; vertical-align: -4px; }
 .tbl-ico-tema { width: 30px; height: 30px; display: block; }
+
+/* F1130 · Efecto al acertar: un anillo de luz que se expande desde la pregunta */
+.tbl-preg.ok::after { content: ""; position: absolute; inset: -6px; border-radius: 22px; border: 3px solid #ffe9a8; pointer-events: none; animation: tblOnda .8s ease-out forwards; }
+.tbl-preg { position: relative; }
+@keyframes tblOnda { from { opacity: .9; transform: scale(.96); } to { opacity: 0; transform: scale(1.08); } }
+@media (prefers-reduced-motion: reduce) { .tbl-preg.ok::after, .tbl-bola::before, .tbl-bola::after, .tbl-aura { animation: none !important; } }

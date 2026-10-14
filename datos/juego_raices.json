@@ -21,7 +21,7 @@
    "cod": "GEN",
    "cap": 1,
    "v": 27,
-   "p": "Según este versículo, ¿a imagen de quién fue creado el ser humano?",
+   "p": "¿A imagen de quién fue creado el ser humano?",
    "o": [
     "De los ángeles",
     "De Dios",
@@ -93,10 +93,10 @@
    "v": 3,
    "p": "¿Qué le regaló Israel (Jacob) a su hijo José?",
    "o": [
-    "Un anillo",
+    "Un anillo de oro",
     "Una túnica de diversos colores",
-    "Un rebaño",
-    "Una espada"
+    "Un rebaño de ovejas",
+    "Una espada de bronce"
    ],
    "c": 1
   },
@@ -107,10 +107,10 @@
    "v": 21,
    "p": "¿Qué pasó cuando Moisés extendió su mano sobre el mar?",
    "o": [
-    "El mar se abrió por medio de un fuerte viento",
-    "Cayó maná del cielo",
-    "Se oscureció el cielo",
-    "Apareció una nube"
+    "El mar se abrió por un fuerte viento del este",
+    "Cayó maná del cielo sobre el campo",
+    "Se oscureció el cielo con una nube",
+    "Apareció una columna de humo"
    ],
    "c": 0
   },
@@ -119,7 +119,7 @@
    "cod": "EXO",
    "cap": 20,
    "v": 12,
-   "p": "¿A quiénes dice este mandamiento que se debe honrar?",
+   "p": "¿A quiénes manda honrar el quinto mandamiento?",
    "o": [
     "A los ancianos",
     "A los reyes",
@@ -133,7 +133,7 @@
    "cod": "JOS",
    "cap": 1,
    "v": 9,
-   "p": "¿Qué le dice Dios a Josué que sea?",
+   "p": "¿Cómo le pide Dios a Josué que sea?",
    "o": [
     "Esforzado y valiente",
     "Rico y poderoso",
@@ -161,7 +161,7 @@
    "cod": "1SA",
    "cap": 16,
    "v": 7,
-   "p": "Según este versículo, ¿qué mira Jehová?",
+   "p": "¿Qué mira Jehová, según 1 Samuel 16:7?",
    "o": [
     "La apariencia",
     "La estatura",
@@ -189,7 +189,7 @@
    "cod": "PSA",
    "cap": 23,
    "v": 1,
-   "p": "¿Cómo llama el salmista a Jehová en este salmo?",
+   "p": "¿Cómo llama el salmista a Jehová en el Salmo 23?",
    "o": [
     "Mi rey",
     "Mi pastor",
@@ -203,7 +203,7 @@
    "cod": "PSA",
    "cap": 46,
    "v": 1,
-   "p": "¿Qué es Dios para nosotros, según este versículo?",
+   "p": "¿Qué es Dios para nosotros?",
    "o": [
     "Amparo y fortaleza",
     "Castigo y temor",
@@ -231,12 +231,12 @@
    "cod": "PSA",
    "cap": 133,
    "v": 1,
-   "p": "¿Qué dice este salmo que es bueno y delicioso?",
+   "p": "¿Qué dice el Salmo 133 que es bueno y delicioso?",
    "o": [
-    "Viajar solo",
-    "Habitar los hermanos juntos en armonía",
-    "Guardar silencio",
-    "Acumular riquezas"
+    "Que cada uno viaje por su lado",
+    "Que los hermanos vivan juntos en armonía",
+    "Que todos guarden silencio siempre",
+    "Que cada cual acumule sus riquezas"
    ],
    "c": 1
   },
@@ -259,7 +259,7 @@
    "cod": "PRO",
    "cap": 15,
    "v": 1,
-   "p": "¿Qué hace la blanda respuesta?",
+   "p": "¿Qué hace la respuesta suave?",
    "o": [
     "Aumenta el enojo",
     "Quita la ira",
@@ -289,10 +289,10 @@
    "v": 22,
    "p": "¿Qué hizo Dios para librar a Daniel en el foso?",
    "o": [
-    "Abrió la tierra",
-    "Envió su ángel que cerró la boca de los leones",
-    "Apagó el fuego",
-    "Hizo caer los muros"
+    "Abrió la tierra bajo sus pies",
+    "Envió su ángel, que cerró la boca de los leones",
+    "Apagó el fuego del horno ardiente",
+    "Hizo caer los muros de la ciudad"
    ],
    "c": 1
   },
@@ -303,10 +303,10 @@
    "v": 17,
    "p": "¿Cuánto tiempo estuvo Jonás en el vientre del gran pez?",
    "o": [
-    "Un día",
+    "Un día entero dentro del pez",
     "Tres días y tres noches",
-    "Siete días",
-    "Cuarenta días"
+    "Siete días en el mar profundo",
+    "Cuarenta días en la costa"
    ],
    "c": 1
   },
@@ -315,7 +315,7 @@
    "cod": "MAT",
    "cap": 5,
    "v": 9,
-   "p": "¿A quiénes llama bienaventurados este versículo?",
+   "p": "¿A quiénes llama bienaventurados Jesús en Mateo 5:9?",
    "o": [
     "A los ricos",
     "A los pacificadores",
@@ -329,12 +329,12 @@
    "cod": "MAT",
    "cap": 6,
    "v": 9,
-   "p": "¿Cómo comienza esta oración que Jesús enseñó?",
+   "p": "¿Con qué palabras comienza la oración que Jesús enseñó?",
    "o": [
-    "Señor mío",
-    "Padre nuestro que estás en los cielos",
-    "Dios de Abraham",
-    "Santo, santo, santo"
+    "«Señor mío, escúchame desde lejos»",
+    "«Padre nuestro que estás en los cielos»",
+    "«Dios de Abraham, Isaac y Jacob»",
+    "«Santo, santo, santo, Señor del cielo»"
    ],
    "c": 1
   },
@@ -343,7 +343,7 @@
    "cod": "MAT",
    "cap": 7,
    "v": 12,
-   "p": "¿Qué enseña este versículo que hagamos con los demás?",
+   "p": "¿Qué enseña Jesús que hagamos con los demás?",
    "o": [
     "Lo mismo que queremos que hagan con nosotros",
     "Lo que ellos hacen con nosotros",
@@ -359,10 +359,10 @@
    "v": 8,
    "p": "¿Qué pasó con la semilla que cayó en buena tierra?",
    "o": [
-    "Se secó",
-    "Fue comida por las aves",
-    "Dio fruto, a ciento, a sesenta y a treinta por uno",
-    "Quedó entre espinos"
+    "Se secó bajo el sol del mediodía",
+    "Las aves se la comieron del suelo",
+    "Dio fruto: cien, sesenta o treinta por uno",
+    "Quedó ahogada entre los espinos"
    ],
    "c": 2
   },
@@ -371,7 +371,7 @@
    "cod": "MAT",
    "cap": 22,
    "v": 39,
-   "p": "¿Cómo se debe amar al prójimo, según este versículo?",
+   "p": "¿Cómo debemos amar al prójimo?",
    "o": [
     "Más que a uno mismo",
     "Como a uno mismo",
@@ -385,12 +385,12 @@
    "cod": "MAT",
    "cap": 28,
    "v": 19,
-   "p": "¿Qué dice Jesús a sus discípulos que hagan?",
+   "p": "¿Qué encarga Jesús a sus discípulos en Mateo 28:19?",
    "o": [
-    "Que se escondan",
-    "Que hagan discípulos a todas las naciones",
-    "Que construyan un templo",
-    "Que guarden silencio"
+    "Que se escondan en un lugar seguro",
+    "Que hagan discípulos de todas las naciones",
+    "Que construyan un gran templo en la ciudad",
+    "Que guarden silencio ante las autoridades"
    ],
    "c": 1
   },
@@ -399,7 +399,7 @@
    "cod": "LUK",
    "cap": 2,
    "v": 7,
-   "p": "¿Dónde fue acostado Jesús al nacer?",
+   "p": "¿En qué lugar fue acostado Jesús al nacer?",
    "o": [
     "En una cuna de oro",
     "En un pesebre",
@@ -441,12 +441,12 @@
    "cod": "JHN",
    "cap": 3,
    "v": 16,
-   "p": "¿Qué dice este versículo que hizo Dios por el mundo?",
+   "p": "Según Juan 3:16, ¿cuánto amó Dios al mundo y qué hizo?",
    "o": [
-    "Lo juzgó",
-    "Lo amó de tal manera que dio a su Hijo",
-    "Lo ignoró",
-    "Lo dividió"
+    "Lo juzgó con severidad y castigo",
+    "Lo amó tanto que dio a su Hijo unigénito",
+    "Lo ignoró como a un pueblo lejano",
+    "Lo dividió entre sus reinos antiguos"
    ],
    "c": 1
   },
@@ -483,7 +483,7 @@
    "cod": "ROM",
    "cap": 8,
    "v": 28,
-   "p": "¿Qué ayuda a bien a los que aman a Dios?",
+   "p": "¿Qué obra para bien en los que aman a Dios?",
    "o": [
     "Solo las cosas fáciles",
     "Todas las cosas",
@@ -525,7 +525,7 @@
    "cod": "GAL",
    "cap": 6,
    "v": 9,
-   "p": "¿Qué se invita a no hacer, según este versículo?",
+   "p": "Según Gálatas 6:9, ¿qué no debemos hacer?",
    "o": [
     "Cansarnos de hacer bien",
     "Reunirnos",
@@ -553,7 +553,7 @@
    "cod": "HEB",
    "cap": 11,
    "v": 1,
-   "p": "¿Qué es la fe, según este versículo?",
+   "p": "¿Qué es la fe?",
    "o": [
     "La certeza de lo que se espera",
     "Una emoción pasajera",
@@ -567,7 +567,7 @@
    "cod": "JAS",
    "cap": 2,
    "v": 17,
-   "p": "¿Qué dice este versículo de la fe sin obras?",
+   "p": "¿Cómo describe la Escritura la fe sin obras?",
    "o": [
     "Que es perfecta",
     "Que es muerta en sí misma",
@@ -581,7 +581,7 @@
    "cod": "1JN",
    "cap": 4,
    "v": 8,
-   "p": "¿Qué dice este versículo que es Dios?",
+   "p": "Según 1 Juan 4:8, ¿qué es Dios?",
    "o": [
     "Poder",
     "Amor",
@@ -599,12 +599,7 @@
    "o": [
     "Abraham",
     "Caín",
-    [
-     "Dios",
-     "Caín",
-     "Noé",
-     "Abraham"
-    ],
+    "Dios",
     "Noé"
    ],
    "c": 2
@@ -619,12 +614,7 @@
     "Ismael",
     "Jacob",
     "Esaú",
-    [
-     "Isaac",
-     "Ismael",
-     "Jacob",
-     "Esaú"
-    ]
+    "Isaac"
    ],
    "c": 3
   },
@@ -637,12 +627,7 @@
    "o": [
     "«Soy tu padre»",
     "«Soy el Señor de la guerra»",
-    [
-     "«YO SOY EL QUE SOY»",
-     "«Soy tu rey»",
-     "«Soy el Señor de la guerra»",
-     "«Soy tu padre»"
-    ],
+    "«YO SOY EL QUE SOY»",
     "«Soy tu rey»"
    ],
    "c": 2
@@ -655,12 +640,7 @@
    "p": "¿Qué mandamiento dice «Acuérdate del día de reposo para santificarlo»?",
    "o": [
     "El sexto",
-    [
-     "El cuarto",
-     "El primero",
-     "El sexto",
-     "El octavo"
-    ],
+    "El cuarto",
     "El primero",
     "El octavo"
    ],
@@ -673,15 +653,10 @@
    "v": 5,
    "p": "Según Deuteronomio 6:5, ¿con qué debemos amar a Dios?",
    "o": [
-    "Solo en el templo",
-    "Con ofrendas de oro",
-    [
-     "Con todo el corazón, el alma y la fuerza",
-     "Solo con las palabras",
-     "Solo en el templo",
-     "Con ofrendas de oro"
-    ],
-    "Solo con las palabras"
+    "Solo con palabras bonitas en el templo",
+    "Con ofrendas costosas de oro y plata",
+    "Con todo el corazón, el alma y la fuerza",
+    "Solo cuando estamos en dificultades"
    ],
    "c": 2
   },
@@ -694,12 +669,7 @@
    "o": [
     "En el nombre del rey Saúl",
     "En su propio nombre",
-    [
-     "En el nombre de Jehová de los ejércitos",
-     "En el nombre del rey Saúl",
-     "En su propio nombre",
-     "En el nombre de su padre"
-    ],
+    "En el nombre de Jehová de los ejércitos",
     "En el nombre de su padre"
    ],
    "c": 2
@@ -711,15 +681,10 @@
    "v": 12,
    "p": "¿Cómo se manifestó Dios a Elías en Horeb?",
    "o": [
-    "En un terremoto",
-    "En un viento fuerte",
-    "En un fuego",
-    [
-     "En un silbo apacible y delicado",
-     "En un terremoto",
-     "En un fuego",
-     "En un viento fuerte"
-    ]
+    "En un terremoto que sacudió la montaña",
+    "En un fuego que consumió el altar",
+    "En un viento fuerte que partía las rocas",
+    "En un silbo apacible y delicado"
    ],
    "c": 3
   },
@@ -731,12 +696,7 @@
    "p": "Nehemías dijo al pueblo que el gozo de Jehová era su…",
    "o": [
     "Corona",
-    [
-     "Fortaleza",
-     "Riqueza",
-     "Descanso",
-     "Corona"
-    ],
+    "Fortaleza",
     "Riqueza",
     "Descanso"
    ],
@@ -752,12 +712,7 @@
     "Que el mar se abriría",
     "Que su casa era grande",
     "Que sus hijos volverían",
-    [
-     "Que su Redentor vive",
-     "Que su casa era grande",
-     "Que sus hijos volverían",
-     "Que el mar se abriría"
-    ]
+    "Que su Redentor vive"
    ],
    "c": 3
   },
@@ -770,12 +725,7 @@
    "o": [
     "Escudero",
     "Rey",
-    [
-     "Salvación",
-     "Juez",
-     "Rey",
-     "Escudero"
-    ],
+    "Salvación",
     "Juez"
    ],
    "c": 2
@@ -789,12 +739,7 @@
    "o": [
     "Olvidarlo",
     "Dejarlo para después",
-    [
-     "Deleitarnos en él",
-     "Olvidarlo",
-     "Temerle sin amor",
-     "Dejarlo para después"
-    ],
+    "Deleitarnos en él",
     "Temerle sin amor"
    ],
    "c": 2
@@ -809,12 +754,7 @@
     "Un vino dulce",
     "El agua del río",
     "La comida del rey",
-    [
-     "Que el Señor es bueno",
-     "Un vino dulce",
-     "La comida del rey",
-     "El agua del río"
-    ]
+    "Que el Señor es bueno"
    ],
    "c": 3
   },
@@ -825,12 +765,7 @@
    "v": 4,
    "p": "Según el Salmo 100:4, ¿con qué entramos a sus puertas?",
    "o": [
-    [
-     "Con acción de gracias",
-     "Con ofrendas de oro",
-     "Con cantos de guerra",
-     "En silencio"
-    ],
+    "Con acción de gracias",
     "Con ofrendas de oro",
     "Con cantos de guerra",
     "En silencio"
@@ -844,15 +779,10 @@
    "v": 2,
    "p": "¿De dónde viene el socorro, según el Salmo 121?",
    "o": [
-    [
-     "De Jehová, que hizo los cielos y la tierra",
-     "De los montes",
-     "De los reyes",
-     "De los ejércitos"
-    ],
-    "De los ejércitos",
-    "De los montes",
-    "De los reyes"
+    "De Jehová, que hizo los cielos y la tierra",
+    "De los ejércitos que cuidan la ciudad",
+    "De los montes altos y sus cumbres",
+    "De los reyes que gobiernan la tierra"
    ],
    "c": 0
   },
@@ -864,12 +794,7 @@
    "p": "¿Cómo dice el Salmo 139:14 que fuimos hechos?",
    "o": [
     "Por casualidad",
-    [
-     "Formidable y maravillosamente",
-     "Como los demás animales",
-     "Al azar",
-     "Por casualidad"
-    ],
+    "Formidable y maravillosamente",
     "Como los demás animales",
     "Al azar"
    ],
@@ -885,12 +810,7 @@
     "Que debe callar siempre",
     "Que debe trabajar desde niño",
     "Que debe ser rico",
-    [
-     "Que no se apartará de ese camino",
-     "Que debe trabajar desde niño",
-     "Que debe ser rico",
-     "Que debe callar siempre"
-    ]
+    "Que no se apartará de ese camino"
    ],
    "c": 3
   },
@@ -901,15 +821,10 @@
    "v": 10,
    "p": "¿Qué le dice Dios al pueblo en Isaías 41:10?",
    "o": [
-    [
-     "«No temas, porque yo estoy contigo»",
-     "«Huye hacia el norte»",
-     "«Construye murallas»",
-     "«Espera en la ciudad»"
-    ],
-    "«Construye murallas»",
-    "«Huye hacia el norte»",
-    "«Espera en la ciudad»"
+    "«No temas, porque yo estoy contigo»",
+    "«Construye murallas altas alrededor»",
+    "«Huye hacia el norte sin mirar atrás»",
+    "«Espera en la ciudad hasta el amanecer»"
    ],
    "c": 0
   },
@@ -921,12 +836,7 @@
    "p": "Según Isaías 53:5, ¿por qué fue herido el Siervo?",
    "o": [
     "Por su propia culpa",
-    [
-     "Por nuestras rebeliones",
-     "Por su propia culpa",
-     "Por el rey de Babilonia",
-     "Por el diluvio"
-    ],
+    "Por nuestras rebeliones",
     "Por el diluvio",
     "Por el rey de Babilonia"
    ],
@@ -942,12 +852,7 @@
     "Pensamientos de guerra",
     "Pensamientos de castigo",
     "Pensamientos de olvido",
-    [
-     "Pensamientos de paz y no de mal",
-     "Pensamientos de castigo",
-     "Pensamientos de olvido",
-     "Pensamientos de guerra"
-    ]
+    "Pensamientos de paz y no de mal"
    ],
    "c": 3
   },
@@ -959,12 +864,7 @@
    "p": "¿Qué promete Dios dar en Ezequiel 36:26?",
    "o": [
     "Un ejército nuevo",
-    [
-     "Un corazón nuevo",
-     "Un reino nuevo",
-     "Un ejército nuevo",
-     "Una ciudad nueva"
-    ],
+    "Un corazón nuevo",
     "Una ciudad nueva",
     "Un reino nuevo"
    ],
@@ -977,15 +877,10 @@
    "v": 8,
    "p": "¿Qué pide Dios según Miqueas 6:8?",
    "o": [
-    "Construir un templo grande",
-    [
-     "Hacer justicia, amar misericordia y andar humildemente con Dios",
-     "Ofrecer muchos animales",
-     "Construir un templo grande",
-     "Viajar a otras tierras"
-    ],
-    "Ofrecer muchos animales",
-    "Viajar a otras tierras"
+    "Construir un templo grande y costoso",
+    "Hacer justicia, amar misericordia y andar humildemente con Dios",
+    "Ofrecer muchos animales en el altar",
+    "Viajar a otras tierras para predicar"
    ],
    "c": 1
   },
@@ -999,12 +894,7 @@
     "Por su sabiduría",
     "Por su riqueza",
     "Por su fuerza",
-    [
-     "Por su fe",
-     "Por su riqueza",
-     "Por su fuerza",
-     "Por su sabiduría"
-    ]
+    "Por su fe"
    ],
    "c": 3
   },
@@ -1015,15 +905,10 @@
    "v": 28,
    "p": "¿Qué invita a hacer Jesús a los trabajados y cargados?",
    "o": [
-    [
-     "Venir a él, y él les dará descanso",
-     "Trabajar más duro",
-     "Pagar sus deudas",
-     "Viajar a Jerusalén"
-    ],
-    "Trabajar más duro",
-    "Viajar a Jerusalén",
-    "Pagar sus deudas"
+    "Venir a él, y él les dará descanso",
+    "Trabajar más duro cada día sin parar",
+    "Viajar a Jerusalén para el templo",
+    "Pagar primero todas sus deudas antiguas"
    ],
    "c": 0
   },
@@ -1034,15 +919,10 @@
    "v": 20,
    "p": "Según Mateo 18:20, ¿dónde está Jesús?",
    "o": [
-    "Solo en el desierto",
-    "Solo en el templo",
-    "Solo en los cielos",
-    [
-     "Donde dos o tres se reúnen en su nombre",
-     "Solo en el templo",
-     "Solo en el desierto",
-     "Solo en los cielos"
-    ]
+    "Solo en el desierto, lejos de la gente",
+    "Solo en el templo de Jerusalén",
+    "Solo en los cielos, lejos de la tierra",
+    "Donde dos o tres se reúnen en su nombre"
    ],
    "c": 3
   },
@@ -1054,12 +934,7 @@
    "p": "¿Qué dice el Rey en Mateo 25:40 sobre lo que hacemos a los más pequeños?",
    "o": [
     "Que no tiene importancia",
-    [
-     "Que se lo hacemos a él",
-     "Que no tiene importancia",
-     "Que lo olvidará",
-     "Que es asunto del gobierno"
-    ],
+    "Que se lo hacemos a él",
     "Que lo olvidará",
     "Que es asunto del gobierno"
    ],
@@ -1072,15 +947,10 @@
    "v": 45,
    "p": "Según Marcos 10:45, ¿para qué vino el Hijo del Hombre?",
    "o": [
-    "Para cobrar impuestos",
-    "Para ser servido por todos",
-    "Para reinar en Roma",
-    [
-     "Para servir y dar su vida en rescate por muchos",
-     "Para ser servido por todos",
-     "Para reinar en Roma",
-     "Para cobrar impuestos"
-    ]
+    "Para cobrar los impuestos del pueblo",
+    "Para ser servido por todos los siervos",
+    "Para reinar como rey en la ciudad de Roma",
+    "Para servir y dar su vida en rescate por muchos"
    ],
    "c": 3
   },
@@ -1089,17 +959,12 @@
    "cod": "LUK",
    "cap": 6,
    "v": 31,
-   "p": "¿Qué dice Lucas 6:31 que hagamos con los demás?",
+   "p": "¿Qué enseña Lucas 6:31 que hagamos con los demás?",
    "o": [
-    [
-     "Lo mismo que queremos que hagan con nosotros",
-     "Lo que nos convenga",
-     "Solo a nuestra familia",
-     "Nada, cada uno por su lado"
-    ],
-    "Solo a nuestra familia",
-    "Lo que nos convenga",
-    "Nada, cada uno por su lado"
+    "Lo mismo que queremos que hagan con nosotros",
+    "Solo a los de nuestra propia familia",
+    "Lo que más nos convenga en ese momento",
+    "Nada, cada uno cuida solo de sí mismo"
    ],
    "c": 0
   },
@@ -1110,15 +975,10 @@
    "v": 10,
    "p": "¿Qué vino a hacer el Hijo del Hombre según Lucas 19:10?",
    "o": [
-    "Conquistar tierras",
-    "Juzgar a los reyes",
-    [
-     "Buscar y salvar lo que se había perdido",
-     "Juzgar a los reyes",
-     "Construir ciudades",
-     "Conquistar tierras"
-    ],
-    "Construir ciudades"
+    "Conquistar nuevas tierras con su ejército",
+    "Juzgar a los reyes de cada nación",
+    "Buscar y salvar lo que se había perdido",
+    "Construir ciudades fuertes y grandes"
    ],
    "c": 2
   },
@@ -1129,15 +989,10 @@
    "v": 1,
    "p": "En Juan 1:1, ¿quién era el Verbo?",
    "o": [
-    "Un profeta",
-    "Un hombre sabio",
-    [
-     "Dios",
-     "Un profeta",
-     "Un ángel",
-     "Un hombre sabio"
-    ],
-    "Un ángel"
+    "Un profeta enviado desde el cielo",
+    "Un hombre sabio de Galilea",
+    "Dios",
+    "Un ángel del Señor"
    ],
    "c": 2
   },
@@ -1148,15 +1003,10 @@
    "v": 14,
    "p": "¿Qué hizo el Verbo según Juan 1:14?",
    "o": [
-    "Se fue al cielo",
-    "Escribió un libro",
-    [
-     "Se hizo carne y habitó entre nosotros",
-     "Se fue al cielo",
-     "Escribió un libro",
-     "Dividió el mar"
-    ],
-    "Dividió el mar"
+    "Se fue al cielo sin volver",
+    "Escribió un libro para el pueblo",
+    "Se hizo carne y habitó entre nosotros",
+    "Dividió el mar con su mano"
    ],
    "c": 2
   },
@@ -1169,12 +1019,7 @@
    "o": [
     "El pan del cielo",
     "El buen pastor",
-    [
-     "La luz del mundo",
-     "El pan del cielo",
-     "La puerta de las ovejas",
-     "El buen pastor"
-    ],
+    "La luz del mundo",
     "La puerta de las ovejas"
    ],
    "c": 2
@@ -1186,12 +1031,7 @@
    "v": 11,
    "p": "Según Juan 10:11, ¿qué hace el buen pastor?",
    "o": [
-    [
-     "Da su vida por las ovejas",
-     "Vende sus ovejas",
-     "Huye cuando viene el lobo",
-     "Cuida solo a sus favoritas"
-    ],
+    "Da su vida por las ovejas",
     "Huye cuando viene el lobo",
     "Vende sus ovejas",
     "Cuida solo a sus favoritas"
@@ -1208,12 +1048,7 @@
     "La luz",
     "La paz",
     "El camino de piedra",
-    [
-     "La vida",
-     "La paz",
-     "La luz",
-     "El camino de piedra"
-    ]
+    "La vida"
    ],
    "c": 3
   },
@@ -1224,12 +1059,7 @@
    "v": 33,
    "p": "¿Qué dijo Jesús sobre el mundo en Juan 16:33?",
    "o": [
-    [
-     "Que él ha vencido al mundo",
-     "Que el mundo nunca cambiará",
-     "Que el mundo es nuestro hogar",
-     "Que el mundo será destruido ayer"
-    ],
+    "Que él ha vencido al mundo",
     "Que el mundo nunca cambiará",
     "Que el mundo es nuestro hogar",
     "Que el mundo será destruido ayer"
@@ -1243,12 +1073,7 @@
    "v": 8,
    "p": "¿Qué recibirían los discípulos al venir el Espíritu Santo?",
    "o": [
-    [
-     "Poder",
-     "Riqueza",
-     "Un ejército",
-     "Un nuevo templo"
-    ],
+    "Poder",
     "Un ejército",
     "Un nuevo templo",
     "Riqueza"
@@ -1262,12 +1087,7 @@
    "v": 23,
    "p": "Según Romanos 3:23, ¿qué pasó con todos?",
    "o": [
-    [
-     "Todos pecaron",
-     "Todos fueron justos",
-     "Todos fueron sabios",
-     "Todos huyeron"
-    ],
+    "Todos pecaron",
     "Todos fueron sabios",
     "Todos fueron justos",
     "Todos huyeron"
@@ -1283,12 +1103,7 @@
    "o": [
     "Cuando éramos niños",
     "Cuando estábamos en el templo",
-    [
-     "Siendo nosotros aún pecadores",
-     "Después de que fuéramos justos",
-     "Cuando estábamos en el templo",
-     "Cuando éramos niños"
-    ],
+    "Siendo nosotros aún pecadores",
     "Después de que fuéramos justos"
    ],
    "c": 2
@@ -1300,15 +1115,10 @@
    "v": 2,
    "p": "¿Cómo nos transformamos según Romanos 12:2?",
    "o": [
-    "Por el tiempo",
-    "Por la fuerza física",
-    [
-     "Por la renovación del entendimiento",
-     "Por la riqueza",
-     "Por la fuerza física",
-     "Por el tiempo"
-    ],
-    "Por la riqueza"
+    "Por el paso del tiempo y los años",
+    "Por la fuerza física y el esfuerzo",
+    "Por la renovación del entendimiento",
+    "Por la acumulación de riquezas"
    ],
    "c": 2
   },
@@ -1321,12 +1131,7 @@
    "o": [
     "Es un esclavo",
     "Tiene más dinero",
-    [
-     "Es nueva criatura",
-     "Está en deuda",
-     "Es un esclavo",
-     "Tiene más dinero"
-    ],
+    "Es nueva criatura",
     "Está en deuda"
    ],
    "c": 2
@@ -1338,12 +1143,7 @@
    "v": 9,
    "p": "¿Qué dijo el Señor a Pablo en 2 Corintios 12:9?",
    "o": [
-    [
-     "«Bástate mi gracia»",
-     "«Vuelve a Damasco»",
-     "«Escribe tu libro»",
-     "«Cuida tus ovejas»"
-    ],
+    "«Bástate mi gracia»",
     "«Escribe tu libro»",
     "«Cuida tus ovejas»",
     "«Vuelve a Damasco»"
@@ -1357,12 +1157,7 @@
    "v": 8,
    "p": "Según Efesios 2:8, ¿por qué medio somos salvos?",
    "o": [
-    [
-     "Por gracia, por medio de la fe",
-     "Por nuestras obras",
-     "Por la ley de Moisés",
-     "Por el dinero"
-    ],
+    "Por gracia, por medio de la fe",
     "Por nuestras obras",
     "Por el dinero",
     "Por la ley de Moisés"
@@ -1376,15 +1171,10 @@
    "v": 10,
    "p": "Efesios 6:10 nos llama a fortalecernos en…",
    "o": [
-    "La opinión de otros",
-    [
-     "El Señor y en el poder de su fuerza",
-     "Nuestra fuerza física",
-     "Las riquezas",
-     "La opinión de otros"
-    ],
-    "Las riquezas",
-    "Nuestra fuerza física"
+    "En nuestra propia opinión y criterio",
+    "En el Señor y en el poder de su fuerza",
+    "En las riquezas que poseemos",
+    "En nuestra fuerza física y resistencia"
    ],
    "c": 1
   },
@@ -1395,15 +1185,10 @@
    "v": 6,
    "p": "Según Filipenses 4:6, ¿de qué no debemos estar afanosos?",
    "o": [
-    [
-     "De nada",
-     "De los impuestos",
-     "De la lluvia",
-     "De los enemigos del reino"
-    ],
-    "De los impuestos",
-    "De la lluvia",
-    "De los enemigos del reino"
+    "De nada",
+    "De los impuestos que cobra el gobierno",
+    "De la lluvia que tarda en llegar",
+    "De los enemigos que amenazan el reino"
    ],
    "c": 0
   },
@@ -1414,15 +1199,10 @@
    "v": 23,
    "p": "Colosenses 3:23 dice que lo que hagamos, lo hagamos…",
    "o": [
-    [
-     "De corazón, como para el Señor",
-     "Para que nos vean",
-     "Solo si nos pagan",
-     "A medias"
-    ],
-    "Solo si nos pagan",
-    "Para que nos vean",
-    "A medias"
+    "De corazón, como para el Señor",
+    "Solo mientras nos paguen por el trabajo",
+    "Para que los demás nos vean y aplaudan",
+    "A medias, sin mucho empeño ni cuidado"
    ],
    "c": 0
   },
@@ -1436,12 +1216,7 @@
     "Viajar mucho",
     "Hablar poco",
     "Ayunar cada semana",
-    [
-     "Orar sin cesar",
-     "Ayunar cada semana",
-     "Hablar poco",
-     "Viajar mucho"
-    ]
+    "Orar sin cesar"
    ],
    "c": 3
   },
@@ -1455,12 +1230,7 @@
     "Riqueza, fama y honor",
     "Temor y silencio",
     "Dudas y tristeza",
-    [
-     "Poder, amor y dominio propio",
-     "Riqueza, fama y honor",
-     "Temor y silencio",
-     "Dudas y tristeza"
-    ]
+    "Poder, amor y dominio propio"
    ],
    "c": 3
   },
@@ -1472,12 +1242,7 @@
    "p": "Según Hebreos 4:12, la palabra de Dios es…",
    "o": [
     "Antigua y olvidada",
-    [
-     "Viva y eficaz",
-     "Escrita solo para reyes",
-     "Antigua y olvidada",
-     "Sin poder"
-    ],
+    "Viva y eficaz",
     "Sin poder",
     "Escrita solo para reyes"
    ],
@@ -1493,12 +1258,7 @@
     "La compre",
     "La espere de otros",
     "La busque en los libros",
-    [
-     "La pida a Dios",
-     "La busque en los libros",
-     "La compre",
-     "La espere de otros"
-    ]
+    "La pida a Dios"
    ],
    "c": 3
   },
@@ -1509,15 +1269,10 @@
    "v": 7,
    "p": "¿Qué nos invita a hacer 1 Pedro 5:7 con nuestras preocupaciones?",
    "o": [
-    "Guardarlas en secreto",
-    "Olvidarlas sin pensar",
-    "Cargarlas solos",
-    [
-     "Echarlas sobre él, porque él cuida de nosotros",
-     "Guardarlas en secreto",
-     "Olvidarlas sin pensar",
-     "Cargarlas solos"
-    ]
+    "Guardarlas en secreto sin contarlas",
+    "Olvidarlas sin pensar en ellas",
+    "Cargarlas solos, sin pedir ayuda",
+    "Echarlas sobre él, porque él cuida de nosotros"
    ],
    "c": 3
   },
@@ -1531,12 +1286,7 @@
     "Olvidarnos",
     "Juzgarnos otra vez",
     "Castigarnos",
-    [
-     "Perdonarnos",
-     "Castigarnos",
-     "Olvidarnos",
-     "Juzgarnos otra vez"
-    ]
+    "Perdonarnos"
    ],
    "c": 3
   },
@@ -1550,12 +1300,7 @@
     "La convertirá en oro",
     "La guardará en un frasco",
     "La olvidará sin más",
-    [
-     "Enjugará toda lágrima de sus ojos",
-     "La guardará en un frasco",
-     "La convertirá en oro",
-     "La olvidará sin más"
-    ]
+    "Enjugará toda lágrima de sus ojos"
    ],
    "c": 3
   },
@@ -1566,15 +1311,10 @@
    "v": 2,
    "p": "Según Éxodo 15:2, ¿qué es Jehová para Moisés?",
    "o": [
-    [
-     "Su fortaleza y su cántico",
-     "Su juez",
-     "Su ejército",
-     "Su riqueza"
-    ],
-    "Su juez",
-    "Su ejército",
-    "Su riqueza"
+    "Su fortaleza y su cántico",
+    "Su juez que castiga con severidad",
+    "Su ejército que pelea por él",
+    "Su riqueza que nunca se acaba"
    ],
    "c": 0
   },
@@ -1586,12 +1326,7 @@
    "p": "Según Deuteronomio 31:6, ¿quién va contigo y no te dejará?",
    "o": [
     "Tu padre",
-    [
-     "Jehová tu Dios",
-     "Tu padre",
-     "Un ángel del cielo",
-     "Tu capitán"
-    ],
+    "Jehová tu Dios",
     "Un ángel del cielo",
     "Tu capitán"
    ],
@@ -1604,12 +1339,7 @@
    "v": 10,
    "p": "Cuando Dios llamó a Samuel, ¿qué le respondió? (1 Samuel 3:10)",
    "o": [
-    [
-     "«Habla, que tu siervo oye»",
-     "«Aquí estoy para ser rey»",
-     "«No soy digno, déjame»",
-     "«Que el templo sea grande»"
-    ],
+    "«Habla, que tu siervo oye»",
     "«Que el templo sea grande»",
     "«No soy digno, déjame»",
     "«Aquí estoy para ser rey»"
@@ -1623,15 +1353,10 @@
    "v": 34,
    "p": "Según 1 Crónicas 16:34, ¿por qué debemos alabar a Jehová?",
    "o": [
-    "Porque su nombre es grande",
-    "Porque es el rey de todos",
-    [
-     "Porque es bueno y su misericordia es para siempre",
-     "Porque tiene muchos ejércitos",
-     "Porque su nombre es grande",
-     "Porque es el rey de todos"
-    ],
-    "Porque tiene muchos ejércitos"
+    "Porque su nombre es grande entre los pueblos",
+    "Porque es el rey de todos los pueblos",
+    "Porque es bueno y su misericordia es para siempre",
+    "Porque tiene muchos ejércitos y fuerza"
    ],
    "c": 2
   },
@@ -1644,12 +1369,7 @@
    "o": [
     "Nada",
     "Solo los jóvenes",
-    [
-     "Todo",
-     "Nada",
-     "Solo los sabios",
-     "Solo los jóvenes"
-    ],
+    "Todo",
     "Solo los sabios"
    ],
    "c": 2
@@ -1664,12 +1384,7 @@
     "Al que tiene poder",
     "Al que tiene riquezas",
     "Al que viaja mucho",
-    [
-     "Al que persevera en pensar en él",
-     "Al que tiene riquezas",
-     "Al que viaja mucho",
-     "Al que tiene poder"
-    ]
+    "Al que persevera en pensar en él"
    ],
    "c": 3
   },
@@ -1681,12 +1396,7 @@
    "p": "Según Mateo 5:13, ¿qué dijo Jesús que somos para la tierra?",
    "o": [
     "El fuego del campo",
-    [
-     "La sal de la tierra",
-     "El fuego del campo",
-     "El agua del pozo",
-     "El trigo del granero"
-    ],
+    "La sal de la tierra",
     "El agua del pozo",
     "El trigo del granero"
    ],
@@ -1702,12 +1412,7 @@
     "Hay que guardar riquezas para años",
     "Hay que planearlo todo con años de anticipación",
     "Hay que temerlo siempre",
-    [
-     "Cada día tiene ya su propio afán",
-     "Hay que guardar riquezas para años",
-     "Hay que temerlo siempre",
-     "Hay que planearlo todo con años de anticipación"
-    ]
+    "Cada día tiene ya su propio afán"
    ],
    "c": 3
   },
@@ -1721,12 +1426,7 @@
     "Corred, huid y esconded",
     "Callad, dormid y esperad",
     "Comed, bebed y reíd",
-    [
-     "Pedid, buscad y llamad",
-     "Corred, huid y esconded",
-     "Callad, dormid y esperad",
-     "Comed, bebed y reíd"
-    ]
+    "Pedid, buscad y llamad"
    ],
    "c": 3
   },
@@ -1738,12 +1438,7 @@
    "p": "Según Lucas 1:37, ¿qué es imposible para Dios?",
    "o": [
     "Hacer que el sol salga dos veces",
-    [
-     "Nada es imposible para Dios",
-     "Vencer a la muerte",
-     "Cambiar el curso del río",
-     "Hacer que el sol salga dos veces"
-    ],
+    "Nada es imposible para Dios",
     "Cambiar el curso del río",
     "Vencer a la muerte"
    ],
@@ -1756,12 +1451,7 @@
    "v": 5,
    "p": "Jesús dijo: «Yo soy la vid, vosotros…» ¿qué somos nosotros según Juan 15:5?",
    "o": [
-    [
-     "Los pámpanos",
-     "Las piedras",
-     "Los reyes",
-     "Los sacerdotes"
-    ],
+    "Los pámpanos",
     "Los reyes",
     "Las piedras",
     "Los sacerdotes"
@@ -1776,12 +1466,7 @@
    "p": "Según Juan 15:13, ¿qué es el mayor amor?",
    "o": [
     "Dar un regalo costoso",
-    [
-     "Poner uno su vida por sus amigos",
-     "Tener muchas riquezas",
-     "Ser el primero en todo",
-     "Dar un regalo costoso"
-    ],
+    "Poner uno su vida por sus amigos",
     "Ser el primero en todo",
     "Tener muchas riquezas"
    ],
@@ -1794,15 +1479,10 @@
    "v": 17,
    "p": "Según Romanos 10:17, ¿de dónde viene la fe?",
    "o": [
-    "Del trabajo duro",
-    [
-     "Por el oír, y el oír por la palabra de Dios",
-     "De los sueños",
-     "De las riquezas",
-     "Del trabajo duro"
-    ],
-    "De los sueños",
-    "De las riquezas"
+    "De los sueños que tenemos cada noche",
+    "Por el oír, y el oír por la palabra de Dios",
+    "De las riquezas que acumulamos en la vida",
+    "Del trabajo duro y el esfuerzo personal"
    ],
    "c": 1
   },
@@ -1816,12 +1496,7 @@
     "Premiado",
     "Necesario",
     "Agradable",
-    [
-     "En vano",
-     "Agradable",
-     "Necesario",
-     "Premiado"
-    ]
+    "En vano"
    ],
    "c": 3
   },
@@ -1833,12 +1508,7 @@
    "p": "Según 2 Timoteo 3:16, ¿cómo es la Escritura?",
    "o": [
     "Solo una historia antigua",
-    [
-     "Inspirada por Dios y útil para enseñar",
-     "Solo una historia antigua",
-     "Escrita solo por hombres sabios",
-     "Un libro sin uso hoy"
-    ],
+    "Inspirada por Dios y útil para enseñar",
     "Escrita solo por hombres sabios",
     "Un libro sin uso hoy"
    ],
@@ -1852,12 +1522,7 @@
    "p": "Según Hebreos 13:8, ¿cómo es Jesucristo?",
    "o": [
     "Distinto cada día",
-    [
-     "El mismo ayer, hoy y por los siglos",
-     "Solo un profeta del pasado",
-     "Un hombre como los demás",
-     "Distinto cada día"
-    ],
+    "El mismo ayer, hoy y por los siglos",
     "Solo un profeta del pasado",
     "Un hombre como los demás"
    ],
@@ -1872,12 +1537,7 @@
    "o": [
     "Que nos dará riquezas",
     "Que olvidará nuestros pecados para siempre sin pedir perdón",
-    [
-     "Que él se acercará a nosotros",
-     "Que nos dará riquezas",
-     "Que nos librará de todo viaje",
-     "Que olvidará nuestros pecados para siempre sin pedir perdón"
-    ],
+    "Que él se acercará a nosotros",
     "Que nos librará de todo viaje"
    ],
    "c": 2
@@ -1892,12 +1552,7 @@
     "En el monte de los olivos",
     "En el desierto",
     "En el templo de Jerusalén",
-    [
-     "A la puerta",
-     "En el templo de Jerusalén",
-     "En el monte de los olivos",
-     "En el desierto"
-    ]
+    "A la puerta"
    ],
    "c": 3
   },
@@ -1909,12 +1564,7 @@
    "p": "Según el Salmo 23:6, ¿qué nos seguirá todos los días de la vida?",
    "o": [
     "Las riquezas",
-    [
-     "El bien y la misericordia",
-     "Los enemigos",
-     "Las preocupaciones",
-     "Las riquezas"
-    ],
+    "El bien y la misericordia",
     "Los enemigos",
     "Las preocupaciones"
    ],
@@ -1930,12 +1580,7 @@
     "Las riquezas de los reyes",
     "El tiempo de las cosechas",
     "La historia de los hombres",
-    [
-     "La gloria de Dios",
-     "Las riquezas de los reyes",
-     "La historia de los hombres",
-     "El tiempo de las cosechas"
-    ]
+    "La gloria de Dios"
    ],
    "c": 3
   },
@@ -1948,12 +1593,7 @@
    "o": [
     "Tus viajes",
     "Tu dinero",
-    [
-     "Tus obras",
-     "Tus enemigos",
-     "Tu dinero",
-     "Tus viajes"
-    ],
+    "Tus obras",
     "Tus enemigos"
    ],
    "c": 2
