@@ -1363,7 +1363,7 @@
     ['sopa', '🔎', 'Sopa del Vivero', 'Letras grandes, sin tiempo y con pistas gratis.'],
     ['jardin', '🌱', 'Jardín del principio', 'Un día de la creación por nivel: responde y se abre el siguiente día.']
   ];
-  const JUEGOS_LISTOS = { minijuegos: (v) => vistaMinijuegos(v), mente: (v) => juegoMente(v), tablero: (v) => { if (window.TBTablero) TBTablero.abrir(v, { pieza: ((PIEZAS.find((p) => p[0] === ((jugadorLeer() || {}).pieza)) || PIEZAS[0])[0]) }); }, raices: (v) => vistaRaices(v), brotes: (v) => vistaBrotesCamino(v), jardin: (v) => vistaJardin(v), sopa: (v) => vistaSopa(v) };   // id -> función que abre el juego (cada fase nueva se registra aquí)
+  const JUEGOS_LISTOS = { minijuegos: (v) => vistaMinijuegos(v), mente: (v) => juegoMente(v), tablero: (v) => { if (window.TBTablero) TBTablero.abrir(v, { sala: () => vistaJuegos('sala'), pieza: ((PIEZAS.find((p) => p[0] === ((jugadorLeer() || {}).pieza)) || PIEZAS[0])[0]) }); }, raices: (v) => vistaRaices(v), brotes: (v) => vistaBrotesCamino(v), jardin: (v) => vistaJardin(v), sopa: (v) => vistaSopa(v) };   // id -> función que abre el juego (cada fase nueva se registra aquí)
   function juegoTerminar(id, aciertos, total) {   // guarda la partida; una gota de rocío al terminar con al menos 60 % de aciertos (tope diario)
     const j = leer(K_JUEGOS) || { n: 0, p: {} }; j.n = (j.n || 0) + 1; j.p = j.p || {};
     const q = j.p[id] || { n: 0, mejor: 0 }; q.n++; q.mejor = Math.max(q.mejor, Number(aciertos) || 0); j.p[id] = q; guardar(K_JUEGOS, j);
@@ -1811,28 +1811,49 @@
       { ok: n >= 10, t: 'Diez partidas', d: 'Constancia de jugador' },
     ];
   }
-  // F1140 · Consola TV: pantalla con marco de madera, luz de encendido y cartuchos de cada juego.
+  // F1143 · Juegos en una sola pantalla con pestañas (Consola, Sala, Logros, Mi jugador).
+  // Primera vez: solo se pide crear el jugador. Después, todo se edita y se ve dentro de Juegos, sin salir.
   const piezaActual = () => ((PIEZAS.find((p) => p[0] === ((jugadorLeer() || {}).pieza)) || PIEZAS[0])[0]);
-  function vistaJuegos() {
-    document.body.classList.remove('tb-full');   // F1126: al volver a la lista, vuelve la barra inferior
-    const j = leer(K_JUEGOS) || { n: 0 }, jug = jugadorLeer(), n = Number(j.n) || 0;
-    const pieza = (k) => PIEZAS.find((p) => p[0] === k) || PIEZAS[0];
-    const alta = !jug ? `<section class="jug-alta card"><div class="t"><span aria-hidden="true">🎮</span>Crea tu jugador</div><p class="suave m0t">Tu nombre y tu pieza te acompañan en cada juego.</p>
-      <label class="jug-campo" for="jugNom">Tu nombre</label><input id="jugNom" class="jug-nom" maxlength="16" autocomplete="off" placeholder="Ej. Ana" value="">
-      <p class="jug-lab">Elige tu pieza</p><div class="jug-piezas" role="radiogroup" aria-label="Pieza">${PIEZAS.map((p, i) => `<button type="button" class="jug-pieza${i === 0 ? ' on' : ''}" role="radio" aria-checked="${i === 0}" data-pieza="${p[0]}"><span aria-hidden="true">${pIcono(p[0])}</span>${p[2]}</button>`).join('')}</div>
-      <button type="button" class="btn" id="jugEmpezar">Empezar a jugar</button></section>`
-      : `<section class="jug-resumen card"><span class="jug-avatar" aria-hidden="true">${pIcono(jug.pieza)}</span><div><b>${esc(jug.nombre)}</b><small class="suave">Jugador ${pieza(jug.pieza)[2].toLowerCase()} · ${n} ${n === 1 ? 'partida' : 'partidas'}</small></div><button type="button" class="btn sec" id="jugEditar">Editar</button></section>`;
-    const logros = logrosDe(jug, n);
+  const COLOR_JUEGO = { tablero: 'ambar', raices: 'teal', brotes: 'verde', sopa: 'azul', jardin: 'violeta', minijuegos: 'rojo', mente: 'rosa' };
+  const piezaDe = (k) => PIEZAS.find((p) => p[0] === k) || PIEZAS[0];
+
+  function jFormulario(jug, primera) {
+    const pieza = jug ? jug.pieza : PIEZAS[0][0];
+    return `<section class="jug-alta card">
+      ${primera ? `<div class="jug-hola" aria-hidden="true">🎮</div><h2 class="jug-titulo">Crea tu jugador</h2><p class="suave jug-intro">Tu nombre y tu pieza te acompañan en cada juego y en tu Sala de tableros.</p>` : `<h2 class="jug-titulo">Mi jugador</h2><p class="suave jug-intro">Cambia tu nombre o tu pieza cuando quieras.</p>`}
+      <label class="jug-campo" for="jugNom">Tu nombre</label>
+      <input id="jugNom" class="jug-nom" maxlength="16" autocomplete="off" placeholder="Ej. Ana" value="${esc(jug ? jug.nombre : '')}">
+      <p class="jug-lab">Elige tu pieza</p>
+      <div class="jug-piezas" role="radiogroup" aria-label="Pieza">${PIEZAS.map((p) => `<button type="button" class="jug-pieza${p[0] === pieza ? ' on' : ''}" role="radio" aria-checked="${p[0] === pieza}" data-pieza="${p[0]}"><span aria-hidden="true">${pIcono(p[0])}</span>${p[2]}</button>`).join('')}</div>
+      <button type="button" class="btn" id="jugGuardar">${primera ? 'Empezar a jugar' : 'Guardar cambios'}</button>
+      <p class="suave jug-ok" id="jugOk" hidden>Cambios guardados.</p></section>`;
+  }
+
+  function bindJugador(jug) {
+    let sel = jug ? jug.pieza : PIEZAS[0][0];
+    document.querySelectorAll('.jug-pieza').forEach((b) => b.addEventListener('click', () => {
+      sel = b.dataset.pieza;
+      document.querySelectorAll('.jug-pieza').forEach((x) => { const on = x === b; x.classList.toggle('on', on); x.setAttribute('aria-checked', String(on)); });
+    }));
+    const g = $('#jugGuardar');
+    if (g) g.addEventListener('click', () => {
+      const nom = ($('#jugNom').value || '').trim();
+      if (nom.length < 2) { $('#jugNom').focus(); $('#jugNom').classList.add('falta'); return; }
+      jugadorGuardar({ nombre: nom, pieza: sel });
+      if (jug) { vistaJuegos('jugador'); const ok = document.getElementById('jugOk'); if (ok) ok.hidden = false; }
+      else vistaJuegos('consola');
+    });
+  }
+
+  function htmlConsola(n) {
     const lugares = window.TBTablero && TBTablero.lista ? TBTablero.lista() : [];
-    const hechos = lugares.filter((t) => t.hecho), COLOR = { tablero: 'ambar', raices: 'teal', brotes: 'verde', sopa: 'azul', jardin: 'violeta', minijuegos: 'rojo', mente: 'rosa' };
-    const cartucho = (g) => `<button type="button" class="cart c-${COLOR[g[0]] || 'verde'}" data-juego="${g[0]}" aria-label="${esc(g[2])}">
+    const hechos = lugares.filter((t) => t.hecho);
+    const vitrina = hechos.slice(-4).map((t) => `<span class="sala-mini" aria-hidden="true">${TBTablero.caja(t.id, true)}</span>`).join('');
+    const cartucho = (g) => `<button type="button" class="cart c-${COLOR_JUEGO[g[0]] || 'verde'}" data-juego="${g[0]}" aria-label="${esc(g[2])}">
         <span class="cart-ranura" aria-hidden="true"></span>
         <span class="cart-etiqueta"><span class="cart-ico" aria-hidden="true">${icono(g[1])}</span><b>${esc(g[2])}</b><small>${esc(g[3])}</small></span>
         <span class="cart-play">▶ Jugar</span></button>`;
-    const vitrina = hechos.length ? hechos.slice(-4).map((t) => `<span class="sala-mini" aria-hidden="true">${TBTablero.caja(t.id, true)}</span>`).join('') : '';
-    $('#pantalla').innerHTML = `${cabecera('Juegos', 'Palabra')}<p class="suave">Elige un juego. Jugar da gotas de rocío para tu Inicio; no hay anuncios ni monedas.</p>
-      ${alta}
-      <section class="tv" aria-label="Consola de juegos">
+    return `<section class="tv" aria-label="Consola de juegos">
         <div class="tv-marco">
           <div class="tv-pantalla">
             <div class="tv-titulo"><span>Elige un juego</span><small>${JUEGOS.length} juegos · ${n} ${n === 1 ? 'partida' : 'partidas'}</small></div>
@@ -1842,42 +1863,27 @@
         </div>
         <div class="tv-pata" aria-hidden="true"></div>
       </section>
-      <button type="button" class="sala-acceso card" id="irSala">
-        <span class="sala-txt"><span class="t"><span aria-hidden="true">🏛️</span>Sala de tableros</span><small class="suave">${hechos.length} de ${lugares.length} lugares completados · vuelve a jugar los que ya ganaste</small></span>
+      <button type="button" class="sala-acceso card" data-jtab="sala">
+        <span class="sala-txt"><span class="t"><span aria-hidden="true">🏛️</span>Sala de tableros</span><small class="suave">${hechos.length} de ${lugares.length} lugares completados</small></span>
         <span class="sala-mini-fila">${vitrina}</span>
-      </button>
-      <h2 class="sep">Logros</h2>
-      <ul class="logros">${logros.map((l) => `<li class="logro${l.ok ? ' ok' : ''}"><span aria-hidden="true">${l.ok ? '🏅' : '🔒'}</span><div><b>${l.t}</b><small class="suave">${l.ok ? l.d : 'Por descubrir'}</small></div></li>`).join('')}</ul>`;
-    volverA('Palabra', vistaPalabra);
-    const elegida = { pieza: 'brote' };
-    document.querySelectorAll('.jug-pieza').forEach((b) => b.addEventListener('click', () => {
-      elegida.pieza = b.dataset.pieza;
-      document.querySelectorAll('.jug-pieza').forEach((x) => { const on = x === b; x.classList.toggle('on', on); x.setAttribute('aria-checked', String(on)); });
+      </button>`;
+  }
+  function bindConsola() {
+    document.querySelectorAll('[data-juego]').forEach((b) => b.addEventListener('click', () => {
+      const f = JUEGOS_LISTOS[b.dataset.juego]; if (f) { document.body.classList.add('tb-full'); f(() => vistaJuegos('consola')); }
     }));
-    const empezar = $('#jugEmpezar');
-    if (empezar) empezar.addEventListener('click', () => {
-      const nom = ($('#jugNom').value || '').trim();
-      if (nom.length < 2) { $('#jugNom').focus(); $('#jugNom').classList.add('falta'); return; }
-      jugadorGuardar({ nombre: nom, pieza: elegida.pieza });
-      vistaJuegos();
-    });
-    const editar = $('#jugEditar');
-    if (editar) editar.addEventListener('click', () => { jugadorGuardar(null); vistaJuegos(); });
-    document.querySelectorAll('[data-juego]').forEach((b) => b.addEventListener('click', () => { const f = JUEGOS_LISTOS[b.dataset.juego]; if (f) { document.body.classList.add('tb-full'); f(vistaJuegos); } }));   // F1126: los juegos ocupan toda la pantalla
-    $('#irSala').addEventListener('click', () => vistaSala(vistaJuegos));
   }
 
-  // F1140 · Sala de tableros: una caja por lugar. Las completadas se pueden volver a jugar sin cambiar el progreso.
-  function vistaSala(volver) {
-    document.body.classList.remove('tb-full');
+  function htmlSala() {
     const lugares = window.TBTablero && TBTablero.lista ? TBTablero.lista() : [];
     const hechos = lugares.filter((t) => t.hecho).length;
-    $('#pantalla').innerHTML = `${cabecera('Sala de tableros', 'Juegos')}
-      <p class="suave">Cada lugar que completas se guarda aquí. Puedes volver a jugarlo cuando quieras: tu progreso no cambia.</p>
+    return `<p class="suave">Cada lugar que completas se guarda aquí. Puedes volver a jugarlo cuando quieras: tu progreso no cambia.</p>
       <p class="sala-cuenta">${hechos} de ${lugares.length} lugares completados</p>
       <div class="estante">${lugares.map((t) => `<button type="button" class="caja-btn${t.hecho ? '' : ' bloq'}" data-tab="${t.id}" aria-label="${t.hecho ? esc(t.nombre) : 'Lugar por descubrir'}">${TBTablero.caja(t.id, t.hecho)}</button>`).join('')}</div>
       <section class="sala-detalle card" id="salaDetalle" aria-live="polite"><p class="suave m0t">Toca una caja para ver su lugar.</p></section>`;
-    $('#volver').onclick = volver;
+  }
+  function bindSala() {
+    const lugares = window.TBTablero && TBTablero.lista ? TBTablero.lista() : [];
     document.querySelectorAll('[data-tab]').forEach((b) => b.addEventListener('click', () => {
       const t = lugares.find((x) => String(x.id) === b.dataset.tab); if (!t) return;
       document.querySelectorAll('.caja-btn').forEach((x) => x.classList.toggle('on', x === b));
@@ -1885,8 +1891,36 @@
         ? `<div class="t"><span aria-hidden="true">${t.icono}</span>${esc(t.nombre)} · ${esc(t.lugar)}</div><p class="m0t">${esc(t.leyenda)}</p><button type="button" class="btn" id="salaJugar">↻ Jugar de nuevo</button>`
         : `<div class="t"><span aria-hidden="true">🔒</span>Lugar por descubrir</div><p class="suave m0t">Completa los 10 niveles del camino para llegar hasta aquí.</p>`;
       const sj = $('#salaJugar');
-      if (sj) sj.addEventListener('click', () => TBTablero.abrir(() => vistaSala(volver), { pieza: piezaActual(), rejugar: t.id }));
+      if (sj) sj.addEventListener('click', () => { document.body.classList.add('tb-full'); TBTablero.abrir(() => vistaJuegos('sala'), { pieza: piezaActual(), rejugar: t.id }); });
     }));
+  }
+
+  function htmlLogros(jug, n) {
+    const logros = logrosDe(jug, n);
+    return `<p class="suave">Los logros se desbloquean mientras juegas.</p>
+      <ul class="logros">${logros.map((l) => `<li class="logro${l.ok ? ' ok' : ''}"><span aria-hidden="true">${l.ok ? '🏅' : '🔒'}</span><div><b>${l.t}</b><small class="suave">${l.ok ? l.d : 'Por descubrir'}</small></div></li>`).join('')}</ul>`;
+  }
+
+  // Pantalla única de Juegos. Sin jugador, solo se pide crearlo. Con jugador, todo vive aquí con pestañas.
+  function vistaJuegos(tab) {
+    document.body.classList.remove('tb-full');   // F1126: al volver, vuelve la barra inferior
+    const jug = jugadorLeer(), j = leer(K_JUEGOS) || { n: 0 }, n = Number(j.n) || 0;
+    if (!jug) {
+      $('#pantalla').innerHTML = `${cabecera('Juegos', 'Palabra')}${jFormulario(null, true)}`;
+      volverA('Palabra', vistaPalabra); bindJugador(null); return;
+    }
+    const T = [['consola', '🎮', 'Consola'], ['sala', '🏛️', 'Sala'], ['logros', '🏅', 'Logros'], ['jugador', '🙂', 'Mi jugador']];
+    const t = T.some((x) => x[0] === tab) ? tab : 'consola';
+    const cuerpo = t === 'consola' ? htmlConsola(n) : t === 'sala' ? htmlSala() : t === 'logros' ? htmlLogros(jug, n) : jFormulario(jug, false);
+    $('#pantalla').innerHTML = `${cabecera('Juegos', 'Palabra')}
+      <div class="jug-cabe card"><span class="jug-avatar" aria-hidden="true">${pIcono(jug.pieza)}</span><div><b>${esc(jug.nombre)}</b><small class="suave">${n} ${n === 1 ? 'partida' : 'partidas'} · ${esc(piezaDe(jug.pieza)[2])}</small></div></div>
+      <nav class="jtabs" role="tablist" aria-label="Secciones de Juegos">${T.map((x) => `<button type="button" role="tab" class="jtab${x[0] === t ? ' on' : ''}" aria-selected="${x[0] === t}" data-jtab="${x[0]}"><span aria-hidden="true">${x[1]}</span>${x[2]}</button>`).join('')}</nav>
+      <div class="jbody" id="jBody">${cuerpo}</div>`;
+    volverA('Palabra', vistaPalabra);
+    document.querySelectorAll('.jtab').forEach((b) => b.addEventListener('click', () => vistaJuegos(b.dataset.jtab)));
+    if (t === 'consola') { bindConsola(); document.querySelectorAll('.sala-acceso[data-jtab]').forEach((b) => b.addEventListener('click', () => vistaJuegos('sala'))); }
+    else if (t === 'sala') bindSala();
+    else if (t === 'jugador') bindJugador(jug);
   }
 
   function vistaPalabra() {

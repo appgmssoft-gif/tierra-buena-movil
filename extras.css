@@ -549,3 +549,37 @@ html[data-anim=off] .so-nodo:not(.bloq):not(.hecho){animation:none}
 .mente-top .volver { font-size: .92rem; padding: 6px 4px; margin: 0; }
 .mente-top b { font-size: .98rem; text-align: center; flex: 1; }
 .mente-pts { font-size: .92rem; padding: 5px 10px; }
+
+/* F1143 · Juegos en una sola pantalla: pestañas, tarjeta del jugador y creación del jugador */
+.jtabs { display: flex; gap: 6px; padding: 6px; margin: 10px 0 12px; border-radius: 18px; background: rgba(90,60,30,.09); overflow-x: auto; scrollbar-width: none; }
+.jtabs::-webkit-scrollbar { display: none; }
+.jtab { appearance: none; border: 0; background: transparent; font: inherit; font-size: .92rem; font-weight: 700; color: #5a4a36; padding: 9px 12px; border-radius: 14px; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; cursor: pointer; flex: 1 0 auto; justify-content: center; transition: background .2s ease, color .2s ease, transform .12s ease; }
+.jtab span { font-size: 1.05rem; }
+.jtab.on { background: #fffdf5; color: #2b2218; box-shadow: 0 3px 8px rgba(43,34,24,.18); }
+.jtab:active { transform: scale(.97); }
+.jtab:focus-visible { outline: 3px solid #d9a441; outline-offset: 2px; }
+.jbody { animation: tvCartEntra .35s ease both; }
+.jug-cabe { display: flex; align-items: center; gap: 12px; margin: 6px 0 4px; }
+.jug-cabe b { display: block; font-size: 1.05rem; }
+.jug-cabe small { display: block; }
+.jug-titulo { margin: 4px 0 2px; font-size: 1.35rem; }
+.jug-intro { margin: 0 0 6px; }
+.jug-hola { font-size: 3.6rem; text-align: center; line-height: 1; margin: 6px 0 4px; animation: tvLed 3s ease-in-out infinite; }
+.jug-ok { color: #2f6e3c; font-weight: 700; margin: 10px 0 0; }
+.jug-ok[hidden] { display: none; }
+.jug-alta .btn { width: 100%; margin-top: 14px; }
+@media (prefers-reduced-motion: reduce) { .jbody, .jug-hola { animation: none; } }
+/* F1143 · Las cuatro pestañas caben en una fila en cualquier teléfono */
+.jtab { flex: 1 1 0; min-width: 0; font-size: .8rem; padding: 8px 2px; gap: 3px; overflow: hidden; text-overflow: ellipsis; }
+.jtab span { font-size: .98rem; }
+
+/* F1144 · Distribución: nada se oculta fuera de la pantalla */
+/* Selector de avatares: la fila se ajusta en varias líneas en lugar de desplazarse hacia un lado */
+.av-sel { flex-wrap: wrap !important; overflow: visible !important; justify-content: center !important; gap: 10px !important; }
+.av-sel:not(.emo) .avatar { width: clamp(30px, 8.4vw, 44px); height: clamp(30px, 8.4vw, 44px); }
+/* Primer paso del Inicio: la última tarjeta queda visible por encima del botón fijo */
+.il-elige { padding-bottom: 150px; }
+/* Mesa: el botón de la Sala convive con Lanzar dado y Dados de bonus */
+.tbl-sala-btn { min-width: 0; }
+/* F1144 · Opciones de tema de color: visibles todas, en varias líneas si hace falta */
+.temas-c { flex-wrap: wrap !important; overflow: visible !important; justify-content: center; }

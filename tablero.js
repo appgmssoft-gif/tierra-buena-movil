@@ -24,7 +24,7 @@
   const tema = (t) => TEMAS[(t - 1) % TEMAS.length];
   // F1140 · Sala de tableros: lugares completados (aparte del progreso). Jugar de nuevo no los cambia.
   const K_HECHOS = 'tb_movil_tableros_hechos';
-  let REPLAY = null, VOLVER = null;                                   // REPLAY: id de un tablero que se juega de nuevo (no guarda progreso)
+  let REPLAY = null, VOLVER = null, SALA = null;   // SALA: lleva a la Sala de tableros desde la mesa                                   // REPLAY: id de un tablero que se juega de nuevo (no guarda progreso)
   function hechosLeer() { try { const a = JSON.parse(localStorage.getItem(K_HECHOS) || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
   function hechoRegistrar(id) { const a = hechosLeer(); if (a.indexOf(id) < 0) a.push(id); try { localStorage.setItem(K_HECHOS, JSON.stringify(a)); } catch (e) { /* sin espacio */ } }
   const RANGO = (n) => Math.min(2 + Math.floor((n - 1) / 2), 6);     // casillas que puede retroceder una tormenta en el nivel n
@@ -449,10 +449,11 @@
   function pintarPanel() {
     if (!$.panel || $.panel.dataset.modo === 'pregunta') return;
     $.panel.dataset.modo = 'botones';
-    $.panel.innerHTML = `<div class="tbl-acciones"><button type="button" class="tbl-btn" id="tblLanzar"${ocupado ? ' disabled' : ''}><img class="tbl-ico" src="img/tablero/ui/dado.svg" alt=""> Lanzar dado</button><button type="button" class="tbl-btn sec" id="tblBonus"${ocupado || E.bonus <= 0 ? ' disabled' : ''}>Dados de bonus (${E.bonus})</button></div>`;
+    $.panel.innerHTML = `<div class="tbl-acciones"><button type="button" class="tbl-btn" id="tblLanzar"${ocupado ? ' disabled' : ''}><img class="tbl-ico" src="img/tablero/ui/dado.svg" alt=""> Lanzar dado</button><button type="button" class="tbl-btn sec" id="tblBonus"${ocupado || E.bonus <= 0 ? ' disabled' : ''}>Dados de bonus (${E.bonus})</button>${SALA ? '<button type="button" class="tbl-btn sec tbl-sala-btn" id="tblSala" aria-label="Ir a la Sala de tableros">🏛 Sala</button>' : ''}</div>`;
     $.lanzar = document.getElementById('tblLanzar'); $.bonus = document.getElementById('tblBonus');
     if ($.lanzar) $.lanzar.addEventListener('click', () => turno(false));
     if ($.bonus) $.bonus.addEventListener('click', () => turno(true));
+    const sa = document.getElementById('tblSala'); if (sa) sa.addEventListener('click', () => { if (SALA) SALA(); });
   }
   function pintarTodo() { pintarEstado(); colocarPieza(); pintarCasillas(false); pintarPanel(); }
 
@@ -901,7 +902,7 @@
   function abrir(volver, opc) {
     opc = opc || {}; PIEZA = opc.pieza || 'brote';
     const main = document.getElementById('pantalla'); if (!main) return;
-    REPLAY = opc.rejugar || null; VOLVER = volver || null;
+    REPLAY = opc.rejugar || null; VOLVER = volver || null; SALA = opc.sala || null;
     E = REPLAY ? Object.assign(nuevoEstado(), { tablero: REPLAY }) : cargar(); ocupado = false; $ = {};
     document.body.classList.add('tb-full');
     main.innerHTML = `<section class="tbl" id="tbl" aria-label="Tablero de Tierra Buena">
