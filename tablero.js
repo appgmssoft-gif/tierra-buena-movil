@@ -380,17 +380,45 @@
     $.cont.innerHTML = '';
     // F1127: el tamaño de cada casilla sale de la distancia real entre vecinas: nunca se pisan, en ningún teléfono
     let sep = 1e9; for (let i = 0; i < N; i++) { const a = $.coords[i], b = $.coords[(i + 1) % N]; sep = Math.min(sep, Math.hypot((a.x - b.x) * MEDIDA.w / 100, (a.y - b.y) * MEDIDA.h / 100)); }
-    $.mesa.style.setProperty('--cs', Math.max(20, Math.min(42, Math.floor(sep * 0.86))) + 'px');
+    const cs = Math.max(20, Math.min(42, Math.floor(sep * 0.86)));
+    $.mesa.style.setProperty('--cs', cs + 'px');
+    // F1144 · Bola y bandeja de dados: la bola se centra un poco arriba y la bandeja queda en el hueco entre la bola y la fila de abajo
+    const w = MEDIDA.w, h = MEDIDA.h, bola = Math.round(Math.max(110, Math.min(w * 0.52, 196, h * 0.36)));
+    const cy = h * 0.46, abajoBola = cy + bola / 2, filaAbajo = Math.max(...$.coords.map((c) => c.y)) * h / 100 - cs / 2, TIRO_H = 70;
+    const ty = Math.max(abajoBola + 2, (abajoBola + filaAbajo) / 2 - TIRO_H / 2);
+    $.mesa.style.setProperty('--bola-w', bola + 'px'); $.mesa.style.setProperty('--bola-y', cy.toFixed(1) + 'px');
+    $.mesa.style.setProperty('--tiro-y', ty.toFixed(1) + 'px');
+    trazarSendero();
     for (let p = 0; p <= I.meta; p++) {
       const c = $.coords[p], el = document.createElement('div');
-      el.className = 'tbl-casilla oculta'; el.style.left = c.x + '%'; el.style.top = c.y + '%'; el.dataset.k = 'o';
+      el.className = 'tbl-casilla oculta brota'; el.style.left = c.x + '%'; el.style.top = c.y + '%'; el.dataset.k = 'o'; el.style.animationDelay = (p * 22) + 'ms';   // F1145 · entrada escalonada del camino
       $.cont.appendChild(el); $.casillas[p] = el;
     }
     colocarPieza(); pintarCasillas(false);
   }
+  // F1144 · Sendero: un camino punteado que une las casillas. Lo recorrido se ve dorado; lo que falta, apenas insinuado.
+  function trazarSendero() {
+    if (!$.mesa || !$.coords) return;
+    $.mesa.querySelectorAll('.tbl-sendero').forEach((x) => x.remove());
+    const NS = 'http://www.w3.org/2000/svg', svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('class', 'tbl-sendero'); svg.setAttribute('viewBox', '0 0 100 100'); svg.setAttribute('preserveAspectRatio', 'none'); svg.setAttribute('aria-hidden', 'true');
+    $.todo = document.createElementNS(NS, 'polyline'); $.todo.setAttribute('class', 'todo');
+    $.hecho = document.createElementNS(NS, 'polyline'); $.hecho.setAttribute('class', 'hecho');
+    svg.appendChild($.todo); svg.appendChild($.hecho);
+    $.cont.parentNode.insertBefore(svg, $.cont);
+    $.sendero = svg; pintarSendero();
+  }
+  function pintarSendero() {
+    if (!$.todo || !$.coords) return;
+    const meta = info().meta, pts = (n) => $.coords.slice(0, Math.min(n, meta) + 1).map((c) => c.x + ',' + c.y).join(' ');
+    $.todo.setAttribute('points', pts(E.maxPos + 1) + (E.maxPos + 1 >= meta ? ' ' + $.coords[0].x + ',' + $.coords[0].y : ''));
+    $.hecho.setAttribute('points', pts(E.pos));
+  }
   function colocarPieza(dir) {
     if (!$.coords) return;
+    if (dir !== undefined && $.casillas && $.casillas[E.pos] && !reducido()) { const f = $.casillas[E.pos]; f.classList.remove('pisada'); void f.offsetWidth; f.classList.add('pisada'); }   // F1145 · onda al pisar
     const c = $.coords[E.pos] || $.coords[0]; $.pieza.style.left = c.x + '%'; $.pieza.style.top = c.y + '%';
+    pintarSendero();
     if (dir === undefined || reducido()) return;
     $.piezaIn.classList.remove('salta', 'retro'); void $.piezaIn.offsetWidth; $.piezaIn.classList.add(dir > 0 ? 'salta' : 'retro');
   }
@@ -401,7 +429,7 @@
       const vis = p <= E.maxPos, t = p === I.meta ? 'meta' : I.tipos[p], key = vis ? 'v' + t : 'o', antes = el.dataset.k;
       if (antes === key) continue;
       el.dataset.k = key; el.className = 'tbl-casilla ' + (vis ? 'tipo-' + t : 'oculta');
-      el.innerHTML = !vis ? '' : '<img src="img/tablero/' + (p === 0 ? 'salida' : t) + '.svg" alt="">';
+      el.innerHTML = !vis ? '' : '<img src="img/tablero/' + (p === 0 ? 'salida' : t) + '.svg" alt="">' + (p > 0 && p < I.meta ? '<em class="tbl-num">' + p + '</em>' : '');
       if (vis && animar && antes === "o") { el.classList.add("revela"); setTimeout(() => el.classList.remove("revela"), 1100); }
     }
   }
@@ -424,6 +452,9 @@
       d.style.setProperty('--r', (rnd() * 40 - 20).toFixed(0) + 'deg'); d.style.width = (26 + rnd() * 18).toFixed(0) + 'px';
       $.campo.appendChild(d);
     }
+    // F1145 · ambiente: nubes que pasan y aves en el cielo del lugar
+    for (let k = 0; k < 3; k++) { const n = document.createElement('i'); n.className = 'tbl-nube'; n.setAttribute('aria-hidden', 'true'); n.style.top = (4 + rnd() * 40).toFixed(0) + '%'; n.style.animationDelay = (-rnd() * 40).toFixed(1) + 's'; n.style.transform = 'scale(' + (0.7 + rnd() * 0.6).toFixed(2) + ')'; $.campo.appendChild(n); }
+    for (let k = 0; k < 2; k++) { const a = document.createElement('i'); a.className = 'tbl-ave'; a.setAttribute('aria-hidden', 'true'); a.style.top = (8 + rnd() * 30).toFixed(0) + '%'; a.style.animationDelay = (-rnd() * 16).toFixed(1) + 's'; $.campo.appendChild(a); }
   }
   function pintarLuces() {
     let h = ''; for (let i = 1; i <= NIVELES; i++) h += '<span class="tbl-luz' + (i <= E.luces ? ' on' : '') + '" title="Luz ' + i + '"></span>';
@@ -449,11 +480,15 @@
   function pintarPanel() {
     if (!$.panel || $.panel.dataset.modo === 'pregunta') return;
     $.panel.dataset.modo = 'botones';
-    $.panel.innerHTML = `<div class="tbl-acciones"><button type="button" class="tbl-btn" id="tblLanzar"${ocupado ? ' disabled' : ''}><img class="tbl-ico" src="img/tablero/ui/dado.svg" alt=""> Lanzar dado</button><button type="button" class="tbl-btn sec" id="tblBonus"${ocupado || E.bonus <= 0 ? ' disabled' : ''}>Dados de bonus (${E.bonus})</button>${SALA ? '<button type="button" class="tbl-btn sec tbl-sala-btn" id="tblSala" aria-label="Ir a la Sala de tableros">🏛 Sala</button>' : ''}</div>`;
+    // F1144 · Los botones viven dentro del tablero (en la bandeja de madera). El bonus solo muestra el dado y su cantidad.
+    $.btns.innerHTML = `<button type="button" class="tbl-lanza" id="tblLanzar" aria-label="Lanzar dado"${ocupado ? ' disabled' : ''}><img src="img/tablero/ui/dado.svg" alt=""><span>Lanzar</span></button>` +
+      `<button type="button" class="tbl-bonus" id="tblBonus" aria-label="Dados de bonus: tienes ${E.bonus}"${ocupado || E.bonus <= 0 ? ' disabled' : ''}><img src="img/tablero/ui/dado.svg" alt=""><b>${E.bonus}</b></button>` +
+      (SALA ? '<button type="button" class="tbl-sala-btn" id="tblSala" aria-label="Ir a la Sala de tableros">Sala</button>' : '');
     $.lanzar = document.getElementById('tblLanzar'); $.bonus = document.getElementById('tblBonus');
     if ($.lanzar) $.lanzar.addEventListener('click', () => turno(false));
     if ($.bonus) $.bonus.addEventListener('click', () => turno(true));
     const sa = document.getElementById('tblSala'); if (sa) sa.addEventListener('click', () => { if (SALA) SALA(); });
+    $.panel.innerHTML = '';
   }
   function pintarTodo() { pintarEstado(); colocarPieza(); pintarCasillas(false); pintarPanel(); }
 
@@ -605,7 +640,7 @@
         if (bien) { gota(2); const c = centroPieza(); chispas(c.x, c.y, 12, '#ffe9a8'); }
         guardar();
         document.getElementById('tblSeguir').addEventListener('click', () => {
-          $.panel.dataset.modo = 'botones'; $.panel.innerHTML = ''; if ($.root) $.root.classList.remove('en-pregunta'); resolver(bien);
+          $.panel.dataset.modo = 'botones'; $.panel.innerHTML = ''; if ($.root) $.root.classList.remove('en-pregunta'); montar(); resolver(bien);
         });
       }));
     });
@@ -622,11 +657,14 @@
     b.addEventListener('click', alTocar); caja.appendChild(b); return b;
   }
   // F1137 · Cada minijuego explica su regla antes de empezar. El tiempo corre solo al tocar «¡Empezar!».
+  // F1146 · Ilustraciones de los juegos (SVG propio), sin emojis
+  const FIG = (n, c) => `<img class="${c || 'tbl-fig'}" src="img/tablero/deco/${n}.svg" alt="">`;
   const INTRO_MINI = {
-    memoria: { ico: '🃏', titulo: 'Memoria del huerto', pasos: ['Toca una carta y luego otra.', 'Si son iguales, quedan juntas.', 'Encuentra las 6 parejas para ganar 2 gotas.'] },
-    cosecha: { ico: '🧺', titulo: 'Cosecha de cosas raras', pasos: ['Toca las frutas que caen: cada una suma 1 punto.', 'Las cosas raras (piedra, hueso, araña, bota) restan 1.', 'Tienes 12 segundos: 6 puntos dan 2 gotas, 3 dan 1.'] },
-    arreo: { ico: '🐑', titulo: 'Arreo de ovejas', pasos: ['Las ovejas cruzan el campo de a una.', 'Toca cada oveja antes de que se vaya: entra al corral.', 'Si una se escapa, no pasa nada. Tienes 14 segundos.'] },
-    reto: { ico: '🧠', titulo: 'Reto de atención', pasos: ['Cinco preguntas cortas de tres tipos.', 'Cada acierto da 1 gota (máximo 4).', 'Fallar no tiene castigo.'] }
+    memoria: { ico: FIG('flor', 'tbl-intro-fig'), titulo: 'Memoria del huerto', pasos: ['Toca una carta y luego otra.', 'Si son iguales, quedan juntas.', 'Encuentra las 6 parejas para ganar 2 gotas.'] },
+    cosecha: { ico: FIG('arbol', 'tbl-intro-fig'), titulo: 'Cosecha de cosas raras', pasos: ['Toca las frutas que caen: cada una suma 1 punto.', 'Las cosas raras (piedra, hueso, araña, bota) restan 1.', 'Tienes 12 segundos: 6 puntos dan 2 gotas, 3 dan 1.'] },
+    arreo: { ico: FIG('oveja', 'tbl-intro-fig'), titulo: 'Arreo de ovejas', pasos: ['Las ovejas cruzan el campo de a una.', 'Toca cada oveja antes de que se vaya: entra al corral.', 'Si una se escapa, no pasa nada. Tienes 14 segundos.'] },
+    reto: { ico: FIG('sol', 'tbl-intro-fig'), titulo: 'Reto de atención', pasos: ['Cinco preguntas cortas de tres tipos.', 'Cada acierto da 1 gota (máximo 4).', 'Fallar no tiene castigo.'] },
+    eco: { ico: FIG('llama', 'tbl-intro-fig'), titulo: 'Eco del pastor', pasos: ['Mira en qué orden se iluminan los animales.', 'Repite la secuencia tocándolos igual.', 'Cada ronda suma un animal. 4 rondas dan 2 gotas; 2 rondas, 1.'] }
   };
   function miniIntro(clave, juego) {
     return new Promise((res) => {
@@ -643,7 +681,7 @@
   }
   // F1138 · Cualquier minijuego se juega desde su tarjeta de instrucciones (casilla, Relámpago o menú).
   function jugarMini(clave) {
-    const f = { arreo: miniArreo, cosecha: miniCosecha, memoria: miniMemoria, reto: miniReto }[clave];
+    const f = { arreo: miniArreo, cosecha: miniCosecha, memoria: miniMemoria, reto: miniReto, eco: miniEco }[clave];
     return miniIntro(clave, f);
   }
   async function minijuegoCasilla(clave) {
@@ -679,9 +717,9 @@
   function soloMini(clave, volver) {
     const main = document.getElementById('pantalla'); if (!main || !INTRO_MINI[clave]) return;
     E = cargar(); $ = {};
-    const ico = ICONO[clave] || '🧠', titulo = INTRO_MINI[clave].titulo;
+    const ico = ICONO[clave] || '🧠', titulo = INTRO_MINI[clave].titulo, icoFig = INTRO_MINI[clave].ico;
     document.body.classList.add('tb-full');
-    main.innerHTML = `<section class="tbl tbl-solo" aria-label="${esc(titulo)}"><header class="tbl-top"><button type="button" class="volver" id="tblVolver">‹ Minijuegos</button><div class="tbl-tit"><span class="tbl-icono" aria-hidden="true">${ico}</span><div><b>${esc(titulo)}</b><small>Minijuego suelto</small></div></div></header><div class="tbl-mesa" id="tblMesa"></div></section>`;
+    main.innerHTML = `<section class="tbl tbl-solo" aria-label="${esc(titulo)}"><header class="tbl-top"><button type="button" class="volver" id="tblVolver">‹ Minijuegos</button><div class="tbl-tit"><span class="tbl-icono" aria-hidden="true">${icoFig}</span><div><b>${esc(titulo)}</b><small>Minijuego suelto</small></div></div></header><div class="tbl-mesa" id="tblMesa"></div></section>`;
     $.mesa = document.getElementById('tblMesa');
     const salirAlMenu = () => { document.body.classList.remove('tb-full'); if (volver) volver(); };
     document.getElementById('tblVolver').addEventListener('click', salirAlMenu);
@@ -689,7 +727,7 @@
       if (n) { try { if (window.TBInicio && TBInicio.ganarDirecto) TBInicio.ganarDirecto(n); } catch (e) { /* sin Vivero: no pasa nada */ } }
       const mesa = document.getElementById('tblMesa'); if (!mesa) return;
       const card = document.createElement('div'); card.className = 'tbl-mini tbl-intro';
-      card.innerHTML = `<span class="tbl-intro-ico" aria-hidden="true">${n ? '🎉' : ico}</span><b>${n ? '¡Ganaste ' + n + ' ' + (n === 1 ? 'gota' : 'gotas') + '!' : 'Buen intento'}</b><small>${n ? 'Las gotas van a tu Vivero.' : 'Puedes volver a intentarlo cuando quieras.'}</small>`;
+      card.innerHTML = `<span class="tbl-intro-ico" aria-hidden="true">${n ? '🎉' : icoFig}</span><b>${n ? '¡Ganaste ' + n + ' ' + (n === 1 ? 'gota' : 'gotas') + '!' : 'Buen intento'}</b><small>${n ? 'Las gotas van a tu Vivero.' : 'Puedes volver a intentarlo cuando quieras.'}</small>`;
       const fila = document.createElement('div'); fila.className = 'tbl-fila';
       const salir = document.createElement('button'); salir.type = 'button'; salir.className = 'tbl-btn sec'; salir.textContent = 'Volver a Minijuegos';
       salir.addEventListener('click', salirAlMenu);
@@ -698,16 +736,18 @@
       fila.append(salir, otra); card.appendChild(fila); mesa.appendChild(card);
     });
   }
-  function miniMemoria() {                                          // Memoria del huerto: 6 parejas. Ganas 2 gotas al completarla.
+  // F1146 · Memoria del huerto con ilustraciones: cartas que giran en 3D, contador de parejas y brillo al acertar.
+  function miniMemoria() {
     return new Promise((res) => {
-      const emo = ['🌵', '🌲', '🌸', '🦙', '🐧', '🌊'], cartas = barajar(emo.concat(emo));
+      const figs = ['cactus', 'arbol', 'flor', 'llama', 'pez', 'sol'], cartas = barajar(figs.concat(figs));
       const caja = mini('Memoria del huerto', 'Encuentra las parejas. Sin prisa y sin castigo.');
+      const marca = document.createElement('p'); marca.className = 'tbl-marca'; marca.textContent = 'Parejas: 0 de 6'; caja.appendChild(marca);
       const grid = document.createElement('div'); grid.className = 'tbl-mem'; caja.appendChild(grid);
       let abiertas = [], parejas = 0, bloqueo = false, listo = false;
       const cerrar = (n) => { if (listo) return; listo = true; caja.remove(); res(n); };
       cartas.forEach((e) => {
-        const b = document.createElement('button'); b.type = 'button'; b.className = 'tbl-carta'; b.dataset.e = e;
-        b.innerHTML = '<span class="tbl-carta-f">?</span><span class="tbl-carta-c">' + e + '</span>';
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'tbl-carta'; b.dataset.e = e; b.setAttribute('aria-label', 'Carta boca abajo');
+        b.innerHTML = '<span class="tbl-carta-f" aria-hidden="true"></span><span class="tbl-carta-c">' + FIG(e) + '</span>';
         b.addEventListener('click', () => girar(b)); grid.appendChild(b);
       });
       function girar(b) {
@@ -717,36 +757,56 @@
         bloqueo = true; const x = abiertas[0], y = abiertas[1];
         if (x.dataset.e === y.dataset.e) {
           x.classList.add('pareja'); y.classList.add('pareja'); parejas++; abiertas = []; bloqueo = false; son('acierto');
-          if (parejas === 6) { son('nivel'); setTimeout(() => cerrar(2), 700); }
+          const r = y.getBoundingClientRect(); chispas(r.left + r.width / 2, r.top + r.height / 2, 10, '#ffe9a8');
+          marca.textContent = 'Parejas: ' + parejas + ' de 6';
+          if (parejas === 6) { son('nivel'); setTimeout(() => cerrar(2), 800); }
         } else {
-          setTimeout(() => { x.classList.remove('abierta'); y.classList.remove('abierta'); abiertas = []; bloqueo = false; }, 800);
+          setTimeout(() => { x.classList.remove('abierta'); y.classList.remove('abierta'); abiertas = []; bloqueo = false; }, 850);
         }
       }
       botonMini(caja, 'Saltar', () => cerrar(0));
     });
   }
+  // F1146 · Frutas y cosas raras dibujadas (SVG propio). Cada toque muestra el resultado donde se tocó.
+  const COSA = {
+    manzana: '<svg viewBox="0 0 40 40"><path d="M20 13c-6-5-16-2-15 9 1 9 8 16 15 16s14-7 15-16C36 11 26 8 20 13z" fill="#e0523a"/><path d="M20 13c0-4 2-6 5-7" stroke="#5b3a1d" stroke-width="2.5" fill="none" stroke-linecap="round"/><ellipse cx="13" cy="20" rx="3" ry="5" fill="#fff" opacity=".35"/></svg>',
+    uva: '<svg viewBox="0 0 40 40"><g fill="#7b4fb3"><circle cx="20" cy="14" r="5"/><circle cx="14" cy="21" r="5"/><circle cx="26" cy="21" r="5"/><circle cx="20" cy="28" r="5"/><circle cx="14" cy="34" r="4"/><circle cx="26" cy="34" r="4"/></g><path d="M20 9V4" stroke="#5b3a1d" stroke-width="2.5" stroke-linecap="round"/></svg>',
+    maiz: '<svg viewBox="0 0 40 40"><ellipse cx="20" cy="22" rx="8" ry="14" fill="#f2c230"/><path d="M15 14v16M20 9v26M25 14v16" stroke="#d9a02b" stroke-width="1.5"/><path d="M12 24c-4-2-5 6 0 10M28 24c4-2 5 6 0 10" stroke="#7cc08a" stroke-width="3" fill="none" stroke-linecap="round"/></svg>',
+    papa: '<svg viewBox="0 0 40 40"><ellipse cx="20" cy="22" rx="16" ry="11" fill="#b98a4e"/><circle cx="13" cy="20" r="1.6" fill="#7a5530"/><circle cx="24" cy="25" r="1.6" fill="#7a5530"/><circle cx="28" cy="18" r="1.2" fill="#7a5530"/></svg>',
+    frutilla: '<svg viewBox="0 0 40 40"><path d="M20 36c-9-4-14-12-13-19 6-5 20-5 26 0 1 7-4 15-13 19z" fill="#e0344b"/><path d="M12 17l4-4 4 4 4-4 4 4 4-4" stroke="#7cc08a" stroke-width="2.5" fill="none" stroke-linejoin="round"/></svg>',
+    piedra: '<svg viewBox="0 0 40 40"><path d="M7 28l5-14 9-5 10 4 5 12-6 7H13z" fill="#8c8a84"/><path d="M12 22l8-2 8 3" stroke="#5f5d58" stroke-width="1.5" fill="none"/></svg>',
+    hueso: '<svg viewBox="0 0 40 40"><g fill="#efe6d2" stroke="#8a7a60" stroke-width="1.5"><rect x="12" y="17" width="16" height="6" rx="3"/><circle cx="10" cy="16" r="4"/><circle cx="10" cy="24" r="4"/><circle cx="30" cy="16" r="4"/><circle cx="30" cy="24" r="4"/></g></svg>',
+    arana: '<svg viewBox="0 0 40 40"><path d="M20 4v8M10 10l8 6M30 10l-8 6M6 20h10M34 20H24M10 30l8-6M30 30l-8-6" stroke="#2b2218" stroke-width="2" fill="none"/><circle cx="20" cy="24" r="7" fill="#2b2218"/><circle cx="20" cy="14" r="4" fill="#2b2218"/></svg>',
+    bota: '<svg viewBox="0 0 40 40"><path d="M14 6h9v18h11v7c0 3-2 4-4 4H10c-3 0-4-2-4-4V22c0-3 2-4 4-4h4z" fill="#6b4a2b"/><path d="M14 30h20" stroke="#3b2612" stroke-width="2.5"/></svg>'
+  };
   function miniCosecha() {                                          // Cosecha de cosas raras: 12 s. Frutas suman, cosas raras restan.
     return new Promise((res) => {
       const caja = mini('Cosecha de cosas raras', 'Toca las frutas que caen. Las cosas raras restan.');
       const campo = document.createElement('div'); campo.className = 'tbl-cosecha'; caja.appendChild(campo);
       const marca = document.createElement('p'); marca.className = 'tbl-marca'; caja.appendChild(marca);
       let pts = 0, fin = false, listo = false; const DUR = 12000, t0 = Date.now();
-      const frutas = ['🍎', '🍇', '🌽', '🥔', '🍓'], raras = ['🪨', '🦴', '🕷️', '🥾'];
+      const frutas = ['manzana', 'uva', 'maiz', 'papa', 'frutilla'], raras = ['piedra', 'hueso', 'arana', 'bota'];
       const pinta = () => { marca.textContent = 'Puntos: ' + pts + ' · ' + Math.max(0, Math.ceil((DUR - (Date.now() - t0)) / 1000)) + ' s'; };
+      const pop = (ev, txt, cls) => {                              // «+1» o «−1» donde se tocó
+        const r = campo.getBoundingClientRect(), p = document.createElement('span'); p.className = 'tbl-pop ' + cls; p.textContent = txt;
+        p.style.left = (ev.clientX - r.left) + 'px'; p.style.top = (ev.clientY - r.top) + 'px'; campo.appendChild(p); setTimeout(() => p.remove(), 700);
+      };
       const caer = () => {
-        if (fin) return;
-        const rara = Math.random() < 0.35, it = document.createElement('button'); it.type = 'button'; it.className = 'tbl-caida';
-        it.textContent = rara ? raras[Math.floor(Math.random() * raras.length)] : frutas[Math.floor(Math.random() * frutas.length)];
-        it.style.left = (8 + Math.random() * 80) + '%'; it.style.animationDuration = (3.2 + Math.random() * 1.2) + 's';
+        if (fin || !campo.isConnected) return;
+        const rara = Math.random() < 0.35, nombre = rara ? raras[Math.floor(Math.random() * raras.length)] : frutas[Math.floor(Math.random() * frutas.length)];
+        const it = document.createElement('button'); it.type = 'button'; it.className = 'tbl-caida ' + (rara ? 'rara' : 'fruta'); it.setAttribute('aria-label', rara ? 'Cosa rara' : 'Fruta');
+        it.innerHTML = COSA[nombre];
+        it.style.left = (8 + Math.random() * 78) + '%'; it.style.animationDuration = (3.2 + Math.random() * 1.2) + 's';
         it.addEventListener('pointerdown', (ev) => {
-          ev.preventDefault(); if (fin) return;
-          if (rara) { pts = Math.max(0, pts - 1); son('error'); } else { pts++; son('rocio'); }
-          it.remove(); pinta();
+          ev.preventDefault(); if (fin || it.dataset.h) return; it.dataset.h = '1';
+          if (rara) { pts = Math.max(0, pts - 1); son('error'); pop(ev, '−1', 'mal'); }
+          else { pts++; son('rocio'); pop(ev, '+1', 'bien'); chispas(ev.clientX, ev.clientY, 6, '#bfe6a6'); }
+          it.classList.add('tocada'); setTimeout(() => it.remove(), 180); pinta();
         });
         it.addEventListener('animationend', () => it.remove());
         campo.appendChild(it);
       };
-      const iv = setInterval(caer, 520), tick = setInterval(pinta, 250); pinta();
+      const iv = setInterval(caer, 520), tick = setInterval(pinta, 250); pinta(); caer();
       setTimeout(() => {
         fin = true; clearInterval(iv); clearInterval(tick);
         const n = pts >= 6 ? 2 : pts >= 3 ? 1 : 0;
@@ -780,6 +840,44 @@
         marca.textContent = `¡Corral con ${n} ${n === 1 ? 'oveja' : 'ovejas'}! ${g ? 'Ganas ' + g + ' ' + (g === 1 ? 'gota' : 'gotas') + '.' : 'Esta vez no entraron muchas.'}`;
         botonMini(caja, 'Seguir', () => { if (listo) return; listo = true; caja.remove(); res(g); });
       }, DUR);
+    });
+  }
+  // F1146 · Eco del pastor (nuevo): los animales se iluminan en orden; repite la secuencia tocándolos igual.
+  function miniEco() {
+    return new Promise((res) => {
+      const OPC = ['oveja', 'llama', 'pez', 'ave'];
+      const caja = mini('Eco del pastor', 'Mira en qué orden se iluminan los animales y repítelo tocándolos.'); caja.classList.add('compacta');
+      const marca = document.createElement('p'); marca.className = 'tbl-marca'; caja.appendChild(marca);
+      const grid = document.createElement('div'); grid.className = 'tbl-eco'; caja.appendChild(grid);
+      const btns = OPC.map((n, i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'tbl-eco-b c' + (i + 1); b.setAttribute('aria-label', n); b.innerHTML = FIG(n); b.disabled = true; grid.appendChild(b); return b; });
+      const seq = []; let paso = 0, listo = false, mostrando = false;
+      const vivo = () => caja.isConnected && !listo;
+      const cerrar = (n) => { if (listo) return; listo = true; caja.remove(); res(n); };
+      const esperar = (ms) => new Promise((r) => setTimeout(r, reducido() ? Math.min(ms, 80) : ms));
+      async function mostrar() {
+        mostrando = true; btns.forEach((b) => { b.disabled = true; }); marca.textContent = 'Mira con atención…';
+        await esperar(450);
+        for (const i of seq) {
+          if (!vivo()) return;
+          btns[i].classList.add('luz'); son('carta', i); await esperar(520); btns[i].classList.remove('luz'); await esperar(200);
+        }
+        if (!vivo()) return;
+        mostrando = false; paso = 0; btns.forEach((b) => { b.disabled = false; }); marca.textContent = 'Tu turno · ronda ' + seq.length;
+      }
+      function ronda() { seq.push(Math.floor(Math.random() * OPC.length)); mostrar(); }
+      function fallo() {
+        btns.forEach((b) => { b.disabled = true; }); son('error'); grid.classList.add('mal');
+        const n = Math.max(0, seq.length - 1), g = n >= 4 ? 2 : n >= 2 ? 1 : 0;
+        marca.textContent = `Llegaste a ${n} ${n === 1 ? 'ronda' : 'rondas'}. ` + (g ? `Ganas ${g} ${g === 1 ? 'gota' : 'gotas'}.` : 'Esta vez no hubo gotas.');
+        botonMini(caja, 'Seguir', () => cerrar(g));
+      }
+      btns.forEach((b, i) => b.addEventListener('click', () => {
+        if (b.disabled || mostrando || !vivo()) return;
+        if (seq[paso] !== i) { fallo(); return; }
+        b.classList.add('luz'); setTimeout(() => b.classList.remove('luz'), 200); son('rocio'); paso++;
+        if (paso === seq.length) { btns.forEach((x) => { x.disabled = true; }); marca.textContent = '¡Bien! Sigue con la ronda ' + (seq.length + 1); setTimeout(ronda, 900); }
+      }));
+      ronda();
     });
   }
   // F1133 · Reto de atención: cinco desafíos rápidos de cultura general, naturaleza y Chile (nada religioso).
@@ -828,7 +926,7 @@
   }
   // Minijuegos desbloqueados por nivel completado (diseño, sección 13): Arreo (nivel 1), Memoria (2), Cosecha (3).
   // F1133 · Desde el primer tablero están los tres minijuegos y el Reto de atención (antes se desbloqueaban por nivel).
-  function minisDesbloqueados() { return ['arreo', 'memoria', 'cosecha', 'reto']; }
+  function minisDesbloqueados() { return ['arreo', 'memoria', 'cosecha', 'reto', 'eco']; }   // F1146 · se suma el Eco del pastor
   async function relampago() {
     son('relampago');
     decir('Relámpago', 'Un minijuego para ganar gotas. Puedes saltarlo.');
@@ -914,13 +1012,14 @@
       <div class="tbl-estado" id="tblEstado"></div>
       <div class="tbl-mesa" id="tblMesa">
         <div class="tbl-campo" id="tblCampo"></div>
+        <i class="tbl-rosa" aria-hidden="true"></i>
         <img class="tbl-medallon m1" src="img/tablero/medallon/condor.svg" alt="" aria-hidden="true"><img class="tbl-medallon m2" src="img/tablero/medallon/zorro.svg" alt="" aria-hidden="true"><img class="tbl-medallon m3" src="img/tablero/medallon/guanaco.svg" alt="" aria-hidden="true"><img class="tbl-medallon m4" src="img/tablero/medallon/copihue.svg" alt="" aria-hidden="true">
-        <div class="tbl-bola" id="tblBola" aria-live="polite"><i class="tbl-aura" aria-hidden="true"></i><p id="tblTexto"></p></div>
+        <div class="tbl-bola" id="tblBola" aria-live="polite"><i class="tbl-aura" aria-hidden="true"></i><i class="tbl-orbita" aria-hidden="true"></i><p id="tblTexto"></p></div>
         <div id="tblCasillas"></div>
         <div class="tbl-pieza" id="tblPieza" aria-label="Tu pieza"><span class="tbl-pieza-in" id="tblPiezaIn"><img class="tbl-pieza-img" src="img/piezas/${esc(PIEZA)}.svg" alt=""></span></div>
+        <div class="tbl-tiro" id="tblTiro"><div class="tbl-tiro-base"><div class="tbl-dados" id="tblDados"></div><div class="tbl-btns" id="tblBtns"></div></div></div>
         <div class="tbl-aviso" id="tblAviso" hidden></div>
       </div>
-      <div class="tbl-bandeja" id="tblBandeja"></div>
       <div class="tbl-panel" id="tblPanel"></div>
     </section>`;
     $.root = document.getElementById('tbl'); $.mesa = document.getElementById('tblMesa'); $.cont = document.getElementById('tblCasillas');
@@ -928,11 +1027,12 @@
     $.tit = document.getElementById('tblTit'); $.sub = document.getElementById('tblSub'); $.icono = document.getElementById('tblIcono');
     $.pieza = document.getElementById('tblPieza'); $.piezaIn = document.getElementById('tblPiezaIn'); $.aviso = document.getElementById('tblAviso'); $.panel = document.getElementById('tblPanel');
     $.d1 = dadoEl(); $.d2 = dadoEl(); $.d2.hidden = true;
-    const band = document.getElementById('tblBandeja'); band.appendChild($.d1); band.appendChild($.d2);
+    $.tiro = document.getElementById('tblTiro'); $.btns = document.getElementById('tblBtns');
+    const dados = document.getElementById('tblDados'); dados.appendChild($.d1); dados.appendChild($.d2);
     document.getElementById('tblVolver').addEventListener('click', () => { son('salida'); if (typeof volver === 'function') volver(); });
     montar(); pintarTodo();
     if (!$.resize) { $.resize = () => { if ($.root && $.root.isConnected) { montar(); } }; window.addEventListener('resize', $.resize); }
-    decir(`Tablero ${E.tablero}`, E.pos === 0 ? tema(E.tablero).leyenda : 'Sigues donde te quedaste. Lanza el dado cuando quieras.');
+    decir(`Tablero ${E.tablero}`, E.pos === 0 ? tema(E.tablero).leyenda : 'Sigue tu camino.');
     son('inicio');
   }
 

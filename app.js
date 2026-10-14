@@ -229,10 +229,12 @@
     sol: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.900 4.900l1.400 1.400M17.700 17.700l1.400 1.400M2 12h2M20 12h2M4.900 19.100l1.400-1.400M17.700 6.300l1.400-1.400"/>'
   };
   SV.pausa = '<path d="M8 5v14M16 5v14"/>'; SV.audifonos = '<path d="M4 14v-2a8 8 0 0 1 16 0v2"/><path d="M4 14h3v6H5a1 1 0 0 1-1-1zM20 14h-3v6h2a1 1 0 0 0 1-1z"/>'; SV.texto = '<path d="M4 19 9.500 5 15 19M6 14h7M17 12h3M18.500 12v7"/>';
-  const EMO = { '📖': 'libro', '✨': 'chispas', '📜': 'rollo', '🌱': 'brote', '🙏': 'corazon', '🕍': 'iglesia', '⛪': 'iglesia', '🔑': 'llave', '✉': 'correo', '🔒': 'candado', '📣': 'altavoz', '📅': 'calendario', '💡': 'foco', '🎓': 'birrete', '🌟': 'estrella', '❓': 'ayuda', '▶': 'play', '📝': 'pluma', '🤝': 'gente', '🧠': 'mente', '🫁': 'viento', '🧱': 'bloques', '🧰': 'llave2', '🕊': 'paloma', '🌿': 'hoja', '🔖': 'marcador', '🗓': 'calendario', '🏆': 'trofeo', '🖼': 'imagen', '🎵': 'nota', '🎶': 'nota', '🎉': 'chispas', '🗑': 'papelera', '✓': 'check', '🤲': 'manos', '✍': 'pluma', '🔎': 'lupa', '🌅': 'amanecer', '🔀': 'baraja', '📜': 'rollo' };
+  const EMO = { '🎲': 'dado', '🕹': 'joystick', '🕹️': 'joystick', '📖': 'libro', '✨': 'chispas', '📜': 'rollo', '🌱': 'brote', '🙏': 'corazon', '🕍': 'iglesia', '⛪': 'iglesia', '🔑': 'llave', '✉': 'correo', '🔒': 'candado', '📣': 'altavoz', '📅': 'calendario', '💡': 'foco', '🎓': 'birrete', '🌟': 'estrella', '❓': 'ayuda', '▶': 'play', '📝': 'pluma', '🤝': 'gente', '🧠': 'mente', '🫁': 'viento', '🧱': 'bloques', '🧰': 'llave2', '🕊': 'paloma', '🌿': 'hoja', '🔖': 'marcador', '🗓': 'calendario', '🏆': 'trofeo', '🖼': 'imagen', '🎵': 'nota', '🎶': 'nota', '🎉': 'chispas', '🗑': 'papelera', '✓': 'check', '🤲': 'manos', '✍': 'pluma', '🔎': 'lupa', '🌅': 'amanecer', '🔀': 'baraja', '📜': 'rollo' };
   // F942: pictogramas a color (más fáciles de reconocer para personas mayores). Si una clave no está aquí, sigue el ícono de línea.
   // Íconos a color de Tierra Buena: contorno café común, tierra/brote/ámbar y un detalle de brote que los une
   const PICTO = {
+    dado: '<g stroke="#5a3d24" stroke-width="1.2" stroke-linejoin="round"><path d="M5 6.5 12 3l7 3.5v11L12 21l-7-3.5z" fill="#f6ecd2"/><path d="M5 6.5 12 10l7-3.5M12 10v11" fill="none"/><circle cx="9" cy="14" r="1.1" fill="#5a3d24"/><circle cx="15" cy="14" r="1.1" fill="#5a3d24"/><circle cx="12" cy="17" r="1.1" fill="#c4604a"/></g>',
+    joystick: '<g stroke="#5a3d24" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"><rect x="3" y="14" width="18" height="6" rx="3" fill="#4f8a5b"/><path d="M12 14V8" fill="none" stroke-width="1.8"/><circle cx="12" cy="6.5" r="2.6" fill="#c4604a"/><circle cx="7" cy="17" r="1.2" fill="#f6ecd2"/><circle cx="17" cy="17" r="1.2" fill="#e9b949"/></g>',
     libro: '<g stroke="#5a3d24" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"><path d="M2.5 7C6 5.5 9.5 6 12 8.5v12C9.5 18.5 6 18.5 2.5 20z" fill="#4f8a5b"/><path d="M21.5 7C18 5.5 14.5 6 12 8.5v12c2.5-2 6-2 9.5-.5z" fill="#f6ecd2"/><path d="M12 8.5V4.5" fill="none"/><path d="M12 5.5C12 3.5 10.3 2.5 8.5 2.8c0 2 1.4 3 3.5 2.7z" fill="#7cc08a"/><path d="M12 4.8c0-2 1.7-3 3.5-2.7 0 2-1.4 3-3.5 2.7z" fill="#4f8a5b"/></g>',
     corazon: '<path d="M12 20s-7.6-4.5-9.3-9.1C1.6 7.6 3.5 4.5 6.8 4.5c2.1 0 3.6 1.2 5.2 3.1 1.6-1.9 3.1-3.1 5.2-3.1 3.3 0 5.2 3.1 4.1 6.4C19.6 15.5 12 20 12 20z"/>',
     iglesia: '<g stroke="#5a3d24" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"><rect x="4.500" y="11.500" width="15" height="9.500" fill="#f6ecd2"/><path d="M3 12 12 5.500l9 6.500z" fill="#c4604a"/><path d="M12 1.500v4M10.300 3h3.400" fill="none" stroke-width="1.500"/><path d="M10 21v-3.800a2 2 0 0 1 4 0V21z" fill="#8b5a2b"/><circle cx="7.600" cy="16" r="1.300" fill="#e9b949"/><circle cx="16.400" cy="16" r="1.300" fill="#e9b949"/></g>',
@@ -286,7 +288,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Preguntas de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Sopa del Vivero': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1135';
+  const APP_VERSION = 'F1147';
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
   const BANDA_POR_VOLVER = { 'Mi iglesia': 'union', 'Palabra': 'palabra', 'Vida': 'crecer', 'Vivir lo que aprendemos': 'crecer', 'Perfil': 'camino', 'Panel': 'pastor' };
   const bandaMini = (tipo) => bandaTB(tipo).replace('class="tb-banda"', 'class="tb-banda tb-banda-mini"');
@@ -1359,11 +1361,11 @@
     ['minijuegos', '🕹️', 'Minijuegos', 'Arreo, Memoria, Cosecha y Reto de atención. Cada uno explica su regla antes de empezar.'],
     ['mente', '🧠', 'Mente en juego', 'Trivia rápida: ciencia, animales, Chile, espacio y adivinanzas. Con racha y comodín.'],
     ['raices', '📖', 'Preguntas de la Palabra', 'Preguntas sobre lo que leíste, con el versículo que explica la respuesta.'],
-    ['brotes', '✍️', 'Completa el versículo', 'Toca la palabra que falta en el versículo. Puedes usar las palabras que tú resaltaste.'],
+    ['memoria', '🃏', 'Memoria del huerto', 'Encuentra las parejas del huerto. Cada pareja completa da gotas para tu Vivero.'],   // F1145 · reemplaza «Completa el versículo» (pendiente de la Fase 1 del tablero)
     ['sopa', '🔎', 'Sopa del Vivero', 'Letras grandes, sin tiempo y con pistas gratis.'],
     ['jardin', '🌱', 'Jardín del principio', 'Un día de la creación por nivel: responde y se abre el siguiente día.']
   ];
-  const JUEGOS_LISTOS = { minijuegos: (v) => vistaMinijuegos(v), mente: (v) => juegoMente(v), tablero: (v) => { if (window.TBTablero) TBTablero.abrir(v, { sala: () => vistaJuegos('sala'), pieza: ((PIEZAS.find((p) => p[0] === ((jugadorLeer() || {}).pieza)) || PIEZAS[0])[0]) }); }, raices: (v) => vistaRaices(v), brotes: (v) => vistaBrotesCamino(v), jardin: (v) => vistaJardin(v), sopa: (v) => vistaSopa(v) };   // id -> función que abre el juego (cada fase nueva se registra aquí)
+  const JUEGOS_LISTOS = { minijuegos: (v) => vistaMinijuegos(v), memoria: (v) => { if (window.TBTablero && TBTablero.minijuego) TBTablero.minijuego('memoria', v); }, mente: (v) => juegoMente(v), tablero: (v) => { if (window.TBTablero) TBTablero.abrir(v, { sala: () => vistaJuegos('sala'), pieza: ((PIEZAS.find((p) => p[0] === ((jugadorLeer() || {}).pieza)) || PIEZAS[0])[0]) }); }, raices: (v) => vistaRaices(v), brotes: (v) => vistaBrotesCamino(v), jardin: (v) => vistaJardin(v), sopa: (v) => vistaSopa(v) };   // id -> función que abre el juego (cada fase nueva se registra aquí)
   function juegoTerminar(id, aciertos, total) {   // guarda la partida; una gota de rocío al terminar con al menos 60 % de aciertos (tope diario)
     const j = leer(K_JUEGOS) || { n: 0, p: {} }; j.n = (j.n || 0) + 1; j.p = j.p || {};
     const q = j.p[id] || { n: 0, mejor: 0 }; q.n++; q.mejor = Math.max(q.mejor, Number(aciertos) || 0); j.p[id] = q; guardar(K_JUEGOS, j);
@@ -1500,10 +1502,11 @@
   // F1138 · Minijuegos sueltos: tarjetas con lo que hace cada uno. Cada juego abre con su tarjeta de instrucciones.
   function vistaMinijuegos(volver) {
     const M = [
-      ['arreo', '🐑', 'Arreo de ovejas', 'Toca las ovejas que cruzan el campo para llevarlas al corral.'],
-      ['memoria', '🃏', 'Memoria del huerto', 'Encuentra las 6 parejas dando vuelta las cartas.'],
-      ['cosecha', '🧺', 'Cosecha de cosas raras', 'Las frutas suman; las piedras, huesos, arañas y botas restan.'],
-      ['reto', '🧠', 'Reto de atención', 'Cinco preguntas cortas de cultura, naturaleza y Chile.']
+      ['arreo', '<img class="mini-fig" src="img/tablero/deco/oveja.svg" alt="">', 'Arreo de ovejas', 'Toca las ovejas que cruzan el campo para llevarlas al corral.'],
+      ['memoria', '<img class="mini-fig" src="img/tablero/deco/flor.svg" alt="">', 'Memoria del huerto', 'Encuentra las 6 parejas dando vuelta las cartas.'],
+      ['cosecha', '<img class="mini-fig" src="img/tablero/deco/arbol.svg" alt="">', 'Cosecha de cosas raras', 'Las frutas suman; las piedras, huesos, arañas y botas restan.'],
+      ['eco', '<img class="mini-fig" src="img/tablero/deco/llama.svg" alt="">', 'Eco del pastor', 'Repite la secuencia de animales. Cada ronda suma uno.'],
+      ['reto', '<img class="mini-fig" src="img/tablero/deco/sol.svg" alt="">', 'Reto de atención', 'Cinco preguntas cortas de cultura, naturaleza y Chile.']
     ];
     $('#pantalla').innerHTML = `${cabecera('Minijuegos', 'Juegos')}<div class="ju"><p class="suave">Juegos rápidos, sin prisa y sin castigo. Cada uno te explica su regla antes de empezar.</p><div class="mini-grid">${M.map(([k, ic, t, d]) => `<button type="button" class="mini-card" data-mini="${k}"><span class="mini-ico" aria-hidden="true">${ic}</span><b>${esc(t)}</b><small>${esc(d)}</small></button>`).join('')}</div></div>`;
     $('#volver').onclick = volver;
