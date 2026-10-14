@@ -409,3 +409,9 @@ html[data-anim=off] .so-nodo:not(.bloq):not(.hecho){animation:none}
 .logro:not(.ok){opacity:.6}
 .logro.ok{border-color:color-mix(in srgb,var(--verde,#4f8a55) 40%,transparent)}
 @media (prefers-reduced-motion:reduce){.consola-tile{transition:none}}
+
+/* F1127 · Los carruseles «Lo que puedes hacer aquí» solo viven en Perfil (antes salían en todas las pestañas) */
+.tbcar:not([data-tab="perfil"]) { display: none !important; }
+/* F1127 · Iconos de «Tu espacio» y de «Efectos y sonido»: transparentes, para que acompañen sin molestar */
+.tbcar-art:not(.grande) { opacity: .3; }
+.tbson-ic { opacity: .45; }

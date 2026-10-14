@@ -9,14 +9,17 @@
   const NIVELES = 10;
   // Lugares turísticos de Chile, con una leyenda corta de tono místico (cada tablero toma uno).
   const TEMAS = [
-    { nombre: 'Rapa Nui', lugar: 'Ahu y moáis', icono: '🗿', cielo: '#f2d7a0', campo: '#2f5f57', leyenda: 'Los moáis miran al mar y guardan silencio. Dicen que a veces, en la noche, se mueven un poco.' },
-    { nombre: 'Atacama', lugar: 'Valle de la Luna', icono: '🌵', cielo: '#f0c59a', campo: '#7a4f33', leyenda: 'Bajo la luna, las sombras de las rocas cuentan historias que el desierto nunca olvidó.' },
-    { nombre: 'Chiloé', lugar: 'Iglesias y palafitos', icono: '⛪', cielo: '#cfe3d6', campo: '#2b5246', leyenda: 'La Pincoya baila sobre la marea cuando el mar está en paz. Quien la ve, vuelve.' },
-    { nombre: 'Torres del Paine', lugar: 'Patagonia', icono: '🏔️', cielo: '#d3dcea', campo: '#3a4c5c', leyenda: 'El viento patagónico lleva los secretos de los cerros de un lado al otro del lago.' },
-    { nombre: 'Lauca', lugar: 'Altiplano', icono: '🌋', cielo: '#eadac4', campo: '#5f6039', leyenda: 'Los volcanes vigilan el agua de los antiguos. Las vicuñas conocen un camino escondido.' },
-    { nombre: 'Valparaíso', lugar: 'Cerros y ascensores', icono: '🚠', cielo: '#f5cfb0', campo: '#463b5a', leyenda: 'Al anochecer los cerros se encienden como un tesoro entre las casas de colores.' },
-    { nombre: 'Cajón del Maipo', lugar: 'Cordillera', icono: '🏞️', cielo: '#d6eacf', campo: '#3a5f43', leyenda: 'Un río cantarín guía a quien busca la montaña. Dicen que el agua recuerda a quien la visita.' },
-    { nombre: 'Juan Fernández', lugar: 'Isla lejana', icono: '🏝️', cielo: '#c0e4e9', campo: '#2b5a62', leyenda: 'Una isla en medio del mar guarda huellas de quien esperó mucho tiempo por volver.' }
+    { nombre: 'Rapa Nui', lugar: 'Ahu y moáis', icono: '🗿', cielo: '#f2d7a0', campo: '#2f5f57', aura: '#ffd45c', deco: ['🗿', '🌊', '🌿', '🪨'], leyenda: 'Los moáis miran al mar y guardan silencio. Dicen que a veces, en la noche, se mueven un poco.' },
+    { nombre: 'Atacama', lugar: 'Valle de la Luna', icono: '🌵', cielo: '#f0c59a', campo: '#7a4f33', aura: '#ffb36b', deco: ['🌵', '☀️', '🪨', '🦂'], leyenda: 'Bajo la luna, las sombras de las rocas cuentan historias que el desierto nunca olvidó.' },
+    { nombre: 'Chiloé', lugar: 'Iglesias y palafitos', icono: '⛪', cielo: '#cfe3d6', campo: '#2b5246', aura: '#8fe3c4', deco: ['🐟', '🌲', '🐚', '🦭'], leyenda: 'La Pincoya baila sobre la marea cuando el mar está en paz. Quien la ve, vuelve.' },
+    { nombre: 'Torres del Paine', lugar: 'Patagonia', icono: '🏔️', cielo: '#d3dcea', campo: '#3a4c5c', aura: '#9fd8ff', deco: ['⛰️', '❄️', '🦅', '🌬️'], leyenda: 'El viento patagónico lleva los secretos de los cerros de un lado al otro del lago.' },
+    { nombre: 'Lauca', lugar: 'Altiplano', icono: '🌋', cielo: '#eadac4', campo: '#5f6039', aura: '#f2c48d', deco: ['🦙', '🌋', '🌾', '🦅'], leyenda: 'Los volcanes vigilan el agua de los antiguos. Las vicuñas conocen un camino escondido.' },
+    { nombre: 'Valparaíso', lugar: 'Cerros y ascensores', icono: '🚠', cielo: '#f5cfb0', campo: '#463b5a', aura: '#ffb08a', deco: ['🎈', '⛵', '🌇', '🎨'], leyenda: 'Al anochecer los cerros se encienden como un tesoro entre las casas de colores.' },
+    { nombre: 'Cajón del Maipo', lugar: 'Cordillera', icono: '🏞️', cielo: '#d6eacf', campo: '#3a5f43', aura: '#9ee0a6', deco: ['💧', '🌿', '🦅', '🌼'], leyenda: 'Un río cantarín guía a quien busca la montaña. Dicen que el agua recuerda a quien la visita.' },
+    { nombre: 'Juan Fernández', lugar: 'Isla lejana', icono: '🏝️', cielo: '#c0e4e9', campo: '#2b5a62', aura: '#8ee3e8', deco: ['🐚', '🐟', '🌴', '⭐'], leyenda: 'Una isla en medio del mar guarda huellas de quien esperó mucho tiempo por volver.' },
+    { nombre: 'Desierto florido', lugar: 'Atacama en primavera', icono: '🌸', cielo: '#ffd9ec', campo: '#7d5a7a', aura: '#ffb3dc', deco: ['🌸', '🌼', '🦋', '🌷'], leyenda: 'Tras la lluvia escasa, el desierto despierta de colores. Las flores esperan años para salir y florecer una sola vez.' },
+    { nombre: 'Costa', lugar: 'Pacífico', icono: '🌊', cielo: '#d2ebff', campo: '#2d5f7a', aura: '#9fd3ff', deco: ['🦀', '🐚', '🐟', '🌊'], leyenda: 'Las olas guardan canciones viejas. Quien escucha con calma, aprende a esperar la marea.' },
+    { nombre: 'Bosque nativo', lugar: 'Alerce Andino', icono: '🌳', cielo: '#cfe8c4', campo: '#2a4d31', aura: '#b8f0a6', deco: ['🌳', '🍄', '🦉', '🌿'], leyenda: 'Los alerces crecen despacio, pero viven siglos. Cada anillo de su tronco cuenta un año de paciencia.' }
   ];
   const tema = (t) => TEMAS[(t - 1) % TEMAS.length];
   const RANGO = (n) => Math.min(2 + Math.floor((n - 1) / 2), 6);     // casillas que puede retroceder una tormenta en el nivel n
@@ -28,7 +31,7 @@
   // ---------- Pesos por nivel: más niveles = menos rocío y más trampas. Se normalizan para sumar 1. ----------
   function pesosDe(n) {
     const w = {
-      rocio: Math.max(0.2, 0.40 - 0.02 * (n - 1)), pregunta: 0.18, atajo: 0.10, tormenta: 0.07 + 0.005 * (n - 1),
+      rocio: Math.max(0.2, 0.40 - 0.02 * (n - 1)), pregunta: 0.18 + 0.006 * (n - 1), atajo: 0.10, tormenta: 0.07 + 0.005 * (n - 1),
       pausa: 0.05, escudo: 0.08, cofre: n >= 2 ? 0.04 : 0, relampago: n >= 3 ? 0.04 : 0,
       ladron: n >= 5 ? 0.05 : 0, remolino: n >= 7 ? 0.04 : 0
     };
@@ -269,6 +272,18 @@
     if (!$.texto) return;
     $.texto.innerHTML = `<b>${esc(titulo)}</b><span>${esc(cuerpo)}</span>`;
     $.bola.classList.remove('salta'); void $.bola.offsetWidth; $.bola.classList.add('salta');
+    brillos(6);
+  }
+  // Destellos dentro de la bola de cristal (siempre dentro del círculo)
+  function brillos(n) {
+    if (!$.bola || reducido()) return;
+    $.bola.querySelectorAll('.tbl-destello').forEach((x) => x.remove());
+    for (let i = 0; i < n; i++) {
+      const s = document.createElement('i'); s.className = 'tbl-destello'; s.setAttribute('aria-hidden', 'true');
+      const a = Math.random() * Math.PI * 2, r = Math.sqrt(Math.random()) * 38;
+      s.style.setProperty('--x', (50 + Math.cos(a) * r).toFixed(1) + '%'); s.style.setProperty('--y', (50 + Math.sin(a) * r).toFixed(1) + '%');
+      s.style.animationDelay = (i * 0.12).toFixed(2) + 's'; $.bola.appendChild(s);
+    }
   }
   function volarGotas(n) {
     if (reducido() || !$.piezaIn || !$.chip) return;
@@ -355,7 +370,9 @@
     $.coords = anillo(N, MEDIDA.w, MEDIDA.h);
     $.casillas = {};
     $.cont.innerHTML = '';
-    $.mesa.classList.toggle('apretado', N > 34);
+    // F1127: el tamaño de cada casilla sale de la distancia real entre vecinas: nunca se pisan, en ningún teléfono
+    let sep = 1e9; for (let i = 0; i < N; i++) { const a = $.coords[i], b = $.coords[(i + 1) % N]; sep = Math.min(sep, Math.hypot((a.x - b.x) * MEDIDA.w / 100, (a.y - b.y) * MEDIDA.h / 100)); }
+    $.mesa.style.setProperty('--cs', Math.max(20, Math.min(42, Math.floor(sep * 0.86))) + 'px');
     for (let p = 0; p <= I.meta; p++) {
       const c = $.coords[p], el = document.createElement('div');
       el.className = 'tbl-casilla oculta'; el.style.left = c.x + '%'; el.style.top = c.y + '%'; el.dataset.k = 'o';
@@ -382,10 +399,23 @@
   }
   function aplicarTema() {
     const T = tema(E.tablero);
-    $.root.style.setProperty('--tb-cielo', T.cielo); $.root.style.setProperty('--tb-campo', T.campo);
+    $.root.style.setProperty('--tb-cielo', T.cielo); $.root.style.setProperty('--tb-campo', T.campo); $.root.style.setProperty('--tb-aura', T.aura || '#9fdcff');
+    pintarDecor(T);
     $.tit.textContent = `Tablero ${E.tablero} · ${T.nombre}`;
     $.sub.textContent = `${T.lugar} · Nivel ${E.nivel} de ${NIVELES}`;
     $.icono.textContent = T.icono;
+  }
+  // Decoración de cada lugar: figuras suaves sobre el campo (siempre igual para ese tablero)
+  function pintarDecor(T) {
+    if (!$.campo) return;
+    const rnd = semilla(E.tablero * 31 + 5), lista = T.deco || [];
+    $.campo.innerHTML = '';
+    for (let i = 0; i < 9 && lista.length; i++) {
+      const d = document.createElement('span'); d.className = 'tbl-deco'; d.textContent = lista[i % lista.length]; d.setAttribute('aria-hidden', 'true');
+      d.style.left = (6 + rnd() * 88).toFixed(1) + '%'; d.style.top = (6 + rnd() * 88).toFixed(1) + '%';
+      d.style.setProperty('--r', (rnd() * 60 - 30).toFixed(0) + 'deg'); d.style.fontSize = (14 + rnd() * 12).toFixed(0) + 'px';
+      $.campo.appendChild(d);
+    }
   }
   function pintarLuces() {
     let h = ''; for (let i = 1; i <= NIVELES; i++) h += '<span class="tbl-luz' + (i <= E.luces ? ' on' : '') + '" title="Luz ' + i + '"></span>';
@@ -676,8 +706,8 @@
       <div class="tbl-luces" id="tblLuces" aria-label="Luces encendidas: una por nivel pasado"></div>
       <div class="tbl-estado" id="tblEstado"></div>
       <div class="tbl-mesa" id="tblMesa">
-        <div class="tbl-campo"></div>
-        <div class="tbl-bola" id="tblBola" aria-live="polite"><p id="tblTexto"></p></div>
+        <div class="tbl-campo" id="tblCampo"></div>
+        <div class="tbl-bola" id="tblBola" aria-live="polite"><i class="tbl-aura" aria-hidden="true"></i><p id="tblTexto"></p></div>
         <div id="tblCasillas"></div>
         <div class="tbl-pieza" id="tblPieza" aria-label="Tu pieza"><span class="tbl-pieza-in" id="tblPiezaIn">${esc(PIEZA)}</span></div>
         <div class="tbl-aviso" id="tblAviso" hidden></div>
@@ -686,7 +716,7 @@
       <div class="tbl-panel" id="tblPanel"></div>
     </section>`;
     $.root = document.getElementById('tbl'); $.mesa = document.getElementById('tblMesa'); $.cont = document.getElementById('tblCasillas');
-    $.estado = document.getElementById('tblEstado'); $.luces = document.getElementById('tblLuces'); $.bola = document.getElementById('tblBola'); $.texto = document.getElementById('tblTexto');
+    $.campo = document.getElementById('tblCampo'); $.estado = document.getElementById('tblEstado'); $.luces = document.getElementById('tblLuces'); $.bola = document.getElementById('tblBola'); $.texto = document.getElementById('tblTexto');
     $.tit = document.getElementById('tblTit'); $.sub = document.getElementById('tblSub'); $.icono = document.getElementById('tblIcono');
     $.pieza = document.getElementById('tblPieza'); $.piezaIn = document.getElementById('tblPiezaIn'); $.aviso = document.getElementById('tblAviso'); $.panel = document.getElementById('tblPanel');
     $.d1 = dadoEl(); $.d2 = dadoEl(); $.d2.hidden = true;
