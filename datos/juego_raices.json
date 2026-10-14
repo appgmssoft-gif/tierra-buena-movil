@@ -219,7 +219,7 @@
    "v": 105,
    "p": "¿Con qué compara el salmista la palabra de Dios?",
    "o": [
-    "Con una lámpara a sus pies",
+    "Con una lámpara para sus pies",
     "Con un río",
     "Con un escudo de bronce",
     "Con una montaña"
@@ -455,7 +455,7 @@
    "cod": "JHN",
    "cap": 11,
    "v": 35,
-   "p": "¿Cuál es el versículo más corto de este capítulo?",
+   "p": "En Juan 11, ¿cuál es el versículo más corto?",
    "o": [
     "Jesús lloró",
     "Jesús oró",
@@ -629,25 +629,6 @@
    "c": 3
   },
   {
-   "id": "r45",
-   "cod": "GEN",
-   "cap": 37,
-   "v": 3,
-   "p": "¿Qué regalo le hizo Jacob a su hijo José?",
-   "o": [
-    "Un anillo de oro",
-    [
-     "Una túnica de colores",
-     "Un anillo de oro",
-     "Un camello",
-     "Una casa"
-    ],
-    "Una casa",
-    "Un camello"
-   ],
-   "c": 1
-  },
-  {
    "id": "r46",
    "cod": "EXO",
    "cap": 3,
@@ -703,44 +684,6 @@
     "Solo con las palabras"
    ],
    "c": 2
-  },
-  {
-   "id": "r49",
-   "cod": "JOS",
-   "cap": 1,
-   "v": 9,
-   "p": "¿Qué le dijo Dios a Josué para que no tuviera miedo?",
-   "o": [
-    "«Huye al desierto»",
-    "«Vuelve a Egipto»",
-    "«Espera diez años»",
-    [
-     "«Esfuérzate y sé valiente; yo estaré contigo»",
-     "«Huye al desierto»",
-     "«Espera diez años»",
-     "«Vuelve a Egipto»"
-    ]
-   ],
-   "c": 3
-  },
-  {
-   "id": "r50",
-   "cod": "1SA",
-   "cap": 16,
-   "v": 7,
-   "p": "Según 1 Samuel 16:7, ¿qué mira Jehová?",
-   "o": [
-    "La apariencia del rostro",
-    [
-     "El corazón",
-     "La estatura",
-     "Las riquezas",
-     "La apariencia del rostro"
-    ],
-    "Las riquezas",
-    "La estatura"
-   ],
-   "c": 1
   },
   {
    "id": "r51",
@@ -929,25 +872,6 @@
     ],
     "Como los demás animales",
     "Al azar"
-   ],
-   "c": 1
-  },
-  {
-   "id": "r61",
-   "cod": "PRO",
-   "cap": 3,
-   "v": 5,
-   "p": "Proverbios 3:5 pide que confiemos en el Señor de todo corazón y que no nos apoyemos en…",
-   "o": [
-    "La suerte",
-    [
-     "Nuestra propia prudencia",
-     "La ayuda de los amigos",
-     "La fuerza de los reyes",
-     "La suerte"
-    ],
-    "La fuerza de los reyes",
-    "La ayuda de los amigos"
    ],
    "c": 1
   },
@@ -1427,25 +1351,6 @@
    "c": 0
   },
   {
-   "id": "r88",
-   "cod": "GAL",
-   "cap": 5,
-   "v": 22,
-   "p": "¿Cuál es el primer fruto del Espíritu (Gálatas 5:22)?",
-   "o": [
-    "La bondad",
-    "La paciencia",
-    "La fe",
-    [
-     "El amor",
-     "La paciencia",
-     "La bondad",
-     "La fe"
-    ]
-   ],
-   "c": 3
-  },
-  {
    "id": "r89",
    "cod": "EPH",
    "cap": 2,
@@ -1655,23 +1560,403 @@
    "c": 3
   },
   {
-   "id": "r100",
-   "cod": "PSA",
-   "cap": 46,
-   "v": 1,
-   "p": "Según el Salmo 46:1, Dios es nuestro amparo, fortaleza y…",
+   "id": "r094",
+   "cod": "EXO",
+   "cap": 15,
+   "v": 2,
+   "p": "Según Éxodo 15:2, ¿qué es Jehová para Moisés?",
    "o": [
     [
-     "Pronto auxilio en las tribulaciones",
-     "Riqueza en la vejez",
-     "Rey de los ejércitos del norte",
-     "Juez de los hombres sabios"
+     "Su fortaleza y su cántico",
+     "Su juez",
+     "Su ejército",
+     "Su riqueza"
     ],
-    "Juez de los hombres sabios",
-    "Rey de los ejércitos del norte",
-    "Riqueza en la vejez"
+    "Su juez",
+    "Su ejército",
+    "Su riqueza"
    ],
    "c": 0
+  },
+  {
+   "id": "r095",
+   "cod": "DEU",
+   "cap": 31,
+   "v": 6,
+   "p": "Según Deuteronomio 31:6, ¿quién va contigo y no te dejará?",
+   "o": [
+    "Tu padre",
+    [
+     "Jehová tu Dios",
+     "Tu padre",
+     "Un ángel del cielo",
+     "Tu capitán"
+    ],
+    "Un ángel del cielo",
+    "Tu capitán"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r096",
+   "cod": "1SA",
+   "cap": 3,
+   "v": 10,
+   "p": "Cuando Dios llamó a Samuel, ¿qué le respondió? (1 Samuel 3:10)",
+   "o": [
+    [
+     "«Habla, que tu siervo oye»",
+     "«Aquí estoy para ser rey»",
+     "«No soy digno, déjame»",
+     "«Que el templo sea grande»"
+    ],
+    "«Que el templo sea grande»",
+    "«No soy digno, déjame»",
+    "«Aquí estoy para ser rey»"
+   ],
+   "c": 0
+  },
+  {
+   "id": "r097",
+   "cod": "1CH",
+   "cap": 16,
+   "v": 34,
+   "p": "Según 1 Crónicas 16:34, ¿por qué debemos alabar a Jehová?",
+   "o": [
+    "Porque su nombre es grande",
+    "Porque es el rey de todos",
+    [
+     "Porque es bueno y su misericordia es para siempre",
+     "Porque tiene muchos ejércitos",
+     "Porque su nombre es grande",
+     "Porque es el rey de todos"
+    ],
+    "Porque tiene muchos ejércitos"
+   ],
+   "c": 2
+  },
+  {
+   "id": "r098",
+   "cod": "ECC",
+   "cap": 3,
+   "v": 1,
+   "p": "Según Eclesiastés 3:1, ¿qué tiene su tiempo?",
+   "o": [
+    "Nada",
+    "Solo los jóvenes",
+    [
+     "Todo",
+     "Nada",
+     "Solo los sabios",
+     "Solo los jóvenes"
+    ],
+    "Solo los sabios"
+   ],
+   "c": 2
+  },
+  {
+   "id": "r099",
+   "cod": "ISA",
+   "cap": 26,
+   "v": 3,
+   "p": "Según Isaías 26:3, ¿a quién guardará Dios en perfecta paz?",
+   "o": [
+    "Al que tiene poder",
+    "Al que tiene riquezas",
+    "Al que viaja mucho",
+    [
+     "Al que persevera en pensar en él",
+     "Al que tiene riquezas",
+     "Al que viaja mucho",
+     "Al que tiene poder"
+    ]
+   ],
+   "c": 3
+  },
+  {
+   "id": "r100",
+   "cod": "MAT",
+   "cap": 5,
+   "v": 13,
+   "p": "Según Mateo 5:13, ¿qué dijo Jesús que somos para la tierra?",
+   "o": [
+    "El fuego del campo",
+    [
+     "La sal de la tierra",
+     "El fuego del campo",
+     "El agua del pozo",
+     "El trigo del granero"
+    ],
+    "El agua del pozo",
+    "El trigo del granero"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r101",
+   "cod": "MAT",
+   "cap": 6,
+   "v": 34,
+   "p": "Según Mateo 6:34, ¿qué dice Jesús sobre el día de mañana?",
+   "o": [
+    "Hay que guardar riquezas para años",
+    "Hay que planearlo todo con años de anticipación",
+    "Hay que temerlo siempre",
+    [
+     "Cada día tiene ya su propio afán",
+     "Hay que guardar riquezas para años",
+     "Hay que temerlo siempre",
+     "Hay que planearlo todo con años de anticipación"
+    ]
+   ],
+   "c": 3
+  },
+  {
+   "id": "r102",
+   "cod": "MAT",
+   "cap": 7,
+   "v": 7,
+   "p": "Mateo 7:7 nos invita con tres verbos. ¿Cuáles son?",
+   "o": [
+    "Corred, huid y esconded",
+    "Callad, dormid y esperad",
+    "Comed, bebed y reíd",
+    [
+     "Pedid, buscad y llamad",
+     "Corred, huid y esconded",
+     "Callad, dormid y esperad",
+     "Comed, bebed y reíd"
+    ]
+   ],
+   "c": 3
+  },
+  {
+   "id": "r103",
+   "cod": "LUK",
+   "cap": 1,
+   "v": 37,
+   "p": "Según Lucas 1:37, ¿qué es imposible para Dios?",
+   "o": [
+    "Hacer que el sol salga dos veces",
+    [
+     "Nada es imposible para Dios",
+     "Vencer a la muerte",
+     "Cambiar el curso del río",
+     "Hacer que el sol salga dos veces"
+    ],
+    "Cambiar el curso del río",
+    "Vencer a la muerte"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r104",
+   "cod": "JHN",
+   "cap": 15,
+   "v": 5,
+   "p": "Jesús dijo: «Yo soy la vid, vosotros…» ¿qué somos nosotros según Juan 15:5?",
+   "o": [
+    [
+     "Los pámpanos",
+     "Las piedras",
+     "Los reyes",
+     "Los sacerdotes"
+    ],
+    "Los reyes",
+    "Las piedras",
+    "Los sacerdotes"
+   ],
+   "c": 0
+  },
+  {
+   "id": "r105",
+   "cod": "JHN",
+   "cap": 15,
+   "v": 13,
+   "p": "Según Juan 15:13, ¿qué es el mayor amor?",
+   "o": [
+    "Dar un regalo costoso",
+    [
+     "Poner uno su vida por sus amigos",
+     "Tener muchas riquezas",
+     "Ser el primero en todo",
+     "Dar un regalo costoso"
+    ],
+    "Ser el primero en todo",
+    "Tener muchas riquezas"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r106",
+   "cod": "ROM",
+   "cap": 10,
+   "v": 17,
+   "p": "Según Romanos 10:17, ¿de dónde viene la fe?",
+   "o": [
+    "Del trabajo duro",
+    [
+     "Por el oír, y el oír por la palabra de Dios",
+     "De los sueños",
+     "De las riquezas",
+     "Del trabajo duro"
+    ],
+    "De los sueños",
+    "De las riquezas"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r107",
+   "cod": "1CO",
+   "cap": 15,
+   "v": 58,
+   "p": "Según 1 Corintios 15:58, ¿qué no es vuestro trabajo en el Señor?",
+   "o": [
+    "Premiado",
+    "Necesario",
+    "Agradable",
+    [
+     "En vano",
+     "Agradable",
+     "Necesario",
+     "Premiado"
+    ]
+   ],
+   "c": 3
+  },
+  {
+   "id": "r108",
+   "cod": "2TI",
+   "cap": 3,
+   "v": 16,
+   "p": "Según 2 Timoteo 3:16, ¿cómo es la Escritura?",
+   "o": [
+    "Solo una historia antigua",
+    [
+     "Inspirada por Dios y útil para enseñar",
+     "Solo una historia antigua",
+     "Escrita solo por hombres sabios",
+     "Un libro sin uso hoy"
+    ],
+    "Escrita solo por hombres sabios",
+    "Un libro sin uso hoy"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r109",
+   "cod": "HEB",
+   "cap": 13,
+   "v": 8,
+   "p": "Según Hebreos 13:8, ¿cómo es Jesucristo?",
+   "o": [
+    "Distinto cada día",
+    [
+     "El mismo ayer, hoy y por los siglos",
+     "Solo un profeta del pasado",
+     "Un hombre como los demás",
+     "Distinto cada día"
+    ],
+    "Solo un profeta del pasado",
+    "Un hombre como los demás"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r110",
+   "cod": "JAS",
+   "cap": 4,
+   "v": 8,
+   "p": "Según Santiago 4:8, ¿qué promete Dios si nos acercamos a él?",
+   "o": [
+    "Que nos dará riquezas",
+    "Que olvidará nuestros pecados para siempre sin pedir perdón",
+    [
+     "Que él se acercará a nosotros",
+     "Que nos dará riquezas",
+     "Que nos librará de todo viaje",
+     "Que olvidará nuestros pecados para siempre sin pedir perdón"
+    ],
+    "Que nos librará de todo viaje"
+   ],
+   "c": 2
+  },
+  {
+   "id": "r111",
+   "cod": "REV",
+   "cap": 3,
+   "v": 20,
+   "p": "Según Apocalipsis 3:20, ¿dónde está Cristo, llamando?",
+   "o": [
+    "En el monte de los olivos",
+    "En el desierto",
+    "En el templo de Jerusalén",
+    [
+     "A la puerta",
+     "En el templo de Jerusalén",
+     "En el monte de los olivos",
+     "En el desierto"
+    ]
+   ],
+   "c": 3
+  },
+  {
+   "id": "r112",
+   "cod": "PSA",
+   "cap": 23,
+   "v": 6,
+   "p": "Según el Salmo 23:6, ¿qué nos seguirá todos los días de la vida?",
+   "o": [
+    "Las riquezas",
+    [
+     "El bien y la misericordia",
+     "Los enemigos",
+     "Las preocupaciones",
+     "Las riquezas"
+    ],
+    "Los enemigos",
+    "Las preocupaciones"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r113",
+   "cod": "PSA",
+   "cap": 19,
+   "v": 1,
+   "p": "Según el Salmo 19:1, ¿qué cuentan los cielos?",
+   "o": [
+    "Las riquezas de los reyes",
+    "El tiempo de las cosechas",
+    "La historia de los hombres",
+    [
+     "La gloria de Dios",
+     "Las riquezas de los reyes",
+     "La historia de los hombres",
+     "El tiempo de las cosechas"
+    ]
+   ],
+   "c": 3
+  },
+  {
+   "id": "r114",
+   "cod": "PRO",
+   "cap": 16,
+   "v": 3,
+   "p": "Según Proverbios 16:3, ¿qué debemos encomendar a Jehová?",
+   "o": [
+    "Tus viajes",
+    "Tu dinero",
+    [
+     "Tus obras",
+     "Tus enemigos",
+     "Tu dinero",
+     "Tus viajes"
+    ],
+    "Tus enemigos"
+   ],
+   "c": 2
   }
  ]
 }

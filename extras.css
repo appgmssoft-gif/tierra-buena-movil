@@ -415,3 +415,6 @@ html[data-anim=off] .so-nodo:not(.bloq):not(.hecho){animation:none}
 /* F1127 · Iconos de «Tu espacio» y de «Efectos y sonido»: transparentes, para que acompañen sin molestar */
 .tbcar-art:not(.grande) { opacity: .3; }
 .tbson-ic { opacity: .45; }
+
+/* F1128 · Piezas: ilustración de ficha en el selector y en la tarjeta del jugador */
+.jug-pieza img, .jug-avatar img.pieza-img, .jug-avatar .pieza-img { width: 56px; height: 56px; display: block; margin: 0 auto; }

@@ -254,7 +254,9 @@
   let E = null, $ = {}, ocupado = false, PIEZA = '🌱', BANCO = null, MEDIDA = null;
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   const espera = (ms) => new Promise((r) => setTimeout(r, reducido() ? Math.min(ms, 60) : ms));
-  const ref = (q) => `${q.cod} ${q.cap}:${q.v}`;
+  // F1128 · Nombre completo del libro (no el código): «Juan 11:35», no «JHN 11:35»
+  const LIBRO = {"GEN": "Génesis", "EXO": "Éxodo", "LEV": "Levítico", "NUM": "Números", "DEU": "Deuteronomio", "JOS": "Josué", "JDG": "Jueces", "RUT": "Rut", "1SA": "1 Samuel", "2SA": "2 Samuel", "1KI": "1 Reyes", "2KI": "2 Reyes", "1CH": "1 Crónicas", "2CH": "2 Crónicas", "EZR": "Esdras", "NEH": "Nehemías", "EST": "Ester", "JOB": "Job", "PSA": "Salmos", "PRO": "Proverbios", "ECC": "Eclesiastés", "SNG": "Cantares", "ISA": "Isaías", "JER": "Jeremías", "LAM": "Lamentaciones", "EZK": "Ezequiel", "DAN": "Daniel", "HOS": "Oseas", "JOL": "Joel", "AMO": "Amós", "OBA": "Abdías", "JON": "Jonás", "MIC": "Miqueas", "NAM": "Nahúm", "HAB": "Habacuc", "ZEP": "Sofonías", "HAG": "Hageo", "ZEC": "Zacarías", "MAL": "Malaquías", "MAT": "Mateo", "MRK": "Marcos", "LUK": "Lucas", "JHN": "Juan", "ACT": "Hechos", "ROM": "Romanos", "1CO": "1 Corintios", "2CO": "2 Corintios", "GAL": "Gálatas", "EPH": "Efesios", "PHP": "Filipenses", "COL": "Colosenses", "1TH": "1 Tesalonicenses", "2TH": "2 Tesalonicenses", "1TI": "1 Timoteo", "2TI": "2 Timoteo", "TIT": "Tito", "PHM": "Filemón", "HEB": "Hebreos", "JAS": "Santiago", "1PE": "1 Pedro", "2PE": "2 Pedro", "1JN": "1 Juan", "2JN": "2 Juan", "3JN": "3 Juan", "JUD": "Judas", "REV": "Apocalipsis"};
+  const ref = (q) => `${LIBRO[q.cod] || q.cod} ${q.cap}:${q.v}`;
   const info = () => nivelDe(E.tablero, E.nivel);
   const barajar = (a) => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = b[i]; b[i] = b[j]; b[j] = t; } return b; };
   const saldoVivero = () => { try { return window.TBInicio ? TBInicio.cargar().gotas.saldo : 0; } catch (e) { return 0; } };
@@ -403,7 +405,7 @@
     pintarDecor(T);
     $.tit.textContent = `Tablero ${E.tablero} · ${T.nombre}`;
     $.sub.textContent = `${T.lugar} · Nivel ${E.nivel} de ${NIVELES}`;
-    $.icono.textContent = T.icono;
+    $.icono.innerHTML = `<img class="tbl-ico-tema" src="img/tablero/deco/${(T.deco || ['sol'])[0]}.svg" alt="">`;
   }
   // Decoración de cada lugar: figuras suaves sobre el campo (siempre igual para ese tablero)
   function pintarDecor(T) {
@@ -424,7 +426,8 @@
   function pintarEstado() {
     if (!$.estado) return;
     const I = info(), pos = E.pos === 0 ? 'Salida' : 'Casilla ' + E.pos + ' de ' + I.C;
-    $.estado.innerHTML = `<span class="tbl-chip" data-chip="saldo" title="Saldo del Vivero: el mismo que ves en Inicio">💧 ${saldoVivero()}</span><span class="tbl-chip">${pos}</span><span class="tbl-chip" title="Escudos guardados">🛡 ${E.escudos}</span>${E.pausa ? '<span class="tbl-chip">⏸ Descanso</span>' : ''}`;
+    const im = (f) => `<img class="tbl-ico" src="img/tablero/${f}.svg" alt="">`;   // F1128 · símbolos ilustrados, no emojis
+    $.estado.innerHTML = `<span class="tbl-chip" data-chip="saldo" title="Saldo del Vivero: el mismo que ves en Inicio">${im('rocio')} ${saldoVivero()}</span><span class="tbl-chip">${pos}</span><span class="tbl-chip" title="Escudos guardados">${im('escudo')} ${E.escudos}</span>${E.pausa ? `<span class="tbl-chip">${im('pausa')} Descanso</span>` : ''}`;
     $.chip = $.estado.querySelector('[data-chip=saldo]');
     if ($.root) $.root.classList.toggle('con-escudo', E.escudos > 0);
     pintarLuces(); aplicarTema();
@@ -432,7 +435,7 @@
   function pintarPanel() {
     if (!$.panel || $.panel.dataset.modo === 'pregunta') return;
     $.panel.dataset.modo = 'botones';
-    $.panel.innerHTML = `<div class="tbl-acciones"><button type="button" class="tbl-btn" id="tblLanzar"${ocupado ? ' disabled' : ''}>🎲 Lanzar dado</button><button type="button" class="tbl-btn sec" id="tblBonus"${ocupado || E.bonus <= 0 ? ' disabled' : ''}>Dados de bonus (${E.bonus})</button></div>`;
+    $.panel.innerHTML = `<div class="tbl-acciones"><button type="button" class="tbl-btn" id="tblLanzar"${ocupado ? ' disabled' : ''}><img class="tbl-ico" src="img/tablero/ui/dado.svg" alt=""> Lanzar dado</button><button type="button" class="tbl-btn sec" id="tblBonus"${ocupado || E.bonus <= 0 ? ' disabled' : ''}>Dados de bonus (${E.bonus})</button></div>`;
     $.lanzar = document.getElementById('tblLanzar'); $.bonus = document.getElementById('tblBonus');
     if ($.lanzar) $.lanzar.addEventListener('click', () => turno(false));
     if ($.bonus) $.bonus.addEventListener('click', () => turno(true));
@@ -573,19 +576,19 @@
     const { q, general } = elegirPregunta(bank);
     decir('Pregunta' + (n > 1 ? ` ${k + 1} de ${n}` : ''), 'Responde para avanzar un poco más.');
     return new Promise((resolver) => {
-      $.panel.dataset.modo = 'pregunta';
-      $.panel.innerHTML = `<div class="tbl-preg"><p class="tbl-preg-cab">${n > 1 ? 'Pregunta ' + (k + 1) + ' de ' + n + ' · ' : ''}${general ? 'Pregunta general: aún no marcas capítulos como leídos' : 'De lo que leíste'}</p><p class="tbl-preg-txt">${esc(q.p)}</p><div class="tbl-opc">${q.o.map((o, i) => `<button type="button" class="tbl-btn sec" data-o="${i}">${esc(o)}</button>`).join('')}</div></div>`;
+      $.panel.dataset.modo = 'pregunta'; if ($.root) $.root.classList.add('en-pregunta');   // F1128: con la pregunta, el tablero se encoge y los dados se esconden
+      $.panel.innerHTML = `<div class="tbl-preg"><p class="tbl-preg-cab">${n > 1 ? 'Pregunta ' + (k + 1) + ' de ' + n + ' · ' : ''}${esc(ref(q))}${general ? ' · (pregunta general)' : ''}</p><p class="tbl-preg-txt">${esc(q.p)}</p><div class="tbl-opc">${q.o.map((o, i) => `<button type="button" class="tbl-btn sec" data-o="${i}">${esc(o)}</button>`).join('')}</div></div>`;
       $.panel.querySelectorAll('[data-o]').forEach((b) => b.addEventListener('click', () => {
         const i = Number(b.dataset.o), bien = i === q.c, caja = $.panel.querySelector('.tbl-preg');
         $.panel.querySelectorAll('[data-o]').forEach((x) => { x.disabled = true; x.classList.toggle('elegida', Number(x.dataset.o) === i); });
-        const res = bien ? `¡Acertaste! Ganas 2 gotas. Versículo: ${ref(q)}.` : `La respuesta era: ${q.o[q.c]}. Versículo: ${ref(q)}. Sin castigo.`;
+        const res = bien ? `¡Acertaste! Ganas 2 gotas. Lo encuentras en ${ref(q)}.` : `La respuesta era: «${q.o[q.c]}». Lo encuentras en ${ref(q)}. Sin castigo.`;
         $.panel.insertAdjacentHTML('beforeend', `<p class="tbl-preg-res">${esc(res)}</p><button type="button" class="tbl-btn" id="tblSeguir">Seguir</button>`);
         caja.classList.add(bien ? 'ok' : 'mal');
         son(bien ? 'acierto' : 'error');
         if (bien) { gota(2); const c = centroPieza(); chispas(c.x, c.y, 12, '#ffe9a8'); }
         guardar();
         document.getElementById('tblSeguir').addEventListener('click', () => {
-          $.panel.dataset.modo = 'botones'; $.panel.innerHTML = ''; resolver(bien);
+          $.panel.dataset.modo = 'botones'; $.panel.innerHTML = ''; if ($.root) $.root.classList.remove('en-pregunta'); resolver(bien);
         });
       }));
     });
@@ -664,7 +667,7 @@
       const caja = mini('Arreo de ovejas', 'Toca las ovejas que cruzan el campo para llevarlas al corral. Sin prisa.');
       const campo = document.createElement('div'); campo.className = 'tbl-cosecha'; caja.appendChild(campo);
       const marca = document.createElement('p'); marca.className = 'tbl-marca'; caja.appendChild(marca);
-      const corral = document.createElement('div'); corral.className = 'tbl-corral'; corral.textContent = '🪵 Corral'; caja.appendChild(corral);
+      const corral = document.createElement('div'); corral.className = 'tbl-corral'; corral.textContent = 'Corral'; caja.appendChild(corral);
       let n = 0, fin = false, listo = false; const DUR = 14000, t0 = Date.now();
       const pinta = () => { marca.textContent = 'Ovejas en el corral: ' + n + ' · ' + Math.max(0, Math.ceil((DUR - (Date.now() - t0)) / 1000)) + ' s'; };
       const salir = () => {
@@ -735,7 +738,7 @@
 
   // ---------- Pantalla ----------
   function abrir(volver, opc) {
-    opc = opc || {}; PIEZA = opc.pieza || '🌱';
+    opc = opc || {}; PIEZA = opc.pieza || 'brote';
     const main = document.getElementById('pantalla'); if (!main) return;
     E = cargar(); ocupado = false; $ = {};
     document.body.classList.add('tb-full');
@@ -750,7 +753,7 @@
         <div class="tbl-campo" id="tblCampo"></div>
         <div class="tbl-bola" id="tblBola" aria-live="polite"><i class="tbl-aura" aria-hidden="true"></i><p id="tblTexto"></p></div>
         <div id="tblCasillas"></div>
-        <div class="tbl-pieza" id="tblPieza" aria-label="Tu pieza"><span class="tbl-pieza-in" id="tblPiezaIn">${esc(PIEZA)}</span></div>
+        <div class="tbl-pieza" id="tblPieza" aria-label="Tu pieza"><span class="tbl-pieza-in" id="tblPiezaIn"><img class="tbl-pieza-img" src="img/piezas/${esc(PIEZA)}.svg" alt=""></span></div>
         <div class="tbl-aviso" id="tblAviso" hidden></div>
       </div>
       <div class="tbl-bandeja" id="tblBandeja"></div>

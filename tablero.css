@@ -1,6 +1,8 @@
 /* tablero.css — Tablero de Tierra Buena, F1125. Todo bajo .tbl o con prefijo tbl-: no toca el resto de la app. */
 /* F1126 · Pantalla completa: el tablero y los juegos ocupan toda la pantalla (sin barra inferior) */
 body.tb-full .barra, body.tb-full #barraTop { display: none !important; }
+/* F1128 · En el tablero no hay botones flotantes encima del encabezado (el tablero tiene su propio «‹ Juegos») */
+body.tb-full #btnMenu, body.tb-full #tbRapido, body.tb-full .qa-caja { display: none !important; }
 body.tb-full #pantalla { padding-bottom: 0; }
 .tbl { position: fixed; inset: 0; height: 100vh; height: 100dvh; z-index: 45; display: flex; flex-direction: column; overflow: hidden; color: var(--tb-tinta); --tb-tinta: #2b2218; --tb-madera: #6b4a2b; --tb-oro: #d9a441;
   background: radial-gradient(circle at 50% 28%, var(--tb-cielo, #f2d7a0), #efe3c8 85%); padding: calc(env(safe-area-inset-top, 0px) + 6px) 10px calc(env(safe-area-inset-bottom, 0px) + 6px); }
@@ -176,3 +178,24 @@ body.tb-full #pantalla { padding-bottom: 0; }
 .tbl-oveja img { width: 100%; height: 100%; display: block; pointer-events: none; }
 .tbl-oveja.llevada { opacity: 0; transform: scale(.4); transition: opacity .3s ease, transform .3s ease; }
 @keyframes tblCruzaOveja { to { left: 104%; } }
+
+/* F1128 · Piezas como fichas de ajedrez (sin el círculo dorado: la ficha ya trae su base) */
+.tbl-pieza-in { background: none !important; box-shadow: none !important; }
+.tbl-pieza-img { width: 100%; height: 100%; display: block; pointer-events: none; filter: drop-shadow(0 5px 4px rgba(0,0,0,.4)); }
+.tbl-mesa.con-escudo .tbl-pieza-in::before { border-radius: 50%; }
+
+/* F1128 · Con una pregunta: el tablero se encoge, los dados se ocultan y el panel se desplaza por dentro (todo cabe en la pantalla) */
+.tbl.en-pregunta .tbl-bandeja { display: none; }
+.tbl.en-pregunta .tbl-mesa { flex: 1 1 0; min-height: 96px; }
+.tbl.en-pregunta .tbl-panel[data-modo="pregunta"] { max-height: 58dvh; flex: 0 0 auto; }
+
+/* F1128 · Con una pregunta: se muestra solo una franja con la bola (sin casillas) para que quepa la pregunta */
+.tbl.en-pregunta .tbl-mesa { flex: 0 0 auto; height: 108px; min-height: 0; margin: 2px auto; }
+.tbl.en-pregunta .tbl-campo, .tbl.en-pregunta .tbl-casilla, .tbl.en-pregunta .tbl-pieza, .tbl.en-pregunta .tbl-deco, .tbl.en-pregunta .tbl-hoja { display: none; }
+.tbl.en-pregunta .tbl-bola { width: 102px; padding: 6px; }
+.tbl.en-pregunta .tbl-bola span { display: none; }
+.tbl.en-pregunta .tbl-bola b { font-size: .92rem; margin: 0; }
+
+/* F1128 · Símbolos ilustrados de la interfaz */
+.tbl-ico { width: 18px; height: 18px; display: inline-block; vertical-align: -4px; }
+.tbl-ico-tema { width: 30px; height: 30px; display: block; }

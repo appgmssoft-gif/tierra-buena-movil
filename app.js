@@ -286,7 +286,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Preguntas de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Sopa del Vivero': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1128';
+  const APP_VERSION = 'F1129';
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
   const BANDA_POR_VOLVER = { 'Mi iglesia': 'union', 'Palabra': 'palabra', 'Vida': 'crecer', 'Vivir lo que aprendemos': 'crecer', 'Perfil': 'camino', 'Panel': 'pastor' };
   const bandaMini = (tipo) => bandaTB(tipo).replace('class="tb-banda"', 'class="tb-banda tb-banda-mini"');
@@ -1361,7 +1361,7 @@
     ['sopa', '🔎', 'Sopa del Vivero', 'Letras grandes, sin tiempo y con pistas gratis.'],
     ['jardin', '🌱', 'Jardín del principio', 'Seis días de la creación, con mapas y un cuaderno para lo que descubres.']
   ];
-  const JUEGOS_LISTOS = { tablero: (v) => { if (window.TBTablero) TBTablero.abrir(v, { pieza: ((PIEZAS.find((p) => p[0] === ((jugadorLeer() || {}).pieza)) || PIEZAS[0])[1]) }); }, raices: (v) => vistaRaices(v), brotes: (v) => vistaBrotesCamino(v), jardin: (v) => vistaJardin(v), sopa: (v) => vistaSopa(v) };   // id -> función que abre el juego (cada fase nueva se registra aquí)
+  const JUEGOS_LISTOS = { tablero: (v) => { if (window.TBTablero) TBTablero.abrir(v, { pieza: ((PIEZAS.find((p) => p[0] === ((jugadorLeer() || {}).pieza)) || PIEZAS[0])[0]) }); }, raices: (v) => vistaRaices(v), brotes: (v) => vistaBrotesCamino(v), jardin: (v) => vistaJardin(v), sopa: (v) => vistaSopa(v) };   // id -> función que abre el juego (cada fase nueva se registra aquí)
   function juegoTerminar(id, aciertos, total) {   // guarda la partida; una gota de rocío al terminar con al menos 60 % de aciertos (tope diario)
     const j = leer(K_JUEGOS) || { n: 0, p: {} }; j.n = (j.n || 0) + 1; j.p = j.p || {};
     const q = j.p[id] || { n: 0, mejor: 0 }; q.n++; q.mejor = Math.max(q.mejor, Number(aciertos) || 0); j.p[id] = q; guardar(K_JUEGOS, j);
@@ -1668,6 +1668,8 @@
   // F1122 · Consola de juegos: jugador (nombre y pieza) y registro de logros
   const K_JUG = 'tb_movil_jugador';
   const PIEZAS = [['brote', '🌱', 'Brote'], ['condor', '🦅', 'Cóndor'], ['zorro', '🦊', 'Zorro'], ['guanaco', '🦙', 'Guanaco']];
+  // F1128 · Piezas como fichas de ajedrez con la forma de cada pieza (img/piezas/)
+  const pIcono = (k) => { const p = PIEZAS.find((x) => x[0] === k) || PIEZAS[0]; return `<img class="pieza-img" src="img/piezas/${p[0]}.svg" alt="" width="56" height="56">`; };
   function jugadorLeer() { try { return JSON.parse(localStorage.getItem(K_JUG) || 'null'); } catch (e) { return null; } }
   function jugadorGuardar(v) { try { localStorage.setItem(K_JUG, JSON.stringify(v)); } catch (e) { /* sin almacenamiento */ } }
   function logrosDe(j, n) {
@@ -1684,9 +1686,9 @@
     const pieza = (k) => PIEZAS.find((p) => p[0] === k) || PIEZAS[0];
     const alta = !jug ? `<section class="jug-alta card"><div class="t"><span aria-hidden="true">🎮</span>Crea tu jugador</div><p class="suave m0t">Tu nombre y tu pieza te acompañan en cada juego.</p>
       <label class="jug-campo" for="jugNom">Tu nombre</label><input id="jugNom" class="jug-nom" maxlength="16" autocomplete="off" placeholder="Ej. Ana" value="">
-      <p class="jug-lab">Elige tu pieza</p><div class="jug-piezas" role="radiogroup" aria-label="Pieza">${PIEZAS.map((p, i) => `<button type="button" class="jug-pieza${i === 0 ? ' on' : ''}" role="radio" aria-checked="${i === 0}" data-pieza="${p[0]}"><span aria-hidden="true">${p[1]}</span>${p[2]}</button>`).join('')}</div>
+      <p class="jug-lab">Elige tu pieza</p><div class="jug-piezas" role="radiogroup" aria-label="Pieza">${PIEZAS.map((p, i) => `<button type="button" class="jug-pieza${i === 0 ? ' on' : ''}" role="radio" aria-checked="${i === 0}" data-pieza="${p[0]}"><span aria-hidden="true">${pIcono(p[0])}</span>${p[2]}</button>`).join('')}</div>
       <button type="button" class="btn" id="jugEmpezar">Empezar a jugar</button></section>`
-      : `<section class="jug-resumen card"><span class="jug-avatar" aria-hidden="true">${pieza(jug.pieza)[1]}</span><div><b>${esc(jug.nombre)}</b><small class="suave">Jugador ${pieza(jug.pieza)[2].toLowerCase()} · ${n} ${n === 1 ? 'partida' : 'partidas'}</small></div><button type="button" class="btn sec" id="jugEditar">Editar</button></section>`;
+      : `<section class="jug-resumen card"><span class="jug-avatar" aria-hidden="true">${pIcono(jug.pieza)}</span><div><b>${esc(jug.nombre)}</b><small class="suave">Jugador ${pieza(jug.pieza)[2].toLowerCase()} · ${n} ${n === 1 ? 'partida' : 'partidas'}</small></div><button type="button" class="btn sec" id="jugEditar">Editar</button></section>`;
     const logros = logrosDe(jug, n);
     $('#pantalla').innerHTML = `${cabecera('Juegos', 'Palabra')}<p class="suave">Elige un juego. Jugar da gotas de rocío para tu Inicio; no hay anuncios ni monedas.</p>
       ${alta}
