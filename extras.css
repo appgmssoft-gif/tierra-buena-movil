@@ -425,3 +425,6 @@ html[data-anim=off] .so-nodo:not(.bloq):not(.hecho){animation:none}
 .mie-buscar input{width:100%;min-height:44px;border-radius:14px;border:1px solid var(--linea);padding:10px 14px;font:inherit;background:var(--tarjeta);color:inherit;box-sizing:border-box}
 .mie-letra{margin:14px 4px 6px;font-size:.8rem;letter-spacing:.12em;color:var(--suave);font-weight:700}
 .mie-fila{padding:10px 12px}
+
+/* F1132 · Referencia visible encima de cada pregunta */
+.ju-ref-q{margin:0 0 6px;font-size:1rem;font-weight:700;color:var(--suave);letter-spacing:.02em}

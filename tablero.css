@@ -68,8 +68,8 @@ body.tb-full #pantalla { padding-bottom: 0; }
   transition: left .26s cubic-bezier(.3,1.25,.5,1), top .26s cubic-bezier(.3,1.25,.5,1); }
 .tbl-pieza-in { position: absolute; inset: 0; border-radius: 50%; display: grid; place-items: center; font-size: calc(var(--cs, 42px) * .52);
   background: radial-gradient(circle at 35% 30%, #fff7d6, #d9a441); box-shadow: 0 6px 12px rgba(0,0,0,.45); transform-origin: 50% 90%; }
-.tbl-pieza-in.salta { animation: tblSaltoPieza .26s ease-out; }
-.tbl-pieza-in.retro { animation: tblRetroPieza .32s ease-in-out; }
+.tbl-pieza-in.salta { animation: tblSaltoPieza .42s ease-out; }
+.tbl-pieza-in.retro { animation: tblRetroPieza .5s ease-in-out; }
 .tbl-pieza::after { content: ""; position: absolute; left: 18%; right: 18%; bottom: -6px; height: 6px; border-radius: 50%; background: rgba(0,0,0,.4); filter: blur(2px); z-index: -1; }
 .tbl-mesa.con-escudo .tbl-pieza-in::before { content: ""; position: absolute; inset: -8px; border-radius: 50%; border: 2px solid rgba(156,195,214,.95); box-shadow: 0 0 12px rgba(156,195,214,.85); animation: tblHalo 1.8s ease-in-out infinite; }
 
@@ -206,3 +206,26 @@ body.tb-full #pantalla { padding-bottom: 0; }
 .tbl-preg { position: relative; }
 @keyframes tblOnda { from { opacity: .9; transform: scale(.96); } to { opacity: 0; transform: scale(1.08); } }
 @media (prefers-reduced-motion: reduce) { .tbl-preg.ok::after, .tbl-bola::before, .tbl-bola::after, .tbl-aura { animation: none !important; } }
+
+/* F1133 · Reto de atención */
+.tbl-reto-q{font-size:1.15rem;font-weight:700;line-height:1.35;margin:.6rem 0;text-align:center}
+.tbl-reto-ops{display:grid;gap:.6rem;width:100%}
+.tbl-reto-op{width:100%}
+.tbl-reto-op.ok{background:#2f7d4f;color:#fff}
+.tbl-reto-op.mal{background:#9b3b2e;color:#fff}
+.tbl-reto-res{min-height:2.6em;font-size:1rem;margin:.5rem 0;text-align:center}
+
+/* F1134 · Ambientación de la mesa: madera tallada, marco dorado y luz de cristal (sin imágenes de otras marcas) */
+.tbl-mesa::before { content: ""; position: absolute; inset: 5px; border-radius: 20px; pointer-events: none;
+  border: 2px solid rgba(217, 164, 65, .55); box-shadow: inset 0 0 0 3px rgba(40, 24, 10, .35), inset 0 0 26px rgba(0, 0, 0, .4); }
+.tbl-mesa::after { content: ""; position: absolute; inset: 0; border-radius: 24px; pointer-events: none;
+  background: repeating-linear-gradient(94deg, rgba(0, 0, 0, .05) 0 2px, transparent 2px 11px), radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(0, 0, 0, .35) 100%);
+  mix-blend-mode: multiply; }
+
+/* F1135 · Medallones tallados en las esquinas de la mesa (bajo las casillas, sin tapar el camino) */
+.tbl-medallon { position: absolute; width: 38px; height: 38px; z-index: 1; pointer-events: none; opacity: .8; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .45)); }
+.tbl-medallon.m1 { left: 4px; top: 4px; } .tbl-medallon.m2 { right: 4px; top: 4px; }
+.tbl-medallon.m3 { left: 4px; bottom: 4px; } .tbl-medallon.m4 { right: 4px; bottom: 4px; }
+/* Luz central del lugar: su color sale del aura del tablero (cambia en cada lugar) */
+.tbl-campo::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--tb-aura, #9fdcff) 28%, transparent), transparent 55%); }

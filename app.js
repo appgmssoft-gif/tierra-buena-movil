@@ -286,7 +286,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Preguntas de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Sopa del Vivero': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1131';
+  const APP_VERSION = 'F1135';
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
   const BANDA_POR_VOLVER = { 'Mi iglesia': 'union', 'Palabra': 'palabra', 'Vida': 'crecer', 'Vivir lo que aprendemos': 'crecer', 'Perfil': 'camino', 'Panel': 'pastor' };
   const bandaMini = (tipo) => bandaTB(tipo).replace('class="tb-banda"', 'class="tb-banda tb-banda-mini"');
@@ -1387,7 +1387,7 @@
       const q = qs[i], ord = q.o.map((t, k) => k).sort(() => Math.random() - 0.5);
       const prog = qs.map((x, k) => `<i class="ju-h${k < i ? (marcas[k] ? ' bien' : ' mal') : k === i ? ' ahora' : ''}"></i>`).join('');
       $('#pantalla').innerHTML = `${cabecera(cfg.titulo, 'Juegos')}<div class="ju"><div class="ju-prog" role="img" aria-label="Pregunta ${i + 1} de ${qs.length}">${prog}</div>
-        <p class="ju-cuenta">${cfg.repaso ? 'Repaso · ' : ''}Pregunta ${i + 1} de ${qs.length}${racha >= 2 ? `<span class="ju-racha"> · ${racha} seguidas</span>` : ''}</p><h2 class="ju-p">${esc(limpiaTexto(q.p))}</h2>
+        <p class="ju-cuenta">${cfg.repaso ? 'Repaso · ' : ''}Pregunta ${i + 1} de ${qs.length}${racha >= 2 ? `<span class="ju-racha"> · ${racha} seguidas</span>` : ''}</p>${q.ref ? `<p class="ju-ref-q">${esc(q.ref)}</p>` : ''}<h2 class="ju-p">${esc(limpiaTexto(q.p))}</h2>
         <div class="ju-ops">${ord.map((k, n) => `<button type="button" class="ju-op" data-k="${k}"><span class="ju-l" aria-hidden="true">${'ABCD'[n]}</span><span class="ju-t">${esc(limpiaTexto(q.o[k]))}</span></button>`).join('')}</div><div id="rzRes"></div></div>`;
       volverA('Juegos', cfg.volver);
       document.querySelectorAll('[data-k]').forEach((b) => b.addEventListener('click', async () => {
@@ -1459,7 +1459,7 @@
     const j0 = leer(K_JUEGOS) || { n: 0, p: {} }; j0.vistas_raices = (j0.vistas_raices || []).concat(elegidas.map((q) => q.id)).slice(-30); guardar(K_JUEGOS, j0);
     const items = elegidas.map((q) => {
       const otras = barajar(q.o.map((_, j) => j).filter((j) => j !== q.c), rnd).slice(0, opc - 1);
-      return { p: q.p, o: [q.c].concat(otras).map((j) => q.o[j]), c: 0, ver: async () => { const inf = libroInfo(q.cod), ref = `${inf ? inf[1] : q.cod} ${q.cap}:${q.v}`; let t = ''; try { const lib = await libroCargar(q.cod, verActual()); t = lib[q.cap - 1] && lib[q.cap - 1][q.v - 1]; } catch (e) { /* sin internet */ } return { html: t ? juVerHtml(t, ref) : `<p class="ju-ref">${esc(ref)}</p>` }; } };
+      return { p: q.p, ref: `${(libroInfo(q.cod) || [])[1] || q.cod} ${q.cap}:${q.v}`, o: [q.c].concat(otras).map((j) => q.o[j]), c: 0, ver: async () => { const inf = libroInfo(q.cod), ref = `${inf ? inf[1] : q.cod} ${q.cap}:${q.v}`; let t = ''; try { const lib = await libroCargar(q.cod, verActual()); t = lib[q.cap - 1] && lib[q.cap - 1][q.v - 1]; } catch (e) { /* sin internet */ } return { html: t ? juVerHtml(t, ref) : `<p class="ju-ref">${esc(ref)}</p>` }; } };
     });
     juegoCorrer({ id: 'raices', titulo: 'Preguntas de la Palabra', volver: volverCamino, items, otra: () => raicesJugar(bank, idx, volverCamino), alFinal: (ac, tot) => caminoMarcar('raices', idx, ac, tot) });
   }
@@ -1483,7 +1483,7 @@
     const d = datos.dias[Math.floor(idx / 6)], opc = (idx % 6) < 3 ? 3 : 4, rnd = rngSeed(9100 + idx * 17);
     const items = barajar(d.preguntas, rnd).slice(0, 4).map((q) => {
       const otras = barajar(q.o.map((_, j) => j).filter((j) => j !== q.c), rnd).slice(0, opc - 1);
-      return { p: q.p, o: [q.c].concat(otras).map((j) => q.o[j]), c: 0, ver: async () => ({ html: `<p class="ju-ref">${esc(d.ref)}</p>` }) };
+      return { p: q.p, ref: d.ref, o: [q.c].concat(otras).map((j) => q.o[j]), c: 0, ver: async () => ({ html: `<p class="ju-ref">${esc(d.ref)}</p>` }) };
     });
     juegoCorrer({ id: 'jardin', titulo: d.titulo, volver: volverCamino, items, otra: () => jardinJugar(datos, idx, volverCamino), alFinal: (ac, tot) => caminoMarcar('jardin', idx, ac, tot) });
   }
@@ -2036,7 +2036,9 @@
   async function datoCargar(nombre) {
     if (datosCache[nombre]) return datosCache[nombre];
     const r = await fetch('datos/' + nombre + '.json'); if (!r.ok) throw new Error('http ' + r.status);
-    return (datosCache[nombre] = await r.json());
+    const j = await r.json();
+    if (nombre === 'juego_raices' && Array.isArray(j.preguntas)) j.preguntas.forEach((q) => { q.o = (q.o || []).map((x) => (Array.isArray(x) ? x[0] : x)); });   // F1132: cada opción es un solo texto
+    return (datosCache[nombre] = j);
   }
   const SIN_DATOS = 'No pudimos abrir esto. Revisa tu internet: lo que ya abriste antes se ve sin conexión.';
   const semanaClave = (d = new Date()) => {   // semana ISO (lunes a domingo): 2026-S40

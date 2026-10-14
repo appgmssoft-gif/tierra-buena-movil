@@ -1,0 +1,436 @@
+{
+ "retos": [
+  {
+   "tipo": "quiz",
+   "p": "¿Cuál es el animal terrestre más rápido?",
+   "o": [
+    "Guepardo",
+    "León",
+    "Caballo",
+    "Antílope"
+   ],
+   "c": 0,
+   "dato": "Un guepardo puede alcanzar cerca de 100 km/h en pocos segundos."
+  },
+  {
+   "tipo": "vf",
+   "p": "Las estrellas de mar tienen cerebro.",
+   "o": [
+    "Verdadero",
+    "Falso"
+   ],
+   "c": 1,
+   "dato": "No tienen cerebro, pero sí un sistema nervioso que les permite moverse."
+  },
+  {
+   "tipo": "vf",
+   "p": "El Sol es un planeta.",
+   "o": [
+    "Verdadero",
+    "Falso"
+   ],
+   "c": 1,
+   "dato": "El Sol es una estrella, la que da luz y calor al sistema solar."
+  },
+  {
+   "tipo": "quiz",
+   "p": "¿Cuál es la flor nacional de Chile?",
+   "o": [
+    "Copihue",
+    "Rosa",
+    "Lirio",
+    "Amapola"
+   ],
+   "c": 0,
+   "dato": "El copihue es una enredadera que florece en el sur del país."
+  },
+  {
+   "tipo": "vf",
+   "p": "El desierto de Atacama es el lugar más frío de Chile.",
+   "o": [
+    "Verdadero",
+    "Falso"
+   ],
+   "c": 1,
+   "dato": "Atacama es uno de los desiertos más secos del mundo, con días muy calurosos."
+  },
+  {
+   "tipo": "quiz",
+   "p": "¿Qué ave simboliza la paz?",
+   "o": [
+    "Paloma",
+    "Halcón",
+    "Gaviota",
+    "Cuervo"
+   ],
+   "c": 0,
+   "dato": "La paloma aparece en muchas culturas como símbolo de calma."
+  },
+  {
+   "tipo": "intruso",
+   "p": "¿Cuál NO es un árbol nativo de Chile?",
+   "o": [
+    "Alerce",
+    "Canelo",
+    "Araucaria",
+    "Baobab"
+   ],
+   "c": 3,
+   "dato": "El baobab es propio de África y Madagascar."
+  },
+  {
+   "tipo": "quiz",
+   "p": "¿Qué alimento andino es una semilla que se cocina como cereal?",
+   "o": [
+    "Quinua",
+    "Maíz",
+    "Trigo",
+    "Arroz"
+   ],
+   "c": 0,
+   "dato": "La quinua se cultiva en el altiplano desde hace miles de años."
+  },
+  {
+   "tipo": "vf",
+   "p": "Las ballenas son peces.",
+   "o": [
+    "Verdadero",
+    "Falso"
+   ],
+   "c": 1,
+   "dato": "Son mamíferos: respiran aire y amamantan a sus crías."
+  },
+  {
+   "tipo": "vf",
+   "p": "Los flamencos nacen de color rosado.",
+   "o": [
+    "Verdadero",
+    "Falso"
+   ],
+   "c": 1,
+   "dato": "Nacen grises o blancos; el rosado viene de su alimentación."
+  },
+  {
+   "tipo": "quiz",
+   "p": "¿Qué planeta tiene anillos muy visibles desde la Tierra con un telescopio?",
+   "o": [
+    "Saturno",
+    "Júpiter",
+    "Urano",
+    "Neptuno"
+   ],
+   "c": 0,
+   "dato": "Los anillos de Saturno están hechos sobre todo de hielo y roca."
+  },
+  {
+   "tipo": "quiz",
+   "p": "¿Cuál es el ave nacional de Chile?",
+   "o": [
+    "Cóndor",
+    "Flamenco",
+    "Pingüino",
+    "Águila"
+   ],
+   "c": 0,
+   "dato": "El cóndor andino vuela sobre la cordillera y puede superar los 3 000 metros de altura."
+  },
+  {
+   "tipo": "vf",
+   "p": "La Antártica es el desierto más grande del mundo.",
+   "o": [
+    "Verdadero",
+    "Falso"
+   ],
+   "c": 0,
+   "dato": "Es el desierto más grande, aunque esté cubierto de hielo."
+  },
+  {
+   "tipo": "quiz",
+   "p": "¿Qué océano baña la costa oeste de Chile?",
+   "o": [
+    "Pacífico",
+    "Atlántico",
+    "Índico",
+    "Ártico"
+   ],
+   "c": 0,
+   "dato": "El Pacífico es el océano más grande de la Tierra."
+  },
+  {
+   "tipo": "quiz",
+   "p": "¿Qué instrumento andino tiene cuerdas?",
+   "o": [
+    "Charango",
+    "Quena",
+    "Zampoña",
+    "Bombo"
+   ],
+   "c": 0,
+   "dato": "El charango suele tener diez cuerdas agrupadas de a dos."
+  },
+  {
+   "tipo": "intruso",
+   "p": "¿Cuál NO es un sentido del cuerpo humano?",
+   "o": [
+    "Vista",
+    "Oído",
+    "Olfato",
+    "Imaginación"
+   ],
+   "c": 3,
+   "dato": "La imaginación es una función de la mente, no un sentido."
+  },
+  {
+   "tipo": "vf",
+   "p": "Un año dura un poco más de 365 días.",
+   "o": [
+    "Verdadero",
+    "Falso"
+   ],
+   "c": 0,
+   "dato": "Por eso cada cuatro años se agrega un día: el 29 de febrero."
+  },
+  {
+   "tipo": "vf",
+   "p": "Los pulpos tienen tres corazones.",
+   "o": [
+    "Verdadero",
+    "Falso"
+   ],
+   "c": 0,
+   "dato": "Tienen tres corazones y sangre de color azul."
+  },
+  {
+   "tipo": "vf",
+   "p": "El agua hierve a 100 °C al nivel del mar.",
+   "o": [
+    "Verdadero",
+    "Falso"
+   ],
+   "c": 0,
+   "dato": "A mayor altura, el agua hierve a menor temperatura."
+  },
+  {
+   "tipo": "intruso",
+   "p": "¿Cuál NO es un mamífero?",
+   "o": [
+    "Delfín",
+    "Murciélago",
+    "Ballena",
+    "Tiburón"
+   ],
+   "c": 3,
+   "dato": "Los tiburones son peces: respiran por branquias y no amamantan a sus crías."
+  },
+  {
+   "tipo": "intruso",
+   "p": "¿Cuál NO es un metal?",
+   "o": [
+    "Hierro",
+    "Cobre",
+    "Oro",
+    "Madera"
+   ],
+   "c": 3,
+   "dato": "La madera viene de los árboles y no es un metal."
+  },
+  {
+   "tipo": "quiz",
+   "p": "¿Qué isla chilena es famosa por sus moáis?",
+   "o": [
+    "Rapa Nui",
+    "Chiloé",
+    "Juan Fernández",
+    "Mocha"
+   ],
+   "c": 0,
+   "dato": "Los moáis fueron tallados en roca volcánica por el pueblo rapa nui."
+  },
+  {
+   "tipo": "vf",
+   "p": "El cóndor puede volar sin batir las alas durante largos tramos.",
+   "o": [
+    "Verdadero",
+    "Falso"
+   ],
+   "c": 0,
+   "dato": "Aprovecha las corrientes de aire caliente para planear."
+  },
+  {
+   "tipo": "intruso",
+   "p": "¿Cuál NO es un ave?",
+   "o": [
+    "Cóndor",
+    "Pingüino",
+    "Flamenco",
+    "Murciélago"
+   ],
+   "c": 3,
+   "dato": "El murciélago es un mamífero que vuela."
+  },
+  {
+   "tipo": "quiz",
+   "p": "¿Qué parte de la planta hace la fotosíntesis principalmente?",
+   "o": [
+    "Las hojas",
+    "Las raíces",
+    "El tronco",
+    "Las flores"
+   ],
+   "c": 0,
+   "dato": "Las hojas usan la luz del sol para fabricar su alimento."
+  },
+  {
+   "tipo": "quiz",
+   "p": "¿Qué planeta es el más cercano al Sol?",
+   "o": [
+    "Mercurio",
+    "Venus",
+    "Marte",
+    "Tierra"
+   ],
+   "c": 0,
+   "dato": "Mercurio da una vuelta completa al Sol en unos 88 días terrestres."
+  },
+  {
+   "tipo": "vf",
+   "p": "La miel casi nunca se echa a perder.",
+   "o": [
+    "Verdadero",
+    "Falso"
+   ],
+   "c": 0,
+   "dato": "Por su bajo contenido de agua, la miel se conserva por mucho tiempo."
+  },
+  {
+   "tipo": "vf",
+   "p": "Las abejas se comunican bailando.",
+   "o": [
+    "Verdadero",
+    "Falso"
+   ],
+   "c": 0,
+   "dato": "Su «baile» indica a sus compañeras dónde está la flor."
+  },
+  {
+   "tipo": "quiz",
+   "p": "¿Cuántos colores suelen contarse en el arcoíris?",
+   "o": [
+    "Siete",
+    "Cinco",
+    "Seis",
+    "Nueve"
+   ],
+   "c": 0,
+   "dato": "El número de colores depende de cómo se separe la luz."
+  },
+  {
+   "tipo": "quiz",
+   "p": "¿Qué árbol chileno puede vivir más de 3 000 años?",
+   "o": [
+    "Alerce",
+    "Canelo",
+    "Araucaria",
+    "Roble"
+   ],
+   "c": 0,
+   "dato": "El alerce crece muy despacio, por eso sus troncos guardan siglos de historia."
+  },
+  {
+   "tipo": "intruso",
+   "p": "¿Cuál NO es un planeta?",
+   "o": [
+    "Marte",
+    "Venus",
+    "Júpiter",
+    "Luna"
+   ],
+   "c": 3,
+   "dato": "La Luna es un satélite: gira alrededor de la Tierra, no alrededor del Sol."
+  },
+  {
+   "tipo": "intruso",
+   "p": "¿Cuál NO es un país sudamericano?",
+   "o": [
+    "Bolivia",
+    "Perú",
+    "Uruguay",
+    "Canadá"
+   ],
+   "c": 3,
+   "dato": "Canadá está en América del Norte."
+  },
+  {
+   "tipo": "quiz",
+   "p": "¿Qué gas es el más abundante en el aire que respiramos?",
+   "o": [
+    "Nitrógeno",
+    "Oxígeno",
+    "Helio",
+    "Dióxido de carbono"
+   ],
+   "c": 0,
+   "dato": "El nitrógeno ocupa cerca del 78 % del aire."
+  },
+  {
+   "tipo": "quiz",
+   "p": "¿Cuántos corazones tiene un pulpo?",
+   "o": [
+    "Tres",
+    "Uno",
+    "Dos",
+    "Cuatro"
+   ],
+   "c": 0,
+   "dato": "Dos corazones bombean sangre a las branquias y uno al resto del cuerpo."
+  },
+  {
+   "tipo": "quiz",
+   "p": "¿Cuál es el animal más grande que existe?",
+   "o": [
+    "Ballena azul",
+    "Elefante africano",
+    "Jirafa",
+    "Tiburón blanco"
+   ],
+   "c": 0,
+   "dato": "La ballena azul puede medir más de 25 metros de largo."
+  },
+  {
+   "tipo": "intruso",
+   "p": "¿Cuál NO es un océano?",
+   "o": [
+    "Atlántico",
+    "Índico",
+    "Pacífico",
+    "Mar Mediterráneo"
+   ],
+   "c": 3,
+   "dato": "El Mediterráneo es un mar, más pequeño y rodeado de tierra."
+  },
+  {
+   "tipo": "quiz",
+   "p": "¿Cuántos huesos tiene aproximadamente un adulto?",
+   "o": [
+    "206",
+    "150",
+    "300",
+    "90"
+   ],
+   "c": 0,
+   "dato": "Los bebés nacen con más huesos; algunos se unen con el crecimiento."
+  },
+  {
+   "tipo": "intruso",
+   "p": "¿Cuál NO es un instrumento de viento?",
+   "o": [
+    "Quena",
+    "Zampoña",
+    "Trutruca",
+    "Charango"
+   ],
+   "c": 3,
+   "dato": "El charango es un instrumento de cuerda."
+  }
+ ]
+}

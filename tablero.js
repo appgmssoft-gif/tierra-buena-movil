@@ -32,7 +32,7 @@
   function pesosDe(n) {
     const w = {
       rocio: Math.max(0.2, 0.40 - 0.02 * (n - 1)), pregunta: 0.18 + 0.006 * (n - 1), atajo: 0.10, tormenta: 0.07 + 0.005 * (n - 1),
-      pausa: 0.05, escudo: 0.08, cofre: n >= 2 ? 0.04 : 0, relampago: n >= 3 ? 0.04 : 0,
+      pausa: 0.05, escudo: 0.08, cofre: n >= 2 ? 0.04 : 0, relampago: 0.04,
       ladron: n >= 5 ? 0.05 : 0, remolino: n >= 7 ? 0.04 : 0
     };
     const suma = Object.keys(w).reduce((a, k) => a + w[k], 0);
@@ -59,7 +59,7 @@
       out[p] = tipo; previa = tipo;
     }
     // mínimos por nivel: cada tipo aparece al menos una vez cuando ya toca
-    [['escudo', 1], ['tormenta', n === 1 ? 1 : 2], ['cofre', n >= 2 ? 1 : 0], ['relampago', n >= 3 ? 1 : 0], ['ladron', n >= 5 ? 1 : 0], ['remolino', n >= 7 ? 1 : 0]].forEach((par) => {
+    [['escudo', 1], ['tormenta', n === 1 ? 1 : 2], ['cofre', n >= 2 ? 1 : 0], ['relampago', 1], ['ladron', n >= 5 ? 1 : 0], ['remolino', n >= 7 ? 1 : 0]].forEach((par) => {
       let c = cuenta(out, par[0], C);
       for (let i = 0; c < par[1] && i < 800; i++) {
         const p = 3 + Math.floor(rnd() * (C - 4));                    // casillas 3 .. C-2
@@ -396,7 +396,7 @@
       if (antes === key) continue;
       el.dataset.k = key; el.className = 'tbl-casilla ' + (vis ? 'tipo-' + t : 'oculta');
       el.innerHTML = !vis ? '' : '<img src="img/tablero/' + (p === 0 ? 'salida' : t) + '.svg" alt="">';
-      if (vis && animar && antes === 'o') { el.classList.add('revela'); setTimeout(() => el.classList.remove('revela'), 620); }
+      if (vis && animar && antes === "o") { el.classList.add("revela"); setTimeout(() => el.classList.remove("revela"), 1100); }
     }
   }
   function aplicarTema() {
@@ -452,13 +452,13 @@
   }
   async function avanzar(n) {                                       // n > 0 avanza; n < 0 retrocede. Nunca antes de la salida ni pasando la meta.
     const paso = n > 0 ? 1 : -1; let k = Math.abs(n);
-    const meta = info().meta, agil = paso > 0 && k >= 2 ? 0.6 : 1;
+    const meta = info().meta, agil = paso > 0 && k >= 2 ? 0.8 : 1;
     while (k-- > 0) {
       const sig = E.pos + paso; if (sig < 0 || sig > meta) break;
       E.pos = sig; E.maxPos = Math.max(E.maxPos, E.pos);
       colocarPieza(paso); pintarCasillas(true); pintarEstado();
       son(paso > 0 ? 'paso' : 'retro', E.pos);
-      await espera((paso > 0 ? 260 : 320) * agil);
+      await espera((paso > 0 ? 470 : 420) * agil);
       if (E.pos === meta) break;
     }
     guardar();
@@ -545,7 +545,7 @@
   // Pregunta de lo leído. Acierto = 1 casilla extra (se cuenta fuera) y 2 gotas. Fallo = sin castigo.
   async function cargarBanco() {
     if (BANCO) return BANCO;
-    try { const r = await fetch('datos/juego_raices.json'); const j = await r.json(); BANCO = Array.isArray(j.preguntas) ? j.preguntas : []; } catch (e) { BANCO = []; }
+    try { const r = await fetch('datos/juego_raices.json'); const j = await r.json(); BANCO = Array.isArray(j.preguntas) ? j.preguntas.map((q) => Object.assign({}, q, { o: (q.o || []).map((x) => (Array.isArray(x) ? x[0] : x)) })) : []; } catch (e) { BANCO = []; }
     return BANCO;
   }
   // F1127 · Elegir pregunta. Regla: nunca se repite hasta que salen todas (ciclo completo del banco).
@@ -688,16 +688,58 @@
       }, DUR);
     });
   }
-  // Minijuegos desbloqueados por nivel completado (diseño, sección 13): Arreo (nivel 1), Memoria (2), Cosecha (3).
-  function minisDesbloqueados() {
-    const lista = [['arreo', 1], ['memoria', 2], ['cosecha', 3]].filter((x) => E.niveles >= x[1]).map((x) => x[0]);
-    return lista.length ? lista : ['memoria'];
+  // F1133 · Reto de atención: cinco desafíos rápidos de cultura general, naturaleza y Chile (nada religioso).
+  // Tres formatos: opción múltiple, «¿cuál no encaja?» y verdadero o falso. Un acierto = 1 gota (máximo 4).
+  let RETOS = null;
+  async function cargarRetos() {
+    if (RETOS) return RETOS;
+    try { const r = await fetch('datos/juego_curiosidades.json'); const j = await r.json(); RETOS = Array.isArray(j.retos) ? j.retos : []; } catch (e) { RETOS = []; }
+    return RETOS;
   }
+  function mezclar(a) { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; }
+  function miniReto() {
+    return new Promise(async (res) => {
+      const banco = await cargarRetos();
+      if (!banco.length) { res(0); return; }
+      const caja = mini('Reto de atención', 'Cinco desafíos rápidos. Un acierto = 1 gota (máximo 4). Sin castigo.');
+      const rondas = mezclar(banco).slice(0, Math.min(5, banco.length));
+      let i = 0, gotasReto = 0, listo = false;
+      const cerrar = (n) => { if (listo) return; listo = true; caja.remove(); res(n); };
+      const rotulo = { quiz: 'Pregunta', intruso: '¿Cuál NO encaja?', vf: '¿Verdadero o falso?' };
+      function ronda() {
+        if (i >= rondas.length) {
+          caja.innerHTML = `<b>¡Reto terminado!</b><small>Acertaste ${gotasReto} ${gotasReto === 1 ? 'vez' : 'veces'}.</small>`;
+          botonMini(caja, 'Seguir', () => cerrar(Math.min(gotasReto, 4)));
+          return;
+        }
+        const r = rondas[i], correcta = r.o[r.c], ops = r.tipo === 'vf' ? r.o.slice() : mezclar(r.o);
+        caja.innerHTML = `<b>${esc(rotulo[r.tipo] || 'Reto')}</b><small>Ronda ${i + 1} de ${rondas.length}</small><p class="tbl-reto-q">${esc(r.p)}</p><div class="tbl-reto-ops"></div><p class="tbl-reto-res" aria-live="polite"></p>`;
+        const cont = caja.querySelector('.tbl-reto-ops'), out = caja.querySelector('.tbl-reto-res');
+        ops.forEach((texto) => {
+          const b = document.createElement('button'); b.type = 'button'; b.className = 'tbl-btn sec tbl-reto-op'; b.textContent = texto;
+          b.addEventListener('click', () => {
+            const bien = texto === correcta;
+            cont.querySelectorAll('button').forEach((x) => { x.disabled = true; });
+            b.classList.add(bien ? 'ok' : 'mal');
+            if (bien) { gotasReto++; son('acierto'); } else { son('error'); }
+            out.textContent = bien ? '¡Acertaste! ' + (r.dato || '') : 'Era: ' + correcta + '. ' + (r.dato || '');
+            botonMini(caja, i + 1 < rondas.length ? 'Siguiente' : 'Ver resultado', () => { i++; ronda(); });
+          });
+          cont.appendChild(b);
+        });
+        botonMini(caja, 'Saltar', () => cerrar(Math.min(gotasReto, 4)));
+      }
+      ronda();
+    });
+  }
+  // Minijuegos desbloqueados por nivel completado (diseño, sección 13): Arreo (nivel 1), Memoria (2), Cosecha (3).
+  // F1133 · Desde el primer tablero están los tres minijuegos y el Reto de atención (antes se desbloqueaban por nivel).
+  function minisDesbloqueados() { return ['arreo', 'memoria', 'cosecha', 'reto']; }
   async function relampago() {
     son('relampago');
     decir('Relámpago', 'Un minijuego para ganar gotas. Puedes saltarlo.');
     const eleccion = minisDesbloqueados()[Math.floor(Math.random() * minisDesbloqueados().length)];
-    const n = eleccion === 'arreo' ? await miniArreo() : eleccion === 'cosecha' ? await miniCosecha() : await miniMemoria();
+    const n = eleccion === 'arreo' ? await miniArreo() : eleccion === 'cosecha' ? await miniCosecha() : eleccion === 'reto' ? await miniReto() : await miniMemoria();
     if (n) gota(n);
     decir('Relámpago', n ? `Ganas ${n} ${n === 1 ? 'gota' : 'gotas'} del minijuego.` : 'Sigue el camino: sin gotas esta vez.');
   }
@@ -751,6 +793,7 @@
       <div class="tbl-estado" id="tblEstado"></div>
       <div class="tbl-mesa" id="tblMesa">
         <div class="tbl-campo" id="tblCampo"></div>
+        <img class="tbl-medallon m1" src="img/tablero/medallon/condor.svg" alt="" aria-hidden="true"><img class="tbl-medallon m2" src="img/tablero/medallon/zorro.svg" alt="" aria-hidden="true"><img class="tbl-medallon m3" src="img/tablero/medallon/guanaco.svg" alt="" aria-hidden="true"><img class="tbl-medallon m4" src="img/tablero/medallon/copihue.svg" alt="" aria-hidden="true">
         <div class="tbl-bola" id="tblBola" aria-live="polite"><i class="tbl-aura" aria-hidden="true"></i><p id="tblTexto"></p></div>
         <div id="tblCasillas"></div>
         <div class="tbl-pieza" id="tblPieza" aria-label="Tu pieza"><span class="tbl-pieza-in" id="tblPiezaIn"><img class="tbl-pieza-img" src="img/piezas/${esc(PIEZA)}.svg" alt=""></span></div>
