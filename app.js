@@ -58,7 +58,7 @@
   // ---------- F872 · Avances por cuenta (nube) ----------
   // Lo personal (oración, crecimiento, ideas, cursos, lectura, acción del mes) se guarda en el teléfono Y en la cuenta
   // (tabla public.avances_cuenta, solo la ve su dueño: docs/sql/SQL_AVANCES_CUENTA.sql). Sin sesión o sin la tabla, todo sigue local.
-  const SYNC_CLAVES = ['tb_movil_planvida', 'tb_movil_mi_oracion', 'tb_movil_crecimiento', 'tb_movil_ideas_fav', 'tb_movil_aprender', 'tb_movil_biblia_ultimo', 'tb_movil_accion_mes', 'tb_movil_perfil', 'tb_movil_racha', 'tb_movil_biblia_res', 'tb_movil_canciones_mias', 'tb_movil_canciones_fav', 'tb_movil_biblia_col', 'tb_movil_biblia_notas', 'tb_movil_biblia_marc', 'tb_movil_leidos', 'tb_movil_planes', 'tb_inicio_v1', 'tb_movil_juegos', 'tb_movil_disponibilidad', 'tb_movil_acciones', 'tb_inicio_fondo', 'tb_inicio_clima'];   // F946: + Inicio (árbol, gotas, vivero), juegos, «Hoy lo hago», paisaje y clima
+  const SYNC_CLAVES = ['tb_movil_planvida', 'tb_movil_mi_oracion', 'tb_movil_crecimiento', 'tb_movil_ideas_fav', 'tb_movil_aprender', 'tb_movil_biblia_ultimo', 'tb_movil_accion_mes', 'tb_movil_perfil', 'tb_movil_racha', 'tb_movil_biblia_res', 'tb_movil_canciones_mias', 'tb_movil_canciones_fav', 'tb_movil_biblia_col', 'tb_movil_biblia_notas', 'tb_movil_biblia_marc', 'tb_movil_leidos', 'tb_movil_planes', 'tb_inicio_v1', 'tb_movil_juegos', 'tb_movil_tablero', 'tb_movil_disponibilidad', 'tb_movil_acciones', 'tb_inicio_fondo', 'tb_inicio_clima'];   // F946: + Inicio (árbol, gotas, vivero), juegos, «Hoy lo hago», paisaje y clima
   const K_SYNC = 'tb_movil_sync';
   const sync = { estado: 'local', cuando: null, timer: null, ocupado: false };   // estado: local | ok | pendiente | falta | error
   const metaLeer = () => { const m = leer(K_SYNC); return m && typeof m === 'object' ? { dueno: m.dueno || null, t: m.t || {}, d: m.d || {}, off: m.off === true } : { dueno: null, t: {}, d: {}, off: false }; };
@@ -286,7 +286,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Preguntas de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Sopa del Vivero': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1122';
+  const APP_VERSION = 'F1125';
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
   const BANDA_POR_VOLVER = { 'Mi iglesia': 'union', 'Palabra': 'palabra', 'Vida': 'crecer', 'Vivir lo que aprendemos': 'crecer', 'Perfil': 'camino', 'Panel': 'pastor' };
   const bandaMini = (tipo) => bandaTB(tipo).replace('class="tb-banda"', 'class="tb-banda tb-banda-mini"');
@@ -1355,12 +1355,13 @@
   // F944 · JUEGOS (fase A): entrada común. Cada juego se enchufa aquí con su vista y llama a juegoTerminar(id, aciertos, total).
   const K_JUEGOS = 'tb_movil_juegos';
   const JUEGOS = [
+    ['tablero', '🎲', 'Tablero de Tierra Buena', 'Un camino con sorpresas: rocío, preguntas, atajos y tormentas que te hacen retroceder.'],   // F1123 · Fase 1 del tablero (tablero.js)
     ['raices', '📖', 'Preguntas de la Palabra', 'Preguntas sobre lo que leíste, con el versículo que explica la respuesta.'],
     ['brotes', '✍️', 'Completa el versículo', 'Completa el versículo y llévalo en la memoria. Usa los que tú resaltaste.'],
     ['sopa', '🔎', 'Sopa del Vivero', 'Letras grandes, sin tiempo y con pistas gratis.'],
     ['jardin', '🌱', 'Jardín del principio', 'Seis días de la creación, con mapas y un cuaderno para lo que descubres.']
   ];
-  const JUEGOS_LISTOS = { raices: (v) => vistaRaices(v), brotes: (v) => vistaBrotesCamino(v), jardin: (v) => vistaJardin(v), sopa: (v) => vistaSopa(v) };   // id -> función que abre el juego (cada fase nueva se registra aquí)
+  const JUEGOS_LISTOS = { tablero: (v) => { if (window.TBTablero) TBTablero.abrir(v, { pieza: ((PIEZAS.find((p) => p[0] === ((jugadorLeer() || {}).pieza)) || PIEZAS[0])[1]) }); }, raices: (v) => vistaRaices(v), brotes: (v) => vistaBrotesCamino(v), jardin: (v) => vistaJardin(v), sopa: (v) => vistaSopa(v) };   // id -> función que abre el juego (cada fase nueva se registra aquí)
   function juegoTerminar(id, aciertos, total) {   // guarda la partida; una gota de rocío al terminar con al menos 60 % de aciertos (tope diario)
     const j = leer(K_JUEGOS) || { n: 0, p: {} }; j.n = (j.n || 0) + 1; j.p = j.p || {};
     const q = j.p[id] || { n: 0, mejor: 0 }; q.n++; q.mejor = Math.max(q.mejor, Number(aciertos) || 0); j.p[id] = q; guardar(K_JUEGOS, j);

@@ -515,6 +515,7 @@
     const saldo = (est.gotas && est.gotas.saldo) || 0, ori = (CAT.economia && CAT.economia.origenes) || {}, hoyG = (est.gotas && est.gotas.hoy) || {};
     let tri = null; try { tri = window.TBInicio.triviaHoy(); } catch (e) { tri = null; }
     const gotasDe = (k) => (ori[k] || {}).gotas || 0;
+    const tabG = (() => { try { return (JSON.parse(localStorage.getItem('tb_movil_tablero')) || {}).gotas || 0; } catch (e) { return 0; } })();   // F1125: gotas ganadas en el tablero (el saldo es el mismo que ves arriba)
     const hoyDe = (k) => { const tope = (ori[k] || {}).tope_dia || 0; return Math.min(hoyG[k] || 0, tope) + ' de ' + tope + ' gotas'; };
     const CATS = [
       { k: 'lectura', t: 'Lectura bíblica', n: 'Lectura bíblica', d: 'Lee un capítulo con calma y a tu ritmo.', bt: 'Ir a leer', to: 'lectura' },
@@ -524,7 +525,7 @@
     const trivia = '<section class="og-trivia"><div><b>Trivia de hoy</b><em>+' + gotasDe('trivia') + (gotasDe('trivia') === 1 ? ' gota' : ' gotas') + '</em><p>' + (tri && tri.resuelta ? 'Ya respondiste la trivia de hoy.' : 'Responde la trivia del día.') + '</p></div><button type="button" class="btn og-bt og-jugar" data-ac="ira" data-id="trivia"' + (tri && tri.resuelta ? ' disabled' : '') + '>Jugar</button></section>';
     return '<div class="og-top"><button type="button" class="btn sec og-volver" data-ac="tab" data-id="flores">← Volver al Vivero</button><button type="button" class="il-viv-saldo il-viv-saldo-bt" data-ac="tab" data-id="flores" aria-label="Guardar y volver al Vivero">' + ic(IC.gota, 16) + saldo + (saldo === 1 ? ' gota' : ' gotas') + '</button></div>'
       + '<h3 class="og-titulo">Obtener gotas</h3><p class="og-sub">Nutre tu entorno completando tus prácticas diarias. Cada actividad tiene un límite de hoy.</p>'
-      + '<div class="og-grid">' + CATS.map(tarjeta).join('') + '</div>' + trivia
+      + '<div class="og-grid">' + CATS.map(tarjeta).join('') + '<article class="og-card"><header class="og-h"><span>Tablero</span><em>+1 a +10</em></header><b>Tablero de Tierra Buena</b>' + '<p>Rocío +1, pregunta acertada +2, ronda completa +10. Sin límite de hoy.</p><small class="og-hoy">' + ic(IC.gota, 13) + ' Ganadas en el tablero: ' + tabG + '</small>' + '<button type="button" class="btn og-bt" data-ac="ira" data-id="juego">Ir al tablero</button></article></div>' + trivia
       + '<p class="il-viv-est" role="status" aria-live="polite">' + esc(vivMsg) + '</p>';
   }
   // F967 · Ilustraciones de cada temática (paisaje de 320×96). Dan identidad visual a las tarjetas del vivero.

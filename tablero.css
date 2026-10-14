@@ -1,0 +1,122 @@
+/* tablero.css — Tablero de Tierra Buena, F1125. Todo bajo .tbl o con prefijo tbl-: no toca el resto de la app. */
+.tbl { --tb-madera: #6b4a2b; --tb-oro: #d9a441; --tb-tinta: #2b2218; display: block; margin: 10px 0 6px; padding-bottom: calc(120px + var(--sa-b, 0px)); }   /* libera la barra inferior flotante */
+.tbl *, .tbl-confeti span { box-sizing: border-box; }
+.tbl-intro { margin: 0 0 10px; text-align: center; }
+.tbl-estado { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; font-size: .85rem; margin-bottom: 10px; }
+.tbl-chip { background: color-mix(in srgb, var(--tb-madera) 14%, transparent); border-radius: 999px; padding: 4px 10px; font-weight: 600; }
+.tbl-chip.pulso { animation: tblPulso .6s ease; }
+
+/* Bola de cristal: cuenta lo que pasó en la última casilla */
+.tbl-bola { position: relative; width: 132px; height: 132px; margin: 0 auto 12px; border-radius: 50%; display: grid; place-items: center; text-align: center; padding: 16px; color: #f7f3e6; overflow: hidden;
+  background: radial-gradient(circle at 30% 24%, rgba(255,255,255,.55), rgba(120,190,220,.22) 26%, rgba(18,48,70,.92) 62%, #0b1d2b);
+  box-shadow: inset 0 0 30px rgba(180,230,255,.45), 0 0 0 5px #5a3d22, 0 0 0 8px var(--tb-oro), 0 0 36px rgba(120,200,255,.4); }
+.tbl-bola b { display: block; color: #ffe9a8; font-size: .92rem; margin-bottom: 3px; text-shadow: 0 1px 3px #000, 0 0 10px rgba(0,0,0,.6); }
+.tbl-bola span { display: block; font-size: .76rem; line-height: 1.3; text-shadow: 0 1px 3px #000; }
+.tbl-bola.salta { animation: tblSalta .5s ease; }
+
+/* Mesa: recorrido en zigzag sobre un campo verde */
+.tbl-mesa { position: relative; width: 100%; max-width: 440px; aspect-ratio: 1 / 1.12; margin: 0 auto; border-radius: 24px; padding: 12px; overflow: hidden;
+  background: linear-gradient(145deg, #9c7140, #5a3d22 55%, #8a6139); box-shadow: inset 0 2px 0 rgba(255,255,255,.18), inset 0 -6px 0 rgba(0,0,0,.35), 0 16px 30px -14px #000; }
+.tbl-mesa.sacude { animation: tblSacude .55s ease; }
+.tbl-campo { position: absolute; inset: 12px; border-radius: 16px; background: radial-gradient(circle at 50% 40%, #3f5a3a, #24361f 75%); box-shadow: inset 0 0 36px rgba(0,0,0,.55); }
+.tbl-casilla { position: absolute; width: 42px; height: 42px; transform: translate(-50%, -50%); border-radius: 12px; display: grid; place-items: center; font-size: 17px; color: var(--tb-tinta);
+  background: linear-gradient(160deg, #fdf7e4, #e8d9b2); box-shadow: 0 3px 0 #b99a5e, 0 6px 10px rgba(0,0,0,.35); }
+.tbl-casilla.oculta { background: radial-gradient(circle, #5b6e4f, #2f3f2a); box-shadow: 0 3px 0 #1d2a19, 0 6px 10px rgba(0,0,0,.35); }
+.tbl-casilla.oculta::after { content: "?"; color: rgba(246,236,210,.55); font-size: 18px; }
+.tbl-casilla.tipo-salida { background: linear-gradient(160deg, #c9f0c6, #7cc08a); font-size: 10px; font-weight: 700; }
+.tbl-casilla.tipo-meta { background: linear-gradient(160deg, #ffe9a8, #d9a441); animation: tblBrilla 2.4s ease-in-out infinite; }
+.tbl-casilla.tipo-tormenta { background: linear-gradient(160deg, #e7c7b8, #b57a62); }
+.tbl-casilla.tipo-pausa { background: linear-gradient(160deg, #efe6d2, #cdbf9f); }
+.tbl-casilla.tipo-escudo { background: linear-gradient(160deg, #d6e9f2, #9cc3d6); }
+.tbl-casilla.tipo-pregunta { background: linear-gradient(160deg, #fff6d8, #f0d98f); }
+.tbl-casilla.tipo-atajo { background: linear-gradient(160deg, #d8efd0, #9fd3a6); }
+.tbl-casilla.tipo-rocio { background: linear-gradient(160deg, #e3f4ff, #a9d8f0); }
+.tbl-casilla.revela { animation: tblGira .6s cubic-bezier(.2,.8,.3,1) both; }   /* al descubrirse, la casilla gira como una carta */
+
+/* Pieza: el contenedor la ubica; el interior salta, se inclina al retroceder y lleva el halo del escudo */
+.tbl-pieza { position: absolute; width: 36px; height: 36px; margin: -18px 0 0 -18px; z-index: 3;
+  transition: left .26s cubic-bezier(.3,1.25,.5,1), top .26s cubic-bezier(.3,1.25,.5,1); }
+.tbl-pieza-in { position: absolute; inset: 0; border-radius: 50%; display: grid; place-items: center; font-size: 22px;
+  background: radial-gradient(circle at 35% 30%, #fff7d6, #d9a441); box-shadow: 0 6px 12px rgba(0,0,0,.45); transform-origin: 50% 90%; }
+.tbl-pieza-in.salta { animation: tblSaltoPieza .26s ease-out; }
+.tbl-pieza-in.retro { animation: tblRetroPieza .32s ease-in-out; }
+.tbl-pieza::after { content: ""; position: absolute; left: 18%; right: 18%; bottom: -6px; height: 6px; border-radius: 50%; background: rgba(0,0,0,.4); filter: blur(2px); z-index: -1; }
+.tbl-mesa.con-escudo .tbl-pieza-in::before { content: ""; position: absolute; inset: -8px; border-radius: 50%; border: 2px solid rgba(156,195,214,.95); box-shadow: 0 0 12px rgba(156,195,214,.85); animation: tblHalo 1.8s ease-in-out infinite; }
+
+/* Destellos, hojas y chispas (se crean desde el JS; van en el tablero o en la página) */
+.tbl-flash { position: absolute; inset: 0; border-radius: 24px; pointer-events: none; z-index: 4; animation: tblFlash .95s ease-out forwards; }
+.tbl-hoja { position: absolute; left: 0; font-size: 18px; pointer-events: none; z-index: 4; }
+.tbl-chispa { position: fixed; left: 0; top: 0; width: 7px; height: 7px; border-radius: 50%; pointer-events: none; z-index: 70; box-shadow: 0 0 8px currentColor; }
+.tbl-gota-vuela { position: fixed; left: 0; top: 0; font-size: 16px; pointer-events: none; z-index: 70; filter: drop-shadow(0 2px 3px rgba(0,0,0,.35)); }
+
+/* Aviso de ronda */
+.tbl-aviso { position: absolute; inset: 0; z-index: 5; display: grid; place-items: center; background: rgba(10,18,14,.72); border-radius: 24px; padding: 16px; }
+.tbl-aviso[hidden] { display: none; }
+.tbl-aviso-caja { background: #fbf4df; color: var(--tb-tinta); border-radius: 18px; padding: 18px; text-align: center; display: grid; gap: 8px; justify-items: center; max-width: 320px; animation: tblEntra .5s cubic-bezier(.2,.9,.3,1.15); }
+.tbl-aviso-caja b { font-size: 1.15rem; }
+.tbl-aviso-caja p { margin: 0; font-size: .92rem; }
+
+/* Dados 3D: cubo con seis caras, sombra que se encoge al saltar */
+.tbl-bandeja { display: flex; gap: 18px; justify-content: center; align-items: flex-end; margin: 8px 0 4px; min-height: 66px; }
+.tbl-dado3d { position: relative; width: 58px; height: 58px; perspective: 320px; }
+.tbl-dado3d[hidden] { display: none; }
+.tbl-dado3d.rueda { animation: tblDadoSalta 1.15s cubic-bezier(.3,.6,.4,1); }
+.tbl-cubo { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform 1.15s cubic-bezier(.16,.84,.26,1.06); }
+.tbl-cara { position: absolute; inset: 0; width: 58px; height: 58px; border-radius: 10px; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); padding: 7px; gap: 1px;
+  background: linear-gradient(150deg, #fffaf0 0%, #f1e2b8 60%, #dcc58d 100%); box-shadow: inset 0 0 0 1px rgba(90,60,30,.28), inset -4px -5px 8px rgba(120,80,30,.12); backface-visibility: hidden; }
+.tbl-cara.c1 { transform: translateZ(29px); }
+.tbl-cara.c2 { transform: rotateX(90deg) translateZ(29px); }
+.tbl-cara.c3 { transform: rotateY(90deg) translateZ(29px); }
+.tbl-cara.c4 { transform: rotateY(-90deg) translateZ(29px); }
+.tbl-cara.c5 { transform: rotateX(-90deg) translateZ(29px); }
+.tbl-cara.c6 { transform: rotateY(180deg) translateZ(29px); }
+.tbl-cara i { display: block; width: 8px; height: 8px; margin: auto; border-radius: 50%; background: transparent; box-shadow: inset 0 1px 1px rgba(0,0,0,.2); }
+.tbl-cara i.on { background: radial-gradient(circle at 35% 30%, #5b4632, #1f160d); }
+.tbl-sombra { position: absolute; left: 10%; right: 10%; bottom: -12px; height: 9px; border-radius: 50%; background: radial-gradient(ellipse, rgba(0,0,0,.45), transparent 70%); }
+.tbl-dado3d.rueda .tbl-sombra { animation: tblSombra 1.15s ease-in-out; }
+.tbl-dado3d:nth-child(2) .tbl-cara { background: linear-gradient(150deg, #ffe9a8 0%, #d9a441 70%, #b8842e 100%); }
+
+/* Botones y panel */
+.tbl-panel { display: grid; gap: 10px; justify-items: center; margin-top: 10px; animation: tblEntra .4s ease both; }
+.tbl-panel[data-modo="pregunta"] { justify-items: stretch; }
+.tbl-acciones { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.tbl-btn { appearance: none; border: 0; border-radius: 16px; padding: 12px 20px; min-height: 48px; font: inherit; font-size: 1rem; font-weight: 700; color: var(--tb-tinta); cursor: pointer;
+  background: linear-gradient(180deg, #ffe9a8, #d9a441); box-shadow: 0 5px 0 #9c7140, 0 10px 18px rgba(0,0,0,.25); transition: transform .1s ease, box-shadow .1s ease; }
+.tbl-btn:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 #9c7140; }
+.tbl-btn:disabled { opacity: .45; cursor: default; }
+.tbl-btn.sec { background: linear-gradient(180deg, #d8efd0, #7cc08a); box-shadow: 0 5px 0 #4f8a55, 0 10px 18px rgba(0,0,0,.25); }
+.tbl-btn.sec.elegida { outline: 3px solid var(--tb-oro); }
+.tbl-nota { margin: 0; font-size: .8rem; opacity: .8; text-align: center; }
+.tbl-preg { display: grid; gap: 10px; background: color-mix(in srgb, var(--tb-madera) 10%, transparent); border-radius: 18px; padding: 14px; transition: box-shadow .3s ease; }
+.tbl-preg.ok { animation: tblBien .7s ease; }
+.tbl-preg.mal { animation: tblMal .45s ease; }
+.tbl-preg-cab { margin: 0; font-size: .8rem; opacity: .8; }
+.tbl-preg-txt { margin: 0; font-weight: 700; font-size: 1.05rem; }
+.tbl-opc { display: grid; gap: 8px; }
+.tbl-opc .tbl-btn { width: 100%; font-size: .95rem; text-align: left; }
+.tbl-preg-res { margin: 0; font-size: .95rem; }
+.tbl-preg .tbl-btn:not(.sec) { justify-self: center; margin-top: 4px; }
+
+/* Confeti */
+.tbl-confeti { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 60; }
+.tbl-confeti span { position: absolute; top: -8%; font-size: 18px; animation: tblCae 1.9s ease-in forwards; }
+
+@keyframes tblSacude { 0%, 100% { transform: translate(0, 0); } 15% { transform: translate(-7px, 2px) rotate(-.5deg); } 35% { transform: translate(7px, -2px) rotate(.5deg); } 55% { transform: translate(-5px, 1px); } 75% { transform: translate(4px, -1px); } }
+@keyframes tblSalta { 0% { transform: scale(.92); } 50% { transform: scale(1.06); } 100% { transform: scale(1); } }
+@keyframes tblSaltoPieza { 0% { transform: translateY(0) scale(1, 1); } 35% { transform: translateY(-16px) scale(.92, 1.08); } 70% { transform: translateY(-3px) scale(1.06, .94); } 100% { transform: translateY(0) scale(1, 1); } }
+@keyframes tblRetroPieza { 0% { transform: rotate(0); } 40% { transform: rotate(-22deg) translateY(-6px); } 100% { transform: rotate(0); } }
+@keyframes tblHalo { 0%, 100% { opacity: .55; transform: scale(1); } 50% { opacity: 1; transform: scale(1.08); } }
+@keyframes tblDadoSalta { 0% { transform: translateY(0); } 30% { transform: translateY(-38px); } 52% { transform: translateY(0); } 68% { transform: translateY(-12px); } 84% { transform: translateY(0); } 93% { transform: translateY(-3px); } 100% { transform: translateY(0); } }
+@keyframes tblSombra { 0% { transform: scale(1); opacity: 1; } 30% { transform: scale(.55); opacity: .45; } 52% { transform: scale(1.1); opacity: 1; } 68% { transform: scale(.75); opacity: .6; } 100% { transform: scale(1); opacity: 1; } }
+@keyframes tblGira { 0% { transform: translate(-50%, -50%) rotateX(90deg); opacity: 0; } 60% { opacity: 1; } 100% { transform: translate(-50%, -50%) rotateX(0deg); opacity: 1; } }
+@keyframes tblBrilla { 0%, 100% { box-shadow: 0 3px 0 #b08030, 0 0 0 0 rgba(255,220,120,.0); } 50% { box-shadow: 0 3px 0 #b08030, 0 0 18px 4px rgba(255,220,120,.7); } }
+@keyframes tblFlash { 0% { opacity: 0; } 15% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes tblEntra { 0% { opacity: 0; transform: translateY(12px) scale(.98); } 100% { opacity: 1; transform: none; } }
+@keyframes tblBien { 0% { box-shadow: 0 0 0 0 rgba(124,192,138,.0); } 40% { box-shadow: 0 0 0 6px rgba(124,192,138,.55); } 100% { box-shadow: 0 0 0 0 rgba(124,192,138,.0); } }
+@keyframes tblMal { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+@keyframes tblPulso { 0% { transform: scale(1); } 40% { transform: scale(1.18); } 100% { transform: scale(1); } }
+@keyframes tblCae { to { transform: translate(var(--dx, 0), 110vh) rotate(540deg); opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .tbl *, .tbl-confeti span { animation: none !important; transition: none !important; }
+}
