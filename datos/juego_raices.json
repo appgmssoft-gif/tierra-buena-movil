@@ -589,6 +589,1089 @@
     "Misterio"
    ],
    "c": 1
+  },
+  {
+   "id": "r43",
+   "cod": "GEN",
+   "cap": 3,
+   "v": 9,
+   "p": "Después de pecar, ¿quién llamó al hombre: «¿Dónde estás tú?»?",
+   "o": [
+    "Abraham",
+    "Caín",
+    [
+     "Dios",
+     "Caín",
+     "Noé",
+     "Abraham"
+    ],
+    "Noé"
+   ],
+   "c": 2
+  },
+  {
+   "id": "r44",
+   "cod": "GEN",
+   "cap": 22,
+   "v": 2,
+   "p": "Dios pidió a Abraham que ofreciera en sacrificio a su hijo…",
+   "o": [
+    "Ismael",
+    "Jacob",
+    "Esaú",
+    [
+     "Isaac",
+     "Ismael",
+     "Jacob",
+     "Esaú"
+    ]
+   ],
+   "c": 3
+  },
+  {
+   "id": "r45",
+   "cod": "GEN",
+   "cap": 37,
+   "v": 3,
+   "p": "¿Qué regalo le hizo Jacob a su hijo José?",
+   "o": [
+    "Un anillo de oro",
+    [
+     "Una túnica de colores",
+     "Un anillo de oro",
+     "Un camello",
+     "Una casa"
+    ],
+    "Una casa",
+    "Un camello"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r46",
+   "cod": "EXO",
+   "cap": 3,
+   "v": 14,
+   "p": "Cuando Moisés preguntó a Dios cómo se llamaba, ¿qué le respondió?",
+   "o": [
+    "«Soy tu padre»",
+    "«Soy el Señor de la guerra»",
+    [
+     "«YO SOY EL QUE SOY»",
+     "«Soy tu rey»",
+     "«Soy el Señor de la guerra»",
+     "«Soy tu padre»"
+    ],
+    "«Soy tu rey»"
+   ],
+   "c": 2
+  },
+  {
+   "id": "r47",
+   "cod": "EXO",
+   "cap": 20,
+   "v": 8,
+   "p": "¿Qué mandamiento dice «Acuérdate del día de reposo para santificarlo»?",
+   "o": [
+    "El sexto",
+    [
+     "El cuarto",
+     "El primero",
+     "El sexto",
+     "El octavo"
+    ],
+    "El primero",
+    "El octavo"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r48",
+   "cod": "DEU",
+   "cap": 6,
+   "v": 5,
+   "p": "Según Deuteronomio 6:5, ¿con qué debemos amar a Dios?",
+   "o": [
+    "Solo en el templo",
+    "Con ofrendas de oro",
+    [
+     "Con todo el corazón, el alma y la fuerza",
+     "Solo con las palabras",
+     "Solo en el templo",
+     "Con ofrendas de oro"
+    ],
+    "Solo con las palabras"
+   ],
+   "c": 2
+  },
+  {
+   "id": "r49",
+   "cod": "JOS",
+   "cap": 1,
+   "v": 9,
+   "p": "¿Qué le dijo Dios a Josué para que no tuviera miedo?",
+   "o": [
+    "«Huye al desierto»",
+    "«Vuelve a Egipto»",
+    "«Espera diez años»",
+    [
+     "«Esfuérzate y sé valiente; yo estaré contigo»",
+     "«Huye al desierto»",
+     "«Espera diez años»",
+     "«Vuelve a Egipto»"
+    ]
+   ],
+   "c": 3
+  },
+  {
+   "id": "r50",
+   "cod": "1SA",
+   "cap": 16,
+   "v": 7,
+   "p": "Según 1 Samuel 16:7, ¿qué mira Jehová?",
+   "o": [
+    "La apariencia del rostro",
+    [
+     "El corazón",
+     "La estatura",
+     "Las riquezas",
+     "La apariencia del rostro"
+    ],
+    "Las riquezas",
+    "La estatura"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r51",
+   "cod": "1SA",
+   "cap": 17,
+   "v": 45,
+   "p": "¿En nombre de quién llegó David a enfrentar a Goliat?",
+   "o": [
+    "En el nombre del rey Saúl",
+    "En su propio nombre",
+    [
+     "En el nombre de Jehová de los ejércitos",
+     "En el nombre del rey Saúl",
+     "En su propio nombre",
+     "En el nombre de su padre"
+    ],
+    "En el nombre de su padre"
+   ],
+   "c": 2
+  },
+  {
+   "id": "r52",
+   "cod": "1KI",
+   "cap": 19,
+   "v": 12,
+   "p": "¿Cómo se manifestó Dios a Elías en Horeb?",
+   "o": [
+    "En un terremoto",
+    "En un viento fuerte",
+    "En un fuego",
+    [
+     "En un silbo apacible y delicado",
+     "En un terremoto",
+     "En un fuego",
+     "En un viento fuerte"
+    ]
+   ],
+   "c": 3
+  },
+  {
+   "id": "r53",
+   "cod": "NEH",
+   "cap": 8,
+   "v": 10,
+   "p": "Nehemías dijo al pueblo que el gozo de Jehová era su…",
+   "o": [
+    "Corona",
+    [
+     "Fortaleza",
+     "Riqueza",
+     "Descanso",
+     "Corona"
+    ],
+    "Riqueza",
+    "Descanso"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r54",
+   "cod": "JOB",
+   "cap": 19,
+   "v": 25,
+   "p": "¿Qué afirmó Job con firmeza en 19:25?",
+   "o": [
+    "Que el mar se abriría",
+    "Que su casa era grande",
+    "Que sus hijos volverían",
+    [
+     "Que su Redentor vive",
+     "Que su casa era grande",
+     "Que sus hijos volverían",
+     "Que el mar se abriría"
+    ]
+   ],
+   "c": 3
+  },
+  {
+   "id": "r55",
+   "cod": "PSA",
+   "cap": 27,
+   "v": 1,
+   "p": "Según el Salmo 27:1, Jehová es mi luz y mi…",
+   "o": [
+    "Escudero",
+    "Rey",
+    [
+     "Salvación",
+     "Juez",
+     "Rey",
+     "Escudero"
+    ],
+    "Juez"
+   ],
+   "c": 2
+  },
+  {
+   "id": "r56",
+   "cod": "PSA",
+   "cap": 37,
+   "v": 4,
+   "p": "¿Qué dice el Salmo 37:4 que hagamos con el Señor?",
+   "o": [
+    "Olvidarlo",
+    "Dejarlo para después",
+    [
+     "Deleitarnos en él",
+     "Olvidarlo",
+     "Temerle sin amor",
+     "Dejarlo para después"
+    ],
+    "Temerle sin amor"
+   ],
+   "c": 2
+  },
+  {
+   "id": "r57",
+   "cod": "PSA",
+   "cap": 34,
+   "v": 8,
+   "p": "¿Qué invita a probar el Salmo 34:8?",
+   "o": [
+    "Un vino dulce",
+    "El agua del río",
+    "La comida del rey",
+    [
+     "Que el Señor es bueno",
+     "Un vino dulce",
+     "La comida del rey",
+     "El agua del río"
+    ]
+   ],
+   "c": 3
+  },
+  {
+   "id": "r58",
+   "cod": "PSA",
+   "cap": 100,
+   "v": 4,
+   "p": "Según el Salmo 100:4, ¿con qué entramos a sus puertas?",
+   "o": [
+    [
+     "Con acción de gracias",
+     "Con ofrendas de oro",
+     "Con cantos de guerra",
+     "En silencio"
+    ],
+    "Con ofrendas de oro",
+    "Con cantos de guerra",
+    "En silencio"
+   ],
+   "c": 0
+  },
+  {
+   "id": "r59",
+   "cod": "PSA",
+   "cap": 121,
+   "v": 2,
+   "p": "¿De dónde viene el socorro, según el Salmo 121?",
+   "o": [
+    [
+     "De Jehová, que hizo los cielos y la tierra",
+     "De los montes",
+     "De los reyes",
+     "De los ejércitos"
+    ],
+    "De los ejércitos",
+    "De los montes",
+    "De los reyes"
+   ],
+   "c": 0
+  },
+  {
+   "id": "r60",
+   "cod": "PSA",
+   "cap": 139,
+   "v": 14,
+   "p": "¿Cómo dice el Salmo 139:14 que fuimos hechos?",
+   "o": [
+    "Por casualidad",
+    [
+     "Formidable y maravillosamente",
+     "Como los demás animales",
+     "Al azar",
+     "Por casualidad"
+    ],
+    "Como los demás animales",
+    "Al azar"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r61",
+   "cod": "PRO",
+   "cap": 3,
+   "v": 5,
+   "p": "Proverbios 3:5 pide que confiemos en el Señor de todo corazón y que no nos apoyemos en…",
+   "o": [
+    "La suerte",
+    [
+     "Nuestra propia prudencia",
+     "La ayuda de los amigos",
+     "La fuerza de los reyes",
+     "La suerte"
+    ],
+    "La fuerza de los reyes",
+    "La ayuda de los amigos"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r62",
+   "cod": "PRO",
+   "cap": 22,
+   "v": 6,
+   "p": "¿Qué dice Proverbios 22:6 sobre instruir al niño?",
+   "o": [
+    "Que debe callar siempre",
+    "Que debe trabajar desde niño",
+    "Que debe ser rico",
+    [
+     "Que no se apartará de ese camino",
+     "Que debe trabajar desde niño",
+     "Que debe ser rico",
+     "Que debe callar siempre"
+    ]
+   ],
+   "c": 3
+  },
+  {
+   "id": "r63",
+   "cod": "ISA",
+   "cap": 41,
+   "v": 10,
+   "p": "¿Qué le dice Dios al pueblo en Isaías 41:10?",
+   "o": [
+    [
+     "«No temas, porque yo estoy contigo»",
+     "«Huye hacia el norte»",
+     "«Construye murallas»",
+     "«Espera en la ciudad»"
+    ],
+    "«Construye murallas»",
+    "«Huye hacia el norte»",
+    "«Espera en la ciudad»"
+   ],
+   "c": 0
+  },
+  {
+   "id": "r64",
+   "cod": "ISA",
+   "cap": 53,
+   "v": 5,
+   "p": "Según Isaías 53:5, ¿por qué fue herido el Siervo?",
+   "o": [
+    "Por su propia culpa",
+    [
+     "Por nuestras rebeliones",
+     "Por su propia culpa",
+     "Por el rey de Babilonia",
+     "Por el diluvio"
+    ],
+    "Por el diluvio",
+    "Por el rey de Babilonia"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r65",
+   "cod": "JER",
+   "cap": 29,
+   "v": 11,
+   "p": "¿Qué pensamientos tiene Dios hacia su pueblo, según Jeremías 29:11?",
+   "o": [
+    "Pensamientos de guerra",
+    "Pensamientos de castigo",
+    "Pensamientos de olvido",
+    [
+     "Pensamientos de paz y no de mal",
+     "Pensamientos de castigo",
+     "Pensamientos de olvido",
+     "Pensamientos de guerra"
+    ]
+   ],
+   "c": 3
+  },
+  {
+   "id": "r66",
+   "cod": "EZK",
+   "cap": 36,
+   "v": 26,
+   "p": "¿Qué promete Dios dar en Ezequiel 36:26?",
+   "o": [
+    "Un ejército nuevo",
+    [
+     "Un corazón nuevo",
+     "Un reino nuevo",
+     "Un ejército nuevo",
+     "Una ciudad nueva"
+    ],
+    "Una ciudad nueva",
+    "Un reino nuevo"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r67",
+   "cod": "MIC",
+   "cap": 6,
+   "v": 8,
+   "p": "¿Qué pide Dios según Miqueas 6:8?",
+   "o": [
+    "Construir un templo grande",
+    [
+     "Hacer justicia, amar misericordia y andar humildemente con Dios",
+     "Ofrecer muchos animales",
+     "Construir un templo grande",
+     "Viajar a otras tierras"
+    ],
+    "Ofrecer muchos animales",
+    "Viajar a otras tierras"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r68",
+   "cod": "HAB",
+   "cap": 2,
+   "v": 4,
+   "p": "Según Habacuc 2:4, ¿cómo vivirá el justo?",
+   "o": [
+    "Por su sabiduría",
+    "Por su riqueza",
+    "Por su fuerza",
+    [
+     "Por su fe",
+     "Por su riqueza",
+     "Por su fuerza",
+     "Por su sabiduría"
+    ]
+   ],
+   "c": 3
+  },
+  {
+   "id": "r69",
+   "cod": "MAT",
+   "cap": 11,
+   "v": 28,
+   "p": "¿Qué invita a hacer Jesús a los trabajados y cargados?",
+   "o": [
+    [
+     "Venir a él, y él les dará descanso",
+     "Trabajar más duro",
+     "Pagar sus deudas",
+     "Viajar a Jerusalén"
+    ],
+    "Trabajar más duro",
+    "Viajar a Jerusalén",
+    "Pagar sus deudas"
+   ],
+   "c": 0
+  },
+  {
+   "id": "r71",
+   "cod": "MAT",
+   "cap": 18,
+   "v": 20,
+   "p": "Según Mateo 18:20, ¿dónde está Jesús?",
+   "o": [
+    "Solo en el desierto",
+    "Solo en el templo",
+    "Solo en los cielos",
+    [
+     "Donde dos o tres se reúnen en su nombre",
+     "Solo en el templo",
+     "Solo en el desierto",
+     "Solo en los cielos"
+    ]
+   ],
+   "c": 3
+  },
+  {
+   "id": "r72",
+   "cod": "MAT",
+   "cap": 25,
+   "v": 40,
+   "p": "¿Qué dice el Rey en Mateo 25:40 sobre lo que hacemos a los más pequeños?",
+   "o": [
+    "Que no tiene importancia",
+    [
+     "Que se lo hacemos a él",
+     "Que no tiene importancia",
+     "Que lo olvidará",
+     "Que es asunto del gobierno"
+    ],
+    "Que lo olvidará",
+    "Que es asunto del gobierno"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r73",
+   "cod": "MAR",
+   "cap": 10,
+   "v": 45,
+   "p": "Según Marcos 10:45, ¿para qué vino el Hijo del Hombre?",
+   "o": [
+    "Para cobrar impuestos",
+    "Para ser servido por todos",
+    "Para reinar en Roma",
+    [
+     "Para servir y dar su vida en rescate por muchos",
+     "Para ser servido por todos",
+     "Para reinar en Roma",
+     "Para cobrar impuestos"
+    ]
+   ],
+   "c": 3
+  },
+  {
+   "id": "r74",
+   "cod": "LUK",
+   "cap": 6,
+   "v": 31,
+   "p": "¿Qué dice Lucas 6:31 que hagamos con los demás?",
+   "o": [
+    [
+     "Lo mismo que queremos que hagan con nosotros",
+     "Lo que nos convenga",
+     "Solo a nuestra familia",
+     "Nada, cada uno por su lado"
+    ],
+    "Solo a nuestra familia",
+    "Lo que nos convenga",
+    "Nada, cada uno por su lado"
+   ],
+   "c": 0
+  },
+  {
+   "id": "r75",
+   "cod": "LUK",
+   "cap": 19,
+   "v": 10,
+   "p": "¿Qué vino a hacer el Hijo del Hombre según Lucas 19:10?",
+   "o": [
+    "Conquistar tierras",
+    "Juzgar a los reyes",
+    [
+     "Buscar y salvar lo que se había perdido",
+     "Juzgar a los reyes",
+     "Construir ciudades",
+     "Conquistar tierras"
+    ],
+    "Construir ciudades"
+   ],
+   "c": 2
+  },
+  {
+   "id": "r76",
+   "cod": "JHN",
+   "cap": 1,
+   "v": 1,
+   "p": "En Juan 1:1, ¿quién era el Verbo?",
+   "o": [
+    "Un profeta",
+    "Un hombre sabio",
+    [
+     "Dios",
+     "Un profeta",
+     "Un ángel",
+     "Un hombre sabio"
+    ],
+    "Un ángel"
+   ],
+   "c": 2
+  },
+  {
+   "id": "r77",
+   "cod": "JHN",
+   "cap": 1,
+   "v": 14,
+   "p": "¿Qué hizo el Verbo según Juan 1:14?",
+   "o": [
+    "Se fue al cielo",
+    "Escribió un libro",
+    [
+     "Se hizo carne y habitó entre nosotros",
+     "Se fue al cielo",
+     "Escribió un libro",
+     "Dividió el mar"
+    ],
+    "Dividió el mar"
+   ],
+   "c": 2
+  },
+  {
+   "id": "r78",
+   "cod": "JHN",
+   "cap": 8,
+   "v": 12,
+   "p": "Jesús dijo: «Yo soy…» ¿qué?",
+   "o": [
+    "El pan del cielo",
+    "El buen pastor",
+    [
+     "La luz del mundo",
+     "El pan del cielo",
+     "La puerta de las ovejas",
+     "El buen pastor"
+    ],
+    "La puerta de las ovejas"
+   ],
+   "c": 2
+  },
+  {
+   "id": "r79",
+   "cod": "JHN",
+   "cap": 10,
+   "v": 11,
+   "p": "Según Juan 10:11, ¿qué hace el buen pastor?",
+   "o": [
+    [
+     "Da su vida por las ovejas",
+     "Vende sus ovejas",
+     "Huye cuando viene el lobo",
+     "Cuida solo a sus favoritas"
+    ],
+    "Huye cuando viene el lobo",
+    "Vende sus ovejas",
+    "Cuida solo a sus favoritas"
+   ],
+   "c": 0
+  },
+  {
+   "id": "r80",
+   "cod": "JHN",
+   "cap": 14,
+   "v": 6,
+   "p": "Jesús dijo: «Yo soy el camino, la verdad y…»",
+   "o": [
+    "La luz",
+    "La paz",
+    "El camino de piedra",
+    [
+     "La vida",
+     "La paz",
+     "La luz",
+     "El camino de piedra"
+    ]
+   ],
+   "c": 3
+  },
+  {
+   "id": "r81",
+   "cod": "JHN",
+   "cap": 16,
+   "v": 33,
+   "p": "¿Qué dijo Jesús sobre el mundo en Juan 16:33?",
+   "o": [
+    [
+     "Que él ha vencido al mundo",
+     "Que el mundo nunca cambiará",
+     "Que el mundo es nuestro hogar",
+     "Que el mundo será destruido ayer"
+    ],
+    "Que el mundo nunca cambiará",
+    "Que el mundo es nuestro hogar",
+    "Que el mundo será destruido ayer"
+   ],
+   "c": 0
+  },
+  {
+   "id": "r82",
+   "cod": "ACT",
+   "cap": 1,
+   "v": 8,
+   "p": "¿Qué recibirían los discípulos al venir el Espíritu Santo?",
+   "o": [
+    [
+     "Poder",
+     "Riqueza",
+     "Un ejército",
+     "Un nuevo templo"
+    ],
+    "Un ejército",
+    "Un nuevo templo",
+    "Riqueza"
+   ],
+   "c": 0
+  },
+  {
+   "id": "r83",
+   "cod": "ROM",
+   "cap": 3,
+   "v": 23,
+   "p": "Según Romanos 3:23, ¿qué pasó con todos?",
+   "o": [
+    [
+     "Todos pecaron",
+     "Todos fueron justos",
+     "Todos fueron sabios",
+     "Todos huyeron"
+    ],
+    "Todos fueron sabios",
+    "Todos fueron justos",
+    "Todos huyeron"
+   ],
+   "c": 0
+  },
+  {
+   "id": "r84",
+   "cod": "ROM",
+   "cap": 5,
+   "v": 8,
+   "p": "¿Cuándo murió Cristo por nosotros, según Romanos 5:8?",
+   "o": [
+    "Cuando éramos niños",
+    "Cuando estábamos en el templo",
+    [
+     "Siendo nosotros aún pecadores",
+     "Después de que fuéramos justos",
+     "Cuando estábamos en el templo",
+     "Cuando éramos niños"
+    ],
+    "Después de que fuéramos justos"
+   ],
+   "c": 2
+  },
+  {
+   "id": "r85",
+   "cod": "ROM",
+   "cap": 12,
+   "v": 2,
+   "p": "¿Cómo nos transformamos según Romanos 12:2?",
+   "o": [
+    "Por el tiempo",
+    "Por la fuerza física",
+    [
+     "Por la renovación del entendimiento",
+     "Por la riqueza",
+     "Por la fuerza física",
+     "Por el tiempo"
+    ],
+    "Por la riqueza"
+   ],
+   "c": 2
+  },
+  {
+   "id": "r86",
+   "cod": "2CO",
+   "cap": 5,
+   "v": 17,
+   "p": "Según 2 Corintios 5:17, si alguien está en Cristo…",
+   "o": [
+    "Es un esclavo",
+    "Tiene más dinero",
+    [
+     "Es nueva criatura",
+     "Está en deuda",
+     "Es un esclavo",
+     "Tiene más dinero"
+    ],
+    "Está en deuda"
+   ],
+   "c": 2
+  },
+  {
+   "id": "r87",
+   "cod": "2CO",
+   "cap": 12,
+   "v": 9,
+   "p": "¿Qué dijo el Señor a Pablo en 2 Corintios 12:9?",
+   "o": [
+    [
+     "«Bástate mi gracia»",
+     "«Vuelve a Damasco»",
+     "«Escribe tu libro»",
+     "«Cuida tus ovejas»"
+    ],
+    "«Escribe tu libro»",
+    "«Cuida tus ovejas»",
+    "«Vuelve a Damasco»"
+   ],
+   "c": 0
+  },
+  {
+   "id": "r88",
+   "cod": "GAL",
+   "cap": 5,
+   "v": 22,
+   "p": "¿Cuál es el primer fruto del Espíritu (Gálatas 5:22)?",
+   "o": [
+    "La bondad",
+    "La paciencia",
+    "La fe",
+    [
+     "El amor",
+     "La paciencia",
+     "La bondad",
+     "La fe"
+    ]
+   ],
+   "c": 3
+  },
+  {
+   "id": "r89",
+   "cod": "EPH",
+   "cap": 2,
+   "v": 8,
+   "p": "Según Efesios 2:8, ¿por qué medio somos salvos?",
+   "o": [
+    [
+     "Por gracia, por medio de la fe",
+     "Por nuestras obras",
+     "Por la ley de Moisés",
+     "Por el dinero"
+    ],
+    "Por nuestras obras",
+    "Por el dinero",
+    "Por la ley de Moisés"
+   ],
+   "c": 0
+  },
+  {
+   "id": "r90",
+   "cod": "EPH",
+   "cap": 6,
+   "v": 10,
+   "p": "Efesios 6:10 nos llama a fortalecernos en…",
+   "o": [
+    "La opinión de otros",
+    [
+     "El Señor y en el poder de su fuerza",
+     "Nuestra fuerza física",
+     "Las riquezas",
+     "La opinión de otros"
+    ],
+    "Las riquezas",
+    "Nuestra fuerza física"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r91",
+   "cod": "PHP",
+   "cap": 4,
+   "v": 6,
+   "p": "Según Filipenses 4:6, ¿de qué no debemos estar afanosos?",
+   "o": [
+    [
+     "De nada",
+     "De los impuestos",
+     "De la lluvia",
+     "De los enemigos del reino"
+    ],
+    "De los impuestos",
+    "De la lluvia",
+    "De los enemigos del reino"
+   ],
+   "c": 0
+  },
+  {
+   "id": "r92",
+   "cod": "COL",
+   "cap": 3,
+   "v": 23,
+   "p": "Colosenses 3:23 dice que lo que hagamos, lo hagamos…",
+   "o": [
+    [
+     "De corazón, como para el Señor",
+     "Para que nos vean",
+     "Solo si nos pagan",
+     "A medias"
+    ],
+    "Solo si nos pagan",
+    "Para que nos vean",
+    "A medias"
+   ],
+   "c": 0
+  },
+  {
+   "id": "r93",
+   "cod": "1TH",
+   "cap": 5,
+   "v": 17,
+   "p": "¿Qué nos manda 1 Tesalonicenses 5:17?",
+   "o": [
+    "Viajar mucho",
+    "Hablar poco",
+    "Ayunar cada semana",
+    [
+     "Orar sin cesar",
+     "Ayunar cada semana",
+     "Hablar poco",
+     "Viajar mucho"
+    ]
+   ],
+   "c": 3
+  },
+  {
+   "id": "r94",
+   "cod": "2TI",
+   "cap": 1,
+   "v": 7,
+   "p": "Según 2 Timoteo 1:7, Dios no nos dio espíritu de cobardía, sino de…",
+   "o": [
+    "Riqueza, fama y honor",
+    "Temor y silencio",
+    "Dudas y tristeza",
+    [
+     "Poder, amor y dominio propio",
+     "Riqueza, fama y honor",
+     "Temor y silencio",
+     "Dudas y tristeza"
+    ]
+   ],
+   "c": 3
+  },
+  {
+   "id": "r95",
+   "cod": "HEB",
+   "cap": 4,
+   "v": 12,
+   "p": "Según Hebreos 4:12, la palabra de Dios es…",
+   "o": [
+    "Antigua y olvidada",
+    [
+     "Viva y eficaz",
+     "Escrita solo para reyes",
+     "Antigua y olvidada",
+     "Sin poder"
+    ],
+    "Sin poder",
+    "Escrita solo para reyes"
+   ],
+   "c": 1
+  },
+  {
+   "id": "r96",
+   "cod": "JAS",
+   "cap": 1,
+   "v": 5,
+   "p": "Si alguno tiene falta de sabiduría, Santiago 1:5 dice que…",
+   "o": [
+    "La compre",
+    "La espere de otros",
+    "La busque en los libros",
+    [
+     "La pida a Dios",
+     "La busque en los libros",
+     "La compre",
+     "La espere de otros"
+    ]
+   ],
+   "c": 3
+  },
+  {
+   "id": "r97",
+   "cod": "1PE",
+   "cap": 5,
+   "v": 7,
+   "p": "¿Qué nos invita a hacer 1 Pedro 5:7 con nuestras preocupaciones?",
+   "o": [
+    "Guardarlas en secreto",
+    "Olvidarlas sin pensar",
+    "Cargarlas solos",
+    [
+     "Echarlas sobre él, porque él cuida de nosotros",
+     "Guardarlas en secreto",
+     "Olvidarlas sin pensar",
+     "Cargarlas solos"
+    ]
+   ],
+   "c": 3
+  },
+  {
+   "id": "r98",
+   "cod": "1JN",
+   "cap": 1,
+   "v": 9,
+   "p": "Según 1 Juan 1:9, si confesamos nuestros pecados, él es fiel y justo para…",
+   "o": [
+    "Olvidarnos",
+    "Juzgarnos otra vez",
+    "Castigarnos",
+    [
+     "Perdonarnos",
+     "Castigarnos",
+     "Olvidarnos",
+     "Juzgarnos otra vez"
+    ]
+   ],
+   "c": 3
+  },
+  {
+   "id": "r99",
+   "cod": "REV",
+   "cap": 21,
+   "v": 4,
+   "p": "Según Apocalipsis 21:4, ¿qué hará Dios con toda lágrima?",
+   "o": [
+    "La convertirá en oro",
+    "La guardará en un frasco",
+    "La olvidará sin más",
+    [
+     "Enjugará toda lágrima de sus ojos",
+     "La guardará en un frasco",
+     "La convertirá en oro",
+     "La olvidará sin más"
+    ]
+   ],
+   "c": 3
+  },
+  {
+   "id": "r100",
+   "cod": "PSA",
+   "cap": 46,
+   "v": 1,
+   "p": "Según el Salmo 46:1, Dios es nuestro amparo, fortaleza y…",
+   "o": [
+    [
+     "Pronto auxilio en las tribulaciones",
+     "Riqueza en la vejez",
+     "Rey de los ejércitos del norte",
+     "Juez de los hombres sabios"
+    ],
+    "Juez de los hombres sabios",
+    "Rey de los ejércitos del norte",
+    "Riqueza en la vejez"
+   ],
+   "c": 0
   }
  ]
 }

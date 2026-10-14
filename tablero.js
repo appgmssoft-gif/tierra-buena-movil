@@ -9,17 +9,17 @@
   const NIVELES = 10;
   // Lugares turísticos de Chile, con una leyenda corta de tono místico (cada tablero toma uno).
   const TEMAS = [
-    { nombre: 'Rapa Nui', lugar: 'Ahu y moáis', icono: '🗿', cielo: '#f2d7a0', campo: '#2f5f57', aura: '#ffd45c', deco: ['🗿', '🌊', '🌿', '🪨'], leyenda: 'Los moáis miran al mar y guardan silencio. Dicen que a veces, en la noche, se mueven un poco.' },
-    { nombre: 'Atacama', lugar: 'Valle de la Luna', icono: '🌵', cielo: '#f0c59a', campo: '#7a4f33', aura: '#ffb36b', deco: ['🌵', '☀️', '🪨', '🦂'], leyenda: 'Bajo la luna, las sombras de las rocas cuentan historias que el desierto nunca olvidó.' },
-    { nombre: 'Chiloé', lugar: 'Iglesias y palafitos', icono: '⛪', cielo: '#cfe3d6', campo: '#2b5246', aura: '#8fe3c4', deco: ['🐟', '🌲', '🐚', '🦭'], leyenda: 'La Pincoya baila sobre la marea cuando el mar está en paz. Quien la ve, vuelve.' },
-    { nombre: 'Torres del Paine', lugar: 'Patagonia', icono: '🏔️', cielo: '#d3dcea', campo: '#3a4c5c', aura: '#9fd8ff', deco: ['⛰️', '❄️', '🦅', '🌬️'], leyenda: 'El viento patagónico lleva los secretos de los cerros de un lado al otro del lago.' },
-    { nombre: 'Lauca', lugar: 'Altiplano', icono: '🌋', cielo: '#eadac4', campo: '#5f6039', aura: '#f2c48d', deco: ['🦙', '🌋', '🌾', '🦅'], leyenda: 'Los volcanes vigilan el agua de los antiguos. Las vicuñas conocen un camino escondido.' },
-    { nombre: 'Valparaíso', lugar: 'Cerros y ascensores', icono: '🚠', cielo: '#f5cfb0', campo: '#463b5a', aura: '#ffb08a', deco: ['🎈', '⛵', '🌇', '🎨'], leyenda: 'Al anochecer los cerros se encienden como un tesoro entre las casas de colores.' },
-    { nombre: 'Cajón del Maipo', lugar: 'Cordillera', icono: '🏞️', cielo: '#d6eacf', campo: '#3a5f43', aura: '#9ee0a6', deco: ['💧', '🌿', '🦅', '🌼'], leyenda: 'Un río cantarín guía a quien busca la montaña. Dicen que el agua recuerda a quien la visita.' },
-    { nombre: 'Juan Fernández', lugar: 'Isla lejana', icono: '🏝️', cielo: '#c0e4e9', campo: '#2b5a62', aura: '#8ee3e8', deco: ['🐚', '🐟', '🌴', '⭐'], leyenda: 'Una isla en medio del mar guarda huellas de quien esperó mucho tiempo por volver.' },
-    { nombre: 'Desierto florido', lugar: 'Atacama en primavera', icono: '🌸', cielo: '#ffd9ec', campo: '#7d5a7a', aura: '#ffb3dc', deco: ['🌸', '🌼', '🦋', '🌷'], leyenda: 'Tras la lluvia escasa, el desierto despierta de colores. Las flores esperan años para salir y florecer una sola vez.' },
-    { nombre: 'Costa', lugar: 'Pacífico', icono: '🌊', cielo: '#d2ebff', campo: '#2d5f7a', aura: '#9fd3ff', deco: ['🦀', '🐚', '🐟', '🌊'], leyenda: 'Las olas guardan canciones viejas. Quien escucha con calma, aprende a esperar la marea.' },
-    { nombre: 'Bosque nativo', lugar: 'Alerce Andino', icono: '🌳', cielo: '#cfe8c4', campo: '#2a4d31', aura: '#b8f0a6', deco: ['🌳', '🍄', '🦉', '🌿'], leyenda: 'Los alerces crecen despacio, pero viven siglos. Cada anillo de su tronco cuenta un año de paciencia.' }
+    { nombre: 'Rapa Nui', lugar: 'Ahu y moáis', icono: '🗿', cielo: '#f2d7a0', campo: '#2f5f57', aura: '#ffd45c', deco: ['moai', 'ola', 'flor', 'sol'], leyenda: 'Los moáis miran al mar y guardan silencio. Dicen que a veces, en la noche, se mueven un poco.' },
+    { nombre: 'Atacama', lugar: 'Valle de la Luna', icono: '🌵', cielo: '#f0c59a', campo: '#7a4f33', aura: '#ffb36b', deco: ['cactus', 'sol', 'montana', 'ave'], leyenda: 'Bajo la luna, las sombras de las rocas cuentan historias que el desierto nunca olvidó.' },
+    { nombre: 'Chiloé', lugar: 'Iglesias y palafitos', icono: '⛪', cielo: '#cfe3d6', campo: '#2b5246', aura: '#8fe3c4', deco: ['pez', 'arbol', 'concha', 'ave'], leyenda: 'La Pincoya baila sobre la marea cuando el mar está en paz. Quien la ve, vuelve.' },
+    { nombre: 'Torres del Paine', lugar: 'Patagonia', icono: '🏔️', cielo: '#d3dcea', campo: '#3a4c5c', aura: '#9fd8ff', deco: ['montana', 'ave', 'arbol', 'sol'], leyenda: 'El viento patagónico lleva los secretos de los cerros de un lado al otro del lago.' },
+    { nombre: 'Lauca', lugar: 'Altiplano', icono: '🌋', cielo: '#eadac4', campo: '#5f6039', aura: '#f2c48d', deco: ['llama', 'montana', 'flor', 'sol'], leyenda: 'Los volcanes vigilan el agua de los antiguos. Las vicuñas conocen un camino escondido.' },
+    { nombre: 'Valparaíso', lugar: 'Cerros y ascensores', icono: '🚠', cielo: '#f5cfb0', campo: '#463b5a', aura: '#ffb08a', deco: ['ave', 'sol', 'flor', 'concha'], leyenda: 'Al anochecer los cerros se encienden como un tesoro entre las casas de colores.' },
+    { nombre: 'Cajón del Maipo', lugar: 'Cordillera', icono: '🏞️', cielo: '#d6eacf', campo: '#3a5f43', aura: '#9ee0a6', deco: ['arbol', 'ola', 'flor', 'ave'], leyenda: 'Un río cantarín guía a quien busca la montaña. Dicen que el agua recuerda a quien la visita.' },
+    { nombre: 'Juan Fernández', lugar: 'Isla lejana', icono: '🏝️', cielo: '#c0e4e9', campo: '#2b5a62', aura: '#8ee3e8', deco: ['concha', 'pez', 'cangrejo', 'ola'], leyenda: 'Una isla en medio del mar guarda huellas de quien esperó mucho tiempo por volver.' },
+    { nombre: 'Desierto florido', lugar: 'Atacama en primavera', icono: '🌸', cielo: '#ffd9ec', campo: '#7d5a7a', aura: '#ffb3dc', deco: ['flor', 'mariposa', 'cactus', 'sol'], leyenda: 'Tras la lluvia escasa, el desierto despierta de colores. Las flores esperan años para salir y florecer una sola vez.' },
+    { nombre: 'Costa', lugar: 'Pacífico', icono: '🌊', cielo: '#d2ebff', campo: '#2d5f7a', aura: '#9fd3ff', deco: ['cangrejo', 'concha', 'pez', 'ola'], leyenda: 'Las olas guardan canciones viejas. Quien escucha con calma, aprende a esperar la marea.' },
+    { nombre: 'Bosque nativo', lugar: 'Alerce Andino', icono: '🌳', cielo: '#cfe8c4', campo: '#2a4d31', aura: '#b8f0a6', deco: ['arbol', 'hongo', 'ave', 'flor'], leyenda: 'Los alerces crecen despacio, pero viven siglos. Cada anillo de su tronco cuenta un año de paciencia.' }
   ];
   const tema = (t) => TEMAS[(t - 1) % TEMAS.length];
   const RANGO = (n) => Math.min(2 + Math.floor((n - 1) / 2), 6);     // casillas que puede retroceder una tormenta en el nivel n
@@ -96,7 +96,7 @@
   }
 
   // ---------- Estado (en este teléfono; la clave entra en SYNC_CLAVES de app.js) ----------
-  const nuevoEstado = () => ({ v: 2, tablero: 1, nivel: 1, pos: 0, maxPos: 0, escudos: 0, bonus: 0, pausa: false, gotas: 0, luces: 0, niveles: 0, vistas: [] });
+  const nuevoEstado = () => ({ v: 2, tablero: 1, nivel: 1, pos: 0, maxPos: 0, escudos: 0, bonus: 0, pausa: false, gotas: 0, luces: 0, niveles: 0, vistas: [], ultima: null });
   function cargar() {
     try {
       const v = JSON.parse(localStorage.getItem(K));
@@ -393,7 +393,7 @@
       const vis = p <= E.maxPos, t = p === I.meta ? 'meta' : I.tipos[p], key = vis ? 'v' + t : 'o', antes = el.dataset.k;
       if (antes === key) continue;
       el.dataset.k = key; el.className = 'tbl-casilla ' + (vis ? 'tipo-' + t : 'oculta');
-      el.textContent = !vis ? '' : (p === 0 ? 'Salida' : ICONO[t] || '');
+      el.innerHTML = !vis ? '' : '<img src="img/tablero/' + (p === 0 ? 'salida' : t) + '.svg" alt="">';
       if (vis && animar && antes === 'o') { el.classList.add('revela'); setTimeout(() => el.classList.remove('revela'), 620); }
     }
   }
@@ -411,9 +411,9 @@
     const rnd = semilla(E.tablero * 31 + 5), lista = T.deco || [];
     $.campo.innerHTML = '';
     for (let i = 0; i < 9 && lista.length; i++) {
-      const d = document.createElement('span'); d.className = 'tbl-deco'; d.textContent = lista[i % lista.length]; d.setAttribute('aria-hidden', 'true');
+      const d = document.createElement('img'); d.className = 'tbl-deco'; d.src = 'img/tablero/deco/' + lista[i % lista.length] + '.svg'; d.alt = ''; d.setAttribute('aria-hidden', 'true');
       d.style.left = (6 + rnd() * 88).toFixed(1) + '%'; d.style.top = (6 + rnd() * 88).toFixed(1) + '%';
-      d.style.setProperty('--r', (rnd() * 60 - 30).toFixed(0) + 'deg'); d.style.fontSize = (14 + rnd() * 12).toFixed(0) + 'px';
+      d.style.setProperty('--r', (rnd() * 40 - 20).toFixed(0) + 'deg'); d.style.width = (26 + rnd() * 18).toFixed(0) + 'px';
       $.campo.appendChild(d);
     }
   }
@@ -545,13 +545,21 @@
     try { const r = await fetch('datos/juego_raices.json'); const j = await r.json(); BANCO = Array.isArray(j.preguntas) ? j.preguntas : []; } catch (e) { BANCO = []; }
     return BANCO;
   }
+  // F1127 · Elegir pregunta. Regla: nunca se repite hasta que salen todas (ciclo completo del banco).
+  // Si leíste capítulos con preguntas, 3 de cada 4 veces salen de ahí; el resto sale de todo el banco.
+  // Así no se quedan atrapadas en las pocas preguntas de un solo capítulo.
   function elegirPregunta(bank) {
     const L = (() => { try { return JSON.parse(localStorage.getItem(K_LEIDOS)) || {}; } catch (e) { return {}; } })();
     const leidas = bank.filter((q) => L[q.cod + '.' + q.cap]);
-    const base = leidas.length ? leidas : bank, vistas = E.vistas || [];
-    const nuevas = base.filter((q) => vistas.indexOf(q.id) < 0), pool = nuevas.length ? nuevas : base;
+    const vistas = E.vistas || [];
+    const libres = (lista) => lista.filter((q) => vistas.indexOf(q.id) < 0 && (!E.ultima || q.id !== E.ultima));
+    let pool = leidas.length && Math.random() < 0.75 ? libres(leidas) : [];
+    if (!pool.length) pool = libres(bank);
+    if (!pool.length) { E.vistas = []; pool = bank.filter((q) => q.id !== E.ultima); }   // se agotaron: empieza un ciclo nuevo
+    if (!pool.length) pool = bank;                                                             // (banco de una sola pregunta)
     const q = pool[Math.floor(Math.random() * pool.length)];
-    E.vistas = vistas.concat(q.id).slice(-30);
+    E.vistas = (E.vistas || []).concat(q.id);
+    E.ultima = q.id;
     return { q, general: !leidas.length };
   }
   async function preguntas(n) {                                     // n preguntas seguidas: devuelve cuántas se aciertan
@@ -650,10 +658,43 @@
       }, DUR);
     });
   }
+  // F1127 · Arreo de ovejas: las ovejas cruzan el campo; toca las que puedas para llevarlas al corral.
+  function miniArreo() {
+    return new Promise((res) => {
+      const caja = mini('Arreo de ovejas', 'Toca las ovejas que cruzan el campo para llevarlas al corral. Sin prisa.');
+      const campo = document.createElement('div'); campo.className = 'tbl-cosecha'; caja.appendChild(campo);
+      const marca = document.createElement('p'); marca.className = 'tbl-marca'; caja.appendChild(marca);
+      const corral = document.createElement('div'); corral.className = 'tbl-corral'; corral.textContent = '🪵 Corral'; caja.appendChild(corral);
+      let n = 0, fin = false, listo = false; const DUR = 14000, t0 = Date.now();
+      const pinta = () => { marca.textContent = 'Ovejas en el corral: ' + n + ' · ' + Math.max(0, Math.ceil((DUR - (Date.now() - t0)) / 1000)) + ' s'; };
+      const salir = () => {
+        if (fin) return;
+        const o = document.createElement('button'); o.type = 'button'; o.className = 'tbl-oveja'; o.setAttribute('aria-label', 'Oveja');
+        const img = document.createElement('img'); img.src = 'img/tablero/deco/oveja.svg'; img.alt = ''; o.appendChild(img);
+        o.style.top = (8 + Math.random() * 78) + '%'; o.style.animationDuration = (3.4 + Math.random() * 1.6) + 's';
+        o.addEventListener('pointerdown', (ev) => { ev.preventDefault(); if (fin || o.dataset.h) return; o.dataset.h = '1'; n++; son('rocio'); o.classList.add('llevada'); setTimeout(() => o.remove(), 300); pinta(); });
+        o.addEventListener('animationend', () => o.remove());
+        campo.appendChild(o);
+      };
+      const iv = setInterval(salir, 700), tick = setInterval(pinta, 250); pinta(); salir();
+      setTimeout(() => {
+        fin = true; clearInterval(iv); clearInterval(tick);
+        const g = n >= 6 ? 2 : n >= 3 ? 1 : 0;
+        marca.textContent = `¡Corral con ${n} ${n === 1 ? 'oveja' : 'ovejas'}! ${g ? 'Ganas ' + g + ' ' + (g === 1 ? 'gota' : 'gotas') + '.' : 'Esta vez no entraron muchas.'}`;
+        botonMini(caja, 'Seguir', () => { if (listo) return; listo = true; caja.remove(); res(g); });
+      }, DUR);
+    });
+  }
+  // Minijuegos desbloqueados por nivel completado (diseño, sección 13): Arreo (nivel 1), Memoria (2), Cosecha (3).
+  function minisDesbloqueados() {
+    const lista = [['arreo', 1], ['memoria', 2], ['cosecha', 3]].filter((x) => E.niveles >= x[1]).map((x) => x[0]);
+    return lista.length ? lista : ['memoria'];
+  }
   async function relampago() {
     son('relampago');
     decir('Relámpago', 'Un minijuego para ganar gotas. Puedes saltarlo.');
-    const n = E.nivel >= 6 || Math.random() < 0.5 ? await miniCosecha() : await miniMemoria();
+    const eleccion = minisDesbloqueados()[Math.floor(Math.random() * minisDesbloqueados().length)];
+    const n = eleccion === 'arreo' ? await miniArreo() : eleccion === 'cosecha' ? await miniCosecha() : await miniMemoria();
     if (n) gota(n);
     decir('Relámpago', n ? `Ganas ${n} ${n === 1 ? 'gota' : 'gotas'} del minijuego.` : 'Sigue el camino: sin gotas esta vez.');
   }
@@ -731,6 +772,8 @@
   window.TBTablero = {
     abrir,
     // expuesto para pruebas (no usar desde la interfaz)
-    _t: { TEMAS, NIVELES, CASILLAS, RANGO, pesosDe, nivelDe, anillo, TRAMPA, ICONO, SONIDOS, audio, tema, CARA, nuevoEstado, cargar }
+    _t: { TEMAS, NIVELES, CASILLAS, RANGO, pesosDe, nivelDe, anillo, TRAMPA, ICONO, SONIDOS, audio, tema, CARA, nuevoEstado, cargar,
+      // para pruebas: elige n preguntas con un estado dado y devuelve sus ids en orden
+      elegirN(bank, estado, n) { const previo = E; E = estado; const ids = []; try { for (let i = 0; i < n; i++) ids.push(elegirPregunta(bank).q.id); } finally { E = previo; } return ids; } }
   };
 })();
