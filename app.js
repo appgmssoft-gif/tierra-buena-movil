@@ -286,7 +286,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Preguntas de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Sopa del Vivero': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1125';
+  const APP_VERSION = 'F1126';
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
   const BANDA_POR_VOLVER = { 'Mi iglesia': 'union', 'Palabra': 'palabra', 'Vida': 'crecer', 'Vivir lo que aprendemos': 'crecer', 'Perfil': 'camino', 'Panel': 'pastor' };
   const bandaMini = (tipo) => bandaTB(tipo).replace('class="tb-banda"', 'class="tb-banda tb-banda-mini"');
@@ -1679,6 +1679,7 @@
     ];
   }
   function vistaJuegos() {
+    document.body.classList.remove('tb-full');   // F1126: al volver a la lista, vuelve la barra inferior
     const j = leer(K_JUEGOS) || { n: 0 }, jug = jugadorLeer(), n = Number(j.n) || 0;
     const pieza = (k) => PIEZAS.find((p) => p[0] === k) || PIEZAS[0];
     const alta = !jug ? `<section class="jug-alta card"><div class="t"><span aria-hidden="true">🎮</span>Crea tu jugador</div><p class="suave m0t">Tu nombre y tu pieza te acompañan en cada juego.</p>
@@ -1710,7 +1711,7 @@
     });
     const editar = $('#jugEditar');
     if (editar) editar.addEventListener('click', () => { jugadorGuardar(null); vistaJuegos(); });
-    document.querySelectorAll('[data-juego]').forEach((b) => b.addEventListener('click', () => { const f = JUEGOS_LISTOS[b.dataset.juego]; if (f) f(vistaJuegos); }));
+    document.querySelectorAll('[data-juego]').forEach((b) => b.addEventListener('click', () => { const f = JUEGOS_LISTOS[b.dataset.juego]; if (f) { document.body.classList.add('tb-full'); f(vistaJuegos); } }));   // F1126: los juegos ocupan toda la pantalla
   }
 
   function vistaPalabra() {

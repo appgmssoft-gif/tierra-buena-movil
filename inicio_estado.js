@@ -129,6 +129,8 @@
   // F1123 · Tablero: las gotas que la app verifica (rondas y preguntas acertadas) van directo al saldo del Vivero.
   // Sin tope diario y sin pasar por pendientes (así no se pierden si el máximo de pendientes ya está lleno).
   function ganarDirecto(n) { const k = Math.max(0, Math.floor(Number(n) || 0)); if (!k) return 0; const e = cargar(); e.gotas.saldo += k; e.gotas.total += k; guardar(e); return k; }
+  // F1126 · Tablero: trampa «Ladrón de rocío». Quita hasta n gotas del saldo (nunca deja menos de 0). Devuelve las que se quitaron.
+  function restarDirecto(n) { const k = Math.max(0, Math.floor(Number(n) || 0)); if (!k) return 0; const e = cargar(); const q = Math.min(k, e.gotas.saldo); e.gotas.saldo -= q; guardar(e); return q; }
   function recolectar(id) {                                // toque en una gota; id = 'todas' recolecta el grupo «+n»
     const e = cargar(); let sel = [];
     if (id === 'todas') sel = e.gotas.pendientes.splice(0);
@@ -233,6 +235,6 @@
     return { ok: true, acierto, correcta: ord.indexOf(q.c), explicacion: q.e, gotas: g };
   }
 
-  const api = { elegirHabitatInicial, visibleEn, avanceDiario, entornoVisible, config(o) { if (o && o.catalogo) CAT = o.catalogo; if (o && o.hoy) HOY = o.hoy; if (o && o.almacen) ALM = o.almacen; }, cargar, guardar, estado: cargar, etapa, malezaPara, elegirPrimera, visita, sanar, ganar, ganarDirecto, recolectar, comprar, tiene, plantar, activarAve, activarAmbiente, mensajeActual, tieneEspecial, comprarEspecial, triviaHoy, responderTrivia, elegirTematica, K };
+  const api = { elegirHabitatInicial, visibleEn, avanceDiario, entornoVisible, config(o) { if (o && o.catalogo) CAT = o.catalogo; if (o && o.hoy) HOY = o.hoy; if (o && o.almacen) ALM = o.almacen; }, cargar, guardar, estado: cargar, etapa, malezaPara, elegirPrimera, visita, sanar, ganar, ganarDirecto, restarDirecto, recolectar, comprar, tiene, plantar, activarAve, activarAmbiente, mensajeActual, tieneEspecial, comprarEspecial, triviaHoy, responderTrivia, elegirTematica, K };
   if (typeof window !== 'undefined') window.TBInicio = api; if (typeof module !== 'undefined') module.exports = api;
 })();

@@ -1,63 +1,108 @@
-// tablero.js — Tablero de Tierra Buena · FASE 1 (F1125). Diseño: diseno/DISENO_TABLERO_JUEGOS.md (sección 14).
-// Reglas: un jugador, dado de 1 (tirada bonus de 2), seis casillas (rocío, pregunta, atajo, tormenta, pausa, escudo), tres rondas.
-// Gotas: van directo al saldo del Vivero (TBInicio.ganarDirecto). El saldo se ve igual aquí y en el Inicio.
-// SONIDO PROPIO: solo en este archivo (tambores, marimba, pájaros, viento, gong) con cola de reverberación.
-// Respeta el interruptor de sonidos de Perfil (tb_movil_sonido). No usa sonido.js.
+// tablero.js — Tablero de Tierra Buena (F1126). Diseño: diseno/DISENO_TABLERO_JUEGOS.md.
+// Cada tablero tiene 10 niveles. Cada nivel pasado enciende una luz. Las luces y el nivel crecen la dificultad:
+// más casillas, retrocesos más largos y preguntas más difíciles. Desde el nivel 5, el «Ladrón de rocío» quita una gota por cada luz encendida.
+// Gotas: directo al saldo del Vivero (TBInicio.ganarDirecto / restarDirecto), el mismo número que en el Inicio.
+// Cada tablero es un lugar turístico de Chile con una leyenda. Sonido propio de la selva. Respeta el interruptor de Perfil.
 'use strict';
 (function () {
   const K = 'tb_movil_tablero', K_LEIDOS = 'tb_movil_leidos', K_SON = 'tb_movil_sonido';
-  const FILAS = 5, COLS = 7, META = 30;                       // recorrido en zigzag: 0 = salida, 30 = meta
-  const NOMBRES = ['Camino de semilla', 'Camino de brote', 'Camino de raíz', 'Camino de ramas'];
-  const ICONO = { rocio: '💧', pregunta: '❓', atajo: '⤴', tormenta: '🌪', pausa: '⏸', escudo: '🛡', meta: '🏁' };
-  const TRAMPA = { tormenta: 1, pausa: 1 };
-  // Pesos por ronda (suman 1). Tormenta + pausa nunca pasan de 1 de cada 6.
-  const PESOS = {
-    1: { rocio: 0.50, pregunta: 0.22, atajo: 0.12, tormenta: 0.04, pausa: 0.04, escudo: 0.08 },
-    2: { rocio: 0.43, pregunta: 0.19, atajo: 0.11, tormenta: 0.10, pausa: 0.06, escudo: 0.11 },
-    3: { rocio: 0.43, pregunta: 0.19, atajo: 0.10, tormenta: 0.10, pausa: 0.06, escudo: 0.12 }
-  };
-  // Rotación del cubo (X, Y) que deja cada número mirando a la persona
-  const CARA = { 1: [0, 0], 2: [-90, 0], 3: [0, -90], 4: [0, 90], 5: [90, 0], 6: [0, 180] };
+  const NIVELES = 10;
+  // Lugares turísticos de Chile, con una leyenda corta de tono místico (cada tablero toma uno).
+  const TEMAS = [
+    { nombre: 'Rapa Nui', lugar: 'Ahu y moáis', icono: '🗿', cielo: '#f2d7a0', campo: '#2f5f57', leyenda: 'Los moáis miran al mar y guardan silencio. Dicen que a veces, en la noche, se mueven un poco.' },
+    { nombre: 'Atacama', lugar: 'Valle de la Luna', icono: '🌵', cielo: '#f0c59a', campo: '#7a4f33', leyenda: 'Bajo la luna, las sombras de las rocas cuentan historias que el desierto nunca olvidó.' },
+    { nombre: 'Chiloé', lugar: 'Iglesias y palafitos', icono: '⛪', cielo: '#cfe3d6', campo: '#2b5246', leyenda: 'La Pincoya baila sobre la marea cuando el mar está en paz. Quien la ve, vuelve.' },
+    { nombre: 'Torres del Paine', lugar: 'Patagonia', icono: '🏔️', cielo: '#d3dcea', campo: '#3a4c5c', leyenda: 'El viento patagónico lleva los secretos de los cerros de un lado al otro del lago.' },
+    { nombre: 'Lauca', lugar: 'Altiplano', icono: '🌋', cielo: '#eadac4', campo: '#5f6039', leyenda: 'Los volcanes vigilan el agua de los antiguos. Las vicuñas conocen un camino escondido.' },
+    { nombre: 'Valparaíso', lugar: 'Cerros y ascensores', icono: '🚠', cielo: '#f5cfb0', campo: '#463b5a', leyenda: 'Al anochecer los cerros se encienden como un tesoro entre las casas de colores.' },
+    { nombre: 'Cajón del Maipo', lugar: 'Cordillera', icono: '🏞️', cielo: '#d6eacf', campo: '#3a5f43', leyenda: 'Un río cantarín guía a quien busca la montaña. Dicen que el agua recuerda a quien la visita.' },
+    { nombre: 'Juan Fernández', lugar: 'Isla lejana', icono: '🏝️', cielo: '#c0e4e9', campo: '#2b5a62', leyenda: 'Una isla en medio del mar guarda huellas de quien esperó mucho tiempo por volver.' }
+  ];
+  const tema = (t) => TEMAS[(t - 1) % TEMAS.length];
+  const RANGO = (n) => Math.min(2 + Math.floor((n - 1) / 2), 6);     // casillas que puede retroceder una tormenta en el nivel n
+  const CASILLAS = (n) => 18 + 3 * (n - 1);                           // casillas de juego en el nivel n (sin salida ni meta)
+  const TRAMPA = { tormenta: 1, pausa: 1, ladron: 1, remolino: 1 };
+  const TIPOS = ['rocio', 'pregunta', 'atajo', 'tormenta', 'pausa', 'escudo', 'cofre', 'relampago', 'ladron', 'remolino'];
+  const ICONO = { rocio: '💧', pregunta: '❓', atajo: '⤴', tormenta: '🌪', pausa: '⏸', escudo: '🛡', cofre: '🎁', relampago: '⚡', ladron: '🦹', remolino: '🌀', meta: '🏁' };
 
-  // ---------- Casillas: cada ronda sale siempre igual (semilla fija) ----------
+  // ---------- Pesos por nivel: más niveles = menos rocío y más trampas. Se normalizan para sumar 1. ----------
+  function pesosDe(n) {
+    const w = {
+      rocio: Math.max(0.2, 0.40 - 0.02 * (n - 1)), pregunta: 0.18, atajo: 0.10, tormenta: 0.07 + 0.005 * (n - 1),
+      pausa: 0.05, escudo: 0.08, cofre: n >= 2 ? 0.04 : 0, relampago: n >= 3 ? 0.04 : 0,
+      ladron: n >= 5 ? 0.05 : 0, remolino: n >= 7 ? 0.04 : 0
+    };
+    const suma = Object.keys(w).reduce((a, k) => a + w[k], 0);
+    Object.keys(w).forEach((k) => { w[k] = w[k] / suma; });
+    return w;
+  }
   function semilla(n) {
     let s = n >>> 0;
     return () => { s = (s + 0x6D2B79F5) >>> 0; let t = s; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
   }
-  const cacheRonda = {};
-  function casillasDeRonda(ronda) {
-    if (cacheRonda[ronda]) return cacheRonda[ronda];
-    const pesos = PESOS[Math.min(ronda, 3)], rnd = semilla(ronda * 7919 + 17), tipos = ['rocio', 'pregunta', 'atajo', 'tormenta', 'pausa', 'escudo'];
-    const out = { 0: 'salida', [META]: 'meta' };
+  const cuenta = (out, tipo, C) => { let c = 0; for (let p = 1; p <= C; p++) if (out[p] === tipo) c++; return c; };
+  const cacheNivel = {};
+  // Un nivel de un tablero: casillas 1..C, salida 0 y meta C+1. Siempre sale igual (semilla por tablero y nivel).
+  function nivelDe(t, n) {
+    const clave = t + ':' + n; if (cacheNivel[clave]) return cacheNivel[clave];
+    const C = CASILLAS(n), rnd = semilla(t * 1009 + n * 7919 + 17), w = pesosDe(n);
+    const out = { 0: 'salida' }; out[C + 1] = 'meta';
     let previa = 'salida';
-    for (let p = 1; p < META; p++) {
-      const r = rnd(); let acc = 0, t = 'rocio';
-      for (const k of tipos) { acc += pesos[k]; if (r < acc) { t = k; break; } }
-      if (p <= 2 && t === 'tormenta') t = 'rocio';                   // la salida nunca castiga
-      if (TRAMPA[t] && TRAMPA[previa]) t = 'rocio';                  // dos trampas seguidas no
-      out[p] = t; previa = t;
+    for (let p = 1; p <= C; p++) {
+      const r = rnd(); let acc = 0, tipo = 'rocio';
+      for (const k of TIPOS) { acc += w[k] || 0; if (r < acc) { tipo = k; break; } }
+      if (p <= 2 && TRAMPA[tipo]) tipo = 'rocio';                    // la salida nunca castiga
+      if (TRAMPA[tipo] && TRAMPA[previa]) tipo = 'rocio';           // dos trampas seguidas no
+      out[p] = tipo; previa = tipo;
     }
-    if (!Object.keys(out).some((p) => out[p] === 'escudo')) out[12] = 'escudo';
-    // retrocesos garantizados: 1 en la ronda 1, 2 en las siguientes
-    const minimo = ronda === 1 ? 1 : 2;
-    let cuantas = Object.keys(out).filter((p) => out[p] === 'tormenta').length;
-    for (let intento = 0; cuantas < minimo && intento < 500; intento++) {
-      const p = 5 + Math.floor(rnd() * 23);
-      if (out[p] !== 'rocio' || TRAMPA[out[p - 1]] || TRAMPA[out[p + 1]]) continue;
-      out[p] = 'tormenta'; cuantas++;
-    }
-    return (cacheRonda[ronda] = out);
+    // mínimos por nivel: cada tipo aparece al menos una vez cuando ya toca
+    [['escudo', 1], ['tormenta', n === 1 ? 1 : 2], ['cofre', n >= 2 ? 1 : 0], ['relampago', n >= 3 ? 1 : 0], ['ladron', n >= 5 ? 1 : 0], ['remolino', n >= 7 ? 1 : 0]].forEach((par) => {
+      let c = cuenta(out, par[0], C);
+      for (let i = 0; c < par[1] && i < 800; i++) {
+        const p = 3 + Math.floor(rnd() * (C - 4));                    // casillas 3 .. C-2
+        if (out[p] !== 'rocio') continue;
+        if (TRAMPA[par[0]] && (TRAMPA[out[p - 1]] || TRAMPA[out[p + 1]])) continue;
+        out[p] = par[0]; c++;
+      }
+    });
+    return (cacheNivel[clave] = { tipos: out, C, meta: C + 1 });
   }
-  const tipoEn = (ronda, p) => casillasDeRonda(ronda)[p];
-  function coord(p) {                                              // zigzag: fila a fila, cada una al revés de la anterior
-    const r = Math.floor(p / COLS), c = r % 2 === 0 ? p % COLS : COLS - 1 - (p % COLS);
-    return { x: (c + 0.5) / COLS * 100, y: (r + 0.5) / FILAS * 100 };
+  // Posiciones de las casillas en un anillo de esquinas redondeadas alrededor de la bola (px del tablero -> %).
+  // Las esquinas redondeadas mantienen la misma separación en las curvas (con esquinas vivas las casillas se juntaban).
+  function anillo(N, w, h) {
+    const m = 26, x0 = m, x1 = w - m, y0 = m, y1 = h - m, r = Math.max(10, Math.min(56, (x1 - x0) / 5));
+    const a = y1 - y0 - 2 * r, b = x1 - x0 - 2 * r, q = (Math.PI * r) / 2;
+    const seg = [
+      { len: a, f: (t) => [x0, y1 - r - t] },                                                         // izquierda, hacia arriba
+      { len: q, f: (t) => { const th = Math.PI + t / r; return [x0 + r + r * Math.cos(th), y0 + r + r * Math.sin(th)]; } },
+      { len: b, f: (t) => [x0 + r + t, y0] },                                                          // arriba, hacia la derecha
+      { len: q, f: (t) => { const th = -Math.PI / 2 + t / r; return [x1 - r + r * Math.cos(th), y0 + r + r * Math.sin(th)]; } },
+      { len: a, f: (t) => [x1, y0 + r + t] },                                                          // derecha, hacia abajo
+      { len: q, f: (t) => { const th = t / r; return [x1 - r + r * Math.cos(th), y1 - r + r * Math.sin(th)]; } },
+      { len: b, f: (t) => [x1 - r - t, y1] },                                                          // abajo, hacia la izquierda
+      { len: q, f: (t) => { const th = Math.PI / 2 + t / r; return [x0 + r + r * Math.cos(th), y1 - r + r * Math.sin(th)]; } }
+    ];
+    const P = seg.reduce((acc, g) => acc + g.len, 0), out = [];
+    for (let k = 0; k < N; k++) {
+      let s = (k * P) / N, g = seg[0];
+      for (let i = 0; i < seg.length; i++) { g = seg[i]; if (s <= g.len || i === seg.length - 1) break; s -= g.len; }
+      const pt = g.f(Math.min(s, g.len));
+      out.push({ x: pt[0] / w * 100, y: pt[1] / h * 100 });
+    }
+    return out;
   }
 
   // ---------- Estado (en este teléfono; la clave entra en SYNC_CLAVES de app.js) ----------
-  const nuevoEstado = () => ({ v: 1, ronda: 1, pos: 0, maxPos: 0, escudos: 0, bonus: 0, pausa: false, gotas: 0, rondas: 0, vistas: [] });
+  const nuevoEstado = () => ({ v: 2, tablero: 1, nivel: 1, pos: 0, maxPos: 0, escudos: 0, bonus: 0, pausa: false, gotas: 0, luces: 0, niveles: 0, vistas: [] });
   function cargar() {
-    try { const v = JSON.parse(localStorage.getItem(K)); if (v && v.v === 1 && v.ronda >= 1 && v.pos >= 0 && v.pos <= META) return Object.assign(nuevoEstado(), v); } catch (e) { /* sin datos */ }
+    try {
+      const v = JSON.parse(localStorage.getItem(K));
+      if (v && v.v === 2 && v.nivel >= 1 && v.nivel <= NIVELES && v.pos >= 0) return Object.assign(nuevoEstado(), v);
+      if (v && v.v === 1) {                                           // versión anterior (rondas de 30): se pasa a niveles
+        const n = Math.min(Math.max(1, v.ronda || 1), NIVELES);
+        return Object.assign(nuevoEstado(), { nivel: n, luces: n - 1, gotas: v.gotas || 0, escudos: v.escudos || 0, bonus: v.bonus || 0, niveles: n - 1 });
+      }
+    } catch (e) { /* sin datos */ }
     return nuevoEstado();
   }
   function guardar() { try { localStorage.setItem(K, JSON.stringify(E)); } catch (e) { /* sin espacio */ } }
@@ -72,10 +117,9 @@
         const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
         ctx = new AC();
         master = ctx.createGain(); master.gain.value = 0.85;
-        const comp = ctx.createDynamicsCompressor();                 // compresor suave: nada se corta ni revienta
+        const comp = ctx.createDynamicsCompressor();
         comp.threshold.value = -16; comp.knee.value = 10; comp.ratio.value = 4; comp.attack.value = 0.003; comp.release.value = 0.2;
         master.connect(comp); comp.connect(ctx.destination);
-        // cola de reverberación de sala con árboles: ruido que se apaga con curva natural
         const n = Math.floor(ctx.sampleRate * 2.4), b = ctx.createBuffer(2, n, ctx.sampleRate);
         for (let c = 0; c < 2; c++) { const d = b.getChannelData(c); for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 2.6); }
         verb = ctx.createConvolver(); verb.buffer = b;
@@ -85,14 +129,12 @@
       return ctx;
     } catch (e) { return null; }
   }
-  // salida: el sonido va al master y, en parte, a la reverberación (humedo = cuánto)
   function salida(nodo, humedo) {
     nodo.connect(master);
     if (humedo) { const g = ctx.createGain(); g.gain.value = humedo; nodo.connect(g); g.connect(verb); }
   }
-  // envolvente natural: ataque corto, caída exponencial (como una tecla que se apaga sola)
   function caida(g, t, vol, atk, vida) { g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(vol, t + atk); g.gain.setTargetAtTime(0.0001, t + atk, vida / 4); }
-  function ruido(d, dur, vol, frec, tipo, q, hasta, humedo) {      // chasquido, soplo: ruido filtrado
+  function ruido(d, dur, vol, frec, tipo, q, hasta, humedo) {
     const t = ctx.currentTime + d, n = Math.max(1, Math.floor(ctx.sampleRate * dur)), b = ctx.createBuffer(1, n, ctx.sampleRate), c = b.getChannelData(0);
     for (let i = 0; i < n; i++) c[i] = Math.random() * 2 - 1;
     const s = ctx.createBufferSource(); s.buffer = b;
@@ -101,15 +143,15 @@
     const g = ctx.createGain(); caida(g, t, vol, Math.min(0.008, dur * 0.25), dur);
     s.connect(f); f.connect(g); salida(g, humedo || 0); s.start(t); s.stop(t + dur + 0.05);
   }
-  function golpe(d, vol, f0, f1, vida, humedo) {                    // tambor: membrana (tono que cae) + cuerpo + baqueta
+  function golpe(d, vol, f0, f1, vida, humedo) {
     const t = ctx.currentTime + d, o = ctx.createOscillator(), g = ctx.createGain();
     o.type = 'sine'; o.frequency.setValueAtTime(f0 || 160, t); o.frequency.exponentialRampToValueAtTime(f1 || 55, t + 0.12);
     caida(g, t, vol, 0.003, vida || 0.5); o.connect(g); salida(g, humedo == null ? 0.2 : humedo); o.start(t); o.stop(t + (vida || 0.5) + 0.05);
     ruido(d, 0.05, vol * 0.45, 900, 'bandpass', 0.8);
     ruido(d, 0.012, vol * 0.3, 3200, 'highpass', 0.5);
   }
-  function madera(d, vol) { ruido(d, 0.035, vol, 2200 + Math.random() * 900, 'bandpass', 6, 0, 0.15); }   // dado contra la mesa
-  function marimba(d, f, vol, dur, brillo) {                        // lámina de madera: tono cálido + parcial 4 + mazo
+  function madera(d, vol) { ruido(d, 0.035, vol, 2200 + Math.random() * 900, 'bandpass', 6, 0, 0.15); }
+  function marimba(d, f, vol, dur, brillo) {
     const t = ctx.currentTime + d;
     [[f, 'triangle', 1, dur], [f * 4, 'sine', 0.14 * (brillo || 1), dur * 0.22]].forEach((p) => {
       const o = ctx.createOscillator(), g = ctx.createGain(); o.type = p[1]; o.frequency.value = p[0];
@@ -117,7 +159,7 @@
     });
     ruido(d, 0.02, vol * 0.4, f * 3, 'bandpass', 3);
   }
-  function pajaro(d) {                                              // trinos: tres chirridos con vibrato
+  function pajaro(d) {
     [[0, 2300, 3100, 0.05], [0.12, 2700, 3500, 0.045], [0.23, 2100, 2900, 0.04]].forEach((p) => {
       const t = ctx.currentTime + d + p[0], o = ctx.createOscillator(), g = ctx.createGain(), lfo = ctx.createOscillator(), lg = ctx.createGain();
       o.type = 'sine'; o.frequency.setValueAtTime(p[1], t); o.frequency.exponentialRampToValueAtTime(p[2], t + 0.07);
@@ -126,7 +168,7 @@
       o.start(t); o.stop(t + 0.14); lfo.start(t); lfo.stop(t + 0.14);
     });
   }
-  function viento(d, dur, vol, desde, hasta) {                      // soplo de selva: ruido marrón que se mueve de tono
+  function viento(d, dur, vol, desde, hasta) {
     const t = ctx.currentTime + d, n = Math.floor(ctx.sampleRate * dur), b = ctx.createBuffer(1, n, ctx.sampleRate), c = b.getChannelData(0);
     let last = 0; for (let i = 0; i < n; i++) { last = (last + 0.02 * (Math.random() * 2 - 1)) / 1.02; c[i] = last * 3.5; }
     const s = ctx.createBufferSource(); s.buffer = b;
@@ -134,40 +176,48 @@
     const g = ctx.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(vol, t + dur * 0.4); g.gain.linearRampToValueAtTime(0.0001, t + dur);
     s.connect(f); f.connect(g); salida(g, 0.6); s.start(t); s.stop(t + dur + 0.05);
   }
-  function wah(d) {                                                 // «¡uy!» que baja: trombón de juguete
+  function wah(d) {
     const t = ctx.currentTime + d, o = ctx.createOscillator(), f = ctx.createBiquadFilter(), g = ctx.createGain();
     o.type = 'sawtooth'; o.frequency.setValueAtTime(330, t); o.frequency.exponentialRampToValueAtTime(110, t + 1.0);
     f.type = 'lowpass'; f.Q.value = 6; f.frequency.setValueAtTime(1200, t); f.frequency.exponentialRampToValueAtTime(260, t + 1.0);
     caida(g, t, 0.14, 0.05, 1.1); o.connect(f); f.connect(g); salida(g, 0.3); o.start(t); o.stop(t + 1.15);
   }
-  function boing(d) {                                               // «boing» suave al fallar: nunca castiga con ruido fuerte
+  function remolinoSonido(d) {                                      // remolino: viento que da vueltas (tono que sube y baja)
+    viento(d, 1.4, 0.2, 200, 1800); viento(d + 0.5, 1.0, 0.14, 1800, 200);
+    [0, 0.3, 0.6, 0.9].forEach((x) => golpe(d + x, 0.12, 90, 45, 0.3, 0.1));
+  }
+  function ladronSonido(d) {                                        // ladrón: notas graves que se alejan a escondidas
+    [392, 329.63, 261.63, 196].forEach((f, i) => marimba(d + i * 0.14, f, 0.1, 0.7, 0.5));
+    viento(d + 0.2, 0.9, 0.06, 500, 180);
+  }
+  function boing(d) {
     const t = ctx.currentTime + d, o = ctx.createOscillator(), g = ctx.createGain(), lfo = ctx.createOscillator(), lg = ctx.createGain();
     o.type = 'triangle'; o.frequency.setValueAtTime(520, t); o.frequency.exponentialRampToValueAtTime(230, t + 0.28);
     lfo.frequency.value = 9; lg.gain.value = 14; lfo.connect(lg); lg.connect(o.frequency);
     caida(g, t, 0.14, 0.01, 0.4); o.connect(g); salida(g, 0.3); o.start(t); o.stop(t + 0.5); lfo.start(t); lfo.stop(t + 0.5);
   }
-  function gotaSonido(d) {                                          // gota de rocío: un «blup» que sube y se apaga
+  function gotaSonido(d) {
     const t = ctx.currentTime + d, o = ctx.createOscillator(), g = ctx.createGain();
     o.type = 'sine'; o.frequency.setValueAtTime(1500, t); o.frequency.exponentialRampToValueAtTime(620, t + 0.11);
     caida(g, t, 0.13, 0.004, 0.22); o.connect(g); salida(g, 0.45); o.start(t); o.stop(t + 0.3);
     marimba(0.09, 1174.66, 0.07, 0.45, 0.6);
   }
-  function gong(d, f, vol) {                                        // gong metálico: parciales no armónicos con vaivén
+  function gong(d, f, vol) {
     const t = ctx.currentTime + d;
     [[1, 1, 4.5], [2.76, 0.35, 3], [5.4, 0.18, 2], [8.93, 0.08, 1.2]].forEach((p) => {
       [0, 1.6].forEach((dt) => { const o = ctx.createOscillator(), g = ctx.createGain(); o.type = 'sine'; o.frequency.value = f * p[0] + dt; caida(g, t, vol * p[1] * 0.5, 0.008, p[2]); o.connect(g); salida(g, 0.7); o.start(t); o.stop(t + p[2] + 0.05); });
     });
   }
-  const ESCALA = [293.66, 329.63, 349.23, 392, 440, 466.16, 523.25, 587.33];   // re menor: camino de selva
+  const ESCALA = [293.66, 329.63, 349.23, 392, 440, 466.16, 523.25, 587.33];
   const SONIDOS = {
-    inicio() {                                                      // entrar a la selva: bombos y una marimba que sube
+    inicio() {
       golpe(0, 0.5, 150, 50, 0.6); golpe(0.24, 0.32, 140, 48, 0.5); golpe(0.48, 0.5, 150, 50, 0.6); golpe(0.7, 0.38, 130, 46, 0.5);
       [293.66, 349.23, 392, 440, 523.25, 587.33].forEach((f, i) => marimba(0.85 + i * 0.085, f, 0.17, 1.0, 1));
       pajaro(1.5); viento(0, 1.6, 0.05, 300, 1400);
     },
     dado() { for (let i = 0; i < 9; i++) madera(i * (0.06 + i * 0.012), 0.22); golpe(0.7, 0.4, 120, 50, 0.3); },
-    clack(i) { madera(0, 0.16 + (Number(i) % 3) * 0.03); },         // cada rebote del dado
-    paso(p) { madera(0, 0.04); marimba(0.01, ESCALA[Number(p) % ESCALA.length], 0.1, 0.42, 0.9); },   // cada casilla suma una nota
+    clack(i) { madera(0, 0.16 + (Number(i) % 3) * 0.03); },
+    paso(p) { madera(0, 0.04); marimba(0.01, ESCALA[Number(p) % ESCALA.length], 0.1, 0.42, 0.9); },
     retro(p) { marimba(0, ESCALA[Math.max(0, Number(p)) % ESCALA.length] * 0.5, 0.09, 0.5, 0.8); golpe(0.02, 0.1, 120, 60, 0.15, 0.1); },
     rocio() { gotaSonido(0); },
     pregunta() { marimba(0, 440, 0.15, 0.5); marimba(0.2, 587.33, 0.15, 0.8); pajaro(0.5); },
@@ -175,9 +225,15 @@
     error() { boing(0); },
     atajo() { viento(0, 0.45, 0.1, 300, 2800); [523.25, 587.33, 659.25, 783.99, 880].forEach((f, i) => marimba(0.12 + i * 0.05, f, 0.12, 0.45)); pajaro(0.35); },
     tormenta() { viento(0, 1.8, 0.22, 260, 700); golpe(0.1, 0.42, 110, 40, 0.5); golpe(0.36, 0.42, 110, 40, 0.5); golpe(0.62, 0.5, 100, 36, 0.7); wah(0.9); },
+    remolino() { remolinoSonido(0); },
+    ladron() { ladronSonido(0); },
+    cofre() { [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => marimba(i * 0.08, f, 0.16, 0.8, 1)); golpe(0.3, 0.3, 140, 50, 0.4); pajaro(0.45); },
+    relampago() { golpe(0, 0.4, 150, 50, 0.4); [392, 523.25, 659.25].forEach((f, i) => marimba(0.1 + i * 0.06, f, 0.14, 0.6)); },
+    carta() { madera(0, 0.12); marimba(0.02, 660, 0.08, 0.3, 0.8); },
     pausa() { golpe(0, 0.4, 90, 42, 0.9); marimba(0.5, 220, 0.1, 1.3, 0.6); },
     escudo() { gong(0, 293.66, 0.22); },
-    meta() {                                                        // fanfarria: rollo de bombos que se acelera + arpegio + pájaros + gong
+    nivel() { [293.66, 392, 523.25, 587.33].forEach((f, i) => marimba(i * 0.1, f, 0.16, 1.0)); gong(0.5, 293.66, 0.12); pajaro(0.7); },
+    meta() {
       for (let i = 0; i < 10; i++) golpe(i * (0.11 - i * 0.004), 0.25 + i * 0.03, 150, 55, 0.35);
       [293.66, 349.23, 440, 587.33, 698.46, 880, 1046.5].forEach((f, i) => marimba(0.9 + i * 0.09, f, 0.16, 1.2));
       pajaro(1.7); pajaro(2.0); gong(1.5, 293.66, 0.16);
@@ -188,28 +244,32 @@
     const A = audio(); if (!A) return;
     try { SONIDOS[nombre](a); } catch (e) { /* un sonido nunca rompe el juego */ }
   }
-  function vibra(p) { try { if (navigator.vibrate && !reducido()) navigator.vibrate(p); } catch (e) { /* sin vibración */ } }
   const reducido = () => { try { return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
+  function vibra(p) { try { if (navigator.vibrate && !reducido()) navigator.vibrate(p); } catch (e) { /* sin vibración */ } }
 
   // ---------- Partida y pantalla ----------
-  let E = null, $ = {}, ocupado = false, PIEZA = '🌱', VOLVER = null, BANCO = null;
+  let E = null, $ = {}, ocupado = false, PIEZA = '🌱', BANCO = null, MEDIDA = null;
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   const espera = (ms) => new Promise((r) => setTimeout(r, reducido() ? Math.min(ms, 60) : ms));
   const ref = (q) => `${q.cod} ${q.cap}:${q.v}`;
+  const info = () => nivelDe(E.tablero, E.nivel);
+  const barajar = (a) => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = b[i]; b[i] = b[j]; b[j] = t; } return b; };
   const saldoVivero = () => { try { return window.TBInicio ? TBInicio.cargar().gotas.saldo : 0; } catch (e) { return 0; } };
 
-  // Gotas para el Vivero: directo al saldo (TBInicio.ganarDirecto), sin tope diario. Sube el contador de la partida y vuela al saldo.
+  // Gotas para el Vivero: directo al saldo, sin tope diario. Sube el contador de la partida y vuela al saldo.
   function gota(n) {
     let k = 0; try { if (window.TBInicio && TBInicio.ganarDirecto) k = TBInicio.ganarDirecto(n) || 0; } catch (e) { k = 0; }
-    if (!k) return;
-    E.gotas += k; pintarEstado(); volarGotas(k);
+    if (!k) return 0;
+    E.gotas += k; pintarEstado(); volarGotas(k); return k;
+  }
+  function quitarGotas(n) {                                         // solo el Ladrón de rocío (y no baja de 0)
+    try { return window.TBInicio && TBInicio.restarDirecto ? TBInicio.restarDirecto(n) : 0; } catch (e) { return 0; }
   }
   function decir(titulo, cuerpo) {
     if (!$.texto) return;
     $.texto.innerHTML = `<b>${esc(titulo)}</b><span>${esc(cuerpo)}</span>`;
     $.bola.classList.remove('salta'); void $.bola.offsetWidth; $.bola.classList.add('salta');
   }
-  // Partículas: gotas que vuelan de la pieza al saldo (visible aquí y en el Inicio)
   function volarGotas(n) {
     if (reducido() || !$.piezaIn || !$.chip) return;
     const o = $.piezaIn.getBoundingClientRect(), d = $.chip.getBoundingClientRect();
@@ -225,7 +285,6 @@
       a.onfinish = () => { g.remove(); const c = $.chip; if (c) { c.classList.remove('pulso'); void c.offsetWidth; c.classList.add('pulso'); } };
     }
   }
-  // Chispas al caer en una casilla o al completar una ronda
   function chispas(x, y, cant, color) {
     if (reducido()) return;
     for (let i = 0; i < cant; i++) {
@@ -236,13 +295,13 @@
     }
   }
   function centroPieza() { const o = $.piezaIn.getBoundingClientRect(); return { x: o.left + o.width / 2, y: o.top + o.height / 2 }; }
-  function sacudir() { if (!$.mesa || reducido()) return; $.mesa.classList.remove('sacude'); void $.mesa.offsetWidth; $.mesa.classList.add('sacude'); }
-  function destello(fondo) {                                        // luz que cruza el tablero (tormenta: oscura; meta: dorada)
+  function sacudir() { if (!$.root || reducido()) return; $.mesa.classList.remove('sacude'); void $.mesa.offsetWidth; $.mesa.classList.add('sacude'); }
+  function destello(fondo) {
     if (!$.mesa || reducido()) return;
     const f = document.createElement('div'); f.className = 'tbl-flash'; f.style.background = fondo; $.mesa.appendChild(f);
     setTimeout(() => f.remove(), 1000);
   }
-  function hojas(cant) {                                            // hojas que vuelan por el tablero en una tormenta
+  function hojas(cant) {
     if (!$.mesa || reducido()) return;
     for (let i = 0; i < cant; i++) {
       const h = document.createElement('span'); h.className = 'tbl-hoja'; h.textContent = i % 3 === 0 ? '🍂' : '🍃'; $.mesa.appendChild(h);
@@ -259,7 +318,8 @@
     document.body.appendChild(c); setTimeout(() => c.remove(), 2600);
   }
 
-  // Dado 3D: un cubo con seis caras. Gira hacia delante varias vueltas y se detiene mostrando el número.
+  // Dado 3D
+  const CARA = { 1: [0, 0], 2: [-90, 0], 3: [0, -90], 4: [0, 90], 5: [90, 0], 6: [0, 180] };
   function pipsHTML(f) {
     const pips = { 1: [4], 2: [0, 8], 3: [0, 4, 8], 4: [0, 2, 6, 8], 5: [0, 2, 4, 6, 8], 6: [0, 2, 3, 5, 6, 8] }[f];
     let h = ''; for (let k = 0; k < 9; k++) h += '<i' + (pips.indexOf(k) >= 0 ? ' class="on"' : '') + '></i>'; return h;
@@ -274,43 +334,75 @@
     return new Promise((res) => {
       const cubo = el.querySelector('.tbl-cubo'), t = CARA[v], b = el._rot, quieto = reducido();
       const norm = (a) => ((a % 360) + 360) % 360;
-      const sp = quieto ? 0 : (2 + Math.floor(Math.random() * 2)) * 360;      // dos o tres vueltas completas
-      const nx = b.x + sp + norm(t[0] - b.x), ny = b.y + sp + norm(t[1] - b.y);   // siempre termina en la cara pedida
+      const sp = quieto ? 0 : (2 + Math.floor(Math.random() * 2)) * 360;
+      const nx = b.x + sp + norm(t[0] - b.x), ny = b.y + sp + norm(t[1] - b.y);
       el._rot = { x: nx, y: ny };
       el.classList.remove('rueda'); void el.offsetWidth; el.classList.add('rueda');
       cubo.style.transform = `rotateX(${nx}deg) rotateY(${ny}deg)`;
-      if (!quieto) [0.26, 0.46, 0.62, 0.76, 0.88, 1.0].forEach((s, k) => setTimeout(() => son('clack', k + i * 2), s * 1000));   // un golpe por rebote
+      if (!quieto) [0.26, 0.46, 0.62, 0.76, 0.88, 1.0].forEach((s, k) => setTimeout(() => son('clack', k + i * 2), s * 1000));
       setTimeout(() => { el.classList.remove('rueda'); res(); }, quieto ? 20 : 1150);
     });
   }
-  // Pieza: salta en cada casilla; al retroceder se inclina hacia atrás
+
+  // ---------- Tablero: casillas en anillo alrededor de la bola ----------
+  function medirMesa() {
+    const w = $.mesa.clientWidth || 360, h = $.mesa.clientHeight || 560;
+    return { w, h };
+  }
+  function montar() {                                               // crea las casillas del nivel actual, en anillo
+    const I = info(), N = I.meta + 1;
+    MEDIDA = medirMesa();
+    $.coords = anillo(N, MEDIDA.w, MEDIDA.h);
+    $.casillas = {};
+    $.cont.innerHTML = '';
+    $.mesa.classList.toggle('apretado', N > 34);
+    for (let p = 0; p <= I.meta; p++) {
+      const c = $.coords[p], el = document.createElement('div');
+      el.className = 'tbl-casilla oculta'; el.style.left = c.x + '%'; el.style.top = c.y + '%'; el.dataset.k = 'o';
+      $.cont.appendChild(el); $.casillas[p] = el;
+    }
+    colocarPieza(); pintarCasillas(false);
+  }
   function colocarPieza(dir) {
-    const c = coord(E.pos); $.pieza.style.left = c.x + '%'; $.pieza.style.top = c.y + '%';
+    if (!$.coords) return;
+    const c = $.coords[E.pos] || $.coords[0]; $.pieza.style.left = c.x + '%'; $.pieza.style.top = c.y + '%';
     if (dir === undefined || reducido()) return;
     $.piezaIn.classList.remove('salta', 'retro'); void $.piezaIn.offsetWidth; $.piezaIn.classList.add(dir > 0 ? 'salta' : 'retro');
   }
   function pintarCasillas(animar) {
-    const tipos = casillasDeRonda(E.ronda);
-    for (let p = 0; p <= META; p++) {
+    const I = info();
+    for (let p = 0; p <= I.meta; p++) {
       const el = $.casillas[p]; if (!el) continue;
-      const vis = p <= E.maxPos, key = vis ? 'v' + tipos[p] : 'o', antes = el.dataset.k;
+      const vis = p <= E.maxPos, t = p === I.meta ? 'meta' : I.tipos[p], key = vis ? 'v' + t : 'o', antes = el.dataset.k;
       if (antes === key) continue;
-      el.dataset.k = key; el.className = 'tbl-casilla ' + (vis ? 'tipo-' + tipos[p] : 'oculta');
-      el.textContent = !vis ? '' : (p === 0 ? 'Salida' : ICONO[tipos[p]] || '');
+      el.dataset.k = key; el.className = 'tbl-casilla ' + (vis ? 'tipo-' + t : 'oculta');
+      el.textContent = !vis ? '' : (p === 0 ? 'Salida' : ICONO[t] || '');
       if (vis && animar && antes === 'o') { el.classList.add('revela'); setTimeout(() => el.classList.remove('revela'), 620); }
     }
   }
+  function aplicarTema() {
+    const T = tema(E.tablero);
+    $.root.style.setProperty('--tb-cielo', T.cielo); $.root.style.setProperty('--tb-campo', T.campo);
+    $.tit.textContent = `Tablero ${E.tablero} · ${T.nombre}`;
+    $.sub.textContent = `${T.lugar} · Nivel ${E.nivel} de ${NIVELES}`;
+    $.icono.textContent = T.icono;
+  }
+  function pintarLuces() {
+    let h = ''; for (let i = 1; i <= NIVELES; i++) h += '<span class="tbl-luz' + (i <= E.luces ? ' on' : '') + '" title="Luz ' + i + '"></span>';
+    $.luces.innerHTML = h;
+  }
   function pintarEstado() {
     if (!$.estado) return;
-    const pos = E.pos === 0 ? 'Salida' : 'Casilla ' + E.pos + ' de ' + META;
-    $.estado.innerHTML = `<span class="tbl-chip">${esc(NOMBRES[Math.min(E.ronda, 4) - 1])} · Ronda ${E.ronda}</span><span class="tbl-chip">${pos}</span><span class="tbl-chip" data-chip="saldo" title="Saldo del Vivero: el mismo que ves en Inicio">💧 ${saldoVivero()}</span><span class="tbl-chip" title="Escudos guardados">🛡 ${E.escudos}</span>${E.pausa ? '<span class="tbl-chip">⏸ Descanso pendiente</span>' : ''}`;
+    const I = info(), pos = E.pos === 0 ? 'Salida' : 'Casilla ' + E.pos + ' de ' + I.C;
+    $.estado.innerHTML = `<span class="tbl-chip" data-chip="saldo" title="Saldo del Vivero: el mismo que ves en Inicio">💧 ${saldoVivero()}</span><span class="tbl-chip">${pos}</span><span class="tbl-chip" title="Escudos guardados">🛡 ${E.escudos}</span>${E.pausa ? '<span class="tbl-chip">⏸ Descanso</span>' : ''}`;
     $.chip = $.estado.querySelector('[data-chip=saldo]');
-    if ($.mesa) $.mesa.classList.toggle('con-escudo', E.escudos > 0);
+    if ($.root) $.root.classList.toggle('con-escudo', E.escudos > 0);
+    pintarLuces(); aplicarTema();
   }
   function pintarPanel() {
     if (!$.panel || $.panel.dataset.modo === 'pregunta') return;
     $.panel.dataset.modo = 'botones';
-    $.panel.innerHTML = `<div class="tbl-acciones"><button type="button" class="tbl-btn" id="tblLanzar"${ocupado ? ' disabled' : ''}>🎲 Lanzar dado</button><button type="button" class="tbl-btn sec" id="tblBonus"${ocupado || E.bonus <= 0 ? ' disabled' : ''}>Dados de bonus (${E.bonus})</button></div><p class="tbl-nota">Tu avance se guarda: puedes cerrar la app y volver aquí.</p>`;
+    $.panel.innerHTML = `<div class="tbl-acciones"><button type="button" class="tbl-btn" id="tblLanzar"${ocupado ? ' disabled' : ''}>🎲 Lanzar dado</button><button type="button" class="tbl-btn sec" id="tblBonus"${ocupado || E.bonus <= 0 ? ' disabled' : ''}>Dados de bonus (${E.bonus})</button></div>`;
     $.lanzar = document.getElementById('tblLanzar'); $.bonus = document.getElementById('tblBonus');
     if ($.lanzar) $.lanzar.addEventListener('click', () => turno(false));
     if ($.bonus) $.bonus.addEventListener('click', () => turno(true));
@@ -327,20 +419,20 @@
   }
   async function avanzar(n) {                                       // n > 0 avanza; n < 0 retrocede. Nunca antes de la salida ni pasando la meta.
     const paso = n > 0 ? 1 : -1; let k = Math.abs(n);
-    const agil = paso > 0 && k >= 2 ? 0.6 : 1;                      // atajo y tiradas largas: un poco más ágil
+    const meta = info().meta, agil = paso > 0 && k >= 2 ? 0.6 : 1;
     while (k-- > 0) {
-      const sig = E.pos + paso; if (sig < 0 || sig > META) break;
+      const sig = E.pos + paso; if (sig < 0 || sig > meta) break;
       E.pos = sig; E.maxPos = Math.max(E.maxPos, E.pos);
       colocarPieza(paso); pintarCasillas(true); pintarEstado();
       son(paso > 0 ? 'paso' : 'retro', E.pos);
       await espera((paso > 0 ? 260 : 320) * agil);
-      if (E.pos === META) break;
+      if (E.pos === meta) break;
     }
     guardar();
   }
   async function turno(bonus) {
     if (ocupado) return;
-    if (E.pausa && !bonus) {                                        // la pausa cuesta un turno: no se tira el dado
+    if (E.pausa && !bonus) {
       E.pausa = false; guardar(); decir('Descanso', 'Descansas este turno. Lanza cuando quieras.'); son('pausa'); pintarTodo(); return;
     }
     if (bonus && E.bonus <= 0) return;
@@ -354,21 +446,30 @@
       await llegada();
     } finally { ocupado = false; guardar(); pintarTodo(); }
   }
-  // Efecto de la casilla donde cayó. Los movimientos extra (atajo, pregunta acertada, tormenta) no encadenan efectos; solo la meta.
+  // Efecto de la casilla. Los movimientos extra no encadenan efectos; solo la meta.
   async function llegada() {
     if (E.pos === 0) return;
-    if (E.pos === META) return ronda();
-    const t = tipoEn(E.ronda, E.pos), c = centroPieza();
+    const I = info();
+    if (E.pos === I.meta) return nivelCompleto();
+    const t = I.tipos[E.pos], c = centroPieza();
     if (t === 'rocio') { gota(1); chispas(c.x, c.y, 6, '#bfe6ff'); decir('Rocío', 'Una gota de rocío para tu Vivero.'); son('rocio'); }
-    else if (t === 'pregunta') { chispas(c.x, c.y, 5, '#fff1b8'); await pregunta(); }
-    else if (t === 'atajo') { const k = Math.random() < 0.5 ? 2 : 3; decir('Atajo', `El camino se acorta: avanzas ${k} casillas.`); son('atajo'); chispas(c.x, c.y, 10, '#b8f0a6'); await espera(380); await avanzar(k); if (E.pos === META) return ronda(); }
+    else if (t === 'pregunta') {
+      chispas(c.x, c.y, 5, '#fff1b8');
+      const ok = await preguntas(E.nivel >= 6 ? 2 : 1);             // desde el nivel 6, dos preguntas seguidas
+      if (ok) { decir('¡Bien!', `Avanzas ${ok} ${ok === 1 ? 'casilla extra' : 'casillas extra'}.`); await espera(300); await avanzar(ok); if (E.pos === I.meta) return nivelCompleto(); }
+    }
+    else if (t === 'atajo') { const k = Math.random() < 0.5 ? 2 : 3; decir('Atajo', `El camino se acorta: avanzas ${k} casillas.`); son('atajo'); chispas(c.x, c.y, 10, '#b8f0a6'); await espera(380); await avanzar(k); if (E.pos === I.meta) return nivelCompleto(); }
     else if (t === 'tormenta') { await tormenta(); }
+    else if (t === 'remolino') { await remolino(); }
+    else if (t === 'ladron') { await ladron(); }
     else if (t === 'pausa') { E.pausa = true; gota(2); decir('Descanso', 'Pierdes un turno, pero ganas 2 gotas.'); son('pausa'); }
     else if (t === 'escudo') {
-      if (E.escudos < 2) { E.escudos++; decir('Escudo', `Guardas un escudo (tienes ${E.escudos}). Detiene una tormenta.`); chispas(c.x, c.y, 8, '#cfe9f5'); }
+      if (E.escudos < 2) { E.escudos++; decir('Escudo', `Guardas un escudo (tienes ${E.escudos}). Detiene tormentas, remolinos y ladrones.`); chispas(c.x, c.y, 8, '#cfe9f5'); }
       else { gota(1); decir('Escudo lleno', 'Ya tienes 2 escudos: esta vez ganas una gota.'); }
       son('escudo');
     }
+    else if (t === 'cofre') { gota(3); chispas(c.x, c.y, 12, '#ffe9a8'); decir('Cofre', 'Un cofre escondido en el camino: 3 gotas.'); son('cofre'); }
+    else if (t === 'relampago') { await relampago(); }
     guardar();
   }
   async function tormenta() {
@@ -378,12 +479,37 @@
       decir('¡Tormenta!', 'Tu escudo la detuvo. Sigues en tu lugar y ganas una gota.');
       return;
     }
-    const r = 1 + Math.floor(Math.random() * 3);
-    gota(1);                                                        // lo que deja la tormenta: siempre algo a cambio
+    const r = 1 + Math.floor(Math.random() * RANGO(E.nivel));
+    gota(1);
     decir('¡Tormenta!', `Retrocedes ${r} ${r === 1 ? 'casilla' : 'casillas'}. Lo que deja la tormenta: una gota.`);
     await espera(750); await avanzar(-r);
   }
-  // Pregunta de lo leído: acierto = 1 casilla extra y 2 gotas. Fallo = sin castigo: ves la respuesta y el versículo.
+  async function remolino() {
+    remolinoSonido(0); sacudir(); destello('radial-gradient(circle,rgba(120,90,160,.1),rgba(40,20,60,.6))'); hojas(9); vibra([70, 40, 70, 40, 70]);
+    if (E.escudos > 0) {
+      E.escudos--; const c = centroPieza(); chispas(c.x, c.y, 12, '#e0d4f5');
+      decir('Remolino', 'Tu escudo lo frenó. Sigues en tu lugar.');
+      return;
+    }
+    const r = RANGO(E.nivel);
+    decir('Remolino', `Te arrastra ${r} ${r === 1 ? 'casilla' : 'casillas'} hacia atrás. Sin premio.`);
+    await espera(850); await avanzar(-r);
+  }
+  // Ladrón de rocío (desde el nivel 5): quita una gota por cada luz encendida. El escudo lo detiene.
+  async function ladron() {
+    ladronSonido(0); sacudir(); vibra([40, 60, 40]);
+    if (E.escudos > 0) {
+      E.escudos--; const c = centroPieza(); chispas(c.x, c.y, 12, '#cfe9f5');
+      decir('Ladrón de rocío', 'Tu escudo lo ahuyentó. Tus gotas están a salvo.');
+      return;
+    }
+    const pierde = Math.max(1, E.luces);
+    const quitadas = quitarGotas(pierde);
+    if (quitadas > 0) decir('Ladrón de rocío', `Te quitó ${quitadas} ${quitadas === 1 ? 'gota' : 'gotas'}: una por cada luz encendida (${E.luces}).`);
+    else decir('Ladrón de rocío', 'Pasó de largo: no tenías gotas que perder.');
+    pintarEstado();
+  }
+  // Pregunta de lo leído. Acierto = 1 casilla extra (se cuenta fuera) y 2 gotas. Fallo = sin castigo.
   async function cargarBanco() {
     if (BANCO) return BANCO;
     try { const r = await fetch('datos/juego_raices.json'); const j = await r.json(); BANCO = Array.isArray(j.preguntas) ? j.preguntas : []; } catch (e) { BANCO = []; }
@@ -395,35 +521,114 @@
     const base = leidas.length ? leidas : bank, vistas = E.vistas || [];
     const nuevas = base.filter((q) => vistas.indexOf(q.id) < 0), pool = nuevas.length ? nuevas : base;
     const q = pool[Math.floor(Math.random() * pool.length)];
-    E.vistas = vistas.concat(q.id).slice(-20);
+    E.vistas = vistas.concat(q.id).slice(-30);
     return { q, general: !leidas.length };
   }
-  async function pregunta() {
+  async function preguntas(n) {                                     // n preguntas seguidas: devuelve cuántas se aciertan
     const bank = await cargarBanco();
-    if (!bank.length) { decir('Pregunta', 'Hoy no hay preguntas disponibles. Sigues sin castigo.'); return; }
+    if (!bank.length) { decir('Pregunta', 'Hoy no hay preguntas disponibles. Sigues sin castigo.'); return 0; }
+    let aciertos = 0;
+    for (let k = 0; k < n; k++) { if (await preguntaUna(bank, k, n)) aciertos++; }
+    return aciertos;
+  }
+  function preguntaUna(bank, k, n) {
     const { q, general } = elegirPregunta(bank);
-    decir('Pregunta', 'Responde para avanzar un poco más.');
-    await new Promise((resolver) => {
+    decir('Pregunta' + (n > 1 ? ` ${k + 1} de ${n}` : ''), 'Responde para avanzar un poco más.');
+    return new Promise((resolver) => {
       $.panel.dataset.modo = 'pregunta';
-      $.panel.innerHTML = `<div class="tbl-preg"><p class="tbl-preg-cab">${general ? 'Pregunta general: aún no marcas capítulos como leídos' : 'De lo que leíste'}</p><p class="tbl-preg-txt">${esc(q.p)}</p><div class="tbl-opc">${q.o.map((o, i) => `<button type="button" class="tbl-btn sec" data-o="${i}">${esc(o)}</button>`).join('')}</div></div>`;
+      $.panel.innerHTML = `<div class="tbl-preg"><p class="tbl-preg-cab">${n > 1 ? 'Pregunta ' + (k + 1) + ' de ' + n + ' · ' : ''}${general ? 'Pregunta general: aún no marcas capítulos como leídos' : 'De lo que leíste'}</p><p class="tbl-preg-txt">${esc(q.p)}</p><div class="tbl-opc">${q.o.map((o, i) => `<button type="button" class="tbl-btn sec" data-o="${i}">${esc(o)}</button>`).join('')}</div></div>`;
       $.panel.querySelectorAll('[data-o]').forEach((b) => b.addEventListener('click', () => {
         const i = Number(b.dataset.o), bien = i === q.c, caja = $.panel.querySelector('.tbl-preg');
         $.panel.querySelectorAll('[data-o]').forEach((x) => { x.disabled = true; x.classList.toggle('elegida', Number(x.dataset.o) === i); });
-        const res = bien ? `¡Acertaste! Avanzas 1 casilla extra y ganas 2 gotas. Versículo: ${ref(q)}.` : `La respuesta era: ${q.o[q.c]}. Versículo: ${ref(q)}. Sigues en tu lugar.`;
+        const res = bien ? `¡Acertaste! Ganas 2 gotas. Versículo: ${ref(q)}.` : `La respuesta era: ${q.o[q.c]}. Versículo: ${ref(q)}. Sin castigo.`;
         $.panel.insertAdjacentHTML('beforeend', `<p class="tbl-preg-res">${esc(res)}</p><button type="button" class="tbl-btn" id="tblSeguir">Seguir</button>`);
         caja.classList.add(bien ? 'ok' : 'mal');
         son(bien ? 'acierto' : 'error');
         if (bien) { gota(2); const c = centroPieza(); chispas(c.x, c.y, 12, '#ffe9a8'); }
         guardar();
-        document.getElementById('tblSeguir').addEventListener('click', async () => {
-          $.panel.dataset.modo = 'botones'; $.panel.innerHTML = '';
-          if (bien) { await avanzar(1); if (E.pos === META) await ronda(); }
-          resolver();
+        document.getElementById('tblSeguir').addEventListener('click', () => {
+          $.panel.dataset.modo = 'botones'; $.panel.innerHTML = ''; resolver(bien);
         });
       }));
     });
   }
-  // Meta: suma 10 gotas y un dado de bonus; empieza la ronda siguiente.
+
+  // ---------- Minijuegos (Relámpago) ----------
+  function mini(titulo, sub) {                                      // capa sobre el tablero para jugar; devuelve la caja
+    const caja = document.createElement('div'); caja.className = 'tbl-mini';
+    caja.innerHTML = `<b>${esc(titulo)}</b><small>${esc(sub)}</small>`;
+    $.mesa.appendChild(caja); return caja;
+  }
+  function botonMini(caja, texto, alTocar) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'tbl-btn sec'; b.textContent = texto;
+    b.addEventListener('click', alTocar); caja.appendChild(b); return b;
+  }
+  function miniMemoria() {                                          // Memoria del huerto: 6 parejas. Ganas 2 gotas al completarla.
+    return new Promise((res) => {
+      const emo = ['🌵', '🌲', '🌸', '🦙', '🐧', '🌊'], cartas = barajar(emo.concat(emo));
+      const caja = mini('Memoria del huerto', 'Encuentra las parejas. Sin prisa y sin castigo.');
+      const grid = document.createElement('div'); grid.className = 'tbl-mem'; caja.appendChild(grid);
+      let abiertas = [], parejas = 0, bloqueo = false, listo = false;
+      const cerrar = (n) => { if (listo) return; listo = true; caja.remove(); res(n); };
+      cartas.forEach((e) => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'tbl-carta'; b.dataset.e = e;
+        b.innerHTML = '<span class="tbl-carta-f">?</span><span class="tbl-carta-c">' + e + '</span>';
+        b.addEventListener('click', () => girar(b)); grid.appendChild(b);
+      });
+      function girar(b) {
+        if (bloqueo || b.classList.contains('abierta') || b.classList.contains('pareja')) return;
+        b.classList.add('abierta'); son('carta'); abiertas.push(b);
+        if (abiertas.length < 2) return;
+        bloqueo = true; const x = abiertas[0], y = abiertas[1];
+        if (x.dataset.e === y.dataset.e) {
+          x.classList.add('pareja'); y.classList.add('pareja'); parejas++; abiertas = []; bloqueo = false; son('acierto');
+          if (parejas === 6) { son('nivel'); setTimeout(() => cerrar(2), 700); }
+        } else {
+          setTimeout(() => { x.classList.remove('abierta'); y.classList.remove('abierta'); abiertas = []; bloqueo = false; }, 800);
+        }
+      }
+      botonMini(caja, 'Saltar', () => cerrar(0));
+    });
+  }
+  function miniCosecha() {                                          // Cosecha de cosas raras: 12 s. Frutas suman, cosas raras restan.
+    return new Promise((res) => {
+      const caja = mini('Cosecha de cosas raras', 'Toca las frutas que caen. Las cosas raras restan.');
+      const campo = document.createElement('div'); campo.className = 'tbl-cosecha'; caja.appendChild(campo);
+      const marca = document.createElement('p'); marca.className = 'tbl-marca'; caja.appendChild(marca);
+      let pts = 0, fin = false, listo = false; const DUR = 12000, t0 = Date.now();
+      const frutas = ['🍎', '🍇', '🌽', '🥔', '🍓'], raras = ['🪨', '🦴', '🕷️', '🍄'];
+      const pinta = () => { marca.textContent = 'Puntos: ' + pts + ' · ' + Math.max(0, Math.ceil((DUR - (Date.now() - t0)) / 1000)) + ' s'; };
+      const caer = () => {
+        if (fin) return;
+        const rara = Math.random() < 0.35, it = document.createElement('button'); it.type = 'button'; it.className = 'tbl-caida';
+        it.textContent = rara ? raras[Math.floor(Math.random() * raras.length)] : frutas[Math.floor(Math.random() * frutas.length)];
+        it.style.left = (8 + Math.random() * 80) + '%'; it.style.animationDuration = (3.2 + Math.random() * 1.2) + 's';
+        it.addEventListener('pointerdown', (ev) => {
+          ev.preventDefault(); if (fin) return;
+          if (rara) { pts = Math.max(0, pts - 1); son('error'); } else { pts++; son('rocio'); }
+          it.remove(); pinta();
+        });
+        it.addEventListener('animationend', () => it.remove());
+        campo.appendChild(it);
+      };
+      const iv = setInterval(caer, 520), tick = setInterval(pinta, 250); pinta();
+      setTimeout(() => {
+        fin = true; clearInterval(iv); clearInterval(tick);
+        const n = pts >= 6 ? 2 : pts >= 3 ? 1 : 0;
+        marca.textContent = `¡Cosecha de ${pts} ${pts === 1 ? 'punto' : 'puntos'}! ${n ? 'Ganas ' + n + ' ' + (n === 1 ? 'gota' : 'gotas') + '.' : 'Esta vez no hubo gotas.'}`;
+        botonMini(caja, 'Seguir', () => { if (listo) return; listo = true; caja.remove(); res(n); });
+      }, DUR);
+    });
+  }
+  async function relampago() {
+    son('relampago');
+    decir('Relámpago', 'Un minijuego para ganar gotas. Puedes saltarlo.');
+    const n = E.nivel >= 6 || Math.random() < 0.5 ? await miniCosecha() : await miniMemoria();
+    if (n) gota(n);
+    decir('Relámpago', n ? `Ganas ${n} ${n === 1 ? 'gota' : 'gotas'} del minijuego.` : 'Sigue el camino: sin gotas esta vez.');
+  }
+
+  // ---------- Niveles y tableros ----------
   function aviso(titulo, cuerpo, boton) {
     return new Promise((r) => {
       $.aviso.innerHTML = `<div class="tbl-aviso-caja"><b>${esc(titulo)}</b><p>${esc(cuerpo)}</p><button type="button" class="tbl-btn" id="tblAvisoOk">${esc(boton)}</button></div>`;
@@ -431,32 +636,48 @@
       document.getElementById('tblAvisoOk').addEventListener('click', () => { $.aviso.hidden = true; r(); });
     });
   }
-  async function ronda() {
-    const hecha = E.ronda;
-    E.rondas++; gota(10);
-    E.ronda = hecha + 1; E.pos = 0; E.maxPos = 0; E.bonus += 1; E.pausa = false;
-    guardar();
-    son('meta'); confeti(); destello('radial-gradient(circle,rgba(255,220,120,.15),rgba(255,200,80,.55))'); vibra([60, 40, 60, 40, 120]);
+  async function nivelCompleto() {
+    const hecho = E.nivel, T = tema(E.tablero);
+    E.luces++; E.niveles++; gota(10); E.bonus += 1; E.pausa = false; E.pos = 0; E.maxPos = 0;
+    let titulo, cuerpo;
+    if (hecho < NIVELES) {
+      E.nivel = hecho + 1;
+      titulo = `¡Nivel ${hecho} completo!`;
+      cuerpo = `Se enciende una luz (${E.luces} de ${NIVELES}). Ganas 10 gotas y un dado de bonus. El camino crece: ${CASILLAS(E.nivel)} casillas.`;
+    } else {
+      const siguiente = tema(E.tablero + 1);
+      E.tablero += 1; E.nivel = 1; E.luces = 0;
+      titulo = '¡Tablero completo!';
+      cuerpo = `Las 10 luces se apagan. Ahora te espera ${siguiente.lugar} (${siguiente.nombre}). Ganas 10 gotas y un dado de bonus.`;
+      void T;
+    }
+    guardar(); son(hecho < NIVELES ? 'nivel' : 'meta'); confeti();
+    destello('radial-gradient(circle,rgba(255,220,120,.15),rgba(255,200,80,.55))'); vibra([60, 40, 60, 40, 120]);
     const c = centroPieza(); chispas(c.x, c.y, 16, '#ffd45c');
-    const fase1 = hecha === 3 ? ' Completaste las tres rondas de la Fase 1. Puedes seguir: las rondas nuevas se afinan en la Fase 2.' : '';
+    if (hecho === NIVELES) { montar(); }
     pintarTodo();
-    await aviso(`¡Ronda ${hecha} completa!`, `Ganas 10 gotas y un dado de bonus.${fase1} Empieza ${NOMBRES[Math.min(E.ronda, 4) - 1]}.`, 'Seguir');
-    decir('Nueva ronda', `Empiezas ${NOMBRES[Math.min(E.ronda, 4) - 1]}. Lanza el dado.`);
+    await aviso(titulo, cuerpo, 'Seguir');
+    if (hecho < NIVELES) montar();
+    decir(`Nivel ${E.nivel}`, hecho < NIVELES ? `Empiezas el nivel ${E.nivel}. Lanza el dado.` : tema(E.tablero).leyenda);
+    pintarTodo();
   }
 
   // ---------- Pantalla ----------
   function abrir(volver, opc) {
-    opc = opc || {}; VOLVER = volver; PIEZA = opc.pieza || '🌱';
+    opc = opc || {}; PIEZA = opc.pieza || '🌱';
     const main = document.getElementById('pantalla'); if (!main) return;
     E = cargar(); ocupado = false; $ = {};
+    document.body.classList.add('tb-full');
     main.innerHTML = `<section class="tbl" id="tbl" aria-label="Tablero de Tierra Buena">
-      <button type="button" class="volver" id="tblVolver">‹ Juegos</button>
-      <h1>Tablero de Tierra Buena</h1><div class="filete"></div>
-      <p class="suave tbl-intro">Avanza por el camino. Cada casilla trae algo: rocío, una pregunta, un atajo o una tormenta. Un escudo la detiene.</p>
+      <header class="tbl-top">
+        <button type="button" class="volver" id="tblVolver">‹ Juegos</button>
+        <div class="tbl-tit"><span class="tbl-icono" id="tblIcono" aria-hidden="true"></span><div><b id="tblTit"></b><small id="tblSub"></small></div></div>
+      </header>
+      <div class="tbl-luces" id="tblLuces" aria-label="Luces encendidas: una por nivel pasado"></div>
       <div class="tbl-estado" id="tblEstado"></div>
-      <div class="tbl-bola" id="tblBola" aria-live="polite"><p id="tblTexto"></p></div>
       <div class="tbl-mesa" id="tblMesa">
         <div class="tbl-campo"></div>
+        <div class="tbl-bola" id="tblBola" aria-live="polite"><p id="tblTexto"></p></div>
         <div id="tblCasillas"></div>
         <div class="tbl-pieza" id="tblPieza" aria-label="Tu pieza"><span class="tbl-pieza-in" id="tblPiezaIn">${esc(PIEZA)}</span></div>
         <div class="tbl-aviso" id="tblAviso" hidden></div>
@@ -464,24 +685,22 @@
       <div class="tbl-bandeja" id="tblBandeja"></div>
       <div class="tbl-panel" id="tblPanel"></div>
     </section>`;
-    $.mesa = document.getElementById('tblMesa'); $.estado = document.getElementById('tblEstado'); $.bola = document.getElementById('tblBola'); $.texto = document.getElementById('tblTexto');
+    $.root = document.getElementById('tbl'); $.mesa = document.getElementById('tblMesa'); $.cont = document.getElementById('tblCasillas');
+    $.estado = document.getElementById('tblEstado'); $.luces = document.getElementById('tblLuces'); $.bola = document.getElementById('tblBola'); $.texto = document.getElementById('tblTexto');
+    $.tit = document.getElementById('tblTit'); $.sub = document.getElementById('tblSub'); $.icono = document.getElementById('tblIcono');
     $.pieza = document.getElementById('tblPieza'); $.piezaIn = document.getElementById('tblPiezaIn'); $.aviso = document.getElementById('tblAviso'); $.panel = document.getElementById('tblPanel');
     $.d1 = dadoEl(); $.d2 = dadoEl(); $.d2.hidden = true;
     const band = document.getElementById('tblBandeja'); band.appendChild($.d1); band.appendChild($.d2);
-    const cont = document.getElementById('tblCasillas'); $.casillas = {};
-    for (let p = 0; p <= META; p++) {
-      const c = coord(p), el = document.createElement('div');
-      el.className = 'tbl-casilla oculta'; el.style.left = c.x + '%'; el.style.top = c.y + '%'; el.dataset.k = 'o'; cont.appendChild(el); $.casillas[p] = el;
-    }
     document.getElementById('tblVolver').addEventListener('click', () => { son('salida'); if (typeof volver === 'function') volver(); });
-    pintarTodo();
-    decir('Bienvenido', E.pos === 0 ? 'Lanza el dado para empezar el camino.' : 'Sigues donde te quedaste. Lanza el dado cuando quieras.');
+    montar(); pintarTodo();
+    if (!$.resize) { $.resize = () => { if ($.root && $.root.isConnected) { montar(); } }; window.addEventListener('resize', $.resize); }
+    decir(`Tablero ${E.tablero}`, E.pos === 0 ? tema(E.tablero).leyenda : 'Sigues donde te quedaste. Lanza el dado cuando quieras.');
     son('inicio');
   }
 
   window.TBTablero = {
     abrir,
     // expuesto para pruebas (no usar desde la interfaz)
-    _t: { casillasDeRonda, coord, PESOS, META, FILAS, COLS, TRAMPA, tipoEn, semilla, nuevoEstado, ICONO, SONIDOS, audio, CARA }
+    _t: { TEMAS, NIVELES, CASILLAS, RANGO, pesosDe, nivelDe, anillo, TRAMPA, ICONO, SONIDOS, audio, tema, CARA, nuevoEstado, cargar }
   };
 })();
