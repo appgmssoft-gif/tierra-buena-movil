@@ -286,7 +286,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Preguntas de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Sopa del Vivero': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1118';
+  const APP_VERSION = 'F1122';
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
   const BANDA_POR_VOLVER = { 'Mi iglesia': 'union', 'Palabra': 'palabra', 'Vida': 'crecer', 'Vivir lo que aprendemos': 'crecer', 'Perfil': 'camino', 'Panel': 'pastor' };
   const bandaMini = (tipo) => bandaTB(tipo).replace('class="tb-banda"', 'class="tb-banda tb-banda-mini"');
@@ -1664,14 +1664,51 @@
     };
     camino();
   }
+  // F1122 · Consola de juegos: jugador (nombre y pieza) y registro de logros
+  const K_JUG = 'tb_movil_jugador';
+  const PIEZAS = [['brote', '🌱', 'Brote'], ['condor', '🦅', 'Cóndor'], ['zorro', '🦊', 'Zorro'], ['guanaco', '🦙', 'Guanaco']];
+  function jugadorLeer() { try { return JSON.parse(localStorage.getItem(K_JUG) || 'null'); } catch (e) { return null; } }
+  function jugadorGuardar(v) { try { localStorage.setItem(K_JUG, JSON.stringify(v)); } catch (e) { /* sin almacenamiento */ } }
+  function logrosDe(j, n) {
+    return [
+      { ok: !!j, t: 'Jugador creado', d: 'Elegiste nombre y pieza' },
+      { ok: n >= 1, t: 'Primera partida', d: 'Jugaste por primera vez' },
+      { ok: n >= 5, t: 'Cinco partidas', d: 'Te quedas a jugar' },
+      { ok: n >= 10, t: 'Diez partidas', d: 'Constancia de jugador' },
+    ];
+  }
   function vistaJuegos() {
-    const j = leer(K_JUEGOS) || { n: 0 };
-    $('#pantalla').innerHTML = `${cabecera('Juegos', 'Palabra')}<p class="suave">Juegos pensados para lo que lees y vives aquí. Jugar da gotas de rocío para tu Inicio; no hay anuncios ni monedas.</p>
-      ${j.n ? `<p class="suave">Partidas jugadas: ${Number(j.n)}</p>` : ''}
-      <div class="grid">${JUEGOS.map((g) => JUEGOS_LISTOS[g[0]]
-        ? `<button type="button" class="card" data-juego="${g[0]}"><div class="t"><span aria-hidden="true">${icono(g[1])}</span>${g[2]}<span class="flecha" aria-hidden="true">›</span></div><p class="suave m0t">${g[3]}</p></button>`
-        : `<div class="card pronto"><div class="t"><span aria-hidden="true">${icono(g[1])}</span>${g[2]}</div><p class="suave m0t">${g[3]} <b>Muy pronto.</b></p></div>`).join('')}</div>`;
+    const j = leer(K_JUEGOS) || { n: 0 }, jug = jugadorLeer(), n = Number(j.n) || 0;
+    const pieza = (k) => PIEZAS.find((p) => p[0] === k) || PIEZAS[0];
+    const alta = !jug ? `<section class="jug-alta card"><div class="t"><span aria-hidden="true">🎮</span>Crea tu jugador</div><p class="suave m0t">Tu nombre y tu pieza te acompañan en cada juego.</p>
+      <label class="jug-campo" for="jugNom">Tu nombre</label><input id="jugNom" class="jug-nom" maxlength="16" autocomplete="off" placeholder="Ej. Ana" value="">
+      <p class="jug-lab">Elige tu pieza</p><div class="jug-piezas" role="radiogroup" aria-label="Pieza">${PIEZAS.map((p, i) => `<button type="button" class="jug-pieza${i === 0 ? ' on' : ''}" role="radio" aria-checked="${i === 0}" data-pieza="${p[0]}"><span aria-hidden="true">${p[1]}</span>${p[2]}</button>`).join('')}</div>
+      <button type="button" class="btn" id="jugEmpezar">Empezar a jugar</button></section>`
+      : `<section class="jug-resumen card"><span class="jug-avatar" aria-hidden="true">${pieza(jug.pieza)[1]}</span><div><b>${esc(jug.nombre)}</b><small class="suave">Jugador ${pieza(jug.pieza)[2].toLowerCase()} · ${n} ${n === 1 ? 'partida' : 'partidas'}</small></div><button type="button" class="btn sec" id="jugEditar">Editar</button></section>`;
+    const logros = logrosDe(jug, n);
+    $('#pantalla').innerHTML = `${cabecera('Juegos', 'Palabra')}<p class="suave">Elige un juego. Jugar da gotas de rocío para tu Inicio; no hay anuncios ni monedas.</p>
+      ${alta}
+      <h2 class="sep">Consola</h2>
+      <div class="consola">${JUEGOS.map((g) => JUEGOS_LISTOS[g[0]]
+        ? `<button type="button" class="consola-tile" data-juego="${g[0]}"><span class="ct-ico" aria-hidden="true">${icono(g[1])}</span><b>${g[2]}</b><small>${g[3]}</small><span class="ct-play" aria-hidden="true">▶ Jugar</span></button>`
+        : `<div class="consola-tile pronto"><span class="ct-ico" aria-hidden="true">${icono(g[1])}</span><b>${g[2]}</b><small>${g[3]}</small><span class="ct-play">Muy pronto</span></div>`).join('')}</div>
+      <h2 class="sep">Logros</h2>
+      <ul class="logros">${logros.map((l) => `<li class="logro${l.ok ? ' ok' : ''}"><span aria-hidden="true">${l.ok ? '🏅' : '🔒'}</span><div><b>${l.t}</b><small class="suave">${l.ok ? l.d : 'Por descubrir'}</small></div></li>`).join('')}</ul>`;
     volverA('Palabra', vistaPalabra);
+    const elegida = { pieza: 'brote' };
+    document.querySelectorAll('.jug-pieza').forEach((b) => b.addEventListener('click', () => {
+      elegida.pieza = b.dataset.pieza;
+      document.querySelectorAll('.jug-pieza').forEach((x) => { const on = x === b; x.classList.toggle('on', on); x.setAttribute('aria-checked', String(on)); });
+    }));
+    const empezar = $('#jugEmpezar');
+    if (empezar) empezar.addEventListener('click', () => {
+      const nom = ($('#jugNom').value || '').trim();
+      if (nom.length < 2) { $('#jugNom').focus(); $('#jugNom').classList.add('falta'); return; }
+      jugadorGuardar({ nombre: nom, pieza: elegida.pieza });
+      vistaJuegos();
+    });
+    const editar = $('#jugEditar');
+    if (editar) editar.addEventListener('click', () => { jugadorGuardar(null); vistaJuegos(); });
     document.querySelectorAll('[data-juego]').forEach((b) => b.addEventListener('click', () => { const f = JUEGOS_LISTOS[b.dataset.juego]; if (f) f(vistaJuegos); }));
   }
 
@@ -3104,12 +3141,23 @@
       <p class="suave" id="pResumen" aria-live="polite">Revisando lo de hoy…</p>
       <h2 class="sep">Mi agenda</h2><div class="lista">${fil('t2', svg('calendario', 22), 'Mi calendario', 'Visitas, reuniones y descanso. Solo tú lo ves', 'mcal')}</div>
       <h2 class="sep">Para atender hoy</h2><div class="lista">${fil('t3', svg('compartir', 22), 'Visitas', 'Quién pide que lo visites', 'vis')}${fil('t2', svg('corazon', 22), 'Oraciones', 'Peticiones recibidas', 'ora')}${fil('t1', svg('gente', 22), 'Solicitudes', 'Quién quiere unirse', 'sol')}</div>
+      <h2 class="sep">Código de tu iglesia</h2><div class="card pas-cod"><p class="suave m0">Compártelo con tus miembros para que se unan a tu iglesia.</p><p class="pas-cod-num" id="pCodNum">${esc(p.codigo || '—')}</p><div class="hoja-bt"><button type="button" class="btn" id="pCodCopiar">Copiar código</button><button type="button" class="btn sec" id="pCodCompartir">Compartir</button></div><details class="pas-llave"><summary>Llave para mi otro teléfono (privada)</summary><p class="suave">Es como una contraseña: no la compartas con nadie.</p><button type="button" class="btn sec" id="pLlaveCopiar">Copiar llave</button></details></div>
       <h2 class="sep">Mi iglesia</h2><div class="lista">${fil('t2', svg('compartir', 22), 'Chat', 'Iglesia, pastor y líderes, y conversaciones', 'chat')}${fil('t4', svg('brote', 22), 'Bienvenida', 'Primeras 4 semanas de quienes llegan', 'bien')}${fil('t4', svg('gente', 22), 'Miembros', 'Quiénes forman tu iglesia', 'mie')}${fil('t1', svg('gente', 22), 'Disponibilidad', 'Quiénes pueden servir y cuándo', 'disp')}${fil('t1', svg('iglesia', 22), 'Ministerios y líderes', 'Grupos, personas y líderes', 'min')}${fil('t2', svg('calendario', 22), 'Agenda', 'Actividades y reuniones', 'age')}${fil('t3', svg('altavoz', 22), 'Avisos', 'Mensajes para todos o un grupo', 'avi')}${fil('t4', svg('bloques', 22), 'Datos y código', 'Nombre, eslogan y código', 'dat')}</div>
       <div id="tbEjem" class="tb-ejem-caja"></div>
       <p class="suave sep16">${svg('escudo', 16)} Las finanzas se administran solo desde el computador.</p>
       <button type="button" class="btn sec sep16" id="pSalir">Salir del modo pastor</button>`;
     try { if (window.TBEjemplos && $('#tbEjem')) window.TBEjemplos.pintar($('#tbEjem'), 'pastor'); } catch (e) { /* sin ejemplos */ }
     document.querySelectorAll('[data-ir=juntos]').forEach((b) => b.addEventListener('click', abrirJuntos));
+    // F1120 · código y llave del pastor: copiar y compartir en un toque
+    const cerrarTxt = (btn, txt) => { const o = btn.textContent; btn.textContent = txt; setTimeout(() => { btn.textContent = o; }, 1600); };
+    const copiarTxt = async (t, btn, ok) => { try { await navigator.clipboard.writeText(t); cerrarTxt(btn, ok); } catch (e) { cerrarTxt(btn, 'No se pudo copiar'); } };
+    if ($('#pCodCopiar')) $('#pCodCopiar').onclick = () => copiarTxt(p.codigo || '', $('#pCodCopiar'), 'Copiado ✓');
+    if ($('#pCodCompartir')) $('#pCodCompartir').onclick = async () => {
+      const t = 'Únete a mi iglesia en Tierra Buena con el código: ' + (p.codigo || '');
+      if (navigator.share) { try { await navigator.share({ title: 'Mi iglesia en Tierra Buena', text: t }); } catch (e) { /* cancelado */ } }
+      else copiarTxt(t, $('#pCodCompartir'), 'Copiado ✓');
+    };
+    if ($('#pLlaveCopiar')) $('#pLlaveCopiar').onclick = () => copiarTxt('PULPITO-PASTOR-' + btoa(JSON.stringify({ c: p.codigo, s: p.secreto })), $('#pLlaveCopiar'), 'Llave copiada ✓');
     document.querySelectorAll('[data-pp]').forEach((b) => b.addEventListener('click', () => ({ sol: pSolicitudes, ora: pOraciones, vis: pVisitas, mie: pMiembros, min: pMinisterios, age: () => vistaAgenda(modoPastor(p)), avi: () => vistaAvisos(modoPastor(p)), mcal: () => pCalendario(p), disp: () => pDisponibilidad(p), bien: () => pBienvenida(p), chat: () => vistaChat({ rol: 'pastor', codigo: p.codigo, secreto: p.secreto }), dat: pDatos }[b.dataset.pp])(p)));
     $('#pSalir').onclick = () => { if (confirm('¿Salir del modo pastor en este teléfono? Tu llave se borra de aquí (sigue en tu computador).')) { borrar(K_PASTOR); borrar('tb_movil_juntos_cache'); barraRefrescar('perfil'); ir('perfil'); } };
     const ins = (k, n) => { const e = $('#n-' + k); if (e && n > 0) { e.textContent = n > 99 ? '99+' : String(n); e.hidden = false; } };

@@ -633,29 +633,20 @@
     }
     return g;
   }
-  // F1118 · Fondo de cada hábitat (Desierto, Costa, Bosque): 4 etapas según el día del árbol (1-3, 4-7, 8-11, 12-15)
-  const HAB_IMG = ['bosque', 'desierto', 'costa'];
-  function habImagen(est, c) {
-    const h = est.tematica; if (HAB_IMG.indexOf(h) < 0) return null;
-    const ets = (CAT && CAT.ciclo && CAT.ciclo.etapas) || [], et = window.TBInicio.etapa(c.diasCuidado);
-    const i = Math.max(0, ets.findIndex((x) => x.id === et));
-    return '<image href="img/inicio/' + h + '-e' + (Math.min(i, 3) + 1) + '.webp" x="0" y="110" width="360" height="310" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"/>';
-  }
   function escena(est) {
     const c = est.ciclo, et = ETAPAS[window.TBInicio ? window.TBInicio.etapa(c.diasCuidado) : 'brote'] ? window.TBInicio.etapa(c.diasCuidado) : 'brote';
     const pais = est.paisaje || [], nPais = window.TBInicio.entornoVisible(pais.length, c.diasCuidado), escAv = window.TBInicio.avanceDiario(c.diasCuidado).escala;
   const fondo = pais.slice(0, nPais).map((q) => { const s = FONDO[q.casilla]; return s ? '<g transform="translate(' + s[0] + ' ' + s[1] + ') scale(' + (s[2] * escAv) + ')">' + arbol(q.especie, 'frondoso') + '</g>' : ''; }).join('');
     const mal = (est.maleza || []).map((m) => '<button type="button" class="il-maleza s-' + esc(m.casilla) + '" data-id="' + esc(m.id) + '" aria-label="Quitar maleza (' + esc(MALEZA[m.tipo] || 'maleza') + '). Toca para limpiarla">' + malezaIcono(m.tipo) + '</button>').join('');
     const TM = est.tematica && CAT && CAT.tematicas && CAT.tematicas[est.tematica], fo = (TM && TM.fondo) || fondoActual(), cl = climaReal(climaActual());   // F965: la temática cambia el fondo
-    const HI = habImagen(est, c);
     return '<div class="il-escena' + ((est.maleza || []).length ? ' apagado' : '') + '" id="ilEscena" data-fondo="' + fo + '" data-clima="' + cl + '">'
       + '<svg class="il-svg" viewBox="0 110 360 310" preserveAspectRatio="xMidYMax meet" aria-hidden="true" focusable="false">'
       + '<defs><linearGradient id="ilNoche" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1330" stop-opacity="0"/><stop offset=".45" stop-color="#0b1330" stop-opacity=".62"/><stop offset="1" stop-color="#0b1330" stop-opacity=".4"/></linearGradient><linearGradient id="ilDeg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="dg-a"/><stop offset=".78" class="dg-a"/><stop offset="1" class="dg-b"/></linearGradient>'
       + '<mask id="ilMasc" maskUnits="userSpaceOnUse" x="-300" y="110" width="960" height="310"><rect x="-300" y="110" width="960" height="310" fill="url(#ilDeg)"/></mask></defs><g mask="url(#ilMasc)">'
-      + (HI ? '<g class="cap cap0">' + HI + '</g><g class="cap cap1">' + fondo + '</g>' : '<g class="cap cap0">' + cielo(cl) + atras(fo) + '</g><g class="cap cap1"><path class="col c1" d="' + COL.c1 + '"/>' + fondo + '</g>')
-      + (HI ? '' : '<g class="cap cap2"><path class="col c2" d="' + COL.c2 + '"/></g>')
-      + (HI ? '</g>' : '<g class="cap cap3"><path class="col c3" d="' + COL.c3 + '"/></g></g>')
-      + '<g mask="url(#ilMasc)">' + (HI ? '' : frente(fo)) + '</g><g class="esp">' + especialesEscena(est, fo) + '</g><g class="pa-dia">' + paisajeDelDia(est.habDias || 0, est.tematica) + rasgosEscena(est) + '</g><g class="cap cap3"><g class="mundo" transform="translate(180 344) scale(' + window.TBInicio.avanceDiario(c.diasCuidado).escala + ')">' + (est.tematica === 'desierto' ? '<g transform="translate(158 -44) scale(0.9)">' + sueloDibujo('cactus') + '</g>' : est.tematica === 'costa' ? '' : arbol(c.especie, et, c.diasCuidado) + hojasTB(window.TBInicio.avanceDiario(c.diasCuidado).hojas, et)) + '</g></g>' + '<g class="tb-hierba" aria-hidden="true">' + (est.tematica === 'desierto' || est.tematica === 'costa' ? '' : hierbaTB(0, 360, 392, 90, 17)) + '</g><g class="clima">' + climaSvg(cl) + '</g></svg>'
+      + '<g class="cap cap0">' + cielo(cl) + atras(fo) + '</g><g class="cap cap1"><path class="col c1" d="' + COL.c1 + '"/>' + fondo + '</g>'
+      + '<g class="cap cap2"><path class="col c2" d="' + COL.c2 + '"/></g>'
+      + '<g class="cap cap3"><path class="col c3" d="' + COL.c3 + '"/></g></g>'
+      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g><g class="esp">' + especialesEscena(est, fo) + '</g><g class="pa-dia">' + paisajeDelDia(est.habDias || 0, est.tematica) + rasgosEscena(est) + '</g><g class="cap cap3"><g class="mundo" transform="translate(180 344) scale(' + window.TBInicio.avanceDiario(c.diasCuidado).escala + ')">' + (est.tematica === 'desierto' ? '<g transform="translate(158 -44) scale(0.9)">' + sueloDibujo('cactus') + '</g>' : est.tematica === 'costa' ? '' : arbol(c.especie, et, c.diasCuidado) + hojasTB(window.TBInicio.avanceDiario(c.diasCuidado).hojas, et)) + '</g></g>' + '<g class="tb-hierba" aria-hidden="true">' + (est.tematica === 'desierto' || est.tematica === 'costa' ? '' : hierbaTB(0, 360, 392, 90, 17)) + '</g><g class="clima">' + climaSvg(cl) + '</g></svg>'
       + '<i class="il-anillo" id="ilAnillo" aria-hidden="true"></i>'
       + '<button type="button" class="il-resp" id="ilResp" aria-label="Respirar con tu árbol. Toca para una pausa de unos 30 segundos"></button>' + mal + gotasHTML(est)  + vivEscena(est) + '</div>';
   }
