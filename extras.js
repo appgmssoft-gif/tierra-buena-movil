@@ -104,12 +104,6 @@
       { k: 'casa', c: 'c2', t: 'Tu iglesia', d: 'Personas, grupos y actividades.', p: [['Conocer a tus miembros', /Miembros/], ['Repartir el servicio en ministerios', /Ministerios y l[íi]deres/], ['Cuidar el código y los datos', /Datos y c[óo]digo/]], b: 'Ver miembros' },
       { k: 'estrella', c: 'c5', t: 'Comunicar bien', d: 'Que lo importante llegue y se lea.', p: [['Publicar la agenda del mes', /Agenda/], ['Escribir un aviso para todos o un grupo', /Avisos/], ['Compartir peticiones en el Muro', /Oraciones/]], b: 'Escribir un aviso' },
       { k: 'gente', c: 'c3', t: 'Juntos hacemos el bien', d: 'Impulsa un movimiento con tu congregación.', p: [['Armar un movimiento con tu iglesia', () => { if (!window.TBJuntos) return false; TBJuntos.abrir(); return true; }], ['Invitar a otras iglesias hermanas', () => { if (!window.TBJuntos) return false; TBJuntos.abrir(); return true; }], ['Medir y celebrar lo logrado', () => { if (!window.TBJuntos) return false; TBJuntos.abrir(); return true; }]], b: 'Entrar a Juntos' }
-    ],
-    perfil: [
-      { k: 'brote', c: 'c2', t: 'Tu camino', d: 'Tu racha, tus logros y tu avance.', p: [['Ver tus días seguidos', '.stats'], ['Desbloquear logros', { h: /Mis logros/ }], ['Seguir creciendo con pasos de acción', /Pasos de acci[óo]n/]], b: 'Ver mis días seguidos' },
-      { k: 'estrella', c: 'c5', t: 'Tu estilo', d: 'Temas de color y apariencia para leer cómodo.', p: [['Elegir entre muchos temas', '[data-pf="temas"]'], ['Cambiar tamaño y fondo', () => { const b = $('#pantalla [data-pf="temas"]'); if (!b) return false; b.click(); return true; }], ['Quitar o dejar el movimiento y los sonidos', '.tbson']], b: 'Elegir mi tema' },
-      { k: 'gente', c: 'c3', t: 'Invita a un amigo', d: 'Comparte la app con un mensaje listo.', p: [['Enviar por WhatsApp o correo', /Invita a un amigo/], ['Editar el mensaje', /Invita a un amigo/], ['No se guarda ningún contacto', /Invita a un amigo/]], b: 'Invitar a un amigo' },
-      { k: 'escudo', c: 'c1', t: 'Tu lectura', d: 'La app se adapta a lo que más buscas.', p: [['Ver tu plan de lectura actual', { h: /Mi lectura/i }], ['Cambiar tu plan cuando quieras', /Cambiar mi plan/i], ['Empezar en tu pestaña favorita', /Cambiar mi plan/i]], b: 'Ver mi lectura' }
     ]
   };
   const buscar = (re) => { if (!re || !(re instanceof RegExp)) return null; return $$('#pantalla [data-ir], #pantalla [data-pp], #pantalla [data-pf], #pantalla button.card, #pantalla .fila').find((b) => re.test(b.textContent || '')) || null; };
@@ -179,12 +173,13 @@
   function filaSonido() {
     const d = document.createElement('div'); d.className = 'tbson';
     const on = () => !window.TBSonido || TBSonido.activo();
-    const pinta = () => { d.innerHTML = `<span class="tbson-ic" aria-hidden="true">${(window.TBApp && TBApp.svg) ? TBApp.svg('campana', 22) : '🔔'}</span><span class="tbson-tx"><b>Sonidos de Tierra Buena</b><small>${on() ? 'Activados: toques, pestañas y logros suenan' : 'Silenciados'}</small></span><button type="button" class="tbson-p" id="tbSonP">Escuchar</button><button type="button" class="tbson-sw" role="switch" aria-checked="${on()}" aria-label="Sonidos"><i></i></button>`; };
+    const pinta = () => { d.innerHTML = `<span class="tbson-ic" aria-hidden="true">${(window.TBApp && TBApp.svg) ? TBApp.svg('campana', 22) : '🔔'}</span><span class="tbson-tx"><b>Sonidos de Tierra Buena</b><small>${on() ? 'Activados: toques, pestañas y logros suenan' : 'Silenciados'}</small></span><button type="button" class="tbson-p" id="tbSonP">Escuchar</button><button type="button" class="tbson-aj">Ajustar</button><button type="button" class="tbson-sw" role="switch" aria-checked="${on()}" aria-label="Sonidos"><i></i></button>`; };
     pinta();
     d.addEventListener('click', (e) => {
       const t = e.target && e.target.closest ? e.target : null; if (!t) return;
       if (t.closest('.tbson-sw')) { try { TBSonido.poner(!on()); } catch (x) { /* nada */ } pinta(); }
       else if (t.closest('.tbson-p')) { try { TBSonido.firma(); } catch (x) { /* nada */ } }
+      else if (t.closest('.tbson-aj')) { try { if (window.TBRendimiento) window.TBRendimiento.abrir(); } catch (x) { /* nada */ } }
     });
     return d;
   }
@@ -199,7 +194,10 @@
       if ($('.volver', pant) || $('#fabCard', pant)) return;                      // solo pantallas raíz (sin botón «volver»)
       if ($('.hero-viva', pant)) return;                                          // F1097: la puerta de entrada no lleva carrusel (antes se pegaba la Palabra encima)
       if (!($('.grid .card', pant) || $('.perfil-hero', pant) || $('.lista .fila[data-pp]', pant))) return;   // la portada, la entrada y las preguntas quedan intactas
-      const tab = tabActual(), car = carrusel(tab); if (!car) return;
+      const tab = tabActual();
+      // F1129 · Perfil: sin carrusel (repetía las secciones de abajo). La fila de sonido va en su hueco de «Efectos y sonido».
+      if (tab === 'perfil') { const hueco = $('#perfSonido', pant); if (hueco && !$('.tbson', hueco)) hueco.appendChild(filaSonido()); return; }
+      const car = carrusel(tab); if (!car) return;
       const ancla = $('.hoy', pant) || $('.perfil-hero', pant) || $('.saludo', pant) || $('.filete', pant);
       if (ancla) ancla.after(car); else pant.insertBefore(car, pant.firstChild);
       let tras = car;
