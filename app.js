@@ -1356,12 +1356,13 @@
   const K_JUEGOS = 'tb_movil_juegos';
   const JUEGOS = [
     ['tablero', '🎲', 'Tablero de Tierra Buena', 'Un camino con sorpresas: rocío, preguntas, atajos y tormentas que te hacen retroceder.'],   // F1123 · Fase 1 del tablero (tablero.js)
+    ['minijuegos', '🕹️', 'Minijuegos', 'Arreo, Memoria, Cosecha y Reto de atención. Cada uno explica su regla antes de empezar.'],
     ['raices', '📖', 'Preguntas de la Palabra', 'Preguntas sobre lo que leíste, con el versículo que explica la respuesta.'],
-    ['brotes', '✍️', 'Completa el versículo', 'Completa el versículo y llévalo en la memoria. Usa los que tú resaltaste.'],
+    ['brotes', '✍️', 'Completa el versículo', 'Toca la palabra que falta en el versículo. Puedes usar las palabras que tú resaltaste.'],
     ['sopa', '🔎', 'Sopa del Vivero', 'Letras grandes, sin tiempo y con pistas gratis.'],
-    ['jardin', '🌱', 'Jardín del principio', 'Seis días de la creación, con mapas y un cuaderno para lo que descubres.']
+    ['jardin', '🌱', 'Jardín del principio', 'Un día de la creación por nivel: responde y se abre el siguiente día.']
   ];
-  const JUEGOS_LISTOS = { tablero: (v) => { if (window.TBTablero) TBTablero.abrir(v, { pieza: ((PIEZAS.find((p) => p[0] === ((jugadorLeer() || {}).pieza)) || PIEZAS[0])[0]) }); }, raices: (v) => vistaRaices(v), brotes: (v) => vistaBrotesCamino(v), jardin: (v) => vistaJardin(v), sopa: (v) => vistaSopa(v) };   // id -> función que abre el juego (cada fase nueva se registra aquí)
+  const JUEGOS_LISTOS = { minijuegos: (v) => vistaMinijuegos(v), tablero: (v) => { if (window.TBTablero) TBTablero.abrir(v, { pieza: ((PIEZAS.find((p) => p[0] === ((jugadorLeer() || {}).pieza)) || PIEZAS[0])[0]) }); }, raices: (v) => vistaRaices(v), brotes: (v) => vistaBrotesCamino(v), jardin: (v) => vistaJardin(v), sopa: (v) => vistaSopa(v) };   // id -> función que abre el juego (cada fase nueva se registra aquí)
   function juegoTerminar(id, aciertos, total) {   // guarda la partida; una gota de rocío al terminar con al menos 60 % de aciertos (tope diario)
     const j = leer(K_JUEGOS) || { n: 0, p: {} }; j.n = (j.n || 0) + 1; j.p = j.p || {};
     const q = j.p[id] || { n: 0, mejor: 0 }; q.n++; q.mejor = Math.max(q.mejor, Number(aciertos) || 0); j.p[id] = q; guardar(K_JUEGOS, j);
@@ -1380,6 +1381,20 @@
   // F947 · Texto de los juegos: separa palabras pegadas y arregla espacios (la Biblia y las preguntas llegan de distintas fuentes).
   const limpiaTexto = (t) => String(t == null ? '' : t).replace(/\s+/g, ' ').replace(/([a-záéíóúñ])([A-ZÁÉÍÓÚÑ])/g, '$1 $2').replace(/([,;:.!?»)])(?=[A-Za-zÁÉÍÓÚáéíóúñ¿¡«(])/g, '$1 ').trim();
   const JU_HERO = (n) => `<svg class="ju-hero" viewBox="0 0 320 96" aria-hidden="true" focusable="false"><path class="ju-suelo" d="M0 70 Q80 58 160 68 T320 62 V96 H0z"/><g class="ju-raiz"><path d="M160 68 C150 78 138 82 124 90 M160 68 C162 80 170 86 176 94 M160 68 C172 76 188 80 204 88"/></g><g class="ju-planta"><path class="ju-tallo" d="M160 68 V${Math.max(22, 62 - n * 8)}"/><path class="ju-hoja h1" d="M160 ${Math.max(40, 62 - n * 5)} c-18-2-28-12-30-24 18 0 30 8 30 24z"/><path class="ju-hoja h2" d="M160 ${Math.max(34, 54 - n * 5)} c18-2 28-12 30-24-18 0-30 8-30 24z"/>${n >= 3 ? '<circle class="ju-flor" cx="160" cy="18" r="7"/><circle class="ju-flor2" cx="160" cy="18" r="3"/>' : ''}</g></svg>`;
+  // F1138 · Minijuegos sueltos: tarjetas con lo que hace cada uno. Cada juego abre con su tarjeta de instrucciones.
+  function vistaMinijuegos(volver) {
+    const M = [
+      ['arreo', '🐑', 'Arreo de ovejas', 'Toca las ovejas que cruzan el campo para llevarlas al corral.'],
+      ['memoria', '🃏', 'Memoria del huerto', 'Encuentra las 6 parejas dando vuelta las cartas.'],
+      ['cosecha', '🧺', 'Cosecha de cosas raras', 'Las frutas suman; las piedras, huesos, arañas y botas restan.'],
+      ['reto', '🧠', 'Reto de atención', 'Cinco preguntas cortas de cultura, naturaleza y Chile.']
+    ];
+    $('#pantalla').innerHTML = `${cabecera('Minijuegos', 'Juegos')}<div class="ju"><p class="suave">Juegos rápidos, sin prisa y sin castigo. Cada uno te explica su regla antes de empezar.</p><div class="mini-grid">${M.map(([k, ic, t, d]) => `<button type="button" class="mini-card" data-mini="${k}"><span class="mini-ico" aria-hidden="true">${ic}</span><b>${esc(t)}</b><small>${esc(d)}</small></button>`).join('')}</div></div>`;
+    $('#volver').onclick = volver;
+    document.querySelectorAll('[data-mini]').forEach((b) => b.addEventListener('click', () => {
+      if (window.TBTablero && TBTablero.minijuego) TBTablero.minijuego(b.dataset.mini, () => vistaMinijuegos(volver));
+    }));
+  }
   function juegoCorrer(cfg) {   // motor común de preguntas con opciones: cfg = { id, titulo, volver, items: [{ p, o, c, ver: async () => ({ html }) }], otra }
     const son = (n) => { try { if (window.TBSonido && window.TBSonido[n]) window.TBSonido[n](); } catch (e) { /* sin sonido */ } };
     const qs = cfg.items; let i = 0, ac = 0, racha = 0; const marcas = [];   // F1093: racha suave (sin vidas ni castigo) y repaso de lo fallado

@@ -229,3 +229,53 @@ body.tb-full #pantalla { padding-bottom: 0; }
 /* Luz central del lugar: su color sale del aura del tablero (cambia en cada lugar) */
 .tbl-campo::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
   background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--tb-aura, #9fdcff) 28%, transparent), transparent 55%); }
+
+/* F1136 · Fase 1: ambientación viva. Medallones que respiran y aura del lugar que late. Respeta reducir movimiento. */
+@keyframes tblMedallonRespira { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-2px) scale(1.06); } }
+@keyframes tblAuraLate { 0%, 100% { opacity: .55; } 50% { opacity: .95; } }
+.tbl-medallon { animation: tblMedallonRespira 4.2s ease-in-out infinite; }
+.tbl-medallon.m2 { animation-delay: -1.1s; } .tbl-medallon.m3 { animation-delay: -2.3s; } .tbl-medallon.m4 { animation-delay: -3.2s; }
+.tbl-aura { animation: tblAuraLate 5s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .tbl-medallon, .tbl-aura { animation: none; } }
+
+/* F1137 · Tarjeta de instrucciones de cada minijuego: entrada animada y pasos claros */
+@keyframes tblIntroEntra { from { opacity: 0; transform: translateY(14px) scale(.97); } to { opacity: 1; transform: none; } }
+.tbl-intro { animation: tblIntroEntra .45s cubic-bezier(.2, .9, .3, 1.2) both; }
+.tbl-pasos { margin: 6px 0 4px; padding-left: 4px; list-style: none; counter-reset: paso; display: grid; gap: 10px; font-size: 1rem; line-height: 1.35; }
+.tbl-pasos li { counter-increment: paso; position: relative; padding-left: 40px; }
+.tbl-pasos li::before { content: counter(paso); position: absolute; left: 0; top: -2px; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(#ffe9a8, #e6b948); color: #2b2218; font-weight: 800; box-shadow: 0 2px 4px rgba(0,0,0,.35); }
+.tbl-fila { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; margin-top: auto; }
+@media (prefers-reduced-motion: reduce) { .tbl-intro { animation: none; } }
+/* F1137 · El texto de la bola completa cabe en teléfono (antes se cortaba la última línea) */
+.tbl-bola p { font-size: .9rem; line-height: 1.26; -webkit-line-clamp: 10; }
+
+/* F1137 · Tarjeta de instrucciones: contenido centrado, texto a la izquierda, ícono grande */
+.tbl-intro { justify-content: center; }
+.tbl-intro-ico { font-size: 3.4rem; text-align: center; line-height: 1; filter: drop-shadow(0 3px 6px rgba(0,0,0,.5)); animation: tblIcoFlota 3.6s ease-in-out infinite; }
+@keyframes tblIcoFlota { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+.tbl-intro > b { text-align: center; font-size: 1.25rem; }
+.tbl-pasos li { text-align: left; }
+.tbl-fila { margin-top: 18px; }
+@media (prefers-reduced-motion: reduce) { .tbl-intro-ico { animation: none; } }
+
+/* F1138 · Casillas de juego (no son preguntas) */
+.tbl-casilla.tipo-arreo { background: linear-gradient(160deg, #f7f3e6, #d6cdb0); }
+.tbl-casilla.tipo-memoria { background: linear-gradient(160deg, #fff1c9, #e0b35a); }
+.tbl-casilla.tipo-cosecha { background: linear-gradient(160deg, #e6f5d8, #9ccc7b); }
+.tbl-casilla.tipo-puerta { background: linear-gradient(160deg, #f1d9b8, #b0794a); }
+.tbl-puertas { justify-content: center; }
+.tbl-puerta { min-width: 84px; font-size: 1.2rem; animation: tblIntroEntra .4s both; }
+.tbl-puerta.abierta { background: linear-gradient(#ffe9a8, #d9a441); }
+/* F1138 · Menú de minijuegos: tarjetas con animación de entrada */
+.mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+.mini-card { appearance: none; border: 0; text-align: left; font: inherit; color: #f7f3e6; cursor: pointer; background: linear-gradient(160deg, #1f3a2b, #0f1f17); border-radius: 18px; padding: 14px; display: grid; gap: 6px; box-shadow: 0 4px 0 #07110c, 0 8px 14px rgba(0,0,0,.3); animation: tblIntroEntra .5s both; transition: transform .15s ease; }
+.mini-card:nth-child(2) { animation-delay: .06s; } .mini-card:nth-child(3) { animation-delay: .12s; } .mini-card:nth-child(4) { animation-delay: .18s; }
+.mini-card:active { transform: translateY(3px); box-shadow: 0 1px 0 #07110c; }
+.mini-ico { font-size: 2.2rem; line-height: 1; }
+.mini-card b { font-size: 1rem; color: #ffe9a8; }
+.mini-card small { font-size: .86rem; opacity: .92; line-height: 1.3; }
+@media (prefers-reduced-motion: reduce) { .mini-card, .tbl-puerta { animation: none; } }
+/* F1138 · Encabezado del minijuego suelto: el título largo se corta con puntos suspensivos, no se sale de la pantalla */
+.tbl-solo .tbl-tit { min-width: 0; flex: 1; }
+.tbl-solo .tbl-tit > div { min-width: 0; }
+.tbl-solo .tbl-tit b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

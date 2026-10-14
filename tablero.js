@@ -25,14 +25,14 @@
   const RANGO = (n) => Math.min(2 + Math.floor((n - 1) / 2), 6);     // casillas que puede retroceder una tormenta en el nivel n
   const CASILLAS = (n) => 18 + 3 * (n - 1);                           // casillas de juego en el nivel n (sin salida ni meta)
   const TRAMPA = { tormenta: 1, pausa: 1, ladron: 1, remolino: 1 };
-  const TIPOS = ['rocio', 'pregunta', 'atajo', 'tormenta', 'pausa', 'escudo', 'cofre', 'relampago', 'ladron', 'remolino'];
-  const ICONO = { rocio: '💧', pregunta: '❓', atajo: '⤴', tormenta: '🌪', pausa: '⏸', escudo: '🛡', cofre: '🎁', relampago: '⚡', ladron: '🦹', remolino: '🌀', meta: '🏁' };
+  const TIPOS = ['rocio', 'pregunta', 'atajo', 'tormenta', 'pausa', 'escudo', 'cofre', 'relampago', 'ladron', 'remolino', 'arreo', 'memoria', 'cosecha', 'puerta'];
+  const ICONO = { rocio: '💧', pregunta: '❓', atajo: '⤴', tormenta: '🌪', pausa: '⏸', escudo: '🛡', cofre: '🎁', relampago: '⚡', ladron: '🦹', remolino: '🌀', meta: '🏁', arreo: '🐑', memoria: '🃏', cosecha: '🧺', puerta: '🚪' };
 
   // ---------- Pesos por nivel: más niveles = menos rocío y más trampas. Se normalizan para sumar 1. ----------
   function pesosDe(n) {
     const w = {
       rocio: Math.max(0.2, 0.40 - 0.02 * (n - 1)), pregunta: 0.18 + 0.006 * (n - 1), atajo: 0.10, tormenta: 0.07 + 0.005 * (n - 1),
-      pausa: 0.05, escudo: 0.08, cofre: n >= 2 ? 0.04 : 0, relampago: 0.04,
+      pausa: 0.05, escudo: 0.08, cofre: n >= 2 ? 0.04 : 0, relampago: 0.04, arreo: 0.05, memoria: 0.05, cosecha: 0.04, puerta: 0.05,
       ladron: n >= 5 ? 0.05 : 0, remolino: n >= 7 ? 0.04 : 0
     };
     const suma = Object.keys(w).reduce((a, k) => a + w[k], 0);
@@ -502,6 +502,8 @@
       son('escudo');
     }
     else if (t === 'cofre') { gota(3); chispas(c.x, c.y, 12, '#ffe9a8'); decir('Cofre', 'Un cofre escondido en el camino: 3 gotas.'); son('cofre'); }
+    else if (t === 'arreo' || t === 'memoria' || t === 'cosecha') { await minijuegoCasilla(t); }
+    else if (t === 'puerta') { await puerta(); }
     else if (t === 'relampago') { await relampago(); }
     guardar();
   }
@@ -604,6 +606,83 @@
     const b = document.createElement('button'); b.type = 'button'; b.className = 'tbl-btn sec'; b.textContent = texto;
     b.addEventListener('click', alTocar); caja.appendChild(b); return b;
   }
+  // F1137 · Cada minijuego explica su regla antes de empezar. El tiempo corre solo al tocar «¡Empezar!».
+  const INTRO_MINI = {
+    memoria: { ico: '🃏', titulo: 'Memoria del huerto', pasos: ['Toca una carta y luego otra.', 'Si son iguales, quedan juntas.', 'Encuentra las 6 parejas para ganar 2 gotas.'] },
+    cosecha: { ico: '🧺', titulo: 'Cosecha de cosas raras', pasos: ['Toca las frutas que caen: cada una suma 1 punto.', 'Las cosas raras (piedra, hueso, araña, bota) restan 1.', 'Tienes 12 segundos: 6 puntos dan 2 gotas, 3 dan 1.'] },
+    arreo: { ico: '🐑', titulo: 'Arreo de ovejas', pasos: ['Las ovejas cruzan el campo de a una.', 'Toca cada oveja antes de que se vaya: entra al corral.', 'Si una se escapa, no pasa nada. Tienes 14 segundos.'] },
+    reto: { ico: '🧠', titulo: 'Reto de atención', pasos: ['Cinco preguntas cortas de tres tipos.', 'Cada acierto da 1 gota (máximo 4).', 'Fallar no tiene castigo.'] }
+  };
+  function miniIntro(clave, juego) {
+    return new Promise((res) => {
+      const d = INTRO_MINI[clave];
+      const caja = document.createElement('div'); caja.className = 'tbl-mini tbl-intro';
+      caja.innerHTML = `<span class="tbl-intro-ico" aria-hidden="true">${d.ico}</span><b>${esc(d.titulo)}</b><ol class="tbl-pasos">${d.pasos.map((p) => `<li>${esc(p)}</li>`).join('')}</ol>`;
+      const fila = document.createElement('div'); fila.className = 'tbl-fila';
+      const ahora = document.createElement('button'); ahora.type = 'button'; ahora.className = 'tbl-btn sec'; ahora.textContent = 'Ahora no';
+      const empezar = document.createElement('button'); empezar.type = 'button'; empezar.className = 'tbl-btn'; empezar.textContent = '¡Empezar!';
+      fila.append(ahora, empezar); caja.appendChild(fila); $.mesa.appendChild(caja);
+      ahora.addEventListener('click', () => { caja.remove(); res(0); });
+      empezar.addEventListener('click', () => { caja.remove(); juego().then(res); });
+    });
+  }
+  // F1138 · Cualquier minijuego se juega desde su tarjeta de instrucciones (casilla, Relámpago o menú).
+  function jugarMini(clave) {
+    const f = { arreo: miniArreo, cosecha: miniCosecha, memoria: miniMemoria, reto: miniReto }[clave];
+    return miniIntro(clave, f);
+  }
+  async function minijuegoCasilla(clave) {
+    const c = centroPieza(); chispas(c.x, c.y, 6, '#fff1b8');
+    const n = await jugarMini(clave);
+    if (n) gota(n);
+    decir(INTRO_MINI[clave].titulo, n ? `Ganas ${n} ${n === 1 ? 'gota' : 'gotas'} del minijuego.` : 'Sigue el camino: sin gotas esta vez.');
+  }
+  // F1138 · Tres puertas: elige una. Cada puerta esconde un premio distinto (gotas, dado de bonus o nada).
+  function puerta() {
+    return new Promise((res) => {
+      const caja = mini('Tres puertas', 'Elige una puerta. Cada una esconde algo distinto.');
+      const fila = document.createElement('div'); fila.className = 'tbl-fila tbl-puertas'; caja.appendChild(fila);
+      const premios = mezclar(['gotas', 'bonus', 'nada']); let elegida = false;
+      premios.forEach((premio, i) => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'tbl-btn sec tbl-puerta';
+        b.innerHTML = '<span aria-hidden="true">🚪</span> ' + (i + 1);
+        b.addEventListener('click', () => {
+          if (elegida) return; elegida = true;
+          fila.querySelectorAll('button').forEach((x) => { x.disabled = true; }); b.classList.add('abierta');
+          let txt;
+          if (premio === 'gotas') { gota(3); txt = 'Había 3 gotas de rocío. ¡Son tuyas!'; son('cofre'); }
+          else if (premio === 'bonus') { E.bonus += 1; pintarPanel(); txt = '¡Un dado de bonus! Lánzalo cuando quieras.'; son('cofre'); }
+          else { txt = 'Solo polvo del camino. Sigue así.'; son('pausa'); }
+          caja.querySelector('small').textContent = txt;
+          botonMini(caja, 'Seguir', () => { caja.remove(); res(); });
+        });
+        fila.appendChild(b);
+      });
+    });
+  }
+  // F1138 · Minijuego suelto desde el menú: misma tarjeta, ganancias al Vivero y opción de jugar otra vez.
+  function soloMini(clave, volver) {
+    const main = document.getElementById('pantalla'); if (!main || !INTRO_MINI[clave]) return;
+    E = cargar(); $ = {};
+    const ico = ICONO[clave] || '🧠', titulo = INTRO_MINI[clave].titulo;
+    document.body.classList.add('tb-full');
+    main.innerHTML = `<section class="tbl tbl-solo" aria-label="${esc(titulo)}"><header class="tbl-top"><button type="button" class="volver" id="tblVolver">‹ Minijuegos</button><div class="tbl-tit"><span class="tbl-icono" aria-hidden="true">${ico}</span><div><b>${esc(titulo)}</b><small>Minijuego suelto</small></div></div></header><div class="tbl-mesa" id="tblMesa"></div></section>`;
+    $.mesa = document.getElementById('tblMesa');
+    const salirAlMenu = () => { document.body.classList.remove('tb-full'); if (volver) volver(); };
+    document.getElementById('tblVolver').addEventListener('click', salirAlMenu);
+    jugarMini(clave).then((n) => {
+      if (n) { try { if (window.TBInicio && TBInicio.ganarDirecto) TBInicio.ganarDirecto(n); } catch (e) { /* sin Vivero: no pasa nada */ } }
+      const mesa = document.getElementById('tblMesa'); if (!mesa) return;
+      const card = document.createElement('div'); card.className = 'tbl-mini tbl-intro';
+      card.innerHTML = `<span class="tbl-intro-ico" aria-hidden="true">${n ? '🎉' : ico}</span><b>${n ? '¡Ganaste ' + n + ' ' + (n === 1 ? 'gota' : 'gotas') + '!' : 'Buen intento'}</b><small>${n ? 'Las gotas van a tu Vivero.' : 'Puedes volver a intentarlo cuando quieras.'}</small>`;
+      const fila = document.createElement('div'); fila.className = 'tbl-fila';
+      const salir = document.createElement('button'); salir.type = 'button'; salir.className = 'tbl-btn sec'; salir.textContent = 'Volver a Minijuegos';
+      salir.addEventListener('click', salirAlMenu);
+      const otra = document.createElement('button'); otra.type = 'button'; otra.className = 'tbl-btn'; otra.textContent = 'Jugar otra vez';
+      otra.addEventListener('click', () => soloMini(clave, volver));
+      fila.append(salir, otra); card.appendChild(fila); mesa.appendChild(card);
+    });
+  }
   function miniMemoria() {                                          // Memoria del huerto: 6 parejas. Ganas 2 gotas al completarla.
     return new Promise((res) => {
       const emo = ['🌵', '🌲', '🌸', '🦙', '🐧', '🌊'], cartas = barajar(emo.concat(emo));
@@ -637,7 +716,7 @@
       const campo = document.createElement('div'); campo.className = 'tbl-cosecha'; caja.appendChild(campo);
       const marca = document.createElement('p'); marca.className = 'tbl-marca'; caja.appendChild(marca);
       let pts = 0, fin = false, listo = false; const DUR = 12000, t0 = Date.now();
-      const frutas = ['🍎', '🍇', '🌽', '🥔', '🍓'], raras = ['🪨', '🦴', '🕷️', '🍄'];
+      const frutas = ['🍎', '🍇', '🌽', '🥔', '🍓'], raras = ['🪨', '🦴', '🕷️', '🥾'];
       const pinta = () => { marca.textContent = 'Puntos: ' + pts + ' · ' + Math.max(0, Math.ceil((DUR - (Date.now() - t0)) / 1000)) + ' s'; };
       const caer = () => {
         if (fin) return;
@@ -739,7 +818,7 @@
     son('relampago');
     decir('Relámpago', 'Un minijuego para ganar gotas. Puedes saltarlo.');
     const eleccion = minisDesbloqueados()[Math.floor(Math.random() * minisDesbloqueados().length)];
-    const n = eleccion === 'arreo' ? await miniArreo() : eleccion === 'cosecha' ? await miniCosecha() : eleccion === 'reto' ? await miniReto() : await miniMemoria();
+    const n = await jugarMini(eleccion);
     if (n) gota(n);
     decir('Relámpago', n ? `Ganas ${n} ${n === 1 ? 'gota' : 'gotas'} del minijuego.` : 'Sigue el camino: sin gotas esta vez.');
   }
@@ -816,7 +895,7 @@
   }
 
   window.TBTablero = {
-    abrir,
+    abrir, minijuego: soloMini,
     // expuesto para pruebas (no usar desde la interfaz)
     _t: { TEMAS, NIVELES, CASILLAS, RANGO, pesosDe, nivelDe, anillo, TRAMPA, ICONO, SONIDOS, audio, tema, CARA, nuevoEstado, cargar,
       // para pruebas: elige n preguntas con un estado dado y devuelve sus ids en orden
