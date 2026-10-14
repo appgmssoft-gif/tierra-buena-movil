@@ -1,0 +1,928 @@
+{
+ "preguntas": [
+  {
+   "t": "Ciencia",
+   "p": "¿A qué temperatura hierve el agua al nivel del mar?",
+   "o": [
+    "100 °C",
+    "50 °C",
+    "0 °C",
+    "80 °C"
+   ],
+   "dato": "A mayor altura, el agua hierve a menor temperatura."
+  },
+  {
+   "t": "Ciencia",
+   "p": "¿Cuál es el gas más abundante en el aire que respiramos?",
+   "o": [
+    "Nitrógeno",
+    "Oxígeno",
+    "Dióxido de carbono",
+    "Helio"
+   ],
+   "dato": "El oxígeno es el segundo, con cerca de un 21 %."
+  },
+  {
+   "t": "Ciencia",
+   "p": "¿Qué necesitan las plantas para hacer la fotosíntesis?",
+   "o": [
+    "Luz, agua y dióxido de carbono",
+    "Solo oscuridad",
+    "Metal y arena",
+    "Azúcar puro"
+   ],
+   "dato": "Como resultado liberan oxígeno al aire."
+  },
+  {
+   "t": "Ciencia",
+   "p": "¿Cuál es el símbolo químico del oro?",
+   "o": [
+    "Au",
+    "Ag",
+    "Go",
+    "Or"
+   ],
+   "dato": "Viene del latín «aurum»."
+  },
+  {
+   "t": "Ciencia",
+   "p": "¿Cuántos huesos tiene aproximadamente un adulto?",
+   "o": [
+    "206",
+    "120",
+    "300",
+    "500"
+   ],
+   "dato": "Un bebé nace con más de 270 huesos que se unen al crecer."
+  },
+  {
+   "t": "Ciencia",
+   "p": "¿Qué partícula del átomo tiene carga negativa?",
+   "o": [
+    "El electrón",
+    "El protón",
+    "El neutrón",
+    "El fotón"
+   ],
+   "dato": "Los protones tienen carga positiva y los neutrones no tienen carga."
+  },
+  {
+   "t": "Animales",
+   "p": "¿Cuál es el animal más grande que ha existido?",
+   "o": [
+    "Ballena azul",
+    "Elefante africano",
+    "Jirafa",
+    "Tiburón blanco"
+   ],
+   "dato": "Puede medir más de 25 metros de largo."
+  },
+  {
+   "t": "Animales",
+   "p": "¿Qué ave chilena vuela muy alto sobre la cordillera?",
+   "o": [
+    "Cóndor andino",
+    "Pingüino emperador",
+    "Pato cuchudo",
+    "Loica"
+   ],
+   "dato": "Es una de las aves voladoras más grandes del mundo."
+  },
+  {
+   "t": "Animales",
+   "p": "¿Qué mamífero es capaz de volar de verdad?",
+   "o": [
+    "Murciélago",
+    "Ornitorrinco",
+    "Erizo",
+    "Koala"
+   ],
+   "dato": "Es el único mamífero que vuela con alas propias."
+  },
+  {
+   "t": "Animales",
+   "p": "¿Cuántos corazones tiene un pulpo?",
+   "o": [
+    "Tres",
+    "Uno",
+    "Dos",
+    "Cinco"
+   ],
+   "dato": "Dos bombean sangre a las branquias y uno al resto del cuerpo."
+  },
+  {
+   "t": "Animales",
+   "p": "¿Qué ave no puede volar pero nada muy bien?",
+   "o": [
+    "Pingüino",
+    "Loro",
+    "Golondrina",
+    "Colibrí"
+   ],
+   "dato": "Algunos pingüinos bucean a más de 500 metros de profundidad."
+  },
+  {
+   "t": "Animales",
+   "p": "¿Qué animal terrestre es el más veloz?",
+   "o": [
+    "Guepardo",
+    "León",
+    "Caballo",
+    "Avestruz"
+   ],
+   "dato": "Puede alcanzar cerca de 100 km/h en pocos segundos."
+  },
+  {
+   "t": "Chile",
+   "p": "¿Cuál es la capital de Chile?",
+   "o": [
+    "Santiago",
+    "Valparaíso",
+    "Concepción",
+    "Antofagasta"
+   ],
+   "dato": "Valparaíso es la sede del Congreso Nacional."
+  },
+  {
+   "t": "Chile",
+   "p": "¿Cómo se llama el desierto más árido del norte de Chile?",
+   "o": [
+    "Desierto de Atacama",
+    "Desierto de Sechura",
+    "Desierto del Namib",
+    "Desierto de Gobi"
+   ],
+   "dato": "Es uno de los lugares más secos del planeta."
+  },
+  {
+   "t": "Chile",
+   "p": "¿Qué isla chilena es famosa por sus moáis?",
+   "o": [
+    "Isla de Pascua",
+    "Chiloé",
+    "Isla Mocha",
+    "Tierra del Fuego"
+   ],
+   "dato": "Los moáis son esculturas talladas en piedra volcánica."
+  },
+  {
+   "t": "Chile",
+   "p": "¿Cuál es el río más largo de Chile?",
+   "o": [
+    "Loa",
+    "Biobío",
+    "Maule",
+    "Maipo"
+   ],
+   "dato": "Nace en la cordillera y recorre el desierto de Atacama."
+  },
+  {
+   "t": "Chile",
+   "p": "¿Cuál es el baile nacional de Chile?",
+   "o": [
+    "La cueca",
+    "El tango",
+    "La cumbia",
+    "El joropo"
+   ],
+   "dato": "Imita el cortejo entre un gallo y una gallina."
+  },
+  {
+   "t": "Chile",
+   "p": "¿Cuál es la flor nacional de Chile?",
+   "o": [
+    "El copihue",
+    "La rosa",
+    "El lirio",
+    "El girasol"
+   ],
+   "dato": "Crece en los bosques del sur y su flor es roja."
+  },
+  {
+   "t": "Espacio",
+   "p": "¿Cuál es el planeta más grande del sistema solar?",
+   "o": [
+    "Júpiter",
+    "Saturno",
+    "Neptuno",
+    "La Tierra"
+   ],
+   "dato": "Dentro de él cabrían más de mil Tierras."
+  },
+  {
+   "t": "Espacio",
+   "p": "¿Qué planeta es conocido como el planeta rojo?",
+   "o": [
+    "Marte",
+    "Venus",
+    "Mercurio",
+    "Júpiter"
+   ],
+   "dato": "Su color se debe al óxido de hierro de su superficie."
+  },
+  {
+   "t": "Espacio",
+   "p": "¿Cuánto tarda la Luna en dar una vuelta completa a la Tierra?",
+   "o": [
+    "Unos 27 días",
+    "24 horas",
+    "365 días",
+    "Unos 12 días"
+   ],
+   "dato": "Por eso siempre vemos casi la misma cara de la Luna."
+  },
+  {
+   "t": "Espacio",
+   "p": "¿Qué es una estrella fugaz?",
+   "o": [
+    "Un meteoroide que se quema al entrar a la atmósfera",
+    "Una estrella que explota",
+    "Un cometa gigante",
+    "Un satélite artificial"
+   ],
+   "dato": "También se les llama meteoros."
+  },
+  {
+   "t": "Espacio",
+   "p": "¿Cuál es la estrella más cercana a la Tierra?",
+   "o": [
+    "El Sol",
+    "Sirio",
+    "Alfa Centauri",
+    "Betelgeuse"
+   ],
+   "dato": "La luz del Sol tarda unos 8 minutos en llegar a nosotros."
+  },
+  {
+   "t": "Espacio",
+   "p": "¿Quién fue el primer ser humano en viajar al espacio?",
+   "o": [
+    "Yuri Gagarin",
+    "Neil Armstrong",
+    "Buzz Aldrin",
+    "John Glenn"
+   ],
+   "dato": "Lo hizo en 1961 a bordo de la nave Vostok 1."
+  },
+  {
+   "t": "Adivinanzas",
+   "p": "Tiene manos y no sabe escribir. ¿Qué es?",
+   "o": [
+    "El reloj",
+    "El libro",
+    "La mesa",
+    "El guante"
+   ],
+   "dato": "Marca el tiempo sin usar palabras."
+  },
+  {
+   "t": "Adivinanzas",
+   "p": "Cuanto más le quitas, más grande se pone. ¿Qué es?",
+   "o": [
+    "El hoyo",
+    "La sombra",
+    "El ruido",
+    "El tiempo"
+   ],
+   "dato": "El hoyo crece cada vez que sacas tierra."
+  },
+  {
+   "t": "Adivinanzas",
+   "p": "Tiene ciudades sin casas, montañas sin árboles y agua sin peces. ¿Qué es?",
+   "o": [
+    "El mapa",
+    "La luna",
+    "El libro",
+    "El sueño"
+   ],
+   "dato": "Los mapas muestran lugares con símbolos y colores."
+  },
+  {
+   "t": "Adivinanzas",
+   "p": "Cuanto más grande es, menos se ve. ¿Qué es?",
+   "o": [
+    "La oscuridad",
+    "El cielo",
+    "La niebla",
+    "El humo"
+   ],
+   "dato": "Cuando hay mucha oscuridad no vemos nada."
+  },
+  {
+   "t": "Adivinanzas",
+   "p": "Soy alto cuando joven y bajo cuando viejo. ¿Qué soy?",
+   "o": [
+    "Una vela",
+    "Un árbol",
+    "Una montaña",
+    "Un tren"
+   ],
+   "dato": "Se consume mientras da luz."
+  },
+  {
+   "t": "Adivinanzas",
+   "p": "Tiene dientes pero no muerde ni come. ¿Qué es?",
+   "o": [
+    "El peine",
+    "La sierra",
+    "El cierre",
+    "La llave"
+   ],
+   "dato": "Sirve para ordenar el cabello."
+  },
+  {
+   "t": "Naturaleza",
+   "p": "¿Cómo se llama el árbol más alto del mundo?",
+   "o": [
+    "Secuoya costera",
+    "Alerce",
+    "Eucalipto",
+    "Baobab"
+   ],
+   "dato": "Puede superar los 110 metros de altura."
+  },
+  {
+   "t": "Naturaleza",
+   "p": "¿Qué árbol nativo de Chile puede vivir más de 3.000 años?",
+   "o": [
+    "Alerce",
+    "Boldo",
+    "Peumo",
+    "Quillay"
+   ],
+   "dato": "Es uno de los seres vivos más longevos del planeta."
+  },
+  {
+   "t": "Naturaleza",
+   "p": "¿Qué hace un árbol con el dióxido de carbono?",
+   "o": [
+    "Lo absorbe y lo usa para crecer",
+    "Lo convierte en agua salada",
+    "Lo guarda en las raíces como sal",
+    "Lo expulsa de noche"
+   ],
+   "dato": "Por eso los bosques ayudan a cuidar el aire."
+  },
+  {
+   "t": "Naturaleza",
+   "p": "¿Qué significa reciclar?",
+   "o": [
+    "Volver a usar materiales para hacer algo nuevo",
+    "Quemar la basura",
+    "Tirar cosas al mar",
+    "Comprar más cosas"
+   ],
+   "dato": "Reduce la basura que llega a los vertederos."
+  },
+  {
+   "t": "Naturaleza",
+   "p": "¿Qué tipo de energía se obtiene del viento?",
+   "o": [
+    "Eólica",
+    "Solar",
+    "Nuclear",
+    "Geotérmica"
+   ],
+   "dato": "Los aerogeneradores la transforman en electricidad."
+  },
+  {
+   "t": "Naturaleza",
+   "p": "¿Qué es un ecosistema?",
+   "o": [
+    "Un conjunto de seres vivos y su entorno",
+    "Un tipo de roca",
+    "Un río grande",
+    "Un volcán apagado"
+   ],
+   "dato": "En un ecosistema todo está conectado."
+  },
+  {
+   "t": "Cuerpo humano",
+   "p": "¿Qué órgano bombea la sangre por el cuerpo?",
+   "o": [
+    "El corazón",
+    "El hígado",
+    "Los pulmones",
+    "El estómago"
+   ],
+   "dato": "Late unas 100.000 veces al día."
+  },
+  {
+   "t": "Cuerpo humano",
+   "p": "¿Cuántos litros de sangre tiene aproximadamente un adulto?",
+   "o": [
+    "Unos 5 litros",
+    "Unos 20 litros",
+    "Medio litro",
+    "Unos 50 litros"
+   ],
+   "dato": "La sangre transporta oxígeno y nutrientes a todo el cuerpo."
+  },
+  {
+   "t": "Cuerpo humano",
+   "p": "¿Qué vitamina produce la piel cuando recibe sol?",
+   "o": [
+    "Vitamina D",
+    "Vitamina C",
+    "Vitamina A",
+    "Vitamina K"
+   ],
+   "dato": "Ayuda a fortalecer los huesos."
+  },
+  {
+   "t": "Cuerpo humano",
+   "p": "¿Qué órganos filtran la sangre y producen la orina?",
+   "o": [
+    "Los riñones",
+    "El corazón",
+    "La tráquea",
+    "El cerebro"
+   ],
+   "dato": "Filtran unos 180 litros de sangre al día."
+  },
+  {
+   "t": "Cuerpo humano",
+   "p": "¿Cuál es el hueso más largo del cuerpo?",
+   "o": [
+    "El fémur",
+    "La tibia",
+    "El húmero",
+    "La costilla"
+   ],
+   "dato": "Está en el muslo."
+  },
+  {
+   "t": "Cuerpo humano",
+   "p": "¿Cuántos dientes tiene un adulto con todas las muelas?",
+   "o": [
+    "32",
+    "28",
+    "20",
+    "36"
+   ],
+   "dato": "Sin las muelas del juicio son 28."
+  },
+  {
+   "t": "Geografía",
+   "p": "¿Qué país tiene la mayor población del mundo?",
+   "o": [
+    "India",
+    "China",
+    "Estados Unidos",
+    "Indonesia"
+   ],
+   "dato": "Su población supera los mil cuatrocientos millones de personas."
+  },
+  {
+   "t": "Geografía",
+   "p": "¿En qué continente está Egipto?",
+   "o": [
+    "África",
+    "Asia",
+    "Europa",
+    "Oceanía"
+   ],
+   "dato": "El río Nilo atraviesa el país de sur a norte."
+  },
+  {
+   "t": "Geografía",
+   "p": "¿Cuál es el océano más grande del mundo?",
+   "o": [
+    "Pacífico",
+    "Atlántico",
+    "Índico",
+    "Ártico"
+   ],
+   "dato": "Cubre casi un tercio de la superficie de la Tierra."
+  },
+  {
+   "t": "Geografía",
+   "p": "¿Cuál es la montaña más alta del mundo?",
+   "o": [
+    "Monte Everest",
+    "K2",
+    "Aconcagua",
+    "Kilimanjaro"
+   ],
+   "dato": "Está en la frontera entre Nepal y China."
+  },
+  {
+   "t": "Geografía",
+   "p": "¿Qué país tiene forma de bota?",
+   "o": [
+    "Italia",
+    "Grecia",
+    "Portugal",
+    "Noruega"
+   ],
+   "dato": "Su forma se parece a una bota apuntando hacia el mar."
+  },
+  {
+   "t": "Geografía",
+   "p": "¿Cuál es la capital de Australia?",
+   "o": [
+    "Canberra",
+    "Sídney",
+    "Melbourne",
+    "Auckland"
+   ],
+   "dato": "Sídney es la ciudad más grande, pero no la capital."
+  },
+  {
+   "t": "Historia",
+   "p": "¿En qué año llegó Cristóbal Colón a América?",
+   "o": [
+    "1492",
+    "1942",
+    "1600",
+    "1421"
+   ],
+   "dato": "Fue una expedición financiada por la corona de Castilla."
+  },
+  {
+   "t": "Historia",
+   "p": "¿Quién fue uno de los líderes de la independencia de Chile?",
+   "o": [
+    "Bernardo O'Higgins",
+    "Arturo Prat",
+    "Gabriela Mistral",
+    "Pedro de Valdivia"
+   ],
+   "dato": "Junto a José de San Martín lideró la independencia."
+  },
+  {
+   "t": "Historia",
+   "p": "¿Cuál fue el gran imperio de América del Sur antes de la llegada de los españoles?",
+   "o": [
+    "Inca",
+    "Azteca",
+    "Maya",
+    "Romano"
+   ],
+   "dato": "Su capital era Cusco, en lo que hoy es Perú."
+  },
+  {
+   "t": "Historia",
+   "p": "¿Qué construyeron los romanos para llevar agua a las ciudades?",
+   "o": [
+    "Acueductos",
+    "Pirámides",
+    "Canales de seda",
+    "Muros de vidrio"
+   ],
+   "dato": "Algunos todavía se mantienen en pie."
+  },
+  {
+   "t": "Historia",
+   "p": "¿En qué año terminó la Segunda Guerra Mundial?",
+   "o": [
+    "1945",
+    "1939",
+    "1918",
+    "1950"
+   ],
+   "dato": "Terminó con la rendición de Japón en septiembre."
+  },
+  {
+   "t": "Historia",
+   "p": "¿Quién creó la imprenta de tipos móviles en Europa?",
+   "o": [
+    "Johannes Gutenberg",
+    "Leonardo da Vinci",
+    "Galileo Galilei",
+    "Isaac Newton"
+   ],
+   "dato": "Hacia 1450 permitió imprimir libros en serie."
+  },
+  {
+   "t": "Tecnología",
+   "p": "¿Para qué sirve un router?",
+   "o": [
+    "Para conectar dispositivos a internet en una red",
+    "Para imprimir fotos",
+    "Para cargar baterías",
+    "Para medir la temperatura"
+   ],
+   "dato": "Reparte la conexión de internet entre varios aparatos."
+  },
+  {
+   "t": "Tecnología",
+   "p": "¿Qué es un byte?",
+   "o": [
+    "Un conjunto de 8 bits",
+    "Un tipo de virus",
+    "Un cable de red",
+    "Un procesador"
+   ],
+   "dato": "Con un byte se puede guardar una letra."
+  },
+  {
+   "t": "Tecnología",
+   "p": "¿Quién patentó el teléfono en 1876?",
+   "o": [
+    "Alexander Graham Bell",
+    "Thomas Edison",
+    "Nikola Tesla",
+    "Guglielmo Marconi"
+   ],
+   "dato": "Fue uno de los primeros inventos de comunicación a distancia."
+  },
+  {
+   "t": "Tecnología",
+   "p": "¿Qué es «la nube» en informática?",
+   "o": [
+    "Servidores remotos donde se guardan datos",
+    "Un programa de dibujo",
+    "Un tipo de cámara",
+    "Un juego"
+   ],
+   "dato": "Permite acceder a tus archivos desde distintos aparatos."
+  },
+  {
+   "t": "Tecnología",
+   "p": "¿Qué combinación de teclas sirve para copiar en la mayoría de computadores?",
+   "o": [
+    "Ctrl + C",
+    "Alt + F4",
+    "Esc",
+    "Ctrl + Z"
+   ],
+   "dato": "Ctrl + V sirve para pegar."
+  },
+  {
+   "t": "Tecnología",
+   "p": "¿Qué significa la sigla USB?",
+   "o": [
+    "Universal Serial Bus",
+    "Unidad de Software Básica",
+    "Universal Storage Board",
+    "Usuario Seguro del Bus"
+   ],
+   "dato": "Se usa para conectar memorias, teclados y cargadores."
+  },
+  {
+   "t": "Deportes",
+   "p": "¿Cuántos jugadores tiene cada equipo de fútbol en la cancha?",
+   "o": [
+    "11",
+    "10",
+    "12",
+    "9"
+   ],
+   "dato": "Incluye al arquero."
+  },
+  {
+   "t": "Deportes",
+   "p": "¿Cada cuántos años se celebran los Juegos Olímpicos de verano?",
+   "o": [
+    "4",
+    "2",
+    "3",
+    "5"
+   ],
+   "dato": "Su origen está en la antigua Grecia."
+  },
+  {
+   "t": "Deportes",
+   "p": "¿En qué deporte se usa un volante?",
+   "o": [
+    "Bádminton",
+    "Tenis",
+    "Ping pong",
+    "Squash"
+   ],
+   "dato": "El volante es la pieza de plumas que se golpea."
+  },
+  {
+   "t": "Deportes",
+   "p": "¿Cuántos puntos vale un triple en básquetbol?",
+   "o": [
+    "3",
+    "2",
+    "1",
+    "4"
+   ],
+   "dato": "Se lanza desde detrás de la línea de tres puntos."
+  },
+  {
+   "t": "Deportes",
+   "p": "¿En qué país nació el fútbol moderno?",
+   "o": [
+    "Inglaterra",
+    "Brasil",
+    "Italia",
+    "Argentina"
+   ],
+   "dato": "Sus primeras reglas se escribieron en el siglo XIX."
+  },
+  {
+   "t": "Deportes",
+   "p": "¿Qué deporte se juega sobre una mesa con raquetas pequeñas y una bolita?",
+   "o": [
+    "Ping pong",
+    "Golf",
+    "Hockey",
+    "Bolos"
+   ],
+   "dato": "También se llama tenis de mesa."
+  },
+  {
+   "t": "Arte y música",
+   "p": "¿Cuántas cuerdas tiene una guitarra clásica?",
+   "o": [
+    "6",
+    "4",
+    "5",
+    "8"
+   ],
+   "dato": "Las cuerdas más gruesas son las más graves."
+  },
+  {
+   "t": "Arte y música",
+   "p": "¿Quién pintó la Mona Lisa?",
+   "o": [
+    "Leonardo da Vinci",
+    "Miguel Ángel",
+    "Rafael",
+    "Vincent van Gogh"
+   ],
+   "dato": "Se exhibe en el Museo del Louvre, en París."
+  },
+  {
+   "t": "Arte y música",
+   "p": "¿Qué instrumento tiene teclas blancas y negras?",
+   "o": [
+    "El piano",
+    "La flauta",
+    "El violín",
+    "La trompeta"
+   ],
+   "dato": "Tiene 88 teclas en un piano de concierto."
+  },
+  {
+   "t": "Arte y música",
+   "p": "¿Quién compuso la Novena Sinfonía?",
+   "o": [
+    "Beethoven",
+    "Mozart",
+    "Bach",
+    "Chopin"
+   ],
+   "dato": "La compuso estando casi sordo."
+  },
+  {
+   "t": "Arte y música",
+   "p": "¿Qué poeta chileno ganó el Premio Nobel de Literatura en 1971?",
+   "o": [
+    "Pablo Neruda",
+    "Vicente Huidobro",
+    "Nicanor Parra",
+    "Violeta Parra"
+   ],
+   "dato": "Gabriela Mistral también ganó el Nobel, en 1945."
+  },
+  {
+   "t": "Arte y música",
+   "p": "¿Qué instrumento de viento tiene un tubo largo y se toca soplando?",
+   "o": [
+    "La flauta",
+    "El tambor",
+    "El arpa",
+    "El acordeón"
+   ],
+   "dato": "Hay flautas de madera y de metal."
+  },
+  {
+   "t": "Cocina",
+   "p": "¿Qué ingrediente hace que la masa de pan suba?",
+   "o": [
+    "Levadura",
+    "Sal",
+    "Azúcar",
+    "Aceite"
+   ],
+   "dato": "Libera gas mientras la masa descansa."
+  },
+  {
+   "t": "Cocina",
+   "p": "¿Qué ingrediente principal lleva el hummus?",
+   "o": [
+    "Garbanzos",
+    "Lentejas",
+    "Arvejas",
+    "Porotos negros"
+   ],
+   "dato": "Se muele con tahini, limón y ajo."
+  },
+  {
+   "t": "Cocina",
+   "p": "¿Qué bebida se prepara con hojas secas de yerba y se toma con bombilla?",
+   "o": [
+    "Mate",
+    "Café",
+    "Té chai",
+    "Jugo"
+   ],
+   "dato": "Es muy popular en Argentina, Uruguay y Paraguay."
+  },
+  {
+   "t": "Cocina",
+   "p": "¿Qué fruta ácida se usa para dar sabor al ceviche?",
+   "o": [
+    "Limón",
+    "Plátano",
+    "Frutilla",
+    "Durazno"
+   ],
+   "dato": "El ácido del limón cambia la textura del pescado crudo."
+  },
+  {
+   "t": "Cocina",
+   "p": "¿Cuál es el ingrediente principal del guacamole?",
+   "o": [
+    "Palta",
+    "Tomate",
+    "Pepino",
+    "Choclo"
+   ],
+   "dato": "En Chile le decimos palta."
+  },
+  {
+   "t": "Cocina",
+   "p": "¿Qué plato chileno lleva pino, pasas y aceitunas dentro de una masa?",
+   "o": [
+    "Empanada de pino",
+    "Charquicán",
+    "Humitas",
+    "Sopaipillas"
+   ],
+   "dato": "Es una de las comidas más típicas de las Fiestas Patrias."
+  },
+  {
+   "t": "Matemáticas",
+   "p": "¿Cuánto es 7 × 8?",
+   "o": [
+    "56",
+    "54",
+    "58",
+    "63"
+   ],
+   "dato": "Puedes comprobarlo sumando 7 ocho veces."
+  },
+  {
+   "t": "Matemáticas",
+   "p": "¿Cuál es el número primo más pequeño?",
+   "o": [
+    "2",
+    "1",
+    "0",
+    "9"
+   ],
+   "dato": "El 1 no se considera primo."
+  },
+  {
+   "t": "Matemáticas",
+   "p": "¿Cuántos grados suman los ángulos interiores de un triángulo?",
+   "o": [
+    "180",
+    "90",
+    "360",
+    "270"
+   ],
+   "dato": "Vale para cualquier triángulo."
+  },
+  {
+   "t": "Matemáticas",
+   "p": "¿Cuánto es el 25 % de 200?",
+   "o": [
+    "50",
+    "25",
+    "75",
+    "100"
+   ],
+   "dato": "El 25 % equivale a una cuarta parte."
+  },
+  {
+   "t": "Matemáticas",
+   "p": "¿Cuánto es la raíz cuadrada de 144?",
+   "o": [
+    "12",
+    "14",
+    "11",
+    "16"
+   ],
+   "dato": "12 multiplicado por sí mismo da 144."
+  },
+  {
+   "t": "Matemáticas",
+   "p": "¿Cuántos lados tiene un hexágono?",
+   "o": [
+    "6",
+    "5",
+    "7",
+    "8"
+   ],
+   "dato": "Un hexágono regular es la forma de cada celda de una colmena."
+  }
+ ]
+}

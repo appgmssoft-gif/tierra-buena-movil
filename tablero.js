@@ -22,6 +22,11 @@
     { nombre: 'Bosque nativo', lugar: 'Alerce Andino', icono: '🌳', cielo: '#cfe8c4', campo: '#2a4d31', aura: '#b8f0a6', deco: ['arbol', 'hongo', 'ave', 'flor'], leyenda: 'Los alerces crecen despacio, pero viven siglos. Cada anillo de su tronco cuenta un año de paciencia.' }
   ];
   const tema = (t) => TEMAS[(t - 1) % TEMAS.length];
+  // F1140 · Sala de tableros: lugares completados (aparte del progreso). Jugar de nuevo no los cambia.
+  const K_HECHOS = 'tb_movil_tableros_hechos';
+  let REPLAY = null, VOLVER = null;                                   // REPLAY: id de un tablero que se juega de nuevo (no guarda progreso)
+  function hechosLeer() { try { const a = JSON.parse(localStorage.getItem(K_HECHOS) || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
+  function hechoRegistrar(id) { const a = hechosLeer(); if (a.indexOf(id) < 0) a.push(id); try { localStorage.setItem(K_HECHOS, JSON.stringify(a)); } catch (e) { /* sin espacio */ } }
   const RANGO = (n) => Math.min(2 + Math.floor((n - 1) / 2), 6);     // casillas que puede retroceder una tormenta en el nivel n
   const CASILLAS = (n) => 18 + 3 * (n - 1);                           // casillas de juego en el nivel n (sin salida ni meta)
   const TRAMPA = { tormenta: 1, pausa: 1, ladron: 1, remolino: 1 };
@@ -108,7 +113,7 @@
     } catch (e) { /* sin datos */ }
     return nuevoEstado();
   }
-  function guardar() { try { localStorage.setItem(K, JSON.stringify(E)); } catch (e) { /* sin espacio */ } }
+  function guardar() { if (REPLAY) return; try { localStorage.setItem(K, JSON.stringify(E)); } catch (e) { /* sin espacio */ } }
 
   // ---------- Sonido propio de la selva (WebAudio; nada de archivos) ----------
   let ctx = null, master = null, verb = null;
@@ -273,6 +278,7 @@
   function decir(titulo, cuerpo) {
     if (!$.texto) return;
     $.texto.innerHTML = `<b>${esc(titulo)}</b><span>${esc(cuerpo)}</span>`;
+    ajustarBola();
     $.bola.classList.remove('salta'); void $.bola.offsetWidth; $.bola.classList.add('salta');
     brillos(6);
   }
@@ -422,6 +428,14 @@
   function pintarLuces() {
     let h = ''; for (let i = 1; i <= NIVELES; i++) h += '<span class="tbl-luz' + (i <= E.luces ? ' on' : '') + '" title="Luz ' + i + '"></span>';
     $.luces.innerHTML = h;
+  }
+  // F1142 · El texto de la bola se ajusta solo: baja de tamaño hasta que quepa entero en el círculo (en cualquier teléfono).
+  function ajustarBola() {
+    const p = $.texto; if (!p) return;
+    const b = p.querySelector('b'), sp = p.querySelector('span');
+    const fija = (t) => { p.style.setProperty('font-size', t + 'rem'); if (sp) sp.style.setProperty('font-size', t + 'rem'); if (b) b.style.setProperty('font-size', (t * 1.12) + 'rem'); };
+    let t = 0.96; fija(t);
+    while (p.scrollHeight > p.clientHeight + 1 && t > 0.6) { t = Math.round((t - 0.02) * 100) / 100; fija(t); }
   }
   function pintarEstado() {
     if (!$.estado) return;
@@ -841,9 +855,10 @@
       cuerpo = `Se enciende una luz (${E.luces} de ${NIVELES}). Ganas 10 gotas y un dado de bonus. El camino crece: ${CASILLAS(E.nivel)} casillas.`;
     } else {
       const siguiente = tema(E.tablero + 1);
+      if (!REPLAY) hechoRegistrar(E.tablero);                           // F1140: el lugar queda en la Sala de tableros
       E.tablero += 1; E.nivel = 1; E.luces = 0;
       titulo = '¡Tablero completo!';
-      cuerpo = `Las 10 luces se apagan. Ahora te espera ${siguiente.lugar} (${siguiente.nombre}). Ganas 10 gotas y un dado de bonus.`;
+      cuerpo = REPLAY ? `Lo jugaste de nuevo. Tu progreso no cambió: ${T.lugar} ya está en tu Sala.` : `Las 10 luces se apagan. Ahora te espera ${siguiente.lugar} (${siguiente.nombre}). Ganas 10 gotas y un dado de bonus.`;
       void T;
     }
     guardar(); son(hecho < NIVELES ? 'nivel' : 'meta'); confeti();
@@ -851,17 +866,43 @@
     const c = centroPieza(); chispas(c.x, c.y, 16, '#ffd45c');
     if (hecho === NIVELES) { montar(); }
     pintarTodo();
-    await aviso(titulo, cuerpo, 'Seguir');
+    await aviso(titulo, cuerpo, REPLAY && hecho === NIVELES ? 'Volver a la Sala' : 'Seguir');
+    if (REPLAY && hecho === NIVELES) { if (VOLVER) VOLVER(); return; }
     if (hecho < NIVELES) montar();
     decir(`Nivel ${E.nivel}`, hecho < NIVELES ? `Empiezas el nivel ${E.nivel}. Lanza el dado.` : tema(E.tablero).leyenda);
     pintarTodo();
+  }
+
+  // F1140 · Caja de un lugar, dibujada en código (SVG nítido). Completada: color y emblema del lugar. Bloqueada: en sombra con candado.
+  function cajaSVG(id, hecho) {
+    const T = tema(id), g = 'c' + id + (hecho ? 'h' : 'b');
+    return `<svg viewBox="0 0 160 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${esc(hecho ? T.nombre : 'Lugar por descubrir')}">` +
+      `<defs><linearGradient id="m${g}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a6a3a"/><stop offset="1" stop-color="#5b3a1d"/></linearGradient>` +
+      `<linearGradient id="s${g}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${T.cielo}"/><stop offset="1" stop-color="${T.campo}"/></linearGradient>` +
+      `<radialGradient id="a${g}"><stop offset="0" stop-color="${T.aura}" stop-opacity=".95"/><stop offset="1" stop-color="${T.aura}" stop-opacity="0"/></radialGradient></defs>` +
+      `<rect x="6" y="6" width="148" height="188" rx="12" fill="url(#m${g})" stroke="#3b2a18" stroke-width="3"/>` +
+      `<rect x="18" y="18" width="124" height="112" rx="8" fill="url(#s${g})" stroke="#3b2a18" stroke-width="2"/>` +
+      `<circle cx="80" cy="66" r="44" fill="url(#a${g})"/>` +
+      `<text x="80" y="78" font-size="34" text-anchor="middle">${hecho ? T.icono : '❔'}</text>` +
+      `<circle cx="14" cy="14" r="3.5" fill="#d9a441"/><circle cx="146" cy="14" r="3.5" fill="#d9a441"/>` +
+      `<rect x="22" y="140" width="116" height="44" rx="6" fill="#d9a441" stroke="#6b4a2b" stroke-width="2"/>` +
+      `<text x="80" y="158" font-size="12.5" font-weight="700" text-anchor="middle" fill="#2b2218">${hecho ? esc(T.nombre) : 'Lugar ' + ((id - 1) % TEMAS.length + 1)}</text>` +
+      `<text x="80" y="174" font-size="9.5" text-anchor="middle" fill="#4a3826">${hecho ? esc(T.lugar) : 'Por descubrir'}</text>` +
+      (hecho ? '' : `<rect x="6" y="6" width="148" height="188" rx="12" fill="#0b1310" opacity=".55"/><text x="80" y="104" font-size="26" text-anchor="middle">🔒</text>`) +
+      `</svg>`;
+  }
+  // Lista de lugares para la Sala: id, nombre, lugar y si ya está completado.
+  function listaTableros() {
+    const H = hechosLeer();
+    return TEMAS.map((T, i) => ({ id: i + 1, nombre: T.nombre, lugar: T.lugar, icono: T.icono, leyenda: T.leyenda, hecho: H.some((h) => ((h - 1) % TEMAS.length) === i) }));
   }
 
   // ---------- Pantalla ----------
   function abrir(volver, opc) {
     opc = opc || {}; PIEZA = opc.pieza || 'brote';
     const main = document.getElementById('pantalla'); if (!main) return;
-    E = cargar(); ocupado = false; $ = {};
+    REPLAY = opc.rejugar || null; VOLVER = volver || null;
+    E = REPLAY ? Object.assign(nuevoEstado(), { tablero: REPLAY }) : cargar(); ocupado = false; $ = {};
     document.body.classList.add('tb-full');
     main.innerHTML = `<section class="tbl" id="tbl" aria-label="Tablero de Tierra Buena">
       <header class="tbl-top">
@@ -895,7 +936,7 @@
   }
 
   window.TBTablero = {
-    abrir, minijuego: soloMini,
+    abrir, minijuego: soloMini, caja: cajaSVG, lista: listaTableros,
     // expuesto para pruebas (no usar desde la interfaz)
     _t: { TEMAS, NIVELES, CASILLAS, RANGO, pesosDe, nivelDe, anillo, TRAMPA, ICONO, SONIDOS, audio, tema, CARA, nuevoEstado, cargar,
       // para pruebas: elige n preguntas con un estado dado y devuelve sus ids en orden

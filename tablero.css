@@ -87,7 +87,7 @@ body.tb-full #pantalla { padding-bottom: 0; }
 .tbl-aviso-caja p { margin: 0; font-size: 1.05rem; line-height: 1.4; }
 
 /* Dados 3D: cubo con seis caras, sombra que se encoge al saltar */
-.tbl-bandeja { display: flex; gap: 18px; justify-content: center; align-items: flex-end; margin: 4px 0 2px; min-height: 66px; flex-shrink: 0; }
+.tbl-bandeja { display: flex; gap: 18px; justify-content: center; align-items: flex-end; margin: 0; padding: 22px 0 2px; box-sizing: border-box; height: 92px; flex-shrink: 0; position: relative; z-index: 1; overflow: visible; }   /* F1139: el salto del dado queda dentro de su zona reservada y nunca tapa el tablero */
 .tbl-dado3d { position: relative; width: 58px; height: 58px; perspective: 320px; }
 .tbl-dado3d[hidden] { display: none; }
 .tbl-dado3d.rueda { animation: tblDadoSalta 1.15s cubic-bezier(.3,.6,.4,1); }
@@ -139,7 +139,7 @@ body.tb-full #pantalla { padding-bottom: 0; }
 @keyframes tblSaltoPieza { 0% { transform: translateY(0) scale(1, 1); } 35% { transform: translateY(-16px) scale(.92, 1.08); } 70% { transform: translateY(-3px) scale(1.06, .94); } 100% { transform: translateY(0) scale(1, 1); } }
 @keyframes tblRetroPieza { 0% { transform: rotate(0); } 40% { transform: rotate(-22deg) translateY(-6px); } 100% { transform: rotate(0); } }
 @keyframes tblHalo { 0%, 100% { opacity: .55; transform: scale(1); } 50% { opacity: 1; transform: scale(1.08); } }
-@keyframes tblDadoSalta { 0% { transform: translateY(0); } 30% { transform: translateY(-38px); } 52% { transform: translateY(0); } 68% { transform: translateY(-12px); } 84% { transform: translateY(0); } 93% { transform: translateY(-3px); } 100% { transform: translateY(0); } }
+@keyframes tblDadoSalta { 0% { transform: translateY(0); } 30% { transform: translateY(-18px); } 52% { transform: translateY(0); } 68% { transform: translateY(-7px); } 84% { transform: translateY(0); } 93% { transform: translateY(-2px); } 100% { transform: translateY(0); } }
 @keyframes tblSombra { 0% { transform: scale(1); opacity: 1; } 30% { transform: scale(.55); opacity: .45; } 52% { transform: scale(1.1); opacity: 1; } 68% { transform: scale(.75); opacity: .6; } 100% { transform: scale(1); opacity: 1; } }
 @keyframes tblGira { 0% { transform: translate(-50%, -50%) rotateX(90deg); opacity: 0; } 60% { opacity: 1; } 100% { transform: translate(-50%, -50%) rotateX(0deg); opacity: 1; } }
 @keyframes tblBrilla { 0%, 100% { box-shadow: 0 3px 0 #b08030, 0 0 0 0 rgba(255,220,120,.0); } 50% { box-shadow: 0 3px 0 #b08030, 0 0 18px 4px rgba(255,220,120,.7); } }
@@ -279,3 +279,10 @@ body.tb-full #pantalla { padding-bottom: 0; }
 .tbl-solo .tbl-tit { min-width: 0; flex: 1; }
 .tbl-solo .tbl-tit > div { min-width: 0; }
 .tbl-solo .tbl-tit b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* F1142 · Texto de la bola: tamaño y altura de línea que caben en el círculo, también en el lugar con leyenda más larga */
+.tbl-bola p { line-height: 1.22; -webkit-line-clamp: 24; }
+.tbl-bola b { font-size: 1.02rem; }
+/* F1142 · Encabezado de la mesa: el nombre del lugar se corta con puntos suspensivos, nunca se sale de la pantalla */
+.tbl-top .tbl-tit { min-width: 0; flex: 1; }
+.tbl-top .tbl-tit > div { min-width: 0; }
+.tbl-top .tbl-tit b, .tbl-top .tbl-tit small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

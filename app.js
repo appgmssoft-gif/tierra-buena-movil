@@ -1357,12 +1357,13 @@
   const JUEGOS = [
     ['tablero', '🎲', 'Tablero de Tierra Buena', 'Un camino con sorpresas: rocío, preguntas, atajos y tormentas que te hacen retroceder.'],   // F1123 · Fase 1 del tablero (tablero.js)
     ['minijuegos', '🕹️', 'Minijuegos', 'Arreo, Memoria, Cosecha y Reto de atención. Cada uno explica su regla antes de empezar.'],
+    ['mente', '🧠', 'Mente en juego', 'Trivia rápida: ciencia, animales, Chile, espacio y adivinanzas. Con racha y comodín.'],
     ['raices', '📖', 'Preguntas de la Palabra', 'Preguntas sobre lo que leíste, con el versículo que explica la respuesta.'],
     ['brotes', '✍️', 'Completa el versículo', 'Toca la palabra que falta en el versículo. Puedes usar las palabras que tú resaltaste.'],
     ['sopa', '🔎', 'Sopa del Vivero', 'Letras grandes, sin tiempo y con pistas gratis.'],
     ['jardin', '🌱', 'Jardín del principio', 'Un día de la creación por nivel: responde y se abre el siguiente día.']
   ];
-  const JUEGOS_LISTOS = { minijuegos: (v) => vistaMinijuegos(v), tablero: (v) => { if (window.TBTablero) TBTablero.abrir(v, { pieza: ((PIEZAS.find((p) => p[0] === ((jugadorLeer() || {}).pieza)) || PIEZAS[0])[0]) }); }, raices: (v) => vistaRaices(v), brotes: (v) => vistaBrotesCamino(v), jardin: (v) => vistaJardin(v), sopa: (v) => vistaSopa(v) };   // id -> función que abre el juego (cada fase nueva se registra aquí)
+  const JUEGOS_LISTOS = { minijuegos: (v) => vistaMinijuegos(v), mente: (v) => juegoMente(v), tablero: (v) => { if (window.TBTablero) TBTablero.abrir(v, { pieza: ((PIEZAS.find((p) => p[0] === ((jugadorLeer() || {}).pieza)) || PIEZAS[0])[0]) }); }, raices: (v) => vistaRaices(v), brotes: (v) => vistaBrotesCamino(v), jardin: (v) => vistaJardin(v), sopa: (v) => vistaSopa(v) };   // id -> función que abre el juego (cada fase nueva se registra aquí)
   function juegoTerminar(id, aciertos, total) {   // guarda la partida; una gota de rocío al terminar con al menos 60 % de aciertos (tope diario)
     const j = leer(K_JUEGOS) || { n: 0, p: {} }; j.n = (j.n || 0) + 1; j.p = j.p || {};
     const q = j.p[id] || { n: 0, mejor: 0 }; q.n++; q.mejor = Math.max(q.mejor, Number(aciertos) || 0); j.p[id] = q; guardar(K_JUEGOS, j);
@@ -1381,6 +1382,121 @@
   // F947 · Texto de los juegos: separa palabras pegadas y arregla espacios (la Biblia y las preguntas llegan de distintas fuentes).
   const limpiaTexto = (t) => String(t == null ? '' : t).replace(/\s+/g, ' ').replace(/([a-záéíóúñ])([A-ZÁÉÍÓÚÑ])/g, '$1 $2').replace(/([,;:.!?»)])(?=[A-Za-zÁÉÍÓÚáéíóúñ¿¡«(])/g, '$1 ').trim();
   const JU_HERO = (n) => `<svg class="ju-hero" viewBox="0 0 320 96" aria-hidden="true" focusable="false"><path class="ju-suelo" d="M0 70 Q80 58 160 68 T320 62 V96 H0z"/><g class="ju-raiz"><path d="M160 68 C150 78 138 82 124 90 M160 68 C162 80 170 86 176 94 M160 68 C172 76 188 80 204 88"/></g><g class="ju-planta"><path class="ju-tallo" d="M160 68 V${Math.max(22, 62 - n * 8)}"/><path class="ju-hoja h1" d="M160 ${Math.max(40, 62 - n * 5)} c-18-2-28-12-30-24 18 0 30 8 30 24z"/><path class="ju-hoja h2" d="M160 ${Math.max(34, 54 - n * 5)} c18-2 28-12 30-24-18 0-30 8-30 24z"/>${n >= 3 ? '<circle class="ju-flor" cx="160" cy="18" r="7"/><circle class="ju-flor2" cx="160" cy="18" r="3"/>' : ''}</g></svg>`;
+  // F1141 · Mente en juego: trivia rápida. 10 preguntas de temas variados, 12 s por pregunta, racha con multiplicador,
+  // comodín 50/50 (una vez) y «¿Sabías que…?» después de cada respuesta. Un tiempo agotado cuenta como fallo, sin castigo extra.
+  async function juegoMente(volver) {
+    const RONDAS = 10, TIEMPO = 12000, PASO = 100, C = { rosa: 1 };
+    const sonido = (n) => { try { if (window.TBSonido && TBSonido[n]) TBSonido[n](); } catch (e) { /* el sonido nunca rompe el juego */ } };
+    const mezcla = (a) => a.slice().sort(() => Math.random() - 0.5);
+    let banco;
+    try { banco = (await datoCargar('mente_en_juego')).preguntas || []; } catch (e) { banco = []; }
+    if (!banco.length) { $('#pantalla').innerHTML = `${cabecera('Mente en juego', 'Juegos')}<div class="ju"><p class="suave">No pudimos cargar las preguntas. Vuelve a intentarlo en un momento.</p></div>`; $('#volver').onclick = volver; return; }
+    // Temas variados: cada pregunta de un tema distinto al anterior, y sin repetir preguntas dentro de la partida.
+    const pool = mezcla(banco), elegidas = [];
+    while (elegidas.length < RONDAS && pool.length) {
+      const ult = elegidas.length ? elegidas[elegidas.length - 1].t : null;
+      let k = pool.findIndex((x) => x.t !== ult); if (k < 0) k = 0;
+      elegidas.push(pool.splice(k, 1)[0]);
+    }
+    const N = elegidas.length;
+    const items = elegidas.map((q) => ({ p: q.p, t: q.t, dato: q.dato, ops: mezcla(q.o.map((texto, i) => ({ t: texto, c: i === 0 }))) }));
+    const st = { i: 0, aciertos: 0, racha: 0, mejorRacha: 0, puntos: 0, comodin: true, restante: TIEMPO, timer: null, listo: false };
+    const parar = () => { if (st.timer) clearInterval(st.timer); st.timer = null; };
+    const salir = () => { parar(); if (volver) volver(); };
+    const mult = () => Math.min(1 + Math.floor(st.racha / 2) * 0.5, 3);
+
+    function pintar() {
+      const it = items[st.i];
+      $('#pantalla').innerHTML = `<div class="mente">
+        <header class="mente-top"><button type="button" class="volver" id="volver">‹ Juegos</button><b>Mente en juego</b><span class="mente-pts" id="mPts">${st.puntos} pts</span></header>
+        <div class="mente-barra" aria-hidden="true"><div class="mente-tiempo" id="mTiempo"></div></div>
+        <div class="mente-meta"><span>Pregunta ${st.i + 1} de ${N}</span><span class="mente-racha" id="mRacha">${st.racha >= 2 ? '🔥 Racha ' + st.racha + ' · x' + mult().toFixed(1) : ''}</span></div>
+        <article class="mente-carta">
+          <span class="mente-tema">${esc(it.t)}</span>
+          <h2 class="mente-p">${esc(it.p)}</h2>
+          <div class="mente-ops" role="group" aria-label="Respuestas">${it.ops.map((o, k) => `<button type="button" class="mente-op" data-k="${k}">${esc(o.t)}</button>`).join('')}</div>
+        </article>
+        <div class="mente-pie"><button type="button" class="btn sec chico" id="mComodin"${st.comodin ? '' : ' disabled'}>${st.comodin ? '✂️ Comodín 50/50' : 'Comodín usado'}</button></div>
+        <div class="mente-dato" id="mDato" hidden></div>
+      </div>`;
+      $('#volver').onclick = salir;
+      document.querySelectorAll('.mente-op').forEach((b) => b.addEventListener('click', () => responder(Number(b.dataset.k))));
+      $('#mComodin').addEventListener('click', comodin);
+      arrancarTiempo();
+    }
+
+    function arrancarTiempo() {
+      parar(); st.restante = TIEMPO; st.listo = false;
+      const barra = () => document.getElementById('mTiempo');
+      const pinta = () => { const b = barra(); if (!b) { parar(); return; } b.style.width = Math.max(0, st.restante / TIEMPO * 100) + '%'; b.classList.toggle('poca', st.restante <= 4000); };
+      pinta();
+      st.timer = setInterval(() => {
+        if (!document.getElementById('mTiempo')) { parar(); return; }
+        st.restante -= PASO; pinta();
+        if (st.restante <= 0) { parar(); responder(-1); }
+      }, PASO);
+    }
+
+    function responder(k) {
+      if (st.listo) return; st.listo = true; parar();
+      const it = items[st.i], ok = k >= 0 && it.ops[k].c;
+      if (ok) {
+        st.aciertos++; st.racha++; st.mejorRacha = Math.max(st.mejorRacha, st.racha);
+        st.puntos += Math.round((10 + Math.min(st.racha, 6) * 5 + Math.round(st.restante / TIEMPO * 10)) * mult());
+        sonido('exito');
+      } else { st.racha = 0; sonido('suave'); }
+      document.querySelectorAll('.mente-op').forEach((b) => {
+        const o = it.ops[Number(b.dataset.k)]; b.disabled = true;
+        if (o.c) b.classList.add('ok'); else if (Number(b.dataset.k) === k) b.classList.add('mal');
+      });
+      const pts = document.getElementById('mPts'); if (pts) pts.textContent = st.puntos + ' pts';
+      const rac = document.getElementById('mRacha'); if (rac) rac.textContent = st.racha >= 2 ? '🔥 Racha ' + st.racha + ' · x' + mult().toFixed(1) : '';
+      const c = document.getElementById('mComodin'); if (c) c.disabled = true;
+      const d = document.getElementById('mDato');
+      d.hidden = false;
+      d.innerHTML = `<p class="mente-res">${ok ? '¡Muy bien!' : k < 0 ? 'Se acabó el tiempo.' : 'Casi. La respuesta era «' + esc(it.ops.find((o) => o.c).t) + '».'}</p>
+        <p class="mente-sab"><b>¿Sabías que…?</b> ${esc(it.dato || '')}</p>
+        <button type="button" class="btn" id="mSig">${st.i + 1 < N ? 'Siguiente pregunta' : 'Ver resultado'}</button>`;
+      $('#mSig').addEventListener('click', siguiente);
+    }
+
+    function comodin() {
+      if (!st.comodin || st.listo) return;
+      st.comodin = false;
+      const malas = []; document.querySelectorAll('.mente-op').forEach((b) => { if (!items[st.i].ops[Number(b.dataset.k)].c) malas.push(b); });
+      mezcla(malas).slice(0, 2).forEach((b) => { b.disabled = true; b.classList.add('fuera'); });
+      const c = document.getElementById('mComodin'); if (c) { c.disabled = true; c.textContent = 'Comodín usado'; }
+    }
+
+    function siguiente() {
+      st.i++;
+      if (st.i >= N) return fin();
+      pintar();
+    }
+
+    function fin() {
+      parar();
+      const pct = Math.round(st.aciertos / N * 100);
+      try { juegoTerminar('mente', st.aciertos, N); } catch (e) { /* sin registro: la partida igual se muestra */ }
+      sonido('logro');
+      $('#pantalla').innerHTML = `<div class="mente mente-fin">
+        <header class="mente-top"><button type="button" class="volver" id="volver">‹ Juegos</button><b>Mente en juego</b><span></span></header>
+        <div class="mente-final">
+          <span class="mente-trofeo" aria-hidden="true">${pct >= 80 ? '🏆' : pct >= 50 ? '🌟' : '🌱'}</span>
+          <h2>${st.aciertos} de ${N} correctas</h2>
+          <p class="mente-pts-grande">${st.puntos} puntos</p>
+          <ul class="mente-stats"><li><b>${st.mejorRacha}</b><small>mejor racha</small></li><li><b>${pct}%</b><small>de acierto</small></li></ul>
+          <p class="suave">${pct >= 60 ? 'Ganaste una gota de rocío para tu Vivero.' : 'Sigue practicando: cada partida se nota.'}</p>
+          <div class="mente-botones"><button type="button" class="btn sec" id="mOtra2">Jugar otra vez</button><button type="button" class="btn" id="mVolver">Volver a Juegos</button></div>
+        </div></div>`;
+      $('#volver').onclick = salir;
+      $('#mVolver').onclick = salir;
+      $('#mOtra2').onclick = () => juegoMente(volver);
+    }
+
+    pintar();
+  }
+
   // F1138 · Minijuegos sueltos: tarjetas con lo que hace cada uno. Cada juego abre con su tarjeta de instrucciones.
   function vistaMinijuegos(volver) {
     const M = [
@@ -1695,6 +1811,8 @@
       { ok: n >= 10, t: 'Diez partidas', d: 'Constancia de jugador' },
     ];
   }
+  // F1140 · Consola TV: pantalla con marco de madera, luz de encendido y cartuchos de cada juego.
+  const piezaActual = () => ((PIEZAS.find((p) => p[0] === ((jugadorLeer() || {}).pieza)) || PIEZAS[0])[0]);
   function vistaJuegos() {
     document.body.classList.remove('tb-full');   // F1126: al volver a la lista, vuelve la barra inferior
     const j = leer(K_JUEGOS) || { n: 0 }, jug = jugadorLeer(), n = Number(j.n) || 0;
@@ -1705,12 +1823,29 @@
       <button type="button" class="btn" id="jugEmpezar">Empezar a jugar</button></section>`
       : `<section class="jug-resumen card"><span class="jug-avatar" aria-hidden="true">${pIcono(jug.pieza)}</span><div><b>${esc(jug.nombre)}</b><small class="suave">Jugador ${pieza(jug.pieza)[2].toLowerCase()} · ${n} ${n === 1 ? 'partida' : 'partidas'}</small></div><button type="button" class="btn sec" id="jugEditar">Editar</button></section>`;
     const logros = logrosDe(jug, n);
+    const lugares = window.TBTablero && TBTablero.lista ? TBTablero.lista() : [];
+    const hechos = lugares.filter((t) => t.hecho), COLOR = { tablero: 'ambar', raices: 'teal', brotes: 'verde', sopa: 'azul', jardin: 'violeta', minijuegos: 'rojo', mente: 'rosa' };
+    const cartucho = (g) => `<button type="button" class="cart c-${COLOR[g[0]] || 'verde'}" data-juego="${g[0]}" aria-label="${esc(g[2])}">
+        <span class="cart-ranura" aria-hidden="true"></span>
+        <span class="cart-etiqueta"><span class="cart-ico" aria-hidden="true">${icono(g[1])}</span><b>${esc(g[2])}</b><small>${esc(g[3])}</small></span>
+        <span class="cart-play">▶ Jugar</span></button>`;
+    const vitrina = hechos.length ? hechos.slice(-4).map((t) => `<span class="sala-mini" aria-hidden="true">${TBTablero.caja(t.id, true)}</span>`).join('') : '';
     $('#pantalla').innerHTML = `${cabecera('Juegos', 'Palabra')}<p class="suave">Elige un juego. Jugar da gotas de rocío para tu Inicio; no hay anuncios ni monedas.</p>
       ${alta}
-      <h2 class="sep">Consola</h2>
-      <div class="consola">${JUEGOS.map((g) => JUEGOS_LISTOS[g[0]]
-        ? `<button type="button" class="consola-tile" data-juego="${g[0]}"><span class="ct-ico" aria-hidden="true">${icono(g[1])}</span><b>${g[2]}</b><small>${g[3]}</small><span class="ct-play" aria-hidden="true">▶ Jugar</span></button>`
-        : `<div class="consola-tile pronto"><span class="ct-ico" aria-hidden="true">${icono(g[1])}</span><b>${g[2]}</b><small>${g[3]}</small><span class="ct-play">Muy pronto</span></div>`).join('')}</div>
+      <section class="tv" aria-label="Consola de juegos">
+        <div class="tv-marco">
+          <div class="tv-pantalla">
+            <div class="tv-titulo"><span>Elige un juego</span><small>${JUEGOS.length} juegos · ${n} ${n === 1 ? 'partida' : 'partidas'}</small></div>
+            <div class="tv-carts">${JUEGOS.map(cartucho).join('')}</div>
+          </div>
+          <div class="tv-base"><span class="tv-marca">TIERRA BUENA</span><span class="tv-led" aria-hidden="true"></span><span class="tv-rejilla" aria-hidden="true"></span></div>
+        </div>
+        <div class="tv-pata" aria-hidden="true"></div>
+      </section>
+      <button type="button" class="sala-acceso card" id="irSala">
+        <span class="sala-txt"><span class="t"><span aria-hidden="true">🏛️</span>Sala de tableros</span><small class="suave">${hechos.length} de ${lugares.length} lugares completados · vuelve a jugar los que ya ganaste</small></span>
+        <span class="sala-mini-fila">${vitrina}</span>
+      </button>
       <h2 class="sep">Logros</h2>
       <ul class="logros">${logros.map((l) => `<li class="logro${l.ok ? ' ok' : ''}"><span aria-hidden="true">${l.ok ? '🏅' : '🔒'}</span><div><b>${l.t}</b><small class="suave">${l.ok ? l.d : 'Por descubrir'}</small></div></li>`).join('')}</ul>`;
     volverA('Palabra', vistaPalabra);
@@ -1729,6 +1864,29 @@
     const editar = $('#jugEditar');
     if (editar) editar.addEventListener('click', () => { jugadorGuardar(null); vistaJuegos(); });
     document.querySelectorAll('[data-juego]').forEach((b) => b.addEventListener('click', () => { const f = JUEGOS_LISTOS[b.dataset.juego]; if (f) { document.body.classList.add('tb-full'); f(vistaJuegos); } }));   // F1126: los juegos ocupan toda la pantalla
+    $('#irSala').addEventListener('click', () => vistaSala(vistaJuegos));
+  }
+
+  // F1140 · Sala de tableros: una caja por lugar. Las completadas se pueden volver a jugar sin cambiar el progreso.
+  function vistaSala(volver) {
+    document.body.classList.remove('tb-full');
+    const lugares = window.TBTablero && TBTablero.lista ? TBTablero.lista() : [];
+    const hechos = lugares.filter((t) => t.hecho).length;
+    $('#pantalla').innerHTML = `${cabecera('Sala de tableros', 'Juegos')}
+      <p class="suave">Cada lugar que completas se guarda aquí. Puedes volver a jugarlo cuando quieras: tu progreso no cambia.</p>
+      <p class="sala-cuenta">${hechos} de ${lugares.length} lugares completados</p>
+      <div class="estante">${lugares.map((t) => `<button type="button" class="caja-btn${t.hecho ? '' : ' bloq'}" data-tab="${t.id}" aria-label="${t.hecho ? esc(t.nombre) : 'Lugar por descubrir'}">${TBTablero.caja(t.id, t.hecho)}</button>`).join('')}</div>
+      <section class="sala-detalle card" id="salaDetalle" aria-live="polite"><p class="suave m0t">Toca una caja para ver su lugar.</p></section>`;
+    $('#volver').onclick = volver;
+    document.querySelectorAll('[data-tab]').forEach((b) => b.addEventListener('click', () => {
+      const t = lugares.find((x) => String(x.id) === b.dataset.tab); if (!t) return;
+      document.querySelectorAll('.caja-btn').forEach((x) => x.classList.toggle('on', x === b));
+      $('#salaDetalle').innerHTML = t.hecho
+        ? `<div class="t"><span aria-hidden="true">${t.icono}</span>${esc(t.nombre)} · ${esc(t.lugar)}</div><p class="m0t">${esc(t.leyenda)}</p><button type="button" class="btn" id="salaJugar">↻ Jugar de nuevo</button>`
+        : `<div class="t"><span aria-hidden="true">🔒</span>Lugar por descubrir</div><p class="suave m0t">Completa los 10 niveles del camino para llegar hasta aquí.</p>`;
+      const sj = $('#salaJugar');
+      if (sj) sj.addEventListener('click', () => TBTablero.abrir(() => vistaSala(volver), { pieza: piezaActual(), rejugar: t.id }));
+    }));
   }
 
   function vistaPalabra() {
@@ -4054,9 +4212,10 @@
     const FRASES = ['Hoy basta con dar un buen paso.', 'Lo pequeño, hecho con cariño, cuenta.', 'Respira. Vas bien.', 'Una palabra amable también es una semilla.', 'No tienes que poder con todo hoy.', 'Lo que siembras con paciencia, crece.', 'Haz una cosa buena y déjala ir.', 'Pregunta cómo está alguien. En serio.', 'La calma también se practica.', 'Hay buena tierra donde estás parado.', 'Descansar es parte del trabajo.', 'Sé el aviso bueno de alguien hoy.'];
     const hoy = new Date(), h0 = hoy.getHours(), saludo = h0 < 6 ? 'Qué bueno verte despierto' : h0 < 12 ? 'Buenos días' : h0 < 19 ? 'Buenas tardes' : 'Buenas noches';
     let k = (hoy.getFullYear() * 366 + hoy.getMonth() * 31 + hoy.getDate()) % FRASES.length;
-    $('#pantalla').innerHTML = `<section class="inicio-limpio${window.TBLienzo ? ' il-con-lienzo' : ''}" id="inicioLimpio" aria-label="Inicio"><button type="button" class="il-juntos il-paisaje" id="ilPais" aria-label="Elegir paisaje y clima" title="Tu paisaje"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 19l6-10 4 6 3-4 7 8z"/><circle cx="17" cy="6" r="2"/></svg></button><button type="button" class="il-juntos" id="ilJuntos" aria-label="Juntos hacemos el bien" title="Juntos hacemos el bien">${svg('gente', 22)}</button><p class="il-sal">${saludo}${n ? ', ' + esc(n) : ''}</p><time class="il-hora" id="ilHora"></time><p class="il-frase" id="ilFrase" aria-live="off"></p><div id="ilLienzo"></div></section>`;
+    $('#pantalla').innerHTML = `<section class="inicio-limpio${window.TBLienzo ? ' il-con-lienzo' : ''}" id="inicioLimpio" aria-label="Inicio"><button type="button" class="il-juntos il-paisaje" id="ilPais" aria-label="Elegir paisaje y clima" title="Tu paisaje"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 19l6-10 4 6 3-4 7 8z"/><circle cx="17" cy="6" r="2"/></svg></button><button type="button" class="il-juntos il-juegos" id="ilJuegos" aria-label="Juegos" title="Juegos"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="10" rx="5"/><path d="M8 12h3M9.5 10.5v3"/><circle cx="15.5" cy="11" r=".7"/><circle cx="17.7" cy="13" r=".7"/></svg></button><button type="button" class="il-juntos" id="ilJuntos" aria-label="Juntos hacemos el bien" title="Juntos hacemos el bien">${svg('gente', 22)}</button><p class="il-sal">${saludo}${n ? ', ' + esc(n) : ''}</p><time class="il-hora" id="ilHora"></time><p class="il-frase" id="ilFrase" aria-live="off"></p><div id="ilLienzo"></div></section>`;
     const sec = $('#inicioLimpio'), fr = $('#ilFrase');
     const bp = $('#ilPais'); if (bp) bp.onclick = () => { vibra(); if (window.TBLienzo && window.TBLienzo.paisajeHoja) window.TBLienzo.paisajeHoja(() => { const c = $('#ilLienzo'); if (c) window.TBLienzo.montar(c); }); };
+    const bg = $('#ilJuegos'); if (bg) bg.onclick = () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) { /* sin vibración */ } ir('palabra'); vistaJuegos(); };
     const bj = $('#ilJuntos'); if (bj) bj.onclick = () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) { /* sin vibración */ } abrirJuntos(); };
     const quieto = () => document.documentElement.getAttribute('data-anim') === 'off' || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
     fr.textContent = FRASES[k]; calmaResp.push(setTimeout(() => { if (fr.isConnected) fr.classList.add('on'); }, 120));
