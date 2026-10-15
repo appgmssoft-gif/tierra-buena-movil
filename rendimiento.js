@@ -12,7 +12,27 @@
   const leer = () => { try { const v = localStorage.getItem(K); return v === '0' || v === '1' || v === '2' ? v : 'auto'; } catch (e) { return 'auto'; } };
   const poner = (v) => { try { localStorage.setItem(K, v); } catch (e) { /* sin guardar */ } };
   let nivelAuto = 0;                     // lo que decidió la medición (solo se sube, nunca baja hasta reabrir)
-  const aplicar = () => { const m = leer(); H.setAttribute('data-eco', m === 'auto' ? String(nivelAuto) : m); };
+  // F1167 · Equilibrado: pausa solo las animaciones que NUNCA terminan (bucles decorativos: plantas, nubes, luces).
+  // Las de un solo uso (un dado que rueda, una aparición) siguen. Solo reanuda las que pausó él; las que pausa el
+  // sistema al salir de pantalla no se tocan. Medido en tablet (CPU 2x): de 14 a ~50 fps en reposo.
+  const pausadasAqui = new WeakSet();
+  let vigilaBucles = 0;
+  function bucles(pausar) {
+    try {
+      document.getAnimations().forEach((a) => {
+        const t = a.effect && a.effect.getTiming ? a.effect.getTiming() : null;
+        if (!t || t.iterations !== Infinity) return;
+        if (pausar) { if (a.playState === 'running') { a.pause(); pausadasAqui.add(a); } }
+        else if (pausadasAqui.has(a)) { pausadasAqui.delete(a); if (a.playState === 'paused') a.play(); }
+      });
+    } catch (e) { /* sin API de animaciones: se ve igual, sin ahorro */ }
+  }
+  function equilibrar() {
+    const eco1 = H.getAttribute('data-eco') === '1';
+    if (eco1 && !vigilaBucles) { bucles(true); vigilaBucles = setInterval(() => bucles(true), 2000); }
+    else if (!eco1 && vigilaBucles) { clearInterval(vigilaBucles); vigilaBucles = 0; bucles(false); }
+  }
+  const aplicar = () => { const m = leer(); H.setAttribute('data-eco', m === 'auto' ? String(nivelAuto) : m); equilibrar(); };
 
   // ---- 1) pausar lo que no se ve ----
   let sels = [], io = null;
@@ -43,7 +63,7 @@
     if (!ioNueva) ioNueva = new IntersectionObserver((en) => { en.forEach((e) => { if (!e.isIntersecting) return; ioNueva.unobserve(e.target); const t = e.target; setTimeout(() => { t.classList.add('tb-nueva'); }, Math.min(900, (t.getBoundingClientRect().top / 2) | 0)); }); }, { threshold: 0.35 });
     Array.prototype.forEach.call(document.querySelectorAll('.card:not(.tb-v),.btn:not(.sec):not(.tb-v)'), (el) => { el.classList.add('tb-v'); ioNueva.observe(el); });
   }
-  let deb = 0; const luego = () => { if (deb) return; deb = setTimeout(() => { deb = 0; marcar(); revelar(); }, 350); };
+  let deb = 0; const luego = () => { if (deb) return; deb = setTimeout(() => { deb = 0; marcar(); revelar(); if (H.getAttribute('data-eco') === '1') bucles(true); }, 350); };
   function iniciarPausas() {
     sels = buscarAnimadas();
     if (typeof IntersectionObserver === 'function') io = new IntersectionObserver((en) => { en.forEach((e) => e.target.classList.toggle('tb-fuera', !e.isIntersecting)); }, { rootMargin: '60px' });

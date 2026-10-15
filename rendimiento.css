@@ -10,7 +10,7 @@ html[data-eco="1"] *,html[data-eco="1"] *::before,html[data-eco="1"] *::after{-w
 html[data-eco="1"] .barra,html[data-eco="1"] .btn-menu,html[data-eco="1"] .barra-top{background-color:color-mix(in srgb,var(--tarjeta) 94%,transparent)}
 /* Nivel 2 «ahorro»: además, lo que se mueve para siempre se queda quieto (la decoración sigue puesta) */
 html[data-eco="2"] .tb-anima,html[data-eco="2"] .tb-anima::before,html[data-eco="2"] .tb-anima::after{animation-play-state:paused!important}
-html[data-eco="2"] *{text-shadow:none!important}
+html[data-eco="2"] *:not(.tbl-bola *){text-shadow:none!important}   /* F1167: la bola conserva su sombra: sin ella el texto se pierde sobre el brillo */
 /* acceso rápido «Efectos y sonido» */
 .tb-rapido{position:fixed;z-index:10;top:calc(10px + var(--sa-t,0px));right:calc(12px + var(--sa-r,0px));width:48px;height:48px;padding:0;border:0;border-radius:50%;display:grid;place-items:center;font-size:1.25rem;background:var(--cristal,var(--tarjeta));color:var(--tinta);box-shadow:0 6px 18px -8px rgba(0,0,0,.5),0 0 0 1px color-mix(in srgb,var(--oro) 45%,transparent);font-family:inherit}
 .tb-rapido:active{transform:scale(.94)}
