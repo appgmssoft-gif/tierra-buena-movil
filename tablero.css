@@ -541,3 +541,15 @@ body.tb-full #pantalla { padding-bottom: 0; }
 .tbl-medallon.tl { left: 4px; top: 4px; } .tbl-medallon.tr { right: 4px; top: 4px; }
 .tbl-medallon.bl { left: 4px; bottom: 4px; } .tbl-medallon.br { right: 4px; bottom: 4px; }
 @media (prefers-reduced-motion: reduce) { .tbl-cofre { animation: none; } .tbl-caja.abriendo .tbl-cofre-luz, .tbl-caja.abriendo .tbl-caja-escena { animation: none; } }
+
+/* F1154 · Ovejas en fuga: campo de pasto con cerca de madera y corral de tablones (como el tablero) */
+.tbl-arreo { background-color: #3f6a3a; background-image: radial-gradient(rgba(30,70,30,.45) 1.5px, transparent 2.5px), radial-gradient(circle at 30% 20%, rgba(170,210,120,.28), transparent 60%), linear-gradient(170deg, #5e8f4f, #2f5530);
+  background-size: 16px 16px, 100% 100%, 100% 100%; border: 3px solid #6b4a2b; border-radius: 16px; box-shadow: inset 0 0 0 4px rgba(40,22,8,.35), inset 0 -18px 30px rgba(0,0,0,.25); }
+.tbl-arreo::after { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 14px; border-radius: 0 12px 12px 0; pointer-events: none;
+  background: repeating-linear-gradient(180deg, #a6733f 0 22px, #6b4424 22px 26px); box-shadow: inset -2px 0 0 rgba(0,0,0,.3); }
+.tbl-arreo .tbl-oveja { width: 64px; height: 64px; filter: drop-shadow(0 4px 4px rgba(0,0,0,.45)); }
+.tbl-corral { position: relative; align-self: flex-end; font-family: Georgia, serif; font-size: .95rem; color: #fff3cf; text-shadow: 0 1px 2px #000;
+  background: repeating-linear-gradient(90deg, #a6733f 0 12px, #7a4f2b 12px 15px), linear-gradient(#a6733f, #6b4424);
+  border: 2px solid #3b2a18; border-radius: 10px; padding: 8px 22px; box-shadow: 0 4px 0 #3b2a18, inset 0 2px 0 rgba(255,255,255,.2); }
+.tbl-corral::before, .tbl-corral::after { content: ""; position: absolute; top: 50%; width: 8px; height: 8px; margin-top: -4px; border-radius: 50%; background: #d9a441; box-shadow: 0 1px 2px #000; }
+.tbl-corral::before { left: 6px; } .tbl-corral::after { right: 6px; }
