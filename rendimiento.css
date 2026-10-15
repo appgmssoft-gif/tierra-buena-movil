@@ -76,3 +76,9 @@ html[data-sesion="0"] #pantalla{padding-bottom:24px}
 /* F1128 · Efectos y sonido: su icono es transparente para no molestar en cada pantalla */
 .tb-rapido{opacity:.35}
 .tb-rapido:hover,.tb-rapido:focus-visible{opacity:.9}
+
+/* F1159 · Parpadeo en tablets y celulares potentes: los brillos que se repiten sin fin repintaban la barra y el título en cada cuadro.
+   Ahora esos brillos hacen 3 pasadas y se quedan quietos. El cristal desenfocado (backdrop-filter) también se quita: es la causa más común de parpadeo en Android. */
+html *,html *::before,html *::after{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+.barra,.barra-top,.btn-menu{background-color:color-mix(in srgb,var(--tarjeta) 94%,transparent)}
+html[data-anim=off] *,html[data-anim=off] *::before,html[data-anim=off] *::after{animation:none!important;transition:none!important}

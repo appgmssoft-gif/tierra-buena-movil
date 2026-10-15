@@ -54,7 +54,7 @@ body.tb-full #pantalla { padding-bottom: 0; }
 .tbl-casilla img { width: 66%; height: 66%; display: block; pointer-events: none; }
 .tbl-casilla.oculta::after { content: "?"; color: rgba(246,236,210,.55); font-size: 18px; }
 .tbl-casilla.tipo-salida { background: linear-gradient(160deg, #c9f0c6, #7cc08a); font-size: 10px; font-weight: 700; }
-.tbl-casilla.tipo-meta { background: linear-gradient(160deg, #ffe9a8, #d9a441); animation: tblBrilla 2.4s ease-in-out infinite; }
+.tbl-casilla.tipo-meta { background: linear-gradient(160deg, #ffe9a8, #d9a441); animation: tblBrilla 2.4s ease-in-out 3; }
 .tbl-casilla.tipo-tormenta { background: linear-gradient(160deg, #e7c7b8, #b57a62); }
 .tbl-casilla.tipo-pausa { background: linear-gradient(160deg, #efe6d2, #cdbf9f); }
 .tbl-casilla.tipo-escudo { background: linear-gradient(160deg, #d6e9f2, #9cc3d6); }
@@ -378,7 +378,7 @@ body.tb-full #pantalla { padding-bottom: 0; }
 @keyframes tblAleteo { from { transform: scaleY(1); } to { transform: scaleY(-.6); } }
 
 /* Botón Lanzar: invita a tocar cuando está listo */
-.tbl-lanza:not(:disabled) { animation: tblInvita 2.4s ease-in-out infinite; }
+.tbl-lanza:not(:disabled) { animation: tblInvita 2.4s ease-in-out 3; }
 @keyframes tblInvita { 0%, 100% { box-shadow: 0 4px 0 #8f6425, 0 8px 12px rgba(0,0,0,.35), 0 0 0 0 rgba(255,233,168,.0); } 50% { box-shadow: 0 4px 0 #8f6425, 0 8px 12px rgba(0,0,0,.35), 0 0 0 7px rgba(255,233,168,.28); } }
 
 /* Bola: respira un poco más de magia al cambiar el mensaje */
@@ -553,3 +553,48 @@ body.tb-full #pantalla { padding-bottom: 0; }
   border: 2px solid #3b2a18; border-radius: 10px; padding: 8px 22px; box-shadow: 0 4px 0 #3b2a18, inset 0 2px 0 rgba(255,255,255,.2); }
 .tbl-corral::before, .tbl-corral::after { content: ""; position: absolute; top: 50%; width: 8px; height: 8px; margin-top: -4px; border-radius: 50%; background: #d9a441; box-shadow: 0 1px 2px #000; }
 .tbl-corral::before { left: 6px; } .tbl-corral::after { right: 6px; }
+
+/* F1158 · Cosecha de cosas raras: huerto con textura, frutas más grandes */
+.tbl-cosecha { border: 3px solid #6b4a2b; background-color: #3f6a3a; background-image: radial-gradient(rgba(30,70,30,.45) 1.5px, transparent 2.5px), linear-gradient(170deg, #5e8f4f, #2f5530); background-size: 16px 16px, 100% 100%; box-shadow: inset 0 0 0 4px rgba(40,22,8,.35), inset 0 -18px 30px rgba(0,0,0,.25); }
+.tbl-caida { font-size: 38px; filter: drop-shadow(0 4px 4px rgba(0,0,0,.45)); }
+
+/* F1158 · Ojo de halcón: respuestas como losetas de piedra y como casillas al acertar o fallar */
+.tbl-mini .tbl-reto-op { color: #2b2218; background: linear-gradient(160deg, #fdf7e4, #e8d9b2); box-shadow: 0 4px 0 #b99a5e, 0 6px 10px rgba(0,0,0,.35); border: 0; }
+.tbl-mini .tbl-reto-op.ok { background: linear-gradient(160deg, #c9f0c6, #7cc08a); color: #1f3d28; box-shadow: 0 4px 0 #4f9a64, 0 0 0 3px #ffe9a8; }
+.tbl-mini .tbl-reto-op.mal { background: linear-gradient(160deg, #e7c7b8, #b57a62); color: #3b1f16; box-shadow: 0 4px 0 #8a5a48; }
+
+/* F1158 · Letras entre las hojas: el nivel en tono madera, legible sobre el fondo claro */
+.so-nivel { color: #6b4a2b; text-shadow: 0 1px 0 rgba(255,255,255,.4); }
+
+/* F1158 · Tapa del cofre ilustrada: greca tallada, volutas y hojas de selva */
+.tbl-cofre-tapa::after { content: ""; position: absolute; inset: 3px; z-index: 0; pointer-events: none; background: url("img/tablero/ui/tapa_cofre.svg") center / 100% 100% no-repeat; opacity: .9; }
+.tbl-cofre-emblema { position: relative; z-index: 1; }
+
+/* F1160 · Caja del tablero: tapa plana a pantalla completa, con textura de madera y ventana tallada. Se abre por la mitad como una puerta doble. */
+.tbl-tapa-caja { padding: 0; display: block; border-radius: 0; --ww: min(60vw, 300px); background: transparent; overflow: hidden; }
+.tbl-tapa-escena { position: absolute; inset: 0; perspective: 1400px; }
+.tbl-tapa-hoja { position: absolute; top: 0; bottom: 0; width: 50%; overflow: hidden; background-color: #5b3a1d;
+  background-image: repeating-linear-gradient(-6deg, rgba(20,10,4,0) 0 13px, rgba(20,10,4,.28) 13px 14px), linear-gradient(170deg, #a57442, #4f2f16);
+  transition: transform 1.3s cubic-bezier(.45,.05,.2,1); backface-visibility: hidden; }
+.tbl-tapa-hoja.izq { left: 0; transform-origin: left center; box-shadow: inset 0 0 0 4px #d9a441, inset 0 0 0 8px rgba(40,22,8,.45), inset -18px 0 24px -14px rgba(0,0,0,.6); }
+.tbl-tapa-hoja.der { right: 0; transform-origin: right center; box-shadow: inset 0 0 0 4px #d9a441, inset 0 0 0 8px rgba(40,22,8,.45), inset 18px 0 24px -14px rgba(0,0,0,.6); }
+.tbl-caja.abriendo .tbl-tapa-hoja.izq { transform: rotateY(-118deg); }
+.tbl-caja.abriendo .tbl-tapa-hoja.der { transform: rotateY(118deg); }
+.tbl-tapa-vent { position: absolute; top: 50%; width: var(--ww); height: var(--ww); margin-top: calc(var(--ww) / -2); border-radius: 22px; border: 5px solid #d9a441;
+  background: var(--deco) center / 72% no-repeat, radial-gradient(circle at 50% 40%, #2f5a44, #0e1d15 75%); box-shadow: 0 0 0 3px #4a2f18, 0 10px 20px rgba(0,0,0,.5); }
+.tbl-tapa-hoja.izq .tbl-tapa-vent { right: calc(var(--ww) / -2); }
+.tbl-tapa-hoja.der .tbl-tapa-vent { left: calc(var(--ww) / -2); }
+.tbl-tapa-med { position: absolute; width: clamp(48px, 14vw, 74px); height: auto; filter: drop-shadow(0 2px 3px rgba(0,0,0,.55)); }
+.tbl-tapa-med.tl { left: 14px; top: 14px; } .tbl-tapa-med.bl { left: 14px; bottom: 14px; }
+.tbl-tapa-med.tr { right: 14px; top: 14px; } .tbl-tapa-med.br { right: 14px; bottom: 14px; }
+.tbl-tapa-tit { position: absolute; left: 0; right: 0; top: 7%; z-index: 5; text-align: center; pointer-events: none; }
+.tbl-tapa-tit b { display: block; font-family: Georgia, 'Times New Roman', serif; font-weight: 900; font-size: clamp(2rem, 11vw, 3.4rem); letter-spacing: .06em; text-transform: uppercase; line-height: 1.05;
+  background: linear-gradient(180deg, #fff6d0 0%, #ffd65a 38%, #c98f2e 52%, #ffe9a8 70%, #8a5a1c 100%); -webkit-background-clip: text; background-clip: text; color: transparent;
+  -webkit-text-stroke: 2px #2a180a; filter: drop-shadow(0 3px 0 #2a180a) drop-shadow(0 8px 10px rgba(0,0,0,.55)); }
+.tbl-tapa-tit small { display: inline-block; margin-top: 8px; padding: 4px 14px; border-radius: 999px; background: rgba(20,10,4,.6); border: 1px solid #d9a441; color: #ffe9a8; font-size: .9rem; letter-spacing: .08em; text-transform: uppercase; }
+.tbl-tapa-info { position: absolute; left: 0; right: 0; bottom: 6%; z-index: 5; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.tbl-caja.abriendo .tbl-tapa-info, .tbl-caja.abriendo .tbl-tapa-tit { opacity: 0; transition: opacity .35s; }
+.tbl-tapa-escena::after { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; width: 60px; margin-left: -30px; opacity: 0; pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(255,230,150,.85), transparent); transition: opacity .4s; }
+.tbl-caja.abriendo .tbl-tapa-escena::after { opacity: 1; transition-delay: .2s; }
+@media (prefers-reduced-motion: reduce) { .tbl-tapa-hoja { transition: none; } }

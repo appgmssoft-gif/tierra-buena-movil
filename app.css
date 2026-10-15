@@ -192,7 +192,7 @@ main{padding-bottom:calc(112px + var(--sa-b))}
   #pantalla>*:nth-child(2){animation-delay:.04s}#pantalla>*:nth-child(3){animation-delay:.08s}#pantalla>*:nth-child(n+4){animation-delay:.12s}
   .hoy-luz,.hero::before{animation:respira 6s ease-in-out infinite}
   .hero-ico{animation:flota 4.5s ease-in-out infinite}
-  .esqueleto{animation:brilla 1.3s linear infinite}
+  .esqueleto{animation:brilla 1.3s linear 3}
   .hoy-verso.listo{animation:entra .5s cubic-bezier(.2,.8,.2,1) both}
   .btn:not(.sec):not(:disabled)::after{content:"";position:absolute;top:0;bottom:0;left:-70%;width:45%;transform:skewX(-20deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);pointer-events:none}
   .tab[aria-current=page] .ico svg{animation:rebota .45s cubic-bezier(.3,1.6,.5,1)}
@@ -460,7 +460,7 @@ h1{font-size:2.05rem}
 /* Carga de capítulo */
 .esq-claro{display:block;height:16px;border-radius:8px;margin:14px 0;background:linear-gradient(90deg,color-mix(in srgb,var(--suave) 14%,transparent) 25%,color-mix(in srgb,var(--suave) 30%,transparent) 50%,color-mix(in srgb,var(--suave) 14%,transparent) 75%);background-size:200% 100%}
 .esq-claro.corto{width:62%}
-@media (prefers-reduced-motion:no-preference){.esq-claro{animation:brilla 1.3s linear infinite}}
+@media (prefers-reduced-motion:no-preference){.esq-claro{animation:brilla 1.3s linear 3}}
 /* F881: el subtítulo de la portada de entrada se lee en claro (antes blanco sobre beige) */
 .hero p{color:var(--suave)}
 
@@ -660,7 +660,7 @@ body.entrando main{padding-bottom:calc(28px + var(--sa-b))}
   html:not([data-anim=off]) .ico-cod-in::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--oro);opacity:0;animation:cod-onda 2.4s 1.4s ease-out 3}
   html:not([data-anim=off]) .ico-cod{animation:tb-baja .6s .15s var(--resorte) both}
   html:not([data-anim=off]) .hero-viva .hero-ico{animation:hero-flota 4.5s ease-in-out infinite}
-  html:not([data-anim=off]) .hero-viva::after{content:"";position:absolute;top:-40%;bottom:-40%;left:-60%;width:38%;transform:skewX(-20deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:hero-brilla 6s 1.2s ease-in-out infinite;pointer-events:none}
+  html:not([data-anim=off]) .hero-viva::after{content:"";position:absolute;top:-40%;bottom:-40%;left:-60%;width:38%;transform:skewX(-20deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:hero-brilla 6s 1.2s ease-in-out 3;pointer-events:none}
   html:not([data-anim=off]) .hv-caja i{animation:hv-cae 8s linear infinite}
   html:not([data-anim=off]) .hv-caja i:nth-child(2){animation-delay:2.2s}html:not([data-anim=off]) .hv-caja i:nth-child(3){animation-delay:4.4s}html:not([data-anim=off]) .hv-caja i:nth-child(4){animation-delay:6s}
   html:not([data-anim=off]) .grid-ent>.card{animation:tb-sube .6s var(--resorte) both}
@@ -706,13 +706,13 @@ main>h2::before,h2.sep::before{content:"";flex:none;width:20px;height:3px;border
   html:not([data-anim=off]) .ambiente::after{right:-70vmax;bottom:-75vmax;background:radial-gradient(circle,color-mix(in srgb,var(--verde) 26%,transparent),transparent 62%);animation:aurora-b 30s ease-in-out infinite alternate}
   html:not([data-anim=off]) .card:active{transform:scale(.975)}
   html:not([data-anim=off]) .btn.tb-nueva:not(.sec)::after,html:not([data-anim=off]) .btn:not(.sec):not(:disabled):active::after{animation:btn-brilla 1.3s ease-out 1 forwards}
-  html:not([data-anim=off]) .hero::after{animation:hero-brilla 6s 1.2s ease-in-out infinite}
+  html:not([data-anim=off]) .hero::after{animation:hero-brilla 6s 1.2s ease-in-out 3}
   html:not([data-anim=off]) main>h2::before,html:not([data-anim=off]) h2.sep::before{transform-origin:left;animation:barra-crece .9s .1s var(--resorte) both}
   html:not([data-anim=off]) .avatar.grande::before{animation:gira 9s linear infinite}
   html:not([data-anim=off]) .stat:nth-child(1) .stat-ic .ic{transform-origin:50% 90%;animation:llama 1.9s ease-in-out infinite}
   html:not([data-anim=off]) .stat{animation:tb-sube .65s var(--resorte) both}
   html:not([data-anim=off]) .stat:nth-child(2){animation-delay:.08s}html:not([data-anim=off]) .stat:nth-child(3){animation-delay:.16s}html:not([data-anim=off]) .stat:nth-child(4){animation-delay:.24s}
-  html:not([data-anim=off]) .logro.on .logro-ic{animation:latido 2.8s ease-in-out infinite}
+  html:not([data-anim=off]) .logro.on .logro-ic{animation:latido 2.8s ease-in-out 3}
   html:not([data-anim=off]) .tab .ico.rebota{animation:tab-rebota .6s var(--resorte)}
   html:not([data-anim=off]) .onda{animation:onda-toca .7s ease-out forwards}
   html:not([data-anim=off]) .rv{transition:opacity .6s ease,transform .75s var(--resorte)}

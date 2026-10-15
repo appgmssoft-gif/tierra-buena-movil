@@ -93,7 +93,7 @@
   html:not([data-anim=off]) .tbcar-art .pu{animation:tbc-late 2.8s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
   html:not([data-anim=off]) .tbcar-art .gi{animation:tbc-gira 18s linear infinite;transform-origin:60px 60px}
   html:not([data-anim=off]) .tbcar-art .on1{animation:tbc-onda 2s ease-in-out infinite}html:not([data-anim=off]) .tbcar-art .on2{animation:tbc-onda 2s ease-in-out .5s infinite}
-  html:not([data-anim=off]) .tbcar-ir{animation:tbc-brilla 4.5s ease-in-out infinite}
+  html:not([data-anim=off]) .tbcar-ir{animation:tbc-brilla 4.5s ease-in-out 3}
 }
 @keyframes tbc-deriva{to{transform:translate(18px,14px) scale(1.12)}}@keyframes tbc-late{50%{transform:scale(1.08);opacity:.85}}
 @keyframes tbc-flota{50%{transform:translateY(-4px)}}@keyframes tbc-gira{to{transform:rotate(360deg)}}@keyframes tbc-onda{0%,100%{opacity:.25}50%{opacity:1}}
@@ -154,7 +154,7 @@
 .arr-anillo.a2{animation-delay:.7s}.arr-anillo.a3{animation-delay:1.4s}
 .arr-p{position:absolute;bottom:-12px;width:7px;height:7px;border-radius:50%;background:color-mix(in srgb,var(--oro) 70%,#fff);opacity:0;animation:arr-flota 3.4s ease-in infinite}
 .arr-p.p1{left:12%;animation-delay:.1s}.arr-p.p2{left:24%;animation-delay:.9s;width:5px;height:5px}.arr-p.p3{left:36%;animation-delay:.4s}.arr-p.p4{left:48%;animation-delay:1.3s;width:5px;height:5px}.arr-p.p5{left:60%;animation-delay:.2s}.arr-p.p6{left:72%;animation-delay:1s;width:5px;height:5px}.arr-p.p7{left:84%;animation-delay:.6s}.arr-p.p8{left:92%;animation-delay:1.6s;width:5px;height:5px}
-.arr-logo{width:112px;height:112px;margin-top:-4px;animation:arr-entra 1s cubic-bezier(.2,.9,.3,1.25) .15s both,arr-brilla 2.4s ease-in-out 1.2s infinite}
+.arr-logo{width:112px;height:112px;margin-top:-4px;animation:arr-entra 1s cubic-bezier(.2,.9,.3,1.25) .15s both,arr-brilla 2.4s ease-in-out 1.2s 3}
 .arr-nombre{display:flex;justify-content:center;animation:none}
 .arr-nombre span{display:inline-block;opacity:0;transform:translateY(16px) scale(.9);animation:arr-letra .55s cubic-bezier(.2,.9,.3,1.2) both}
 .arr-nombre span:nth-child(1){animation-delay:0.61s}.arr-nombre span:nth-child(2){animation-delay:0.66s}.arr-nombre span:nth-child(3){animation-delay:0.72s}.arr-nombre span:nth-child(4){animation-delay:0.77s}.arr-nombre span:nth-child(5){animation-delay:0.83s}.arr-nombre span:nth-child(6){animation-delay:0.88s}.arr-nombre span:nth-child(7){animation-delay:0.94s}.arr-nombre span:nth-child(8){animation-delay:0.99s}.arr-nombre span:nth-child(9){animation-delay:1.04s}.arr-nombre span:nth-child(10){animation-delay:1.10s}.arr-nombre span:nth-child(11){animation-delay:1.16s}.arr-nombre span:nth-child(12){animation-delay:1.21s}
@@ -352,7 +352,7 @@ h2.sep.grupo-fin{margin-top:34px}
 .so-camino{position:relative;padding:8px 0;background-image:radial-gradient(circle,color-mix(in srgb,var(--mc,#8dc466) 40%,transparent) 1.6px,transparent 2.2px);background-size:16px 16px;background-position:center;border-radius:18px}
 .so-nodo{transition:transform .18s ease,box-shadow .2s ease,background-color .2s ease}
 .so-nodo:hover:not(:disabled){transform:translateY(-2px)}
-.so-nodo:not(.bloq):not(.hecho){animation:nodo-pulso 2.8s ease-in-out infinite}
+.so-nodo:not(.bloq):not(.hecho){animation:nodo-pulso 2.8s ease-in-out 3}
 @keyframes nodo-pulso{0%,100%{box-shadow:0 4px 0 color-mix(in srgb,var(--mc,#8dc466) 45%,transparent),0 0 0 0 color-mix(in srgb,var(--mc,#8dc466) 35%,transparent)}50%{box-shadow:0 4px 0 color-mix(in srgb,var(--mc,#8dc466) 45%,transparent),0 0 0 9px transparent}}
 .so-c{transition:transform .12s ease,background-color .18s ease,box-shadow .18s ease,color .18s ease}
 .so-c:hover{transform:translateY(-1px)}

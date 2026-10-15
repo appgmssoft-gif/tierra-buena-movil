@@ -1119,10 +1119,17 @@
     const T = tema(E.tablero);
     const luces = Array.from({ length: NIVELES }, (_, i) => `<span class="tbl-caja-luz${i < E.luces ? ' on' : ''}"></span>`).join('');
     const c = document.createElement('div'); c.className = 'tbl-caja'; c.id = 'tblCaja';
-    c.innerHTML = `<div class="tbl-caja-escena" aria-hidden="true"><i class="tbl-caja-rayo"></i><div class="tbl-cofre"><div class="tbl-cofre-cuerpo"><span class="tbl-cofre-cierre"></span></div><div class="tbl-cofre-luz"></div><div class="tbl-cofre-tapa"><span class="tbl-cofre-emblema"><img src="img/tablero/deco/${esc((T.deco || ['sol'])[0])}.svg" alt=""></span></div></div></div>` +
-      `<p class="tbl-caja-tit">Tablero ${E.tablero} · ${esc(T.nombre)}</p><p class="tbl-caja-sub">${esc(T.lugar)}</p>` +
-      `<p class="tbl-caja-sub">Nivel ${E.nivel} de ${NIVELES}</p><div class="tbl-caja-lucesfila" aria-label="Luces: una por nivel pasado">${luces}</div>` +
-      `<button type="button" class="tbl-btn" id="tblAbrirCaja">Abrir la caja</button>`;
+    c.className = 'tbl-caja tbl-tapa-caja'; c.id = 'tblCaja';
+    c.style.setProperty('--deco', `url(img/tablero/deco/${esc((T.deco || ['sol'])[0])}.svg)`);
+    const med = (n, pos) => `<img class="tbl-tapa-med ${pos}" src="img/tablero/medallon/${n}.svg" alt="">`;
+    c.innerHTML = `<div class="tbl-tapa-escena" aria-hidden="true">` +
+      `<div class="tbl-tapa-hoja izq">${med('condor', 'tl')}${med('zorro', 'bl')}<span class="tbl-tapa-vent"></span></div>` +
+      `<div class="tbl-tapa-hoja der">${med('copihue', 'tr')}${med('guanaco', 'br')}<span class="tbl-tapa-vent"></span></div>` +
+      `</div>` +
+      `<div class="tbl-tapa-tit"><b>${esc(T.nombre)}</b><small>Tablero ${E.tablero} · ${esc(T.lugar)}</small></div>` +
+      `<div class="tbl-tapa-info"><div class="tbl-caja-lucesfila" aria-label="Luces: una por nivel pasado">${luces}</div>` +
+      `<p class="tbl-caja-sub">Nivel ${E.nivel} de ${NIVELES}</p>` +
+      `<button type="button" class="tbl-btn" id="tblAbrirCaja">Abrir la caja</button></div>`;
     $.root.appendChild(c);
     document.getElementById('tblAbrirCaja').addEventListener('click', (ev) => {
       const b = ev.currentTarget; b.disabled = true; c.classList.add('abriendo'); son('cofre');
