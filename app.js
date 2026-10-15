@@ -287,7 +287,7 @@
   const CABECERAS_ILUSTRADAS = false;
   const bandaTB = (tipo) => { if (!CABECERAS_ILUSTRADAS) return ''; const t = BANDA_ESCENAS[tipo] ? tipo : 'camino'; return '<svg class="tb-banda" viewBox="0 0 320 110" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">' + BANDA_BASE + (t === 'crecer' ? '' : BANDA_COLINAS) + BANDA_ESCENAS[t] + '</svg>'; };
   // F1113 · cabecera ilustrada de cada área (16:9, representa lo que contiene la sección)
-  const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Preguntas de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Sopa del Vivero': 'juego-sopa' };   // F1114 · F1117
+  const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Acertijos de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Letras entre las hojas': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => !CABECERAS_ILUSTRADAS ? '' : `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
   const APP_VERSION = 'F1151';
@@ -1360,11 +1360,11 @@
   const K_JUEGOS = 'tb_movil_juegos';
   const JUEGOS = [
     ['tablero', '🎲', 'Tablero de Tierra Buena', 'Un camino con sorpresas: rocío, preguntas, atajos y tormentas que te hacen retroceder.'],   // F1123 · Fase 1 del tablero (tablero.js)
-    ['minijuegos', '🕹️', 'Minijuegos', 'Arreo, Memoria, Cosecha y Reto de atención. Cada uno explica su regla antes de empezar.'],
+    ['minijuegos', '🕹️', 'Minijuegos', 'Ovejas en fuga, Pares del huerto, Cosecha de cosas raras y Ojo de halcón. Cada uno explica su regla antes de empezar.'],
     ['mente', '🧠', 'Mente en juego', 'Trivia rápida: ciencia, animales, Chile, espacio y adivinanzas. Con racha y comodín.'],
-    ['raices', '📖', 'Preguntas de la Palabra', 'Preguntas sobre lo que leíste, con el versículo que explica la respuesta.'],
-    ['memoria', '🃏', 'Memoria del huerto', 'Encuentra las parejas del huerto. Cada pareja completa da gotas para tu Vivero.'],   // F1145 · reemplaza «Completa el versículo» (pendiente de la Fase 1 del tablero)
-    ['sopa', '🔎', 'Sopa del Vivero', 'Letras grandes, sin tiempo y con pistas gratis.'],
+    ['raices', '📖', 'Acertijos de la Palabra', 'Preguntas sobre lo que leíste, con el versículo que explica la respuesta.'],
+    ['memoria', '🃏', 'Pares del huerto', 'Encuentra las parejas del huerto. Cada pareja completa da gotas para tu Vivero.'],   // F1145 · reemplaza «Completa el versículo» (pendiente de la Fase 1 del tablero)
+    ['sopa', '🔎', 'Letras entre las hojas', 'Letras grandes, sin tiempo y con pistas gratis.'],
     ['jardin', '🌱', 'Jardín del principio', 'Un día de la creación por nivel: responde y se abre el siguiente día.']
   ];
   const JUEGOS_LISTOS = { minijuegos: (v) => vistaMinijuegos(v), memoria: (v) => { if (window.TBTablero && TBTablero.minijuego) TBTablero.minijuego('memoria', v); }, mente: (v) => juegoMente(v), tablero: (v) => { if (window.TBTablero) TBTablero.abrir(v, { sala: () => vistaJuegos('sala'), pieza: ((PIEZAS.find((p) => p[0] === ((jugadorLeer() || {}).pieza)) || PIEZAS[0])[0]) }); }, raices: (v) => vistaRaices(v), brotes: (v) => vistaBrotesCamino(v), jardin: (v) => vistaJardin(v), sopa: (v) => vistaSopa(v) };   // id -> función que abre el juego (cada fase nueva se registra aquí)
@@ -1504,11 +1504,11 @@
   // F1138 · Minijuegos sueltos: tarjetas con lo que hace cada uno. Cada juego abre con su tarjeta de instrucciones.
   function vistaMinijuegos(volver) {
     const M = [
-      ['arreo', '<img class="mini-fig" src="img/tablero/deco/oveja.svg" alt="">', 'Arreo de ovejas', 'Toca las ovejas que cruzan el campo para llevarlas al corral.'],
-      ['memoria', '<img class="mini-fig" src="img/tablero/deco/flor.svg" alt="">', 'Memoria del huerto', 'Encuentra las 6 parejas dando vuelta las cartas.'],
-      ['cosecha', '<img class="mini-fig" src="img/tablero/deco/arbol.svg" alt="">', 'Cosecha del huerto', 'Las frutas suman; lo que no es fruta resta.'],
-      ['eco', '<img class="mini-fig" src="img/tablero/deco/llama.svg" alt="">', 'Eco del pastor', 'Repite la secuencia de animales. Cada ronda suma uno.'],
-      ['reto', '<img class="mini-fig" src="img/tablero/deco/sol.svg" alt="">', 'Reto de atención', 'Cinco preguntas cortas de cultura, naturaleza y Chile.']
+      ['arreo', '<img class="mini-fig" src="img/tablero/deco/oveja.svg" alt="">', 'Ovejas en fuga', 'Toca las ovejas que cruzan el campo para llevarlas al corral.'],
+      ['memoria', '<img class="mini-fig" src="img/tablero/deco/flor.svg" alt="">', 'Pares del huerto', 'Encuentra las 6 parejas dando vuelta las cartas.'],
+      ['cosecha', '<img class="mini-fig" src="img/tablero/deco/arbol.svg" alt="">', 'Cosecha de cosas raras', 'Las frutas suman; lo que no es fruta resta.'],
+      ['eco', '<img class="mini-fig" src="img/tablero/deco/llama.svg" alt="">', 'Eco de la montaña', 'Repite la secuencia de animales. Cada ronda suma uno.'],
+      ['reto', '<img class="mini-fig" src="img/tablero/deco/sol.svg" alt="">', 'Ojo de halcón', 'Cinco preguntas cortas de cultura, naturaleza y Chile.']
     ];
     $('#pantalla').innerHTML = `${cabecera('Minijuegos', 'Juegos')}<div class="ju"><p class="suave">Juegos rápidos, sin prisa y sin castigo. Cada uno te explica su regla antes de empezar.</p><div class="mini-grid">${M.map(([k, ic, t, d]) => `<button type="button" class="mini-card" data-mini="${k}"><span class="mini-ico" aria-hidden="true">${ic}</span><b>${esc(t)}</b><small>${esc(d)}</small></button>`).join('')}</div></div>`;
     $('#volver').onclick = volver;
@@ -1597,11 +1597,11 @@
       const otras = barajar(q.o.map((_, j) => j).filter((j) => j !== q.c), rnd).slice(0, opc - 1);
       return { p: q.p, ref: `${(libroInfo(q.cod) || [])[1] || q.cod} ${q.cap}:${q.v}`, o: [q.c].concat(otras).map((j) => q.o[j]), c: 0, ver: async () => { const inf = libroInfo(q.cod), ref = `${inf ? inf[1] : q.cod} ${q.cap}:${q.v}`; let t = ''; try { const lib = await libroCargar(q.cod, verActual()); t = lib[q.cap - 1] && lib[q.cap - 1][q.v - 1]; } catch (e) { /* sin internet */ } return { html: t ? juVerHtml(t, ref) : `<p class="ju-ref">${esc(ref)}</p>` }; } };
     });
-    juegoCorrer({ id: 'raices', titulo: 'Preguntas de la Palabra', volver: volverCamino, items, otra: () => raicesJugar(bank, idx, volverCamino), alFinal: (ac, tot) => caminoMarcar('raices', idx, ac, tot) });
+    juegoCorrer({ id: 'raices', titulo: 'Acertijos de la Palabra', volver: volverCamino, items, otra: () => raicesJugar(bank, idx, volverCamino), alFinal: (ac, tot) => caminoMarcar('raices', idx, ac, tot) });
   }
   async function vistaRaices(volver) {
-    let bank; try { bank = (await datoCargar('juego_raices')).preguntas; } catch (e) { $('#pantalla').innerHTML = `${cabecera('Preguntas de la Palabra', 'Juegos')}<p class="suave">${SIN_DATOS}</p>`; volverA('Juegos', volver); return; }
-    juegoCamino({ id: 'raices', titulo: 'Preguntas de la Palabra', volver, intro: 'Elige una respuesta. Después aparece el versículo que la explica. Cuatro preguntas por nivel.', mapas: RAICES_MAPAS, jugar: (idx, vc) => raicesJugar(bank, idx, vc) });
+    let bank; try { bank = (await datoCargar('juego_raices')).preguntas; } catch (e) { $('#pantalla').innerHTML = `${cabecera('Acertijos de la Palabra', 'Juegos')}<p class="suave">${SIN_DATOS}</p>`; volverA('Juegos', volver); return; }
+    juegoCamino({ id: 'raices', titulo: 'Acertijos de la Palabra', volver, intro: 'Elige una respuesta. Después aparece el versículo que la explica. Cuatro preguntas por nivel.', mapas: RAICES_MAPAS, jugar: (idx, vc) => raicesJugar(bank, idx, vc) });
   }
   async function vistaBrotesCamino(volver) {
     juegoCamino({ id: 'brotes', titulo: 'Completa el versículo', volver, intro: 'Completa el versículo con el nombre o el lugar que falta. Usa los que tú resaltaste.', mapas: BROTES_MAPAS, jugar: (idx, vc) => { const mi = Math.floor(idx / 6); vistaBrotes(vc, { n: 5, opc: BROTES_MAPAS[mi].opc, alFinal: (ac, tot) => caminoMarcar('brotes', idx, ac, tot) }); } });
@@ -1679,7 +1679,7 @@
   ];
   const K_CAMINO_SOPA = 'tb_movil_camino_sopa';
   async function vistaSopa(volver) {
-    let datos; try { datos = await datoCargar('juego_sopa'); } catch (e) { $('#pantalla').innerHTML = `${cabecera('Sopa del Vivero', 'Juegos')}<p class="suave">${SIN_DATOS}</p>`; volverA('Juegos', volver); return; }
+    let datos; try { datos = await datoCargar('juego_sopa'); } catch (e) { $('#pantalla').innerHTML = `${cabecera('Letras entre las hojas', 'Juegos')}<p class="suave">${SIN_DATOS}</p>`; volverA('Juegos', volver); return; }
     const son = (n) => { try { if (window.TBSonido && window.TBSonido[n]) window.TBSonido[n](); } catch (e) { /* sin sonido */ } };
     const N_MAX = 10, ABC = 'ABCDEFGHIJLMNOPQRSTUVXYZ', DIRS = [[0, 1], [1, 0], [1, 1], [1, -1], [0, -1], [-1, 0], [-1, -1], [-1, 1]];
     const norma = (s) => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().replace(/[^A-Z]/g, '');
@@ -1701,7 +1701,7 @@
         }).join('');
         html += `<section class="so-mapa" data-mapa="${m.id}"><header class="so-mapa-cab"><img class="so-mapa-fig" src="img/tablero/deco/${({ semillero: 'flor', brote: 'arbol', bosque: 'llama' })[m.id] || 'flor'}.svg" alt="" aria-hidden="true"><div><b>${esc(m.nombre)}</b><small>${esc(m.ayuda)}</small></div></header><div class="so-camino">${nodos}</div></section>`;
       });
-      $('#pantalla').innerHTML = `${cabecera('Sopa del Vivero', 'Juegos')}<div class="ju so-ju">${JU_HERO(3)}<p class="suave">Toca una letra y luego la siguiente, en línea recta. Completa un nivel para abrir el siguiente.</p>${html}</div>`;
+      $('#pantalla').innerHTML = `${cabecera('Letras entre las hojas', 'Juegos')}<div class="ju so-ju">${JU_HERO(3)}<p class="suave">Toca una letra y luego la siguiente, en línea recta. Completa un nivel para abrir el siguiente.</p>${html}</div>`;
       volverA('Juegos', volver);
       document.querySelectorAll('[data-nivel]').forEach((b) => b.addEventListener('click', () => jugarNivel(Number(b.dataset.nivel))));
     };
@@ -1739,7 +1739,7 @@
       const pintar = () => {
         if (!montado) {
           montado = true;
-          $('#pantalla').innerHTML = `${cabecera('Sopa del Vivero', 'Juegos')}<div class="ju so-ju" data-mapa="${m.id}">
+          $('#pantalla').innerHTML = `${cabecera('Letras entre las hojas', 'Juegos')}<div class="ju so-ju" data-mapa="${m.id}">
             <p class="so-nivel">${esc(m.nombre)} · nivel ${k + 1} de 6</p>
             <p class="so-cuenta" aria-live="polite"></p>
             <div class="so-tablero"><div class="so-grid" role="grid" aria-label="Sopa de letras">${g.map((fila, f) => fila.map((l, c) => `<button type="button" class="so-c" data-i="${f * N + c}" aria-label="${esc(l)}, fila ${f + 1}, columna ${c + 1}">${esc(l)}</button>`).join('')).join('')}</div></div>
@@ -1787,7 +1787,7 @@
         const p = progreso(); p[idx] = Math.max(p[idx] || 0, est); guardarProgreso(p);
         juegoTerminar('sopa', colocadas.length, colocadas.length);
         const sig = idx + 1 < SOPA_MAPAS.length * 6 ? idx + 1 : null;
-        $('#pantalla').innerHTML = `${cabecera('Sopa del Vivero', 'Juegos')}<div class="ju so-ju" data-mapa="${m.id}">${JU_HERO(5)}<h2 class="ju-fin">Nivel ${k + 1} completo</h2>
+        $('#pantalla').innerHTML = `${cabecera('Letras entre las hojas', 'Juegos')}<div class="ju so-ju" data-mapa="${m.id}">${JU_HERO(5)}<h2 class="ju-fin">Nivel ${k + 1} completo</h2>
           <p class="so-estrellas" aria-label="${est} estrellas">${'★'.repeat(est)}${'☆'.repeat(3 - est)}</p>
           <p class="suave">${est === 3 ? 'Sin pistas. ¡Muy bien!' : 'Puedes repetir el nivel para ganar más estrellas.'}</p>
           ${sig !== null && abierto(sig) ? `<button type="button" class="ju-sig" id="soSig">Siguiente nivel <span aria-hidden="true">›</span></button>` : ''}

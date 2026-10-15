@@ -100,6 +100,32 @@
     return out;
   }
 
+  // F1152 · Caminos que cambian por nivel: anillo, ondas (un anillo con olas) y trébol (cuatro lóbulos). Todos rodean la bola
+  // y las casillas quedan a la misma distancia entre sí, igual que el anillo.
+  function trazo(nivel, N, w, h) {
+    const forma = ['anillo', 'ondas', 'trebol'][(nivel - 1) % 3];
+    if (forma === 'anillo') return anillo(N, w, h);
+    const cx = w / 2, cy = h * 0.46, ax = (w - 52) / 2, ay = (h - 52) / 2, M = 720;
+    const pts = [];
+    for (let i = 0; i < M; i++) {
+      const t = (i / M) * Math.PI * 2;
+      const r = forma === 'ondas' ? 0.9 + 0.1 * Math.sin(5 * t) : 0.84 + 0.16 * Math.cos(2 * t) ** 2;
+      pts.push([cx + ax * r * Math.cos(t), cy + ay * r * Math.sin(t)]);
+    }
+    // Reparte N casillas por longitud de arco (distancia igual entre vecinas)
+    const acum = [0];
+    for (let i = 1; i <= M; i++) { const a = pts[i - 1], b = pts[i % M]; acum.push(acum[i - 1] + Math.hypot(b[0] - a[0], b[1] - a[1])); }
+    const L = acum[M], out = [];
+    let j = 0;
+    for (let k = 0; k < N; k++) {
+      const s = (k * L) / N;
+      while (j < M && acum[j + 1] < s) j++;
+      const seg = acum[j + 1] - acum[j] || 1, f = (s - acum[j]) / seg, a = pts[j], b = pts[(j + 1) % M];
+      out.push({ x: (a[0] + (b[0] - a[0]) * f) / w * 100, y: (a[1] + (b[1] - a[1]) * f) / h * 100 });
+    }
+    return out;
+  }
+
   // ---------- Estado (en este teléfono; la clave entra en SYNC_CLAVES de app.js) ----------
   const nuevoEstado = () => ({ v: 2, tablero: 1, nivel: 1, pos: 0, maxPos: 0, escudos: 0, bonus: 0, pausa: false, gotas: 0, luces: 0, niveles: 0, vistas: [], ultima: null });
   function cargar() {
@@ -375,7 +401,7 @@
   function montar() {                                               // crea las casillas del nivel actual, en anillo
     const I = info(), N = I.meta + 1;
     MEDIDA = medirMesa();
-    $.coords = anillo(N, MEDIDA.w, MEDIDA.h);
+    $.coords = trazo(E.nivel, N, MEDIDA.w, MEDIDA.h);
     $.casillas = {};
     $.cont.innerHTML = '';
     // F1127: el tamaño de cada casilla sale de la distancia real entre vecinas: nunca se pisan, en ningún teléfono
@@ -442,10 +468,21 @@
     $.icono.innerHTML = `<img class="tbl-ico-tema" src="img/tablero/deco/${(T.deco || ['sol'])[0]}.svg" alt="">`;
   }
   // Decoración de cada lugar: figuras suaves sobre el campo (siempre igual para ese tablero)
+  // F1153 · Medallones tallados en las esquinas del tablero (como en las referencias)
+  function pintarMedallones() {
+    if (!$.mesa) return;
+    $.mesa.querySelectorAll('.tbl-medallon').forEach((x) => x.remove());
+    const figs = ['condor', 'copihue', 'guanaco', 'zorro'], pos = ['tl', 'tr', 'bl', 'br'];
+    figs.forEach((f, i) => {
+      const d = document.createElement('img'); d.className = 'tbl-medallon ' + pos[i]; d.alt = ''; d.src = 'img/tablero/medallon/' + f + '.svg';
+      $.mesa.appendChild(d);
+    });
+  }
   function pintarDecor(T) {
     if (!$.campo) return;
     const rnd = semilla(E.tablero * 31 + 5), lista = T.deco || [];
-    $.campo.innerHTML = paisajeHTML(T);   // F1151 · paisaje del lugar detrás de las casillas
+    $.campo.innerHTML = paisajeHTML(T);
+    pintarMedallones();   // F1151 · paisaje del lugar detrás de las casillas
     for (let i = 0; i < 9 && lista.length; i++) {
       const d = document.createElement('img'); d.className = 'tbl-deco'; d.src = 'img/tablero/deco/' + lista[i % lista.length] + '.svg'; d.alt = ''; d.setAttribute('aria-hidden', 'true');
       d.style.left = (6 + rnd() * 88).toFixed(1) + '%'; d.style.top = (6 + rnd() * 88).toFixed(1) + '%';
@@ -675,11 +712,11 @@
   // F1146 · Ilustraciones de los juegos (SVG propio), sin emojis
   const FIG = (n, c) => `<img class="${c || 'tbl-fig'}" src="img/tablero/deco/${n}.svg" alt="">`;
   const INTRO_MINI = {
-    memoria: { ico: FIG('flor', 'tbl-intro-fig'), titulo: 'Memoria del huerto', pasos: ['Toca una carta y luego otra.', 'Si son iguales, quedan juntas.', 'Encuentra las 6 parejas para ganar 2 gotas.'] },
-    cosecha: { ico: FIG('arbol', 'tbl-intro-fig'), titulo: 'Cosecha del huerto', pasos: ['Toca las frutas que caen: cada una suma 1 punto.', 'Las cosas raras (piedra, hueso, araña, bota) restan 1.', 'Tienes 12 segundos: 6 puntos dan 2 gotas, 3 dan 1.'] },
-    arreo: { ico: FIG('oveja', 'tbl-intro-fig'), titulo: 'Arreo de ovejas', pasos: ['Toca cada oveja para llevarla al corral. Las rebeldes necesitan dos toques.', 'Tres toques seguidos traen una oveja extra.', 'Espanta al zorro antes de que cruce: si no, se lleva una oveja. 18 segundos.'] },
-    reto: { ico: FIG('sol', 'tbl-intro-fig'), titulo: 'Reto de atención', pasos: ['Cinco preguntas cortas de tres tipos.', 'Cada acierto da 1 gota (máximo 4).', 'Fallar no tiene castigo.'] },
-    eco: { ico: FIG('llama', 'tbl-intro-fig'), titulo: 'Eco del pastor', pasos: ['Mira en qué orden se iluminan los animales.', 'Repite la secuencia tocándolos igual.', 'Cada ronda suma un animal. 4 rondas dan 2 gotas; 2 rondas, 1.'] }
+    memoria: { ico: FIG('flor', 'tbl-intro-fig'), titulo: 'Pares del huerto', pasos: ['Toca una carta y luego otra.', 'Si son iguales, quedan juntas.', 'Encuentra las 6 parejas para ganar 2 gotas.'] },
+    cosecha: { ico: FIG('arbol', 'tbl-intro-fig'), titulo: 'Cosecha de cosas raras', pasos: ['Toca las frutas que caen: cada una suma 1 punto.', 'Las cosas raras (piedra, hueso, araña, bota) restan 1.', 'Tienes 12 segundos: 6 puntos dan 2 gotas, 3 dan 1.'] },
+    arreo: { ico: FIG('oveja', 'tbl-intro-fig'), titulo: 'Ovejas en fuga', pasos: ['Toca cada oveja para llevarla al corral. Las rebeldes necesitan dos toques.', 'Tres toques seguidos traen una oveja extra.', 'Espanta al zorro antes de que cruce: si no, se lleva una oveja. 18 segundos.'] },
+    reto: { ico: FIG('sol', 'tbl-intro-fig'), titulo: 'Ojo de halcón', pasos: ['Cinco preguntas cortas de tres tipos.', 'Cada acierto da 1 gota (máximo 4).', 'Fallar no tiene castigo.'] },
+    eco: { ico: FIG('llama', 'tbl-intro-fig'), titulo: 'Eco de la montaña', pasos: ['Mira en qué orden se iluminan los animales.', 'Repite la secuencia tocándolos igual.', 'Cada ronda suma un animal. 4 rondas dan 2 gotas; 2 rondas, 1.'] }
   };
   function miniIntro(clave, juego) {
     return new Promise((res) => {
@@ -751,11 +788,11 @@
       fila.append(salir, otra); card.appendChild(fila); mesa.appendChild(card);
     });
   }
-  // F1146 · Memoria del huerto con ilustraciones: cartas que giran en 3D, contador de parejas y brillo al acertar.
+  // F1146 · Pares del huerto con ilustraciones: cartas que giran en 3D, contador de parejas y brillo al acertar.
   function miniMemoria() {
     return new Promise((res) => {
       const figs = ['cactus', 'arbol', 'flor', 'llama', 'pez', 'sol'], cartas = barajar(figs.concat(figs));
-      const caja = mini('Memoria del huerto', 'Encuentra las parejas. Sin prisa y sin castigo.');
+      const caja = mini('Pares del huerto', 'Encuentra las parejas. Sin prisa y sin castigo.');
       const marca = document.createElement('p'); marca.className = 'tbl-marca'; marca.textContent = 'Parejas: 0 de 6'; caja.appendChild(marca);
       const grid = document.createElement('div'); grid.className = 'tbl-mem'; caja.appendChild(grid);
       let abiertas = [], parejas = 0, bloqueo = false, listo = false;
@@ -796,7 +833,7 @@
   };
   function miniCosecha() {                                          // Cosecha de cosas raras: 12 s. Frutas suman, cosas raras restan.
     return new Promise((res) => {
-      const caja = mini('Cosecha del huerto', 'Toca las frutas que caen. Lo que no es fruta resta.');
+      const caja = mini('Cosecha de cosas raras', 'Toca las frutas que caen. Lo que no es fruta resta.');
       const campo = document.createElement('div'); campo.className = 'tbl-cosecha'; caja.appendChild(campo);
       const marca = document.createElement('p'); marca.className = 'tbl-marca'; caja.appendChild(marca);
       let pts = 0, fin = false, listo = false; const DUR = 12000, t0 = Date.now();
@@ -830,11 +867,11 @@
       }, DUR);
     });
   }
-  // F1151 · Arreo de ovejas con reglas: ovejas normales, rebeldes (hay que tocarlas dos veces), zorro (espantarlo antes de que cruce)
+  // F1151 · Ovejas en fuga con reglas: ovejas normales, rebeldes (hay que tocarlas dos veces), zorro (espantarlo antes de que cruce)
   // y racha: tres toques seguidos traen una oveja extra. Más rápido a medida que avanza.
   function miniArreo() {
     return new Promise((res) => {
-      const caja = mini('Arreo de ovejas', 'Lleva las ovejas al corral. Cuidado con el zorro.');
+      const caja = mini('Ovejas en fuga', 'Lleva las ovejas al corral. Cuidado con el zorro.');
       const campo = document.createElement('div'); campo.className = 'tbl-cosecha tbl-arreo'; caja.appendChild(campo);
       const marca = document.createElement('p'); marca.className = 'tbl-marca'; caja.appendChild(marca);
       const corral = document.createElement('div'); corral.className = 'tbl-corral'; corral.textContent = 'Corral'; caja.appendChild(corral);
@@ -883,11 +920,11 @@
       }, DUR);
     });
   }
-  // F1146 · Eco del pastor (nuevo): los animales se iluminan en orden; repite la secuencia tocándolos igual.
+  // F1146 · Eco de la montaña (nuevo): los animales se iluminan en orden; repite la secuencia tocándolos igual.
   function miniEco() {
     return new Promise((res) => {
       const OPC = ['oveja', 'llama', 'pez', 'ave'];
-      const caja = mini('Eco del pastor', 'Mira en qué orden se iluminan los animales y repítelo tocándolos.'); caja.classList.add('compacta');
+      const caja = mini('Eco de la montaña', 'Mira en qué orden se iluminan los animales y repítelo tocándolos.'); caja.classList.add('compacta');
       const marca = document.createElement('p'); marca.className = 'tbl-marca'; caja.appendChild(marca);
       const grid = document.createElement('div'); grid.className = 'tbl-eco'; caja.appendChild(grid);
       const btns = OPC.map((n, i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'tbl-eco-b c' + (i + 1); b.setAttribute('aria-label', n); b.innerHTML = FIG(n); b.disabled = true; grid.appendChild(b); return b; });
@@ -921,7 +958,7 @@
       ronda();
     });
   }
-  // F1133 · Reto de atención: cinco desafíos rápidos de cultura general, naturaleza y Chile (nada religioso).
+  // F1133 · Ojo de halcón: cinco desafíos rápidos de cultura general, naturaleza y Chile (nada religioso).
   // Tres formatos: opción múltiple, «¿cuál no encaja?» y verdadero o falso. Un acierto = 1 gota (máximo 4).
   let RETOS = null;
   async function cargarRetos() {
@@ -934,7 +971,7 @@
     return new Promise(async (res) => {
       const banco = await cargarRetos();
       if (!banco.length) { res(0); return; }
-      const caja = mini('Reto de atención', 'Cinco desafíos rápidos. Un acierto = 1 gota (máximo 4). Sin castigo.');
+      const caja = mini('Ojo de halcón', 'Cinco desafíos rápidos. Un acierto = 1 gota (máximo 4). Sin castigo.');
       const rondas = mezclar(banco).slice(0, Math.min(5, banco.length));
       let i = 0, gotasReto = 0, listo = false;
       const cerrar = (n) => { if (listo) return; listo = true; caja.remove(); res(n); };
@@ -966,8 +1003,8 @@
     });
   }
   // Minijuegos desbloqueados por nivel completado (diseño, sección 13): Arreo (nivel 1), Memoria (2), Cosecha (3).
-  // F1133 · Desde el primer tablero están los tres minijuegos y el Reto de atención (antes se desbloqueaban por nivel).
-  function minisDesbloqueados() { return ['arreo', 'memoria', 'cosecha', 'reto', 'eco']; }   // F1146 · se suma el Eco del pastor
+  // F1133 · Desde el primer tablero están los tres minijuegos y el Ojo de halcón (antes se desbloqueaban por nivel).
+  function minisDesbloqueados() { return ['arreo', 'memoria', 'cosecha', 'reto', 'eco']; }   // F1146 · se suma el Eco de la montaña
   async function relampago() {
     son('relampago');
     decir('Relámpago', 'Un minijuego para ganar gotas. Puedes saltarlo.');
@@ -1019,12 +1056,13 @@
     return `<svg viewBox="0 0 160 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${esc(hecho ? T.nombre : 'Lugar por descubrir')}">` +
       `<defs><linearGradient id="m${g}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a6a3a"/><stop offset="1" stop-color="#5b3a1d"/></linearGradient>` +
       `<linearGradient id="s${g}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${T.cielo}"/><stop offset="1" stop-color="${T.campo}"/></linearGradient>` +
-      `<radialGradient id="a${g}"><stop offset="0" stop-color="${T.aura}" stop-opacity=".95"/><stop offset="1" stop-color="${T.aura}" stop-opacity="0"/></radialGradient></defs>` +
+      `<radialGradient id="a${g}"><stop offset="0" stop-color="${T.aura}" stop-opacity=".95"/><stop offset="1" stop-color="${T.aura}" stop-opacity="0"/></radialGradient><pattern id="w${g}" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(-7)"><path d="M0 4 H14 M0 11 H14" stroke="#2a180a" stroke-width="1" opacity=".28"/></pattern></defs>` +
       `<rect x="6" y="6" width="148" height="188" rx="12" fill="url(#m${g})" stroke="#3b2a18" stroke-width="3"/>` +
+      `<rect x="6" y="6" width="148" height="188" rx="12" fill="url(#w${g})"/>` +
       `<rect x="18" y="18" width="124" height="112" rx="8" fill="url(#s${g})" stroke="#3b2a18" stroke-width="2"/>` +
       `<circle cx="80" cy="66" r="44" fill="url(#a${g})"/>` +
       `<text x="80" y="78" font-size="34" text-anchor="middle">${hecho ? T.icono : '❔'}</text>` +
-      `<circle cx="14" cy="14" r="3.5" fill="#d9a441"/><circle cx="146" cy="14" r="3.5" fill="#d9a441"/>` +
+      `<circle cx="14" cy="14" r="3.5" fill="#d9a441"/><circle cx="146" cy="14" r="3.5" fill="#d9a441"/><circle cx="14" cy="186" r="3.5" fill="#d9a441"/><circle cx="146" cy="186" r="3.5" fill="#d9a441"/>` +
       `<rect x="22" y="140" width="116" height="44" rx="6" fill="#d9a441" stroke="#6b4a2b" stroke-width="2"/>` +
       `<text x="80" y="158" font-size="12.5" font-weight="700" text-anchor="middle" fill="#2b2218">${hecho ? esc(T.nombre) : 'Lugar ' + ((id - 1) % TEMAS.length + 1)}</text>` +
       `<text x="80" y="174" font-size="9.5" text-anchor="middle" fill="#4a3826">${hecho ? esc(T.lugar) : 'Por descubrir'}</text>` +
@@ -1081,14 +1119,14 @@
     const T = tema(E.tablero);
     const luces = Array.from({ length: NIVELES }, (_, i) => `<span class="tbl-caja-luz${i < E.luces ? ' on' : ''}"></span>`).join('');
     const c = document.createElement('div'); c.className = 'tbl-caja'; c.id = 'tblCaja';
-    c.innerHTML = `<div class="tbl-caja-escena" aria-hidden="true"><i class="tbl-caja-rayo"></i><div class="tbl-caja-cuerpo"><div class="tbl-caja-base"></div><div class="tbl-caja-tapa"><img src="img/tablero/deco/${esc((T.deco || ['sol'])[0])}.svg" alt=""></div></div></div>` +
+    c.innerHTML = `<div class="tbl-caja-escena" aria-hidden="true"><i class="tbl-caja-rayo"></i><div class="tbl-cofre"><div class="tbl-cofre-cuerpo"><span class="tbl-cofre-cierre"></span></div><div class="tbl-cofre-luz"></div><div class="tbl-cofre-tapa"><span class="tbl-cofre-emblema"><img src="img/tablero/deco/${esc((T.deco || ['sol'])[0])}.svg" alt=""></span></div></div></div>` +
       `<p class="tbl-caja-tit">Tablero ${E.tablero} · ${esc(T.nombre)}</p><p class="tbl-caja-sub">${esc(T.lugar)}</p>` +
       `<p class="tbl-caja-sub">Nivel ${E.nivel} de ${NIVELES}</p><div class="tbl-caja-lucesfila" aria-label="Luces: una por nivel pasado">${luces}</div>` +
       `<button type="button" class="tbl-btn" id="tblAbrirCaja">Abrir la caja</button>`;
     $.root.appendChild(c);
     document.getElementById('tblAbrirCaja').addEventListener('click', (ev) => {
       const b = ev.currentTarget; b.disabled = true; c.classList.add('abriendo'); son('cofre');
-      setTimeout(() => { c.remove(); son('inicio'); }, 1250);
+      setTimeout(() => { c.remove(); son('inicio'); }, 1800);
     });
   }
 

@@ -441,7 +441,7 @@ body.tb-full #pantalla { padding-bottom: 0; }
 .tbl-eco.mal { animation: tblMal .45s ease; }
 @media (prefers-reduced-motion: reduce) { .tbl-mem .tbl-carta.pareja, .tbl-caida, .tbl-pop { animation: none !important; } .tbl-eco-b { transition: none; } }
 /* Tarjetas que solo tienen texto y botones: se ajustan a su contenido en vez de llenar la pantalla */
-.tbl-mini.tbl-intro, .tbl-mini.compacta { bottom: auto; }
+.tbl-mini.compacta { bottom: auto; }
 
 /* ===== F1150 · Tablero: sin resplandor, sin info de más, pregunta que siempre se ve ===== */
 /* Fuera el brillo que hacía parecer sol a la bola: el aura, el anillo de luz y los rayos del astrolabio */
@@ -462,7 +462,7 @@ body.tb-full #pantalla { padding-bottom: 0; }
 /* ===== F1151 · Caja cerrada, paisaje del lugar y Arreo con reglas ===== */
 .tbl-caja { position: absolute; inset: 0; z-index: 30; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 18px; text-align: center; color: #f7f3e6; border-radius: 24px;
   background: radial-gradient(circle at 50% 38%, #4a3520, #1a120a 78%); animation: tblEntra .5s both; }
-.tbl-caja.abriendo { animation: none; opacity: 0; transition: opacity .4s ease .85s; }
+.tbl-caja.abriendo { animation: none; }
 .tbl-caja-escena { position: relative; width: 240px; height: 200px; }
 .tbl-caja-cuerpo { position: absolute; left: 18px; right: 18px; bottom: 0; height: 130px; }
 .tbl-caja-base { position: absolute; inset: 0; border-radius: 14px; border: 3px solid #d9a441;
@@ -497,3 +497,47 @@ body.tb-full #pantalla { padding-bottom: 0; }
 .tbl-oveja.espantado { animation-play-state: paused; }
 .tbl-oveja.espantado.llevada { transform: translateX(40px) scale(.4); }
 .tbl-arreo { position: relative; }
+
+/* F1152 · Tablero con marco tallado (como en las referencias): filete dorado y clavos de bronce en las esquinas */
+.tbl-mesa::before { content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none; border-radius: 24px;
+  background: radial-gradient(circle at 0 0, #ffe9a8 0 7px, #b8842e 8px 10px, transparent 11px), radial-gradient(circle at 100% 0, #ffe9a8 0 7px, #b8842e 8px 10px, transparent 11px), radial-gradient(circle at 0 100%, #ffe9a8 0 7px, #b8842e 8px 10px, transparent 11px), radial-gradient(circle at 100% 100%, #ffe9a8 0 7px, #b8842e 8px 10px, transparent 11px); }
+.tbl-mesa::after { content: ""; position: absolute; inset: 6px; z-index: 3; pointer-events: none; border-radius: 18px; border: 2px solid rgba(217,164,65,.55); box-shadow: inset 0 0 0 4px rgba(40,22,8,.42), inset 0 0 0 5px rgba(217,164,65,.22); }
+
+/* F1152 · Caja cerrada de madera: veta en la tapa y en el cuerpo, con filete de bronce */
+.tbl-caja-base { background-image: repeating-linear-gradient(-7deg, rgba(42,24,10,0) 0 11px, rgba(42,24,10,.26) 11px 12px), linear-gradient(160deg, #9a6a3a, #5b3a1d); }
+.tbl-caja-tapa { background-image: repeating-linear-gradient(-5deg, rgba(42,24,10,0) 0 10px, rgba(42,24,10,.24) 10px 11px), linear-gradient(170deg, #a87442, #6b4424); box-shadow: 0 -2px 0 #3b2a18, inset 0 -6px 0 rgba(0,0,0,.25); }
+.tbl-caja-base::before { content: ""; position: absolute; left: 10px; right: 10px; top: 10px; bottom: 10px; border-radius: 8px; border: 1px dashed rgba(217,164,65,.6); pointer-events: none; }
+
+/* F1153 · Cofre de madera cerrado: se abre levantando la tapa, sale luz y aparece el tablero */
+.tbl-cofre { position: absolute; left: 50%; top: 58px; width: 250px; height: 136px; margin-left: -125px; perspective: 700px; animation: tblCofreRespira 4.6s ease-in-out infinite; }
+.tbl-caja.abriendo .tbl-cofre { animation: none; }
+@keyframes tblCofreRespira { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+.tbl-cofre-cuerpo { position: absolute; inset: 0; border-radius: 12px; border: 3px solid #d9a441; z-index: 2;
+  background-image: repeating-linear-gradient(-6deg, rgba(0,0,0,0) 0 11px, rgba(20,10,4,.28) 11px 12px), linear-gradient(170deg, #9a6a3a, #4f2f16);
+  box-shadow: inset 0 0 0 6px rgba(40,22,8,.45), inset 0 0 0 7px rgba(217,164,65,.35), 0 18px 28px rgba(0,0,0,.6); }
+.tbl-cofre-cuerpo::before, .tbl-cofre-cuerpo::after { content: ""; position: absolute; width: 14px; height: 14px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #ffe9a8, #8a5f1f); box-shadow: 0 1px 2px rgba(0,0,0,.6); }
+.tbl-cofre-cuerpo::before { left: 8px; bottom: 8px; }
+.tbl-cofre-cuerpo::after { right: 8px; bottom: 8px; }
+.tbl-cofre-cierre { position: absolute; left: 50%; top: 16px; width: 34px; height: 26px; margin-left: -17px; border-radius: 6px; background: linear-gradient(#ffe9a8, #b8842e); box-shadow: 0 2px 5px rgba(0,0,0,.5); transition: opacity .35s ease, transform .35s ease; }
+.tbl-cofre-cierre::after { content: ""; position: absolute; left: 50%; top: -12px; width: 18px; height: 18px; margin-left: -9px; border: 4px solid #c99a3e; border-bottom: none; border-radius: 10px 10px 0 0; }
+.tbl-caja.abriendo .tbl-cofre-cierre { opacity: 0; transform: translateY(-10px) scale(.7); }
+.tbl-cofre-luz { position: absolute; left: 14px; right: 14px; top: 6px; height: 40px; z-index: 1; border-radius: 50%; opacity: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 60%, #fff6c4, #ffc94a 45%, transparent 75%); filter: blur(3px); }
+.tbl-caja.abriendo .tbl-cofre-luz { animation: tblLuzCofre .9s .45s ease-out forwards; }
+@keyframes tblLuzCofre { 0% { opacity: 0; transform: scale(.4, .3); } 60% { opacity: 1; transform: scale(1.15, 1); } 100% { opacity: .55; transform: scale(1.5, 1.2); } }
+.tbl-cofre-tapa { position: absolute; left: -6px; right: -6px; top: -66px; height: 72px; z-index: 3; border-radius: 14px 14px 6px 6px; border: 3px solid #d9a441; transform-origin: 50% 100%; display: grid; place-items: center;
+  background-image: repeating-linear-gradient(-4deg, rgba(0,0,0,0) 0 10px, rgba(20,10,4,.26) 10px 11px), linear-gradient(170deg, #b77d43, #6a4222);
+  box-shadow: inset 0 4px 0 rgba(255,255,255,.18), inset 0 -8px 0 rgba(0,0,0,.2), 0 -2px 0 rgba(0,0,0,.25); transition: transform 1.1s cubic-bezier(.3,.7,.2,1) .15s; }
+.tbl-cofre-tapa::before { content: ""; position: absolute; inset: 7px; border-radius: 9px; border: 1px dashed rgba(217,164,65,.7); pointer-events: none; }
+.tbl-cofre-emblema { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: radial-gradient(circle, #2c4a3a, #14241b 72%); border: 2px solid #d9a441; box-shadow: 0 0 0 3px #5a3d22, 0 3px 6px rgba(0,0,0,.5); }
+.tbl-cofre-emblema img { width: 38px; height: 38px; filter: drop-shadow(0 2px 3px rgba(0,0,0,.5)); }
+.tbl-caja.abriendo .tbl-cofre-tapa { transform: rotateX(-125deg); }
+.tbl-caja.abriendo .tbl-caja-escena { animation: tblCofreSube 1.2s .1s ease both; }
+@keyframes tblCofreSube { 0% { transform: scale(1); } 60% { transform: scale(1.05); } 100% { transform: scale(1.02); } }
+.tbl-caja.abriendo { animation: tblCajaSale .45s 1.35s ease forwards; }
+@keyframes tblCajaSale { from { opacity: 1; } to { opacity: 0; } }
+
+/* F1153 · Medallones de las esquinas del tablero */
+.tbl-medallon { position: absolute; width: 58px; height: 58px; z-index: 4; pointer-events: none; filter: drop-shadow(0 2px 3px rgba(0,0,0,.55)); opacity: .95; }
+.tbl-medallon.tl { left: 4px; top: 4px; } .tbl-medallon.tr { right: 4px; top: 4px; }
+.tbl-medallon.bl { left: 4px; bottom: 4px; } .tbl-medallon.br { right: 4px; bottom: 4px; }
+@media (prefers-reduced-motion: reduce) { .tbl-cofre { animation: none; } .tbl-caja.abriendo .tbl-cofre-luz, .tbl-caja.abriendo .tbl-caja-escena { animation: none; } }
