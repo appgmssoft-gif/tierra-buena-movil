@@ -63,18 +63,29 @@
     };
     requestAnimationFrame(paso);
   }
+  // F1161 · Modo automático: mide la fluidez en la pantalla donde está la persona (no solo al abrir la app),
+  // y en celulares de pocos núcleos o poca memoria arranca directo en «Ahorro», que es el nivel que sí libera el hilo.
   function vigilar() {
     if (leer() !== 'auto') return;
-    try { const c = navigator.hardwareConcurrency || 8, m = navigator.deviceMemory || 4; if (c <= 4 || m <= 2) { nivelAuto = Math.max(nivelAuto, 1); aplicar(); } } catch (e) { /* sin datos */ }
-    try { if (navigator.getBattery) navigator.getBattery().then((b) => { if (!b.charging && b.level <= 0.2) { nivelAuto = Math.max(nivelAuto, 1); aplicar(); } }); } catch (e) { /* sin batería */ }
+    try { const c = navigator.hardwareConcurrency || 8, m = navigator.deviceMemory || 4; if (c <= 4 || m <= 2) { nivelAuto = 2; aplicar(); } } catch (e) { /* sin datos */ }
+    try { if (navigator.getBattery) navigator.getBattery().then((b) => { if (!b.charging && b.level <= 0.2 && nivelAuto < 1) { nivelAuto = 1; aplicar(); } }); } catch (e) { /* sin batería */ }
+    let midiendo = false, ultima = 0, tCambio = 0;
     const ronda = () => {
-      if (leer() !== 'auto') return;
+      if (midiendo || leer() !== 'auto') return;
+      midiendo = true; ultima = Date.now();
       medir(1600, (fps, lentos) => {
-        if (fps < 38 || lentos > 0.25) { if (nivelAuto < 2) { nivelAuto++; aplicar(); } }
+        midiendo = false;
+        if ((fps < 38 || lentos > 0.25) && nivelAuto < 2) { nivelAuto = 2; aplicar(); }
         setTimeout(ronda, nivelAuto >= 2 ? 120000 : 45000);
       });
     };
-    setTimeout(ronda, 6000);             // espera a que termine la apertura
+    // Al cambiar de pantalla, si aún no está en Ahorro, mide esa pantalla (como mucho cada 15 s).
+    document.addEventListener('click', (e) => {
+      const t = e.target && e.target.closest && e.target.closest('button.tab');
+      if (!t || leer() !== 'auto' || nivelAuto >= 2 || midiendo || Date.now() - ultima < 15000) return;
+      clearTimeout(tCambio); tCambio = setTimeout(ronda, 1400);   // espera a que termine la transición
+    }, true);
+    setTimeout(ronda, 6000);             // primera medida: espera a que termine la apertura
   }
 
   // ---- 3) acceso rápido ----

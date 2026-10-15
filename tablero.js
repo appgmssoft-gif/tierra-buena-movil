@@ -468,21 +468,10 @@
     $.icono.innerHTML = `<img class="tbl-ico-tema" src="img/tablero/deco/${(T.deco || ['sol'])[0]}.svg" alt="">`;
   }
   // Decoración de cada lugar: figuras suaves sobre el campo (siempre igual para ese tablero)
-  // F1153 · Medallones tallados en las esquinas del tablero (como en las referencias)
-  function pintarMedallones() {
-    if (!$.mesa) return;
-    $.mesa.querySelectorAll('.tbl-medallon').forEach((x) => x.remove());
-    const figs = ['condor', 'copihue', 'guanaco', 'zorro'], pos = ['tl', 'tr', 'bl', 'br'];
-    figs.forEach((f, i) => {
-      const d = document.createElement('img'); d.className = 'tbl-medallon ' + pos[i]; d.alt = ''; d.src = 'img/tablero/medallon/' + f + '.svg';
-      $.mesa.appendChild(d);
-    });
-  }
   function pintarDecor(T) {
     if (!$.campo) return;
     const rnd = semilla(E.tablero * 31 + 5), lista = T.deco || [];
-    $.campo.innerHTML = paisajeHTML(T);
-    pintarMedallones();   // F1151 · paisaje del lugar detrás de las casillas
+    $.campo.innerHTML = paisajeHTML(T);   // F1151 · paisaje del lugar detrás de las casillas
     for (let i = 0; i < 9 && lista.length; i++) {
       const d = document.createElement('img'); d.className = 'tbl-deco'; d.src = 'img/tablero/deco/' + lista[i % lista.length] + '.svg'; d.alt = ''; d.setAttribute('aria-hidden', 'true');
       d.style.left = (6 + rnd() * 88).toFixed(1) + '%'; d.style.top = (6 + rnd() * 88).toFixed(1) + '%';
@@ -1121,10 +1110,9 @@
     const c = document.createElement('div'); c.className = 'tbl-caja'; c.id = 'tblCaja';
     c.className = 'tbl-caja tbl-tapa-caja'; c.id = 'tblCaja';
     c.style.setProperty('--deco', `url(img/tablero/deco/${esc((T.deco || ['sol'])[0])}.svg)`);
-    const med = (n, pos) => `<img class="tbl-tapa-med ${pos}" src="img/tablero/medallon/${n}.svg" alt="">`;
     c.innerHTML = `<div class="tbl-tapa-escena" aria-hidden="true">` +
-      `<div class="tbl-tapa-hoja izq">${med('condor', 'tl')}${med('zorro', 'bl')}<span class="tbl-tapa-vent"></span></div>` +
-      `<div class="tbl-tapa-hoja der">${med('copihue', 'tr')}${med('guanaco', 'br')}<span class="tbl-tapa-vent"></span></div>` +
+      `<div class="tbl-tapa-hoja izq"><span class="tbl-tapa-vent"></span></div>` +
+      `<div class="tbl-tapa-hoja der"><span class="tbl-tapa-vent"></span></div>` +
       `</div>` +
       `<div class="tbl-tapa-tit"><b>${esc(T.nombre)}</b><small>Tablero ${E.tablero} · ${esc(T.lugar)}</small></div>` +
       `<div class="tbl-tapa-info"><div class="tbl-caja-lucesfila" aria-label="Luces: una por nivel pasado">${luces}</div>` +

@@ -636,7 +636,6 @@ body.entrando main{padding-bottom:calc(28px + var(--sa-b))}
 .ico-cod-in .ic{stroke-width:1.9}
 .ent-splash{position:relative}
 .ent-splash>.ico-cod{position:absolute;top:calc(14px + var(--sa-t));right:14px;z-index:2}
-.pista-cod{text-align:center;margin:16px 6px 0;font-size:.92rem}
 
 /* hoja donde se escribe el código */
 .hoja-cod{text-align:center}
@@ -655,7 +654,6 @@ body.entrando main{padding-bottom:calc(28px + var(--sa-b))}
 .hv-caja{position:absolute;inset:0;pointer-events:none}
 .hv-caja i{position:absolute;top:-16px;width:10px;height:16px;border-radius:0 100% 0 100%;background:color-mix(in srgb,var(--verde) 55%,transparent);opacity:0}
 .hv-caja i:nth-child(1){left:12%}.hv-caja i:nth-child(2){left:36%;width:8px;height:13px}.hv-caja i:nth-child(3){left:64%}.hv-caja i:nth-child(4){left:86%;width:8px;height:13px;background:color-mix(in srgb,var(--oro) 60%,transparent)}
-.pista-cod b{color:var(--verde)}
 @media (prefers-reduced-motion:no-preference){
   html:not([data-anim=off]) .ico-cod-in::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--oro);opacity:0;animation:cod-onda 2.4s 1.4s ease-out 3}
   html:not([data-anim=off]) .ico-cod{animation:tb-baja .6s .15s var(--resorte) both}
@@ -665,7 +663,6 @@ body.entrando main{padding-bottom:calc(28px + var(--sa-b))}
   html:not([data-anim=off]) .hv-caja i:nth-child(2){animation-delay:2.2s}html:not([data-anim=off]) .hv-caja i:nth-child(3){animation-delay:4.4s}html:not([data-anim=off]) .hv-caja i:nth-child(4){animation-delay:6s}
   html:not([data-anim=off]) .grid-ent>.card{animation:tb-sube .6s var(--resorte) both}
   html:not([data-anim=off]) .grid-ent>.card:nth-child(1){animation-delay:.18s}html:not([data-anim=off]) .grid-ent>.card:nth-child(2){animation-delay:.3s}html:not([data-anim=off]) .grid-ent>.card:nth-child(3){animation-delay:.42s}
-  html:not([data-anim=off]) .pista-cod{animation:tb-sube .6s .55s var(--resorte) both}
   @keyframes cod-onda{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(1.9)}}
   @keyframes hero-flota{50%{transform:translateY(-6px) rotate(-3deg)}}
   @keyframes hero-brilla{0%{left:-60%}55%,100%{left:130%}}
@@ -750,7 +747,7 @@ html[data-anim=off] .rv{opacity:1;transform:none}
   html:not([data-anim=off]) .card.tb-nueva::after{background-size:200% 200%;animation:borde-luz 2.6s ease-out 1 forwards}
   html:not([data-anim=off]) .fila:active,html:not([data-anim=off]) .chip:active{transform:scale(.97)}
   html:not([data-anim=off]) .tab[aria-current=page]::after{animation:punto-late 2.4s ease-in-out infinite}
-  @keyframes tb-entra{from{opacity:0;transform:translateY(22px) scale(.97);filter:blur(5px)}to{opacity:1;transform:none;filter:none}}
+  @keyframes tb-entra{from{opacity:0;transform:translateY(22px) scale(.97)}to{opacity:1;transform:none}}
   @keyframes oro-corre{to{background-position:100% 0}}
   @keyframes flota{0%,100%{translate:0 0}50%{translate:0 -8px}}
   @keyframes borde-luz{to{background-position:100% 100%}}
@@ -760,15 +757,12 @@ html[data-anim=off] .rv{opacity:1;transform:none}
 
 /* ===== F888 — invitar a un amigo ===== */
 .invita{display:flex;align-items:center;gap:14px;width:100%;text-align:left;margin:16px 0;padding:16px;border:0;color:var(--tinta);font:inherit;cursor:pointer;background:linear-gradient(135deg,color-mix(in srgb,var(--oro) 22%,var(--tarjeta)),var(--tarjeta) 70%)}
-.invita-ic{flex:none;display:grid;place-items:center;width:52px;height:52px;border-radius:16px;color:#fff;background:linear-gradient(135deg,var(--oro),var(--verde));box-shadow:0 12px 22px -10px var(--oro)}
-.invita-txt{flex:1;display:flex;flex-direction:column;gap:2px}.invita-txt b{font-size:1.08rem}.invita-txt small{color:var(--suave);font-size:.9rem;line-height:1.35}
 .inv-sobre{display:grid;place-items:center;width:60px;height:60px;margin:0 auto 6px;border-radius:20px;color:#fff;background:linear-gradient(135deg,var(--oro),var(--verde));box-shadow:0 14px 26px -12px var(--oro)}
 .hoja-inv{max-height:92vh;overflow-y:auto;text-align:left}.hoja-inv h3,.hoja-inv>p.suave{text-align:center}
 .inv-msg{margin-top:14px;padding:12px 14px;border-radius:14px;border:1px dashed var(--oro);background:color-mix(in srgb,var(--oro) 8%,transparent)}
 .inv-msg small{color:var(--suave);font-weight:700}.inv-msg p{margin:6px 0 0;white-space:pre-wrap;font-size:.95rem;line-height:1.5}
 .inv-wa{background:#1f9d55}.inv-mail{background:var(--verde)}.inv-priv{text-align:center;font-size:.85rem;margin:12px 0 0}
 @media (prefers-reduced-motion:no-preference){
-  html:not([data-anim=off]) .invita-ic{animation:flota 4.5s ease-in-out infinite}
   html:not([data-anim=off]) .inv-sobre{animation:tb-entra .6s var(--resorte) backwards}
 }
 /* F888 · los campos de teléfono se ven igual que los de texto y correo */

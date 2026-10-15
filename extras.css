@@ -396,19 +396,14 @@ html[data-anim=off] .so-nodo:not(.bloq):not(.hecho){animation:none}
 .jug-pieza span{font-size:26px}
 .jug-pieza.on{border-color:var(--verde,#4f8a55);box-shadow:0 6px 14px -8px rgba(43,34,24,.5);transform:translateY(-2px)}
 .consola{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.consola-tile{position:relative;display:grid;gap:4px;text-align:left;padding:14px;border-radius:20px;border:1px solid color-mix(in srgb,var(--verde,#4f8a55) 30%,transparent);background:linear-gradient(160deg,#fffdf7,color-mix(in srgb,var(--verde,#4f8a55) 12%,#faf5ea));box-shadow:0 10px 18px -14px rgba(43,34,24,.6),inset 0 -4px 0 color-mix(in srgb,var(--verde,#4f8a55) 18%,transparent);cursor:pointer;transition:transform .2s ease}
-.consola-tile:not(.pronto):active{transform:scale(.98)}
-.consola-tile:not(.pronto):hover{transform:translateY(-3px)}
-.consola-tile.pronto{opacity:.7;cursor:default}
 .ct-ico{font-size:30px;line-height:1}
-.consola-tile small{font-size:12px;line-height:1.35;color:#6b5a48}
 .ct-play{margin-top:6px;font-weight:700;font-size:13px;color:var(--verde,#4f8a55)}
 .logros{list-style:none;margin:0;padding:0;display:grid;gap:8px}
 .logro{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;background:#fffdf7;border:1px solid rgba(43,34,24,.08)}
 .logro span{font-size:22px}
 .logro:not(.ok){opacity:.6}
 .logro.ok{border-color:color-mix(in srgb,var(--verde,#4f8a55) 40%,transparent)}
-@media (prefers-reduced-motion:reduce){.consola-tile{transition:none}}
+@media (prefers-reduced-motion:reduce){}
 
 /* F1127 · Los carruseles «Lo que puedes hacer aquí» solo viven en Perfil (antes salían en todas las pestañas) */
 .tbcar:not([data-tab="perfil"]) { display: none !important; }
@@ -576,7 +571,7 @@ html[data-anim=off] .so-nodo:not(.bloq):not(.hecho){animation:none}
 /* F1144 · Distribución: nada se oculta fuera de la pantalla */
 /* Selector de avatares: la fila se ajusta en varias líneas en lugar de desplazarse hacia un lado */
 .av-sel { flex-wrap: wrap !important; overflow: visible !important; justify-content: center !important; gap: 10px !important; }
-.av-sel:not(.emo) .avatar { width: clamp(30px, 8.4vw, 44px); height: clamp(30px, 8.4vw, 44px); }
+.av-sel:not(.emo) .avatar { width: 44px; height: 44px; }   /* F1161: 44 px mínimo para tocar; antes 30 px en celulares */
 /* Primer paso del Inicio: la última tarjeta queda visible por encima del botón fijo */
 .il-elige { padding-bottom: 150px; }
 /* Mesa: el botón de la Sala convive con Lanzar dado y Dados de bonus */

@@ -1,1 +1,0 @@
-Portadas de los planes de lectura (F994). Son ilustraciones SVG en el estilo de Tierra Buena (calma, sermon, animo, juan, prov, marcos, lucas, hechos, romanos, genesis). Para cambiar una por una foto con licencia: poner el JPG de 1280x720 (menos de 150 KB) y cambiar la extensión en planFoto() de app.js. Si falta un archivo, la tarjeta muestra un fondo de color.

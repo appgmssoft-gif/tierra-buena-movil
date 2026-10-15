@@ -82,3 +82,7 @@ html[data-sesion="0"] #pantalla{padding-bottom:24px}
 html *,html *::before,html *::after{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 .barra,.barra-top,.btn-menu{background-color:color-mix(in srgb,var(--tarjeta) 94%,transparent)}
 html[data-anim=off] *,html[data-anim=off] *::before,html[data-anim=off] *::after{animation:none!important;transition:none!important}
+/* F1161 · Ahorro: los destellos de «tarjeta nueva», la entrada de tarjetas y el brillo del título
+   repintan la pantalla en cada cuadro. Con Ahorro se quedan quietos; el contenido igual aparece. */
+html[data-eco="2"] .card.tb-nueva::after,html[data-eco="2"] .btn.tb-nueva::after,html[data-eco="2"] .tab[aria-current=page]::after,
+html[data-eco="2"] #pantalla>*,html[data-eco="2"] main>*,html[data-eco="2"] .hero h1,html[data-eco="2"] .hero-ico,html[data-eco="2"] .inv-sobre{animation:none!important}
