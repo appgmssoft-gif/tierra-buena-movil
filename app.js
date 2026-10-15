@@ -290,7 +290,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Acertijos de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Letras entre las hojas': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => !CABECERAS_ILUSTRADAS ? '' : `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1163';
+  const APP_VERSION = 'F1166';
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
   const BANDA_POR_VOLVER = { 'Mi iglesia': 'union', 'Palabra': 'palabra', 'Vida': 'crecer', 'Vivir lo que aprendemos': 'crecer', 'Perfil': 'camino', 'Panel': 'pastor' };
   const bandaMini = (tipo) => bandaTB(tipo).replace('class="tb-banda"', 'class="tb-banda tb-banda-mini"');
@@ -782,37 +782,43 @@
   const K_DISP = 'tb_movil_disponibilidad';
   const DISP_OPC = [['entre', 'Entre semana'], ['fin', 'Fines de semana'], ['manana', 'Mañanas'], ['tarde', 'Tardes'], ['noche', 'Noches']];
   const dispLeer = () => { const v = leer(K_DISP); return Array.isArray(v) ? v.filter((x) => DISP_OPC.some((o) => o[0] === x)) : []; };
+  // F1166 · Mi iglesia ordenada: 4 grupos plegables. Recuerda cuáles quedaron abiertos mientras la app esté abierta.
+  const miAbierto = new Set(['Pedir ayuda', 'Mi iglesia', 'Servir']);
   function vistaMiembro(id) {
     const ig = leer(K_IG);
     $('#pantalla').innerHTML = `
       ${areaHero('area-iglesia')}<p class="area-tag area-tag-miembro">Tu comunidad</p><section class="saludo"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML(id.nombre, perfilLeer(), false)}<div><p class="suave m0">${saludoHora()}</p><h1>Hola, ${esc(id.nombre)}</h1><p class="suave m0">⛪ ${ig ? esc(ig.nombre) : 'Tu iglesia'}</p></div></section>
-      <h2 class="sep">Pedir ayuda</h2>
+      <details class="pf-grupo mi-grupo" data-mg="Pedir ayuda"${miAbierto.has('Pedir ayuda') ? ' open' : ''}><summary>Pedir ayuda</summary>
       <div class="grid">${activa('🙏', 'Pedir oración', 'Cuéntale a tu pastor por qué orar.', 'oracion')}${activa('🤝', 'Pedir visita', 'Pide que tu pastor te visite.', 'visita')}</div>
-      <h2 class="sep">Vivir con mi iglesia</h2>
+      </details>
+      <details class="pf-grupo mi-grupo" data-mg="Mi iglesia"${miAbierto.has('Mi iglesia') ? ' open' : ''}><summary>Mi iglesia</summary>
       <div class="grid">${activa('📅', 'Agenda', 'Actividades de tu iglesia y de tus grupos.', 'agenda')}${activa('📣', 'Avisos', 'Mensajes de tu pastor y de los líderes.', 'avisos')}${activa('🧱', 'Muro', 'Peticiones que tu pastor compartió, para orar juntos.', 'muro')}${activa('🌟', 'Acción del mes', 'Lo que viviremos juntos este mes.', 'accion')}</div>
-      <h2 class="sep">Conversar</h2><div class="lista"><button type="button" class="fila" data-chat="1"><span class="fila-txt">Chat de mi iglesia<small>Bendecir, unirnos y organizar. Sin conflictos en público.</small></span><span class="flecha" aria-hidden="true">›</span></button></div>
-      <h2 class="sep">Servir</h2>
-      <div class="grid">${activa('🕍', 'Mis ministerios', 'Los grupos donde sirves y quién los lidera.', 'ministerios')}${activa('🤲', 'Juntos hacemos el bien', 'Ideas y movimientos para servir con tu iglesia.', 'juntos')}</div>
-      <h2 class="sep">Mis turnos</h2><div class="card" id="misTurnos"><p class="suave m0">Cargando tus turnos…</p></div>
+      <div class="lista"><button type="button" class="fila" data-chat="1"><span class="fila-txt">Chat de mi iglesia<small>Bendecir, unirnos y organizar. Sin conflictos en público.</small></span><span class="flecha" aria-hidden="true">›</span></button></div>
+      <section class="card cuidar-pastor"><b>Cuidar a tu pastor</b><p class="suave m0t">Tu pastor también es una persona. Estas son formas concretas de acompañarlo:</p><ul class="ayuda-pasos"><li>Ora por él y por su familia, por su nombre.</li><li>Agradécele con una palabra sincera, en persona o por escrito.</li><li>Respeta sus días de descanso: no todo es urgente.</li><li>Ofrece una ayuda concreta: un servicio, transporte o una compra para el aseo.</li><li>Si ves una carga que no puede con todo, dile que cuentas con él.</li></ul></section>
+      </details>
+      <details class="pf-grupo mi-grupo" data-mg="Servir"${miAbierto.has('Servir') ? ' open' : ''}><summary>Servir</summary>
+        <div class="card"><div class="t">Mis turnos</div><div id="misTurnos"><p class="suave m0">Cargando tus turnos…</p></div></div>
       <div id="turLider"></div>
-      <h2 class="sep">Quién sirve</h2><div class="card" id="quienSirve"><p class="suave m0">Cargando el rol de la iglesia…</p></div>
       <div class="card"><b>¿Cuándo puedes servir?</b><p class="suave m0t">Marca lo que te sirve. Por ahora solo lo ves tú.</p>
         <div class="chips" role="group" aria-label="Mi disponibilidad">${DISP_OPC.map(([k, t]) => `<button type="button" class="chip${dispLeer().indexOf(k) >= 0 ? ' on' : ''}" data-disp="${k}" aria-pressed="${dispLeer().indexOf(k) >= 0}">${t}</button>`).join('')}</div>
         <p class="suave m0t" id="dispMsg" aria-live="polite"></p></div>
-      <div id="tbEjem" class="tb-ejem-caja"></div>
-      <section class="card cuidar-pastor"><b>Cuidar a tu pastor</b><p class="suave m0t">Tu pastor también es una persona. Estas son formas concretas de acompañarlo:</p><ul class="ayuda-pasos"><li>Ora por él y por su familia, por su nombre.</li><li>Agradécele con una palabra sincera, en persona o por escrito.</li><li>Respeta sus días de descanso: no todo es urgente.</li><li>Ofrece una ayuda concreta: un servicio, transporte o una compra para el aseo.</li><li>Si ves una carga que no puede con todo, dile que cuentas con él.</li></ul></section><h2 class="sep">Privacidad y ayuda</h2>
+      <div class="grid">${activa('🕍', 'Mis ministerios', 'Los grupos donde sirves y quién los lidera.', 'ministerios')}${activa('🤲', 'Juntos hacemos el bien', 'Ideas y movimientos para servir con tu iglesia.', 'juntos')}</div>
+        <div class="card"><div class="t">Quién sirve este mes</div><div id="quienSirve"><p class="suave m0">Cargando el rol de la iglesia…</p></div></div>
+      </details>
+      <details class="pf-grupo mi-grupo" data-mg="Mi cuenta y ayuda"${miAbierto.has('Mi cuenta y ayuda') ? ' open' : ''}><summary>Mi cuenta y ayuda</summary>
       <div class="grid">${activa('🔒', 'Mi privacidad', 'Qué ve tu pastor, descargar o borrar tus datos.', 'privacidad')}${activa('❓', 'Preguntas frecuentes', 'Respuestas cortas sobre cómo usar la app.', 'ayuda')}</div>
-      <h2 class="sep">Mi cuenta</h2>
+      <div id="tbEjem" class="tb-ejem-caja"></div>
       ${leer(K_CUENTA)
         ? `<div class="card"><div class="t"><span aria-hidden="true">${svg('correo', 22)}</span>Sesión iniciada</div><p class="suave m0t">${esc(leer(K_CUENTA).correo)}. Tu iglesia queda guardada en tu cuenta: en otro teléfono entras solo con tu correo y contraseña.</p><button type="button" class="btn sec" id="cuentaSalir">Cerrar sesión</button></div>`
         : `<div class="card"><div class="t"><span aria-hidden="true">${svg('correo', 22)}</span>Guardar mi iglesia con mi correo</div><p class="suave m0t">Crea una cuenta (o entra con la que ya tienes) y tu iglesia te sigue a cualquier teléfono, sin copiar llaves.</p><button type="button" class="btn sec" id="cuentaIr">Entrar o crear cuenta</button></div>`}
-      <h2 class="sep">Mi dispositivo</h2>
       <div class="card"><div class="t"><span aria-hidden="true">🔑</span>Pasar mi iglesia a otro dispositivo</div>
         <p class="suave m0t">Copia tu llave y pégala en tu otro teléfono o tablet, en Perfil → «Recuperar mi iglesia». Guárdala como una contraseña: quien la tenga entra como tú.</p>
         <button type="button" class="btn sec" id="verLlave">Mostrar mi llave</button>
         <div id="llaveBox" hidden><textarea id="llaveTxt" rows="3" readonly spellcheck="false"></textarea><button type="button" class="btn" id="copiarLlave">📋 Copiar mi llave</button><p id="llaveMsg" class="ok" role="status"></p></div></div>
       ${bloqueInstalar()}
+      </details>
       <button id="salir" class="btn sec sep28">Salir de mi iglesia</button>`;
+    document.querySelectorAll('[data-mg]').forEach((d) => d.addEventListener('toggle', () => { const n = d.dataset.mg; if (d.open) miAbierto.add(n); else miAbierto.delete(n); }));
     pintarInstalar($('[data-instalar-box]'));
     try { if (window.TBEjemplos && $('#tbEjem')) window.TBEjemplos.pintar($('#tbEjem'), 'miembro'); } catch (e) { /* sin ejemplos */ }
     const cs = $('#cuentaSalir'); if (cs) cs.onclick = () => { if (confirm('¿Cerrar sesión? Tu iglesia sigue guardada en tu cuenta; para volver a entrar necesitarás tu correo y contraseña. Tus notas personales (oración, crecimiento) quedan guardadas en tu cuenta y vuelven cuando entres.')) cerrarSesionCuenta(); };
@@ -3361,7 +3367,11 @@
       <h2 class="sep">Mi agenda</h2><div class="lista">${fil('t2', svg('calendario', 22), 'Mi calendario', 'Visitas, reuniones y descanso. Solo tú lo ves', 'mcal')}</div>
       <h2 class="sep">Para atender hoy</h2><div class="lista">${fil('t3', svg('compartir', 22), 'Visitas', 'Quién pide que lo visites', 'vis')}${fil('t2', svg('corazon', 22), 'Oraciones', 'Peticiones recibidas', 'ora')}${fil('t1', svg('gente', 22), 'Solicitudes', 'Quién quiere unirse', 'sol')}</div>
       <h2 class="sep">Código de tu iglesia</h2><div class="card pas-cod"><p class="suave m0">Compártelo con tus miembros para que se unan a tu iglesia.</p><p class="pas-cod-num" id="pCodNum">${esc(p.codigo || '—')}</p><div class="hoja-bt"><button type="button" class="btn" id="pCodCopiar">Copiar código</button><button type="button" class="btn sec" id="pCodCompartir">Compartir</button></div><details class="pas-llave"><summary>Llave para mi otro teléfono (privada)</summary><p class="suave">Es como una contraseña: no la compartas con nadie.</p><button type="button" class="btn sec" id="pLlaveCopiar">Copiar llave</button></details></div>
-      <h2 class="sep">Mi iglesia</h2><div class="lista">${fil('t2', svg('compartir', 22), 'Chat', 'Iglesia, pastor y líderes, y conversaciones', 'chat')}${fil('t4', svg('brote', 22), 'Bienvenida', 'Primeras 4 semanas de quienes llegan', 'bien')}${fil('t4', svg('gente', 22), 'Miembros', 'Quiénes forman tu iglesia', 'mie')}${fil('t1', svg('gente', 22), 'Disponibilidad', 'Quiénes pueden servir y cuándo', 'disp')}${fil('t1', svg('iglesia', 22), 'Ministerios y líderes', 'Grupos, personas y líderes', 'min')}${fil('t2', svg('calendario', 22), 'Agenda', 'Actividades y reuniones', 'age')}${fil('t3', svg('altavoz', 22), 'Avisos', 'Mensajes para todos o un grupo', 'avi')}${fil('t4', svg('bloques', 22), 'Datos y código', 'Nombre, eslogan y código', 'dat')}</div>
+      <h2 class="sep">Mi iglesia</h2>
+      <details class="pf-grupo" open><summary>Personas</summary><div class="lista">${fil('t4', svg('gente', 22), 'Miembros', 'Quiénes forman tu iglesia', 'mie')}${fil('t4', svg('brote', 22), 'Bienvenida', 'Primeras 4 semanas de quienes llegan', 'bien')}${fil('t1', svg('gente', 22), 'Disponibilidad', 'Quiénes pueden servir y cuándo', 'disp')}</div></details>
+<details class="pf-grupo" open><summary>Comunicación</summary><div class="lista">${fil('t2', svg('compartir', 22), 'Chat', 'Iglesia, pastor y líderes, y conversaciones', 'chat')}${fil('t3', svg('altavoz', 22), 'Avisos', 'Mensajes para todos o un grupo', 'avi')}${fil('t2', svg('calendario', 22), 'Agenda', 'Actividades y reuniones', 'age')}</div></details>
+<details class="pf-grupo" open><summary>Organización</summary><div class="lista">${fil('t1', svg('iglesia', 22), 'Ministerios y líderes', 'Grupos, personas y líderes', 'min')}${fil('t4', svg('bloques', 22), 'Datos y código', 'Nombre, eslogan y código', 'dat')}</div></details>
+
       <div id="tbEjem" class="tb-ejem-caja"></div>
       <p class="suave sep16">${svg('escudo', 16)} Las finanzas se administran solo desde el computador.</p>
       <button type="button" class="btn sec sep16" id="pSalir">Salir del modo pastor</button>`;
@@ -4330,8 +4340,10 @@
         if (!e.isIntersecting) return; const n = e.target; io.unobserve(n); n.classList.add('rv-on');
         setTimeout(() => { try { n.classList.remove('rv'); n.classList.remove('rv-on'); } catch (x) { /* nada */ } }, 1000);
       }), { threshold: 0.06 }) : null;
-      let clave = '';
-      new MutationObserver(() => {
+      let clave = '', pendiente = 0;
+      // F1166 · Un solo pase por cuadro: varias mutaciones seguidas (cambio de pestaña) ya no leen el diseño una por una
+      const revisar = () => {
+        pendiente = 0;
         try {
           if (calma()) return;
           if (io) {
@@ -4348,7 +4360,8 @@
             b.textContent = '0'; requestAnimationFrame(paso);
           });
         } catch (e) { /* nada */ }
-      }).observe(pan, { childList: true });
+      };
+      new MutationObserver(() => { if (!pendiente) pendiente = requestAnimationFrame(revisar); }).observe(pan, { childList: true });
     } catch (e) { /* sin capa premium: la app funciona igual */ }
   })();
   // ---------- F899 · Perfil ordenado (secciones que se abren y cierran) + pantalla de apertura ----------

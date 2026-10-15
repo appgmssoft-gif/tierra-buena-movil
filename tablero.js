@@ -100,6 +100,29 @@
     return out;
   }
 
+  // F1165 · Encaje del trazo: se achica en torno a su centro (misma forma, mismo espaciado) hasta que cada casilla
+  // quede dentro del campo con 4 px de aire y ninguna pise a otra. Devuelve las coordenadas en % y el tamaño de casilla.
+  function encajar(base, w, h) {
+    const P = base.map((c) => ({ x: c.x * w / 100, y: c.y * h / 100 })), N = P.length;
+    let sep0 = 1e9, cheb0 = 1e9;                                     // mínimos entre TODOS los pares (no solo vecinas): distancia y separación por eje
+    for (let i = 0; i < N; i++) for (let j = i + 1; j < N; j++) {
+      sep0 = Math.min(sep0, Math.hypot(P[i].x - P[j].x, P[i].y - P[j].y));
+      cheb0 = Math.min(cheb0, Math.max(Math.abs(P[i].x - P[j].x), Math.abs(P[i].y - P[j].y)));
+    }
+    const xs = P.map((p) => p.x), ys = P.map((p) => p.y);
+    const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+    const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+    let cs = 16, s = 1;
+    for (let cand = 42; cand >= 16; cand--) {                        // la casilla más grande que cabe
+      const pad = cand / 2 + 16;                                     // 12 px del campo + 4 px de aire
+      s = Math.max(0.3, Math.min(1, (cx - pad) / (cx - minX), (w - pad - cx) / (maxX - cx), (cy - pad) / (cy - minY), (h - pad - cy) / (maxY - cy)));
+      // cuadrados: en diagonal se pisan si la separación por eje es menor que el lado, por eso el tope es también 0,9 × esa separación
+      cs = Math.max(16, Math.min(42, Math.floor(Math.min(sep0 * 0.86, cheb0 * 0.9) * s)));
+      if (cs <= cand) break;
+    }
+    const coords = P.map((p) => ({ x: (cx + (p.x - cx) * s) / w * 100, y: (cy + (p.y - cy) * s) / h * 100 }));
+    return { coords, cs };
+  }
   // F1152 · Caminos que cambian por nivel: anillo, ondas (un anillo con olas) y trébol (cuatro lóbulos). Todos rodean la bola
   // y las casillas quedan a la misma distancia entre sí, igual que el anillo.
   function trazo(nivel, N, w, h) {
@@ -401,12 +424,10 @@
   function montar() {                                               // crea las casillas del nivel actual, en anillo
     const I = info(), N = I.meta + 1;
     MEDIDA = medirMesa();
-    $.coords = trazo(E.nivel, N, MEDIDA.w, MEDIDA.h);
+    const enc = encajar(trazo(E.nivel, N, MEDIDA.w, MEDIDA.h), MEDIDA.w, MEDIDA.h);   // F1165: dentro del campo y sin pisarse
+    $.coords = enc.coords; const cs = enc.cs;
     $.casillas = {};
     $.cont.innerHTML = '';
-    // F1127: el tamaño de cada casilla sale de la distancia real entre vecinas: nunca se pisan, en ningún teléfono
-    let sep = 1e9; for (let i = 0; i < N; i++) { const a = $.coords[i], b = $.coords[(i + 1) % N]; sep = Math.min(sep, Math.hypot((a.x - b.x) * MEDIDA.w / 100, (a.y - b.y) * MEDIDA.h / 100)); }
-    const cs = Math.max(20, Math.min(42, Math.floor(sep * 0.86)));
     $.mesa.style.setProperty('--cs', cs + 'px');
     // F1144 · Bola y bandeja de dados: la bola se centra un poco arriba y la bandeja queda en el hueco entre la bola y la fila de abajo
     const w = MEDIDA.w, h = MEDIDA.h, bola = Math.round(Math.max(110, Math.min(w * 0.52, 196, h * 0.36)));
@@ -1128,7 +1149,7 @@
   window.TBTablero = {
     abrir, minijuego: soloMini, caja: cajaSVG, lista: listaTableros,
     // expuesto para pruebas (no usar desde la interfaz)
-    _t: { TEMAS, NIVELES, CASILLAS, RANGO, pesosDe, nivelDe, anillo, TRAMPA, ICONO, SONIDOS, audio, tema, CARA, nuevoEstado, cargar,
+    _t: { TEMAS, NIVELES, CASILLAS, RANGO, pesosDe, nivelDe, anillo, trazo, encajar, TRAMPA, ICONO, SONIDOS, audio, tema, CARA, nuevoEstado, cargar,
       // para pruebas: elige n preguntas con un estado dado y devuelve sus ids en orden
       elegirN(bank, estado, n) { const previo = E; E = estado; const ids = []; try { for (let i = 0; i < n; i++) ids.push(elegirPregunta(bank).q.id); } finally { E = previo; } return ids; } }
   };

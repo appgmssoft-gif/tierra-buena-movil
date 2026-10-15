@@ -86,3 +86,12 @@ html[data-anim=off] *,html[data-anim=off] *::before,html[data-anim=off] *::after
    repintan la pantalla en cada cuadro. Con Ahorro se quedan quietos; el contenido igual aparece. */
 html[data-eco="2"] .card.tb-nueva::after,html[data-eco="2"] .btn.tb-nueva::after,html[data-eco="2"] .tab[aria-current=page]::after,
 html[data-eco="2"] #pantalla>*,html[data-eco="2"] main>*,html[data-eco="2"] .hero h1,html[data-eco="2"] .hero-ico,html[data-eco="2"] .inv-sobre{animation:none!important}
+
+/* F1164 · Equilibrado (nivel 1): quita las sombras y filtros de las decoraciones que se repintan cuando algo se mueve
+   alrededor (casillas del tablero, figuras de la Iglesia, mapas), y los brillos de un solo uso. Mantiene el movimiento. */
+html[data-eco="1"] .tbl-deco,html[data-eco="1"] .tbl-pieza-img,html[data-eco="1"] .tbl-caida svg,html[data-eco="1"] .tbl-intro-fig,
+html[data-eco="1"] .tbl-intro-ico,html[data-eco="1"] .tbl-sendero .hecho,html[data-eco="1"] .sala-mini svg,html[data-eco="1"] .caja-btn svg,
+html[data-eco="1"] .so-mapa-fig,html[data-eco="1"] .tbej-big,html[data-eco="1"] .fab-icono,html[data-eco="1"] .il-gota svg,
+html[data-eco="1"] .il-fruto svg,html[data-eco="1"] .arr-halo{filter:none!important}
+html[data-eco="1"] .tbl-bola.salta{animation:tblSalta .5s ease!important}
+html[data-eco="1"] .il-escena.brilla .arbol{animation:none!important}
