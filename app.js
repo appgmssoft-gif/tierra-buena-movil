@@ -290,7 +290,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Preguntas de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Sopa del Vivero': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => !CABECERAS_ILUSTRADAS ? '' : `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1149';
+  const APP_VERSION = 'F1151';
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
   const BANDA_POR_VOLVER = { 'Mi iglesia': 'union', 'Palabra': 'palabra', 'Vida': 'crecer', 'Vivir lo que aprendemos': 'crecer', 'Perfil': 'camino', 'Panel': 'pastor' };
   const bandaMini = (tipo) => bandaTB(tipo).replace('class="tb-banda"', 'class="tb-banda tb-banda-mini"');
@@ -1506,7 +1506,7 @@
     const M = [
       ['arreo', '<img class="mini-fig" src="img/tablero/deco/oveja.svg" alt="">', 'Arreo de ovejas', 'Toca las ovejas que cruzan el campo para llevarlas al corral.'],
       ['memoria', '<img class="mini-fig" src="img/tablero/deco/flor.svg" alt="">', 'Memoria del huerto', 'Encuentra las 6 parejas dando vuelta las cartas.'],
-      ['cosecha', '<img class="mini-fig" src="img/tablero/deco/arbol.svg" alt="">', 'Cosecha de cosas raras', 'Las frutas suman; las piedras, huesos, arañas y botas restan.'],
+      ['cosecha', '<img class="mini-fig" src="img/tablero/deco/arbol.svg" alt="">', 'Cosecha del huerto', 'Las frutas suman; lo que no es fruta resta.'],
       ['eco', '<img class="mini-fig" src="img/tablero/deco/llama.svg" alt="">', 'Eco del pastor', 'Repite la secuencia de animales. Cada ronda suma uno.'],
       ['reto', '<img class="mini-fig" src="img/tablero/deco/sol.svg" alt="">', 'Reto de atención', 'Cinco preguntas cortas de cultura, naturaleza y Chile.']
     ];

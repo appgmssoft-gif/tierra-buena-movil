@@ -438,14 +438,14 @@
     $.root.style.setProperty('--tb-cielo', T.cielo); $.root.style.setProperty('--tb-campo', T.campo); $.root.style.setProperty('--tb-aura', T.aura || '#9fdcff');
     pintarDecor(T);
     $.tit.textContent = `Tablero ${E.tablero} · ${T.nombre}`;
-    $.sub.textContent = `${T.lugar} · Nivel ${E.nivel} de ${NIVELES}`;
+    $.sub.textContent = '';   // F1150 · la info del lugar y de los niveles no se muestra durante el juego
     $.icono.innerHTML = `<img class="tbl-ico-tema" src="img/tablero/deco/${(T.deco || ['sol'])[0]}.svg" alt="">`;
   }
   // Decoración de cada lugar: figuras suaves sobre el campo (siempre igual para ese tablero)
   function pintarDecor(T) {
     if (!$.campo) return;
     const rnd = semilla(E.tablero * 31 + 5), lista = T.deco || [];
-    $.campo.innerHTML = '';
+    $.campo.innerHTML = paisajeHTML(T);   // F1151 · paisaje del lugar detrás de las casillas
     for (let i = 0; i < 9 && lista.length; i++) {
       const d = document.createElement('img'); d.className = 'tbl-deco'; d.src = 'img/tablero/deco/' + lista[i % lista.length] + '.svg'; d.alt = ''; d.setAttribute('aria-hidden', 'true');
       d.style.left = (6 + rnd() * 88).toFixed(1) + '%'; d.style.top = (6 + rnd() * 88).toFixed(1) + '%';
@@ -455,6 +455,20 @@
     // F1145 · ambiente: nubes que pasan y aves en el cielo del lugar
     for (let k = 0; k < 3; k++) { const n = document.createElement('i'); n.className = 'tbl-nube'; n.setAttribute('aria-hidden', 'true'); n.style.top = (4 + rnd() * 40).toFixed(0) + '%'; n.style.animationDelay = (-rnd() * 40).toFixed(1) + 's'; n.style.transform = 'scale(' + (0.7 + rnd() * 0.6).toFixed(2) + ')'; $.campo.appendChild(n); }
     for (let k = 0; k < 2; k++) { const a = document.createElement('i'); a.className = 'tbl-ave'; a.setAttribute('aria-hidden', 'true'); a.style.top = (8 + rnd() * 30).toFixed(0) + '%'; a.style.animationDelay = (-rnd() * 16).toFixed(1) + 's'; $.campo.appendChild(a); }
+  }
+  // F1151 · Paisaje de cada lugar: cielo, horizonte y primer plano (mar, dunas, bosque, montañas o valle)
+  function paisajeHTML(T) {
+    const txt = (T.nombre + ' ' + (T.deco || []).join(' ')).toLowerCase();
+    const tipo = /ola|pez|concha|cangrejo|costa|juan|rapa|valpara/.test(txt) ? 'mar' : /cactus|desierto|atacama|llama/.test(txt) ? 'desierto' : /arbol|bosque|hongo|chilo|alerce/.test(txt) ? 'bosque' : /montana|torres|lauca|maipo|cordillera|paine/.test(txt) ? 'montana' : 'valle';
+    const cielo = `<rect width="100" height="100" fill="${T.cielo}"/><circle cx="78" cy="20" r="7" fill="#fff6d6" opacity=".55"/>`;
+    const fondo = {
+      mar: `<rect y="50" width="100" height="50" fill="#3f8fb0"/><path d="M0 58 Q12 54 24 58 T48 58 T72 58 T100 58" stroke="#e6f6ff" stroke-width="1" fill="none" opacity=".6"/><path d="M0 50 Q50 40 100 50 V58 Q50 50 0 58Z" fill="#d9c08f"/>`,
+      desierto: `<path d="M0 60 Q30 46 60 58 T100 54 V100 H0Z" fill="#d9a26b"/><path d="M0 74 Q40 62 70 74 T100 70 V100 H0Z" fill="#c2814e"/>`,
+      bosque: `<path d="M0 58 Q40 44 100 56 V100 H0Z" fill="#5f8f5a"/><g fill="#2f6b3d"><circle cx="14" cy="60" r="7"/><circle cx="36" cy="56" r="8"/><circle cx="62" cy="58" r="6"/><circle cx="86" cy="55" r="8"/></g>`,
+      montana: `<path d="M0 70 L22 40 L38 60 L58 30 L78 62 L100 45 V100 H0Z" fill="#8fa6b8"/><path d="M58 30 L66 42 L58 39 L50 44Z" fill="#fff" opacity=".9"/><path d="M0 80 Q50 70 100 80 V100 H0Z" fill="#5f7a4e"/>`,
+      valle: `<path d="M0 58 Q35 42 65 56 T100 52 V100 H0Z" fill="#7fa86a"/><path d="M0 72 Q45 62 100 72 V100 H0Z" fill="#5d8a4f"/>`
+    }[tipo];
+    return `<svg class="tbl-paisaje" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${cielo}${fondo}</svg>`;
   }
   function pintarLuces() {
     let h = ''; for (let i = 1; i <= NIVELES; i++) h += '<span class="tbl-luz' + (i <= E.luces ? ' on' : '') + '" title="Luz ' + i + '"></span>';
@@ -472,7 +486,8 @@
     if (!$.estado) return;
     const I = info(), pos = E.pos === 0 ? 'Salida' : 'Casilla ' + E.pos + ' de ' + I.C;
     const im = (f) => `<img class="tbl-ico" src="img/tablero/${f}.svg" alt="">`;   // F1128 · símbolos ilustrados, no emojis
-    $.estado.innerHTML = `<span class="tbl-chip" data-chip="saldo" title="Saldo del Vivero: el mismo que ves en Inicio">${im('rocio')} ${saldoVivero()}</span><span class="tbl-chip">${pos}</span><span class="tbl-chip" title="Escudos guardados">${im('escudo')} ${E.escudos}</span>${E.pausa ? `<span class="tbl-chip">${im('pausa')} Descanso</span>` : ''}`;
+    // F1150 · Dentro del tablero solo lo que se usa: gotas del Vivero, protección (escudos) y descanso si aplica
+    $.estado.innerHTML = `<span class="tbl-chip" data-chip="saldo" title="Gotas en tu Vivero">${im('rocio')} ${saldoVivero()}</span><span class="tbl-chip" title="Escudos: protegen de tormentas">${im('escudo')} ${E.escudos}</span>${E.pausa ? `<span class="tbl-chip">${im('pausa')} Descanso</span>` : ''}`;
     $.chip = $.estado.querySelector('[data-chip=saldo]');
     if ($.root) $.root.classList.toggle('con-escudo', E.escudos > 0);
     pintarLuces(); aplicarTema();
@@ -483,11 +498,10 @@
     // F1144 · Los botones viven dentro del tablero (en la bandeja de madera). El bonus solo muestra el dado y su cantidad.
     $.btns.innerHTML = `<button type="button" class="tbl-lanza" id="tblLanzar" aria-label="Lanzar dado"${ocupado ? ' disabled' : ''}><img src="img/tablero/ui/dado.svg" alt=""><span>Lanzar</span></button>` +
       `<button type="button" class="tbl-bonus" id="tblBonus" aria-label="Dados de bonus: tienes ${E.bonus}"${ocupado || E.bonus <= 0 ? ' disabled' : ''}><img src="img/tablero/ui/dado.svg" alt=""><b>${E.bonus}</b></button>` +
-      (SALA ? '<button type="button" class="tbl-sala-btn" id="tblSala" aria-label="Ir a la Sala de tableros">Sala</button>' : '');
+      '';   // F1150 · sin botón Sala
     $.lanzar = document.getElementById('tblLanzar'); $.bonus = document.getElementById('tblBonus');
     if ($.lanzar) $.lanzar.addEventListener('click', () => turno(false));
     if ($.bonus) $.bonus.addEventListener('click', () => turno(true));
-    const sa = document.getElementById('tblSala'); if (sa) sa.addEventListener('click', () => { if (SALA) SALA(); });
     $.panel.innerHTML = '';
   }
   function pintarTodo() { pintarEstado(); colocarPieza(); pintarCasillas(false); pintarPanel(); }
@@ -635,6 +649,7 @@
         $.panel.querySelectorAll('[data-o]').forEach((x) => { x.disabled = true; x.classList.toggle('elegida', Number(x.dataset.o) === i); });
         const res = bien ? `¡Acertaste! Ganas 2 gotas. Lo encuentras en ${ref(q)}.` : `La respuesta era: «${q.o[q.c]}». Lo encuentras en ${ref(q)}. Sin castigo.`;
         $.panel.insertAdjacentHTML('beforeend', `<p class="tbl-preg-res">${esc(res)}</p><button type="button" class="tbl-btn" id="tblSeguir">Seguir</button>`);
+        requestAnimationFrame(() => { const sg = document.getElementById('tblSeguir'); if (sg) sg.scrollIntoView({ block: 'end', behavior: 'smooth' }); });   // F1150 · se ve sin deslizar
         caja.classList.add(bien ? 'ok' : 'mal');
         son(bien ? 'acierto' : 'error');
         if (bien) { gota(2); const c = centroPieza(); chispas(c.x, c.y, 12, '#ffe9a8'); }
@@ -661,8 +676,8 @@
   const FIG = (n, c) => `<img class="${c || 'tbl-fig'}" src="img/tablero/deco/${n}.svg" alt="">`;
   const INTRO_MINI = {
     memoria: { ico: FIG('flor', 'tbl-intro-fig'), titulo: 'Memoria del huerto', pasos: ['Toca una carta y luego otra.', 'Si son iguales, quedan juntas.', 'Encuentra las 6 parejas para ganar 2 gotas.'] },
-    cosecha: { ico: FIG('arbol', 'tbl-intro-fig'), titulo: 'Cosecha de cosas raras', pasos: ['Toca las frutas que caen: cada una suma 1 punto.', 'Las cosas raras (piedra, hueso, araña, bota) restan 1.', 'Tienes 12 segundos: 6 puntos dan 2 gotas, 3 dan 1.'] },
-    arreo: { ico: FIG('oveja', 'tbl-intro-fig'), titulo: 'Arreo de ovejas', pasos: ['Las ovejas cruzan el campo de a una.', 'Toca cada oveja antes de que se vaya: entra al corral.', 'Si una se escapa, no pasa nada. Tienes 14 segundos.'] },
+    cosecha: { ico: FIG('arbol', 'tbl-intro-fig'), titulo: 'Cosecha del huerto', pasos: ['Toca las frutas que caen: cada una suma 1 punto.', 'Las cosas raras (piedra, hueso, araña, bota) restan 1.', 'Tienes 12 segundos: 6 puntos dan 2 gotas, 3 dan 1.'] },
+    arreo: { ico: FIG('oveja', 'tbl-intro-fig'), titulo: 'Arreo de ovejas', pasos: ['Toca cada oveja para llevarla al corral. Las rebeldes necesitan dos toques.', 'Tres toques seguidos traen una oveja extra.', 'Espanta al zorro antes de que cruce: si no, se lleva una oveja. 18 segundos.'] },
     reto: { ico: FIG('sol', 'tbl-intro-fig'), titulo: 'Reto de atención', pasos: ['Cinco preguntas cortas de tres tipos.', 'Cada acierto da 1 gota (máximo 4).', 'Fallar no tiene castigo.'] },
     eco: { ico: FIG('llama', 'tbl-intro-fig'), titulo: 'Eco del pastor', pasos: ['Mira en qué orden se iluminan los animales.', 'Repite la secuencia tocándolos igual.', 'Cada ronda suma un animal. 4 rondas dan 2 gotas; 2 rondas, 1.'] }
   };
@@ -781,7 +796,7 @@
   };
   function miniCosecha() {                                          // Cosecha de cosas raras: 12 s. Frutas suman, cosas raras restan.
     return new Promise((res) => {
-      const caja = mini('Cosecha de cosas raras', 'Toca las frutas que caen. Las cosas raras restan.');
+      const caja = mini('Cosecha del huerto', 'Toca las frutas que caen. Lo que no es fruta resta.');
       const campo = document.createElement('div'); campo.className = 'tbl-cosecha'; caja.appendChild(campo);
       const marca = document.createElement('p'); marca.className = 'tbl-marca'; caja.appendChild(marca);
       let pts = 0, fin = false, listo = false; const DUR = 12000, t0 = Date.now();
@@ -815,29 +830,55 @@
       }, DUR);
     });
   }
-  // F1127 · Arreo de ovejas: las ovejas cruzan el campo; toca las que puedas para llevarlas al corral.
+  // F1151 · Arreo de ovejas con reglas: ovejas normales, rebeldes (hay que tocarlas dos veces), zorro (espantarlo antes de que cruce)
+  // y racha: tres toques seguidos traen una oveja extra. Más rápido a medida que avanza.
   function miniArreo() {
     return new Promise((res) => {
-      const caja = mini('Arreo de ovejas', 'Toca las ovejas que cruzan el campo para llevarlas al corral. Sin prisa.');
-      const campo = document.createElement('div'); campo.className = 'tbl-cosecha'; caja.appendChild(campo);
+      const caja = mini('Arreo de ovejas', 'Lleva las ovejas al corral. Cuidado con el zorro.');
+      const campo = document.createElement('div'); campo.className = 'tbl-cosecha tbl-arreo'; caja.appendChild(campo);
       const marca = document.createElement('p'); marca.className = 'tbl-marca'; caja.appendChild(marca);
       const corral = document.createElement('div'); corral.className = 'tbl-corral'; corral.textContent = 'Corral'; caja.appendChild(corral);
-      let n = 0, fin = false, listo = false; const DUR = 14000, t0 = Date.now();
-      const pinta = () => { marca.textContent = 'Ovejas en el corral: ' + n + ' · ' + Math.max(0, Math.ceil((DUR - (Date.now() - t0)) / 1000)) + ' s'; };
-      const salir = () => {
-        if (fin) return;
-        const o = document.createElement('button'); o.type = 'button'; o.className = 'tbl-oveja'; o.setAttribute('aria-label', 'Oveja');
-        const img = document.createElement('img'); img.src = 'img/tablero/deco/oveja.svg'; img.alt = ''; o.appendChild(img);
-        o.style.top = (8 + Math.random() * 78) + '%'; o.style.animationDuration = (3.4 + Math.random() * 1.6) + 's';
-        o.addEventListener('pointerdown', (ev) => { ev.preventDefault(); if (fin || o.dataset.h) return; o.dataset.h = '1'; n++; son('rocio'); o.classList.add('llevada'); setTimeout(() => o.remove(), 300); pinta(); });
-        o.addEventListener('animationend', () => o.remove());
+      let n = 0, zorro = 0, racha = 0, ultimo = 0, fin = false, listo = false; const DUR = 18000, t0 = Date.now();
+      const progreso = () => Math.min(1, (Date.now() - t0) / DUR);
+      const pinta = () => { marca.textContent = `Corral: ${n} · Zorro: ${zorro} · ${Math.max(0, Math.ceil((DUR - (Date.now() - t0)) / 1000))} s`; };
+      const aviso = (txt, cls) => { const p = document.createElement('span'); p.className = 'tbl-pop ' + cls; p.textContent = txt; p.style.left = '50%'; p.style.top = '40%'; campo.appendChild(p); setTimeout(() => p.remove(), 800); };
+      const crear = (tipo) => {
+        const o = document.createElement('button'); o.type = 'button'; o.className = 'tbl-oveja ' + tipo;
+        o.setAttribute('aria-label', tipo === 'zorro' ? 'Zorro: tócalo para espantarlo' : tipo === 'rebelde' ? 'Oveja rebelde: tócala dos veces' : 'Oveja');
+        const img = document.createElement('img'); img.src = tipo === 'zorro' ? 'img/piezas/zorro.svg' : 'img/tablero/deco/oveja.svg'; img.alt = ''; o.appendChild(img);
+        o.dataset.falta = tipo === 'rebelde' ? '2' : '1';
+        const dur = (4.4 - 1.9 * progreso()) * (0.85 + Math.random() * 0.3) * (tipo === 'zorro' ? 0.8 : 1);
+        o.style.top = (8 + Math.random() * 74) + '%'; o.style.animationDuration = dur.toFixed(2) + 's';
+        o.addEventListener('pointerdown', (ev) => {
+          ev.preventDefault(); if (fin || o.dataset.h) return;
+          o.dataset.falta = String(Number(o.dataset.falta) - 1);
+          if (Number(o.dataset.falta) > 0) { o.classList.add('tocada'); son('carta'); return; }   // rebelde: primer toque
+          o.dataset.h = '1';
+          if (tipo === 'zorro') { o.classList.add('espantado'); aviso('¡Zorro espantado!', 'bien'); son('pausa'); chispas(ev.clientX, ev.clientY, 8, '#ffd8a0'); }
+          else {
+            const ahora = Date.now(); racha = ahora - ultimo < 1500 ? racha + 1 : 1; ultimo = ahora;
+            n++; if (racha > 0 && racha % 3 === 0) { n++; aviso('¡En fila! +1', 'bien'); son('atajo'); }
+            son('rocio'); chispas(ev.clientX, ev.clientY, 6, '#fff1b8');
+          }
+          o.classList.add('llevada'); setTimeout(() => o.remove(), 320); pinta();
+        });
+        o.addEventListener('animationend', () => {
+          if (tipo === 'zorro' && !o.dataset.h && !fin) { zorro++; aviso('¡Se llevó una oveja!', 'mal'); son('error'); pinta(); }
+          o.remove();
+        });
         campo.appendChild(o);
       };
-      const iv = setInterval(salir, 700), tick = setInterval(pinta, 250); pinta(); salir();
+      const cadena = () => {                                       // la siguiente aparición depende del avance: cada vez más seguido
+        if (fin || !campo.isConnected) return;
+        const r = Math.random(), tipo = r < 0.14 ? 'zorro' : r < 0.36 ? 'rebelde' : 'oveja';
+        crear(tipo);
+        setTimeout(cadena, (1000 - 480 * progreso()) * (0.8 + Math.random() * 0.4));
+      };
+      const tick = setInterval(pinta, 250); pinta(); cadena();
       setTimeout(() => {
-        fin = true; clearInterval(iv); clearInterval(tick);
-        const g = n >= 6 ? 2 : n >= 3 ? 1 : 0;
-        marca.textContent = `¡Corral con ${n} ${n === 1 ? 'oveja' : 'ovejas'}! ${g ? 'Ganas ' + g + ' ' + (g === 1 ? 'gota' : 'gotas') + '.' : 'Esta vez no entraron muchas.'}`;
+        fin = true; clearInterval(tick);
+        const neto = n - zorro, g = neto >= 8 ? 2 : neto >= 4 ? 1 : 0;
+        marca.textContent = `¡Corral con ${n} ${n === 1 ? 'oveja' : 'ovejas'}! El zorro se llevó ${zorro}. ${g ? 'Ganas ' + g + ' ' + (g === 1 ? 'gota' : 'gotas') + '.' : 'Esta vez no fue suficiente.'}`;
         botonMini(caja, 'Seguir', () => { if (listo) return; listo = true; caja.remove(); res(g); });
       }, DUR);
     });
@@ -1009,11 +1050,9 @@
         <div class="tbl-tit"><span class="tbl-icono" id="tblIcono" aria-hidden="true"></span><div><b id="tblTit"></b><small id="tblSub"></small></div></div>
       </header>
       <div class="tbl-luces" id="tblLuces" aria-label="Luces encendidas: una por nivel pasado"></div>
-      <div class="tbl-estado" id="tblEstado"></div>
-      <div class="tbl-mesa" id="tblMesa">
+      <div class="tbl-mesa" id="tblMesa"><div class="tbl-estado" id="tblEstado"></div>
         <div class="tbl-campo" id="tblCampo"></div>
         <i class="tbl-rosa" aria-hidden="true"></i>
-        <img class="tbl-medallon m1" src="img/tablero/medallon/condor.svg" alt="" aria-hidden="true"><img class="tbl-medallon m2" src="img/tablero/medallon/zorro.svg" alt="" aria-hidden="true"><img class="tbl-medallon m3" src="img/tablero/medallon/guanaco.svg" alt="" aria-hidden="true"><img class="tbl-medallon m4" src="img/tablero/medallon/copihue.svg" alt="" aria-hidden="true">
         <div class="tbl-bola" id="tblBola" aria-live="polite"><i class="tbl-aura" aria-hidden="true"></i><i class="tbl-orbita" aria-hidden="true"></i><p id="tblTexto"></p></div>
         <div id="tblCasillas"></div>
         <div class="tbl-pieza" id="tblPieza" aria-label="Tu pieza"><span class="tbl-pieza-in" id="tblPiezaIn"><img class="tbl-pieza-img" src="img/piezas/${esc(PIEZA)}.svg" alt=""></span></div>
@@ -1034,6 +1073,23 @@
     if (!$.resize) { $.resize = () => { if ($.root && $.root.isConnected) { montar(); } }; window.addEventListener('resize', $.resize); }
     decir(`Tablero ${E.tablero}`, E.pos === 0 ? tema(E.tablero).leyenda : 'Sigue tu camino.');
     son('inicio');
+    if (E.pos === 0 && !REPLAY) mostrarCaja();   // F1151 · al empezar, el tablero llega cerrado en su caja
+  }
+  // F1151 · Caja cerrada: muestra el lugar y las luces de niveles (esa info ya no aparece durante el juego). Un toque la abre.
+  function mostrarCaja() {
+    if (!$.root || document.getElementById('tblCaja')) return;
+    const T = tema(E.tablero);
+    const luces = Array.from({ length: NIVELES }, (_, i) => `<span class="tbl-caja-luz${i < E.luces ? ' on' : ''}"></span>`).join('');
+    const c = document.createElement('div'); c.className = 'tbl-caja'; c.id = 'tblCaja';
+    c.innerHTML = `<div class="tbl-caja-escena" aria-hidden="true"><i class="tbl-caja-rayo"></i><div class="tbl-caja-cuerpo"><div class="tbl-caja-base"></div><div class="tbl-caja-tapa"><img src="img/tablero/deco/${esc((T.deco || ['sol'])[0])}.svg" alt=""></div></div></div>` +
+      `<p class="tbl-caja-tit">Tablero ${E.tablero} · ${esc(T.nombre)}</p><p class="tbl-caja-sub">${esc(T.lugar)}</p>` +
+      `<p class="tbl-caja-sub">Nivel ${E.nivel} de ${NIVELES}</p><div class="tbl-caja-lucesfila" aria-label="Luces: una por nivel pasado">${luces}</div>` +
+      `<button type="button" class="tbl-btn" id="tblAbrirCaja">Abrir la caja</button>`;
+    $.root.appendChild(c);
+    document.getElementById('tblAbrirCaja').addEventListener('click', (ev) => {
+      const b = ev.currentTarget; b.disabled = true; c.classList.add('abriendo'); son('cofre');
+      setTimeout(() => { c.remove(); son('inicio'); }, 1250);
+    });
   }
 
   window.TBTablero = {
