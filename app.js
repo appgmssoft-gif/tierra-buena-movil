@@ -290,7 +290,9 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Acertijos de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Letras entre las hojas': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => !CABECERAS_ILUSTRADAS ? '' : `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1170';
+  const APP_VERSION = 'F1172';
+  // F1171: respaldo si movimiento.js no cargó (pruebas o caché vieja): mismo criterio que TBMov.quieto().
+  const MOV_QUIETO = () => { try { if (window.TBMov) return window.TBMov.quieto(); const h = document.documentElement; return h.getAttribute('data-anim') === 'off' || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
   const BANDA_POR_VOLVER = { 'Mi iglesia': 'union', 'Palabra': 'palabra', 'Vida': 'crecer', 'Vivir lo que aprendemos': 'crecer', 'Perfil': 'camino', 'Panel': 'pastor' };
   const bandaMini = (tipo) => bandaTB(tipo).replace('class="tb-banda"', 'class="tb-banda tb-banda-mini"');
@@ -311,7 +313,7 @@
 
   // F882: chispas de celebración en cualquier botón (se quitan solas; respeta «reducir movimiento»).
   function confeti(ancla) {
-    if (!ancla || !document.body || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+    if (!ancla || !document.body || MOV_QUIETO()) return;
     const r = ancla.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2, col = ['cf-a', 'cf-b', 'cf-c', 'cf-d'];
     for (let i = 0; i < 16; i++) {
       const e = document.createElement('i'), a = (i / 16) * Math.PI * 2 + Math.random() * .6, d = 40 + Math.random() * 64;
@@ -3028,7 +3030,7 @@
   let fabPaso = 0, fabId = null;
   const fabSemana = () => { const d = new Date(), j = new Date(d.getFullYear(), 0, 1); return d.getFullYear() + 'w' + Math.ceil(((d - j) / 864e5 + j.getDay() + 1) / 7); };
   function destello(ancla, tono) {
-    const card = $('#fabCard'); if (!card || !ancla || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+    const card = $('#fabCard'); if (!card || !ancla || MOV_QUIETO()) return;
     const rc = card.getBoundingClientRect(), ra = ancla.getBoundingClientRect(), cx = ra.left - rc.left + ra.width / 2, cy = ra.top - rc.top + ra.height / 2, col = ['#ffffff', '#ffd36b', /^#[0-9a-fA-F]{6}$/.test(tono || '') ? tono : '#ffffff'];
     for (let i = 0; i < 18; i++) { const e = document.createElement('i'), a = (i / 18) * Math.PI * 2 + Math.random() * .5, d = 44 + Math.random() * 70; e.className = 'fb-spark'; e.style.left = cx + 'px'; e.style.top = cy + 'px'; e.style.setProperty('--dx', Math.cos(a) * d + 'px'); e.style.setProperty('--dy', Math.sin(a) * d + 'px'); e.style.setProperty('--c', col[i % 3]); card.appendChild(e); setTimeout(() => e.remove(), 1200); }
   }
@@ -4114,7 +4116,7 @@
     { ic: 'iglesia', t: 'Camina con tu iglesia', a: 'Pide oración, recibe avisos y súmate a lo que hace tu comunidad.', c: ['paloma', 'calendario', 'gente'] },
     { ic: 'gente', t: 'Juntos hacemos el bien', a: 'Tu iglesia pasa de la Palabra a la acción: elige una idea, ponle fecha, lugar y líderes, e invita a tu congregación.', c: ['corazon', 'hoja', 'sol'] }
   ];
-  const portMov = () => { try { const h = document.documentElement; return !(h && h.getAttribute && h.getAttribute('data-anim') === 'off') && !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
+  const portMov = () => { try { return !MOV_QUIETO(); } catch (e) { return false; } };
   function onbSplash() {
     onbParar(); entrandoPon(true);
     const ya = !!onbLeer() && !leer(K_ID) && !leer(K_SOL) && !leer(K_CUENTA), dentro = !!(leer(K_ID) || leer(K_SOL) || leer(K_CUENTA)), n = PORT.length + 1;
@@ -4201,7 +4203,7 @@
       <h1 class="ent-t">${r.nombre ? esc(r.nombre) + ', estamos' : 'Estamos'} armando tu espacio</h1>
       <div class="ent-aro-c" aria-hidden="true"><svg viewBox="0 0 120 120" width="150" height="150"><circle class="aro-f" cx="60" cy="60" r="52"/><circle class="aro-v" cx="60" cy="60" r="52"/></svg><b id="onbPct">0%</b></div>
       <ul class="ent-pasos">${pasos.map((p, k) => `<li data-p="${k}"><span class="ent-paso-ok">${svg('check', 16)}</span>${esc(p)}</li>`).join('')}</ul></section>`;
-    const calma = (() => { try { return document.documentElement.getAttribute('data-anim') === 'off' || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } })();
+    const calma = MOV_QUIETO();
     const total = calma ? 900 : 4200, t0 = Date.now(), lis = Array.from(document.querySelectorAll('.ent-pasos li'));
     const aro = $('.aro-v'); if (aro && !calma) clase(aro, 'llena', true);
     onbI = setInterval(() => {
@@ -4266,7 +4268,7 @@
     const bp = $('#ilPais'); if (bp) bp.onclick = () => { vibra(); if (window.TBLienzo && window.TBLienzo.paisajeHoja) window.TBLienzo.paisajeHoja(() => { const c = $('#ilLienzo'); if (c) window.TBLienzo.montar(c); }); };
     const bg = $('#ilJuegos'); if (bg) bg.onclick = () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) { /* sin vibración */ } ir('palabra'); vistaJuegos(); };
     const bj = $('#ilJuntos'); if (bj) bj.onclick = () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) { /* sin vibración */ } abrirJuntos(); };
-    const quieto = () => document.documentElement.getAttribute('data-anim') === 'off' || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    const quieto = () => MOV_QUIETO();
     fr.textContent = FRASES[k]; calmaResp.push(setTimeout(() => { if (fr.isConnected) fr.classList.add('on'); }, 120));
     const reloj = $('#ilHora'), horaTxt = () => { try { return new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; } };   // F928: reloj pequeño, se actualiza con el mismo temporizador de las frases (sin otro)
     if (reloj) reloj.textContent = horaTxt();
@@ -4291,7 +4293,7 @@
   const ORDEN_TAB = ['iglesia', 'palabra', 'inicio', 'vida', 'perfil', 'pastor']; let tabPrev = '';
   function pantEntra(sentido) {                             // F885: la pantalla nueva entra deslizando (se apaga con «reducir movimiento» o Animaciones: más tranquilo)
     try {
-      const p = $('#pantalla'); if (!p || !p.animate || document.documentElement.getAttribute('data-anim') === 'off' || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+      const p = $('#pantalla'); if (!p || !p.animate || MOV_QUIETO()) return;
       const H = document.documentElement; H.classList.add('tb-cambia');                 // F915: efectos en pausa mientras entra la pantalla
       const an = p.animate([{ opacity: 0, transform: 'translateX(' + (sentido === 'atras' ? -22 : 22) + 'px)' }, { opacity: 1, transform: 'none' }], { duration: 300, easing: 'cubic-bezier(.32,.72,0,1)' });
       const fin = () => H.classList.remove('tb-cambia'); an.onfinish = fin; an.oncancel = fin; setTimeout(fin, 450);
@@ -4318,7 +4320,7 @@
   // ---------- F886: capa premium (ondas al tocar, aparición al bajar, números que suben, rebote de pestañas, paralaje) ----------
   (function premium() {
     try {
-      const calma = () => { try { return document.documentElement.getAttribute('data-anim') === 'off' || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return true; } };
+      const calma = () => { try { return MOV_QUIETO(); } catch (e) { return true; } };
       if (document.addEventListener) document.addEventListener('pointerdown', (ev) => {   // onda de luz donde tocas + rebote del ícono de la pestaña
         try {
           if (calma() || !ev || !ev.target || !ev.target.closest) return;

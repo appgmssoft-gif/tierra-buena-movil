@@ -301,7 +301,7 @@
     const A = audio(); if (!A) return;
     try { SONIDOS[nombre](a); } catch (e) { /* un sonido nunca rompe el juego */ }
   }
-  const reducido = () => { try { return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
+  const reducido = () => { try { return !!(window.TBMov && window.TBMov.quieto()); } catch (e) { return false; } };
   function vibra(p) { try { if (navigator.vibrate && !reducido()) navigator.vibrate(p); } catch (e) { /* sin vibración */ } }
 
   // ---------- Partida y pantalla ----------

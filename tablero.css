@@ -104,7 +104,7 @@ body.tb-full #pantalla { padding-bottom: 0; }
 .tbl-dado3d:nth-child(2) .tbl-cara { background: linear-gradient(150deg, #ffe9a8 0%, #d9a441 70%, #b8842e 100%); }
 
 /* Botones y panel */
-.tbl-panel { display: grid; gap: 10px; justify-items: center; margin-top: 4px; flex-shrink: 0; max-height: 30dvh; overflow-y: auto; animation: tblEntra .4s ease both; }
+.tbl-panel { display: grid; gap: 10px; justify-items: center; margin-top: 4px; flex-shrink: 0; max-height: 30dvh; overflow-y: auto; animation: tblEntra .4s ease backwards; }
 .tbl-panel[data-modo="pregunta"] { justify-items: stretch; max-height: 52dvh; }
 .tbl-btn { appearance: none; border: 0; border-radius: 16px; padding: 14px 22px; min-height: 52px; font: inherit; font-size: 1.12rem; font-weight: 700; color: var(--tb-tinta); cursor: pointer;
   background: linear-gradient(180deg, #ffe9a8, #d9a441); box-shadow: 0 5px 0 #9c7140, 0 10px 18px rgba(0,0,0,.25); transition: transform .1s ease, box-shadow .1s ease; }
@@ -226,7 +226,7 @@ body.tb-full #pantalla { padding-bottom: 0; }
 
 /* F1137 · Tarjeta de instrucciones de cada minijuego: entrada animada y pasos claros */
 @keyframes tblIntroEntra { from { opacity: 0; transform: translateY(14px) scale(.97); } to { opacity: 1; transform: none; } }
-.tbl-intro { animation: tblIntroEntra .45s cubic-bezier(.2, .9, .3, 1.2) both; }
+.tbl-intro { animation: tblIntroEntra .45s cubic-bezier(.2, .9, .3, 1.2) backwards; }
 .tbl-pasos { margin: 6px 0 4px; padding-left: 4px; list-style: none; counter-reset: paso; display: grid; gap: 10px; font-size: 1rem; line-height: 1.35; }
 .tbl-pasos li { counter-increment: paso; position: relative; padding-left: 40px; }
 .tbl-pasos li::before { content: counter(paso); position: absolute; left: 0; top: -2px; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(#ffe9a8, #e6b948); color: #2b2218; font-weight: 800; box-shadow: 0 2px 4px rgba(0,0,0,.35); }
@@ -250,11 +250,11 @@ body.tb-full #pantalla { padding-bottom: 0; }
 .tbl-casilla.tipo-cosecha { background: linear-gradient(160deg, #e6f5d8, #9ccc7b); }
 .tbl-casilla.tipo-puerta { background: linear-gradient(160deg, #f1d9b8, #b0794a); }
 .tbl-puertas { justify-content: center; }
-.tbl-puerta { min-width: 84px; font-size: 1.2rem; animation: tblIntroEntra .4s both; }
+.tbl-puerta { min-width: 84px; font-size: 1.2rem; animation: tblIntroEntra .4s backwards; }
 .tbl-puerta.abierta { background: linear-gradient(#ffe9a8, #d9a441); }
 /* F1138 · Menú de minijuegos: tarjetas con animación de entrada */
 .mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
-.mini-card { appearance: none; border: 0; text-align: left; font: inherit; color: #f7f3e6; cursor: pointer; background: linear-gradient(160deg, #1f3a2b, #0f1f17); border-radius: 18px; padding: 14px; display: grid; gap: 6px; box-shadow: 0 4px 0 #07110c, 0 8px 14px rgba(0,0,0,.3); animation: tblIntroEntra .5s both; transition: transform .15s ease; }
+.mini-card { appearance: none; border: 0; text-align: left; font: inherit; color: #f7f3e6; cursor: pointer; background: linear-gradient(160deg, #1f3a2b, #0f1f17); border-radius: 18px; padding: 14px; display: grid; gap: 6px; box-shadow: 0 4px 0 #07110c, 0 8px 14px rgba(0,0,0,.3); animation: tblIntroEntra .5s backwards; transition: transform .15s ease; }
 .mini-card:nth-child(2) { animation-delay: .06s; } .mini-card:nth-child(3) { animation-delay: .12s; } .mini-card:nth-child(4) { animation-delay: .18s; }
 .mini-card:active { transform: translateY(3px); box-shadow: 0 1px 0 #07110c; }
 .mini-ico { font-size: 2.2rem; line-height: 1; }
@@ -439,7 +439,7 @@ body.tb-full #pantalla { padding-bottom: 0; }
 
 /* ===== F1151 · Caja cerrada, paisaje del lugar y Arreo con reglas ===== */
 .tbl-caja { position: absolute; inset: 0; z-index: 30; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 18px; text-align: center; color: #f7f3e6; border-radius: 24px;
-  background: radial-gradient(circle at 50% 38%, #4a3520, #1a120a 78%); animation: tblEntra .5s both; }
+  background: radial-gradient(circle at 50% 38%, #4a3520, #1a120a 78%); animation: tblEntra .5s backwards; }
 .tbl-caja.abriendo { animation: none; }
 .tbl-caja-sub { margin: 0; font-size: 1rem; opacity: .9; }
 .tbl-caja-lucesfila { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; max-width: 280px; margin: 4px 0 10px; }

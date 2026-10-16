@@ -63,7 +63,10 @@
     if (!ioNueva) ioNueva = new IntersectionObserver((en) => { en.forEach((e) => { if (!e.isIntersecting) return; ioNueva.unobserve(e.target); const t = e.target; setTimeout(() => { t.classList.add('tb-nueva'); }, Math.min(900, (t.getBoundingClientRect().top / 2) | 0)); }); }, { threshold: 0.35 });
     Array.prototype.forEach.call(document.querySelectorAll('.card:not(.tb-v),.btn:not(.sec):not(.tb-v)'), (el) => { el.classList.add('tb-v'); ioNueva.observe(el); });
   }
-  let deb = 0; const luego = () => { if (deb) return; deb = setTimeout(() => { deb = 0; marcar(); revelar(); if (H.getAttribute('data-eco') === '1') bucles(true); }, 350); };
+  // F1171 · Foco: si hay una hoja o ventana encima (Efectos, perfil, código…), el fondo queda tapado: se pausa (CSS: html.tb-tapada).
+  // Además, el portero de visibilidad ya no corre cada 0,7 s: corre cuando cambia la pantalla y, como red de seguridad, cada 3 s.
+  const tapar = () => { try { H.classList.toggle('tb-tapada', !!document.querySelector('#tbHoja,#tbRap,[aria-modal="true"]')); } catch (e) { /* sin selector */ } };
+  let deb = 0; const luego = () => { if (deb) return; deb = setTimeout(() => { deb = 0; marcar(); revelar(); tapar(); if (H.getAttribute('data-eco') === '1') bucles(true); gateVisibilidad(); }, 350); };
   function iniciarPausas() {
     sels = buscarAnimadas();
     if (typeof IntersectionObserver === 'function') io = new IntersectionObserver((en) => { en.forEach((e) => e.target.classList.toggle('tb-fuera', !e.isIntersecting)); }, { rootMargin: '60px' });
@@ -144,22 +147,28 @@
   // una capa con opacidad 0, dentro de algo oculto) se pausa; cuando vuelve a verse, se reanuda sola. No cambia nada
   // de lo que se ve. Medido en tablet: Mi iglesia tenía 86 animaciones corriendo y solo 27 se veían.
   const pausadasOcultas = new WeakSet();
-  function esVisible(el) {
+  // F1171 · Arreglo del parpadeo: antes se miraba también la opacidad DEL PROPIO elemento. Una luz o un destello que en su
+  // ciclo pasa por opacidad 0 se pausaba justo ahí y quedaba invisible y congelado. Ahora solo cuentan los padres
+  // (una capa oculta), y el resultado de cada padre se recuerda durante esa pasada para no leer estilos de más.
+  function esVisible(el, memo) {
     if (!el || !el.isConnected) return false;
-    if (el.checkVisibility && !el.checkVisibility({ checkVisibility: true, checkOpacity: true })) return false;
-    for (let n = el, i = 0; n && n.nodeType === 1 && i < 14; n = n.parentElement, i++) {
-      if (parseFloat(getComputedStyle(n).opacity) === 0) return false;
+    if (el.checkVisibility && !el.checkVisibility({ checkVisibilityCSS: true, visibilityProperty: true })) return false;
+    for (let n = el.parentElement, i = 0; n && n.nodeType === 1 && i < 14; n = n.parentElement, i++) {
+      let o = memo ? memo.get(n) : undefined;
+      if (o === undefined) { o = parseFloat(getComputedStyle(n).opacity); if (memo) memo.set(n, o); }
+      if (o === 0) return false;
     }
     return true;
   }
   function gateVisibilidad() {
-    if (H.getAttribute('data-anim') === 'off') return;
+    if (H.getAttribute('data-anim') === 'off' || document.hidden) return;
     try {
+      const memo = new Map();
       const eco1 = H.getAttribute('data-eco') === '1';
       document.getAnimations().forEach((a) => {
         const t = a.effect && a.effect.getTiming ? a.effect.getTiming() : null;
         if (!t || t.iterations !== Infinity) return;
-        const vis = esVisible(a.effect.target);
+        const vis = esVisible(a.effect.target, memo);
         if (!vis) { if (a.playState === 'running') { a.pause(); pausadasOcultas.add(a); } }
         else if (pausadasOcultas.has(a)) {
           pausadasOcultas.delete(a);
@@ -171,7 +180,7 @@
   }
 
   aplicar();
-  const arranque = () => { iniciarPausas(); vigilar(); boton(); setInterval(gateVisibilidad, 700); };
+  const arranque = () => { iniciarPausas(); vigilar(); boton(); setInterval(gateVisibilidad, 3000); };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', arranque); else arranque();
   window.TBRendimiento = { nivel: () => H.getAttribute('data-eco'), abrir: hoja };
 })();

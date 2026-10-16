@@ -49,11 +49,11 @@ html[data-tema=medianoche] .tr-t{stroke:#8a6a48}
 @keyframes il-pano2{from{transform:translateX(52px)}to{transform:none}}
 @keyframes il-pano3{from{transform:translateX(96px)}to{transform:none}}
 @keyframes il-brota{from{opacity:0;transform:translateY(10px) scale(.7)}to{opacity:1;transform:none}}
-html:not([data-anim=off]) .il-escena.entra .il-svg{animation:il-sube .9s ease both}
-html:not([data-anim=off]) .il-escena.pano .cap1{animation:il-pano1 2.6s cubic-bezier(.3,.6,.3,1) both}
-html:not([data-anim=off]) .il-escena.pano .cap2{animation:il-pano2 2.6s cubic-bezier(.3,.6,.3,1) both}
-html:not([data-anim=off]) .il-escena.pano .cap3{animation:il-pano3 2.6s cubic-bezier(.3,.6,.3,1) both}
-html:not([data-anim=off]) .il-escena.brota .mundo{animation:il-brota 1.4s ease both}
+html:not([data-anim=off]) .il-escena.entra .il-svg{animation:il-sube .9s ease backwards}
+html:not([data-anim=off]) .il-escena.pano .cap1{animation:il-pano1 2.6s cubic-bezier(.3,.6,.3,1) backwards}
+html:not([data-anim=off]) .il-escena.pano .cap2{animation:il-pano2 2.6s cubic-bezier(.3,.6,.3,1) backwards}
+html:not([data-anim=off]) .il-escena.pano .cap3{animation:il-pano3 2.6s cubic-bezier(.3,.6,.3,1) backwards}
+html:not([data-anim=off]) .il-escena.brota .mundo{animation:il-brota 1.4s ease backwards}
 
 /* ---- Respirar: anillo que nace del tronco (zona táctil grande, transparente) ---- */
 .il-resp{position:absolute;left:50%;top:46%;width:22%;height:30%;transform:translateX(-50%);border:0;background:transparent;border-radius:40%;cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -197,7 +197,7 @@ html[data-eco="2"] .il-planta svg,html[data-eco="2"] .il-ave svg{animation:none!
 .il-mc .il-tema{margin:0 0 4px}.il-mc .il-vida{margin:0;font-size:.98rem;line-height:1.55}
 .il-mini{display:inline-flex;align-items:center;gap:6px;margin-top:12px;min-height:40px;padding:6px 14px;border-radius:999px;border:1px solid color-mix(in srgb,var(--suave) 28%,transparent);background:transparent;color:var(--suave);font:inherit;font-size:.8rem;cursor:pointer}.il-mini .il-ic{margin:0}.il-mini:active{transform:scale(.96)}
 .il-msg .il-como{margin:4px 0 6px;font-size:.86rem;line-height:1.5;color:var(--suave)}.il-manana{margin:0!important;font-size:.78rem!important;color:var(--oro)!important;font-weight:600}
-html:not([data-anim=off]) .il-msg.entra .il-mc{animation:il-mc-in .5s ease-out both}
+html:not([data-anim=off]) .il-msg.entra .il-mc{animation:il-mc-in .5s ease-out backwards}
 html:not([data-anim=off]) .il-msg.entra .il-mc.d1{animation-delay:.12s}html:not([data-anim=off]) .il-msg.entra .il-mc.d2{animation-delay:.24s}
 @keyframes il-mc-in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 
@@ -316,7 +316,7 @@ html[data-eco="2"] .il-tri-op.pop,html[data-eco="2"] .il-btn-msg.nuevo::after{an
 .il-viv-grp-bt:active{transform:scale(.97)}
 .il-viv-grp-uso{position:absolute;top:3px;right:5px;width:6px;height:6px;border-radius:50%;background:var(--oro)}
 .il-viv-gotas{display:grid;gap:12px;margin:0 0 12px}
-.il-viv-gota{display:grid;gap:8px;padding:14px 16px;border-radius:18px;border:1px solid color-mix(in srgb,var(--suave) 22%,transparent);background:color-mix(in srgb,var(--tinta) 3%,transparent);animation:ilGotaEntra .4s ease both}
+.il-viv-gota{display:grid;gap:8px;padding:14px 16px;border-radius:18px;border:1px solid color-mix(in srgb,var(--suave) 22%,transparent);background:color-mix(in srgb,var(--tinta) 3%,transparent);animation:ilGotaEntra .4s ease backwards}
 .il-viv-gota b{font-size:1.02rem}
 .il-viv-gota p{margin:0;color:var(--suave);font-size:.94rem;line-height:1.45}
 .il-viv-gota-pie{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;margin-top:4px}

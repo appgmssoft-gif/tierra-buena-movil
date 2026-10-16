@@ -95,3 +95,7 @@ html[data-eco="1"] .so-mapa-fig,html[data-eco="1"] .tbej-big,html[data-eco="1"] 
 html[data-eco="1"] .il-fruto svg,html[data-eco="1"] .arr-halo{filter:none!important}
 html[data-eco="1"] .tbl-bola.salta{animation:tblSalta .5s ease!important}
 html[data-eco="1"] .il-escena.brilla .arbol{animation:none!important}
+
+/* F1171 · Foco: con una hoja o ventana encima, el fondo (aurora, luciérnagas, escena viva) queda quieto; al cerrarla sigue solo. */
+html.tb-tapada .ambiente,html.tb-tapada .ambiente *,html.tb-tapada .ambiente::before,html.tb-tapada .ambiente::after,
+html.tb-tapada #fondoVivo *{animation-play-state:paused!important}

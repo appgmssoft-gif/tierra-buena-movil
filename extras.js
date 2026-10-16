@@ -7,15 +7,18 @@
 (function () {
   const $ = (s, r) => (r || document).querySelector(s), $$ = (s, r) => Array.prototype.slice.call((r || document).querySelectorAll(s));
   const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const calma = () => { try { return document.documentElement.getAttribute('data-anim') === 'off' || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
+  const calma = () => { try { return !!(window.TBMov && window.TBMov.quieto()); } catch (e) { return false; } };
   const snd = (n) => { try { if (window.TBSonido) TBSonido[n](); } catch (e) { /* sin sonido */ } };
 
   // ---------- 1) FONDO VIVO ----------
   const R = (a, b) => a + ((Math.sin(a * 12.9898 + b * 78.233) * 43758.5453) % 1 + 1) % 1 * (b - a);   // «azar» fijo (siempre igual, no parpadea al recargar)
+  // F1171 · Capas de GPU: antes cada punto de polen, luciérnaga o estrella era una animación (y una capa) propia: 60 a 116 capas por pantalla,
+  // lo que en teléfonos de poca memoria hace parpadear. Ahora se agrupan en pocas «bandadas»: cada grupo se anima como una sola capa.
+  const GRUPOS = (cls, k, piezas) => { const g = Array.from({ length: k }, () => ''); piezas.forEach((p, i) => { g[i % k] += p; }); return g.map((c, j) => `<g class="fv-g ${cls} g${j}">${c}</g>`).join(''); };
   function escenaPalabra() {
     let n = '', p = '';
     for (let i = 0; i < 4; i++) n += `<g class="fv-nube"><ellipse cx="${60 + i * 95}" cy="${90 + i * 46}" rx="${46 - i * 4}" ry="13"/><ellipse cx="${88 + i * 95}" cy="${80 + i * 46}" rx="28" ry="12"/></g>`;
-    for (let i = 0; i < 16; i++) p += `<circle class="fv-polen" cx="${R(10, 390).toFixed(0)}" cy="${R(420, 780).toFixed(0)}" r="${(1.2 + (i % 3) * .7).toFixed(1)}"/>`;
+    { const a = []; for (let i = 0; i < 16; i++) a.push(`<circle class="fv-polen" cx="${R(10, 390).toFixed(0)}" cy="${R(420, 780).toFixed(0)}" r="${(1.2 + (i % 3) * .7).toFixed(1)}"/>`); p = GRUPOS('fv-gpolen', 5, a); }
     return `<svg class="fv-esc fv-palabra" viewBox="0 0 400 800" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
       <defs><linearGradient id="fvPc" x1="0" y1="0" x2="0" y2="1"><stop class="fv-s0" offset="0"/><stop class="fv-s1" offset="1"/></linearGradient></defs>
       <rect width="400" height="800" fill="url(#fvPc)"/>
@@ -26,8 +29,9 @@
   }
   function escenaVida() {
     let t = '', l = '';
-    for (let i = 0; i < 26; i++) { const x = 8 + i * 15.5, h = 60 + ((i * 37) % 55), y = 720 - ((i * 23) % 40), sg = i % 2 ? 1 : -1; t += `<g class="fv-tg"><path class="fv-tallo" d="M${x} ${y + 80}q${i % 2 ? 6 : -6} -${h * .5} 0 -${h}"/><path class="fv-hoja" d="M${x} ${y + 80 - h * .6}q${sg * 14} -10 ${sg * 22} -2q${-sg * 12} 10 ${-sg * 22} 2z"/></g>`; }
-    for (let i = 0; i < 14; i++) l += `<circle class="fv-luci" cx="${R(20, 380).toFixed(0)}" cy="${R(480, 740).toFixed(0)}" r="${(2 + (i % 3)).toFixed(0)}"/>`;
+    { const a = []; for (let i = 0; i < 26; i++) { const x = 8 + i * 15.5, h = 60 + ((i * 37) % 55), y = 720 - ((i * 23) % 40), sg = i % 2 ? 1 : -1; a.push(`<g><path class="fv-tallo" d="M${x} ${y + 80}q${i % 2 ? 6 : -6} -${h * .5} 0 -${h}"/><path class="fv-hoja" d="M${x} ${y + 80 - h * .6}q${sg * 14} -10 ${sg * 22} -2q${-sg * 12} 10 ${-sg * 22} 2z"/></g>`); }
+      for (let k = 0; k < 3; k++) t += `<g class="fv-tg">${a.slice(k * 9, k * 9 + 9).join('')}</g>`; }
+    { const a = []; for (let i = 0; i < 14; i++) a.push(`<circle class="fv-luci" cx="${R(20, 380).toFixed(0)}" cy="${R(480, 740).toFixed(0)}" r="${(2 + (i % 3)).toFixed(0)}"/>`); l = GRUPOS('fv-gluci', 5, a); }
     return `<svg class="fv-esc fv-vida" viewBox="0 0 400 800" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
       <defs><linearGradient id="fvVc" x1="0" y1="0" x2="0" y2="1"><stop class="fv-v0" offset="0"/><stop class="fv-v1" offset=".75"/><stop class="fv-v2" offset="1"/></linearGradient><radialGradient id="fvVs" cx=".5" cy=".5" r=".5"><stop class="fv-vs0" offset="0"/><stop class="fv-vs1" offset="1"/></radialGradient></defs>
       <rect width="400" height="800" fill="url(#fvVc)"/><circle class="fv-sol2" cx="90" cy="610" r="150" fill="url(#fvVs)"/>
@@ -35,7 +39,7 @@
   }
   function escenaIglesia() {
     let m = '';
-    for (let i = 0; i < 18; i++) m += `<circle class="fv-mota" cx="${R(70, 330).toFixed(0)}" cy="${R(300, 760).toFixed(0)}" r="${(1.2 + (i % 3) * .8).toFixed(1)}"/>`;
+    { const a = []; for (let i = 0; i < 18; i++) a.push(`<circle class="fv-mota" cx="${R(70, 330).toFixed(0)}" cy="${R(300, 760).toFixed(0)}" r="${(1.2 + (i % 3) * .8).toFixed(1)}"/>`); m = GRUPOS('fv-gmota', 5, a); }
     return `<svg class="fv-esc fv-iglesia" viewBox="0 0 400 800" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
       <defs><linearGradient id="fvIc" x1="0" y1="0" x2="0" y2="1"><stop class="fv-i0" offset="0"/><stop class="fv-i1" offset="1"/></linearGradient></defs>
       <rect width="400" height="800" fill="url(#fvIc)"/>
@@ -45,7 +49,7 @@
   }
   function escenaPerfil() {
     let e = '';
-    for (let i = 0; i < 40; i++) e += `<circle class="fv-est" cx="${R(6, 394).toFixed(0)}" cy="${R(10, 520).toFixed(0)}" r="${(0.8 + (i % 4) * .5).toFixed(1)}"/>`;
+    { const a = []; for (let i = 0; i < 40; i++) a.push(`<circle class="fv-est" cx="${R(6, 394).toFixed(0)}" cy="${R(10, 520).toFixed(0)}" r="${(0.8 + (i % 4) * .5).toFixed(1)}"/>`); e = GRUPOS('fv-gest', 4, a); }
     return `<svg class="fv-esc fv-perfil" viewBox="0 0 400 800" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
       <defs><linearGradient id="fvNc" x1="0" y1="0" x2="0" y2="1"><stop class="fv-n0" offset="0"/><stop class="fv-n1" offset="1"/></linearGradient></defs>
       <rect width="400" height="800" fill="url(#fvNc)"/>${e}<circle class="fv-luna-h" cx="90" cy="140" r="64"/><path class="fv-luna" transform="translate(70 120) scale(1.7)" d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/>
