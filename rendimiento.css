@@ -99,3 +99,14 @@ html[data-eco="1"] .il-escena.brilla .arbol{animation:none!important}
 /* F1171 · Foco: con una hoja o ventana encima, el fondo (aurora, luciérnagas, escena viva) queda quieto; al cerrarla sigue solo. */
 html.tb-tapada .ambiente,html.tb-tapada .ambiente *,html.tb-tapada .ambiente::before,html.tb-tapada .ambiente::after,
 html.tb-tapada #fondoVivo *{animation-play-state:paused!important}
+
+/* F1173 · Al activar las animaciones el fondo aparece con un fundido (no de golpe); la hoja «Efectos y sonido» sube suave. Solo opacidad y transform. */
+@media (prefers-reduced-motion:no-preference){
+  @keyframes tb-aparece{from{opacity:0}to{opacity:1}}
+  @keyframes tb-hoja-sube{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+  @keyframes tb-velo{from{opacity:0}to{opacity:1}}
+  html.tb-reactiva .ambiente{animation:tb-aparece .9s ease-out both}
+  html.tb-reactiva.tb-tapada .ambiente{animation-play-state:running!important}
+  html:not([data-anim=off]) .tb-hoja-r{animation:tb-velo .25s ease-out backwards}
+  html:not([data-anim=off]) .tb-hoja-r>div{animation:tb-hoja-sube .38s var(--resorte,cubic-bezier(.32,.72,0,1)) backwards}
+}

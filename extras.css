@@ -603,3 +603,26 @@ html[data-anim=off] .so-nodo:not(.bloq):not(.hecho){animation:none}
 .so-nodo.hecho { background: linear-gradient(160deg, #fff3c4, #e9c36a); box-shadow: 0 4px 0 #a9782c, 0 0 0 3px #ffe9a8, 0 8px 14px rgba(255,214,90,.35); }
 .so-nodo.bloq { opacity: 1; border: 0; background: radial-gradient(circle, #5b6e4f, #2f3f2a); box-shadow: 0 4px 0 #1d2a19, 0 7px 12px rgba(0,0,0,.35); color: rgba(246,236,210,.55); }
 .so-nodo.bloq span { opacity: .4; }
+
+/* F1174 · Grupos plegables (Vida, Palabra, Perfil): el grupo abierto se marca con un velo dorado y su contenido entra en cascada. Solo opacidad y transform. */
+.pf-grupo[open]>summary{background:linear-gradient(90deg,color-mix(in srgb,var(--oro) 15%,transparent),transparent 72%)}
+@media (prefers-reduced-motion:no-preference){
+  @keyframes tb-grupo-entra{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  html:not([data-anim=off]) .pf-grupo[open]>p,html:not([data-anim=off]) .pf-grupo[open] .grid>.card,html:not([data-anim=off]) .pf-grupo[open] .lista>.fila{animation:tb-grupo-entra .42s var(--resorte,cubic-bezier(.32,.72,0,1)) backwards}
+  html:not([data-anim=off]) .pf-grupo[open] .grid>.card:nth-child(2),html:not([data-anim=off]) .pf-grupo[open] .lista>.fila:nth-child(2){animation-delay:.07s}
+  html:not([data-anim=off]) .pf-grupo[open] .grid>.card:nth-child(3),html:not([data-anim=off]) .pf-grupo[open] .lista>.fila:nth-child(3){animation-delay:.14s}
+  html:not([data-anim=off]) .pf-grupo[open] .grid>.card:nth-child(n+4),html:not([data-anim=off]) .pf-grupo[open] .lista>.fila:nth-child(n+4){animation-delay:.21s}
+}
+
+/* F1175 · Filas de lista: el ícono se hunde un poco al tocarlas (respuesta táctil). */
+@media (prefers-reduced-motion:no-preference){
+  html:not([data-anim=off]) .fila .fila-ico{transition:transform .22s var(--resorte,cubic-bezier(.32,.72,0,1))}
+  html:not([data-anim=off]) .fila:active .fila-ico{transform:scale(.88) rotate(-5deg)}
+}
+
+/* F1176 · Plan de lectura (arriba en Palabra): un destello cruza la tarjeta una vez al aparecer. Solo transform. */
+@media (prefers-reduced-motion:no-preference){
+  @keyframes tb-brillo{from{transform:translateX(-140%) skewX(-18deg)}to{transform:translateX(320%) skewX(-18deg)}}
+  .card.tbplan-on::before{content:"";position:absolute;top:0;bottom:0;left:0;width:34%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);pointer-events:none;transform:translateX(-140%) skewX(-18deg)}
+  html:not([data-anim=off]) .card.tbplan-on::before{animation:tb-brillo 1.3s ease-out .5s 1 both}
+}

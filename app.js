@@ -229,7 +229,7 @@
     sol: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.900 4.900l1.400 1.400M17.700 17.700l1.400 1.400M2 12h2M20 12h2M4.900 19.100l1.400-1.400M17.700 6.300l1.400-1.400"/>'
   };
   SV.pausa = '<path d="M8 5v14M16 5v14"/>'; SV.audifonos = '<path d="M4 14v-2a8 8 0 0 1 16 0v2"/><path d="M4 14h3v6H5a1 1 0 0 1-1-1zM20 14h-3v6h2a1 1 0 0 0 1-1z"/>'; SV.texto = '<path d="M4 19 9.500 5 15 19M6 14h7M17 12h3M18.500 12v7"/>';
-  const EMO = { '🎲': 'dado', '🕹': 'joystick', '🕹️': 'joystick', '📖': 'libro', '✨': 'chispas', '📜': 'rollo', '🌱': 'brote', '🙏': 'corazon', '🕍': 'iglesia', '⛪': 'iglesia', '🔑': 'llave', '✉': 'correo', '🔒': 'candado', '📣': 'altavoz', '📅': 'calendario', '💡': 'foco', '🎓': 'birrete', '🌟': 'estrella', '❓': 'ayuda', '▶': 'play', '📝': 'pluma', '🤝': 'gente', '🧠': 'mente', '🫁': 'viento', '🧱': 'bloques', '🧰': 'llave2', '🕊': 'paloma', '🌿': 'hoja', '🔖': 'marcador', '🗓': 'calendario', '🏆': 'trofeo', '🖼': 'imagen', '🎵': 'nota', '🎶': 'nota', '🎉': 'chispas', '🗑': 'papelera', '✓': 'check', '🤲': 'manos', '✍': 'pluma', '🔎': 'lupa', '🌅': 'amanecer', '🔀': 'baraja', '📜': 'rollo' };
+  const EMO = { '🎲': 'dado', '🕹': 'joystick', '🕹️': 'joystick', '📖': 'libro', '✨': 'chispas', '📜': 'rollo', '🌱': 'brote', '🙏': 'corazon', '🕍': 'iglesia', '⛪': 'iglesia', '🔑': 'llave', '✉': 'correo', '🔒': 'candado', '📣': 'altavoz', '📅': 'calendario', '💡': 'foco', '🎓': 'birrete', '🌟': 'estrella', '❓': 'ayuda', '▶': 'play', '📝': 'pluma', '🤝': 'gente', '🧠': 'mente', '🫁': 'viento', '🧱': 'bloques', '🧰': 'llave2', '🕊': 'paloma', '🌿': 'hoja', '🔖': 'marcador', '🗓': 'calendario', '🏆': 'trofeo', '🖼': 'imagen', '🎵': 'nota', '🎶': 'nota', '🎉': 'chispas', '🗑': 'papelera', '✓': 'check', '🤲': 'manos', '✍': 'pluma', '🔎': 'lupa', '🌅': 'amanecer', '🔀': 'baraja' };
   // F942: pictogramas a color (más fáciles de reconocer para personas mayores). Si una clave no está aquí, sigue el ícono de línea.
   // Íconos a color de Tierra Buena: contorno café común, tierra/brote/ámbar y un detalle de brote que los une
   const PICTO = {
@@ -290,7 +290,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Acertijos de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Letras entre las hojas': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => !CABECERAS_ILUSTRADAS ? '' : `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1172';
+  const APP_VERSION = 'F1177';
   // F1171: respaldo si movimiento.js no cargó (pruebas o caché vieja): mismo criterio que TBMov.quieto().
   const MOV_QUIETO = () => { try { if (window.TBMov) return window.TBMov.quieto(); const h = document.documentElement; return h.getAttribute('data-anim') === 'off' || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
@@ -451,6 +451,8 @@
     try { const i = window.TBResguardo && window.TBResguardo.info && window.TBResguardo.info(); if (!i || !i.fecha) return 'Copia de seguridad: aún no hay una en este teléfono.'; const d = new Date(i.fecha); return 'Copia de seguridad en este teléfono: ' + d.toLocaleDateString('es-CL', { day: 'numeric', month: 'long' }) + ', ' + d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }).replace(/\.$/, '') + '.'; } catch (e) { return ''; }
   };
   const cuentaBarra = () => { const c = leer(K_CUENTA); return c ? `<p class="suave" id="cuentaBarra">Sesión iniciada: <b>${esc(c.correo)}</b><br><button type=\"button\" class=\"enlace\" id=\"cuentaSalir">Cerrar sesión</button><br><span id="sincEstado" class="sinc">${esc(syncTexto())}</span><br><span id="copiaEstado" class="sinc">${esc(copiaTexto())}</span></p>` : ''; };
+  // F1174 · Iglesia (sin iglesia aún): una sola línea de sesión. La copia de seguridad y la instalación ya viven en Perfil.
+  const cuentaMini = () => { const c = leer(K_CUENTA); return c ? `<p class="suave" id="cuentaBarra">Sesión iniciada: <b>${esc(c.correo)}</b> · <button type="button" class="enlace" id="cuentaSalir">Cerrar sesión</button></p>` : ''; };
   // ---------- F873 · Revisar la conexión con las cuentas y reenviar el correo de confirmación ----------
   async function diagnosticoNube() {
     const L = [], cab = { apikey: SUPABASE_ANON_KEY };
@@ -694,9 +696,8 @@
       ${areaHero('unirse')}<div class="ent-top">${icoPastorHTML()}${icoCodigoHTML()}</div>
       <div class="hero hero-viva"><span class="hv-caja" aria-hidden="true"><i></i><i></i><i></i><i></i></span><div class="hero-ico" aria-hidden="true">${svg('iglesia', 38)}</div><h1>Tu iglesia te espera</h1>
       <p>¿Eres miembro? Toca <b>Mi&nbsp;código</b>. ¿Cuidas una iglesia? Toca <b>Soy&nbsp;pastor</b>.</p></div>
-      ${cuentaBarra()}
-      <div id="tbEjem" class="tb-ejem-caja"></div>
-      ${bloqueInstalar()}`;
+      ${cuentaMini()}
+      <div id="tbEjem" class="tb-ejem-caja"></div>`;
     ligaCodigo(); pantEntra('adelante');
     try { if (window.TBEjemplos && $('#tbEjem')) window.TBEjemplos.pintar($('#tbEjem'), 'ambos'); } catch (e) { /* sin ejemplos */ }
     document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ cuenta: () => vistaCuenta('entrar'), codigo: () => codigoHoja(), pastor: () => vistaPastorEntrar(), solo: () => ir('palabra') }[b.dataset.ir]())));
@@ -1946,7 +1947,7 @@
       <h1>Hoy</h1><div class="hoy-verso" id="hoyVerso"><span class="esqueleto"></span><span class="esqueleto corto"></span></div>
       ${racha ? `<p class="hoy-racha">${svg('llama', 18)}<span>${racha === 1 ? '1 día leyendo la Palabra' : racha + ' días seguidos leyendo la Palabra'}</span></p>` : ''}${fechaCercanaChip()}${instalarChip()}</div>
       <h2 class="sep">Tu Palabra</h2>
-      <div class="grid">${(planAct ? activa('🗓', 'Mi plan: ' + esc(planAct.pl.n || 'lectura'), 'Día ' + (planAct.n + 1) + ' de ' + planAct.pl.dias.length + ' · sigue donde ibas.', 'plan') : activa('🗓', 'Plan de lectura', 'Elige uno y lee un poquito cada día, con tu avance.', 'planes')).replace('class="card"', 'class="card tbplan"')}${inf ? activa('▶️', 'Seguir leyendo', esc(inf[1]) + ' ' + Number(ult.cap) + ' · donde te quedaste', 'seguir') : ''}${activa('📖', 'Leer la Biblia', 'Biblia en español: elige tu versión. Los libros que lees quedan para leer sin internet.', 'biblia')}${activa('🔖', 'Mi Biblia', 'Tus resaltes, notas y versículos guardados.', 'mibiblia')}${activa('✨', 'Versículo de hoy', 'Una frase para empezar el día.', 'versiculo')}</div>
+      <div class="grid">${(planAct ? activa('🗓', 'Mi plan: ' + esc(planAct.pl.n || 'lectura'), 'Día ' + (planAct.n + 1) + ' de ' + planAct.pl.dias.length + ' · sigue donde ibas.', 'plan') : activa('🗓', 'Plan de lectura', 'Elige uno y lee un poquito cada día, con tu avance.', 'planes')).replace('class="card"', 'class="card tbplan"')}${inf ? activa('▶️', 'Seguir leyendo', esc(inf[1]) + ' ' + Number(ult.cap) + ' · donde te quedaste', 'seguir') : ''}${activa('📖', 'Leer la Biblia', 'Biblia en español: elige tu versión, léela o escúchala. Los libros que lees quedan para leer sin internet.', 'biblia')}${activa('🔖', 'Mi Biblia', 'Tus resaltes, notas y versículos guardados.', 'mibiblia')}${activa('✨', 'Versículo de hoy', 'Una frase para empezar el día.', 'versiculo')}</div>
       <h2 class="sep">Practicar</h2><div class="grid">${activa('📜', 'Fábula del mes', 'Un relato corto para practicar, capítulo a capítulo.', 'fabula')}${activa('🔀', 'Juegos', 'Repasa la Palabra jugando. Sin anuncios y sin tiempo.', 'juegos')}</div>`;
     document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => {
       const k = b.dataset.ir;
@@ -2914,12 +2915,10 @@
         <div><div class="t">Meta de hoy</div><p class="suave m0t">${leidosHoy() >= p.meta ? '¡Meta cumplida! Gracias por dedicarle tiempo a la Palabra.' : 'Lee ' + p.meta + (p.meta === 1 ? ' capítulo' : ' capítulos') + ' hoy.'}</p>
         <div class="chips chips-meta" role="group" aria-label="Capítulos por día">${[1, 2, 3, 5].map((x) => `<button type="button" class="chip${p.meta === x ? ' on' : ''}" data-meta="${x}" aria-pressed="${p.meta === x}">${x}</button>`).join('')}</div></div></div>
       <h2 class="sep">Mi camino</h2>
-      <div class="lista">${fila('t2', svg('trofeo', 26), 'Mis logros', 'Lo que has desbloqueado', 'logros')}${fila('t2', svg('brote', 26), 'Pasos de acción', nHechas() ? nHechas() + ' hechos: por ti, por otros y por tu comunidad' : 'Empieza hoy: un paso pequeño cuenta', 'hacer')}</div>
-      <h2 class="sep">Mi lectura</h2><div class="lista">${fila('t2', svg('libro', 26), 'Cambiar mi plan', esc(planResumen()), 'plan')}</div>
+      <div class="lista">${fila('t2', svg('trofeo', 26), 'Mis logros', 'Lo que has desbloqueado', 'logros')}${fila('t2', svg('brote', 26), 'Pasos de acción', nHechas() ? nHechas() + ' hechos: por ti, por otros y por tu comunidad' : 'Empieza hoy: un paso pequeño cuenta', 'hacer')}${fila('t2', svg('libro', 26), 'Cambiar mi plan', esc(planResumen()), 'plan')}</div>
       ${pastorLeer() ? `${bandaTB('pastor')}<section class="area area-pastor" aria-label="Panel del pastor"><div class="area-cab"><span class="area-tag">Panel del pastor</span><h2 class="area-t">Cuidar a tu iglesia</h2><p class="suave m0">Todo lo que necesitas para guiar, orar y servir con tu comunidad, en un solo lugar.</p></div><div class="card pas-descanso"><b>Tu descanso también cuenta</b><p class="suave m0t">Guiar a una iglesia exige mucho. Aparta tiempo para ti y para tu familia, y busca un par con quien hablar.</p></div><div class="grid">${[['🧱', 'Muro', 'Peticiones que compartiste y cuántas personas oran.', 'muro'], ['📅', 'Agenda', 'Actividades y reuniones de tu iglesia.', 'agenda'], ['📣', 'Avisos', 'Mensajes para todos o para un grupo.', 'avisos'], ['🕍', 'Ministerios', 'Grupos, personas y líderes.', 'ministerios'], ['🤲', 'Juntos hacemos el bien', 'Ideas y movimientos para servir con tu iglesia.', 'juntos'], ['🙏', 'Oraciones', 'Peticiones recibidas.', 'oraciones']].map((x) => activa(x[0], x[1], x[2], x[3]).replace('data-ir=', 'data-pas=')).join('')}</div></section>` : ''}
-      ${id ? '' : `<h2 class="sep">Empieza</h2><div class="lista">${fila('t1', '⛪', 'Unirme a mi iglesia', 'Con el código de tu pastor', 'unir')}${fila('t2', '🔑', 'Recuperar mi iglesia', 'Con la llave de otro teléfono', 'llave')}</div>`}
-      <h2 class="sep">Compartir</h2>
-      <div class="lista">${fila('t2', svg('compartir', 26), 'Invita a un amigo', 'Comparte la app con un mensaje listo', 'invitar')}</div>
+      <h2 class="sep">${id ? 'Compartir' : 'Empieza'}</h2>
+      <div class="lista">${id ? '' : fila('t1', '⛪', 'Unirme a mi iglesia', 'Con el código de tu pastor', 'unir') + fila('t2', '🔑', 'Recuperar mi iglesia', 'Con la llave de otro teléfono', 'llave')}${fila('t2', svg('compartir', 26), 'Invita a un amigo', 'Comparte la app con un mensaje listo', 'invitar')}</div>   <!-- F1174: dos secciones de una fila se unieron en una -->
       <h2 class="sep">Mi perfil</h2>
       <details class="perfil-det"><summary><span aria-hidden="true">${svg('pluma', 18)}</span> Mi nombre, lema y apariencia <i class="flecha" aria-hidden="true">›</i></summary>
       <div class="card"><label for="pfn">Cómo quieres que te llame</label><input id="pfn" type="text" maxlength="30" value="${esc(p.n)}" placeholder="${esc((id && id.nombre) || 'Tu nombre')}" autocomplete="given-name">
@@ -4171,7 +4170,7 @@
       $('#onbAtras').onclick = () => { guardaNombre(); atras(); }; $('#onbSaltar').onclick = () => { r.nombre = ''; sig(); };
       $('#onbSig').onclick = () => { guardaNombre(); sig(); };
       $('#onbNombre').addEventListener('keydown', (e) => { if (e && e.key === 'Enter') { guardaNombre(); sig(); } });
-      try { setTimeout(() => $('#onbNombre').focus(), 250); } catch (e) { /* sin foco */ }
+      setTimeout(() => { try { const n = $('#onbNombre'); if (n) n.focus(); } catch (e) { /* sin foco */ } }, 250);   // F1174: si la persona ya avanzó, el campo no existe y antes daba error
       return;
     }
     const cur = (q.multi ? r.busca : [r[q.id]]).map(String);

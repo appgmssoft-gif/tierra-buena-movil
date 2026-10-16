@@ -200,7 +200,19 @@
       if (!($('.grid .card', pant) || $('.perfil-hero', pant) || $('.lista .fila[data-pp]', pant))) return;   // la portada, la entrada y las preguntas quedan intactas
       const tab = tabActual();
       // F1129 · Perfil: sin carrusel (repetía las secciones de abajo). La fila de sonido va en su hueco de «Efectos y sonido».
+      // F1174 · Vida: sin carrusel. Repetía las mismas seis opciones que están justo debajo y empujaba lo importante fuera de la pantalla.
+      if (tab === 'vida') { $$('[data-ir=hacer]', pant).forEach((b) => b.classList.add('tb-destacada')); return; }
       if (tab === 'perfil') { const hueco = $('#perfSonido', pant); if (hueco && !$('.tbson', hueco)) hueco.appendChild(filaSonido()); return; }
+      // F1176 · Palabra: sin carrusel. Sus cuatro láminas repetían «Leer la Biblia», «Fábula del mes» y «Versículo de hoy», que están justo debajo.
+      // El plan de lectura (lo que se hace cada día) queda arriba, bajo «Hoy». Solo se mueve una vez (si ya está arriba, no se toca: evita un bucle).
+      if (tab === 'palabra') {
+        const pl = $('.tbplan', pant), hoy = $('.hoy', pant);
+        if (pl && hoy && pl.parentNode !== pant) { pl.classList.add('tbplan-on'); hoy.after(pl); }
+        $$('[data-ir=hacer]', pant).forEach((b) => b.classList.add('tb-destacada'));
+        return;
+      }
+      // F1177 · Iglesia (miembro): sin carrusel. Sus cinco láminas repetían Pedir oración, Pedir visita, Avisos y agenda y Juntos hacemos el bien, que están en los grupos de abajo.
+      if (tab === 'iglesia') { $$('[data-ir=hacer]', pant).forEach((b) => b.classList.add('tb-destacada')); return; }
       const car = carrusel(tab); if (!car) return;
       const ancla = $('.hoy', pant) || $('.perfil-hero', pant) || $('.saludo', pant) || $('.filete', pant);
       if (ancla) ancla.after(car); else pant.insertBefore(car, pant.firstChild);
