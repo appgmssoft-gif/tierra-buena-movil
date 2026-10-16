@@ -6,6 +6,11 @@
 .fv-esc *{animation-play-state:paused}
 #fondoVivo[data-lugar=palabra] .fv-palabra,#fondoVivo[data-lugar=vida] .fv-vida,#fondoVivo[data-lugar=iglesia] .fv-iglesia,#fondoVivo[data-lugar=perfil] .fv-perfil{opacity:.62}
 #fondoVivo[data-lugar=palabra] .fv-palabra *,#fondoVivo[data-lugar=vida] .fv-vida *,#fondoVivo[data-lugar=iglesia] .fv-iglesia *,#fondoVivo[data-lugar=perfil] .fv-perfil *{animation-play-state:running}
+/* F1169 · Solo anima la escena del lugar actual. Antes, las otras escenas quedaban en opacidad 0 y seguían animándose (58 animaciones inútiles en Mi iglesia). */
+#fondoVivo:not([data-lugar=palabra]) .fv-palabra *{animation:none!important}
+#fondoVivo:not([data-lugar=vida]) .fv-vida *{animation:none!important}
+#fondoVivo:not([data-lugar=iglesia]) .fv-iglesia *{animation:none!important}
+#fondoVivo:not([data-lugar=perfil]) .fv-perfil *{animation:none!important}
 /* Palabra: campo, luz y nubes */
 .fv-s0{stop-color:color-mix(in srgb,var(--oro) 40%,var(--papel))}.fv-s1{stop-color:var(--papel)}
 .fv-sol{fill:color-mix(in srgb,var(--oro) 70%,#fff);opacity:.85}

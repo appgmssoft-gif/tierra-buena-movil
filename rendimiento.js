@@ -88,6 +88,8 @@
   function vigilar() {
     if (leer() !== 'auto') return;
     try { const c = navigator.hardwareConcurrency || 8, m = navigator.deviceMemory || 4; if (c <= 4 || m <= 2) { nivelAuto = 2; aplicar(); } } catch (e) { /* sin datos */ }
+    // F1168 · Tablet (lado menor ≥ 600 px): arranca en Equilibrado. Medido: en Completo bajaba a 12–20 fps; en Equilibrado, 45–60 fps.
+    try { if (Math.min(window.innerWidth, window.innerHeight) >= 600 && nivelAuto < 1) { nivelAuto = 1; aplicar(); } } catch (e) { /* sin medida de pantalla */ }
     try { if (navigator.getBattery) navigator.getBattery().then((b) => { if (!b.charging && b.level <= 0.2 && nivelAuto < 1) { nivelAuto = 1; aplicar(); } }); } catch (e) { /* sin batería */ }
     let midiendo = false, ultima = 0, tCambio = 0;
     const ronda = () => {
@@ -138,8 +140,38 @@
     b.onclick = hoja; document.body.appendChild(b);
   }
 
+  // F1168 · Portero de visibilidad: una animación que nunca termina y que nadie puede ver (otra pantalla, detrás de
+  // una capa con opacidad 0, dentro de algo oculto) se pausa; cuando vuelve a verse, se reanuda sola. No cambia nada
+  // de lo que se ve. Medido en tablet: Mi iglesia tenía 86 animaciones corriendo y solo 27 se veían.
+  const pausadasOcultas = new WeakSet();
+  function esVisible(el) {
+    if (!el || !el.isConnected) return false;
+    if (el.checkVisibility && !el.checkVisibility({ checkVisibility: true, checkOpacity: true })) return false;
+    for (let n = el, i = 0; n && n.nodeType === 1 && i < 14; n = n.parentElement, i++) {
+      if (parseFloat(getComputedStyle(n).opacity) === 0) return false;
+    }
+    return true;
+  }
+  function gateVisibilidad() {
+    if (H.getAttribute('data-anim') === 'off') return;
+    try {
+      const eco1 = H.getAttribute('data-eco') === '1';
+      document.getAnimations().forEach((a) => {
+        const t = a.effect && a.effect.getTiming ? a.effect.getTiming() : null;
+        if (!t || t.iterations !== Infinity) return;
+        const vis = esVisible(a.effect.target);
+        if (!vis) { if (a.playState === 'running') { a.pause(); pausadasOcultas.add(a); } }
+        else if (pausadasOcultas.has(a)) {
+          pausadasOcultas.delete(a);
+          if (eco1) pausadasAqui.add(a);                       // Equilibrado la mantiene en pausa: su lógica decide
+          else if (a.playState === 'paused') a.play();
+        }
+      });
+    } catch (e) { /* sin API de animaciones */ }
+  }
+
   aplicar();
-  const arranque = () => { iniciarPausas(); vigilar(); boton(); };
+  const arranque = () => { iniciarPausas(); vigilar(); boton(); setInterval(gateVisibilidad, 700); };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', arranque); else arranque();
   window.TBRendimiento = { nivel: () => H.getAttribute('data-eco'), abrir: hoja };
 })();

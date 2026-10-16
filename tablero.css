@@ -441,7 +441,6 @@ body.tb-full #pantalla { padding-bottom: 0; }
 .tbl-caja { position: absolute; inset: 0; z-index: 30; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 18px; text-align: center; color: #f7f3e6; border-radius: 24px;
   background: radial-gradient(circle at 50% 38%, #4a3520, #1a120a 78%); animation: tblEntra .5s both; }
 .tbl-caja.abriendo { animation: none; }
-@keyframes tblRayoCaja { 0% { opacity: 0; transform: scale(.4); } 45% { opacity: 1; transform: scale(1.05); } 100% { opacity: .15; transform: scale(1.4); } }
 .tbl-caja-sub { margin: 0; font-size: 1rem; opacity: .9; }
 .tbl-caja-lucesfila { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; max-width: 280px; margin: 4px 0 10px; }
 .tbl-caja-luz { width: 14px; height: 14px; border-radius: 50%; background: #4a3d2c; box-shadow: inset 0 0 0 1px rgba(0,0,0,.4); }
@@ -464,8 +463,6 @@ body.tb-full #pantalla { padding-bottom: 0; }
 /* F1152 · Tablero: marco interior sencillo (sin figuras en las esquinas) */
 .tbl-mesa::after { content: ""; position: absolute; inset: 6px; z-index: 3; pointer-events: none; border-radius: 18px; border: 2px solid rgba(217,164,65,.55); box-shadow: inset 0 0 0 4px rgba(40,22,8,.42), inset 0 0 0 5px rgba(217,164,65,.22); }/* F1152 · Caja cerrada de madera: veta en la tapa y en el cuerpo{ background-image: repeating-linear-gradient(-7deg, rgba(42,24,10,0) 0 11px, rgba(42,24,10,.26) 11px 12px), linear-gradient(160deg, #9a6a3a, #5b3a1d); }/* F1153 · Cofre de madera cerrado: se abre levantando la tapa{ position: absolute; left: 50%; top: 58px; width: 250px; height: 136px; margin-left: -125px; perspective: 700px; animation: tblCofreRespira 4.6s ease-in-out infinite; }
 @keyframes tblCofreRespira { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
-@keyframes tblLuzCofre { 0% { opacity: 0; transform: scale(.4, .3); } 60% { opacity: 1; transform: scale(1.15, 1); } 100% { opacity: .55; transform: scale(1.5, 1.2); } }
-@keyframes tblCofreSube { 0% { transform: scale(1); } 60% { transform: scale(1.05); } 100% { transform: scale(1.02); } }
 .tbl-caja.abriendo { animation: tblCajaSale .45s 1.35s ease forwards; }
 @keyframes tblCajaSale { from { opacity: 1; } to { opacity: 0; } }
 
