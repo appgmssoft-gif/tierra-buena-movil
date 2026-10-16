@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Diagnóstico de parpadeo — Tierra Buena</title>
+<style>
+  body{margin:0;font:15px/1.4 system-ui,sans-serif;background:#f6f1e6;color:#222}
+  header{padding:10px 12px;background:#2f4a3a;color:#fff;position:sticky;top:0;z-index:5}
+  header b{font-size:1rem} #fps{font-weight:700;font-size:1.1rem;margin-left:8px}
+  .panel{padding:10px 12px;display:grid;gap:8px}
+  button.t{display:flex;justify-content:space-between;align-items:center;width:100%;padding:12px;border:1px solid #bbb;border-radius:12px;background:#fff;font:inherit;text-align:left;min-height:48px}
+  button.t[aria-pressed="true"]{background:#ffe9a8;border-color:#b58b1c}
+  small{color:#555;display:block}
+  iframe{width:100%;height:60vh;border:0;border-top:1px solid #ccc}
+  .nota{padding:8px 12px;font-size:.92rem;color:#444}
+</style></head>
+<body>
+<header><b>Diagnóstico de parpadeo</b><span id="fps">— fps</span></header>
+<p class="nota">Toca un interruptor para APAGAR esa parte (en rojo queda apagada). Mira cuál hace desaparecer el parpadeo y anótalo. Puedes activar varios.</p>
+<div class="panel" id="panel"></div>
+<iframe id="app" title="Tierra Buena" src="index.html"></iframe>
+<script>
+(function () {
+  // Familias de animaciones (por nombre de animación). Se pausan/reanudan; nada se borra.
+  const FAMILIAS = [
+    ['Fondo de escenas (plantas, nubes, sol)', /^fv-/],
+    ['Estrellas y brillos que titilan', /titila|tbc-late|haloR|halo$|fbHalo|fbLuz|tvLed/],
+    ['Luciérnagas y luces', /luci|luz|il-late|il-gota|punto-late/],
+    ['Mar, colinas y nieve', /aurora|colina|pa-nieva|hv-cae|tbHoja|hero-flota/],
+    ['Tablero (bola, aura, respiración)', /^tbl|tblHalo|tblAura|tblRespira|tblSombra|tblCae/],
+    ['Todo lo que se mueve en bucle', /./]
+  ];
+  const panel = document.getElementById('panel'), app = document.getElementById('app');
+  const estado = FAMILIAS.map(() => false);
+  const pausadas = new Set();   // animaciones que ESTA página pausó (y solo esas se reanudan)
+  FAMILIAS.forEach(([nombre, re], i) => {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 't'; b.setAttribute('aria-pressed', 'false');
+    b.innerHTML = '<span>' + nombre + '</span>';
+    b.onclick = () => { estado[i] = !estado[i]; b.setAttribute('aria-pressed', String(estado[i])); aplicar(); };
+    panel.appendChild(b);
+  });
+  const sombras = document.createElement('button'); sombras.type = 'button'; sombras.className = 't'; sombras.setAttribute('aria-pressed', 'false');
+  sombras.innerHTML = '<span>Sombras, filtros y desenfoques<small>Quita lo que el teléfono repinta en cada cuadro</small></span>';
+  let sombrasOn = false;
+  sombras.onclick = () => { sombrasOn = !sombrasOn; sombras.setAttribute('aria-pressed', String(sombrasOn)); aplicar(); };
+  panel.appendChild(sombras);
+
+  function aplicar() {
+    let d; try { d = app.contentDocument; } catch (e) { return; }
+    if (!d || !d.getAnimations) return;
+    // Animaciones: pausa las de cada familia activa; reanuda las que quedaron apagadas.
+    d.getAnimations().forEach((a) => {
+      const nombre = a.animationName || '';
+      const t = a.effect && a.effect.getTiming ? a.effect.getTiming() : null;
+      if (!t || t.iterations !== Infinity) return;
+      let apagar = false;
+      FAMILIAS.forEach(([_, re], i) => { if (estado[i] && re.test(nombre)) apagar = true; });
+      if (apagar) { if (a.playState === 'running') { a.pause(); pausadas.add(a); } }
+      else if (pausadas.has(a)) { pausadas.delete(a); if (a.playState === 'paused') a.play(); }
+    });
+    // Sombras y filtros (sin tocar el contenido): una hoja de estilo que se activa o quita.
+    let hoja = d.getElementById('diag-sombras');
+    if (sombrasOn && !hoja) { hoja = d.createElement('style'); hoja.id = 'diag-sombras'; hoja.textContent = '*,*::before,*::after{box-shadow:none!important;text-shadow:none!important;filter:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}'; d.head.appendChild(hoja); }
+    if (!sombrasOn && hoja) hoja.remove();
+  }
+
+  // Contador de cuadros dentro de la app (lo que el teléfono de verdad logra).
+  app.addEventListener('load', () => {
+    try {
+      const w = app.contentWindow; let n = 0, t0 = w.performance.now();
+      const paso = () => { n++; const t = w.performance.now(); if (t - t0 >= 1000) { document.getElementById('fps').textContent = Math.round(n * 1000 / (t - t0)) + ' fps'; n = 0; t0 = t; } w.requestAnimationFrame(paso); };
+      w.requestAnimationFrame(paso);
+    } catch (e) { document.getElementById('fps').textContent = 'sin medida'; }
+    // La app vuelve a poner animaciones al cambiar de pantalla: reaplica los interruptores.
+    setInterval(aplicar, 1500);
+  });
+})();
+</script>
+</body></html>
