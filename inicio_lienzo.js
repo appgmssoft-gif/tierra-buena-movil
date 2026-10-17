@@ -71,7 +71,7 @@
     const hab = est.tematica, ids = (((CAT && CAT.tematicas) || {})[hab] || {}).rasgos_ids || [], d = est.habDias || 0;
     if (!hab || !ids.length) return '';
     return ids.map((id, k) => {
-      const ini = 4 * k + 4; if (d < ini) return '';   // F1119: cada rasgo entra al cambiar de etapa (días 4, 8 y 12)
+      const ini = 2 * k + 3; if (d < ini) return '';   // F1203: el hábitat se completa en 10 días: los rasgos entran los días 3, 5 y 7
       const xy = (est.tematica === 'costa' && k === 2) ? [250, 214] : (est.tematica === 'desierto' ? RASGO_SLOTS_DESIERTO[k] : RASGO_SLOTS[k]), dd = Math.min(4, d - ini + 1);   // F1088: la gaviota vuela sobre el mar
       const esAnimal = !!AVES[id] || ['guanaco', 'zorro', 'gaviota'].indexOf(id) >= 0;
       if (!esAnimal) {   // plantas: crecen dentro de su bloque
@@ -80,8 +80,8 @@
       }
       // F1084 · Animales por etapas dentro de su bloque: bebé (días 1-3), joven (4-7), adulto con su pequeña familia (8-10)
       const tam = AVES[id] ? 1.7 : 1.35, adulto = rasgoDibujo(id);
-      if (dd <= 3) return '<g class="ras-it ras-bebe" transform="translate(' + xy[0] + ' ' + xy[1] + ') scale(' + (tam * 0.5).toFixed(2) + ')">' + adulto + '</g>';
-      if (dd <= 7) return '<g class="ras-it ras-joven" transform="translate(' + xy[0] + ' ' + xy[1] + ') scale(' + (tam * 0.75).toFixed(2) + ')">' + adulto + '</g>';
+      if (dd <= 1) return '<g class="ras-it ras-bebe" transform="translate(' + xy[0] + ' ' + xy[1] + ') scale(' + (tam * 0.5).toFixed(2) + ')">' + adulto + '</g>';
+      if (dd <= 3) return '<g class="ras-it ras-joven" transform="translate(' + xy[0] + ' ' + xy[1] + ') scale(' + (tam * 0.75).toFixed(2) + ')">' + adulto + '</g>';
       const cria = '<g transform="translate(-34 0) scale(0.42)">' + adulto + '</g><g transform="translate(34 0) scale(0.42)">' + adulto + '</g>';
       return '<g class="ras-it ras-familia" transform="translate(' + xy[0] + ' ' + xy[1] + ') scale(' + tam.toFixed(2) + ')">' + cria + adulto + '</g>';
     }).join('');
@@ -90,12 +90,24 @@
     const rs = (((CAT && CAT.tematicas) || {})[hab] || {}).rasgos_ids || [];
     // F1088: decoración fuera de los lugares de los rasgos
     const L = (PAISAJE_HAB[hab] || PAISAJE_HAB.general).filter((it) => rs.indexOf(it[1]) < 0 && [4, 5, 14].indexOf(it[2]) < 0).slice(0, 2), d = Math.max(0, Math.floor(dias || 0)); let g = '';   // F1087: menos es más: como máximo 3 decoraciones de suelo
-    L.forEach((it) => {
-      if (d < it[0] * 2) return;
-      const xy = SLOTS_DIA[it[2]], k = (it[3] * (0.55 + 0.45 * Math.min(1, (d - it[0] * 2 + 1) / 6))).toFixed(2);
+    L.forEach((it, i) => {
+      const ini = 4 + 4 * i; if (d < ini) return;   // F1203: la primera decoración llega el día 4 y la segunda el día 8
+      const xy = SLOTS_DIA[it[2]], k = (it[3] * (0.55 + 0.45 * Math.min(1, (d - ini + 1) / 4))).toFixed(2);
       g += '<g class="pa-it" transform="translate(' + xy[0] + ' ' + xy[1] + ') scale(' + k + ')">' + sueloDibujo(it[1]) + '</g>';
     });
     return g;
+  }
+
+
+  // F1203 · Día 9: la atmósfera propia del lugar (rayos de luz desde arriba a la izquierda y partículas). Día 10: halo dorado del lugar completo.
+  function ambienteDelDia(dias, hab) {
+    const d = Math.floor(dias || 0); if (d < 9 || !hab) return '';
+    const tipo = hab === 'desierto' ? 'polvo' : hab === 'costa' ? 'brillo' : 'luciernaga';
+    const pos = { luciernaga: [[58, 286], [112, 262], [168, 300], [226, 272], [282, 296], [326, 268], [92, 318]], polvo: [[40, 290], [104, 270], [170, 304], [240, 280], [300, 300], [334, 274], [140, 326]], brillo: [[46, 330], [104, 346], [168, 334], [236, 350], [298, 338], [338, 352], [136, 362]] }[tipo];
+    const luz = '<path class="am-rayo r1" d="M-30 130 L40 130 L230 420 L110 420Z"/><path class="am-rayo r2" d="M60 130 L100 130 L300 420 L210 420Z"/>';
+    const pts = pos.map((q, i) => '<g class="am-p ' + tipo + ' p' + (i + 1) + '"><circle class="am-halo-p" cx="' + q[0] + '" cy="' + q[1] + '" r="5.5"/><circle class="am-nuc" cx="' + q[0] + '" cy="' + q[1] + '" r="1.9"/></g>').join('');
+    const halo = d >= 10 ? '<defs><radialGradient id="amHalo" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ffe9a8" stop-opacity=".55"/><stop offset="1" stop-color="#ffe9a8" stop-opacity="0"/></radialGradient></defs><ellipse class="am-halo" cx="180" cy="318" rx="170" ry="84" fill="url(#amHalo)"/>' : '';
+    return '<g class="pa-amb" aria-hidden="true">' + halo + luz + pts + '</g>';
   }
 
   function brote() { return p('tr-t t3', 'M0 0 C0 -10 1 -20 0 -30') + p('tr-h', 'M0 -26 C-14 -30 -22 -22 -24 -14 C-12 -12 -4 -16 0 -26Z') + p('tr-h2', 'M0 -30 C12 -38 24 -32 26 -24 C14 -20 4 -22 0 -30Z'); }
@@ -442,7 +454,7 @@
   let vivGrupo = null;
   const nomGrupo = (g) => (g === 'general' ? 'Generales' : ((CAT.tematicas || {})[g] || {}).nombre || g);
   const listaDe = (tipo) => (tipo === 'ave' ? Object.keys(CAT.aves || {}) : (CAT.orden_semillas || Object.keys(CAT.semillas || {})));
-  const DIAS = () => (CAT && CAT.ciclo && CAT.ciclo.dias) || 30;   // F1059: la duración del ciclo viene del catálogo
+  const DIAS = () => (CAT && CAT.ciclo && CAT.ciclo.dias) || 10;   // F1059: la duración del ciclo viene del catálogo
   const catDe = (t) => (t === 'ave' ? CAT.aves : t === 'ambiente' ? CAT.ambientes : CAT.semillas) || {};   // F1055: catálogo según el tipo de decoración
   const enGrupo = (tipo, id, g) => { const it = catDe(tipo)[id] || {}, h = it.habitat && it.habitat.length ? it.habitat : ['general']; return h.indexOf(g) >= 0; };
   const gruposCon = (tipo) => ['general'].concat(Object.keys(CAT.tematicas || {})).filter((g) => listaDe(tipo).some((i) => enGrupo(tipo, i, g)));
@@ -640,14 +652,14 @@
   const fondo = pais.slice(0, nPais).map((q) => { const s = FONDO[q.casilla]; return s ? '<g transform="translate(' + s[0] + ' ' + s[1] + ') scale(' + (s[2] * escAv) + ')">' + arbol(q.especie, 'frondoso') + '</g>' : ''; }).join('');
     const mal = (est.maleza || []).map((m) => '<button type="button" class="il-maleza s-' + esc(m.casilla) + '" data-id="' + esc(m.id) + '" aria-label="Quitar maleza (' + esc(MALEZA[m.tipo] || 'maleza') + '). Toca para limpiarla">' + malezaIcono(m.tipo) + '</button>').join('');
     const TM = est.tematica && CAT && CAT.tematicas && CAT.tematicas[est.tematica], fo = (TM && TM.fondo) || fondoActual(), cl = climaReal(climaActual());   // F965: la temática cambia el fondo
-    return '<div class="il-escena' + ((est.maleza || []).length ? ' apagado' : '') + '" id="ilEscena" data-fondo="' + fo + '" data-clima="' + cl + '">'
+    return '<div class="il-escena' + ((est.maleza || []).length ? ' apagado' : '') + '" id="ilEscena" data-dia="' + Math.min(10, Math.max(0, est.habDias || 0)) + '" data-fondo="' + fo + '" data-clima="' + cl + '">'
       + '<svg class="il-svg" viewBox="0 110 360 310" preserveAspectRatio="xMidYMax meet" aria-hidden="true" focusable="false">'
       + '<defs><linearGradient id="ilNoche" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1330" stop-opacity="0"/><stop offset=".45" stop-color="#0b1330" stop-opacity=".62"/><stop offset="1" stop-color="#0b1330" stop-opacity=".4"/></linearGradient><linearGradient id="ilDeg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="dg-a"/><stop offset=".78" class="dg-a"/><stop offset="1" class="dg-b"/></linearGradient>'
       + '<mask id="ilMasc" maskUnits="userSpaceOnUse" x="-300" y="110" width="960" height="310"><rect x="-300" y="110" width="960" height="310" fill="url(#ilDeg)"/></mask></defs><g mask="url(#ilMasc)">'
-      + '<g class="cap cap0">' + cielo(cl) + atras(fo) + '</g><g class="cap cap1"><path class="col c1" d="' + COL.c1 + '"/>' + fondo + '</g>'
+      + '<g class="cap cap0">' + cielo(cl) + '<g class="plano-lejano">' + atras(fo) + '</g></g><g class="cap cap1"><path class="col c1" d="' + COL.c1 + '"/>' + fondo + '</g>'
       + '<g class="cap cap2"><path class="col c2" d="' + COL.c2 + '"/></g>'
       + '<g class="cap cap3"><path class="col c3" d="' + COL.c3 + '"/></g></g>'
-      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g><g class="esp">' + especialesEscena(est, fo) + '</g><g class="pa-dia">' + paisajeDelDia(est.habDias || 0, est.tematica) + rasgosEscena(est) + '</g><g class="cap cap3"><g class="mundo" transform="translate(180 344) scale(' + window.TBInicio.avanceDiario(c.diasCuidado).escala + ')">' + (est.tematica === 'desierto' ? '<g transform="translate(158 -44) scale(0.9)">' + sueloDibujo('cactus') + '</g>' : est.tematica === 'costa' ? '' : arbol(c.especie, et, c.diasCuidado) + hojasTB(window.TBInicio.avanceDiario(c.diasCuidado).hojas, et)) + '</g></g>' + '<g class="tb-hierba" aria-hidden="true">' + (est.tematica === 'desierto' || est.tematica === 'costa' ? '' : hierbaTB(0, 360, 392, 90, 17)) + '</g><g class="clima">' + climaSvg(cl) + '</g></svg>'
+      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g><g class="esp">' + especialesEscena(est, fo) + '</g><g class="pa-dia">' + paisajeDelDia(est.habDias || 0, est.tematica) + rasgosEscena(est) + '</g>' + ambienteDelDia(est.habDias || 0, est.tematica) + '<g class="cap cap3"><g class="mundo" transform="translate(180 344) scale(' + window.TBInicio.avanceDiario(c.diasCuidado).escala + ')">' + (est.tematica === 'desierto' ? '<g transform="translate(158 -44) scale(0.9)">' + sueloDibujo('cactus') + '</g>' : est.tematica === 'costa' ? '' : arbol(c.especie, et, c.diasCuidado) + hojasTB(window.TBInicio.avanceDiario(c.diasCuidado).hojas, et)) + '</g></g>' + '<g class="tb-hierba" aria-hidden="true">' + (est.tematica === 'desierto' || est.tematica === 'costa' ? '' : hierbaTB(0, 360, 392, 90, 17)) + '</g><g class="clima">' + climaSvg(cl) + '</g></svg>'
       + '<i class="il-anillo" id="ilAnillo" aria-hidden="true"></i>'
       + '<button type="button" class="il-resp" id="ilResp" aria-label="Respirar con tu árbol. Toca para una pausa de unos 30 segundos"></button>' + mal + gotasHTML(est)  + vivEscena(est) + '</div>';
   }
@@ -657,7 +669,7 @@
     const c = est.ciclo, e = window.TBInicio.etapa(c.diasCuidado), av = window.TBInicio.avanceDiario(c.diasCuidado), falta = Math.max(0, DIAS() - c.diasCuidado), dia = 'Día ' + c.diasCuidado + ' de ' + DIAS() + ' · ' + (ETAPAS[e] || 'Brote') + (falta ? ' · Faltan ' + falta + (falta === 1 ? ' día' : ' días') : '');   // F1178: se muestra cuánto falta, en días reales
     if (r && r.cicloNuevo) { const s = CAT && CAT.especies && CAT.especies[c.especie]; return 'Empieza un árbol nuevo' + (s ? ': ' + s.nombre : '') + '. El anterior ya forma parte del paisaje.'; }
     if (est.maleza.length) return 'Hay maleza en el pasto. Puedes tocarla para quitarla; así tu árbol sigue creciendo.';
-    if (c.cerrado) return 'Tu árbol está completo. Tu lugar va en el día ' + (est.habDias || 0) + ' de ' + ((CAT && CAT.ciclo && CAT.ciclo.habitat_dias) || 15) + '.';   // F1090: el árbol madura en 10 días
+    if (c.cerrado) return 'Tu árbol está completo. Tu lugar va en el día ' + (est.habDias || 0) + ' de ' + ((CAT && CAT.ciclo && CAT.ciclo.habitat_dias) || 10) + '.';   // F1090: el árbol madura en 10 días
     if (r && r.diaNuevo) return 'Hoy tu árbol creció un día más. ' + dia;
     return dia;
   }
@@ -676,14 +688,14 @@
     if (cont.parentNode && cont.parentNode.classList) cont.parentNode.classList.add('il-eligiendo');
     const hs = ['bosque', 'desierto', 'costa'].filter((h) => CAT.tematicas && CAT.tematicas[h]);
     cont.innerHTML = '<div class="il-elige"><h2>Elige el lugar de tu jardín</h2>'
-      + '<p class="il-elige-sub">Cada lugar tiene su árbol y sus rasgos. Lo que plantes aquí se queda aquí.</p>'
+      + '<p class="il-elige-sub">Lo que plantes aquí se queda aquí.</p>'
       + '<div class="il-semillas" role="radiogroup" aria-label="Lugares para elegir">' + hs.map((h) => { const t = CAT.tematicas[h], s = CAT.especies[t.arbol];
         return '<button type="button" class="il-semilla il-lugar" role="radio" aria-checked="false" data-id="' + esc(h) + '">' + lugarIlustracion(h)
           + '<span class="il-sem-tx"><b>' + esc(t.nombre) + '</b><em>Árbol: ' + esc(s ? s.nombre : 'ninguno') + '</em><small>Rasgos: ' + esc((t.rasgos || []).join(', ')) + '</small></span></button>'; }).join('') + '</div>'
-      + '<button type="button" class="btn il-plantar" id="ilPlantar" disabled>Elige un lugar para continuar</button></div>';
+      + '<button type="button" class="btn il-plantar" id="ilPlantar" disabled>Desliza y elige un lugar</button></div>';
     let sel = '';
     const bots = Array.prototype.slice.call(cont.querySelectorAll('.il-semilla')), pl = $('#ilPlantar', cont);
-    bots.forEach((b) => { b.onclick = () => { sel = b.getAttribute('data-id'); bots.forEach((x) => { const on = x === b; x.setAttribute('aria-checked', String(on)); x.classList.toggle('on', on); }); pl.disabled = false; pl.textContent = 'Empezar en ' + CAT.tematicas[sel].nombre; }; });
+    bots.forEach((b) => { b.onclick = () => { sel = b.getAttribute('data-id'); bots.forEach((x) => { const on = x === b; x.setAttribute('aria-checked', String(on)); x.classList.toggle('on', on); }); pl.disabled = false; pl.textContent = 'Empezar aquí'; }; });
     pl.onclick = () => { if (!sel || !window.TBInicio.elegirHabitatInicial(sel)) return; sonido('semilla'); window.TBInicio.visita(); pintar(cont, mi, { plantado: true }); };
   }
 
@@ -695,10 +707,10 @@
     const est = T.cargar(); if (est.eligiendo) return vistaEleccion(cont, mi);
     if (cont.parentNode && cont.parentNode.classList) cont.parentNode.classList.remove('il-eligiendo');
     const guia = lsGet(KGUIA) !== '1';
-    cont.innerHTML = escena(est) + '<div class="il-datos"><p class="il-nombre" id="ilNombre">' + nombreArbol(est) + '</p><p class="il-estado" id="ilEstado" role="status" aria-live="polite">' + esc(estadoTxt(est, r)) + '</p>'
+    cont.innerHTML = escena(est) + '<div class="il-datos"><div class="il-tarjeta"><p class="il-nombre" id="ilNombre">' + nombreArbol(est) + '</p><p class="il-estado" id="ilEstado" role="status" aria-live="polite">' + esc(estadoTxt(est, r)) + '</p>'
       + '<p class="il-gotas" id="ilGotas" aria-live="polite">' + gotasTexto(est) + '</p>'
       + (guia ? '<p class="il-guia" id="ilGuia">Toca el tronco para respirar un momento.</p>' : '')
-      + '<div class="il-fila"><button type="button" class="il-btn-msg" id="ilMsgBtn" aria-expanded="false" aria-controls="ilMsg">' + ic(IC.libro) + 'Mensajes de hoy</button>'
+      + '</div><div class="il-fila"><button type="button" class="il-btn-msg" id="ilMsgBtn" aria-expanded="false" aria-controls="ilMsg">' + ic(IC.libro) + 'Mensajes de hoy</button>'
       + '<button type="button" class="il-btn-msg" id="ilTriBtn" aria-expanded="false" aria-controls="ilTri"></button>'
       + '<button type="button" class="il-btn-msg" id="ilVivBtn" aria-expanded="false" aria-controls="ilViv">' + ic(IC.hoja) + 'Vivero</button></div>'
       + '<div class="il-msg" id="ilMsg" hidden></div><div class="il-msg il-tri" id="ilTri" hidden></div><section class="il-viv" id="ilViv" aria-label="Vivero" hidden></section></div>';
@@ -749,7 +761,7 @@
     ligarViv(cont, mi);
     const tb = $('#ilTriBtn', cont), tc = $('#ilTri', cont);                   // F961 · Trivia diaria de naturaleza
     if (tb && tc) {
-      const marca = () => { const t = T.triviaHoy(); tb.classList.toggle('nuevo', !!t && !t.resuelta); tb.innerHTML = ic(IC.mundo) + (t && t.resuelta ? 'Trivia de hoy · lista' : 'Trivia del día · +' + (t ? t.gotas : 3) + ' gotas'); };
+      const marca = () => { const t = T.triviaHoy(); tb.classList.toggle('nuevo', !!t && !t.resuelta); tb.innerHTML = ic(IC.mundo) + (t && t.resuelta ? '<span>Trivia de hoy</span><small>lista</small>' : '<span>Trivia del día</span><small>+' + (t ? t.gotas : 3) + ' gotas</small>'); };   // F1203: dos líneas cortas para que el botón no crezca
       const pintaTri = (anim) => {
         const t = T.triviaHoy(); if (!t) { tc.innerHTML = '<p class="il-tri-ay">Por ahora no hay pregunta. Vuelve mañana.</p>'; return; }
         const ops = t.opciones.map((o, i) => { let cl = 'il-tri-op'; if (t.resuelta) { if (i === t.correcta) cl += ' ok'; else if (i === t.elegida) cl += ' mal'; } return '<button type="button" class="' + cl + '" data-i="' + i + '"' + (t.resuelta ? ' disabled' : '') + '><i aria-hidden="true">' + 'ABC'.charAt(i) + '</i><span>' + esc(o) + '</span></button>'; }).join('');

@@ -95,9 +95,9 @@ html:not([data-anim=off]) .il-maleza::after{animation:il-late 1.8s ease-in-out 2
 .il-elige{width:100%;max-width:28em;padding:8px 22px 0;text-align:center}
 .il-elige h2{margin:10px 0 12px;font:600 1.3rem/1.3 Fraunces,Georgia,serif;color:var(--tinta)}
 .il-elige-sub{margin:0 0 24px;font-size:.92rem;line-height:1.5;color:var(--suave)}
-.il-semillas{display:flex;flex-direction:column;gap:16px;margin-bottom:24px}
-.il-semilla{display:flex;align-items:center;gap:16px;width:100%;min-height:96px;padding:14px 18px;text-align:left;border-radius:18px;border:2px solid color-mix(in srgb,var(--suave) 24%,transparent);background:var(--vidrio,transparent);color:var(--tinta);font:inherit;cursor:pointer;transition:border-color .25s,transform .25s}
-.il-semilla.on{border-color:var(--oro);transform:scale(1.015)}
+.il-semillas{display:flex;flex-direction:row;gap:14px;margin:0 -22px 20px;padding:4px 22px 8px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}.il-semillas::-webkit-scrollbar{display:none}
+.il-semilla{display:flex;flex:0 0 78%;flex-direction:column;align-items:stretch;gap:12px;scroll-snap-align:center;min-height:200px;padding:12px;text-align:left;border-radius:18px;border:2px solid color-mix(in srgb,var(--suave) 24%,transparent);background:var(--vidrio,transparent);color:var(--tinta);font:inherit;cursor:pointer;transition:border-color .25s,transform .25s}
+.il-semilla.on{border-color:var(--oro);transform:scale(1.015)}.il-semilla.on::after{content:'✓';position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:50%;background:var(--oro);color:#fff;font:700 14px/26px system-ui,sans-serif;text-align:center}.il-semilla{position:relative}
 .il-semilla:focus-visible{outline:2px solid var(--oro);outline-offset:2px}
 .il-mini{flex:0 0 58px;width:58px;height:96px}
 .il-sem-tx{display:flex;flex-direction:column;gap:5px;min-width:0}
@@ -440,3 +440,60 @@ html[data-eco="2"] .il-escena.camara .il-svg{animation:none}
 
 /* F1081 · Sombra de las matas de follaje (técnica de sombreado en dos tonos) */
 .tr-sombra{fill:#2a5a38}
+
+/* F1200 · Cabecera: paisaje y juegos en una sola píldora arriba a la derecha */
+.il-pill{position:absolute;top:10px;right:14px;display:flex;gap:4px;padding:4px;border-radius:999px;background:color-mix(in srgb,var(--vidrio,var(--papel)) 80%,transparent);border:1px solid color-mix(in srgb,var(--suave) 18%,transparent);box-shadow:0 6px 18px rgba(40,30,15,.08);z-index:2}
+.il-pill .il-juntos{position:static;opacity:1;width:40px;height:40px;border:0;background:transparent}
+.il-pill .il-juntos:focus-visible{outline:2px solid var(--oro);outline-offset:2px}
+
+/* F1202 · Jardín protagonista (fase 2): tarjeta de vidrio legible, acciones en cuadrícula y espacio libre sobre la barra inferior */
+.inicio-limpio.il-con-lienzo{padding-bottom:calc(136px + env(safe-area-inset-bottom,0px))}
+.il-tarjeta{width:100%;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 18px;border-radius:22px;background:color-mix(in srgb,var(--papel) 88%,transparent);border:1px solid color-mix(in srgb,var(--suave) 20%,transparent);box-shadow:0 10px 30px rgba(40,30,15,.10);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.il-tarjeta .il-nombre{color:var(--tinta)}
+.il-tarjeta .il-estado{color:color-mix(in srgb,var(--tinta) 82%,var(--papel))}
+.il-tarjeta .il-gotas{color:color-mix(in srgb,var(--tinta) 78%,var(--papel))}
+.il-tarjeta .il-guia{color:color-mix(in srgb,var(--oro) 70%,var(--tinta))}
+.il-fila{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px;padding:0 22px 8px;box-sizing:border-box}
+.il-fila .il-btn-msg{width:100%;margin-top:0;min-height:52px;white-space:normal;text-align:center;line-height:1.25}
+html[data-eco="2"] .il-tarjeta{-webkit-backdrop-filter:none;backdrop-filter:none;background:var(--papel)}
+
+/* F1203 · Cabecera sin choques, escena más arriba (menos cielo vacío), capas por día y atmósfera del día 9 */
+.il-pill{top:-4px}
+.inicio-limpio.il-con-lienzo .il-escena{margin-top:-56px}
+.inicio-limpio.il-con-lienzo .il-sal,.inicio-limpio.il-con-lienzo .il-hora,.inicio-limpio.il-con-lienzo .il-frase{position:relative;z-index:1}
+.plano-lejano{transition:opacity 1.2s ease}
+.il-escena[data-dia="0"] .plano-lejano,.il-escena[data-dia="1"] .plano-lejano{opacity:0}
+@keyframes il-aparece{from{opacity:0}to{opacity:1}}
+html:not([data-anim=off]) .il-escena.entra[data-dia="2"] .plano-lejano{animation:il-aparece 1.6s ease backwards}
+.pa-amb{pointer-events:none}
+.am-rayo{fill:#fff1c9;opacity:.11}.am-rayo.r2{opacity:.08}
+.am-halo{pointer-events:none}
+.am-p{transform-box:fill-box;transform-origin:center}
+.am-halo-p{fill:#fff3b0;opacity:.28}.am-nuc{fill:#fff8d0}
+.am-p.polvo .am-halo-p{fill:#ffd9a0}.am-p.polvo .am-nuc{fill:#ffe7bd}
+.am-p.brillo .am-halo-p{fill:#e6fbff}.am-p.brillo .am-nuc{fill:#fff}
+@keyframes am-resp{from{opacity:.05}to{opacity:.15}}
+@keyframes am-flota{0%,100%{transform:translate(0,0);opacity:.4}50%{transform:translate(4px,-7px);opacity:1}}
+@keyframes am-deriva{0%,100%{transform:translate(0,0);opacity:.35}50%{transform:translate(12px,-2px);opacity:.95}}
+@keyframes am-brilla{0%,100%{transform:scale(.6);opacity:.3}50%{transform:scale(1.25);opacity:1}}
+html:not([data-anim=off]) .am-rayo{animation:am-resp 8s ease-in-out infinite alternate}
+html:not([data-anim=off]) .am-rayo.r2{animation-delay:-3s}
+html:not([data-anim=off]) .am-p.luciernaga{animation:am-flota 6s ease-in-out infinite}
+html:not([data-anim=off]) .am-p.polvo{animation:am-deriva 9s ease-in-out infinite}
+html:not([data-anim=off]) .am-p.brillo{animation:am-brilla 3.4s ease-in-out infinite}
+.am-p.p2{animation-delay:-1.2s!important}.am-p.p3{animation-delay:-2.4s!important}.am-p.p4{animation-delay:-3.6s!important}.am-p.p5{animation-delay:-.6s!important}.am-p.p6{animation-delay:-1.8s!important}.am-p.p7{animation-delay:-3s!important}
+@media (prefers-reduced-motion:reduce){.am-rayo,.am-p,.plano-lejano{animation:none!important}}
+html[data-eco="2"] .am-rayo,html[data-eco="2"] .am-p{animation:none!important}
+
+/* F1203 · Acciones como tres fichas de igual tamaño, siempre visibles sobre la barra inferior */
+.inicio-limpio.il-con-lienzo .il-escena{margin-bottom:-32px}
+.il-datos{position:relative;z-index:2}
+.il-fila{grid-template-columns:repeat(3,1fr);gap:10px}
+.il-fila .il-btn-msg{flex-direction:column;gap:5px;min-height:68px;padding:9px 6px;font-size:.78rem;line-height:1.2;border-radius:18px}
+.il-fila .il-btn-msg .il-ic{margin:0}
+.il-fila .il-btn-msg span{display:block}
+.il-fila .il-btn-msg small{display:block;font-size:.72rem;color:color-mix(in srgb,var(--tinta) 70%,var(--papel))}
+.il-fila{padding-bottom:12px}
+/* F1203 · Tarjeta más compacta: el estado y la guía ocupan menos y las fichas quedan libres de la barra */
+.il-tarjeta{padding:13px 16px;gap:5px}
+.il-tarjeta .il-guia{font-size:.8rem}

@@ -26,7 +26,7 @@
         ultimoDia: c.ultimoDia || null, ultimaVisita: c.ultimaVisita || c.ultimoDia || null, cerrado: !!c.cerrado, diaPendiente: !!c.diaPendiente };
       b.eligiendo = x.eligiendo === undefined ? !b.ciclo.especie : !!x.eligiendo;
       b.tematica = typeof x.tematica === 'string' ? x.tematica : null;   // F965: temática activa
-      b.habDias = tope(+x.habDias || 0, 0, (cat().ciclo && cat().ciclo.habitat_dias) || 30);   // F1076: días del hábitat (30)
+      b.habDias = tope(+x.habDias || 0, 0, (cat().ciclo && cat().ciclo.habitat_dias) || 10);   // F1203: el hábitat se completa en 10 días
       if (Array.isArray(x.paisaje)) b.paisaje = x.paisaje.filter((p) => p && p.especie).slice(-6);
       if (Array.isArray(x.maleza)) b.maleza = x.maleza.filter((m) => m && m.id && m.casilla).slice(0, 5);
       const g = x.gotas || {}; b.gotas = { saldo: Math.max(0, +g.saldo || 0), total: Math.max(0, +g.total || 0), pendientes: Array.isArray(g.pendientes) ? g.pendientes.filter((p) => p && p.id).slice(0, 30) : [],
@@ -45,7 +45,7 @@
   // Etapa del árbol según los días de cuidado (0 = aún no hay árbol: se está eligiendo la semilla).
   // F1005 · Avance diario: cada día se nota. La escala crece del 78 % al 100 % a lo largo del ciclo, y dentro de cada etapa se ve el porcentaje.
   function avanceDiario(dias) {
-    const c = cat().ciclo, tot = c.dias || 30, d = Math.max(1, Math.min(tot, dias || 1));
+    const c = cat().ciclo, tot = c.dias || 10, d = Math.max(1, Math.min(tot, dias || 1));
     const e = etapa(d), idx = Math.max(0, c.etapas.findIndex((s) => s.id === e));
     const ini = c.etapas[idx].desde, fin = idx + 1 < c.etapas.length ? c.etapas[idx + 1].desde : tot + 1;
     const fraccion = Math.min(1, Math.max(0, (d - ini) / (fin - ini)));
@@ -57,7 +57,7 @@
   }
   // F1006 · Entorno que crece con el árbol: cuántos elementos comprados se ven según el día (todos al día 30).
   function entornoVisible(total, dia) {
-    const tot = cat().ciclo.dias || 30; if (!total) return 0;
+    const tot = cat().ciclo.dias || 10; if (!total) return 0;
     return Math.min(total, Math.max(1, Math.ceil(total * Math.min(Math.max(1, dia || 1), tot) / tot)));
   }
   function etapa(dias) { const et = cat().ciclo.etapas; let r = null; if (dias >= 1) for (const s of et) if (dias >= s.desde) r = s.id; return r; }
@@ -188,7 +188,7 @@
   }
   // F1074 · Primera elección: el lugar del jardín (bosque, desierto o costa). Compra el hábitat, lo activa y su árbol emblemático es el primero.
   const HABITATS_INICIALES = ['bosque', 'desierto', 'costa'];
-  const HAB_DIAS = () => (cat().ciclo && cat().ciclo.habitat_dias) || 30;   // F1076: el hábitat se completa en 30 días (tres rasgos de 10)
+  const HAB_DIAS = () => (cat().ciclo && cat().ciclo.habitat_dias) || 10;   // F1203: el hábitat se completa en 10 días
   function elegirHabitatInicial(h) {
     const e = cargar(); if (!e.eligiendo || HABITATS_INICIALES.indexOf(h) < 0) return false;
     const t = (cat().tematicas || {})[h] || {}, em = t.arbol && (cat().especies || {})[t.arbol] ? t.arbol : null;
