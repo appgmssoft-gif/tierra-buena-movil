@@ -4470,14 +4470,15 @@
     const quieto = () => MOV_QUIETO();
     fr.textContent = FRASES[k]; calmaResp.push(setTimeout(() => { if (fr.isConnected) fr.classList.add('on'); }, 120));
     const reloj = $('#ilHora'), horaTxt = () => { try { return new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; } };   // F928: reloj pequeño, se actualiza con el mismo temporizador de las frases (sin otro)
-    if (reloj) reloj.textContent = horaTxt();
+    const pintaHora = () => { if (!reloj) return; const t = horaTxt(); if (reloj.getAttribute('aria-label') === t) return; const i = t.indexOf(' '); reloj.textContent = i > 0 ? t.slice(0, i) : t; reloj.setAttribute('data-ap', i > 0 ? t.slice(i + 1) : ''); reloj.setAttribute('aria-label', t); };   // F1209: hora grande y «a. m.» pequeño (solo CSS); la etiqueta lleva la hora completa
+    pintaHora();
     if (window.TBLienzo) window.TBLienzo.montar($('#ilLienzo'));
     let visible = true;
     const io = typeof IntersectionObserver === 'function' ? new IntersectionObserver((es) => { visible = es[es.length - 1].isIntersecting; }) : null; if (io) io.observe(sec);
     relojInicio = setInterval(() => {                         // una frase cada 11 s; si no se ve, no hace nada
       if (!sec.isConnected) { if (io) io.disconnect(); return calmaSoltar(); }
       if (document.hidden || !visible) return;
-      if (reloj) { const t = horaTxt(); if (reloj.textContent !== t) reloj.textContent = t; }
+      pintaHora();
       if (quieto()) return;
       fr.classList.remove('on');
       calmaResp.push(setTimeout(() => { if (!fr.isConnected) return; k = (k + 1) % FRASES.length; fr.textContent = FRASES[k]; fr.classList.add('on'); }, 1500));

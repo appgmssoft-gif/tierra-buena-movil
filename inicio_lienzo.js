@@ -717,8 +717,12 @@
     cont.innerHTML = '<div class="il-elige"><h2>Elige el lugar de tu jardín</h2>'
       + '<p class="il-elige-sub">Lo que plantes aquí se queda aquí.</p>'
       + '<div class="il-semillas" role="radiogroup" aria-label="Lugares para elegir">' + hs.map((h) => { const t = CAT.tematicas[h], s = CAT.especies[t.arbol];
-        return '<button type="button" class="il-semilla il-lugar" role="radio" aria-checked="false" data-id="' + esc(h) + '">' + lugarIlustracion(h)
-          + '<span class="il-sem-tx"><b>' + esc(t.nombre) + '</b><em>Árbol: ' + esc(s ? s.nombre : 'ninguno') + '</em><small>Rasgos: ' + esc((t.rasgos || []).join(', ')) + '</small></span></button>'; }).join('') + '</div>'
+        const A = window.TBArte, post = A && A.postal ? A.postal(h) : null, lema = A && A.lema ? A.lema(h) : '';
+        const rasgos = (t.rasgos || []).map((r) => '<i>' + esc(r) + '</i>').join('');
+        return '<button type="button" class="il-semilla il-lugar" role="radio" aria-checked="false" data-id="' + esc(h) + '" data-lugar="' + esc(h) + '">'
+          + (post ? '<span class="il-postal">' + post + '<span class="il-postal-vel" aria-hidden="true"></span><b class="il-postal-nombre">' + esc(t.nombre) + '</b></span>' : lugarIlustracion(h))
+          + '<span class="il-sem-tx">' + (post ? '' : '<b>' + esc(t.nombre) + '</b>') + (lema ? '<q class="il-lema">' + esc(lema) + '</q>' : '') + '<em>Árbol: ' + esc(s ? s.nombre : 'ninguno') + '</em>'
+          + (rasgos ? '<span class="il-rasgos" aria-label="Rasgos del lugar">' + rasgos + '</span>' : '') + '</span></button>'; }).join('') + '</div>'
       + '<button type="button" class="btn il-plantar" id="ilPlantar" disabled>Desliza y elige un lugar</button></div>';
     let sel = '';
     const bots = Array.prototype.slice.call(cont.querySelectorAll('.il-semilla')), pl = $('#ilPlantar', cont);
@@ -734,9 +738,10 @@
     const est = T.cargar(); if (est.eligiendo) return vistaEleccion(cont, mi);
     if (cont.parentNode && cont.parentNode.classList) cont.parentNode.classList.remove('il-eligiendo');
     const guia = lsGet(KGUIA) !== '1';
-    cont.innerHTML = escena(est) + '<div class="il-datos"><div class="il-tarjeta"><p class="il-nombre" id="ilNombre">' + nombreArbol(est) + '</p><p class="il-estado" id="ilEstado" role="status" aria-live="polite">' + esc(estadoVisible(est, r)) + '</p>'
+    cont.innerHTML = escena(est) + '<div class="il-datos"><div class="il-tarjeta"><p class="il-etiqueta">Día ' + Math.max(1, Math.min(DIAS(), est.habDias || (est.ciclo && est.ciclo.diasCuidado) || 1)) + ' de ' + DIAS() + ' · tu lugar</p><p class="il-nombre" id="ilNombre">' + nombreArbol(est) + '</p><p class="il-estado" id="ilEstado" role="status" aria-live="polite">' + esc(estadoVisible(est, r)) + '</p>'
       + puntosDias(est) + '<p class="il-hoy' + ((r && r.diaNuevo) ? ' nuevo' : '') + '" id="ilHoy"><span class="il-hoy-brillo" aria-hidden="true">✦</span><span id="ilHoyTx">' + esc(hoyCapa(est)) + '</span></p>'
       + '<p class="il-gotas" id="ilGotas" aria-live="polite">' + gotasTexto(est) + '</p>'
+      + (est.habDias >= DIAS() && window.TBArte && window.TBArte.postal(est.tematica) ? '<button type="button" class="il-compartir" id="ilComp"><span aria-hidden="true">✦</span> Compartir mi lugar</button><p class="il-comp-msg" id="ilCompMsg" role="status" aria-live="polite"></p>' : '')
       + (guia ? '<p class="il-guia" id="ilGuia">Toca el tronco para respirar un momento.</p>' : '')
       + '</div><div class="il-fila"><button type="button" class="il-btn-msg" id="ilMsgBtn" aria-expanded="false" aria-controls="ilMsg">' + ic(IC.libro) + 'Mensajes de hoy</button>'
       + '<button type="button" class="il-btn-msg" id="ilTriBtn" aria-expanded="false" aria-controls="ilTri"></button>'
@@ -771,6 +776,14 @@
   function ligar(cont, mi) {
     const T = window.TBInicio, estado = $('#ilEstado', cont);
     const rb = $('#ilResp', cont); if (rb) rb.onclick = () => respirar(cont);
+    const cb = $('#ilComp', cont); if (cb) cb.onclick = () => {   // F1208: foto del lugar completo para compartir
+      const e = T.cargar(), t = (CAT.tematicas || {})[e.tematica] || {}, sp = CAT.especies && CAT.especies[e.ciclo.especie], msg = $('#ilCompMsg', cont);
+      cb.disabled = true; if (msg) msg.textContent = 'Preparando tu foto…';
+      window.TBArte.compartir({ lugar: e.tematica, nombre: t.nombre || 'Mi lugar', arbol: e.tematica === 'costa' ? '' : (sp ? 'Árbol: ' + sp.nombre : ''), dias: DIAS() }).then((r) => {
+        cb.disabled = false; sonido('capa');
+        if (msg) msg.textContent = r === 'descargado' ? 'Tu foto se guardó en el teléfono.' : r === 'fallo' ? 'No se pudo preparar la foto. Inténtalo de nuevo.' : '';
+      });
+    };
     Array.prototype.forEach.call(cont.querySelectorAll('.il-maleza'), (b) => {
       b.onclick = () => {
         const x = T.sanar(b.getAttribute('data-id')); if (!x.ok) return; sonido('sana');

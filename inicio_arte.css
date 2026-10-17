@@ -1,0 +1,85 @@
+/* inicio_arte.css - F1207 · Elegir lugar con postales y tarjeta del jardín con más carácter.
+   Se carga al final: solo transform/opacity en movimiento; sin style="" (la política de seguridad lo bloquea). */
+
+/* ---------- Elegir lugar ---------- */
+.il-elige h2{font-size:1.45rem;letter-spacing:-.01em;margin:6px 0 8px}
+.il-elige-sub{margin:0 0 16px;font-size:.95rem}
+.il-semillas{gap:16px;padding:8px 22px 18px;margin-bottom:6px;scroll-padding:0 22px}
+.il-semilla.il-lugar{flex:0 0 84%;gap:0;padding:0;min-height:0;overflow:hidden;border:0;border-radius:26px;text-align:left;
+  background:color-mix(in srgb,var(--papel) 94%,transparent);
+  box-shadow:0 1px 0 color-mix(in srgb,#fff 70%,transparent) inset,0 10px 28px color-mix(in srgb,var(--tinta) 16%,transparent),0 2px 6px color-mix(in srgb,var(--tinta) 10%,transparent);
+  transition:transform .35s cubic-bezier(.2,.8,.3,1),box-shadow .35s}
+.il-semilla.il-lugar.on{transform:translateY(-4px) scale(1.012);box-shadow:0 0 0 3px var(--oro),0 16px 34px color-mix(in srgb,var(--tinta) 22%,transparent)}
+.il-semilla.il-lugar.on::after{top:12px;right:12px;width:30px;height:30px;font-size:16px;line-height:30px;box-shadow:0 3px 10px rgba(120,80,10,.4)}
+.il-postal{position:relative;display:block;width:100%;aspect-ratio:8/5;overflow:hidden}
+.il-postal-svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.il-postal-vel{position:absolute;inset:auto 0 0 0;height:46%;background:linear-gradient(to top,rgba(20,24,18,.55),rgba(20,24,18,0))}
+.il-postal-nombre{position:absolute;left:16px;bottom:12px;right:48px;color:#fff;font:600 1.35rem/1.15 Fraunces,"TB Titulo",Georgia,serif;text-shadow:0 2px 10px rgba(0,0,0,.45)}
+.il-lugar .il-sem-tx{padding:14px 16px 16px;gap:8px}
+.il-lugar .il-lema{display:block;quotes:none;margin:0;font:italic 500 .95rem/1.4 Fraunces,"TB Titulo",Georgia,serif;color:var(--tinta)}
+.il-lugar .il-sem-tx em{font-size:.82rem;font-weight:600;letter-spacing:.02em;color:color-mix(in srgb,var(--oro) 55%,var(--tinta))}
+.il-rasgos{display:flex;flex-wrap:wrap;gap:6px}
+.il-rasgos i{font-style:normal;font-size:.76rem;line-height:1;padding:6px 10px;border-radius:999px;background:color-mix(in srgb,var(--verde,#4f8a55) 14%,transparent);color:color-mix(in srgb,var(--tinta) 86%,var(--papel));border:1px solid color-mix(in srgb,var(--verde,#4f8a55) 26%,transparent)}
+.il-lugar[data-lugar=desierto] .il-rasgos i{background:color-mix(in srgb,#d99a32 16%,transparent);border-color:color-mix(in srgb,#d99a32 34%,transparent)}
+.il-lugar[data-lugar=costa] .il-rasgos i{background:color-mix(in srgb,#3f9bb5 16%,transparent);border-color:color-mix(in srgb,#3f9bb5 34%,transparent)}
+.il-plantar{min-height:54px;border-radius:999px;font-size:1.02rem}
+.il-plantar:not(:disabled){box-shadow:0 8px 22px color-mix(in srgb,var(--oro) 40%,transparent)}
+
+/* ---------- Tarjeta del jardín ---------- */
+.il-tarjeta{position:relative;overflow:hidden;border:0;border-radius:24px;padding:14px 16px 12px;gap:4px;
+  box-shadow:0 1px 0 color-mix(in srgb,#fff 75%,transparent) inset,0 10px 26px color-mix(in srgb,var(--tinta) 14%,transparent)}
+.il-tarjeta::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,#8fc06a,#d99a32 55%,#e8c26a)}
+.il-etiqueta{margin:2px 0 0;font:700 .68rem/1 system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--oro) 60%,var(--tinta))}
+.il-tarjeta .il-nombre{font-size:1.2rem;letter-spacing:-.01em}
+.il-tarjeta .il-gotas{margin-top:2px;border-radius:999px;border:0;padding:6px 14px;background:color-mix(in srgb,#5db1d6 14%,transparent);font-weight:600}
+.il-dias i{width:10px;height:10px}
+.il-dias i.ahora{width:14px;height:14px}
+
+/* ---------- Fichas Mensajes / Trivia / Vivero ---------- */
+.il-fila .il-btn-msg{border-radius:20px;border:0;
+  background:color-mix(in srgb,var(--papel) 90%,transparent);
+  box-shadow:0 1px 0 color-mix(in srgb,#fff 70%,transparent) inset,0 6px 16px color-mix(in srgb,var(--tinta) 12%,transparent);
+  transition:transform .2s,box-shadow .2s}
+.il-fila .il-btn-msg:active{transform:scale(.96)}
+.il-fila .il-btn-msg .il-ic{width:22px;height:22px;color:color-mix(in srgb,var(--oro) 55%,var(--tinta))}
+/* Que las fichas queden SIEMPRE por encima de la barra inferior: la escena cede el espacio (menos cielo vacío) */
+.inicio-limpio.il-con-lienzo{padding-top:56px;gap:6px}
+.inicio-limpio.il-con-lienzo .il-escena{width:min(100vw,520px,max(290px,calc((100svh - 500px) * 1.16)))}
+.inicio-limpio.il-con-lienzo .il-escena{margin-top:-64px}
+
+/* ---------- Movimiento: solo opacidad y transformación, apagado con Animaciones «Apagadas», Ahorro o reducir movimiento ---------- */
+@media (prefers-reduced-motion:no-preference){
+  html:not([data-anim=off]):not([data-eco="2"]) .il-semilla.il-lugar{animation:pt-entra .7s cubic-bezier(.2,.8,.3,1) backwards}
+  html:not([data-anim=off]):not([data-eco="2"]) .il-semilla.il-lugar:nth-child(2){animation-delay:.12s}
+  html:not([data-anim=off]):not([data-eco="2"]) .il-semilla.il-lugar:nth-child(3){animation-delay:.24s}
+  html:not([data-anim=off]):not([data-eco="2"]) .pt-sol{transform-box:fill-box;transform-origin:center;animation:pt-sol 7s ease-in-out infinite}
+  html:not([data-anim=off]):not([data-eco="2"]) .pt-brillo{animation:pt-brilla 3.6s ease-in-out infinite}
+  html:not([data-anim=off]):not([data-eco="2"]) .pt-brillo:nth-of-type(2n){animation-delay:-1.6s}
+  html:not([data-anim=off]):not([data-eco="2"]) .pt-ave{transform-box:fill-box;animation:pt-vuela 9s ease-in-out infinite}
+  html:not([data-anim=off]):not([data-eco="2"]) .pt-ave.a2{animation-duration:12s;animation-delay:-4s}
+}
+@keyframes pt-entra{from{opacity:0;transform:translateY(18px) scale(.97)}}
+@keyframes pt-sol{50%{transform:scale(1.06);opacity:.92}}
+@keyframes pt-brilla{50%{opacity:.25}}
+@keyframes pt-vuela{50%{transform:translate(14px,-4px)}}
+
+/* ---------- Compartir mi lugar (día 10) ---------- */
+.il-compartir{appearance:none;-webkit-appearance:none;margin:4px 0 0;min-height:48px;padding:10px 22px;border:0;border-radius:999px;font:600 .95rem/1 inherit;font-family:inherit;color:#fff;cursor:pointer;
+  background:linear-gradient(135deg,#d99a32,#b9741a);box-shadow:0 8px 20px color-mix(in srgb,#b9741a 38%,transparent);transition:transform .2s}
+.il-compartir:active{transform:scale(.96)}.il-compartir:disabled{opacity:.6}
+.il-compartir:focus-visible{outline:3px solid color-mix(in srgb,var(--oro) 70%,transparent);outline-offset:3px}
+.il-comp-msg{margin:0;font-size:.8rem;color:var(--suave);min-height:0}.il-comp-msg:empty{display:none}
+@media (prefers-reduced-motion:no-preference){html:not([data-anim=off]):not([data-eco="2"]) .il-compartir{animation:il-late 2.8s ease-in-out infinite}}
+/* Con el botón de compartir (día 10) la escena cede un poco más de espacio para que las fichas sigan sobre la barra */
+.inicio-limpio.il-con-lienzo:has(.il-compartir) .il-escena{width:min(100vw,520px,max(300px,calc((100svh - 540px) * 1.16)))}
+.il-compartir{min-height:44px;padding:8px 20px;margin-top:2px}
+
+/* ---------- Encabezado del Inicio (F1209): saludo pequeño, hora grande, frase con filete dorado ---------- */
+.inicio-limpio.il-con-lienzo .il-sal{font-size:.72rem;letter-spacing:.2em;color:color-mix(in srgb,var(--oro) 52%,var(--tinta))}
+.inicio-limpio.il-con-lienzo .il-hora{margin-top:-6px;font:500 2.7rem/1 Fraunces,"TB Titulo",Georgia,serif;letter-spacing:-.02em;color:var(--tinta);text-shadow:0 2px 18px color-mix(in srgb,var(--papel) 85%,transparent)}
+.inicio-limpio.il-con-lienzo .il-hora::after{content:attr(data-ap);margin-left:.35em;font:600 .78rem/1 system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.12em;text-transform:uppercase;vertical-align:.95em;color:color-mix(in srgb,var(--tinta) 62%,var(--papel))}
+.inicio-limpio.il-con-lienzo .il-frase{position:relative;padding-top:14px;margin-top:-2px}
+.inicio-limpio.il-con-lienzo .il-frase::before{content:"";position:absolute;top:0;left:50%;width:34px;height:2px;margin-left:-17px;border-radius:2px;background:linear-gradient(90deg,transparent,#d99a32,transparent)}
+/* El encabezado más grande se compensa subiendo la escena (había cielo vacío): las fichas siguen libres de la barra */
+.inicio-limpio.il-con-lienzo .il-escena{margin-top:-104px}
+.inicio-limpio.il-con-lienzo .il-hora{font-size:2.5rem}
