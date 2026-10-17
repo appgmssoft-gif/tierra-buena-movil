@@ -1138,3 +1138,27 @@ html[data-contraste=alto] .card,html[data-contraste=alto] .chip,html[data-contra
 .mi-pasos li::before{content:counter(p);position:absolute;left:12px;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:700 1rem/1 "TB Titulo",Georgia,serif;color:#fff;background:linear-gradient(135deg,#46874f,#1d4430)}
 .mi-cita{margin:6px 0 16px;padding:16px 18px;border-radius:20px;border-left:5px solid var(--oro);background:color-mix(in srgb,var(--oro) 14%,var(--tarjeta));font:italic 1.05rem/1.45 "TB Titulo",Georgia,serif}
 .mi-cita small{display:block;font:700 .72rem/1 system-ui,sans-serif;letter-spacing:.09em;text-transform:uppercase;opacity:.7;margin-bottom:6px;font-style:normal}
+
+/* F1181 · puntos con marca (en vez de números) para listas que no son pasos */
+.mi-puntos li::before{content:"";width:14px;height:14px;left:20px;background:linear-gradient(135deg,#2f7b9c,#18405e)}
+
+/* F1182 · Ayuda: números grandes para tocar y llamar; día de plan de vida con «Para hoy» destacado */
+.ay-grande,.ay-lista{display:flex;flex-direction:column;gap:10px;margin:6px 0 8px}
+.ay-llamar{display:flex;align-items:center;gap:12px;min-height:68px;padding:12px 14px;border:1px solid var(--linea);border-radius:20px;background:var(--tarjeta);color:var(--tinta);text-decoration:none}
+.ay-grande .ay-llamar{background:linear-gradient(90deg,color-mix(in srgb,#c0504a 22%,var(--tarjeta)),var(--tarjeta))}
+.ay-num{flex:none;min-width:64px;text-align:center;font:700 1.35rem/1 "TB Titulo",Georgia,serif}
+.ay-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.ay-tx b{font-size:.98rem}.ay-tx small{font-size:.82rem;opacity:.75;line-height:1.25}
+.ay-tel{flex:none;font-size:1.4rem}
+.ay-llamar:active{transform:scale(.98)}
+.pv-hoy{border-left:5px solid #46874f;background:linear-gradient(135deg,color-mix(in srgb,#46874f 18%,var(--tarjeta)),var(--tarjeta))}
+.pv-et{display:block;font:700 .72rem/1 system-ui,sans-serif;letter-spacing:.09em;text-transform:uppercase;opacity:.7;margin-bottom:6px}
+
+/* F1183 · notas como botón y muro de oración */
+button.mo-nota{display:block;width:100%;text-align:left;font:inherit;color:var(--tinta);cursor:pointer}
+.muro-card{border-left:5px solid color-mix(in srgb,#7456a0 60%,var(--tarjeta));border-radius:20px}
+
+/* F1184 · Servir: cada turno es una cita con fecha grande */
+.turno{display:flex;align-items:center;gap:14px;padding:10px 12px;margin:0 0 10px;border:1px solid var(--linea);border-radius:20px;background:linear-gradient(90deg,color-mix(in srgb,#46874f 16%,var(--tarjeta)),var(--tarjeta))}
+.turno-f{flex:none;width:56px;height:60px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;background:linear-gradient(135deg,#46874f,#1d4430)}
+.turno-f b{font:700 1.5rem/1 "TB Titulo",Georgia,serif}.turno-f small{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em}
+.turno-t{display:flex;flex-direction:column;gap:2px;min-width:0}.turno-t b{font-size:1rem}.turno-t small{font-size:.84rem;opacity:.75;text-transform:capitalize}

@@ -843,14 +843,14 @@
   }
 
   function vistaMiembroServir(id) {
-    $('#pantalla').innerHTML = `${cabecera('Servir', 'Mi iglesia')}<p class="suave">Tus turnos, cuándo puedes servir y los grupos de tu iglesia.</p>
-      <div class="card"><div class="t">Mis turnos</div><div id="misTurnos"><p class="suave m0">Cargando tus turnos…</p></div></div>
+    $('#pantalla').innerHTML = `${cabecera('Servir', 'Mi iglesia')}${heroInt('c2', '🕍', 'Mi servicio', 'Servir con tu iglesia', 'Tus turnos, cuándo puedes servir y los grupos donde ayudas.')}
+      <h2 class="mi-sub">Mis turnos</h2><div id="misTurnos"><p class="suave m0">Cargando tus turnos…</p></div>
       <div id="turLider"></div>
       <div class="card"><b>¿Cuándo puedes servir?</b><p class="suave m0t">Marca lo que te sirve. Por ahora solo lo ves tú.</p>
         <div class="chips" role="group" aria-label="Mi disponibilidad">${DISP_OPC.map(([k, t]) => `<button type="button" class="chip${dispLeer().indexOf(k) >= 0 ? ' on' : ''}" data-disp="${k}" aria-pressed="${dispLeer().indexOf(k) >= 0}">${t}</button>`).join('')}</div>
         <p class="suave m0t" id="dispMsg" aria-live="polite"></p></div>
-      <div class="lista">${filaIr('🕍', 'Mis ministerios', 'Los grupos donde sirves y quién los lidera', 'ministerios')}${filaIr('🤲', 'Juntos hacemos el bien', 'Ideas para servir con tu iglesia', 'juntos')}</div>
-      <div class="card"><div class="t">Quién sirve este mes</div><div id="quienSirve"><p class="suave m0">Cargando el rol de la iglesia…</p></div></div>
+      <h2 class="mi-sub">Mis grupos</h2><div class="mi-bento">${bento('mb2', '🕍', 'Mis ministerios', 'Dónde sirves y quién lidera', 'ministerios')}${bento('mb1', '🤲', 'Juntos hacemos el bien', 'Ideas para servir', 'juntos')}</div>
+      <h2 class="mi-sub">Quién sirve este mes</h2><div class="card"><div id="quienSirve"><p class="suave m0">Cargando el rol de la iglesia…</p></div></div>
       <details class="pf-grupo mi-grupo"><summary>Cuidar a tu pastor</summary><section class="cuidar-pastor"><p class="suave m0t">Tu pastor también es una persona. Formas concretas de acompañarlo:</p><ul class="ayuda-pasos"><li>Ora por él y por su familia, por su nombre.</li><li>Agradécele con una palabra sincera, en persona o por escrito.</li><li>Respeta sus días de descanso: no todo es urgente.</li><li>Ofrece una ayuda concreta: un servicio, transporte o una compra para el aseo.</li><li>Si ves una carga que no puede con todo, dile que cuentas con él.</li></ul></section></details>`;
     volverA('Mi iglesia', () => vistaMiembro(id));
     cablearMiembro(id);
@@ -861,7 +861,7 @@
       const c = $('#misTurnos'); if (!c) return;
       if (!r.ok) { c.innerHTML = '<p class="suave m0">No pudimos cargar tus turnos. Revisa tu conexión.</p>'; return; }
       const filas = r.data || [];
-      c.innerHTML = filas.length ? filas.map((t) => { const d = new Date(t.inicio); return '<p class="m0 t2"><b>' + esc(d.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' })) + ' · ' + esc(d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })) + '</b><br>' + esc(t.titulo) + '</p>'; }).join('<hr class="sep16">') : '<p class="suave m0">Por ahora no tienes turnos asignados en las próximas dos semanas.</p>';
+      c.innerHTML = filas.length ? filas.map((t) => { const d = new Date(t.inicio); return '<div class="turno"><span class="turno-f"><b>' + d.getDate() + '</b><small>' + esc(d.toLocaleDateString('es-CL', { month: 'short' })) + '</small></span><span class="turno-t"><b>' + esc(t.titulo) + '</b><small>' + esc(d.toLocaleDateString('es-CL', { weekday: 'long' })) + ' · ' + esc(d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })) + '</small></span></div>'; }).join('') : '<p class="suave m0">Por ahora no tienes turnos asignados en las próximas dos semanas.</p>';
     })();
     // F1045 · Rol de la iglesia: quién sirve en los próximos 30 días.
     (async () => {
@@ -1023,9 +1023,8 @@
   // ---------- Pedir oración (MOV2b) ----------
   const TIPOS_ORACION = { salud: '🩺 Salud', familia: '🏠 Familia', trabajo: '💼 Trabajo', animo: '🕊️ Ánimo', gratitud: '🙌 Gratitud', otro: '✨ Otro' };
   function vistaOracion(id) {
-    $('#pantalla').innerHTML = `${volver()}<h1>Pedir oración</h1><div class="filete"></div>
-      <p class="suave">Cuéntale a tu pastor por quién o por qué orar. Se borra sola a los 6 meses y tú puedes borrarla cuando quieras.</p>
-      <label for="otxt">¿Por qué quieres que oremos?</label>
+    $('#pantalla').innerHTML = `${volver()}${heroInt('c5', '🙏', 'Para tu pastor', 'Pedir oración', 'Cuéntale por quién o por qué orar. Se borra sola a los 6 meses y tú puedes borrarla cuando quieras.')}
+      <div class="mo-nueva"><label for="otxt">¿Por qué quieres que oremos?</label>
       <textarea id="otxt" rows="4" maxlength="600" placeholder="Ej. Por la salud de mi mamá, que esta semana entra al hospital."></textarea>
       <div id="ocont" class="suave der">0 / 600</div>
       <label for="otipo">¿Sobre qué es?</label>
@@ -1037,7 +1036,7 @@
       <label id="oanonf" class="chk" hidden><input id="oanon" type="checkbox"><span>Que no aparezca mi nombre cuando se comparta.</span></label>
       <p id="msg" role="alert" hidden></p>
       <button id="oenviar" class="btn">Enviar petición</button>
-      <h2 class="sep">Mis peticiones</h2><div id="omias" aria-live="polite"><p class="suave">Cargando…</p></div>`;
+      </div><h2 class="mi-sub">Mis peticiones</h2><div id="omias" aria-live="polite"><p class="suave">Cargando…</p></div>`;
     alVolver();
     const t = $('#otxt'); t.addEventListener('input', () => { $('#ocont').textContent = t.value.length + ' / 600'; });
     document.querySelectorAll('input[name=oquien]').forEach((r) => r.addEventListener('change', () => {
@@ -1099,8 +1098,7 @@
   // Misma logica que peticiones.js del escritorio: peticion_muro lista lo que el pastor compartio y
   // peticion_orando suma/quita mi "Estoy orando" (solo un contador, nadie ve quien oro).
   function vistaMuro(id) {
-    $('#pantalla').innerHTML = `${volver()}<h1>Muro</h1><div class="filete"></div>
-      <p class="suave">Peticiones que tu pastor compartió. Pulsa el botón para decir que estás orando.</p>
+    $('#pantalla').innerHTML = `${volver()}${heroInt('c5', '🕊️', 'Orando juntos', 'Muro de oración', 'Peticiones que tu pastor compartió. Pulsa el botón para decir que estás orando.')}
       <p id="msg" role="alert" hidden></p>
       <div id="muro" aria-live="polite"><p class="suave">Cargando…</p></div>`;
     alVolver();
@@ -1175,10 +1173,9 @@
     const t = await temaDelMes(id); const caja = $('#amtema'); if (!caja) return;
     if (!t) { caja.innerHTML = `<p class="suave">${esc(errTxt('sin-internet'))}</p>`; return; }
     const mes = new Date().toLocaleDateString('es-CL', { month: 'long', year: 'numeric' });
-    caja.innerHTML = `<div class="card"><p class="suave m0 mayus">${esc(mes)}${t.iglesia ? ' · 🌟 Esto es lo que vive tu iglesia' : ''}</p>
-      <h2 class="m0t">${esc(t.tema)}</h2><p>${esc(t.descripcion)}</p>
-      ${t.referencia ? `<p class="m0"><b>📖 Para leer:</b> ${esc(t.referencia)}</p>` : ''}
-      ${t.formas.length ? `<h3 class="sep">Formas de vivirla</h3><ul class="formas">${t.formas.map((f) => `<li>${esc(f)}</li>`).join('')}</ul>` : ''}</div>`;
+    caja.innerHTML = `${heroInt('c2', '🌟', esc(mes) + (t.iglesia ? ' · 🌟 Esto es lo que vive tu iglesia' : ''), esc(t.tema), esc(t.descripcion))}
+      ${t.referencia ? `<blockquote class="mi-cita"><small>📖 Para leer</small>${esc(t.referencia)}</blockquote>` : ''}
+      ${t.formas.length ? `<h2 class="mi-sub">Formas de vivirla</h2><ol class="mi-pasos">${t.formas.map((f) => `<li>${esc(f)}</li>`).join('')}</ol>` : ''}`;
     // La accion por defecto (vivir el tema del mes) se crea sola, una vez por mes.
     const clave = claveMes(); let todas = accTodas();
     if (!todas.some((x) => x.mes === clave && x.esDefault)) { todas.push({ id: 'a' + Date.now().toString(36), mes: clave, titulo: t.tema, comoMeFue: '', esDefault: true, fecha: new Date().toISOString() }); accGuardar(todas); }
@@ -1219,9 +1216,8 @@
   const TIPOS_VISITA = { hogar: 'Visita a mi hogar', enfermo: 'Visita a un enfermo', iglesia: 'Reunión en la iglesia', conversacion: 'Conversación personal', otro: 'Otro motivo' };
   const ESTADOS_VISITA = { solicitada: '📨 Enviada', aceptada: '✅ Tu pastor aceptó', agendada: '📅 Agendada', realizada: '🏁 Realizada', no_disponible: '🕊️ Por ahora tu pastor no puede' };
   function vistaVisita(id) {
-    $('#pantalla').innerHTML = `${volver()}<h1>Pedir visita</h1><div class="filete"></div>
-      <p class="suave">Pide que tu pastor te visite o conversar con él. Solo él lo ve: nunca se publica. Él decide si puede y cuándo, y te responde aquí.</p>
-      <label for="vtipo">¿Qué necesitas?</label>
+    $('#pantalla').innerHTML = `${volver()}${heroInt('c1', '🏠', 'Solo lo ve tu pastor', 'Pedir visita', 'Pide que te visite o conversar con él. Nunca se publica. Él decide si puede y cuándo, y te responde aquí.')}
+      <div class="mo-nueva"><label for="vtipo">¿Qué necesitas?</label>
       <select id="vtipo">${Object.keys(TIPOS_VISITA).map((k) => `<option value="${k}">${esc(TIPOS_VISITA[k])}</option>`).join('')}</select>
       <label for="vmot">Cuéntale brevemente el motivo</label>
       <textarea id="vmot" rows="3" maxlength="300" placeholder="Ej. Mi papá está internado y quisiera que oráramos juntos."></textarea>
@@ -1238,7 +1234,7 @@
         <input id="vdir" type="text" maxlength="200" placeholder="Calle, número, comuna"><p class="suave">Tu pastor solo verá la dirección cuando acepte visitarte.</p></div>
       <p id="msg" role="alert" hidden></p>
       <button id="venviar" class="btn">Enviar pedido</button>
-      <h2 class="sep">Mis pedidos</h2><div id="vmias" aria-live="polite"><p class="suave">Cargando…</p></div>`;
+      </div><h2 class="mi-sub">Mis pedidos</h2><div id="vmias" aria-live="polite"><p class="suave">Cargando…</p></div>`;
     alVolver();
     const m = $('#vmot'); m.addEventListener('input', () => { $('#vcont').textContent = m.value.length + ' / 300'; });
     const aj = () => { $('#vdirf').hidden = !(['hogar', 'enfermo'].includes($('#vtipo').value)); }; $('#vtipo').addEventListener('change', aj); aj();
@@ -1274,13 +1270,13 @@
   function vistaLlave() {
     $('#pantalla').innerHTML = `
       <button type="button" class="volver" id="atras">‹ Perfil</button>
-      <h1>Recuperar mi iglesia</h1><div class="filete"></div>
-      <p>En tu otro teléfono, abre <b>Perfil</b> → «Pasar mi iglesia a otro dispositivo», copia la llave y pégala aquí. (Si tienes cuenta con correo, no la necesitas: tu iglesia te sigue sola.)</p>
-      <label for="llv">Tu llave (empieza con PULPITO-ID-)</label>
+      ${heroInt('c3', '🔑', 'Cambiaste de teléfono', 'Recuperar mi iglesia', 'Si tienes cuenta con correo, no la necesitas: tu iglesia te sigue sola.')}
+      <ol class="mi-pasos"><li>En tu otro teléfono, abre <b>Perfil</b>.</li><li>Toca «Pasar mi iglesia a otro dispositivo» y copia la llave.</li><li>Pégala aquí abajo.</li></ol>
+      <div class="mo-nueva"><label for="llv">Tu llave (empieza con PULPITO-ID-)</label>
       <textarea id="llv" rows="3" autocapitalize="off" autocomplete="off" spellcheck="false"></textarea>
       <button id="pegar" class="btn sec" hidden>📋 Pegar desde el portapapeles</button>
       <p id="err" class="error" role="alert" hidden></p>
-      <button id="usar" class="btn">Recuperar mi identidad</button>`;
+      <button id="usar" class="btn">Recuperar mi identidad</button></div>`;
     $('#atras').onclick = () => ir('perfil'); pantEntra('adelante');
     if (navigator.clipboard && navigator.clipboard.readText) {
       $('#pegar').hidden = false;
@@ -2599,7 +2595,9 @@
   }
   function vistaTarjetaSalud(t, ayuda) {
     if (!t) return vistaSalud();
-    $('#pantalla').innerHTML = `${cabecera(t.titulo, 'Salud mental')}<div class="card"><p class="m0t">${esc(t.resumen)}</p><ul class="formas">${(t.puntos || []).map((x) => `<li>${esc(x)}</li>`).join('')}</ul>${t.paraPensar ? `<p class="sep"><b>💭 Para pensar:</b> ${esc(t.paraPensar)}</p>` : ''}</div>${t.mostrarLineas ? lineasAyuda(ayuda) : ''}`;
+    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ Salud mental</button>${heroInt('c3', icono(t.icono), 'Para entender', esc(t.titulo), esc(t.resumen))}
+      ${(t.puntos || []).length ? `<h2 class="mi-sub">Lo que conviene saber</h2><ul class="mi-pasos mi-puntos">${t.puntos.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
+      ${t.paraPensar ? `<blockquote class="mi-cita"><small>💭 Para pensar</small>${esc(t.paraPensar)}</blockquote>` : ''}${t.mostrarLineas ? lineasAyuda(ayuda) : ''}`;
     volverA('Salud mental', vistaSalud);
   }
   function vistaRespirar(r) {
@@ -2664,10 +2662,9 @@
     let cur = null; d.categorias.forEach((c) => c.cursos.forEach((x) => { if (x.id === id) cur = x; }));
     if (!cur) return vistaAprender();
     const url = urlSegura(cur.url), est = aprEstado(id);
-    $('#pantalla').innerHTML = `${cabecera(cur.titulo, 'Aprender')}
-      <p class="suave">${esc(cur.proveedor)} · ${esc(cur.costo)}</p>
-      <div class="card"><p class="m0t">${esc(cur.queEs)}</p><h2 class="sep16">¿Cómo me ayuda?</h2><p>${esc(cur.comoAyuda)}</p>
-        ${(cur.ejemplos || []).length ? `<h2>Para ponerlo en práctica</h2><ul class="formas">${cur.ejemplos.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}</div>
+    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ Aprender</button>${heroInt('c1', '🎓', esc(cur.proveedor) + ' · ' + esc(cur.costo), esc(cur.titulo), esc(cur.queEs))}
+      <h2 class="mi-sub">¿Cómo me ayuda?</h2><div class="card"><p class="m0">${esc(cur.comoAyuda)}</p></div>
+      ${(cur.ejemplos || []).length ? `<h2 class="mi-sub">Para ponerlo en práctica</h2><ol class="mi-pasos">${cur.ejemplos.map((x) => `<li>${esc(x)}</li>`).join('')}</ol>` : ''}
       ${url ? `<a class="btn" id="abrircurso" href="${esc(url)}" target="_blank" rel="noopener noreferrer">Abrir el curso ↗</a><p class="suave">Se abre en otra pestaña, en el sitio de ${esc(cur.proveedor)}. Allí puede pedirte crear una cuenta.</p>` : ''}
       <fieldset class="opciones"><legend>Mi avance</legend>
         ${ESTADOS_APR.map((e) => `<label class="opcion"><input type="radio" name="aest" value="${e[0]}"${est === e[0] ? ' checked' : ''}><span>${e[1]} ${e[2]}</span></label>`).join('')}</fieldset>
@@ -2799,18 +2796,23 @@
   }
   // F1017 · Ayuda y contactos: emergencias, líneas de apoyo, cuidados y la iglesia. Los números NO van dentro de los planes.
   function vistaAyuda() {
-    const bloque = (titulo, cuerpo) => '<section class="card ayuda-bloque"><h3 class="ayuda-t">' + esc(titulo) + '</h3>' + cuerpo + '</section>';
-    const linea = (nombre, numero, detalle) => '<li><b>' + esc(nombre) + '</b> · <span class="ayuda-num">' + esc(numero) + '</span><br><span class="suave">' + esc(detalle) + '</span></li>';
-    const emergencias = '<ul class="ayuda-lista">' + linea('Ambulancia (SAMU)', '131', 'Emergencias de salud, a cualquier hora.') + linea('Bomberos', '132', 'Incendios y rescates.') + linea('Carabineros', '133', 'Seguridad y peligro inmediato.') + '</ul><p class="suave m0">Si hay peligro inmediato, llama primero.</p>';
-    const apoyo = '<ul class="ayuda-lista">' + linea('Fono *4141 (Minsal)', '*4141', 'Prevención del suicidio. Gratuito, 24 horas, confidencial.') + linea('Sernameg', '1455', 'Violencia contra la mujer y violencia intrafamiliar.') + linea('SENDA', '1412', 'Consumo de drogas y alcohol. Gratuito y anónimo.') + linea('Fono Infancia', '800 200 818', 'Apoyo para la crianza y para niños y adolescentes.') + '</ul><p class="suave m0">Confirma estos números en el sitio oficial antes de publicar la app.</p>';
-    const cuidados = '<ul class="ayuda-pasos"><li>Come algo, aunque sea poco, y bebe agua.</li><li>Sal a caminar cinco minutos, si puedes.</li><li>Habla hoy con una persona de confianza.</li><li>Respira lento: cuatro segundos adentro, seis afuera.</li><li>Aleja de tu alcance lo que pueda hacerte daño.</li></ul>';
-    const iglesia = '<p>Tu pastor o un líder de tu comunidad de fe puede acompañarte, orar contigo y ayudarte a buscar apoyo profesional.</p><ul class="ayuda-pasos"><li>Habla con tu pastor en persona o por teléfono.</li><li>Visita una iglesia cercana y pide un momento de oración o consejería pastoral.</li><li>Pide que te acompañen a buscar un profesional si lo necesitas.</li></ul><p class="suave m0">La iglesia acompaña; no reemplaza a los servicios de emergencia ni al tratamiento profesional.</p>';
-    $('#pantalla').innerHTML = cabecera('Ayuda y contactos', 'Vida') + '<p class="suave">Si estás en peligro, llama primero. Aquí encuentras a quién acudir.</p>' + bloque('Tu iglesia y tu pastor', iglesia) + bloque('Cuidarte hoy', cuidados) + bloque('Emergencias', emergencias) + bloque('Líneas de apoyo en Chile', apoyo);
+    const sec = (tit, cuerpo) => '<h2 class="mi-sub">' + esc(tit) + '</h2>' + cuerpo;
+    const llamar = (nombre, numero, detalle) => '<a class="ay-llamar" href="' + telDe(numero) + '"><span class="ay-num">' + esc(numero) + '</span><span class="ay-tx"><b>' + esc(nombre) + '</b><small>' + esc(detalle) + '</small></span><span class="ay-tel" aria-hidden="true">📞</span></a>';
+    const emergencias = '<div class="ay-grande">' + llamar('Ambulancia (SAMU)', '131', 'Emergencias de salud, a cualquier hora.') + llamar('Bomberos', '132', 'Incendios y rescates.') + llamar('Carabineros', '133', 'Seguridad y peligro inmediato.') + '</div><p class="suave m0">Si hay peligro inmediato, llama primero.</p>';
+    const apoyo = '<div class="ay-lista">' + llamar('Fono *4141 (Minsal)', '*4141', 'Prevención del suicidio. Gratuito, 24 horas, confidencial.') + llamar('Sernameg', '1455', 'Violencia contra la mujer y violencia intrafamiliar.') + llamar('SENDA', '1412', 'Consumo de drogas y alcohol. Gratuito y anónimo.') + llamar('Fono Infancia', '800 200 818', 'Apoyo para la crianza y para niños y adolescentes.') + '</div><p class="suave m0">Confirma estos números en el sitio oficial antes de publicar la app.</p>';
+    const cuidados = '<ol class="mi-pasos">' + ['Come algo, aunque sea poco, y bebe agua.', 'Sal a caminar cinco minutos, si puedes.', 'Habla hoy con una persona de confianza.', 'Respira lento: cuatro segundos adentro, seis afuera.', 'Aleja de tu alcance lo que pueda hacerte daño.'].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol>';
+    const iglesia = '<div class="card"><p class="m0">Tu pastor o un líder de tu comunidad de fe puede acompañarte, orar contigo y ayudarte a buscar apoyo profesional.</p><ul class="ayuda-pasos"><li>Habla con tu pastor en persona o por teléfono.</li><li>Visita una iglesia cercana y pide un momento de oración o consejería pastoral.</li><li>Pide que te acompañen a buscar un profesional si lo necesitas.</li></ul><p class="suave m0">La iglesia acompaña; no reemplaza a los servicios de emergencia ni al tratamiento profesional.</p></div>';
+    $('#pantalla').innerHTML = cabecera('Ayuda y contactos', 'Vida') + heroInt('c3', '🤝', 'No estás solo ni sola', 'A quién acudir', 'Si estás en peligro, llama primero.') + sec('Tu iglesia y tu pastor', iglesia) + sec('Cuidarte hoy', cuidados) + sec('Emergencias', emergencias) + sec('Líneas de apoyo en Chile', apoyo);
     volverA('Vida', vistaVida);
   }
   function vistaPlanesVida() {
-    $('#pantalla').innerHTML = `${cabecera('Planes de vida', 'Vida')}<p class="suave">Un tema a la vez para crecer como persona. Son ideas para ti, no tareas que cumplir.</p><div class="grid">${PLAN_VIDA.map(planVidaCardHTML).join('')}</div>`;
+    const pvCurso = [], pvNuevos = [], pvListos = [];
+    PLAN_VIDA.forEach((pl) => { const h = planVidaHechos(pl.id).length; (h >= pl.dias.length ? pvListos : h > 0 ? pvCurso : pvNuevos).push(pl); });
+    const p0 = pvCurso[0], d0 = p0 ? p0.dias.findIndex((x, k) => planVidaHechos(p0.id).indexOf(k) < 0) : -1;
+    const heroVida = p0 ? slide('c2 mi-hero', '🌱', 'Tu paso de hoy', esc(p0.n), 'Día ' + (d0 + 1) + ' · ' + esc(p0.dias[d0].t), slBt('Seguir mi plan', p0.id).replace('data-ir=', 'data-dia="' + d0 + '" data-ir=')) : slide('c2 mi-hero', '🌱', 'Un tema a la vez', 'Elige un plan de vida', 'Son ideas para ti, no tareas que cumplir.', '');
+    $('#pantalla').innerHTML = `${cabecera('Planes de vida', 'Vida')}${heroVida}${[['En curso', pvCurso], ['Para empezar', pvNuevos], ['Completados', pvListos]].filter((g) => g[1].length).map((g) => '<h2 class="mi-sub">' + g[0] + '</h2><div class="grid">' + g[1].map(planVidaCardHTML).join('') + '</div>').join('')}`;
     volverA('Vida', vistaVida);
+    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => seguro(() => vistaDiaVida(b.dataset.ir, Number(b.dataset.dia)))));
     document.querySelectorAll('[data-planvida]').forEach((b) => b.addEventListener('click', () => seguro(() => vistaPlanVida(b.dataset.planvida))));
   }
   // F1002 · Progreso neutral: siete puntos, sin rojos ni reproches. El botón lleva al primer día pendiente.
@@ -2824,7 +2826,7 @@
   function vistaPlanVida(id) {
     const pl = PLAN_VIDA.find((x) => x.id === id); if (!pl) return vistaPlanesVida();
     const hechos = new Set(planVidaHechos(id));
-    $('#pantalla').innerHTML = `${cabecera(pl.n, 'Planes de vida')}<div class="plan-foto plan-foto-svg" aria-hidden="true">${portadaPlanVida(id)}</div><p class="suave">${esc(pl.d)}</p><p class="plan-ctx">${esc(pl.ctx)}</p><p class="suave m0">${esc(pl.aviso)}</p>${planVidaAvance(pl, hechos)}<button type="button" class="btn sec" id="pvAyuda">Ayuda y contactos</button>
+    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ Planes de vida</button><div class="plan-foto plan-foto-svg" aria-hidden="true">${portadaPlanVida(id)}</div>${heroInt('c2', '🌱', esc(pl.d), esc(pl.n), esc(pl.ctx), Math.round(hechos.size * 100 / pl.dias.length))}<p class="suave m0">${esc(pl.aviso)}</p>${planVidaAvance(pl, hechos)}<button type="button" class="btn sec" id="pvAyuda">Ayuda y contactos</button>
       <div class="lista sep">${pl.dias.map((d, j) => `<button type="button" class="plan-leer${hechos.has(j) ? ' hecho' : ''}" data-vdia="${j}"><span class="plan-n">${hechos.has(j) ? svg('check', 16) : j + 1}</span><span>Día ${j + 1} · ${esc(d.t)}</span></button>`).join('')}</div>`;
     volverA('Planes de vida', vistaPlanesVida);
     document.querySelectorAll('[data-vdia]').forEach((b) => b.addEventListener('click', () => vistaDiaVida(id, Number(b.dataset.vdia))));
@@ -2834,7 +2836,11 @@
   function vistaDiaVida(id, j) {
     const pl = PLAN_VIDA.find((x) => x.id === id); if (!pl || !pl.dias[j]) return vistaPlanesVida();
     const d = pl.dias[j], hecho = planVidaHechos(id).indexOf(j) >= 0;
-    $('#pantalla').innerHTML = `${cabecera('Día ' + (j + 1) + ' · ' + d.t, pl.n)}<p class="suave m0">Día ${j + 1} de ${pl.dias.length}</p><button type="button" class="btn ${hecho ? 'sec' : ''}" id="vdiaHecho" aria-pressed="${hecho}">${hecho ? 'Marcado como hecho (quitar)' : 'Lo hice'}</button><p class="plan-ctx">${esc(d.r)}</p><div class="card"><b>Para hoy</b><p class="m0t">${esc(d.a)}</p></div><div class="card"><b>Para pensar</b><p class="m0t">${esc(d.p || '')}</p></div><p class="suave">Referencia: ${esc(d.v)}</p>${d.f ? '<p class="suave">Fuente de la idea: ' + esc(d.f) + '</p>' : ''}${d.h && d.h !== 'No aplica' ? '<div class="card"><b>Cuándo buscar ayuda</b><p class="m0t">' + esc(d.h) + '</p></div>' : ''}
+    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ ${esc(pl.n)}</button>${heroInt('c2', '🌱', 'Día ' + (j + 1) + ' de ' + pl.dias.length, esc(d.t), '', Math.round((j + 1) * 100 / pl.dias.length))}
+      <blockquote class="mi-cita"><small>📖 ${esc(d.v)}</small>${esc(d.r)}</blockquote>
+      <div class="card pv-hoy"><small class="pv-et">Para hoy</small><p class="m0">${esc(d.a)}</p></div>
+      <button type="button" class="btn ${hecho ? 'sec' : ''}" id="vdiaHecho" aria-pressed="${hecho}">${hecho ? 'Marcado como hecho (quitar)' : 'Lo hice'}</button>
+      ${d.p ? `<h2 class="mi-sub">Para pensar</h2><div class="card"><p class="m0">${esc(d.p)}</p></div>` : ''}${d.h && d.h !== 'No aplica' ? '<div class="card ayuda"><b>Cuándo buscar ayuda</b><p class="m0t">' + esc(d.h) + '</p></div>' : ''}${d.f ? '<p class="suave">Fuente de la idea: ' + esc(d.f) + '</p>' : ''}
       ${j + 1 < pl.dias.length ? `<button type="button" class="btn sec sep" id="vdiaSig">Siguiente día</button>` : `<p class="suave sep">Terminaste los ${pl.dias.length} días de este plan. Puedes volver a leerlos cuando quieras.</p>`}`;
     volverA(pl.n, () => vistaPlan2(id));
     const vs = $('#vdiaSig'); if (vs) vs.onclick = () => vistaDiaVida(id, j + 1);
@@ -2875,17 +2881,21 @@
     } catch (e) { /* sin planes */ }
   }
   function vistaPlanes() {
-    const pls = rg(K_PLANES);
-    $('#pantalla').innerHTML = `${cabecera('Planes de lectura', 'Palabra')}<p class="suave">Un poquito cada día. Si lees el capítulo del plan en la Biblia, se marca solo.</p>
-      <div class="grid">${PLANES.map((pl) => { const e = planEstado(pl.id), n = e ? e.h.length : 0, tot = PD(pl).length; return `<button type="button" class="card plan-card" data-plan="${pl.id}">${planFoto(pl)}<div class="t"><span aria-hidden="true">${svg('calendario')}</span>${esc(pl.n)}<span class="flecha" aria-hidden="true">›</span></div><p class="suave m0t">${esc(pl.d)}</p>${e ? `<div class="barra-av" role="progressbar" aria-valuemin="0" aria-valuemax="${tot}" aria-valuenow="${n}"><i class="av-${Math.round((n / tot) * 20) * 5}"></i></div><p class="suave m0t">${n === tot ? '¡Completado!' : n + ' de ' + tot + ' días'}</p>` : '<p class="suave m0t">Toca para empezar</p>'}</button>`; }).join('')}</div>`;
+    const enCurso = [], nuevos = [], listos = [];
+    PLANES.forEach((pl) => { const e = planEstado(pl.id); (e ? (e.h.length >= PD(pl).length ? listos : enCurso) : nuevos).push(pl); });
+    const tarjP = (pl) => { const e = planEstado(pl.id), n = e ? e.h.length : 0, tot = PD(pl).length; return `<button type="button" class="card plan-card" data-plan="${pl.id}">${planFoto(pl)}<div class="t"><span aria-hidden="true">${svg('calendario')}</span>${esc(pl.n)}<span class="flecha" aria-hidden="true">›</span></div><p class="suave m0t">${esc(pl.d)}</p>${e ? `<div class="barra-av" role="progressbar" aria-valuemin="0" aria-valuemax="${tot}" aria-valuenow="${n}"><i class="av-${Math.round((n / tot) * 20) * 5}"></i></div><p class="suave m0t">${n === tot ? '¡Completado!' : n + ' de ' + tot + ' días'}</p>` : '<p class="suave m0t">Toca para empezar</p>'}</button>`; };
+    const pl0 = enCurso[0], e0 = pl0 && planEstado(pl0.id), sig0 = pl0 ? PD(pl0).findIndex((d, j) => e0.h.indexOf(j) < 0) : -1;
+    const heroLect = pl0 ? slide('c1 mi-hero', '📖', 'Tu lectura de hoy', esc(pl0.n), 'Día ' + (sig0 + 1) + ' · ' + esc(planTxt(pl0, sig0)), slBt('Seguir mi plan', pl0.id)) : slide('c1 mi-hero', '📖', 'Un poquito cada día', 'Elige tu primer plan', 'Si lees el capítulo del plan en la Biblia, se marca solo.', '');
+    $('#pantalla').innerHTML = `${cabecera('Planes de lectura', 'Palabra')}${heroLect}${[['En curso', enCurso], ['Para empezar', nuevos], ['Completados', listos]].filter((g) => g[1].length).map((g) => '<h2 class="mi-sub">' + g[0] + '</h2><div class="grid">' + g[1].map(tarjP).join('') + '</div>').join('')}`;
     volverA('Palabra', vistaPalabra);
     document.querySelectorAll('[data-plan]').forEach((b) => b.addEventListener('click', () => vistaPlan(b.dataset.plan)));
+    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => vistaPlan(b.dataset.ir)));
   }
   let ritSel = 1;
   function vistaPlan(id) {
     const pl = PLANES.find((x) => x.id === id); if (!pl) return vistaPlanes();
     const e = planEstado(id), DIAS = PD(pl), hechos = new Set(e ? e.h : []), sig = DIAS.findIndex((d, j) => !hechos.has(j));
-    $('#pantalla').innerHTML = `${cabecera(pl.n, 'Planes')}${planFoto(pl)}<p class="suave">${esc(pl.d)}</p>${pl.ctx ? '<p class="plan-ctx">' + esc(pl.ctx) + '</p>' : ''}
+    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ Planes</button>${planFoto(pl)}${heroInt('c1', '📖', esc(pl.d), esc(pl.n), esc(pl.ctx || ''), e ? Math.round(hechos.size * 100 / DIAS.length) : null)}
       ${!e ? '<p class="suave m0">¿Cuántos capítulos quieres leer por día?</p><div class="chips" role="group" aria-label="Capítulos por día">' + RITMOS.map((x) => `<button type="button" class="chip${x === ritSel ? ' on' : ''}" data-rit="${x}" aria-pressed="${x === ritSel}">${x}</button>`).join('') + '</div><p class="suave">' + planDias(pl, ritSel).length + ' días con ' + ritSel + (ritSel === 1 ? ' capítulo' : ' capítulos') + ' por día</p><button type="button" class="btn" id="plEmpezar">Empezar este plan</button>' : sig < 0 ? '<div class="card plan-fin"><b>¡Terminaste este plan!</b><p class="suave m0t">Qué hermoso constancia. Puedes volver a leerlo cuando quieras.</p></div>' : `<button type="button" class="btn" id="plHoy">Leer hoy: ${esc(planTxt(pl, sig))}</button>`}
       <div class="lista sep">${DIAS.map((d, j) => `<div class="plan-dia${hechos.has(j) ? ' hecho' : ''}"><button type="button" class="plan-leer" data-leer="${j}"><span class="plan-n">${hechos.has(j) ? svg('check', 16) : j + 1}</span><span>Día ${j + 1} · ${esc(planTxt(pl, j))}</span></button>${e ? `<button type="button" class="plan-ok" data-ok="${j}" aria-pressed="${hechos.has(j)}" aria-label="${hechos.has(j) ? 'Quitar la marca' : 'Marcar como leído'}">${svg('check', 18)}</button>` : ''}</div>`).join('')}</div>
       ${e ? '<button type="button" class="btn sec sep" id="plQuitar">Dejar este plan</button>' : ''}`;
@@ -2907,9 +2917,9 @@
     const items = []; Object.keys(res).forEach((ck) => (res[ck] || []).forEach((v) => items.push({ k: ck + '.' + v, cod: ck.split('.')[0], cap: Number(ck.split('.')[1]), v, c: Number(cols[ck + '.' + v]) || 0 })));
     const tabs3 = [['res', 'Resaltados', items.length], ['notas', 'Notas', Object.keys(notas).length], ['marc', 'Guardados', marc.length]];
     const vacio = { res: 'Aún no has resaltado nada. En la Biblia toca un versículo y elige un color.', notas: 'Aún no tienes notas. Toca un versículo y elige «Nota».', marc: 'Aún no has guardado versículos. Toca uno y elige «Guardar».' };
-    const cuerpoNotas = Object.keys(notas).sort((a, b) => String(notas[b].f).localeCompare(String(notas[a].f))).map((k) => `<button type="button" class="card item mb-fila" data-mb="${esc(k)}"><b>${esc(notas[k].c)}</b><p class="m0t">${esc(notas[k].t)}</p><p class="suave m0t">${esc(fecha(notas[k].f))}</p></button>`).join('');
-    const cuerpoMarc = marc.slice().reverse().map((x) => `<button type="button" class="card item mb-fila" data-mb="${esc(x.k)}"><b>${svg('marcador', 15)} ${esc(x.c)}</b><p class="m0t">«${esc(x.t)}»</p></button>`).join('');
-    $('#pantalla').innerHTML = `${cabecera('Mi Biblia', 'Palabra')}
+    const cuerpoNotas = Object.keys(notas).sort((a, b) => String(notas[b].f).localeCompare(String(notas[a].f))).map((k) => `<button type="button" class="mo-nota mb-fila" data-mb="${esc(k)}"><b>${esc(notas[k].c)}</b><p class="m0t">${esc(notas[k].t)}</p><p class="suave m0t">${esc(fecha(notas[k].f))}</p></button>`).join('');
+    const cuerpoMarc = marc.slice().reverse().map((x) => `<button type="button" class="mo-nota resp mb-fila" data-mb="${esc(x.k)}"><b>${svg('marcador', 15)} ${esc(x.c)}</b><p class="m0t">«${esc(x.t)}»</p></button>`).join('');
+    $('#pantalla').innerHTML = `${cabecera('Mi Biblia', 'Palabra')}${heroInt('c1', '🔖', 'Lo que Dios te habló', items.length + (items.length === 1 ? ' resaltado' : ' resaltados') + ' · ' + Object.keys(notas).length + (Object.keys(notas).length === 1 ? ' nota' : ' notas') + ' · ' + marc.length + (marc.length === 1 ? ' guardado' : ' guardados'), 'Tus versículos y apuntes, juntos para volver a ellos.')}
       <div class="chips" role="group" aria-label="Sección">${tabs3.map((t) => `<button type="button" class="chip${miBibTab === t[0] ? ' on' : ''}" data-mbt="${t[0]}" aria-pressed="${miBibTab === t[0]}">${t[1]} · ${t[2]}</button>`).join('')}</div>
       <div id="mbCuerpo">${miBibTab === 'notas' ? (cuerpoNotas || `<p class="suave sep">${vacio.notas}</p>`) : miBibTab === 'marc' ? (cuerpoMarc || `<p class="suave sep">${vacio.marc}</p>`) : (items.length ? '<p class="suave" id="mbCarga">Cargando…</p>' : `<p class="suave sep">${vacio.res}</p>`)}</div>`;
     volverA('Palabra', vistaPalabra);
