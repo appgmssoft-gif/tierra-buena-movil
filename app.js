@@ -1984,6 +1984,17 @@
     else if (t === 'jugador') bindJugador(jug);
   }
 
+  // F1178 · Piezas compartidas del rediseño: carrusel «Para ti hoy» y cuadrícula con tamaños distintos.
+  const slBt = (txt, ir) => `<button type="button" class="mi-sl-bt" data-ir="${ir}">${txt}</button>`;
+  const slide = (cls, ico, peq, tit, desc, btns) => `<article class="mi-sl ${cls}"><span class="mi-sl-big" aria-hidden="true">${ico}</span><div class="mi-sl-tx"><small>${peq}</small><b>${tit}</b><span>${desc}</span><div class="mi-sl-dos">${btns}</div></div></article>`;
+  const carHTML = (sl) => `<section class="mi-car" aria-label="Para ti hoy" aria-roledescription="carrusel"><div class="mi-car-pista" tabindex="0">${sl.join('')}</div><div class="mi-car-pts" aria-hidden="true">${sl.map((_, i) => `<i${i ? '' : ' class="on"'}></i>`).join('')}</div></section>`;
+  const bento = (cls, ico, tit, peq, ir) => `<button type="button" class="mi-b ${cls}" data-ir="${ir}"><span class="mi-b-big" aria-hidden="true">${ico}</span>${cls.indexOf('mb-ancho') >= 0 ? `<span class="mi-b-tx"><b>${tit}</b><small>${peq}</small></span>` : `<b>${tit}</b><small>${peq}</small>`}</button>`;
+  function carCablear() {
+    document.querySelectorAll('.mi-car').forEach((c) => {
+      const pista = $('.mi-car-pista', c), pts = c.querySelectorAll('.mi-car-pts i'); if (!pista) return;
+      pista.addEventListener('scroll', () => { const w = (pista.firstElementChild ? pista.firstElementChild.getBoundingClientRect().width : 1) + 10, i = Math.max(0, Math.min(pts.length - 1, Math.round(pista.scrollLeft / w))); pts.forEach((p, j) => p.classList.toggle('on', j === i)); }, { passive: true });
+    });
+  }
   function vistaPalabra() {
     const ult = leer(K_BIB), inf = ult && libroInfo(ult.cod);
     let planAct = null; try { for (const pl of PLANES) { const e = planEstado(pl.id); if (e && e.h.length < PD(pl).length) { planAct = { pl, n: e.h.length }; break; } } } catch (e) { planAct = null; }   // F915: plan en curso (si hay)
@@ -1993,13 +2004,20 @@
       ${haySesion() ? '' : '<button type="button" class="sin-cuenta" id="sinCuentaBan"><b>Lees sin cuenta.</b> Lo que subrayas y anotas queda en este teléfono. Entra con tu correo para llevarlo a todos tus equipos.</button>'}
       <h1>Hoy</h1><div class="hoy-verso" id="hoyVerso"><span class="esqueleto"></span><span class="esqueleto corto"></span></div>
       ${racha ? `<p class="hoy-racha">${svg('llama', 18)}<span>${racha === 1 ? '1 día leyendo la Palabra' : racha + ' días seguidos leyendo la Palabra'}</span></p>` : ''}${fechaCercanaChip()}${instalarChip()}</div>
-      <h2 class="sep">Tu Palabra</h2>
-      <div class="grid">${(planAct ? activa('🗓', 'Mi plan: ' + esc(planAct.pl.n || 'lectura'), 'Día ' + (planAct.n + 1) + ' de ' + planAct.pl.dias.length + ' · sigue donde ibas.', 'plan') : activa('🗓', 'Plan de lectura', 'Elige uno y lee un poquito cada día, con tu avance.', 'planes')).replace('class="card"', 'class="card tbplan"')}${inf ? activa('▶️', 'Seguir leyendo', esc(inf[1]) + ' ' + Number(ult.cap) + ' · donde te quedaste', 'seguir') : ''}${activa('📖', 'Leer la Biblia', 'Biblia en español: elige tu versión, léela o escúchala. Los libros que lees quedan para leer sin internet.', 'biblia')}${activa('🔖', 'Mi Biblia', 'Tus resaltes, notas y versículos guardados.', 'mibiblia')}${activa('✨', 'Versículo de hoy', 'Una frase para empezar el día.', 'versiculo')}</div>
-      <h2 class="sep">Practicar</h2><div class="grid">${activa('📜', 'Fábula del mes', 'Un relato corto para practicar, capítulo a capítulo.', 'fabula')}${activa('🔀', 'Juegos', 'Repasa la Palabra jugando. Sin anuncios y sin tiempo.', 'juegos')}</div>`;
+      ${carHTML([
+        planAct ? slide('c2', '🗓', 'Tu plan', esc(planAct.pl.n || 'Plan de lectura'), 'Día ' + (planAct.n + 1) + ' de ' + planAct.pl.dias.length + ' · sigue donde ibas.', slBt('Seguir mi plan', 'plan')) : slide('c2', '🗓', 'Plan de lectura', 'Un poquito cada día', 'Elige un plan y avanza a tu ritmo, con tu progreso.', slBt('Elegir un plan', 'planes')),
+        inf ? slide('c1', '▶️', 'Seguir leyendo', esc(inf[1]) + ' ' + Number(ult.cap), 'Justo donde te quedaste.', slBt('Seguir', 'seguir') + slBt('Escuchar la Biblia', 'biblia')) : slide('c1', '📖', 'Leer la Biblia', 'Tu primera lectura', 'Elige tu versión, léela o escúchala.', slBt('Abrir la Biblia', 'biblia')),
+        slide('c5', '📜', 'Fábula del mes', '<span id="pfFabT">Un relato para practicar</span>', 'Un relato corto, capítulo a capítulo.', slBt('Leerla', 'fabula')),
+        slide('c3', '🔀', 'Para repasar', 'Juegos de la Palabra', 'Sin anuncios y sin tiempo.', slBt('Jugar', 'juegos'))
+      ])}
+      <h2 class="mi-sub">Tu Palabra</h2>
+      <div class="mi-bento">${bento('mb-alto mb1', '📖', 'Leer la Biblia', 'Tu versión, para leer o escuchar. Lo que lees queda sin internet.', 'biblia')}${bento('mb2', '🔖', 'Mi Biblia', 'Resaltes y notas', 'mibiblia')}${bento('mb3', '✨', 'Versículo de hoy', 'Para empezar el día', 'versiculo')}${bento('mb-ancho mb4', '🗓', 'Planes de lectura', 'Elige uno y lee un poco cada día', 'planes')}${bento('mb5', '📜', 'Fábula del mes', 'Para practicar', 'fabula')}${bento('mb6', '🔀', 'Juegos', 'Repasa jugando', 'juegos')}</div>`;
     document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => {
       const k = b.dataset.ir;
       if (k === 'hacer') vistaHacer(); else if (k === 'juegos') vistaJuegos(); else if (k === 'biblia') vistaBiblia(); else if (k === 'versiculo') vistaVersiculo(); else if (k === 'fabula') vistaFabula(); else if (k === 'mibiblia') vistaMiBiblia(); else if (k === 'planes') vistaPlanes(); else if (k === 'plan' && planAct) vistaPlan(planAct.pl.id); else if (k === 'cal') vistaCalendario(); else if (k === 'inst') instalarUnToque(); else if (k === 'instno') { try { localStorage.setItem('tb_movil_inst_no', String(new Date().getMonth())); } catch (e) { /* nada */ } b.closest('.hoy-inst').remove(); } else if (k === 'seguir' && inf) vistaCapitulo(ult.cod, Number(ult.cap));
     }));
+    carCablear();
+    fetch('datos/fabulas.json').then((r) => r.json()).then((j) => { const ids = Object.keys(j), f = j[ids[new Date().getMonth() % ids.length]], t = $('#pfFabT'); if (f && t) t.textContent = f.titulo; }).catch(() => { /* queda el texto base */ });
     // F871: el versículo del día aparece arriba, en «Hoy» (si no hay internet ni copia guardada, la zona se oculta sola).
     (async () => {
       const caja = $('#hoyVerso'); if (!caja) return;
@@ -2314,11 +2332,21 @@
     const ini = new Date(Date.UTC(t.getUTCFullYear(), 0, 1)); return t.getUTCFullYear() + '-S' + String(Math.ceil(((t - ini) / 86400000 + 1) / 7)).padStart(2, '0');
   };
   function vistaVida() {
-    $('#pantalla').innerHTML = `${areaHero('area-vida')}<h1>Vivir lo que aprendemos</h1><div class="filete"></div><div class="grid vida-ayuda">${activa('🙏', 'Ayuda y contactos', 'Emergencias, líneas de apoyo, cuidados y tu iglesia.', 'ayuda')}</div>
-      <div class="grid">${activa('✨', 'Hoy lo hago', 'Un paso pequeño para hoy. Intentarlo ya cuenta.', 'hacer')}</div>
-      <h2 class="sep">Con Dios y conmigo</h2><p class="suave sep-d">Oración, música y tu bienestar.</p><div class="grid">${activa('🕊️', 'Mi oración', 'Tu diario de peticiones, solo para ti.', 'mioracion')}${activa('🎵', 'Música', 'Letras para cantar y para leer en el culto.', 'musica')}${activa('🧠', 'Salud mental', 'Respirar, un chequeo y dónde pedir ayuda.', 'salud')}</div>
-      <h2 class="sep">Para crecer</h2><p class="suave sep-d">Planes, pasos y aprendizaje.</p><div class="grid">${activa('🌱', 'Planes de vida', 'Un tema por varios días, con un paso cada día.', 'planvida')}${activa('🌿', 'Mi crecimiento', 'Tu paso de la semana y cómo vas.', 'crecimiento')}${activa('🎓', 'Aprender', 'Cursos gratuitos en internet para servir mejor, con tu avance.', 'aprender')}</div>`;
+    const hechas = nHechas();
+    $('#pantalla').innerHTML = `${areaHero('area-vida')}<h1>Vivir lo que aprendemos</h1><div class="filete"></div>
+      <button type="button" class="mi-b mb-ancho mb-ayuda" data-ir="ayuda"><span class="mi-b-big" aria-hidden="true">🆘</span><span class="mi-b-tx"><b>Ayuda y contactos</b><small>Emergencias, líneas de apoyo y tu iglesia</small></span></button>
+      ${carHTML([
+        slide('c4', '✨', 'Hoy lo hago', hechas ? hechas + (hechas === 1 ? ' paso dado' : ' pasos dados') : 'Un paso pequeño', 'Intentarlo ya cuenta. Elige algo para hoy.', slBt('Dar mi paso', 'hacer')),
+        slide('c5', '🕊️', 'Con Dios', 'Mi oración', 'Tu diario de peticiones, solo para ti.', slBt('Orar', 'mioracion') + slBt('Música', 'musica')),
+        slide('c3', '🧠', 'Para ti', 'Un momento de calma', 'Respirar, un chequeo y dónde pedir ayuda.', slBt('Respirar', 'salud')),
+        slide('c2', '🌱', 'Para crecer', 'Planes de vida', 'Un tema por varios días, con un paso cada día.', slBt('Ver planes', 'planvida'))
+      ])}
+      <h2 class="mi-sub">Con Dios y conmigo</h2>
+      <div class="mi-bento">${bento('mb-alto mb1', '✨', 'Hoy lo hago', 'Un paso pequeño para hoy', 'hacer')}${bento('mb2', '🕊️', 'Mi oración', 'Solo para ti', 'mioracion')}${bento('mb3', '🎵', 'Música', 'Letras para cantar', 'musica')}${bento('mb-ancho mb4', '🧠', 'Salud mental', 'Respirar, un chequeo y dónde pedir ayuda', 'salud')}</div>
+      <h2 class="mi-sub">Para crecer</h2>
+      <div class="mi-bento">${bento('mb5', '🌱', 'Planes de vida', 'Un tema, varios días', 'planvida')}${bento('mb6', '🌿', 'Mi crecimiento', 'Cómo vas', 'crecimiento')}${bento('mb-ancho mb2', '🎓', 'Aprender', 'Cursos gratuitos para servir mejor', 'aprender')}</div>`;
     document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ hacer: () => vistaHacer(), planvida: () => seguro(vistaPlanesVida), ayuda: vistaAyuda, juntos: vistaJuntosVida, musica: vistaMusica, mioracion: vistaMiOracion, crecimiento: vistaCrecimiento, salud: vistaSalud, aprender: vistaAprender }[b.dataset.ir] || vistaVida)()));
+    carCablear();
   }
 
   // ---------- F891 · «Hoy lo hago»: la Palabra se vive ----------
@@ -4431,7 +4459,7 @@
   function palabraOrdenar() {
     try {
       const p = $('#pantalla'); if (!p || p.querySelector('.pal-grupo') || !/^Hoy$/.test(((p.querySelector('h1') || {}).textContent || '').trim())) return;
-      Array.from(p.querySelectorAll(':scope > h2')).forEach((h) => {
+      Array.from(p.querySelectorAll(':scope > h2.sep')).forEach((h) => {
         const nombre = h.textContent.trim(), d = document.createElement('details'), sm = document.createElement('summary');
         d.className = 'pf-grupo pal-grupo'; d.open = palabraAbierta.has(nombre); sm.textContent = nombre; d.appendChild(sm);
         h.parentNode.insertBefore(d, h);

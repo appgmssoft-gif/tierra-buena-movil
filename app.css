@@ -1106,3 +1106,5 @@ html[data-contraste=alto] .card,html[data-contraste=alto] .chip,html[data-contra
 .mi-chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 2px 10px;margin:0 -2px}
 .mi-chips::-webkit-scrollbar{display:none}
 .mi-chip{flex:none;display:flex;align-items:center;gap:8px;min-height:46px;padding:0 16px;border:1px solid var(--linea);border-radius:999px;background:var(--tarjeta);color:var(--tinta);font:600 .9rem/1 inherit;font-family:inherit;cursor:pointer;white-space:nowrap}
+.mb-ayuda{margin:12px 0 4px;width:100%;background:linear-gradient(90deg,color-mix(in srgb,#c0504a 22%,var(--tarjeta)),var(--tarjeta))}
+.mi-car+.mi-sub:first-child{margin-top:12px}
