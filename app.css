@@ -1108,3 +1108,33 @@ html[data-contraste=alto] .card,html[data-contraste=alto] .chip,html[data-contra
 .mi-chip{flex:none;display:flex;align-items:center;gap:8px;min-height:46px;padding:0 16px;border:1px solid var(--linea);border-radius:999px;background:var(--tarjeta);color:var(--tinta);font:600 .9rem/1 inherit;font-family:inherit;cursor:pointer;white-space:nowrap}
 .mb-ayuda{margin:12px 0 4px;width:100%;background:linear-gradient(90deg,color-mix(in srgb,#c0504a 22%,var(--tarjeta)),var(--tarjeta))}
 .mi-car+.mi-sub:first-child{margin-top:12px}
+
+/* F1179 · Kit interior: cabecera de color, barra de avance, cursos y listas con identidad (mismo sistema que mi-sl / mi-b) */
+.mi-hero{width:100%;flex:none;margin:12px 0 10px;min-height:140px}
+.mi-hero.c1,.mi-hero.c2,.mi-hero.c3,.mi-hero.c5{color:#fff}
+.mi-barra{display:block;width:100%;height:8px;border:0;border-radius:99px;background:rgba(255,255,255,.28);overflow:hidden;margin-top:8px;appearance:none;-webkit-appearance:none}
+.mi-barra::-webkit-progress-bar{background:rgba(255,255,255,.28);border-radius:99px}
+.mi-barra::-webkit-progress-value{background:#fff;border-radius:99px;min-width:6px}
+.mi-barra::-moz-progress-bar{background:#fff;border-radius:99px}
+.mi-lista{display:flex;flex-direction:column;gap:8px;margin:8px 0 4px}
+.mi-curso{display:flex;align-items:center;gap:12px;width:100%;min-height:64px;padding:10px 12px;border:1px solid var(--linea);border-radius:20px;background:var(--tarjeta);color:var(--tinta);font:inherit;text-align:left;cursor:pointer}
+.mi-curso-ic{flex:none;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:1.5rem;background:linear-gradient(135deg,color-mix(in srgb,var(--oro) 30%,var(--tarjeta)),var(--tarjeta))}
+.mi-curso-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.mi-curso-tx b{font-size:.98rem;line-height:1.2}.mi-curso-tx small{font-size:.82rem;opacity:.72}
+.mi-curso-est{flex:none;font-size:.78rem;font-weight:700;padding:6px 10px;border-radius:99px;background:color-mix(in srgb,var(--tinta) 8%,transparent)}
+.mi-curso.hecho{background:linear-gradient(90deg,color-mix(in srgb,#46874f 22%,var(--tarjeta)),var(--tarjeta))}
+.mi-curso:active{transform:scale(.98)}
+.mi-bento .mb-ancho svg.ic{width:34px;height:34px}
+
+/* F1180 · Diario de oración, pasos numerados y cita (cada área según lo que se hace en ella) */
+.mo-nueva{background:var(--tarjeta);border:1px solid var(--linea);border-radius:22px;padding:14px;margin:6px 0 12px}
+.mo-nueva .btn{margin-top:10px}
+.mo-nota{position:relative;background:var(--tarjeta);border:1px solid var(--linea);border-left:5px solid color-mix(in srgb,#7456a0 60%,var(--tarjeta));border-radius:18px;padding:14px 14px 12px;margin:0 0 10px}
+.mo-nota.resp{border-left-color:#d99a32;background:linear-gradient(135deg,color-mix(in srgb,#d99a32 20%,var(--tarjeta)),var(--tarjeta))}
+.mo-nota .btn{margin:8px 8px 0 0}
+.mo-vacio{text-align:center;opacity:.75;padding:22px 10px;font-size:.95rem}
+.mi-pasos{list-style:none;counter-reset:p;margin:6px 0 14px;padding:0;display:flex;flex-direction:column;gap:10px}
+.mi-pasos li{counter-increment:p;position:relative;min-height:48px;padding:12px 14px 12px 58px;background:var(--tarjeta);border:1px solid var(--linea);border-radius:18px;line-height:1.35}
+.mi-pasos li::before{content:counter(p);position:absolute;left:12px;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:700 1rem/1 "TB Titulo",Georgia,serif;color:#fff;background:linear-gradient(135deg,#46874f,#1d4430)}
+.mi-cita{margin:6px 0 16px;padding:16px 18px;border-radius:20px;border-left:5px solid var(--oro);background:color-mix(in srgb,var(--oro) 14%,var(--tarjeta));font:italic 1.05rem/1.45 "TB Titulo",Georgia,serif}
+.mi-cita small{display:block;font:700 .72rem/1 system-ui,sans-serif;letter-spacing:.09em;text-transform:uppercase;opacity:.7;margin-bottom:6px;font-style:normal}

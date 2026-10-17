@@ -1988,7 +1988,11 @@
   const slBt = (txt, ir) => `<button type="button" class="mi-sl-bt" data-ir="${ir}">${txt}</button>`;
   const slide = (cls, ico, peq, tit, desc, btns) => `<article class="mi-sl ${cls}"><span class="mi-sl-big" aria-hidden="true">${ico}</span><div class="mi-sl-tx"><small>${peq}</small><b>${tit}</b><span>${desc}</span><div class="mi-sl-dos">${btns}</div></div></article>`;
   const carHTML = (sl) => `<section class="mi-car" aria-label="Para ti hoy" aria-roledescription="carrusel"><div class="mi-car-pista" tabindex="0">${sl.join('')}</div><div class="mi-car-pts" aria-hidden="true">${sl.map((_, i) => `<i${i ? '' : ' class="on"'}></i>`).join('')}</div></section>`;
-  const bento = (cls, ico, tit, peq, ir) => `<button type="button" class="mi-b ${cls}" data-ir="${ir}"><span class="mi-b-big" aria-hidden="true">${ico}</span>${cls.indexOf('mb-ancho') >= 0 ? `<span class="mi-b-tx"><b>${tit}</b><small>${peq}</small></span>` : `<b>${tit}</b><small>${peq}</small>`}</button>`;
+  const bento = (cls, ico, tit, peq, ir, attr) => `<button type="button" class="mi-b ${cls}" data-${attr || 'ir'}="${ir}"><span class="mi-b-big" aria-hidden="true">${ico}</span>${cls.indexOf('mb-ancho') >= 0 ? `<span class="mi-b-tx"><b>${tit}</b><small>${peq}</small></span>` : `<b>${tit}</b><small>${peq}</small>`}</button>`;
+  // F1179 · KIT INTERIOR (mismo sistema que Palabra y Vida): cabecera de color + tarjetas bento en vez de listas. Usarlo en TODA pantalla interior.
+  const corto = (t, n) => { t = String(t || ''); return t.length > n ? t.slice(0, n - 1).trim() + '…' : t; };
+  const heroInt = (cls, ico, peq, tit, desc, pct) => `<section class="mi-sl mi-hero ${cls}"><span class="mi-sl-big" aria-hidden="true">${ico}</span><div class="mi-sl-tx"><small>${peq}</small><b>${tit}</b>${desc ? `<span>${desc}</span>` : ''}${pct == null ? '' : `<progress class="mi-barra" max="100" value="${pct}" aria-label="Avance"></progress>`}</div></section>`;
+  const mbCol = (i) => 'mb' + ((i % 6) + 1);
   function carCablear() {
     document.querySelectorAll('.mi-car').forEach((c) => {
       const pista = $('.mi-car-pista', c), pts = c.querySelectorAll('.mi-car-pts i'); if (!pista) return;
@@ -2426,7 +2430,7 @@
     const pestanas = [['canciones', 'Canciones'], ['reflex', 'Para músicos']];
     let cuerpo;
     if (musicaSel === 'reflex') cuerpo = (r.tarjetas || []).map((t) => `<details class="card ayuda-it"><summary><span aria-hidden="true">${icono(t.icono)}</span> ${esc(t.titulo)}</summary><p class="m0t">${esc(t.resumen)}</p><ul class="formas">${(t.puntos || []).map((x) => `<li>${esc(x)}</li>`).join('')}</ul>${t.paraPensar ? `<p class="sep"><b>Para pensar:</b> ${esc(t.paraPensar)}</p>` : ''}</details>`).join('');
-    else cuerpo = `<div class="grid">${todas.map((x) => `<button type="button" class="card can-fila" data-can="${esc(x.id)}"><div class="t"><span aria-hidden="true">${svg('nota')}</span>${esc(x.titulo)}${fav.has(x.id) ? `<span class="etiqueta">${svg('estrella', 14)}</span>` : ''}<span class="flecha" aria-hidden="true">›</span></div>${x.mia ? '<p class="suave m0t">Tu canción</p>' : ''}</button>`).join('')}</div>
+    else cuerpo = `${heroInt('c5', '🎵', 'Para cantar', todas.length + (todas.length === 1 ? ' canción' : ' canciones'), 'Letra grande y desplazamiento automático.')}<div class="mi-bento">${todas.map((x, i) => bento(mbCol(i + 3) + (i === 0 ? ' mb-ancho' : ''), svg('nota', i === 0 ? 34 : 40), esc(corto(x.titulo, 34)), fav.has(x.id) ? '★ Favorita' : (x.mia ? 'Tu canción' : 'Letra'), esc(x.id), 'can')).join('')}</div>
       <button type="button" class="btn sec sep" id="canNueva">+ Agregar mi canción</button>
       <p class="suave sep">Las letras de ejemplo son originales y se pueden usar libremente. Si agregas canciones de otros autores, revisa que tu iglesia tenga la licencia (por ejemplo CCLI).</p>`;
     $('#pantalla').innerHTML = `${cabecera('Música', 'Vivir lo que aprendemos')}
@@ -2476,13 +2480,17 @@
   }
 
   // --- Mi oración: diario personal (no se envia a nadie) ---
+  let moFiltro = 'todas';
   function vistaMiOracion() {
     $('#pantalla').innerHTML = `${cabecera('Mi oración', 'Vivir lo que aprendemos')}
-      <p class="suave">Escribe lo que quieras pedirle a Dios. Esto queda solo en tu teléfono; nadie más lo ve.</p>
+      ${heroInt('c5', '🕊️', 'Mi diario con Dios', '<span id="moConteo"></span>', 'Solo en tu teléfono; nadie más lo ve.')}
       <p id="msg" role="alert" hidden></p>
-      <label for="motxt">¿Por qué quieres orar?</label><textarea id="motxt" rows="3" maxlength="600" placeholder="Escribe aquí tu petición…"></textarea>
-      <button type="button" class="btn" id="moadd">Guardar en mi diario</button><div id="molista" aria-live="polite"></div>`;
+      <div class="mo-nueva"><label for="motxt">¿Por qué quieres orar?</label><textarea id="motxt" rows="3" maxlength="600" placeholder="Escribe aquí tu petición…"></textarea>
+      <button type="button" class="btn" id="moadd">Guardar en mi diario</button></div>
+      <div class="chips" role="group" aria-label="Ver peticiones">${[['todas', 'Todas'], ['orando', 'En oración'], ['resp', 'Respondidas 🎉']].map((x) => `<button type="button" class="chip${moFiltro === x[0] ? ' on' : ''}" data-mof="${x[0]}" aria-pressed="${moFiltro === x[0]}">${x[1]}</button>`).join('')}</div>
+      <div id="molista" aria-live="polite"></div>`;
     volverA('Vivir lo que aprendemos', vistaVida);
+    document.querySelectorAll('[data-mof]').forEach((b) => b.addEventListener('click', () => { moFiltro = b.dataset.mof; document.querySelectorAll('[data-mof]').forEach((x) => { clase(x, 'on', x === b); x.setAttribute('aria-pressed', String(x === b)); }); miOracionPintar(); }));
     $('#moadd').onclick = () => {
       const t = $('#motxt').value.trim(); if (!t) return msg('Escribe algo antes de guardar.');
       const l = lista(K_MIORACION); l.push({ id: nuevoId(), texto: t.slice(0, 600), fecha: new Date().toISOString(), contestada: false, respuesta: '' });
@@ -2492,9 +2500,11 @@
   }
   function miOracionPintar() {
     const caja = $('#molista'); if (!caja) return;
-    const l = lista(K_MIORACION).slice().sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-    if (!l.length) { caja.innerHTML = '<p class="suave sep">Todavía no hay nada en tu diario.</p>'; return; }
-    caja.innerHTML = l.map((p) => `<div class="card item"><p class="m0">${esc(p.texto)}</p>
+    const todasL = lista(K_MIORACION), nR = todasL.filter((x) => x.contestada).length, cnt = $('#moConteo');
+    if (cnt) cnt.textContent = (todasL.length - nR) + ' en oración · ' + nR + (nR === 1 ? ' respondida' : ' respondidas');
+    const l = todasL.slice().sort((a, b) => new Date(b.fecha) - new Date(a.fecha)).filter((p) => moFiltro === 'todas' || (moFiltro === 'resp') === !!p.contestada);
+    if (!l.length) { caja.innerHTML = '<p class="mo-vacio">' + (todasL.length ? 'No hay peticiones en esta vista.' : 'Todavía no hay nada en tu diario. Escribe tu primera petición: Dios escucha.') + '</p>'; return; }
+    caja.innerHTML = l.map((p) => `<div class="mo-nota${p.contestada ? ' resp' : ''}"><p class="m0">${esc(p.texto)}</p>
       <p class="suave m0">${esc(fecha(p.fecha))}${p.contestada ? ' · Dios respondió' : ''}</p>
       <button type="button" class="btn sec chico" data-mocont="${esc(p.id)}">${p.contestada ? 'Quitar «contestada»' : '🎉 Marcar como contestada'}</button>
       <button type="button" class="btn sec chico" data-model="${esc(p.id)}">${svg('papelera', 16)} Borrar</button>
@@ -2518,15 +2528,14 @@
         ${accMes.length ? accMes.map((x) => `<p class="m0"><b>${x.esDefault ? '🌟' : '✚'} ${esc(x.titulo)}</b></p><p class="suave m0t">${x.comoMeFue ? esc(x.comoMeFue.length > 90 ? x.comoMeFue.slice(0, 90) + '…' : x.comoMeFue) : 'Aún no cuentas cómo te fue.'}</p>`).join('') : '<p class="suave m0">Este mes todavía no abres la Acción del mes de tu iglesia.</p>'}
         <button type="button" class="btn sec chico" id="cracc">${accMes.length ? 'Contar cómo me fue' : 'Abrir la Acción del mes'} ›</button></div>` : '';
     $('#pantalla').innerHTML = `${cabecera('Mi crecimiento', 'Vivir lo que aprendemos')}
-      <h2>Mi paso de esta semana</h2><p id="msg" role="alert" hidden></p>
-      <p class="suave m0">${todos.filter((x) => x.hecho).length ? 'Semanas con un paso cumplido: ' + todos.filter((x) => x.hecho).length + '. Un paso a la vez.' : 'Un paso pequeño basta. No hay prisa.'}</p>
+      ${heroInt('c2', actual ? esc(actual.icono || '🌱') : '🌱', 'Mi paso de esta semana', actual ? esc(actual.titulo) : 'Elige un paso pequeño', todos.filter((x) => x.hecho).length ? 'Semanas con un paso cumplido: ' + todos.filter((x) => x.hecho).length : 'Uno pequeño basta. No hay prisa.')}<p id="msg" role="alert" hidden></p>
       ${actual ? `<div class="card item"><p class="m0"><b>${esc(actual.icono || '🌱')} ${esc(actual.titulo)}</b></p>
           <label for="crnota">¿Cómo te fue con esto? Cuéntalo en pocas palabras.</label><textarea id="crnota" rows="3" maxlength="600" placeholder="Escribe cómo te fue…">${esc(actual.nota || '')}</textarea>
           <div class="cr-acc"><button type="button" class="btn ${actual.hecho ? 'sec' : ''} chico" id="crhecho" aria-pressed="${!!actual.hecho}">${actual.hecho ? '✓ Hecho esta semana (quitar)' : 'Lo hice esta semana'}</button><button type="button" class="btn sec chico" id="crsave">Guardar nota</button></div></div>`
         : '<p class="suave">Todavía no elegiste un paso para esta semana. Elige una idea abajo y pruébala con calma: uno pequeño basta.</p>'}
       ${cardAccion}
-      <h2 class="sep">${actual ? 'Cambiar mi paso' : 'Elegir una idea'}</h2>
-      <div class="grid">${AREAS.map((a) => activa(a[1], a[2], 'Ideas sencillas para empezar.', a[0])).join('')}</div>
+      <h2 class="mi-sub">${actual ? 'Cambiar mi paso' : 'Elegir una idea'}</h2>
+      <div class="mi-bento">${AREAS.map((a, i) => bento(mbCol(i), icono(a[1]), esc(a[2]), 'Ideas sencillas', a[0])).join('')}</div>
       ${antes.length ? `<h2 class="sep">Mis pasos anteriores</h2>${antes.map((x) => `<div class="card item"><p class="m0"><b>${esc(x.icono || '🌱')} ${esc(x.titulo)}</b></p><p class="suave m0">Semana ${esc(x.sem.replace('-S', ' · S'))}</p>${x.nota ? `<p class="m0t">${esc(x.nota)}</p>` : ''}</div>`).join('')}` : ''}`;
     volverA('Vivir lo que aprendemos', vistaVida);
     document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => vistaAreaCrec(b.dataset.ir)));
@@ -2548,15 +2557,16 @@
     volverA('Mi crecimiento', vistaCrecimiento);
     let d; try { d = (await datoCargar('crecimiento_ideas'))[area]; } catch (e) { d = null; }
     const m = $('#armsg'); if (!m) return; if (!d) { m.textContent = SIN_DATOS; return; }
-    $('#pantalla').innerHTML = `${cabecera(inf[2], 'Mi crecimiento')}<p>${esc(d.intro)}</p><p class="suave">${esc(d.aviso)}</p>
-      <div class="grid">${d.ideas.map((i) => `<button type="button" class="card" data-idea="${esc(i.id)}"><div class="t"><span aria-hidden="true">${esc(i.icono)}</span>${esc(i.titulo)}<span class="flecha" aria-hidden="true">›</span></div></button>`).join('')}</div>`;
+    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ Mi crecimiento</button>${heroInt(inf[0] === 'devocional' ? 'c5' : inf[0] === 'medio_ambiente' ? 'c2' : 'c1', icono(inf[1]), esc(d.ideas.length + ' ideas para empezar'), esc(inf[2]), esc(d.intro))}<p class="suave">${esc(d.aviso)}</p>
+      <div class="mi-bento">${d.ideas.map((i, k) => bento(mbCol(k) + (k % 3 === 2 ? ' mb-ancho' : ''), icono(i.icono), esc(i.titulo), esc(corto(i.resumen, 56)), esc(i.id), 'idea')).join('')}</div>`;
     volverA('Mi crecimiento', vistaCrecimiento);
     document.querySelectorAll('[data-idea]').forEach((b) => b.addEventListener('click', () => vistaIdeaCrec(area, d.ideas.find((i) => i.id === b.dataset.idea))));
   }
   function vistaIdeaCrec(area, i) {
     if (!i) return vistaAreaCrec(area);
-    $('#pantalla').innerHTML = `${cabecera(i.titulo, 'Atrás')}<p id="msg" role="alert" hidden></p>
-      <div class="card"><p class="m0t">${esc(i.resumen)}</p><ul class="formas">${(i.puntos || []).map((x) => `<li>${esc(x)}</li>`).join('')}</ul>${i.versiculo ? `<p class="suave"><b>📖 Para leer:</b> ${esc(i.versiculo)}</p>` : ''}</div>
+    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ Atrás</button>${heroInt('c2', icono(i.icono), 'Una idea para esta semana', esc(i.titulo), esc(i.resumen))}<p id="msg" role="alert" hidden></p>
+      ${(i.puntos || []).length ? `<h2 class="mi-sub">Cómo hacerlo</h2><ol class="mi-pasos">${i.puntos.map((x) => `<li>${esc(x)}</li>`).join('')}</ol>` : ''}
+      ${i.versiculo ? `<blockquote class="mi-cita"><small>📖 Para leer</small>${esc(i.versiculo)}</blockquote>` : ''}
       <button type="button" class="btn" id="probar">🌱 Probar esta semana</button>`;
     volverA('Atrás', () => vistaAreaCrec(area));
     $('#probar').onclick = () => {
@@ -2576,10 +2586,10 @@
     volverA('Vivir lo que aprendemos', vistaVida);
     let q, h; try { q = await datoCargar('salud_mental_que_es'); h = await datoCargar('salud_mental_herramientas'); } catch (e) { q = null; }
     const m = $('#smmsg'); if (!m) return; if (!q || !h) { m.textContent = SIN_DATOS; return; }
-    $('#pantalla').innerHTML = `${cabecera('Salud mental', 'Vivir lo que aprendemos')}<p class="suave">${esc(q.aviso)}</p>
+    $('#pantalla').innerHTML = `${cabecera('Salud mental', 'Vivir lo que aprendemos')}${heroInt('c3', '🧠', 'Un momento para ti', 'Cuidarte también es vivir', 'Respirar, entender lo que sientes y saber dónde pedir ayuda.')}<p class="suave">${esc(q.aviso)}</p>
       ${lineasAyuda(q.ayuda)}
-      <h2 class="sep">Para cuidarme</h2><div class="grid">${activa('🫁', esc(h.respiracion.titulo), 'Para volver a la calma.', 'respirar')}${activa('📝', esc(h.chequeo.titulo), 'No se guarda nada.', 'chequeo')}</div>
-      <h2 class="sep">Para entender</h2><div class="grid">${q.tarjetas.map((t) => activa(esc(t.icono), esc(t.titulo), esc(t.resumen), 'sm_' + t.id)).join('')}</div>`;
+      <h2 class="mi-sub">Para cuidarme</h2><div class="mi-bento">${bento('mb4', '🫁', esc(h.respiracion.titulo), 'Para volver a la calma', 'respirar')}${bento('mb5', '📝', esc(h.chequeo.titulo), 'No se guarda nada', 'chequeo')}</div>
+      <h2 class="mi-sub">Para entender</h2><div class="mi-bento">${q.tarjetas.map((t, i) => bento(mbCol(i + 2) + (i % 3 === 2 ? ' mb-ancho' : ''), icono(t.icono), esc(t.titulo), esc(corto(t.resumen, 64)), 'sm_' + t.id)).join('')}</div>`;
     volverA('Vivir lo que aprendemos', vistaVida);
     document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => {
       const k = b.dataset.ir;
@@ -2643,10 +2653,9 @@
     if (!chips.some((c) => c[0] === aprFiltro)) aprFiltro = 'todas';
     const cats = d.categorias.filter((c) => aprFiltro === 'todas' || c.id === aprFiltro);
     $('#pantalla').innerHTML = `${cabecera('Aprender', 'Vivir lo que aprendemos')}
-      <p class="suave">Cursos gratuitos de otras organizaciones. Se abren en tu navegador; aquí solo anotas tu avance (queda en este teléfono).</p>
-      <div class="card bienvenida"><b>${hechos} de ${todos}</b> completados${enCurso ? ' · ' + enCurso + ' en progreso' : ''}</div>
+      ${heroInt('c1', '🎓', 'Cursos gratuitos', '<b>' + hechos + ' de ' + todos + '</b> completados' + (enCurso ? ' · ' + enCurso + ' en progreso' : ''), 'Se abren en tu navegador; aquí solo anotas tu avance (queda en este teléfono).', todos ? Math.round(hechos * 100 / todos) : 0)}
       <div class="chips" role="group" aria-label="Filtrar por tema">${chips.map((c) => `<button type="button" class="chip${aprFiltro === c[0] ? ' on' : ''}" data-afiltro="${esc(c[0])}" aria-pressed="${aprFiltro === c[0]}">${c[1] ? esc(c[1]) + ' ' : ''}${esc(c[2])}</button>`).join('')}</div>
-      ${cats.map((c) => `<h2 class="sep">${esc(c.icon)} ${esc(c.titulo)}</h2><p class="suave m0">${esc(c.subtitulo)}</p>` + c.cursos.map((x) => { const e = ESTADOS_APR.find((z) => z[0] === aprEstado(x.id)); return `<button type="button" class="card item" data-curso="${esc(x.id)}"><div class="t"><span aria-hidden="true">${e[1]}</span>${esc(x.titulo)}<span class="flecha" aria-hidden="true">›</span></div><p class="suave m0t">${esc(x.proveedor)} · ${esc(e[2])}</p></button>`; }).join('')).join('')}`;
+      ${cats.map((c) => `<h2 class="mi-sub">${esc(c.icon)} ${esc(c.titulo)}</h2><p class="suave m0">${esc(c.subtitulo)}</p><div class="mi-lista">` + c.cursos.map((x) => { const e = ESTADOS_APR.find((z) => z[0] === aprEstado(x.id)); return `<button type="button" class="mi-curso${aprEstado(x.id) === 'completado' ? ' hecho' : ''}" data-curso="${esc(x.id)}"><span class="mi-curso-ic" aria-hidden="true">${esc(c.icon)}</span><span class="mi-curso-tx"><b>${esc(x.titulo)}</b><small>${esc(x.proveedor)}</small></span><span class="mi-curso-est">${e[1]} ${esc(e[2])}</span></button>`; }).join('') + '</div>').join('')}`;
     volverA('Vivir lo que aprendemos', vistaVida);
     document.querySelectorAll('[data-afiltro]').forEach((b) => b.addEventListener('click', () => { aprFiltro = b.dataset.afiltro; vistaAprender(); }));
     document.querySelectorAll('[data-curso]').forEach((b) => b.addEventListener('click', () => vistaCurso(d, b.dataset.curso)));
