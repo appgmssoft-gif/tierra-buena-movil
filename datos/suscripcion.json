@@ -1,12 +1,12 @@
 {
- "_nota": "F941 · Oferta «Tierra Buena Plus». APAGADA por defecto (oferta_activa:false). F1196-F1197: «tarjetas» = los 3 planes de la pantalla Suscripción (Plus persona, Familia, Iglesia), cada uno mensual y anual; precios INVENTADOS como hipótesis; el cobro no está implementado y el plan Iglesia aún no se puede contratar. F1197: la app pasa a ser de pago. GRATIS = la Biblia y lo que otras apps regalan (planes de lectura, notas, resaltado, copia con cuenta, oración) más la ayuda en crisis; DE PAGO = contenido propio (jardín completo, planes de vida, música, juegos), personalización, copia del jardín y las herramientas de la iglesia. «comparativa» es lo que se muestra como Gratis / Plus / Plan Iglesia; para sumar algo, agregar una fila (nivel: gratis | plus | iglesia) o un ítem con pronto:true en una tarjeta. Nada se bloquea todavía en la app: esto describe el reparto propuesto.",
+ "_nota": "F941 · Oferta «Tierra Buena Plus». APAGADA por defecto (oferta_activa:false). F1196-F1197: «tarjetas» = los 3 planes de la pantalla Suscripción (Plus persona, Familia, Iglesia), cada uno mensual y anual; precios bajados en F1198 a pedido del dueño (buena aceptación, cobrar lo necesario); siguen siendo hipótesis a validar en tienda; el cobro no está implementado y el plan Iglesia aún no se puede contratar. F1197: la app pasa a ser de pago. GRATIS = la Biblia y lo que otras apps regalan (planes de lectura, notas, resaltado, copia con cuenta, oración) más la ayuda en crisis; DE PAGO = contenido propio (jardín completo, planes de vida, música, juegos), personalización, copia del jardín y las herramientas de la iglesia. «comparativa» es lo que se muestra como Gratis / Plus / Plan Iglesia; para sumar algo, agregar una fila (nivel: gratis | plus | iglesia) o un ítem con pronto:true en una tarjeta. Nada se bloquea todavía en la app: esto describe el reparto propuesto.",
  "oferta_activa": false,
  "dias_cuidado_minimo": 7,
  "gracia_dias": 7,
  "planes": {
   "mensual": {
    "nombre": "Mensual",
-   "precio_clp": 2490,
+   "precio_clp": 1490,
    "periodo": "mes",
    "nota": "Se renueva cada mes. Puedes cancelar cuando quieras desde la tienda.",
    "id_tienda": {
@@ -16,9 +16,9 @@
   },
   "anual": {
    "nombre": "Anual",
-   "precio_clp": 24900,
+   "precio_clp": 14900,
    "periodo": "año",
-   "nota": "Equivale a unos 2.075 al mes: dos meses de regalo. Se renueva cada año.",
+   "nota": "Equivale a unos 1.240 al mes: dos meses de regalo. Se renueva cada año.",
    "id_tienda": {
     "apple": "tb_plus_anual",
     "google": "tb_plus_anual"
@@ -61,8 +61,8 @@
    "icono": "🌿",
    "clase": "sb-plus",
    "quien": "Para una persona que quiere su espacio a su medida y a salvo en cualquier teléfono.",
-   "mensual": 2490,
-   "anual": 24900,
+   "mensual": 1490,
+   "anual": 14900,
    "grupos": [
     {
      "t": "",
@@ -94,8 +94,8 @@
    "icono": "🏡",
    "clase": "sb-familia",
    "quien": "Para una familia o un hogar: una sola suscripción y hasta 5 personas con todo Plus.",
-   "mensual": 3990,
-   "anual": 39900,
+   "mensual": 2490,
+   "anual": 24900,
    "grupos": [
     {
      "t": "",
@@ -116,7 +116,7 @@
     "anual": "tb_familia_anual"
    },
    "boton": "Elegir Familia",
-   "etiqueta": "Desde $798 por persona al mes"
+   "etiqueta": "Desde $498 por persona al mes"
   },
   {
    "id": "iglesia",
@@ -125,8 +125,8 @@
    "icono": "🕍",
    "clase": "sb-iglesia",
    "quien": "Para el pastor y toda su congregación. Lo contrata la iglesia; los miembros no pagan nada.",
-   "mensual": 14900,
-   "anual": 149000,
+   "mensual": 9900,
+   "anual": 99000,
    "grupos": [
     {
      "t": "Para el pastor y sus líderes",

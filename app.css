@@ -1324,3 +1324,36 @@ button.mo-nota{display:block;width:100%;text-align:left;font:inherit;color:var(-
 .sb-ins{flex:none;padding:4px 11px;border-radius:99px;font:700 .72rem/1.2 system-ui,sans-serif;color:#fff;background:#46874f}
 .sb-n-plus .sb-ins{background:linear-gradient(135deg,#2f7b9c,#1d4f67)}
 .sb-n-iglesia .sb-ins{background:linear-gradient(135deg,#d99a32,#8a5a12)}
+
+/* F1198 · Pantallas de lectura del Menú (Cómo usar, Historia, Widgets): tarjetas con ícono y entrada en cascada */
+.lc-lista{display:flex;flex-direction:column;gap:10px}
+.lc-card{--lc:var(--oro);display:flex;gap:12px;align-items:flex-start;width:100%;margin:0;padding:14px;border:0;border-left:5px solid var(--lc);border-radius:18px;background:var(--tarjeta);box-shadow:var(--sombra);color:inherit;font:inherit;text-align:left}
+button.lc-card{cursor:pointer}
+.lc-card.lc-pal{--lc:#2f7b9c}.lc-card.lc-vid,.lc-card.lc-ahora{--lc:#46874f}.lc-card.lc-igl{--lc:#7a4fa3}.lc-card.lc-pronto{--lc:var(--oro)}
+.lc-ico{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:14px;font-size:1.4rem;background:color-mix(in srgb,var(--lc) 18%,transparent)}
+.lc-tx{flex:1;min-width:0}
+.lc-tx b{display:block;margin-bottom:3px;font:700 1.02rem/1.25 "TB Titulo",Georgia,serif}
+.lc-tx p{margin:0;font-size:.93rem;line-height:1.45}
+.lc-tag{display:inline-block;margin-bottom:6px;padding:4px 8px;border-radius:99px;font:700 .68rem/1 system-ui,sans-serif;font-style:normal;letter-spacing:.06em;text-transform:uppercase;background:color-mix(in srgb,var(--lc) 20%,transparent)}
+.lc-ir{align-self:center;font-size:1.5rem;opacity:.55}
+.lc-carta p{margin:0 0 12px;line-height:1.65}
+.lc-carta p:last-child{margin-bottom:0}
+.lc-vals{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lc-val{padding:14px 8px;border-radius:18px;text-align:center;background:var(--tarjeta);box-shadow:var(--sombra)}
+.lc-val span{display:block;margin-bottom:4px;font-size:1.7rem}
+.lc-val b{display:block;font:700 1rem/1.2 "TB Titulo",Georgia,serif}
+.lc-val small{display:block;margin-top:3px;font-size:.8rem;line-height:1.3;opacity:.8}
+.lc-cierre{margin:16px 4px;text-align:center;font-style:italic;line-height:1.5}
+@media (prefers-reduced-motion:no-preference){
+  html:not([data-anim=off]) .lc-card,html:not([data-anim=off]) .lc-val,html:not([data-anim=off]) .lc-carta{animation:hac-sube .4s ease-out backwards}
+  html:not([data-anim=off]) .lc-card:nth-child(2),html:not([data-anim=off]) .lc-val:nth-child(2){animation-delay:.07s}
+  html:not([data-anim=off]) .lc-card:nth-child(n+3),html:not([data-anim=off]) .lc-val:nth-child(n+3){animation-delay:.14s}
+}
+
+/* F1198 · Preguntas frecuentes e Instalar: mismo ritmo que el resto */
+.ayuda-it{border-left:5px solid #2f7b9c}
+@media (prefers-reduced-motion:no-preference){
+  html:not([data-anim=off]) .ayuda-it{animation:hac-sube .4s ease-out backwards}
+  html:not([data-anim=off]) .ayuda-it:nth-child(2){animation-delay:.05s}
+  html:not([data-anim=off]) .ayuda-it:nth-child(n+3){animation-delay:.1s}
+}

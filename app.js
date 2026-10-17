@@ -636,12 +636,16 @@
     if (promptInstalar && !yaInstalada()) { try { promptInstalar.prompt(); await promptInstalar.userChoice; } catch (e) { /* nada */ } promptInstalar = null; document.querySelectorAll('[data-instalar-box]').forEach(pintarInstalar); return; }
     vistaInstalar();
   }
-  function vistaInstalar() {
+  function vistaInstalar() {                                // F1198: pasos en tarjetas numeradas
     const ya = yaInstalada(), ios = esIOS();
-    const p = ya ? ['Ya tienes Tierra Buena instalada. Ábrela desde el ícono de tu pantalla de inicio.'] : ios
-      ? ['1. Abre esta página en Safari (si estás en otro navegador, copia el enlace y pégalo en Safari).', '2. Toca el botón Compartir: el cuadrado con la flecha hacia arriba.', '3. Elige «Agregar a pantalla de inicio» y toca «Agregar».']
-      : ['1. Toca el menú ⋮ de tu navegador (arriba a la derecha).', '2. Elige «Instalar app» o «Agregar a pantalla de inicio».', '3. Confirma. El ícono de Tierra Buena aparece junto a tus otras apps.'];
-    textoPantalla('Instalar la app', p.concat(ya ? [] : ['Después, mantén tocado el ícono para ir directo a tu versículo, a la Biblia o a tus fechas importantes.']), '');
+    const pasos = ya ? [] : ios
+      ? ['Abre esta página en Safari (si estás en otro navegador, copia el enlace y pégalo en Safari).', 'Toca el botón Compartir: el cuadrado con la flecha hacia arriba.', 'Elige «Agregar a pantalla de inicio» y toca «Agregar».']
+      : ['Toca el menú ⋮ de tu navegador (arriba a la derecha).', 'Elige «Instalar app» o «Agregar a pantalla de inicio».', 'Confirma. El ícono de Tierra Buena aparece junto a tus otras apps.'];
+    $('#pantalla').innerHTML = `${cabecera('Instalar la app', 'Menú')}
+      ${heroInt('c1', '📲', ya ? 'Todo listo' : 'Tres pasos', ya ? 'Ya la tienes instalada' : 'Instalar Tierra Buena', ya ? 'Ábrela desde el ícono de tu pantalla de inicio.' : 'Se abre como cualquier otra app, desde tu pantalla de inicio.')}
+      <div class="lc-lista">${pasos.map((t, i) => `<div class="lc-card lc-vid"><span class="lc-ico" aria-hidden="true">${i + 1}</span><span class="lc-tx"><p>${esc(t)}</p></span></div>`).join('')}
+      ${ya ? '' : lcTarjeta('lc-pronto', '👆', 'Después, un atajo', 'Mantén tocado el ícono para ir directo a tu versículo, a la Biblia o a tus fechas importantes.')}</div>`;
+    $('#volver').onclick = menuAbrir; window.scrollTo(0, 0);
   }
   const instalarChip = () => { try { if (yaInstalada() || localStorage.getItem('tb_movil_inst_no') === String(new Date().getMonth())) return ''; } catch (e) { return ''; } return `<span class="hoy-inst"><button type="button" class="hoy-fecha" data-ir="inst">${svg('compartir', 16)}<span><b>Instalar la app</b> · un toque</span></button><button type="button" class="hoy-inst-x" data-ir="instno" aria-label="Ahora no">${svg('x', 14)}</button></span>`; };
   const bloqueInstalar = () => '<div data-instalar-box class="sep16"></div>';
@@ -970,12 +974,11 @@
   }
   function vistaPrivacidad(id, atras) {
     const cuenta = !!leer(K_CUENTA), off = metaLeer().off;
-    $('#pantalla').innerHTML = `${volver()}<h1>Mi privacidad</h1><div class="filete"></div>
-      <p class="suave">Tus datos son tuyos. Así de claro: qué ve cada persona y qué puedes hacer tú.</p>
+    $('#pantalla').innerHTML = `${volver()}${heroInt('c2', '🔒', 'Tus datos son tuyos', 'Mi privacidad', 'Así de claro: qué ve cada persona y qué puedes hacer tú.')}
       <p class="suave"><a href="privacidad.html" target="_blank" rel="noopener">Leer la política de privacidad completa</a></p>
-      <h2 class="sep">Qué ve cada persona</h2>
+      <h2 class="mi-sub">Qué ve cada persona</h2>
       <div class="quien-lista">${PRIV_FILAS.map((f) => `<div class="card quien"><span class="quien-ico" aria-hidden="true">${f[0]}</span><div><b>${esc(f[1])}</b><span class="quien-chip ${QUIEN[f[2]][1]}">${esc(QUIEN[f[2]][0])}</span><p class="suave m0t">${esc(f[3])}</p></div></div>`).join('')}</div>
-      <h2 class="sep">Lo que puedes hacer</h2>
+      <h2 class="mi-sub">Lo que puedes hacer</h2>
       ${cuenta ? `<div class="card"><div class="interruptor-fila"><div><b>Guardar mis avances en mi cuenta</b><p class="suave m0t" id="nubeTxt">${off ? 'Apagado: tus notas quedan solo en este teléfono.' : 'Encendido: las ves igual en tu otro teléfono o tablet.'}</p></div><button type="button" class="interruptor" id="nubeSw" role="switch" aria-checked="${!off}" aria-label="Guardar mis avances en mi cuenta"><i></i></button></div></div>` : ''}
       <div class="card"><div class="t"><span aria-hidden="true">📥</span>Descargar mis datos</div><p class="suave m0t">Un archivo con tu nombre, tus notas y tus peticiones. Sin tu llave.</p><button type="button" class="btn sec" id="privBaja">Descargar</button><p id="privMsg" class="ok" role="status" hidden></p></div>
       <div class="card"><div class="t"><span aria-hidden="true">🗑️</span>Eliminar mi cuenta</div><p class="suave m0t">Borra tu cuenta, tus notas, tus peticiones y todo lo guardado en este teléfono. No se puede deshacer.</p><button type="button" class="btn sec" id="eliminarCuentaBtn">Eliminar mi cuenta y mis datos</button></div>
@@ -1019,8 +1022,7 @@
   ];
   function vistaPreguntas(id, atras) {   // F1094: antes se llamaba vistaAyuda y la pisaba «Ayuda y contactos»; ahora cada una abre lo que dice su tarjeta
     const dePerfil = atras === 'perfil';
-    $('#pantalla').innerHTML = `${dePerfil ? cabecera('Preguntas frecuentes', 'Perfil') : `${volver()}<h1>Preguntas frecuentes</h1><div class="filete"></div>`}
-      <p class="suave">Toca una pregunta para ver la respuesta.</p>
+    $('#pantalla').innerHTML = `${dePerfil ? '<button type="button" class="volver" id="volver">‹ Perfil</button>' : volver()}${heroInt('c3', '💬', 'Respuestas rápidas', 'Preguntas frecuentes', 'Toca una pregunta para ver la respuesta.')}
       <div class="ayuda-lista">${AYUDA.map((a, i) => `<details class="card ayuda-it"><summary><span aria-hidden="true">${a[0]}</span>${esc(a[1])}</summary><p>${esc(a[2])}</p>${a[3] ? `<button type="button" class="btn sec chico" data-ayuda-ir="${a[3]}">Abrir «Mi privacidad»</button>` : ''}</details>`).join('')}</div>`;
     if (dePerfil) volverA('Perfil', vistaPerfil); else alVolver();
     document.querySelectorAll('[data-ayuda-ir]').forEach((b) => b.addEventListener('click', () => vistaPrivacidad(id, dePerfil ? 'perfil' : undefined)));
@@ -4082,27 +4084,46 @@
     $('#pantalla').innerHTML = `${cabecera(titulo, 'Menú')}${trozos.map((t) => `<p class="txt-l">${esc(t)}</p>`).join('')}${extra || ''}`;
     $('#volver').onclick = atras || menuAbrir; window.scrollTo(0, 0);
   };
+  // F1198 · Pantallas de lectura del Menú con el mismo estilo que el resto: cabecera de color, tarjetas con ícono y entrada en cascada.
+  const lcTarjeta = (cls, ico, tit, txt, tab, etq) => `<${tab ? 'button type="button"' : 'div'} class="lc-card ${cls}"${tab ? ` data-tab="${tab}"` : ''}><span class="lc-ico" aria-hidden="true">${ico}</span><span class="lc-tx">${etq ? `<em class="lc-tag">${esc(etq)}</em>` : ''}<b>${esc(tit)}</b><p>${esc(txt)}</p></span>${tab ? '<span class="lc-ir" aria-hidden="true">›</span>' : ''}</${tab ? 'button' : 'div'}>`;
   function vistaHistoria() {
-    textoPantalla('Nuestra historia', [
-      'Tierra Buena nació de una idea sencilla: aprender es hermoso, pero vivir lo aprendido es todavía mejor.',
-      'Creemos que una sociedad mejor empieza en cada persona: en cómo nos tratamos en casa, con los vecinos, en el barrio y en la ciudad.',
-      'Por eso aquí lees, practicas y compartes. Cada día das un paso pequeño, y si solo lo intentas, también cuenta.',
-      'No juzgamos. Cuando vemos algo que falta, lo convertimos en ayuda. Nos perdonamos, nos valoramos, nos cuidamos y cuidamos la tierra que nos sostiene.',
-      'Nuestros valores son cuatro: humildad, empatía, acción y esperanza. Y la invitación es para todos, de cualquier iglesia o sin ella: lo que nos une es hacer el bien.'
-    ], '<button type="button" class="btn sec" id="hPal">Una palabra para pastores y para quienes los acompañamos</button>');
-    const hp = $('#hPal'); if (hp) hp.onclick = () => vistaPalabraFundador();
+    const VAL = [['🌱', 'Humildad', 'Aprender de todos'], ['🤝', 'Empatía', 'Ponernos en el lugar del otro'], ['🛠️', 'Acción', 'Dar un paso, aunque sea pequeño'], ['🌅', 'Esperanza', 'Volver a empezar cada día']];
+    $('#pantalla').innerHTML = `${cabecera('Nuestra historia', 'Menú')}
+      ${heroInt('c2', '🌳', 'Por qué existe', 'Tierra Buena', 'Aprender es hermoso; vivirlo es mejor.')}
+      <div class="card fx-vivir lc-carta"><p>Tierra Buena nació de una idea sencilla: aprender es hermoso, pero vivir lo aprendido es todavía mejor.</p><p>Creemos que una sociedad mejor empieza en cada persona: en cómo nos tratamos en casa, con los vecinos, en el barrio y en la ciudad.</p></div>
+      <h2 class="mi-sub">Lo que hacemos aquí</h2>
+      <div class="card lc-carta"><p>Aquí lees, practicas y compartes. Cada día das un paso pequeño, y si solo lo intentas, también cuenta.</p><p>No juzgamos. Cuando vemos algo que falta, lo convertimos en ayuda. Nos perdonamos, nos valoramos, nos cuidamos y cuidamos la tierra que nos sostiene.</p></div>
+      <h2 class="mi-sub">Nuestros cuatro valores</h2>
+      <div class="lc-vals">${VAL.map((v) => `<div class="lc-val"><span aria-hidden="true">${v[0]}</span><b>${v[1]}</b><small>${v[2]}</small></div>`).join('')}</div>
+      <p class="lc-cierre">La invitación es para todos, de cualquier iglesia o sin ella: lo que nos une es hacer el bien.</p>
+      <button type="button" class="btn sec" id="hPal">Una palabra para pastores y para quienes los acompañamos</button>`;
+    $('#volver').onclick = menuAbrir; $('#hPal').onclick = () => vistaPalabraFundador(); window.scrollTo(0, 0);
   }
   // F1023 · Palabras para pastores y para quienes los acompañamos (texto guardado en docs/PALABRAS_FUNDADOR.md)
   function vistaPalabraFundador() {
-    textoPantalla('Para quien guía y para quien acompaña', ["Un pastor sirve de muchas formas a la vez: predica, escucha, visita, organiza, aconseja, planifica, administra y acompaña a su familia. Cada semana lleva en el corazón los problemas de muchas personas, y muchas veces lo hace en silencio. Este espacio es para reconocer ese trabajo y para recordar que quien guía también necesita ser sostenido.","Los pastores son personas. Se cansan, se preocupan, ríen y lloran como cualquiera. A veces se les exige que nunca se equivoquen y que siempre den el ejemplo, y pocas veces alguien se detiene a preguntar cómo están. Lo mismo ocurre con sus familias: esposas e hijos que también sostienen esta llamada, muchas veces sin que nadie lo note.","Si tú eres parte de una iglesia, puedes ser una gran ayuda. Ora por tu pastor por su nombre. Dale las gracias con una palabra sincera. Respeta sus días de descanso. Ofrece lo que puedas: un servicio, una mano para el aseo, un momento para escuchar. Cada gesto pequeño de apoyo renueva a quien sirve.","Quiero contarte algo personal. Crecí en familias de pastores que viajan de ciudad en ciudad. Conocí muchas comunidades, muchas misiones y muchas maneras de servir. Y en todas partes encontré lo mismo: personas que quieren ayudar, y pastores que necesitan saber que alguien camina a su lado. Esa es la razón de esta app.","Dios renueva nuestras fuerzas, y nosotros también tenemos que hacer nuestra parte. No se trata solo de sentir, sino de actuar. Haz algo hoy por alguien. Ora, escucha, visita, ayuda. Y cuando te canses, vuelve a empezar: el bien se construye un paso a la vez, una y otra vez. HACERLO. Hacerlo juntos, paso a paso, para que nuestra comunidad crezca y sea mejor cada día."], '', vistaHistoria);
+    const T = ["Un pastor sirve de muchas formas a la vez: predica, escucha, visita, organiza, aconseja, planifica, administra y acompaña a su familia. Cada semana lleva en el corazón los problemas de muchas personas, y muchas veces lo hace en silencio. Este espacio es para reconocer ese trabajo y para recordar que quien guía también necesita ser sostenido.","Los pastores son personas. Se cansan, se preocupan, ríen y lloran como cualquiera. A veces se les exige que nunca se equivoquen y que siempre den el ejemplo, y pocas veces alguien se detiene a preguntar cómo están. Lo mismo ocurre con sus familias: esposas e hijos que también sostienen esta llamada, muchas veces sin que nadie lo note.","Si tú eres parte de una iglesia, puedes ser una gran ayuda. Ora por tu pastor por su nombre. Dale las gracias con una palabra sincera. Respeta sus días de descanso. Ofrece lo que puedas: un servicio, una mano para el aseo, un momento para escuchar. Cada gesto pequeño de apoyo renueva a quien sirve.","Quiero contarte algo personal. Crecí en familias de pastores que viajan de ciudad en ciudad. Conocí muchas comunidades, muchas misiones y muchas maneras de servir. Y en todas partes encontré lo mismo: personas que quieren ayudar, y pastores que necesitan saber que alguien camina a su lado. Esa es la razón de esta app.","Dios renueva nuestras fuerzas, y nosotros también tenemos que hacer nuestra parte. No se trata solo de sentir, sino de actuar. Haz algo hoy por alguien. Ora, escucha, visita, ayuda. Y cuando te canses, vuelve a empezar: el bien se construye un paso a la vez, una y otra vez. HACERLO. Hacerlo juntos, paso a paso, para que nuestra comunidad crezca y sea mejor cada día."];
+    $('#pantalla').innerHTML = `${cabecera('Para quien guía y para quien acompaña', 'Historia')}
+      ${heroInt('c3', '🕊️', 'Una palabra', 'Quien guía también necesita ser sostenido', '')}
+      <div class="card lc-carta">${T.map((x) => `<p>${esc(x)}</p>`).join('')}</div>`;
+    $('#volver').onclick = vistaHistoria; window.scrollTo(0, 0);
   }
   function vistaInfo() {
-    textoPantalla('Cómo usar la app', [
-      'Tierra Buena es una app para leer la Biblia, orar y poner en práctica lo que aprendes, sola o con tu iglesia.',
-      'Palabra: lees y escuchas la Biblia a tu ritmo. Vida: das un paso pequeño cada día y lo compartes si quieres. Mi iglesia: pides oración, recibes avisos y te unes con el código de tu iglesia.',
-      'Tu plan se arma con lo que nos cuentas al empezar, y lo puedes cambiar cuando quieras desde el menú.',
-      'Tus notas y tu avance son tuyos. Nada se comparte sin que tú lo decidas.'
-    ]);
+    $('#pantalla').innerHTML = `${cabecera('Cómo usar la app', 'Menú')}
+      ${heroInt('c1', '🧭', 'Guía rápida', 'Tres lugares y un menú', 'Para leer la Biblia, orar y poner en práctica lo que aprendes, sola o con tu iglesia.')}
+      <h2 class="mi-sub">Dónde está cada cosa</h2>
+      <div class="lc-lista">
+        ${lcTarjeta('lc-pal', '📖', 'Palabra', 'Lees y escuchas la Biblia a tu ritmo.', 'palabra')}
+        ${lcTarjeta('lc-vid', '🌿', 'Vida', 'Das un paso pequeño cada día y lo compartes si quieres.', 'vida')}
+        ${lcTarjeta('lc-igl', '🕍', 'Mi iglesia', 'Pides oración, recibes avisos y te unes con el código de tu iglesia.', 'iglesia')}
+      </div>
+      <h2 class="mi-sub">Es tuya</h2>
+      <div class="lc-lista">
+        ${lcTarjeta('lc-vid', '🧩', 'Tu plan se arma contigo', 'Se basa en lo que nos cuentas al empezar, y lo puedes cambiar cuando quieras desde el menú.')}
+        ${lcTarjeta('lc-pal', '🔒', 'Tus notas y tu avance son tuyos', 'Nada se comparte sin que tú lo decidas.')}
+      </div>`;
+    $('#volver').onclick = menuAbrir;
+    document.querySelectorAll('.lc-card[data-tab]').forEach((b) => b.addEventListener('click', () => { vibra(); ir(b.dataset.tab); }));
+    window.scrollTo(0, 0);
   }
   // F1196 · Suscripción según su función (elegir un plan de pago con calma): tres tarjetas (Plus para una persona, Familia para el hogar,
   // Iglesia para el pastor y su congregación), cada una mensual o anual, con lo que incluye; debajo, lo que siempre es gratis y cómo se cancela.
@@ -4152,12 +4173,16 @@
     if (rs) rs.onclick = async () => { vibra(); if (!puente || typeof puente.restaurar !== 'function') return msg(T.sin_tienda); try { const r = await puente.restaurar(); if (r && r.ok && r.compra) { S.aplicar(r.compra); vistaSuscripcion(per, desde); } else msg('No encontramos compras para restaurar.'); } catch (e) { msg('No pudimos restaurar ahora. Inténtalo más tarde.'); } };
     window.scrollTo(0, 0);
   }
-  function vistaWidgets() {                                 // F898: lo que sí se puede hoy en una app web instalada
-    textoPantalla('Versículo en mi pantalla', [
-      'Con Tierra Buena instalada, mantén tocado su ícono: aparecen atajos directos a tu versículo de hoy, a la Biblia y a tus fechas importantes. Funciona en Android.',
-      'Los widgets que se quedan fijos en la pantalla (como un reloj) solo existen en apps de tienda. Los estamos preparando para cuando publiquemos la app; mientras tanto, «Hoy» muestra tu versículo, tu racha y la próxima fecha importante.'
-    ], '<button type="button" class="btn" id="wgInst">Instalar la app</button>');
-    $('#wgInst').onclick = instalarUnToque;
+  function vistaWidgets() {                                 // F898: lo que sí se puede hoy en una app web instalada (F1198: tarjetas)
+    const inst = yaInstalada();
+    $('#pantalla').innerHTML = `${cabecera('Versículo en mi pantalla', 'Menú')}
+      ${heroInt('c3', '📲', inst ? 'Ya la tienes instalada' : 'Un paso antes', 'Tu versículo, sin abrir la app', 'Atajos desde el ícono de Tierra Buena.')}
+      <div class="lc-lista">
+        ${lcTarjeta('lc-ahora', '👆', 'Hoy: atajos en el ícono', 'Con Tierra Buena instalada, mantén tocado su ícono: aparecen atajos directos a tu versículo de hoy, a la Biblia y a tus fechas importantes. Funciona en Android.', '', 'Funciona hoy')}
+        ${lcTarjeta('lc-pronto', '🧱', 'Pronto: widgets fijos', 'Los widgets que se quedan fijos en la pantalla (como un reloj) solo existen en apps de tienda. Los estamos preparando para cuando publiquemos la app; mientras tanto, «Hoy» muestra tu versículo, tu racha y la próxima fecha importante.', '', 'Pronto')}
+      </div>
+      ${inst ? '' : '<button type="button" class="btn" id="wgInst">Instalar la app</button>'}`;
+    $('#volver').onclick = menuAbrir; const wi = $('#wgInst'); if (wi) wi.onclick = instalarUnToque; window.scrollTo(0, 0);
   }
   // Fechas cristianas que celebran todas las iglesias (sin santos ni fiestas que dividan). La Pascua se calcula (método de Meeus).
   function pascua(a) {
@@ -4244,7 +4269,7 @@
         ${it('comp', 'compartir', 'Compartir la app', 'Invita a alguien que quieras')}
         ${it('wid', 'bloques', 'Versículo en mi pantalla', 'Verlo sin abrir la app')}
         ${it('conf', 'foco', 'Ajustes y cuenta', 'Temas, letra, sonido y datos de tu cuenta')}
-        ${it('sus', 'estrella', 'Suscripción', 'Hoy todo es gratis')}
+        ${it('sus', 'estrella', 'Suscripción', 'Planes, precios y qué es gratis')}
         ${it('hist', 'hoja', 'Lee nuestra historia', 'Por qué existe Tierra Buena')}
       </div></nav></div>`);
     if (!h) return ir('perfil');
@@ -4387,7 +4412,7 @@
     const vref = ONB_VERS[r.animo] || 'JER.29.11', vp = vref.split('.');
     $('#pantalla').innerHTML = `<section class="ent ent-res">
       <div class="ent-cab"><button type="button" class="volver" id="onbAtras" aria-label="Atrás">‹</button></div>
-      <h1 class="ent-t">${r.nombre ? esc(r.nombre) + ', tu' : 'Tu'} espacio está listo</h1><p class="suave">Lo armamos con lo que nos contaste. Todo se puede cambiar después.</p>
+      <h1 class="ent-t">${onbEstado.cambiar ? 'Así quedaría tu plan' : (r.nombre ? esc(r.nombre) + ', tu' : 'Tu') + ' espacio está listo'}</h1><p class="suave">${onbEstado.cambiar ? 'Revisa los cambios y guarda cuando estés conforme. Si no, deja tu plan como estaba.' : 'Lo armamos con lo que nos contaste. Todo se puede cambiar después.'}</p>
       <div class="ent-vers card" id="onbVers"><small>Una palabra para ti hoy</small><p class="ent-vers-t" id="onbVersT">…</p><span class="suave" id="onbVersR"></span></div>
       <div class="ent-filas">
         <div class="ent-fila"><span class="ent-fila-ic">${svg('calendario', 24)}</span><div><small>Tu primer plan</small><b>${esc(pl.n)}</b><span class="suave">${esc(pl.d)}</span></div></div>
