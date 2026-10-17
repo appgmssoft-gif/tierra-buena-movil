@@ -497,3 +497,55 @@ html[data-eco="2"] .am-rayo,html[data-eco="2"] .am-p{animation:none!important}
 /* F1203 · Tarjeta más compacta: el estado y la guía ocupan menos y las fichas quedan libres de la barra */
 .il-tarjeta{padding:13px 16px;gap:5px}
 .il-tarjeta .il-guia{font-size:.8rem}
+
+/* F1204 · Fichas siempre sobre la barra: la escena se achica en pantallas bajas y el estado se limita a 2 líneas */
+.inicio-limpio.il-con-lienzo .il-escena{width:min(100vw,520px,max(300px,calc((100svh - 420px) * 1.16)))}
+.il-tarjeta .il-estado{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:.86rem;line-height:1.3;min-height:0}
+
+/* F1204 · Inicio: la escena sube (menos cielo vacío), la tarjeta y las fichas se compactan y todo queda sobre la barra inferior */
+.inicio-limpio.il-con-lienzo .il-escena{margin-top:-52px}
+.il-tarjeta{padding:11px 16px;gap:4px}
+.il-tarjeta .il-nombre{font-size:1.08rem}
+.il-fila{gap:9px;padding-bottom:6px}
+.il-fila .il-btn-msg{min-height:60px;padding:8px 6px;gap:3px}
+.inicio-limpio.il-con-lienzo{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))}
+
+/* F1204 · «Hoy apareció…», diez puntos de camino y destello de la capa nueva (revela) / cierre dorado del día 10 (dorado). Solo transform/opacity; quieto con «reducir movimiento» y Ahorro. */
+.il-dias{display:flex;gap:6px;justify-content:center;align-items:center;margin:2px 0 1px}
+.il-dias i{width:9px;height:9px;border-radius:50%;background:color-mix(in srgb,var(--tinta) 14%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--tinta) 16%,transparent)}
+.il-dias i.on{background:linear-gradient(145deg,#8fc06a,#46874f);box-shadow:0 1px 3px rgba(40,70,30,.35)}
+.il-dias i.ahora{width:13px;height:13px;background:radial-gradient(circle at 35% 30%,#ffe9a8,#d99a32);box-shadow:0 0 0 3px color-mix(in srgb,#d99a32 25%,transparent),0 2px 6px rgba(150,100,20,.4)}
+.il-hoy{margin:3px 0 0;display:flex;gap:7px;align-items:flex-start;justify-content:center;text-align:left;font-size:.88rem;line-height:1.3;font-weight:600;color:color-mix(in srgb,#8a5a12 78%,var(--tinta));font-family:"TB Titulo",Georgia,serif}
+.il-hoy-brillo{flex:none;color:#d99a32;font-size:.9rem;line-height:1.35}
+.il-escena::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;border-radius:50%;background:radial-gradient(ellipse 60% 45% at 50% 70%,rgba(255,236,170,.75),rgba(255,236,170,0) 70%)}
+.il-escena.dorado::after{background:radial-gradient(ellipse 85% 70% at 50% 62%,rgba(255,214,110,.9),rgba(255,200,90,.35) 45%,rgba(255,200,90,0) 75%)}
+@media (prefers-reduced-motion:no-preference){
+  html:not([data-anim=off]):not([data-eco="2"]) .il-escena.revela::after{animation:il-revela 2.6s ease-out 1}
+  html:not([data-anim=off]):not([data-eco="2"]) .il-escena.dorado::after{animation:il-revela 3.2s ease-in-out 1}
+  html:not([data-anim=off]):not([data-eco="2"]) .il-hoy.nuevo{animation:il-hoy-entra .9s cubic-bezier(.2,.8,.3,1) .35s backwards}
+  html:not([data-anim=off]):not([data-eco="2"]) .il-hoy.nuevo .il-hoy-brillo{animation:il-chispa 1.8s ease-in-out .6s 2}
+  html:not([data-anim=off]):not([data-eco="2"]) .il-dias i.ahora{animation:il-late 2.4s ease-in-out infinite}
+}
+@keyframes il-revela{0%{opacity:0;transform:scale(.8)}35%{opacity:1}100%{opacity:0;transform:scale(1.12)}}
+@keyframes il-hoy-entra{from{opacity:0;transform:translateY(8px)}}
+@keyframes il-chispa{50%{transform:scale(1.5) rotate(20deg);opacity:.6}}
+@keyframes il-late{50%{transform:scale(1.18)}}
+/* hueco para la nueva línea */
+.il-datos{gap:8px}
+.il-fila .il-btn-msg{min-height:54px}
+.il-tarjeta{padding:9px 14px;gap:3px}
+.il-tarjeta .il-estado:empty{display:none}
+.il-hoy{font-size:.85rem}
+@media (max-height:800px){.il-tarjeta .il-guia{display:none}}
+.il-datos{gap:6px}.il-fila{padding-bottom:0;gap:8px}.il-fila .il-btn-msg{min-height:50px;padding:6px}
+/* F1205 · Diario del lugar: cada punto es un botón con área de toque amplia */
+.il-dias{gap:0}
+.il-pt{appearance:none;-webkit-appearance:none;border:0;background:none;padding:0;margin:0;width:26px;height:34px;display:grid;place-items:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.il-pt i{transition:transform .2s}
+.il-pt:active i{transform:scale(1.5)}
+.il-pt.sel i{box-shadow:0 0 0 3px color-mix(in srgb,var(--tinta) 22%,transparent)}
+.il-pt:focus-visible{outline:2px solid #d99a32;outline-offset:-3px;border-radius:50%}
+.il-dias{margin:-4px 0 -6px}
+.il-pt{height:28px}.il-dias{margin:-5px 0 -8px}
+.il-hoy{min-height:2.6em;align-items:center}
+@media (max-height:860px){.il-tarjeta .il-guia{display:none}}

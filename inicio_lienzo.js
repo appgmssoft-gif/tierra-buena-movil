@@ -666,12 +666,39 @@
 
   // ---------- Textos ----------
   function estadoTxt(est, r) {
-    const c = est.ciclo, e = window.TBInicio.etapa(c.diasCuidado), av = window.TBInicio.avanceDiario(c.diasCuidado), falta = Math.max(0, DIAS() - c.diasCuidado), dia = 'Día ' + c.diasCuidado + ' de ' + DIAS() + ' · ' + (ETAPAS[e] || 'Brote') + (falta ? ' · Faltan ' + falta + (falta === 1 ? ' día' : ' días') : '');   // F1178: se muestra cuánto falta, en días reales
+    const c = est.ciclo, e = window.TBInicio.etapa(c.diasCuidado), av = window.TBInicio.avanceDiario(c.diasCuidado), falta = Math.max(0, DIAS() - c.diasCuidado), dia = 'Día ' + c.diasCuidado + ' de ' + DIAS() + ' · ' + String(ETAPAS[e] || 'Brote').replace('Echando raíces', 'Raíces') + (falta ? ' · Quedan ' + falta : '');   // F1178: se muestra cuánto falta, en días reales
     if (r && r.cicloNuevo) { const s = CAT && CAT.especies && CAT.especies[c.especie]; return 'Empieza un árbol nuevo' + (s ? ': ' + s.nombre : '') + '. El anterior ya forma parte del paisaje.'; }
     if (est.maleza.length) return 'Hay maleza en el pasto. Puedes tocarla para quitarla; así tu árbol sigue creciendo.';
+    if (c.cerrado && est.tematica === 'costa' && (est.habDias || 0) >= DIAS()) return '';
+    if (c.cerrado && est.tematica === 'costa') return 'Tu lugar está completo: día ' + (est.habDias || 0) + ' de ' + ((CAT && CAT.ciclo && CAT.ciclo.habitat_dias) || 10) + '.';
+    if (c.cerrado && (est.habDias || 0) >= ((CAT && CAT.ciclo && CAT.ciclo.habitat_dias) || 10)) return '';
     if (c.cerrado) return 'Tu árbol está completo. Tu lugar va en el día ' + (est.habDias || 0) + ' de ' + ((CAT && CAT.ciclo && CAT.ciclo.habitat_dias) || 10) + '.';   // F1090: el árbol madura en 10 días
-    if (r && r.diaNuevo) return 'Hoy tu árbol creció un día más. ' + dia;
+    if (r && r.diaNuevo) return 'Creció un día · ' + dia.replace(/^Día /,'día ');
     return dia;
+  }
+  // F1204: el día normal lo cuentan los diez puntos y la frase «Hoy apareció…»; el estado solo habla cuando pasa algo
+  const estadoVisible = (est, r) => { const t = estadoTxt(est, r); return /^Día \d+ de \d+/.test(t) ? '' : t; };
+
+  // F1204 · «Hoy apareció…»: cada día una frase cuenta qué capa nueva llegó a tu lugar; diez puntos muestran el camino hasta el día 10.
+  const HOY_CAPA = {
+    bosque: ['Hoy empezó tu bosque: cielo, suelo y luz.', 'Hoy apareció el plano lejano: cerros verdes entre la bruma.', 'Hoy brotó un copihue, la flor del bosque.', 'Hoy llegó un primer detalle al suelo del bosque.', 'Hoy crecieron los helechos, a la sombra.', 'Hoy tu lugar ganó vida: lo que llegó sigue creciendo.', 'Hoy llegó el chucao, un ave café entre las hojas.', 'Hoy tu pewén abrió sus ramas y llegó otro detalle.', 'Hoy llegó la atmósfera: rayos de luz y luciérnagas.', 'Tu lugar quedó completo. Gracias por cuidarlo cada día.'],
+    desierto: ['Hoy empezó tu desierto: cielo, arena y luz.', 'Hoy apareció la mesa lejana sobre las dunas.', 'Hoy floreció una añañuca, roja sobre la arena.', 'Hoy el aire se aquietó: sol y arena en calma.', 'Hoy llegó el guanaco, todavía pequeño.', 'Hoy tu lugar ganó vida: lo que llegó sigue creciendo.', 'Hoy apareció el zorro, atento entre las dunas.', 'Hoy tu lugar se llenó un poco más de vida.', 'Hoy llegó la atmósfera: luz tibia y polvo dorado.', 'Tu lugar quedó completo. Gracias por cuidarlo cada día.'],
+    costa: ['Hoy empezó tu costa: cielo, arena y luz.', 'Hoy apareció el horizonte del mar.', 'Hoy brotó un chagual junto a la arena.', 'Hoy el mar dejó una piedra en la orilla.', 'Hoy el mar trajo conchas a la playa.', 'Hoy tu lugar ganó vida: lo que llegó sigue creciendo.', 'Hoy una gaviota cruzó sobre el mar.', 'Hoy la espuma llegó más suave a la orilla.', 'Hoy llegó la atmósfera: brillos de mar y brisa.', 'Tu lugar quedó completo. Gracias por cuidarlo cada día.']
+  };
+  function hoyCapa(est) { const l = HOY_CAPA[est.tematica] || HOY_CAPA.bosque, d = Math.max(1, Math.min(l.length, est.habDias || (est.ciclo && est.ciclo.diasCuidado) || 1)); return l[d - 1]; }
+  function diaActual(est) { const t = DIAS(); return Math.max(1, Math.min(t, est.habDias || (est.ciclo && est.ciclo.diasCuidado) || 1)); }
+  function puntosDias(est) { const t = DIAS(), d = diaActual(est); let h = ''; for (let i = 1; i <= t; i++) h += '<button type="button" class="il-pt" data-d="' + i + '" aria-label="Día ' + i + (i < d ? ': ver qué apareció' : i === d ? ': hoy' : ': aún no llega') + '"><i' + (i < d ? ' class="on"' : i === d ? ' class="ahora"' : '') + '></i></button>'; return '<div class="il-dias" role="group" aria-label="Diario de tu lugar: día ' + d + ' de ' + t + '">' + h + '</div>'; }
+  // F1205 · Diario del lugar: tocar un punto cuenta qué apareció ese día; volver a tocar el de hoy regresa a la frase de hoy.
+  function diarioLigar(cont, est) {
+    const tx = $('#ilHoyTx', cont), hoyD = diaActual(est), l = HOY_CAPA[est.tematica] || HOY_CAPA.bosque; if (!tx) return;
+    Array.prototype.forEach.call(cont.querySelectorAll('.il-pt'), (b) => {
+      b.onclick = () => {
+        const d = +b.getAttribute('data-d');
+        try { window.TBSonido && window.TBSonido.punto(d, d > hoyD); } catch (e) { /* sin sonido */ }   // F1206
+        tx.textContent = d === hoyD ? l[d - 1] : d < hoyD ? 'Día ' + d + ' · ' + l[d - 1].replace(/^Hoy /, '').replace(/^./, (c) => c.toUpperCase()) : 'El día ' + d + ' aún no llega. Tu lugar sigue creciendo.';
+        Array.prototype.forEach.call(cont.querySelectorAll('.il-pt'), (z) => z.classList.toggle('sel', z === b));
+      };
+    });
   }
   function nombreArbol(est) { if (est.tematica === 'costa') return esc((CAT.tematicas.costa || {}).nombre || 'Costa del Pacífico');   // F1090: en la playa no se dibuja árbol
     const s = CAT && CAT.especies && CAT.especies[est.ciclo.especie]; return s ? esc(s.nombre) + (s.otro ? ' <span>· ' + esc(s.otro) + '</span>' : '') : 'Tu árbol'; }
@@ -707,7 +734,8 @@
     const est = T.cargar(); if (est.eligiendo) return vistaEleccion(cont, mi);
     if (cont.parentNode && cont.parentNode.classList) cont.parentNode.classList.remove('il-eligiendo');
     const guia = lsGet(KGUIA) !== '1';
-    cont.innerHTML = escena(est) + '<div class="il-datos"><div class="il-tarjeta"><p class="il-nombre" id="ilNombre">' + nombreArbol(est) + '</p><p class="il-estado" id="ilEstado" role="status" aria-live="polite">' + esc(estadoTxt(est, r)) + '</p>'
+    cont.innerHTML = escena(est) + '<div class="il-datos"><div class="il-tarjeta"><p class="il-nombre" id="ilNombre">' + nombreArbol(est) + '</p><p class="il-estado" id="ilEstado" role="status" aria-live="polite">' + esc(estadoVisible(est, r)) + '</p>'
+      + puntosDias(est) + '<p class="il-hoy' + ((r && r.diaNuevo) ? ' nuevo' : '') + '" id="ilHoy"><span class="il-hoy-brillo" aria-hidden="true">✦</span><span id="ilHoyTx">' + esc(hoyCapa(est)) + '</span></p>'
       + '<p class="il-gotas" id="ilGotas" aria-live="polite">' + gotasTexto(est) + '</p>'
       + (guia ? '<p class="il-guia" id="ilGuia">Toca el tronco para respirar un momento.</p>' : '')
       + '</div><div class="il-fila"><button type="button" class="il-btn-msg" id="ilMsgBtn" aria-expanded="false" aria-controls="ilMsg">' + ic(IC.libro) + 'Mensajes de hoy</button>'
@@ -717,7 +745,9 @@
     const esc0 = $('#ilEscena', cont);
     if (r.panoramica && !quieto()) { esc0.classList.add('pano'); later(() => esc0.classList.remove('pano'), 3000); } else if ((extra && extra.plantado) && !quieto()) { esc0.classList.add('brota'); later(() => esc0.classList.remove('brota'), 1800); }
     esc0.classList.add('entra'); later(() => esc0.classList.remove('entra'), 1400);
-    paralaje(esc0); ligar(cont, mi); pantalla();
+    if (r && r.diaNuevo && !quieto()) { esc0.classList.add(est.habDias >= DIAS() ? 'dorado' : 'revela'); later(() => esc0.classList.remove('dorado', 'revela'), 3400); }   // F1204: destello al llegar la capa nueva
+    if (r && r.diaNuevo) later(() => { try { window.TBSonido && (est.habDias >= DIAS() ? window.TBSonido.completo() : window.TBSonido.capa()); } catch (e) { /* sin sonido */ } }, 700);   // F1204: sonido de la capa nueva del día
+    paralaje(esc0); ligar(cont, mi); diarioLigar(cont, est); pantalla();
   }
 
   function paralaje(esc0) {                                   // el fondo se mueve apenas mientras se arrastra el dedo; al soltar vuelve solo (transición CSS). Sin dedo, no hay trabajo.
@@ -761,7 +791,7 @@
     ligarViv(cont, mi);
     const tb = $('#ilTriBtn', cont), tc = $('#ilTri', cont);                   // F961 · Trivia diaria de naturaleza
     if (tb && tc) {
-      const marca = () => { const t = T.triviaHoy(); tb.classList.toggle('nuevo', !!t && !t.resuelta); tb.innerHTML = ic(IC.mundo) + (t && t.resuelta ? '<span>Trivia de hoy</span><small>lista</small>' : '<span>Trivia del día</span><small>+' + (t ? t.gotas : 3) + ' gotas</small>'); };   // F1203: dos líneas cortas para que el botón no crezca
+      const marca = () => { const t = T.triviaHoy(); tb.classList.toggle('nuevo', !!t && !t.resuelta); tb.innerHTML = ic(IC.mundo) + (t && t.resuelta ? '<span>Trivia de hoy</span><small>lista</small>' : '<span>Trivia</span><small>+' + (t ? t.gotas : 3) + ' gotas</small>'); };   // F1203: dos líneas cortas para que el botón no crezca
       const pintaTri = (anim) => {
         const t = T.triviaHoy(); if (!t) { tc.innerHTML = '<p class="il-tri-ay">Por ahora no hay pregunta. Vuelve mañana.</p>'; return; }
         const ops = t.opciones.map((o, i) => { let cl = 'il-tri-op'; if (t.resuelta) { if (i === t.correcta) cl += ' ok'; else if (i === t.elegida) cl += ' mal'; } return '<button type="button" class="' + cl + '" data-i="' + i + '"' + (t.resuelta ? ' disabled' : '') + '><i aria-hidden="true">' + 'ABC'.charAt(i) + '</i><span>' + esc(o) + '</span></button>'; }).join('');

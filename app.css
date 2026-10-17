@@ -1357,3 +1357,30 @@ button.lc-card{cursor:pointer}
   html:not([data-anim=off]) .ayuda-it:nth-child(2){animation-delay:.05s}
   html:not([data-anim=off]) .ayuda-it:nth-child(n+3){animation-delay:.1s}
 }
+
+/* F1204 · CHAT: conversación con burbujas, avatar, tipos de mensaje en fichas y caja de escribir cómoda (sistema interior F1178) */
+.ch-av{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font:700 1rem/1 "TB Titulo",Georgia,serif;color:#fff;background:#46874f;box-shadow:inset 0 -3px 6px rgba(0,0,0,.14),0 2px 6px rgba(40,30,15,.16)}
+.ch-av.mb1{background:#46874f}.ch-av.mb2{background:#3f78a8}.ch-av.mb3{background:#b8782a}.ch-av.mb4{background:#7456a0}.ch-av.mb5{background:#b5546b}.ch-av.mb6{background:#2f8a86}
+.mi-curso-ic.ch-av{width:44px;height:44px;border-radius:14px;font-size:1.25rem}
+.ch-sala.ch-iglesia .mi-curso-ic{background:linear-gradient(135deg,color-mix(in srgb,#46874f 34%,var(--tarjeta)),var(--tarjeta))}
+.ch-sala.ch-lideres .mi-curso-ic{background:linear-gradient(135deg,color-mix(in srgb,#d99a32 34%,var(--tarjeta)),var(--tarjeta))}
+.ch-sala.ch-directo .mi-curso-ic{background:linear-gradient(135deg,color-mix(in srgb,#7456a0 30%,var(--tarjeta)),var(--tarjeta))}
+.chat-hilo{display:flex;flex-direction:column;gap:12px;margin:14px 0}
+.chat-msg{display:flex;align-items:flex-end;gap:8px;padding:0;background:none;border:0;max-width:100%}
+.chat-msg.mio{flex-direction:row-reverse;background:none;border:0;border-radius:0}
+.chat-msg .ch-burbuja{min-width:0;max-width:calc(100% - 52px);padding:10px 14px 8px;border-radius:20px 20px 20px 6px;background:var(--tarjeta);border:1px solid var(--linea);box-shadow:0 3px 10px rgba(40,30,15,.07)}
+.chat-msg.mio .ch-burbuja{border-radius:20px 20px 6px 20px;background:linear-gradient(160deg,color-mix(in srgb,#46874f 26%,var(--tarjeta)),color-mix(in srgb,#46874f 10%,var(--tarjeta)));border-color:color-mix(in srgb,#46874f 34%,transparent)}
+.chat-msg.rol-pastor .ch-burbuja{border-color:color-mix(in srgb,#d99a32 55%,transparent)}
+.chat-msg.oculto{opacity:.65}
+.chat-msg .chat-quien{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 3px;font-size:.88rem}
+.chat-msg .chat-quien small{margin-left:auto;font-size:.72rem}
+.chat-msg .chat-txt{font-size:1rem;line-height:1.45}
+.chat-msg .cr-acc{margin-top:4px}.chat-msg .cr-acc .btn{min-height:32px;padding:4px 10px;font-size:.78rem;opacity:.8}
+.chat-escribir{position:sticky;bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:3;padding:12px;border-radius:24px;box-shadow:0 10px 30px rgba(40,30,15,.16)}
+.ch-cats{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none}.ch-cats::-webkit-scrollbar{display:none}
+.ch-cat{flex:none;min-height:36px;padding:6px 13px;border-radius:99px;border:1px solid var(--linea);background:transparent;color:var(--tinta);font:600 .82rem/1 inherit;cursor:pointer;transition:transform .15s,background .2s}
+.ch-cat.on{background:#46874f;border-color:#46874f;color:#fff}.ch-cat:active{transform:scale(.94)}
+.ch-lbl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.ch-fila{display:flex;align-items:flex-end;gap:8px}.ch-fila textarea{flex:1;min-width:0;margin:0;border-radius:18px;resize:none}
+.ch-env{flex:none;width:auto;min-height:46px;margin:0;padding:0 18px;border-radius:99px}
+@media (prefers-reduced-motion:no-preference){html:not([data-anim=off]) .chat-msg{animation:hac-sube .35s ease-out backwards}html:not([data-anim=off]) .chat-msg:last-child{animation-delay:.08s}}

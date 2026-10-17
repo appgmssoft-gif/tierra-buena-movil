@@ -3735,9 +3735,9 @@
     }
     if (!canal) {
       const volver = esPastor ? vistaPastor : vistaIglesia;
-      $('#pantalla').innerHTML = `${cabecera('Chat de mi iglesia', esPastor ? 'Panel' : 'Mi iglesia')}<p class="suave">Un espacio para bendecir, unirnos y organizar. Aquí no se resuelven conflictos: para eso, habla en persona o en privado con el pastor.</p>
-        <div id="chMsg" class="suave" role="status"></div><div id="chLista" class="lista"><p class="suave">Cargando…</p></div>
-        ${esPastor ? '<button type="button" class="btn sec" id="chNuevo">Nueva conversación con una persona</button><div id="chPersona" class="lista" hidden></div>' : '<button type="button" class="btn sec" id="chPrivado">Hablar en privado con mi pastor</button>'}`;
+      $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ ${esPastor ? 'Panel' : 'Mi iglesia'}</button>${heroInt('c3', '💬', 'Tu iglesia conversa', 'Chat de mi iglesia', 'Un espacio para bendecir, unirnos y organizar. Los desacuerdos se hablan en persona o en privado con el pastor.')}
+        <div id="chMsg" class="suave" role="status"></div><h2 class="mi-sub">Tus conversaciones</h2><div id="chLista" class="mi-lista"><p class="suave">Cargando…</p></div>
+        ${esPastor ? '<button type="button" class="btn sec" id="chNuevo">Nueva conversación con una persona</button><div id="chPersona" class="mi-lista" hidden></div>' : '<button type="button" class="btn sec" id="chPrivado">Hablar en privado con mi pastor</button>'}`;
       volverA(esPastor ? 'Panel' : 'Mi iglesia', volver);
       const abrir = (c) => vistaChat(x, c);
       const r = await rpcRaw('chat_canales_listar', q);
@@ -3745,7 +3745,7 @@
       if (!r.ok) { caja.innerHTML = '<p class="suave">No pudimos abrir el chat. Revisa tu conexión.</p>'; }
       else {
         const c = r.data || [];
-        caja.innerHTML = c.length ? c.map((k) => `<button type="button" class="fila" data-chc="${esc(k.id)}"><span class="fila-txt">${esc(k.tipo === 'directo' ? k.directo_nombre || k.nombre : k.nombre)}<small>${k.tipo === 'iglesia' ? 'Toda la iglesia' : k.tipo === 'lideres' ? 'Pastor y líderes: reuniones y organización' : 'Conversación privada'}</small></span><span class="flecha" aria-hidden="true">›</span></button>`).join('') : '<p class="suave">Aún no hay conversaciones.</p>';
+        caja.innerHTML = c.length ? c.map((k) => `<button type="button" class="mi-curso ch-sala ch-${esc(k.tipo)}" data-chc="${esc(k.id)}"><span class="mi-curso-ic" aria-hidden="true">${k.tipo === 'iglesia' ? '🕊️' : k.tipo === 'lideres' ? '🤝' : '🔒'}</span><span class="mi-curso-tx"><b>${esc(k.tipo === 'directo' ? k.directo_nombre || k.nombre : k.nombre)}</b><small>${k.tipo === 'iglesia' ? 'Toda la iglesia' : k.tipo === 'lideres' ? 'Pastor y líderes: reuniones y organización' : 'Conversación privada'}</small></span><span class="mi-curso-est">${k.tipo === 'iglesia' ? 'Todos' : k.tipo === 'lideres' ? 'Equipo' : 'Privado'}</span></button>`).join('') : '<p class="suave">Aún no hay conversaciones.</p>';
         caja.querySelectorAll('[data-chc]').forEach((b) => b.addEventListener('click', () => abrir(c.find((k) => k.id === b.dataset.chc))));
       }
       const pv = $('#chPrivado');
@@ -3754,7 +3754,7 @@
       if (nv) nv.onclick = async () => {
         const box = $('#chPersona'); box.hidden = false; box.innerHTML = '<p class="suave">Cargando personas…</p>';
         const rp = await rpcRaw('miembros_servicio_listar', { p_codigo: x.codigo, p_secreto: x.secreto });
-        box.innerHTML = (rp.ok ? (rp.data || []) : []).map((m) => `<button type="button" class="fila" data-chm="${esc(m.id)}"><span class="fila-txt">${esc(m.nombre)}</span><span class="flecha" aria-hidden="true">›</span></button>`).join('') || '<p class="suave">No hay personas para mostrar.</p>';
+        box.innerHTML = (rp.ok ? (rp.data || []) : []).map((m, i) => `<button type="button" class="mi-curso" data-chm="${esc(m.id)}"><span class="mi-curso-ic ch-av ${mbCol(i)}" aria-hidden="true">${esc(String(m.nombre || '?').trim().charAt(0).toUpperCase())}</span><span class="mi-curso-tx"><b>${esc(m.nombre)}</b><small>Abrir conversación privada</small></span></button>`).join('') || '<p class="suave">No hay personas para mostrar.</p>';
         box.querySelectorAll('[data-chm]').forEach((b) => b.addEventListener('click', async () => {
           const rr = await rpcRaw('chat_directo_abrir', Object.assign({}, q, { p_miembro: b.dataset.chm }));
           const e = chatMot(rr); if (e) { $('#chMsg').textContent = e; return; }
@@ -3769,10 +3769,12 @@
     const privadoBtn = (!esPastor && canal.tipo === 'iglesia') ? '<button type="button" class="btn sec chico" id="chDirecto">Hablar en privado con mi pastor</button>' : '';
     const pastorTools = esPastor ? `<div class="cr-acc"><button type="button" class="btn sec chico" id="chNormas">Editar normas</button><button type="button" class="btn sec chico" id="chLimpiar">Limpiar historial</button><button type="button" class="btn sec chico" id="chDenuncias">Ver denuncias</button></div><div id="chPanel" hidden></div>` : '';
     const videoBox = puedeVideo ? `<div class="cr-acc"><button type="button" class="btn sec chico" id="chVideo">Crear reunión por video</button></div><div id="chVideoForm" class="card" hidden><label for="chVT">Título de la reunión</label><input id="chVT" type="text" maxlength="80"><label for="chVI">Cuándo</label><input id="chVI" type="datetime-local" value="${aLocal(new Date())}"><button type="button" class="btn" id="chVG">Crear y compartir</button></div><div id="chReuniones" class="lista"></div>` : '';
-    $('#pantalla').innerHTML = `${cabecera(canal.tipo === 'directo' ? (canal.directo_nombre || canal.nombre) : canal.nombre, 'Chat')}${normas}${privadoBtn}${pastorTools}${videoBox}
+    const nomCanal = canal.tipo === 'directo' ? (canal.directo_nombre || canal.nombre) : canal.nombre;
+    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ Chat</button>${heroInt(canal.tipo === 'iglesia' ? 'c2' : canal.tipo === 'lideres' ? 'c1' : 'c3', canal.tipo === 'iglesia' ? '🕊️' : canal.tipo === 'lideres' ? '🤝' : '🔒', canal.tipo === 'iglesia' ? 'Toda la iglesia' : canal.tipo === 'lideres' ? 'Pastor y líderes' : 'Conversación privada', esc(nomCanal), canal.tipo === 'directo' ? 'Solo ustedes dos ven esta conversación.' : 'Escribe con respeto: aquí nos acompañamos.')}${normas}${privadoBtn}${pastorTools}${videoBox}
       <p class="suave" id="chMsg" role="status"></p><div id="chHilo" class="chat-hilo" aria-live="polite"><p class="suave">Cargando mensajes…</p></div>
-      <div class="card chat-escribir"><label for="chCat">Tipo de mensaje</label><select id="chCat">${CHAT_CAT.map((c) => `<option value="${c[0]}">${c[1]}</option>`).join('')}</select>
-        <label for="chTxt">Escribe con cariño</label><textarea id="chTxt" rows="2" maxlength="1000"></textarea><button type="button" class="btn" id="chEnviar">Enviar</button></div>`;
+      <div class="card chat-escribir"><input type="hidden" id="chCat" value="${CHAT_CAT[0][0]}"><div class="ch-cats" role="radiogroup" aria-label="Tipo de mensaje">${CHAT_CAT.map((c, i) => `<button type="button" class="ch-cat${i ? '' : ' on'}" role="radio" aria-checked="${i ? 'false' : 'true'}" data-cat="${c[0]}">${c[1]}</button>`).join('')}</div>
+        <label for="chTxt" class="ch-lbl">Escribe con cariño</label><div class="ch-fila"><textarea id="chTxt" rows="2" maxlength="1000"></textarea><button type="button" class="btn ch-env" id="chEnviar" aria-label="Enviar mensaje">Enviar</button></div></div>`;
+    document.querySelectorAll('.ch-cat').forEach((b) => b.addEventListener('click', () => { document.querySelectorAll('.ch-cat').forEach((z) => { const on = z === b; z.classList.toggle('on', on); z.setAttribute('aria-checked', on ? 'true' : 'false'); }); $('#chCat').value = b.dataset.cat; }));
     volverA('Chat', () => vistaChat(x));
     const msg = (t, ok) => { const m = $('#chMsg'); if (m) { m.textContent = t; m.className = ok ? 'ok suave' : 'suave'; } };
     const cargarHilo = async () => {
@@ -3780,7 +3782,7 @@
       const h = $('#chHilo'); if (!h) return;
       if (!r.ok) { h.innerHTML = '<p class="suave">No pudimos cargar los mensajes.</p>'; return; }
       const l = r.data || [];
-      h.innerHTML = l.length ? l.map((m) => `<article class="chat-msg${m.es_mio ? ' mio' : ''}${m.oculto ? ' oculto' : ''}"><p class="chat-quien"><b>${esc(m.autor_nombre)}</b> <span class="etiqueta">${esc(m.autor_rol === 'pastor' ? 'Pastor' : m.autor_rol === 'lider' ? 'Líder' : 'Miembro')}</span> <small class="suave">${esc(new Date(m.creado_en).toLocaleString('es-CL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }))}</small></p><p class="chat-txt">${m.texto === null ? '<em>Mensaje oculto por el pastor.</em>' : esc(m.texto)}</p><div class="cr-acc">${!m.es_mio ? `<button type="button" class="btn sec chico" data-denu="${esc(m.id)}">Denunciar</button>` : ''}${esPastor ? `<button type="button" class="btn sec chico" data-ocu="${esc(m.id)}" data-val="${m.oculto ? '0' : '1'}">${m.oculto ? 'Mostrar' : 'Ocultar'}</button>` : ''}</div></article>`).join('') : '<p class="suave">Todavía no hay mensajes. Sé el primero en bendecir.</p>';
+      h.innerHTML = l.length ? l.map((m) => `<article class="chat-msg${m.es_mio ? ' mio' : ''}${m.oculto ? ' oculto' : ''} rol-${esc(m.autor_rol || 'miembro')}"><span class="ch-av ${mbCol(String(m.autor_nombre || 'a').charCodeAt(0))}" aria-hidden="true">${esc(String(m.autor_nombre || '?').trim().charAt(0).toUpperCase())}</span><div class="ch-burbuja"><p class="chat-quien"><b>${esc(m.autor_nombre)}</b> <span class="etiqueta">${esc(m.autor_rol === 'pastor' ? 'Pastor' : m.autor_rol === 'lider' ? 'Líder' : 'Miembro')}</span> <small class="suave">${esc(new Date(m.creado_en).toLocaleString('es-CL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }))}</small></p><p class="chat-txt">${m.texto === null ? '<em>Mensaje oculto por el pastor.</em>' : esc(m.texto)}</p><div class="cr-acc">${!m.es_mio ? `<button type="button" class="btn sec chico" data-denu="${esc(m.id)}">Denunciar</button>` : ''}${esPastor ? `<button type="button" class="btn sec chico" data-ocu="${esc(m.id)}" data-val="${m.oculto ? '0' : '1'}">${m.oculto ? 'Mostrar' : 'Ocultar'}</button>` : ''}</div></div></article>`).join('') : '<p class="suave">Todavía no hay mensajes. Sé el primero en bendecir.</p>';
       h.querySelectorAll('[data-denu]').forEach((b) => b.addEventListener('click', async () => {
         const motivo = prompt('¿Qué pasó? (opcional, una frase)') || '';
         const rr = await rpcRaw('chat_reportar', Object.assign({}, q, { p_mensaje: b.dataset.denu, p_motivo: motivo }));
@@ -3799,7 +3801,7 @@
       btn.disabled = false;
       const e = chatMot(rr);
       if (e) return msg(e);
-      $('#chTxt').value = ''; msg('Enviado.', true); cargarHilo();
+      $('#chTxt').value = ''; msg('Enviado.', true); try { window.TBSonido && TBSonido.mensaje(); } catch (e0) { /* sin sonido */ } cargarHilo();
     };
     const dc = $('#chDirecto');
     if (dc) dc.onclick = async () => { const rr = await rpcRaw('chat_directo_abrir', Object.assign({}, q, { p_miembro: null })); if (chatMot(rr)) return msg(chatMot(rr)); const c2 = await rpcRaw('chat_canales_listar', q); const k = (c2.data || []).find((z) => z.id === primera(rr.data).canal_id); if (k) vistaChat(x, k); };
@@ -4454,7 +4456,13 @@
     const p = perfilLeer(), o = (() => { try { return onbLeer(); } catch (e) { return null; } })(), n = (p.n || (o && o.nombre) || '').split(' ')[0];
     const FRASES = ['Hoy basta con dar un buen paso.', 'Lo pequeño, hecho con cariño, cuenta.', 'Respira. Vas bien.', 'Una palabra amable también es una semilla.', 'No tienes que poder con todo hoy.', 'Lo que siembras con paciencia, crece.', 'Haz una cosa buena y déjala ir.', 'Pregunta cómo está alguien. En serio.', 'La calma también se practica.', 'Hay buena tierra donde estás parado.', 'Descansar es parte del trabajo.', 'Sé el aviso bueno de alguien hoy.'];
     const hoy = new Date(), h0 = hoy.getHours(), saludo = h0 < 6 ? 'Qué bueno verte despierto' : h0 < 12 ? 'Buenos días' : h0 < 19 ? 'Buenas tardes' : 'Buenas noches';
-    let k = (hoy.getFullYear() * 366 + hoy.getMonth() * 31 + hoy.getDate()) % FRASES.length;
+    // F1205 · Frases por hora y por estación (hemisferio sur): las dos primeras de cada rotación son de AHORA; las demás son de siempre y no nombran la hora ni la estación.
+    const FH = h0 < 6 ? ['Aún es temprano. Tu jardín también duerme.', 'La noche guarda silencio para ti.', 'Si no puedes dormir, respira despacio.'] : h0 < 12 ? ['Que este día empiece con una buena palabra.', 'La luz de la mañana es para ti.', 'Hoy ya hay algo bueno esperando.'] : h0 < 19 ? ['A mitad del día, haz una pausa pequeña.', 'La tarde también es buen momento para agradecer.', 'Lo que hiciste hoy ya cuenta.'] : ['Hoy hiciste lo que pudiste. Descansa.', 'Que la noche te encuentre en paz.', 'Guarda el día con gratitud.'];
+    const mes = hoy.getMonth() + 1, dia = hoy.getDate(), est0 = (mes === 12 && dia >= 21) || mes <= 2 || (mes === 3 && dia <= 20) ? 'verano' : (mes === 3 || mes === 4 || mes === 5 || (mes === 6 && dia <= 20)) ? 'otono' : (mes === 6 || mes === 7 || mes === 8 || (mes === 9 && dia <= 20)) ? 'invierno' : 'primavera';
+    const FE = { primavera: ['En primavera todo vuelve a brotar.', 'Lo que parecía quieto, hoy florece.', 'Las flores nuevas no tienen apuro.'], verano: ['Que el sol largo del verano no te apure.', 'En verano, la sombra y el agua son un regalo.', 'Los días largos alcanzan para descansar.'], otono: ['El otoño enseña a soltar con calma.', 'Las hojas caen sin pena: así también se descansa.', 'Cada estación tiene su fruto.'], invierno: ['En invierno la tierra descansa y prepara.', 'Hasta el día más frío guarda una semilla.', 'El abrigo también es un cuidado.'] }[est0];
+    const SEED = (hoy.getFullYear() * 366 + hoy.getMonth() * 31 + hoy.getDate());
+    FRASES.unshift(FH[SEED % 3], FE[(SEED + 1) % 3], FH[(SEED + 1) % 3], FE[SEED % 3]);
+    let k = 0;
     $('#pantalla').innerHTML = `<section class="inicio-limpio${window.TBLienzo ? ' il-con-lienzo' : ''}" id="inicioLimpio" aria-label="Inicio"><div class="il-pill" role="group" aria-label="Paisaje y juegos"><button type="button" class="il-juntos il-paisaje" id="ilPais" aria-label="Elegir paisaje y clima" title="Tu paisaje"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 19l6-10 4 6 3-4 7 8z"/><circle cx="17" cy="6" r="2"/></svg></button><button type="button" class="il-juntos il-juegos" id="ilJuegos" aria-label="Juegos" title="Juegos"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="10" rx="5"/><path d="M8 12h3M9.5 10.5v3"/><circle cx="15.5" cy="11" r=".7"/><circle cx="17.7" cy="13" r=".7"/></svg></button></div><p class="il-sal">${saludo}${n ? ', ' + esc(n) : ''}</p><time class="il-hora" id="ilHora"></time><p class="il-frase" id="ilFrase" aria-live="off"></p><div id="ilLienzo"></div></section>`;
     const sec = $('#inicioLimpio'), fr = $('#ilFrase');
     const bp = $('#ilPais'); if (bp) bp.onclick = () => { vibra(); if (window.TBLienzo && window.TBLienzo.paisajeHoja) window.TBLienzo.paisajeHoja(() => { const c = $('#ilLienzo'); if (c) window.TBLienzo.montar(c); }); };

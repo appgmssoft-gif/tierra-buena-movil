@@ -1,4 +1,4 @@
-// sonido.js - F918 (voz propia del área Iglesia). F902 (melodía de apertura + coro suave en cada nota). F900. Identidad sonora de Tierra Buena. Todo se genera en el teléfono (WebAudio): no hay archivos, no hay derechos de autor, pesa casi nada.
+// sonido.js - F1204 (timbre «marimba de madera»: voz pluck para chat y capas del jardín; filtro de suavidad en el maestro). F918 (voz propia del área Iglesia). F902 (melodía de apertura + coro suave en cada nota). F900. Identidad sonora de Tierra Buena. Todo se genera en el teléfono (WebAudio): no hay archivos, no hay derechos de autor, pesa casi nada.
 // FIRMA SONORA: tres notas que suben (tierra → brote → cielo): Sol4 · Re5 · Si5, con cola larga y un destello. Es lo primero que se oye y vuelve en los logros.
 // Familia: todos los sonidos usan la misma escala (pentatónica de Sol) y el mismo «timbre cálido» (seno + triángulo suave, ataque redondo, algo de eco), para que suenen a UNA sola app.
 // Regla del usuario: en CADA sesión de trabajo se mejora el sonido (ver compartido/docs/TAREAS.md).
@@ -16,7 +16,8 @@
       ctx = new AC();
       maestro = ctx.createGain(); maestro.gain.value = 0.5;
       const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -18; comp.ratio.value = 3; comp.attack.value = 0.005; comp.release.value = 0.25;
-      maestro.connect(comp); comp.connect(ctx.destination);
+      const suav = ctx.createBiquadFilter(); suav.type = 'highshelf'; suav.frequency.value = 6200; suav.gain.value = -2.5;   // F1204: recorta lo áspero del agudo: todo suena más redondo y «caro»
+      maestro.connect(suav); suav.connect(comp); comp.connect(ctx.destination);
       // eco suave (sala pequeña): ruido que se apaga solo
       const largo = Math.floor(ctx.sampleRate * 1.2), buf = ctx.createBuffer(2, largo, ctx.sampleRate);
       for (let c = 0; c < 2; c++) { const d = buf.getChannelData(c); for (let i = 0; i < largo; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / largo, 3.2); }
@@ -43,6 +44,20 @@
     o1.connect(g); o2.connect(g2); g2.connect(g); g.connect(fl); fl.connect(maestro);
     if (!opc.sinCoro) { const o3 = ctx.createOscillator(), g3 = ctx.createGain(); o3.type = 'sine'; o3.frequency.value = f; o3.detune.value = -7; g3.gain.value = 0.45; o3.connect(g3); g3.connect(g); o3.start(t); o3.stop(t + dur + 0.05); }   // F902: coro suave = más cuerpo, más agradable
     if (eco && (opc.eco == null ? 0.5 : opc.eco) > 0) { const e = ctx.createGain(); e.gain.value = opc.eco == null ? 0.5 : opc.eco; fl.connect(e); e.connect(eco); }
+    o1.start(t); o2.start(t); o1.stop(t + dur + 0.05); o2.stop(t + dur + 0.05);
+  }
+  // F1204: nota «de madera» (marimba suave): ataque inmediato, un armónico alto que se apaga muy rápido y cuerpo cálido. Es la voz de las cosas que «se dicen» (mensajes) y «brotan» (capas del jardín).
+  function pluck(f, cuando, dur, vol, ecoV) {
+    const salaEco = eco;
+    if (!ctx || !listo) return;
+    f = f * 2 * (1 + (Math.random() - 0.5) * 0.004);
+    const t = ctx.currentTime + (cuando || 0), g = ctx.createGain(), o1 = ctx.createOscillator(), o2 = ctx.createOscillator(), g2 = ctx.createGain(), fl = ctx.createBiquadFilter();
+    o1.type = 'sine'; o1.frequency.value = f; o2.type = 'sine'; o2.frequency.value = f * 4.0; o2.detune.value = 6;
+    g2.gain.setValueAtTime(0.5, t); g2.gain.exponentialRampToValueAtTime(0.0001, t + Math.min(0.14, dur * 0.4));   // el «toc» de la madera dura una fracción
+    fl.type = 'lowpass'; fl.frequency.setValueAtTime(7000, t); fl.frequency.exponentialRampToValueAtTime(1800, t + dur);
+    g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(vol, t + 0.004); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o1.connect(g); o2.connect(g2); g2.connect(g); g.connect(fl); fl.connect(maestro);
+    if (ecoV && salaEco) { const e = ctx.createGain(); e.gain.value = ecoV; fl.connect(e); e.connect(salaEco); }
     o1.start(t); o2.start(t); o1.stop(t + dur + 0.05); o2.stop(t + dur + 0.05);
   }
   // un soplo de aire (para abrir/cerrar pantallas)
@@ -114,13 +129,28 @@
     gota: ok(function () { nota(NOTAS.E5, 0, 0.18, 0.06, { eco: 0.5, brillo: 0.2, ataque: 0.005 }); nota(NOTAS.B4, 0.09, 0.5, 0.05, { eco: 0.8, ataque: 0.01 }); }),   // F931 (I4): una gota de rocío que se recoge
     sana: ok(function () { nota(NOTAS.G4, 0, 0.5, 0.06, { eco: 0.7, ataque: 0.02 }); nota(NOTAS.D5, 0.1, 0.7, 0.06, { eco: 0.8, brillo: 0.15, ataque: 0.03 }); nota(NOTAS.G5, 0.22, 1.1, 0.045, { eco: 0.9, brillo: 0.25, ataque: 0.04 }); }),   // F930 (I3): sello Tierra Buena al limpiar maleza: tres notas que suben, como la luz que vuelve
     salvo: ok(function () { nota(NOTAS.D4, 0, 0.9, 0.06, { eco: 0.7, corte: 2400, ataque: 0.03 }); nota(NOTAS.A4, 0.16, 1.0, 0.055, { eco: 0.8, ataque: 0.04 }); nota(NOTAS.D5, 0.34, 1.6, 0.05, { eco: 0.9, brillo: 0.15, ataque: 0.06 }); }),   // F946: «tus avances están a salvo»: tres notas que se asientan, como algo que se guarda con cuidado
+    mensaje: ok(function () { pluck(NOTAS.G5, 0, 0.5, 0.1, 0.5); pluck(NOTAS.D6, 0.09, 0.8, 0.085, 0.7); }),   // F1204: al enviar un mensaje: dos notas de madera que suben, como una palabra que sale
+    llega: ok(function () { pluck(NOTAS.D6, 0, 0.45, 0.07, 0.6); pluck(NOTAS.B5, 0.1, 0.7, 0.06, 0.7); }),   // F1204: llega algo de tu iglesia: dos notas que bajan, suaves
+    capa: ok(function () {                       // F1204: cada día aparece una capa nueva en tu lugar: la tierra responde (nota grave) y la luz brota (tres gotas de madera que suben)
+      nota(NOTAS.G3, 0, 1.6, 0.06, { eco: 0.5, corte: 900, ataque: 0.05, sinCoro: true });
+      [[NOTAS.D5, 0.18], [NOTAS.G5, 0.3], [NOTAS.B5, 0.42], [NOTAS.D6, 0.56]].forEach((n) => pluck(n[0], n[1], 0.9, 0.07, 0.8)); soplo(0.12, 0.8, 0.025, 700, 3600);
+    }),
+    completo: ok(function () {                   // F1204: tu lugar quedó completo (día 10): la apertura en pequeño, con madera. Tierra, brote, acorde abierto y destello.
+      nota(NOTAS.G3, 0, 3.4, 0.06, { eco: 0.5, corte: 1200, ataque: 0.4, sinCoro: true });
+      [[NOTAS.G5, 0], [NOTAS.A5, 0.2], [NOTAS.D6, 0.4], [NOTAS.B5, 0.7], [NOTAS.G6, 1.0]].forEach((n) => pluck(n[0] / 2, n[1], 1.2, 0.085, 0.9));
+      nota(NOTAS.D5, 1.0, 2.4, 0.07, { eco: 0.8 }); nota(NOTAS.B5, 1.0, 2.6, 0.06, { eco: 0.9, brillo: 0.24 }); soplo(0.9, 1.2, 0.03, 800, 4200);
+    }),
+    punto(i, futuro) { ok(function () {          // F1206: al tocar un día del diario del lugar: cada día una nota más alta de la escala (los 10 días suben como un brote); si aún no llega, suena baja y suave
+      const e = [NOTAS.G4, NOTAS.A4, NOTAS.B4, NOTAS.D5, NOTAS.E5, NOTAS.G5, NOTAS.A5, NOTAS.B5, NOTAS.D6, NOTAS.G6][Math.max(0, Math.min(9, (Number(i) || 1) - 1))];
+      if (futuro) pluck(NOTAS.D4, 0, 0.5, 0.05, 0.4); else { pluck(e, 0, 0.7, 0.085, 0.7); pluck(e * 1.5, 0.07, 0.5, 0.04, 0.8); }
+    })(); },
     semilla: ok(function () { nota(NOTAS.D4, 0, 0.22, 0.09, { eco: 0.3, corte: 1100 }); nota(NOTAS.A4, 0.12, 0.35, 0.08, { eco: 0.5 }); nota(NOTAS.E5, 0.24, 0.6, 0.07, { eco: 0.7, brillo: 0.2 }); })   // algo que cae en la tierra y brota
   };
   // F903: ahorro de batería: con la app en segundo plano el audio se duerme del todo y se despierta al volver
   document.addEventListener('visibilitychange', () => { try { if (!ctx) return; if (document.hidden) { if (ctx.state === 'running') ctx.suspend(); } else if (activo() && ctx.state === 'suspended' && API._sono) ctx.resume(); } catch (e) { /* sin audio */ } });
   // F915: SIN SONIDOS DOBLES. Si otro sonido DISTINTO sonó hace menos de 0,3 s, los sonidos «suaves» (toque, abre, vuelve, suave, tab) se callan:
   // suena uno solo, el primero. Los momentos importantes (firma, logro, éxito, aviso, error, campana, juntos, semilla, calma, respira) y las teclas siempre suenan.
-  const FUERTES = ['firma', 'exito', 'logro', 'aviso', 'error', 'campana', 'juntos', 'semilla', 'sana', 'gota', 'calma', 'respira', 'suerte', 'tecla', 'iglesia', 'armar', 'recordatorio', 'palabra', 'vida', 'salvo'];
+  const FUERTES = ['firma', 'exito', 'logro', 'aviso', 'error', 'campana', 'juntos', 'semilla', 'sana', 'gota', 'calma', 'respira', 'suerte', 'tecla', 'iglesia', 'armar', 'recordatorio', 'palabra', 'vida', 'salvo', 'mensaje', 'llega', 'capa', 'completo', 'punto'];
   let ultNom = '', ultMs = 0;
   Object.keys(API).forEach((k) => {
     const f = API[k]; if (typeof f !== 'function' || k === 'activo' || k === 'poner') return;
@@ -135,6 +165,7 @@
       despertar();
       if (!listo && !ctx) return;
       const t = por(ev && ev.target); if (!t) return;
+      if (t.closest('.il-pt')) return;   // F1206: el diario del lugar trae su propia nota
       if (t.closest('.tbl')) return;   // F1123: el tablero trae sus propios sonidos (tablero.js); aquí no suena lo general
       const tab = t.closest('.tab');
       if (tab && tab.getAttribute('data-tab') === 'iglesia') return API.iglesia();   // F918
