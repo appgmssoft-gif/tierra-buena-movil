@@ -318,3 +318,54 @@ button,.card,.fila,.chip{-webkit-tap-highlight-color:transparent}
 .tbj-pe{list-style:none;display:flex;flex-direction:column;gap:4px;margin-bottom:8px}.tbj-pe label{display:flex;gap:8px;align-items:flex-start;min-height:44px}.tbj-pe input[type=date]{max-width:11em}
 .tbj-cierre{margin:8px 0;padding:10px 12px;border-radius:14px;background:rgba(80,140,90,.12)}.tbj-cierre.oculto{opacity:.6}.tbj-cifras{display:flex;gap:12px;flex-wrap:wrap;margin:6px 0}.tbj-cifras b{font-size:1.3rem}
 .tbj-cierre-f label{display:block;margin:10px 0 4px;font-weight:700}.tbj-cierre-f textarea,.tbj-cierre-f input{width:100%;box-sizing:border-box}
+
+/* F1186 · Juntos hacemos el bien: la ficha de una idea sirve para DECIDIR si se usa (qué es, qué se necesita, cómo empezar, para pensar) */
+.tbj-mov{--cat:#46874f;border-left:5px solid var(--cat)}
+.tbj-mov .tbj-mov-ic{background:color-mix(in srgb,var(--cat) 22%,transparent)}
+.cat-alimentos_ropa{--cat:#d99a32;--cat2:#7a4d12}.cat-ninez_juventud{--cat:#2f7b9c;--cat2:#18405e}.cat-mayores_compania{--cat:#9a5d8f;--cat2:#5a2f55}
+.cat-entorno{--cat:#46874f;--cat2:#1d4430}.cat-salud{--cat:#c0504a;--cat2:#6e2420}.cat-entre_iglesias{--cat:#7456a0;--cat2:#40295f}
+.tbj-ficha{background:linear-gradient(155deg,var(--cat,#46874f),var(--cat2,#1e3d2b))}
+.tbj-ficha h1{color:#fff}
+.tbj-ficha-big{position:absolute;right:-4px;top:-10px;font-size:5.6rem;line-height:1;opacity:.26;transform:rotate(-8deg);pointer-events:none}
+.tbj-ficha>*:not(.tbj-ficha-big){position:relative}
+.tbj-datos{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:12px 0 4px}
+.tbj-dato{display:flex;flex-direction:column;gap:2px;padding:12px;border-radius:18px;background:color-mix(in srgb,var(--cat,#46874f) 14%,var(--tarjeta));border:1px solid var(--linea)}
+.tbj-dato i{font-style:normal;font-size:1.3rem}.tbj-dato small{font:700 .7rem/1 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;opacity:.65}.tbj-dato b{font-size:.95rem;line-height:1.25}
+@media (prefers-reduced-motion:no-preference){
+  html:not([data-anim=off]) .tbj-dato,html:not([data-anim=off]) .tbj-ficha .tbj-sello,html:not([data-anim=off]) .tbj-lista .tbj-mov{animation:tbj-sube .4s ease-out backwards}
+  html:not([data-anim=off]) .tbj-dato:nth-child(2),html:not([data-anim=off]) .tbj-lista .tbj-mov:nth-child(3){animation-delay:.07s}
+  html:not([data-anim=off]) .tbj-dato:nth-child(3),html:not([data-anim=off]) .tbj-lista .tbj-mov:nth-child(4){animation-delay:.14s}
+  html:not([data-anim=off]) .tbj-lista .tbj-mov:nth-child(n+5){animation-delay:.2s}
+  html:not([data-anim=off]) .tbj-ficha-big{animation:tbj-flota 6s ease-in-out infinite alternate}
+}
+@keyframes tbj-sube{from{opacity:0;transform:translateY(10px)}}
+@keyframes tbj-flota{to{transform:rotate(-4deg) translateY(6px)}}
+
+/* F1187 · Mis movimientos: seguimiento de lo que ya iniciaste (cuándo, cuánto avanzó, qué sigue) */
+.tbj-mov.mio{border-left-color:var(--verde)}
+.tbj-mov.mio.cumplido{border-left-color:var(--oro)}
+.tbj-cita{display:flex;align-items:center;gap:12px;margin:10px 0 0;padding:8px 10px;border-radius:18px;background:linear-gradient(90deg,color-mix(in srgb,var(--verde) 16%,var(--tarjeta)),var(--tarjeta));box-shadow:inset 0 0 0 1px var(--linea)}
+.tbj-cita-f{flex:none;width:52px;height:56px;border-radius:15px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;background:linear-gradient(135deg,#46874f,#1d4430)}
+.tbj-cita-f b{font:700 1.4rem/1 "TB Titulo",Georgia,serif}.tbj-cita-f small{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em}
+.tbj-cita-t{display:flex;flex-direction:column;gap:2px;min-width:0}.tbj-cita-t b{font-size:.98rem;text-transform:capitalize}.tbj-cita-t small{font-size:.84rem;opacity:.75}
+.tbj-paso{margin:10px 0 0;padding:10px 12px;border-radius:14px;line-height:1.35;border-left:4px solid var(--oro);background:color-mix(in srgb,var(--oro) 14%,var(--tarjeta))}
+.tbj-mov.cumplido .tbj-paso{opacity:.7}
+@media (prefers-reduced-motion:no-preference){
+  html:not([data-anim=off]) .tbj-mov.mio{animation:tbj-sube .4s ease-out backwards}
+  html:not([data-anim=off]) .tbj-mov.mio:nth-of-type(2){animation-delay:.08s}
+  html:not([data-anim=off]) .tbj-mov.mio:nth-of-type(n+3){animation-delay:.16s}
+  html:not([data-anim=off]) .tbj-mov.cumplido .tbj-mov-ic{animation:tbj-pop .6s cubic-bezier(.3,1.5,.5,1) backwards}
+}
+@keyframes tbj-pop{from{opacity:0;transform:scale(.5) rotate(-12deg)}}
+
+/* F1188 · Armar un movimiento: cada paso con su ícono, para qué sirve, y los campos juntos en una tarjeta */
+.tbj-ruta{display:flex;justify-content:space-between;gap:6px;list-style:none;margin:12px 2px 8px;padding:0}
+.tbj-ruta li{flex:1;max-width:44px;height:36px;border-radius:12px;display:grid;place-items:center;font-size:1.05rem;background:color-mix(in srgb,var(--tinta) 8%,transparent);opacity:.6}
+.tbj-ruta li.hecho{opacity:1;color:#fff;font-weight:700;background:linear-gradient(135deg,#46874f,#1d4430)}
+.tbj-ruta li.ahora{opacity:1;background:color-mix(in srgb,var(--oro) 40%,var(--tarjeta));box-shadow:0 0 0 2px var(--oro)}
+.tbj-campos{display:flex;flex-direction:column;gap:6px;margin:10px 0}
+.tbj-campos label{margin-top:6px}.tbj-campos label:first-child{margin-top:0}
+@media (prefers-reduced-motion:no-preference){
+  html:not([data-anim=off]) .tbj-ruta li.ahora{animation:tbj-pop .5s cubic-bezier(.3,1.5,.5,1) backwards}
+  html:not([data-anim=off]) .tbj-campos{animation:tbj-sube .35s ease-out backwards}
+}

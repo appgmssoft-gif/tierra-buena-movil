@@ -850,7 +850,7 @@
         <div class="chips" role="group" aria-label="Mi disponibilidad">${DISP_OPC.map(([k, t]) => `<button type="button" class="chip${dispLeer().indexOf(k) >= 0 ? ' on' : ''}" data-disp="${k}" aria-pressed="${dispLeer().indexOf(k) >= 0}">${t}</button>`).join('')}</div>
         <p class="suave m0t" id="dispMsg" aria-live="polite"></p></div>
       <h2 class="mi-sub">Mis grupos</h2><div class="mi-bento">${bento('mb2', '🕍', 'Mis ministerios', 'Dónde sirves y quién lidera', 'ministerios')}${bento('mb1', '🤲', 'Juntos hacemos el bien', 'Ideas para servir', 'juntos')}</div>
-      <h2 class="mi-sub">Quién sirve este mes</h2><div class="card"><div id="quienSirve"><p class="suave m0">Cargando el rol de la iglesia…</p></div></div>
+      <h2 class="mi-sub">Quién sirve este mes</h2><div id="quienSirve" class="rol"><p class="suave m0">Cargando el rol de la iglesia…</p></div>
       <details class="pf-grupo mi-grupo"><summary>Cuidar a tu pastor</summary><section class="cuidar-pastor"><p class="suave m0t">Tu pastor también es una persona. Formas concretas de acompañarlo:</p><ul class="ayuda-pasos"><li>Ora por él y por su familia, por su nombre.</li><li>Agradécele con una palabra sincera, en persona o por escrito.</li><li>Respeta sus días de descanso: no todo es urgente.</li><li>Ofrece una ayuda concreta: un servicio, transporte o una compra para el aseo.</li><li>Si ves una carga que no puede con todo, dile que cuentas con él.</li></ul></section></details>`;
     volverA('Mi iglesia', () => vistaMiembro(id));
     cablearMiembro(id);
@@ -871,11 +871,14 @@
       if (!r.ok) { c.innerHTML = '<p class="suave m0">Por ahora no pudimos cargar el rol. Revisa tu conexión.</p>'; return; }
       const filas = r.data || [];
       if (!filas.length) { c.innerHTML = '<p class="suave m0">Todavía no hay servicios asignados en los próximos 30 días.</p>'; return; }
-      let dia = '', html = '';
-      filas.forEach((t) => {
-        const d = new Date(t.inicio), clave = d.toDateString();
-        if (clave !== dia) { dia = clave; html += '<p class="m0 t2 rol-dia"><b>' + esc(d.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' })) + '</b></p>'; }
-        html += '<p class="m0 suave">' + esc(d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })) + ' · ' + esc(t.titulo) + ': <b>' + esc(t.miembro) + '</b>' + (t.ministerio ? ' <small>(' + esc(t.ministerio) + ')</small>' : '') + '</p>';
+      // F1191 · el rol se lee por día (quién sirve y a qué hora) y mis servicios se reconocen de un vistazo
+      const norm = (x) => String(x || '').trim().toLowerCase(), yo = norm(id.nombre);
+      const esMio = (t) => !!yo && norm(t.miembro) === yo;
+      const dias = []; filas.forEach((t) => { const k = new Date(t.inicio).toDateString(); let g = dias.find((z) => z.k === k); if (!g) { g = { k, d: new Date(t.inicio), l: [] }; dias.push(g); } g.l.push(t); });
+      const mios = filas.filter(esMio).length;
+      let html = '<p class="suave m0 rol-resumen">' + filas.length + (filas.length === 1 ? ' servicio' : ' servicios') + ' en los próximos 30 días' + (mios ? ' · <b>' + mios + (mios === 1 ? ' es tuyo' : ' son tuyos') + '</b>' : '') + '.</p>';
+      dias.forEach((g) => {
+        html += '<div class="rol-dia"><span class="turno-f" aria-hidden="true"><b>' + g.d.getDate() + '</b><small>' + esc(g.d.toLocaleDateString('es-CL', { month: 'short' })) + '</small></span><div class="rol-filas"><p class="m0 rol-dia-t"><b>' + esc(g.d.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' })) + '</b></p>' + g.l.map((t) => '<div class="rol-fila' + (esMio(t) ? ' mio' : '') + '"><span class="rol-hora">' + esc(t.inicio ? new Date(t.inicio).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }) : '') + '</span><span class="rol-que"><b>' + esc(t.titulo) + '</b><small>' + esc(t.miembro) + (t.ministerio ? ' · ' + esc(t.ministerio) : '') + '</small></span>' + (esMio(t) ? '<span class="rol-tu">Tú</span>' : '') + '</div>').join('') + '</div></div>';
       });
       c.innerHTML = html;
     })();
@@ -895,18 +898,21 @@
   }
 
   function vistaMiembroCuenta(id) {
-    $('#pantalla').innerHTML = `${cabecera('Mi cuenta y ayuda', 'Mi iglesia')}
-      <div class="lista">${filaIr('🔒', 'Mi privacidad', 'Qué ve tu pastor, descargar o borrar tus datos', 'privacidad')}${filaIr('❓', 'Preguntas frecuentes', 'Respuestas cortas sobre cómo usar la app', 'ayuda')}</div>
+    $('#pantalla').innerHTML = `${cabecera('Mi cuenta y ayuda', 'Mi iglesia')}${heroInt('c3', '🗝️', 'Tu cuenta', leer(K_CUENTA) ? 'Tu iglesia te sigue' : 'Guarda tu iglesia', leer(K_CUENTA) ? 'Tienes sesión iniciada: en otro teléfono entras solo con tu correo y contraseña.' : 'Con un correo, tu iglesia te sigue a cualquier teléfono, sin copiar llaves.')}
+      <h2 class="mi-sub">Mis datos y mis dudas</h2><div class="mi-bento">${bento('mb4', '🔒', 'Mi privacidad', 'Qué ve tu pastor, descargar o borrar tus datos', 'privacidad')}${bento('mb5', '❓', 'Preguntas frecuentes', 'Respuestas cortas sobre cómo usar la app', 'ayuda')}</div>
       <div id="tbEjem" class="tb-ejem-caja"></div>
+      <h2 class="mi-sub">Mi sesión</h2>
       ${leer(K_CUENTA)
         ? `<div class="card"><div class="t"><span aria-hidden="true">${svg('correo', 22)}</span>Sesión iniciada</div><p class="suave m0t">${esc(leer(K_CUENTA).correo)}. Tu iglesia queda guardada en tu cuenta: en otro teléfono entras solo con tu correo y contraseña.</p><button type="button" class="btn sec" id="cuentaSalir">Cerrar sesión</button></div>`
         : `<div class="card"><div class="t"><span aria-hidden="true">${svg('correo', 22)}</span>Guardar mi iglesia con mi correo</div><p class="suave m0t">Crea una cuenta (o entra con la que ya tienes) y tu iglesia te sigue a cualquier teléfono, sin copiar llaves.</p><button type="button" class="btn sec" id="cuentaIr">Entrar o crear cuenta</button></div>`}
+      <h2 class="mi-sub">Cambiar de teléfono</h2>
       <div class="card"><div class="t"><span aria-hidden="true">🔑</span>Pasar mi iglesia a otro dispositivo</div>
         <p class="suave m0t">Copia tu llave y pégala en tu otro teléfono o tablet, en Perfil → «Recuperar mi iglesia». Guárdala como una contraseña: quien la tenga entra como tú.</p>
         <button type="button" class="btn sec" id="verLlave">Mostrar mi llave</button>
         <div id="llaveBox" hidden><textarea id="llaveTxt" rows="3" readonly spellcheck="false"></textarea><button type="button" class="btn" id="copiarLlave">📋 Copiar mi llave</button><p id="llaveMsg" class="ok" role="status"></p></div></div>
       ${bloqueInstalar()}
-      <button id="salir" class="btn sec sep28">Salir de mi iglesia</button>`;
+      <h2 class="mi-sub">Salir de mi iglesia</h2><p class="suave m0">Si ya no vas a participar aquí, se borra tu nombre en la iglesia y en este teléfono.</p>
+      <button id="salir" class="btn sec">Salir de mi iglesia</button>`;
     volverA('Mi iglesia', () => vistaMiembro(id));
     cablearMiembro(id);
     pintarInstalar($('[data-instalar-box]'));
@@ -2360,6 +2366,7 @@
     otros: ['Llamar a alguien que está solo', 'Escuchar sin interrumpir', 'Llevarle comida a un vecino', 'Ofrecer mi ayuda en la iglesia'],
     sociedad: ['Recoger basura de mi calle', 'Visitar a un adulto mayor', 'Donar ropa que no uso', 'Cuidar un espacio de todos']
   };
+  const HAC_ICO = { yo: '🌿', otros: '🤝', sociedad: '🏘️', mirar: '👀' };
   const hacLista = () => { const l = leer(K_HACER); return Array.isArray(l) ? l : []; };
   const hacGuardar = (l) => guardar(K_HACER, l.slice(-300));
   const nHechas = () => hacLista().filter((x) => x.est === 'hecho' || x.est === 'intente').length;
@@ -2370,15 +2377,14 @@
     const delMes = todas.filter((x) => x.est !== 'pend' && String(x.fin || '').slice(0, 7) === mes);
     let tipo = (pre && pre.tipo) || 'otros';
     const volverFn = atras || vistaVida;
-    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ ${atras ? 'Volver' : 'Vida'}</button>${areaHero('hoy-lo-hago')}<section class="hac-hero"><span class="hac-h-a" aria-hidden="true"></span><span class="hac-h-b" aria-hidden="true"></span><p class="hac-sello">Un paso a la vez</p><h1>Hoy lo hago</h1>
-        <p class="hac-lema">Leer es el principio. Aquí damos el paso: algo pequeño, hoy, que mejora tu vida y la de los demás. Intentarlo ya cuenta.</p></section>
+    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ ${atras ? 'Volver' : 'Vida'}</button>${areaHero('hoy-lo-hago')}${heroInt('c4', '✨', 'Un paso a la vez', 'Hoy lo hago', 'Leer es el principio. Aquí damos el paso: algo pequeño, hoy, que mejora tu vida y la de los demás. Intentarlo ya cuenta.')}
       <div class="stats hac-stats"><div class="stat"><span class="stat-ic">${svg('check', 22)}</span><b>${delMes.length}</b><small>pasos este mes</small></div><div class="stat"><span class="stat-ic">${svg('trofeo', 22)}</span><b>${nHechas()}</b><small>en total</small></div></div>
-      <div class="card hac-nueva"><h3 class="m0">${pre && pre.ref ? 'Lo que leí en ' + esc(pre.ref) + ': ¿qué haré?' : '¿Qué vas a hacer hoy?'}</h3>
+      <h2 class="mi-sub">Mi próximo paso</h2><div class="card hac-nueva"><h3 class="m0">${pre && pre.ref ? 'Lo que leí en ' + esc(pre.ref) + ': ¿qué haré?' : '¿Qué vas a hacer hoy?'}</h3>
         <div class="chips hac-tipos" role="group" aria-label="Tipo de acción">${HAC_TIPOS.map((t) => `<button type="button" class="chip${t[0] === tipo ? ' on' : ''}" data-tipo="${t[0]}" aria-pressed="${t[0] === tipo}">${esc(t[1])}</button>`).join('')}</div>
         <div class="hac-ideas" id="hacIdeas"></div>
         <label for="hacTxt" class="sr">Mi acción</label><input id="hacTxt" type="text" maxlength="140" placeholder="Algo pequeño y concreto" autocomplete="off" value="${esc((pre && pre.texto) || '')}">
         <button type="button" class="btn" id="hacOk">Me comprometo</button></div>
-      <h2 class="sep">Mis compromisos</h2><div id="hacPend">${pend.length ? pend.map((x) => `<div class="card item hac-pend"><p class="m0">${esc(x.t)}</p>${x.nec ? `<small class="suave">Necesita: ${esc(x.nec)}</small>` : ''}<div class="hac-fila"><button type="button" class="btn chico" data-hec="${esc(x.id)}">Lo hice</button><button type="button" class="btn sec chico" data-int="${esc(x.id)}">Lo intenté</button><button type="button" class="enlace" data-quitar="${esc(x.id)}">Quitar</button></div></div>`).join('') : '<p class="suave">Aún no tienes ninguno. Elige uno arriba y empieza.</p>'}</div>
+      <h2 class="mi-sub">Mis compromisos${pend.length ? ' · ' + pend.length : ''}</h2><div id="hacPend">${pend.length ? pend.map((x) => `<div class="card item hac-pend"><span class="hac-ic ${esc(x.tipo || 'otros')}" aria-hidden="true">${HAC_ICO[x.tipo] || '🌱'}</span><div class="hac-cuerpo"><p class="m0">${esc(x.t)}</p>${x.nec ? `<small class="suave">Necesita: ${esc(x.nec)}</small>` : ''}<div class="hac-fila"><button type="button" class="btn chico" data-hec="${esc(x.id)}">Lo hice</button><button type="button" class="btn sec chico" data-int="${esc(x.id)}">Lo intenté</button><button type="button" class="enlace" data-quitar="${esc(x.id)}">Quitar</button></div></div></div>`).join('') : '<p class="mo-vacio"><span class="hac-brote" aria-hidden="true">🌱</span><br>Aún no tienes ninguno. Elige uno arriba y empieza.</p>'}</div>
       <div class="card hac-mirar"><h3 class="m0">${svg('foco', 20)} Mirar para ayudar</h3>
         <p class="suave m0t">Ver lo que falta a nuestro alrededor sirve para saber cómo ayudar, no para hablar mal de nadie. Escribe la necesidad, <b>sin nombres</b>.</p>
         <button type="button" class="btn sec" id="hacMirar">Quiero ayudar con algo que noté</button><div id="hacMirarForm" hidden>
@@ -2386,7 +2392,7 @@
           <label for="mNec">¿Qué necesita?</label><input id="mNec" type="text" maxlength="120" autocomplete="off" placeholder="Ej. Compañía y alguien que le haga las compras">
           <label for="mYo">¿Qué puedo hacer yo?</label><input id="mYo" type="text" maxlength="140" autocomplete="off" placeholder="Ej. Visitarlo el sábado y llevarle pan">
           <button type="button" class="btn" id="mOk">Comprometerme a ayudar</button></div></div>
-      ${fin.length ? `<h2 class="sep">Lo que ya hice</h2><div id="hacFin">${fin.map((x) => `<div class="card item hac-fin"><span class="hac-sello ${x.est}">${x.est === 'hecho' ? 'Lo hice' : 'Lo intenté'}</span><p class="m0t">${esc(x.t)}</p><div class="hac-fila"><small class="suave">${esc(fecha(x.fin))}</small><button type="button" class="btn sec chico" data-comp="${esc(x.id)}">${svg('compartir', 18)} Compartir</button></div></div>`).join('')}</div>` : ''}`;
+      ${fin.length ? `<h2 class="mi-sub">Lo que ya hice</h2><div id="hacFin">${fin.map((x) => `<div class="card item hac-fin ${x.est}"><span class="hac-sello ${x.est}">${x.est === 'hecho' ? 'Lo hice' : 'Lo intenté'}</span><p class="m0t">${esc(x.t)}</p><div class="hac-fila"><small class="suave">${esc(fecha(x.fin))}</small><button type="button" class="btn sec chico" data-comp="${esc(x.id)}">${svg('compartir', 18)} Compartir</button></div></div>`).join('')}</div>` : ''}`;
     volverA(atras ? 'Volver' : 'Vida', volverFn);
     const pintaIdeas = () => { const c = $('#hacIdeas'); if (!c) return; c.innerHTML = (HAC_IDEAS[tipo] || []).map((t) => `<button type="button" class="chip suave-chip" data-idea="${esc(t)}">${esc(t)}</button>`).join(''); c.querySelectorAll('[data-idea]').forEach((b) => b.addEventListener('click', () => { $('#hacTxt').value = b.dataset.idea; vibra(); })); };
     pintaIdeas();
@@ -2972,13 +2978,17 @@
     return r.ok && Array.isArray(r.data) ? { ok: true, lista: r.data } : { ok: false, falta: !!r.falta };
   }
   async function vistaMinisterios(id) {
-    $('#pantalla').innerHTML = `${cabecera('Mis ministerios', 'Mi iglesia')}<p class="suave" id="mimsg">Cargando…</p><div id="milista" class="grid"></div>`;
+    $('#pantalla').innerHTML = `${cabecera('Mis ministerios', 'Mi iglesia')}<div id="mihero"></div><p class="suave" id="mimsg">Cargando…</p><div id="milista"></div>`;
     volverA('Mi iglesia', vistaIglesia);
     const r = await misMinisterios(id), m = $('#mimsg'); if (!m) return;
     if (!r.ok) { m.textContent = r.falta ? 'Los ministerios se están preparando en el servidor. Vuelve a intentarlo pronto.' : MOTIVOS['sin-internet']; return; }
     if (!r.lista.length) { m.innerHTML = 'Todavía no estás en ningún ministerio. Cuéntale a tu pastor en qué te gustaría servir: él te suma al grupo y aparecerá aquí.'; return; }
     m.textContent = 'Los grupos donde sirves con tu iglesia.';
-    $('#milista').innerHTML = r.lista.map((x) => `<div class="card min-card" data-mc="${esc(x.color)}"><div class="t"><span class="min-ico" aria-hidden="true">${x.icono ? esc(x.icono) : svg('persona', 26)}</span>${esc(x.nombre)}${x.es_lider ? '<span class="etiqueta">Líder</span>' : ''}</div><p class="suave m0t">${x.lideres ? 'Lideran: ' + esc(x.lideres) : 'Tu pastor aún no designó líder.'}</p></div>`).join('');
+    const minCard = (x) => `<div class="card min-card" data-mc="${esc(x.color)}"><div class="t"><span class="min-ico" aria-hidden="true">${x.icono ? esc(x.icono) : svg('persona', 26)}</span>${esc(x.nombre)}${x.es_lider ? '<span class="etiqueta">Líder</span>' : ''}</div><p class="suave m0t">${x.lideres ? 'Lideran: ' + esc(x.lideres) : 'Tu pastor aún no designó líder.'}</p></div>`;
+    const lidero = r.lista.filter((x) => x.es_lider), sirvo = r.lista.filter((x) => !x.es_lider), n = r.lista.length;
+    $('#mihero').innerHTML = heroInt('c2', '🕍', n + (n === 1 ? ' grupo' : ' grupos'), 'Dónde sirves', lidero.length ? 'Lideras ' + lidero.length + (lidero.length === 1 ? ' de ellos.' : ' de ellos. Tu equipo cuenta contigo.') : 'Cada grupo tiene a alguien que lo lidera: habla con esa persona para saber qué toca.');
+    $('#milista').innerHTML = (lidero.length && sirvo.length ? [['Los que lidero', lidero], ['Donde sirvo', sirvo]] : [[lidero.length ? 'Los que lidero' : 'Mis grupos', r.lista]]).map((g) => '<h2 class="mi-sub">' + g[0] + '</h2><div class="grid">' + g[1].map(minCard).join('') + '</div>').join('') + '<button type="button" class="btn sec" id="miTurnos">Ver mis turnos</button>';
+    const bt = $('#miTurnos'); if (bt) bt.onclick = () => vistaMiembroServir(id);
     pintaColores();
   }
 
@@ -3008,23 +3018,23 @@
       <div class="card meta-hoy"><div class="anillo" role="img" aria-label="Meta de hoy: ${Math.min(leidosHoy(), p.meta)} de ${p.meta}"><svg viewBox="0 0 36 36" width="64" height="64" aria-hidden="true"><circle cx="18" cy="18" r="15.9" fill="none" stroke="currentColor" stroke-opacity=".15" stroke-width="3.4" pathLength="100"/><circle class="anillo-v" cx="18" cy="18" r="15.9" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" pathLength="100" stroke-dasharray="${Math.round(Math.min(1, leidosHoy() / p.meta) * 100)} 100" transform="rotate(-90 18 18)"/></svg><b>${Math.min(leidosHoy(), p.meta)}/${p.meta}</b></div>
         <div><div class="t">Meta de hoy</div><p class="suave m0t">${leidosHoy() >= p.meta ? '¡Meta cumplida! Gracias por dedicarle tiempo a la Palabra.' : 'Lee ' + p.meta + (p.meta === 1 ? ' capítulo' : ' capítulos') + ' hoy.'}</p>
         <div class="chips chips-meta" role="group" aria-label="Capítulos por día">${[1, 2, 3, 5].map((x) => `<button type="button" class="chip${p.meta === x ? ' on' : ''}" data-meta="${x}" aria-pressed="${p.meta === x}">${x}</button>`).join('')}</div></div></div>
-      <h2 class="sep">Mi camino</h2>
-      <div class="lista">${fila('t2', svg('trofeo', 26), 'Mis logros', 'Lo que has desbloqueado', 'logros')}${fila('t2', svg('brote', 26), 'Pasos de acción', nHechas() ? nHechas() + ' hechos: por ti, por otros y por tu comunidad' : 'Empieza hoy: un paso pequeño cuenta', 'hacer')}${fila('t2', svg('libro', 26), 'Cambiar mi plan', esc(planResumen()), 'plan')}</div>
+      <h2 class="mi-sub">Mi camino</h2>
+      <div class="mi-bento">${bento('mb1', svg('trofeo', 34), 'Mis logros', 'Lo que has desbloqueado', 'logros', 'pf')}${bento('mb2', svg('brote', 34), 'Pasos de acción', nHechas() ? nHechas() + (nHechas() === 1 ? ' hecho' : ' hechos') : 'Un paso pequeño cuenta', 'hacer', 'pf')}${bento('mb-ancho mb3', svg('libro', 34), 'Cambiar mi plan', esc(planResumen()), 'plan', 'pf')}</div>
       ${pastorLeer() ? `${bandaTB('pastor')}<section class="area area-pastor" aria-label="Panel del pastor"><div class="area-cab"><span class="area-tag">Panel del pastor</span><h2 class="area-t">Cuidar a tu iglesia</h2><p class="suave m0">Todo lo que necesitas para guiar, orar y servir con tu comunidad, en un solo lugar.</p></div><div class="card pas-descanso"><b>Tu descanso también cuenta</b><p class="suave m0t">Guiar a una iglesia exige mucho. Aparta tiempo para ti y para tu familia, y busca un par con quien hablar.</p></div><div class="grid">${[['🧱', 'Muro', 'Peticiones que compartiste y cuántas personas oran.', 'muro'], ['📅', 'Agenda', 'Actividades y reuniones de tu iglesia.', 'agenda'], ['📣', 'Avisos', 'Mensajes para todos o para un grupo.', 'avisos'], ['🕍', 'Ministerios', 'Grupos, personas y líderes.', 'ministerios'], ['🤲', 'Juntos hacemos el bien', 'Ideas y movimientos para servir con tu iglesia.', 'juntos'], ['🙏', 'Oraciones', 'Peticiones recibidas.', 'oraciones']].map((x) => activa(x[0], x[1], x[2], x[3]).replace('data-ir=', 'data-pas=')).join('')}</div></section>` : ''}
-      <h2 class="sep">${id ? 'Compartir' : 'Empieza'}</h2>
+      <h2 class="mi-sub">${id ? 'Compartir' : 'Empieza'}</h2>
       <div class="lista">${id ? '' : fila('t1', '⛪', 'Unirme a mi iglesia', 'Con el código de tu pastor', 'unir') + fila('t2', '🔑', 'Recuperar mi iglesia', 'Con la llave de otro teléfono', 'llave')}${fila('t2', svg('compartir', 26), 'Invita a un amigo', 'Comparte la app con un mensaje listo', 'invitar')}</div>   <!-- F1174: dos secciones de una fila se unieron en una -->
-      <h2 class="sep">Mi perfil</h2>
+      <h2 class="mi-sub">Mi perfil</h2>
       <details class="perfil-det"><summary><span aria-hidden="true">${svg('pluma', 18)}</span> Mi nombre, lema y apariencia <i class="flecha" aria-hidden="true">›</i></summary>
       <div class="card"><label for="pfn">Cómo quieres que te llame</label><input id="pfn" type="text" maxlength="30" value="${esc(p.n)}" placeholder="${esc((id && id.nombre) || 'Tu nombre')}" autocomplete="given-name">
         <label for="pfb">Mi versículo o lema favorito</label><textarea id="pfb" rows="2" maxlength="140" placeholder="Ej. Todo lo puedo en Cristo que me fortalece">${esc(p.b)}</textarea>
         <button type="button" class="btn" id="pfok">Guardar perfil</button></div>
-      <h2 class="sep">Mi avatar y apariencia</h2>
+      <h2 class="mi-sub">Mi avatar y apariencia</h2>
       <div class="card"><div class="av-sel" role="group" aria-label="Color del avatar">${[0, 1, 2, 3, 4, 5, 6, 7].map((i) => `<button type="button" class="avatar g${i}${p.g === i ? ' sel' : ''}" data-g="${i}" aria-label="Color ${i + 1}" aria-pressed="${p.g === i}"></button>`).join('')}</div>
         <div class="av-sel emo" role="group" aria-label="Símbolo">${['']. concat(AVATARES).map((e) => `<button type="button" class="av-emo${p.e === e ? ' sel' : ''}" data-e="${e}" aria-label="${e ? 'Símbolo ' + e.replace('svg:', '') : 'Mis iniciales'}" aria-pressed="${p.e === e}">${e ? (/^svg:/.test(e) ? svg(e.slice(4), 22) : e) : 'Aa'}</button>`).join('')}</div></div></details>
       <div class="temas-c" role="group" aria-label="Tema de color">${TEMAS.map((x) => `<button type="button" class="tema-c${p.t === x[0] ? ' sel' : ''}" data-tc="${x[0]}" data-mc="${x[3]}" aria-label="${esc(x[1])}" aria-pressed="${p.t === x[0]}"></button>`).join('')}<button type="button" class="tema-c mas" data-pf="temas" aria-label="Más opciones de apariencia">⋯</button></div>
-      <h2 class="sep">${svg('ajustes', 26)} Efectos y sonido</h2>
+      <h2 class="mi-sub">${svg('ajustes', 26)} Efectos y sonido</h2>
       <div id="perfSonido"></div>
-      <h2 class="sep grupo-fin">Cuenta y ayuda</h2>
+      <h2 class="mi-sub grupo-fin">Cuenta y ayuda</h2>
       <div class="lista">${cu ? fila('t2', svg('correo', 26), 'Sesión iniciada', esc(cu.correo), 'nada') + fila('t4', '↩️', 'Cerrar sesión', '', 'salir') : fila('t2', '✉️', 'Entrar o crear cuenta', 'Tu iglesia te sigue a cualquier teléfono', 'cuenta')}${fila('t2', '🔒', 'Mi privacidad y mis datos', 'Qué ve cada persona, descargar o borrar', 'priv')}${fila('t2', svg('ayuda', 26), 'Preguntas frecuentes', 'Respuestas cortas sobre cómo usar la app', 'ayu')}</div>
       ${cu ? '<p class="suave sinc-p" id="sincEstado"></p>' : ''}
       ${apoyarFila()}
@@ -3200,11 +3210,12 @@
   // ----- Temas -----
   function vistaTemas() {
     const t = perfilLeer().t;
-    $('#pantalla').innerHTML = `${cabecera('Temas', 'Perfil')}<p class="suave">Elige cómo se ve tu app. Se guarda en tu cuenta.</p>
-      <h2 class="sep">Colores</h2><div class="temas">${TEMAS.map((x) => `<button type="button" class="tema${t === x[0] ? ' sel' : ''}" data-t="${x[0]}" aria-pressed="${t === x[0]}"><span class="tema-bola" data-mc="${x[3]}"></span><b>${esc(x[1])}</b><small>${esc(x[2])}</small></button>`).join('')}</div>
-      <h2 class="sep">Letra para leer</h2><div class="chips" role="group" aria-label="Tipo de letra"><button type="button" class="chip${perfilLeer().f === 'serif' ? ' on' : ''}" data-fu="serif" aria-pressed="${perfilLeer().f === 'serif'}">Con serifa (libro)</button><button type="button" class="chip${perfilLeer().f === 'sans' ? ' on' : ''}" data-fu="sans" aria-pressed="${perfilLeer().f === 'sans'}">Clara (sin serifa)</button></div>
-      <h2 class="sep">Contraste</h2><div class="chips" role="group" aria-label="Contraste"><button type="button" class="chip${perfilLeer().ca ? ' on' : ''}" data-ca="on" aria-pressed="${perfilLeer().ca}">Alto (más fácil de leer)</button><button type="button" class="chip${perfilLeer().ca ? '' : ' on'}" data-ca="off" aria-pressed="${!perfilLeer().ca}">Normal</button></div>
-      <h2 class="sep">Animaciones</h2><div class="chips" role="group" aria-label="Animaciones"><button type="button" class="chip${perfilLeer().m === 'on' ? ' on' : ''}" data-an="on" aria-pressed="${perfilLeer().m === 'on'}">Activadas</button><button type="button" class="chip${perfilLeer().m === 'off' ? ' on' : ''}" data-an="off" aria-pressed="${perfilLeer().m === 'off'}">Más tranquilo</button></div>`;
+    $('#pantalla').innerHTML = `${cabecera('Temas', 'Perfil')}${heroInt('c1', '🎨', 'Tu app, a tu medida', 'Cómo se ve tu app', 'Elige colores, letra y contraste para que leer sea cómodo. Se guarda en tu cuenta.')}
+      <div class="card tema-prev"><small class="tema-prev-et">Así se ve ahora</small><p class="lectura tema-prev-t">Lámpara es a mis pies tu palabra, y lumbrera a mi camino.</p><p class="suave m0">Salmos 119:105</p><span class="tema-prev-bt" aria-hidden="true">Un botón de ejemplo</span></div>
+      <h2 class="mi-sub">Colores</h2><div class="temas">${TEMAS.map((x) => `<button type="button" class="tema${t === x[0] ? ' sel' : ''}" data-t="${x[0]}" aria-pressed="${t === x[0]}"><span class="tema-bola" data-mc="${x[3]}"></span><b>${esc(x[1])}</b><small>${esc(x[2])}</small></button>`).join('')}</div>
+      <h2 class="mi-sub">Letra para leer</h2><p class="suave m0">Cambia la letra de la Biblia y de las lecturas.</p><div class="chips" role="group" aria-label="Tipo de letra"><button type="button" class="chip${perfilLeer().f === 'serif' ? ' on' : ''}" data-fu="serif" aria-pressed="${perfilLeer().f === 'serif'}">Con serifa (libro)</button><button type="button" class="chip${perfilLeer().f === 'sans' ? ' on' : ''}" data-fu="sans" aria-pressed="${perfilLeer().f === 'sans'}">Clara (sin serifa)</button></div>
+      <h2 class="mi-sub">Contraste</h2><p class="suave m0">Alto sirve si te cuesta leer con mucha luz o con letra pequeña.</p><div class="chips" role="group" aria-label="Contraste"><button type="button" class="chip${perfilLeer().ca ? ' on' : ''}" data-ca="on" aria-pressed="${perfilLeer().ca}">Alto (más fácil de leer)</button><button type="button" class="chip${perfilLeer().ca ? '' : ' on'}" data-ca="off" aria-pressed="${!perfilLeer().ca}">Normal</button></div>
+      <h2 class="mi-sub">Animaciones</h2><p class="suave m0">«Más tranquilo» deja la app quieta y cuida la batería.</p><div class="chips" role="group" aria-label="Animaciones"><button type="button" class="chip${perfilLeer().m === 'on' ? ' on' : ''}" data-an="on" aria-pressed="${perfilLeer().m === 'on'}">Activadas</button><button type="button" class="chip${perfilLeer().m === 'off' ? ' on' : ''}" data-an="off" aria-pressed="${perfilLeer().m === 'off'}">Más tranquilo</button></div>`;
     volverA('Perfil', vistaPerfil); pintaColores();
     document.querySelectorAll('[data-fu]').forEach((b) => b.addEventListener('click', () => { perfilGuardar({ f: b.dataset.fu }); ajusteAplicar(); vibra(); vistaTemas(); }));
     document.querySelectorAll('[data-ca]').forEach((b) => b.addEventListener('click', () => { perfilGuardar({ ca: b.dataset.ca === 'on' }); ajusteAplicar(); vibra(); vistaTemas(); }));
@@ -3231,13 +3242,16 @@
     <label for="avx">Mensaje</label><textarea id="avx" rows="3" maxlength="600"></textarea>
     <label for="ava">Para quién</label><select id="ava">${alcanceOpc(mins, todaIglesia)}</select>
     <p id="averr" class="error" role="alert" hidden></p><button type="button" class="btn" id="avok">Publicar aviso</button></div>`;
-  const eventoHTML = (e, borrable) => `<div class="card item evento"><div class="ev-fecha" aria-hidden="true"><b>${esc(new Date(e.inicio).toLocaleDateString('es-CL', { day: 'numeric' }))}</b><small>${esc(new Date(e.inicio).toLocaleDateString('es-CL', { month: 'short' }))}</small></div><div class="ev-txt"><b>${esc(e.titulo)}</b><p class="suave m0">${esc(dtFmt(e.inicio))}${e.lugar ? ' · ' + svg('lugar', 14) + ' ' + esc(e.lugar) : ''}${e.ministerio ? ' · ' + esc(e.ministerio) : ''}</p>${e.detalle ? `<p class="m0t">${esc(e.detalle)}</p>` : ''}${borrable ? `<button type="button" class="enlace" data-bev="${esc(e.id)}">Quitar</button>` : ''}</div></div>`;
-  const avisoHTML = (a, borrable) => `<div class="card item aviso"><div class="t"><span aria-hidden="true">${svg('altavoz', 20)}</span>${esc(a.titulo)}${a.ministerio ? `<span class="etiqueta">${esc(a.ministerio)}</span>` : ''}</div><p class="m0t">${esc(a.texto)}</p><p class="suave m0t">${esc(fecha(a.creado_en))}${borrable ? ` · <button type="button" class="enlace" data-bav="${esc(a.id)}">Quitar</button>` : ''}</p></div>`;
+  const diasHasta = (iso) => { try { const a = new Date(iso), h = new Date(); a.setHours(12, 0, 0, 0); h.setHours(12, 0, 0, 0); const d = Math.round((a - h) / 86400000); return isNaN(d) ? null : d; } catch (e) { return null; } };
+  const cercania = (d) => (d == null ? '' : d === 0 ? 'Hoy' : d === 1 ? 'Mañana' : d > 1 && d <= 7 ? 'En ' + d + ' días' : '');
+  const eventoHTML = (e, borrable) => `<div class="card item evento${diasHasta(e.inicio) === 0 ? ' ev-hoy' : ''}${(diasHasta(e.inicio) || 0) < 0 ? ' ev-paso' : ''}"><div class="ev-fecha" aria-hidden="true"><b>${esc(new Date(e.inicio).toLocaleDateString('es-CL', { day: 'numeric' }))}</b><small>${esc(new Date(e.inicio).toLocaleDateString('es-CL', { month: 'short' }))}</small></div><div class="ev-txt">${cercania(diasHasta(e.inicio)) ? `<span class="ev-pronto">${cercania(diasHasta(e.inicio))}</span>` : ''}<b>${esc(e.titulo)}</b><p class="suave m0">${esc(dtFmt(e.inicio))}${e.lugar ? ' · ' + svg('lugar', 14) + ' ' + esc(e.lugar) : ''}${e.ministerio ? ' · ' + esc(e.ministerio) : ''}</p>${e.detalle ? `<p class="m0t">${esc(e.detalle)}</p>` : ''}${borrable ? `<button type="button" class="enlace" data-bev="${esc(e.id)}">Quitar</button>` : ''}</div></div>`;
+  const avisoNuevo = (a) => { const d = diasHasta(a.creado_en); return d != null && d <= 0 && d >= -3; };
+  const avisoHTML = (a, borrable) => `<div class="card item aviso${avisoNuevo(a) ? ' av-nuevo' : ''}"><div class="t"><span aria-hidden="true">${svg('altavoz', 20)}</span>${esc(a.titulo)}${avisoNuevo(a) ? '<span class="av-pill">Nuevo</span>' : ''}${a.ministerio ? `<span class="etiqueta">${esc(a.ministerio)}</span>` : ''}</div><p class="m0t">${esc(a.texto)}</p><p class="suave m0t">${esc(fecha(a.creado_en))}${borrable ? ` · <button type="button" class="enlace" data-bav="${esc(a.id)}">Quitar</button>` : ''}</p></div>`;
 
   // Pantalla común (miembro/líder y pastor). modo: { pas, id, volverTxt, volverFn }
   async function vistaAgenda(modo) {
     const { pas, id } = modo;
-    $('#pantalla').innerHTML = `${cabecera('Agenda', modo.volverTxt)}<p class="suave" id="agmsg">Cargando…</p><div id="agmov"></div><div id="aglista"></div><div id="agform"></div>`;
+    $('#pantalla').innerHTML = `${cabecera('Agenda', modo.volverTxt)}<div id="aghero"></div><p class="suave" id="agmsg">Cargando…</p><div id="agmov"></div><div id="aglista"></div><div id="agform"></div>`;
     volverA(modo.volverTxt, modo.volverFn);
     try { const mv = window.TBJuntos && window.TBJuntos.listaHTML(); if (mv) $('#agmov').innerHTML = '<h2 class="sep">Movimientos de tu iglesia</h2><div class="lista">' + mv + '</div>'; } catch (e) { /* sin movimientos */ }
     const [rE, rM] = await Promise.all([
@@ -3250,7 +3264,10 @@
     const lista = rE.data || [];
     try { guardar('tb_movil_agenda_cache', lista.map((e) => ({ id: e.id, t: e.titulo, fecha: e.inicio, lugar: e.lugar || '' }))); } catch (e) { /* sin copia */ }   // F921: alimenta calendario y avisos
     m.textContent = lista.length ? 'Lo que viene en tu iglesia.' : 'Todavía no hay actividades.';
-    $('#aglista').innerHTML = lista.map((e) => eventoHTML(e, !!pas || e.puede_borrar)).join('');
+    const prox = lista.find((e) => (diasHasta(e.inicio) || 0) >= 0);
+    if (prox) $('#aghero').innerHTML = heroInt('c1', '🗓️', 'Lo próximo', esc(prox.titulo), esc((cercania(diasHasta(prox.inicio)) || dtFmt(prox.inicio)) + (prox.lugar ? ' · ' + prox.lugar : '')));
+    const gAg = [['Esta semana', (e) => { const d = diasHasta(e.inicio); return d != null && d >= 0 && d <= 7; }], ['Más adelante', (e) => (diasHasta(e.inicio) || 0) > 7], ['Ya pasaron', (e) => (diasHasta(e.inicio) || 0) < 0]];
+    $('#aglista').innerHTML = gAg.map((g) => { const l = lista.filter(g[1]); return l.length ? '<h2 class="mi-sub">' + g[0] + '</h2>' + l.map((e) => eventoHTML(e, !!pas || e.puede_borrar)).join('') : ''; }).join('');
     if (pas || mins.length) $('#agform').innerHTML = formAgenda(mins, !!pas);
     document.querySelectorAll('[data-bev]').forEach((b) => b.addEventListener('click', async () => {
       if (!confirm('¿Quitar esta actividad de la agenda?')) return;
@@ -3271,7 +3288,7 @@
   }
   async function vistaAvisos(modo) {
     const { pas, id } = modo;
-    $('#pantalla').innerHTML = `${cabecera('Avisos', modo.volverTxt)}<p class="suave" id="avmsg">Cargando…</p><div id="avlista"></div><div id="avform"></div>`;
+    $('#pantalla').innerHTML = `${cabecera('Avisos', modo.volverTxt)}<div id="avhero"></div><p class="suave" id="avmsg">Cargando…</p><div id="avlista"></div><div id="avform"></div>`;
     volverA(modo.volverTxt, modo.volverFn);
     const [rA, rM] = await Promise.all([
       pas ? rpcRaw('aviso_pastor_listar', { p_codigo: pas.codigo, p_secreto: pas.secreto }) : rpcRaw('aviso_miembro_listar', { p_codigo: id.codigo, p_clave: id.clave }),
@@ -3281,6 +3298,8 @@
     if (!rA.ok) { m.textContent = rA.falta ? 'Los avisos aún no están listos. Estamos preparándolos; vuelve a intentarlo más tarde.' : MOTIVOS['sin-internet']; return; }
     const mins = (rM.ok && Array.isArray(rM.data) ? rM.data : []).filter((x) => pas || x.es_lider), lista = rA.data || [];
     m.textContent = lista.length ? 'Mensajes de tu pastor y de los líderes.' : 'Todavía no hay avisos.';
+    const nNuevos = lista.filter(avisoNuevo).length;
+    if (lista.length) $('#avhero').innerHTML = heroInt('c5', '📣', nNuevos ? nNuevos + (nNuevos === 1 ? ' aviso nuevo' : ' avisos nuevos') : 'Al día', 'Avisos de tu iglesia', 'Lo que tu pastor y los líderes quieren que sepas.');
     $('#avlista').innerHTML = lista.map((a) => avisoHTML(a, !!pas || a.puede_borrar)).join('');
     if (pas || mins.length) $('#avform').innerHTML = formAviso(mins, !!pas);
     document.querySelectorAll('[data-bav]').forEach((b) => b.addEventListener('click', async () => {
