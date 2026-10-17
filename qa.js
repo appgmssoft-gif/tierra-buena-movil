@@ -107,7 +107,7 @@
     const version = document.createElement('p'); version.className = 'qa-pie'; version.textContent = 'Versión: buscando…'; panel.appendChild(version);
     versionActiva((v) => { version.textContent = 'Versión: ' + v; });
     const acc = [['+1 día', () => avanzar(1)], ['+10 días', () => avanzar(10)], ['+30 días', () => avanzar(30)], ['+500 gotas', () => { darGotas(500); location.reload(); }], ['Desbloquear todo', desbloquearTodo],
-      ['Probar bosque', () => probarHabitat('bosque')], ['Probar desierto', () => probarHabitat('desierto')], ['Probar costa', () => probarHabitat('costa')],
+      ['Guía visual (casillas)', () => { location.href = './guia_visual.html'; }], ['Probar bosque', () => probarHabitat('bosque')], ['Probar desierto', () => probarHabitat('desierto')], ['Probar costa', () => probarHabitat('costa')],
       ['Ver como usuario', () => verComo('usuario')], ['Ver como miembro', () => verComo('miembro')], ['Ver como pastor', () => verComo('pastor')], ['Empezar de nuevo (primera vez)', reiniciar]];
     panel.appendChild(titulo);
     acc.forEach(([txt, fn]) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'qa-btn'; b.textContent = txt; b.addEventListener('click', () => fn()); panel.appendChild(b); });
