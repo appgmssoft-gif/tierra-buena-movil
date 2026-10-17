@@ -1242,3 +1242,85 @@ button.mo-nota{display:block;width:100%;text-align:left;font:inherit;color:var(-
   html:not([data-anim=off]) .tema-prev{animation:hac-sube .4s ease-out backwards}
   html:not([data-anim=off]) .tema.sel .tema-bola{animation:hac-brota .5s cubic-bezier(.3,1.5,.5,1) backwards}
 }
+
+/* F1194 · Biblia por dentro: elegir dónde leer (retomar, libros por género con color, capítulos leídos marcados) */
+.lb-seguir{display:block;width:100%;margin:2px 0 10px}
+.lb-test .sep{margin-top:22px}
+.lb-grupo .mi-sub{margin:14px 2px 8px}
+.libro.lb{display:flex;flex-direction:column;justify-content:center;gap:2px;padding:10px 12px}
+.libro.lb b{font-size:.98rem;line-height:1.2}
+.libro.lb small{font-size:.76rem;opacity:.72}
+.libro.lb.listo{box-shadow:var(--sombra),inset 0 0 0 1.5px color-mix(in srgb,var(--oro) 70%,transparent)}
+.lb-bar{display:block;width:100%;height:5px;margin-top:5px;border:0;border-radius:99px;overflow:hidden;appearance:none;-webkit-appearance:none;background:rgba(0,0,0,.12)}
+.lb-bar::-webkit-progress-bar{background:rgba(0,0,0,.12);border-radius:99px}
+.lb-bar::-webkit-progress-value{background:var(--verde);border-radius:99px;min-width:4px}
+.lb-bar::-moz-progress-bar{background:var(--verde);border-radius:99px}
+.lb-grupo[hidden],.lb-test[hidden]{display:none}
+.cap.leido{background:color-mix(in srgb,var(--verde) 16%,var(--tarjeta))}
+.cap.leido::after{content:"✓";margin-left:3px;font-size:.7em}
+.cap.actual{box-shadow:var(--sombra),0 0 0 2px var(--oro)}
+.lb-leyenda{margin-top:10px;font-size:.85rem}
+@media (prefers-reduced-motion:no-preference){
+  html:not([data-anim=off]) .lb-grupo{animation:hac-sube .4s ease-out backwards}
+}
+
+/* F1195 · Fechas importantes: la fecha grande a la izquierda, lo que recordamos y qué hacer a la derecha */
+.fx-vivir{border-left:5px solid var(--oro);background:linear-gradient(135deg,color-mix(in srgb,var(--oro) 14%,var(--tarjeta)),var(--tarjeta))}
+.fx-vivir .cal-paso{justify-content:flex-start;align-items:flex-start;margin:12px 0 0}
+.fx-lista{display:flex;flex-direction:column;gap:8px}
+.fx-fila{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:16px;background:var(--tarjeta);box-shadow:var(--sombra)}
+.fx-fecha{flex:none;width:54px;padding:7px 0;border-radius:12px;text-align:center;color:#fff;background:linear-gradient(160deg,#d99a32,#8a5a12)}
+.fx-fecha b{display:block;font:700 1.35rem/1 "TB Titulo",Georgia,serif}
+.fx-fecha small{display:block;margin-top:3px;font:700 .68rem/1 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase}
+.fx-juntos .fx-fecha{background:linear-gradient(160deg,#46874f,#2c5a33)}
+.fx-agenda .fx-fecha{background:linear-gradient(160deg,#2f7b9c,#1d4f67)}
+.fx-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.fx-tx b{font-size:.98rem;line-height:1.25}
+.fx-tx small{font-size:.82rem;opacity:.75}
+.fx-tx em{font-style:normal;font-size:.85rem;line-height:1.35;opacity:.85}
+.fx-hoy{box-shadow:var(--sombra),inset 0 0 0 1.5px color-mix(in srgb,var(--oro) 70%,transparent)}
+@media (prefers-reduced-motion:no-preference){
+  html:not([data-anim=off]) .fx-fila{animation:hac-sube .4s ease-out backwards}
+  html:not([data-anim=off]) .fx-fila:nth-child(2){animation-delay:.07s}
+  html:not([data-anim=off]) .fx-fila:nth-child(n+3){animation-delay:.14s}
+}
+
+/* F1196 · Suscripción: tres planes en tarjetas (persona, hogar, iglesia), mensual o anual */
+.sb-aviso{margin:6px 2px 12px;font-size:.85rem}
+.sb-planes{display:flex;flex-direction:column;gap:16px}
+.sb-plan{overflow:hidden;padding:0 0 16px;border-radius:22px;background:var(--tarjeta);box-shadow:var(--sombra)}
+.sb-plan > :not(.sb-cab){margin-left:16px;margin-right:16px}
+.sb-cab{display:flex;align-items:center;gap:12px;padding:16px;color:#fff;background:linear-gradient(135deg,#46874f,#2c5a33)}
+.sb-plus .sb-cab{background:linear-gradient(135deg,#46874f,#2c5a33)}
+.sb-familia .sb-cab{background:linear-gradient(135deg,#2f7b9c,#1d4f67)}
+.sb-iglesia .sb-cab{background:linear-gradient(135deg,#d99a32,#8a5a12)}
+.sb-iglesia{box-shadow:var(--sombra),0 0 0 2px color-mix(in srgb,var(--oro) 65%,transparent)}
+.sb-ic{flex:none;display:grid;place-items:center;width:52px;height:52px;border-radius:16px;font-size:1.7rem;background:rgba(255,255,255,.22)}
+.sb-cab small{display:block;font:700 .72rem/1 system-ui,sans-serif;letter-spacing:.09em;text-transform:uppercase;opacity:.9}
+.sb-cab h3{margin:4px 0 0;font:700 1.25rem/1.15 "TB Titulo",Georgia,serif;color:#fff}
+.sb-quien{margin-top:14px;margin-bottom:8px;line-height:1.4}
+.sb-precio{margin-top:4px;margin-bottom:0}
+.sb-precio b{font:700 2rem/1.1 "TB Titulo",Georgia,serif}
+.sb-precio span{font-size:.95rem;opacity:.75}
+.sb-eq{margin-top:2px;margin-bottom:12px;font-size:.85rem;opacity:.75}
+.sb-sub{margin-top:12px;margin-bottom:4px;font:700 .95rem/1.2 "TB Titulo",Georgia,serif}
+.sb-nota{font-size:.85rem}
+.sb-bt{display:block;width:calc(100% - 32px);margin-top:14px}
+@media (prefers-reduced-motion:no-preference){
+  html:not([data-anim=off]) .sb-plan{animation:hac-sube .4s ease-out backwards}
+  html:not([data-anim=off]) .sb-plan:nth-child(2){animation-delay:.08s}
+  html:not([data-anim=off]) .sb-plan:nth-child(3){animation-delay:.16s}
+}
+
+/* F1197 · Planes: etiqueta destacada, «Pronto» y qué es gratis / de pago por área */
+.sb-cab{flex-wrap:wrap}
+.sb-etq{flex:1 0 100%;align-self:flex-start;width:fit-content;margin-top:2px;padding:4px 11px;border-radius:99px;font:700 .74rem/1.2 system-ui,sans-serif;background:rgba(255,255,255,.26)}
+.sb-pronto{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:99px;font:700 .68rem/1.5 system-ui,sans-serif;font-style:normal;letter-spacing:.04em;text-transform:uppercase;color:#fff;background:#7456a0}
+.sb-comp{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.sb-fila{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:14px;background:var(--tarjeta);box-shadow:var(--sombra)}
+.sb-fila-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.sb-fila-tx b{font-size:.92rem;line-height:1.3;font-weight:600}
+.sb-fila-tx small{font-size:.8rem;opacity:.72}
+.sb-ins{flex:none;padding:4px 11px;border-radius:99px;font:700 .72rem/1.2 system-ui,sans-serif;color:#fff;background:#46874f}
+.sb-n-plus .sb-ins{background:linear-gradient(135deg,#2f7b9c,#1d4f67)}
+.sb-n-iglesia .sb-ins{background:linear-gradient(135deg,#d99a32,#8a5a12)}

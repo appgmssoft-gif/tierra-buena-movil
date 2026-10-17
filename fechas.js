@@ -28,7 +28,7 @@
   }
   function listaHTML(tipos) {
     const l = fuentes().filter((x) => !tipos || tipos.indexOf(x.tipo) >= 0); if (!l.length) return '';
-    return l.map((x) => '<div class="fila cal-fila"><span class="fila-ico t2" aria-hidden="true">' + x.ic + '</span><span class="fila-txt"><b>' + esc(x.t) + '</b><small>' + esc(x.f.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' }) + ' · ' + cuando(x).toLowerCase() + (x.lugar ? ' · ' + x.lugar : '')) + '</small></span></div>').join('');
+    return l.map((x) => '<div class="fx-fila fx-' + x.tipo + (x.d === 0 ? ' fx-hoy' : '') + '"><span class="fx-fecha" aria-hidden="true"><b>' + x.f.getDate() + '</b><small>' + esc(x.f.toLocaleDateString('es-CL', { month: 'short' }).replace('.', '')) + '</small></span><span class="fx-tx"><b>' + esc(x.t) + '</b><small>' + esc(cuando(x) + (x.lugar ? ' · ' + x.lugar : '')) + '</small></span></div>').join('');
   }
   function aviso(txt) {
     try { const o = document.querySelector('.tb-aviso'); if (o) o.remove(); const d = document.createElement('div'); d.className = 'tb-aviso'; d.setAttribute('role', 'status'); d.textContent = txt; document.body.appendChild(d); setTimeout(() => { try { d.remove(); } catch (e) { /* nada */ } }, 4200); } catch (e) { /* nada */ }

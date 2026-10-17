@@ -2039,27 +2039,51 @@
     })();
   }
   const volverA = (txt, fn) => { const b = $('#volver'); if (b) { b.textContent = '‹ ' + txt; b.onclick = fn; } };
+  // F1194 · Biblia por dentro: aquí se ELIGE dónde leer. Retomar donde ibas (héroe con avance), libros agrupados por género
+  // (cada género con su color) y, en cada libro, los capítulos ya leídos marcados. Sin animar los 66 libros (solo los grupos).
+  const BIB_GRUPOS = [
+    ['Antiguo Testamento', [['La Ley', 0, 5, 3], ['Historia', 5, 17, 2], ['Poesía y sabiduría', 17, 22, 5], ['Profetas', 22, 39, 4]]],
+    ['Nuevo Testamento', [['Evangelios', 39, 43, 1], ['Hechos', 43, 44, 6], ['Cartas de Pablo', 44, 57, 4], ['Otras cartas', 57, 65, 3], ['Apocalipsis', 65, 66, 5]]]
+  ];
+  const leidosDe = (cod) => { const o = leer(K_LEIDOS) || {}; let n = 0; Object.keys(o).forEach((k) => { if (k.indexOf(cod + '.') === 0) n++; }); return n; };
+  const generoDe = (cod) => { const i = LIBROS.findIndex((l) => l[0] === cod); let r = ''; BIB_GRUPOS.forEach((t) => t[1].forEach((g) => { if (i >= g[1] && i < g[2]) r = g[0]; })); return r; };
   function vistaBiblia() {
-    const fila = (l) => `<button type="button" class="libro" data-libro="${l[0]}">${esc(l[1])}</button>`;
-    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ Palabra</button>${portadaBiblia(verDe(verActual()))}<h1>Biblia</h1><div class="filete"></div>${verChip()}
+    const ult = leer(K_BIB), inf = ult && libroInfo(ult.cod), leidos = leer(K_LEIDOS) || {}, porLibro = {};
+    Object.keys(leidos).forEach((k) => { const c = k.split('.')[0]; porLibro[c] = (porLibro[c] || 0) + 1; });
+    const fila = (l, col) => { const n = porLibro[l[0]] || 0, todo = n >= l[2];
+      return `<button type="button" class="libro lb mb${col}${todo ? ' listo' : ''}" data-libro="${l[0]}"><b>${esc(l[1])}</b><small>${todo ? '✓ Completo' : (n ? n + ' de ' + l[2] + ' leídos' : l[2] + (l[2] === 1 ? ' capítulo' : ' capítulos'))}</small>${n && !todo ? `<progress class="lb-bar" max="${l[2]}" value="${n}" aria-label="Capítulos leídos"></progress>` : ''}</button>`; };
+    const grupos = BIB_GRUPOS.map((t) => `<div class="lb-test"><h2 class="sep">${esc(t[0])}</h2>${t[1].map((g) => `<section class="lb-grupo"><h3 class="mi-sub">${esc(g[0])}</h3><div class="libros">${LIBROS.slice(g[1], g[2]).map((l) => fila(l, g[3])).join('')}</div></section>`).join('')}</div>`).join('');
+    const hero = inf
+      ? heroInt('c1', '📖', 'Sigue donde ibas', esc(inf[1]) + ' ' + Number(ult.cap), nLeidos() + ' de 1189 capítulos leídos', Math.round(nLeidos() * 100 / 1189)) + `<button type="button" class="btn lb-seguir" data-seguir="${esc(ult.cod)}.${Number(ult.cap)}">Seguir leyendo</button>`
+      : heroInt('c1', '📖', 'La Biblia completa', '66 libros', 'Elige un libro y un capítulo. Si no sabes por dónde empezar, Juan o Marcos son un buen comienzo.') + `<button type="button" class="btn lb-seguir" data-seguir="JHN.1">Empezar por Juan</button>`;
+    $('#pantalla').innerHTML = `${cabecera('Biblia', 'Palabra')}${hero}${verChip()}
       <input type="text" id="buscaLibro" class="busca-libro" placeholder="Buscar un libro…" aria-label="Buscar un libro" autocomplete="off" enterkeyhint="search">
-      <h2>Antiguo Testamento</h2><div class="libros">${LIBROS.slice(0, 39).map(fila).join('')}</div>
-      <h2 class="sep">Nuevo Testamento</h2><div class="libros">${LIBROS.slice(39).map(fila).join('')}</div>
+      <p id="lbNada" class="suave" hidden>No hay un libro con ese nombre.</p>${grupos}
       ${verCredito()}`;
     volverA('Palabra', vistaPalabra); verChipBind(vistaBiblia);
     document.querySelectorAll('[data-libro]').forEach((b) => b.addEventListener('click', () => vistaLibro(b.dataset.libro)));
+    document.querySelectorAll('[data-seguir]').forEach((b) => b.addEventListener('click', () => { const p = b.dataset.seguir.split('.'); vistaCapitulo(p[0], Number(p[1])); }));
     try {
       const norm = (t) => String(t).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-      $('#buscaLibro').addEventListener('input', (e) => { const q = norm(e.target.value.trim()); document.querySelectorAll('[data-libro]').forEach((b) => { b.hidden = !!q && norm(b.textContent).indexOf(q) < 0; }); });
+      $('#buscaLibro').addEventListener('input', (e) => {
+        const q = norm(e.target.value.trim());
+        document.querySelectorAll('[data-libro]').forEach((b) => { b.hidden = !!q && norm($('b', b).textContent).indexOf(q) < 0; });
+        document.querySelectorAll('.lb-grupo').forEach((g) => { g.hidden = !g.querySelector('[data-libro]:not([hidden])'); });
+        document.querySelectorAll('.lb-test').forEach((t) => { t.hidden = !t.querySelector('[data-libro]:not([hidden])'); });
+        $('#lbNada').hidden = !q || !!document.querySelector('[data-libro]:not([hidden])');
+      });
     } catch (e) { /* sin filtro */ }
   }
   function vistaLibro(cod) {
     const inf = libroInfo(cod); if (!inf) return vistaBiblia();
-    let c = ''; for (let i = 1; i <= inf[2]; i++) c += `<button type="button" class="cap" data-cap="${i}">${i}</button>`;
-    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ Biblia</button><h1>${esc(inf[1])}</h1><div class="filete"></div>
-      <p class="suave">${inf[2] === 1 ? 'Tiene un solo capítulo.' : 'Elige un capítulo.'}</p><div class="caps">${c}</div>`;
+    const leidos = leer(K_LEIDOS) || {}, ult = leer(K_BIB), n = leidosDe(cod), ultCap = ult && ult.cod === cod ? Number(ult.cap) : 0;
+    let c = ''; for (let i = 1; i <= inf[2]; i++) { const lei = leidos[cod + '.' + i] ? ' leido' : ''; c += `<button type="button" class="cap${lei}${i === ultCap ? ' actual' : ''}" data-cap="${i}" aria-label="Capítulo ${i}${lei ? ', leído' : ''}">${i}</button>`; }
+    $('#pantalla').innerHTML = `${cabecera(inf[1], 'Biblia')}${heroInt('c1', '📖', esc(generoDe(cod)), inf[2] === 1 ? 'Un solo capítulo' : inf[2] + ' capítulos', n ? 'Llevas ' + n + (n === 1 ? ' leído.' : ' leídos.') : 'Aún no lo empiezas.', n ? Math.round(n * 100 / inf[2]) : null)}
+      ${ultCap ? `<button type="button" class="btn lb-seguir" data-seguir="${cod}.${ultCap}">Seguir en el capítulo ${ultCap}</button>` : ''}
+      <h2 class="mi-sub">${inf[2] === 1 ? 'Para leer' : 'Elige un capítulo'}</h2><div class="caps">${c}</div>${n ? '<p class="suave lb-leyenda">Los marcados con ✓ ya los leíste.</p>' : ''}`;
     volverA('Biblia', vistaBiblia);
     document.querySelectorAll('[data-cap]').forEach((b) => b.addEventListener('click', () => vistaCapitulo(cod, Number(b.dataset.cap))));
+    document.querySelectorAll('[data-seguir]').forEach((b) => b.addEventListener('click', () => vistaCapitulo(cod, Number(b.dataset.seguir.split('.')[1]))));
   }
   // F880: lector de primer nivel. Tocar un versículo lo selecciona (resaltar, copiar, compartir), deslizar cambia de
   // capítulo, una barra fina muestra cuánto llevas leído. Todo con CSSOM (la política de seguridad no permite style="").
@@ -3184,28 +3208,8 @@
     } catch (e) { /* sin oferta */ }
     return '';
   };
-  async function vistaApoyar(periodo) {
-    const S = window.TBSuscripcion; if (!S) return vistaPerfil();
-    if (!S.catalogo()) { try { S.config(await datoCargar('suscripcion')); } catch (e) { /* sin catálogo */ } }
-    const C = S.catalogo(); if (!C) return vistaPerfil();
-    const T = C.textos, per = S.PERIODOS.indexOf(periodo) >= 0 ? periodo : 'anual', ya = S.tengoPlus(), est = S.leer();
-    const lista = (l) => `<ul class="apoyo-lista">${l.map((x) => `<li>${svg('check', 18)}<span>${esc(x)}</span></li>`).join('')}</ul>`;
-    const aho = S.ahorroAnual();
-    $('#pantalla').innerHTML = `${cabecera(T.titulo, 'Perfil')}<p class="suave">${esc(T.intro)}</p>
-      ${ya ? `<div class="card apoyo-ok"><b>${esc(T.activo)}</b>${est && est.vence ? `<p class="suave m0t">${esc(T.vence)} ${esc(fecha(est.vence))}.</p>` : ''}${S.enGracia() ? `<p class="suave m0t">${esc(T.gracia)}</p>` : ''}<p class="suave m0t">${esc(T.cancelar)}</p></div>` : `
-      <div class="chips apoyo-per" role="group" aria-label="Elige el periodo">${S.PERIODOS.map((p) => `<button type="button" class="chip${p === per ? ' on' : ''}" data-per="${p}" aria-pressed="${p === per}">${esc(C.planes[p].nombre)}${p === 'anual' && aho ? ' · ahorra ' + aho + '%' : ''}</button>`).join('')}</div>
-      <div class="card apoyo-plan"><p class="apoyo-precio">${esc(S.precioTexto(per))}</p><p class="suave m0">${esc(C.planes[per].nota)}</p></div>
-      <h2 class="sep">Qué incluye</h2>${lista(C.incluye)}`}
-      <h2 class="sep">Siempre gratis</h2>${lista(C.siempre_gratis)}
-      ${ya ? '' : '<div class="apoyo-acc"><button type="button" class="btn" id="apoyoOk">Suscribirme</button><button type="button" class="btn sec" id="apoyoRest">Restaurar compras</button></div><p class="suave" id="apoyoMsg" aria-live="polite"></p><p class="suave"><small>Al suscribirte aceptas los Términos y la Política de privacidad. Puedes cancelar cuando quieras desde la tienda.</small></p>'}`;
-    volverA('Perfil', vistaPerfil);
-    document.querySelectorAll('[data-per]').forEach((b) => b.addEventListener('click', () => { vibra(); vistaApoyar(b.dataset.per); }));
-    const msg = (t) => { const m = $('#apoyoMsg'); if (m) m.textContent = t; };
-    const puente = window.TBPagos;   // lo agrega la versión de tienda (Capacitor/RevenueCat); en la web no existe
-    const ok = $('#apoyoOk'), rs = $('#apoyoRest');
-    if (ok) ok.onclick = async () => { vibra(); if (!puente || typeof puente.comprar !== 'function') return msg(T.sin_tienda); ok.disabled = true; try { const r = await puente.comprar(per, C.planes[per].id_tienda); if (r && r.ok) { S.aplicar(r.compra); vistaApoyar(per); } else msg('No se completó la compra. No se cobró nada.'); } catch (e) { msg('No pudimos completar la compra ahora. No se cobró nada.'); } ok.disabled = false; };
-    if (rs) rs.onclick = async () => { vibra(); if (!puente || typeof puente.restaurar !== 'function') return msg(T.sin_tienda); try { const r = await puente.restaurar(); if (r && r.ok && r.compra) { S.aplicar(r.compra); vistaApoyar(per); } else msg('No encontramos compras para restaurar.'); } catch (e) { msg('No pudimos restaurar ahora. Inténtalo más tarde.'); } };
-  }
+  function vistaApoyar(periodo) { return vistaSuscripcion(periodo, 'perfil'); }   // F1196: misma pantalla de planes (antes un solo plan)
+  // TBPagos (compra y restaurar) y los textos sin_tienda viven en vistaSuscripcion
 
   // ----- Temas -----
   function vistaTemas() {
@@ -4100,11 +4104,53 @@
       'Tus notas y tu avance son tuyos. Nada se comparte sin que tú lo decidas.'
     ]);
   }
-  function vistaSuscripcion() {
-    textoPantalla('Suscripción', [
-      'Hoy Tierra Buena es gratis y todo está abierto.',
-      'Más adelante podría haber un apoyo voluntario para sostener la app. Si llega, será claro, sin letra chica, y lo que ya usas seguirá siendo tuyo.'
-    ]);
+  // F1196 · Suscripción según su función (elegir un plan de pago con calma): tres tarjetas (Plus para una persona, Familia para el hogar,
+  // Iglesia para el pastor y su congregación), cada una mensual o anual, con lo que incluye; debajo, lo que siempre es gratis y cómo se cancela.
+  // El cobro pasa solo por la tienda (window.TBPagos); sin tienda se explica con calma y no se cobra nada.
+  async function vistaSuscripcion(periodo, desde) {
+    const S = window.TBSuscripcion, atras = desde === 'perfil' ? ['Perfil', vistaPerfil] : ['Menú', menuAbrir];
+    if (S && !S.catalogo()) { try { S.config(await datoCargar('suscripcion')); } catch (e) { /* sin catálogo */ } }
+    const C = S && S.catalogo();
+    if (!C || !C.tarjetas) { textoPantalla('Suscripción', ['No pudimos abrir los planes ahora. Revisa tu conexión y vuelve a intentarlo.'], '', atras[1]); return; }
+    const T = C.textos, per = periodo === 'mensual' ? 'mensual' : 'anual', ya = S.tengoPlus(), est = S.leer();
+    const moneda = (n) => '$' + String(Math.round(+n || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    const lista = (l) => `<ul class="apoyo-lista">${l.map((x) => `<li>${svg('check', 18)}<span>${esc(typeof x === 'string' ? x : x.t)}${typeof x !== 'string' && x.pronto ? ' <i class="sb-pronto">Pronto</i>' : ''}</span></li>`).join('')}</ul>`;
+    const compara = (a) => `<h3 class="mi-sub">${esc(a.area)}</h3><ul class="sb-comp">${a.filas.map((f) => `<li class="sb-fila sb-n-${esc(f.n)}"><span class="sb-fila-tx"><b>${esc(f.t)}</b>${f.nota ? `<small>${esc(f.nota)}</small>` : ''}</span><span class="sb-ins">${esc((C.niveles || {})[f.n] || f.n)}</span></li>`).join('')}</ul>`;
+    const tarjeta = (t) => {
+      const m = +t.mensual, a = +t.anual, ahorro = Math.max(0, Math.round((1 - a / (m * 12)) * 100));
+      return `<article class="sb-plan ${esc(t.clase)}"><header class="sb-cab"><span class="sb-ic" aria-hidden="true">${esc(t.icono)}</span><div><small>${esc(t.para)}</small><h3>${esc(t.nombre)}</h3></div>${t.etiqueta ? `<span class="sb-etq">${esc(t.etiqueta)}</span>` : ''}</header>
+        <p class="sb-quien">${esc(t.quien)}</p>
+        <p class="sb-precio"><b>${moneda(per === 'anual' ? a : m)}</b><span> ${per === 'anual' ? 'al año' : 'al mes'}</span></p>
+        <p class="sb-eq">${per === 'anual' ? 'Unos ' + moneda(a / 12) + ' al mes · dos meses de regalo' : 'Pagas mes a mes' + (ahorro ? '. Con el anual ahorras ' + ahorro + '%' : '')}</p>
+        ${t.grupos.map((g) => (g.t ? `<h4 class="sb-sub">${esc(g.t)}</h4>` : '') + lista(g.l)).join('')}
+        ${t.nota ? `<p class="suave sb-nota">${esc(t.nota)}</p>` : ''}
+        ${ya ? '' : `<button type="button" class="btn sb-bt" data-plan="${esc(t.id)}">${esc(t.boton)}</button>`}</article>`;
+    };
+    $('#pantalla').innerHTML = `${cabecera('Suscripción', atras[0])}${heroInt('c4', '💚', 'Tierra Buena', esc(T.planes_titulo), esc(T.planes_intro))}
+      ${ya ? `<div class="card apoyo-ok"><b>${esc(T.activo)}</b>${est && est.vence ? `<p class="suave m0t">${esc(T.vence)} ${esc(fecha(est.vence))}.</p>` : ''}${S.enGracia() ? `<p class="suave m0t">${esc(T.gracia)}</p>` : ''}<p class="suave m0t">${esc(T.cancelar)}</p></div>` : ''}
+      <div class="chips apoyo-per" role="group" aria-label="Elige el periodo">${S.PERIODOS.map((p) => `<button type="button" class="chip${p === per ? ' on' : ''}" data-per="${p}" aria-pressed="${p === per}">${p === 'anual' ? 'Anual · 2 meses de regalo' : 'Mensual'}</button>`).join('')}</div>
+      <p class="suave sb-aviso">${esc(T.precios_nota)}</p>
+      <div class="sb-planes">${C.tarjetas.map(tarjeta).join('')}</div>
+      <p class="suave" id="apoyoMsg" role="status" aria-live="polite"></p>
+      <h2 class="mi-sub">Qué es gratis y qué es de pago</h2><p class="suave m0">La Biblia y lo que otras apps también regalan siguen gratis. Los planes suman lo propio de Tierra Buena.</p>${(C.comparativa || []).map(compara).join('')}
+      <h2 class="mi-sub">Cómo funciona</h2>${lista(C.como_funciona || [])}
+      ${ya ? '' : '<div class="apoyo-acc"><button type="button" class="btn sec" id="apoyoRest">Restaurar compras</button></div>'}
+      <p class="suave"><small>Al suscribirte aceptas los Términos y la Política de privacidad.</small></p>`;
+    volverA(atras[0], atras[1]);
+    document.querySelectorAll('[data-per]').forEach((b) => b.addEventListener('click', () => { vibra(); vistaSuscripcion(b.dataset.per, desde); }));
+    const msg = (t) => { const m = $('#apoyoMsg'); if (m) m.textContent = t; };
+    const puente = window.TBPagos;   // lo agrega la versión de tienda (Capacitor/RevenueCat); en la web no existe
+    document.querySelectorAll('[data-plan]').forEach((b) => b.addEventListener('click', async () => {
+      vibra(); const t = C.tarjetas.find((x) => x.id === b.dataset.plan); if (!t) return;
+      if (t.id === 'iglesia') return msg(T.iglesia_sin_tienda);   // lo contrata el pastor desde su panel (aún no disponible)
+      if (!puente || typeof puente.comprar !== 'function') return msg(T.sin_tienda);
+      b.disabled = true;
+      try { const r = await puente.comprar(per, t.id_tienda[per]); if (r && r.ok) { S.aplicar(r.compra); vistaSuscripcion(per, desde); return; } msg('No se completó la compra. No se cobró nada.'); } catch (e) { msg('No pudimos completar la compra ahora. No se cobró nada.'); }
+      b.disabled = false;
+    }));
+    const rs = $('#apoyoRest');
+    if (rs) rs.onclick = async () => { vibra(); if (!puente || typeof puente.restaurar !== 'function') return msg(T.sin_tienda); try { const r = await puente.restaurar(); if (r && r.ok && r.compra) { S.aplicar(r.compra); vistaSuscripcion(per, desde); } else msg('No encontramos compras para restaurar.'); } catch (e) { msg('No pudimos restaurar ahora. Inténtalo más tarde.'); } };
+    window.scrollTo(0, 0);
   }
   function vistaWidgets() {                                 // F898: lo que sí se puede hoy en una app web instalada
     textoPantalla('Versículo en mi pantalla', [
@@ -4162,15 +4208,24 @@
       return `<button type="button" class="hoy-fecha" data-ir="cal">${svg('calendario', 16)}<span><b>${esc(p[1])}</b> · ${n === 0 ? (p[4] === 'mes' ? 'todo este mes' : 'hoy') : n === 1 ? 'mañana' : 'en ' + n + ' días'}</span></button>`;
     } catch (e) { return ''; }
   }
+  // F1195 · Fechas importantes según su función (saber qué viene y cómo vivirlo): héroe con la próxima fecha y cuánto falta,
+  // «Para vivirla» (qué recordamos + una sugerencia), lo de tu iglesia y lo que sigue ordenado por mes con la fecha grande.
   function vistaCalendario() {
     const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
     const a = hoy.getFullYear(), lista = fechasSantas(a, tradLeer()).concat(fechasSantas(a + 1, tradLeer())).sort((x, y) => x[0] - y[0]).filter((x) => x[0] >= hoy).slice(0, 8);
-    const fmt = (d) => d.toLocaleDateString('es', { weekday: 'long', day: 'numeric', month: 'long' });
+    const cap = (t) => String(t).charAt(0).toUpperCase() + String(t).slice(1);
+    const fmt = (d) => cap(d.toLocaleDateString('es', { weekday: 'long', day: 'numeric', month: 'long' }));
     const dias = (d, f) => { const n = Math.round((d - hoy) / 86400000); return n === 0 ? (f === 'mes' ? 'Todo este mes' : 'Hoy') : n === 1 ? 'Mañana' : 'En ' + n + ' días'; };
-    const [p, ...resto] = lista;
-    $('#pantalla').innerHTML = `${cabecera('Fechas importantes', 'Menú')}<p class="suave">Cada fecha incluye una sugerencia sencilla para vivirla.</p><p class="cal-trad"><span>${svg('calendario', 18)} ${esc(TRAD_N[tradLeer()] || 'Fechas para todos')}</span><button type="button" class="enlace" id="calCambiar">Cambiar tradición</button></p>
-      ${p ? `<div class="card cal-prox"><small>Próxima fecha</small><h3>${esc(p[1])}</h3><p class="cal-cuando">${esc(dias(p[0], p[4]))} · ${esc(fmt(p[0]))}</p><p>${esc(p[2])}</p><p class="cal-paso">${svg('chispas', 18)} <b>Sugerencia:</b> ${esc(p[3])}</p></div>` : ''}
-      ${(() => { try { const mv = window.TBFechas && window.TBFechas.listaHTML(['juntos', 'agenda']); return mv ? '<h2 class="sep">Lo de tu iglesia</h2><div class="lista">' + mv + '</div>' : ''; } catch (e) { return ''; } })()}<h2 class="sep">Más adelante</h2><div class="lista">${resto.map((x) => `<div class="fila cal-fila"><span class="fila-ico t2" aria-hidden="true">${svg('calendario', 20)}</span><span class="fila-txt"><b>${esc(x[1])}</b><small>${esc(dias(x[0], x[4]))} · ${esc(fmt(x[0]))}</small></span></div>`).join('')}</div>`;
+    const [p, ...resto] = lista, meses = [];
+    resto.forEach((x) => { const k = x[0].getFullYear() * 12 + x[0].getMonth(); let g = meses[meses.length - 1]; if (!g || g.k !== k) { g = { k, d: x[0], l: [] }; meses.push(g); } g.l.push(x); });
+    const fila = (x) => `<div class="fx-fila fx-santa${x[4] === 'mes' ? ' fx-mes' : ''}"><span class="fx-fecha" aria-hidden="true"><b>${x[4] === 'mes' ? '✦' : x[0].getDate()}</b><small>${esc(x[0].toLocaleDateString('es', { month: 'short' }).replace('.', ''))}</small></span><span class="fx-tx"><b>${esc(x[1])}</b><small>${esc(dias(x[0], x[4]))}</small><em>${esc(x[3])}</em></span></div>`;
+    const igl = (() => { try { return (window.TBFechas && window.TBFechas.listaHTML(['juntos', 'agenda'])) || ''; } catch (e) { return ''; } })();
+    $('#pantalla').innerHTML = `${cabecera('Fechas importantes', 'Menú')}
+      ${p ? heroInt('c2', '🕊️', esc(dias(p[0], p[4])), esc(p[1]), esc(fmt(p[0]))) : heroInt('c2', '🗓️', 'Por ahora', 'Sin fechas cercanas', 'Cuando haya una, aparece aquí.')}
+      <p class="cal-trad"><span>${svg('calendario', 18)} ${esc(TRAD_N[tradLeer()] || 'Fechas para todos')}</span><button type="button" class="enlace" id="calCambiar">Cambiar tradición</button></p>
+      ${p ? `<h2 class="mi-sub">Para vivirla</h2><div class="card fx-vivir"><p class="m0">${esc(p[2])}</p><p class="cal-paso">${svg('chispas', 18)} <span><b>Sugerencia:</b> ${esc(p[3])}</span></p></div>` : ''}
+      ${igl ? `<h2 class="mi-sub">Lo de tu iglesia</h2><div class="fx-lista">${igl}</div>` : ''}
+      ${meses.map((g) => `<h2 class="mi-sub">${esc(cap(g.d.toLocaleDateString('es', { month: 'long' })) + (g.d.getFullYear() !== a ? ' ' + g.d.getFullYear() : ''))}</h2><div class="fx-lista">${g.l.map(fila).join('')}</div>`).join('')}`;
     $('#volver').onclick = menuAbrir; $('#calCambiar').onclick = planRehacer; window.scrollTo(0, 0);
   }
   const menuCerrar = () => { try { const c = $('#cajonMenu'); if (c) c.remove(); } catch (e) { /* nada */ } };
@@ -4194,7 +4249,7 @@
       </div></nav></div>`);
     if (!h) return ir('perfil');
     document.body.appendChild(h);
-    const va = { inst: instalarUnToque, jun: abrirJuntos, plan: planRehacer, info: vistaInfo, cal: vistaCalendario, comp: invitarHoja, wid: vistaWidgets, conf: () => ir('perfil'), sus: vistaSuscripcion, hist: vistaHistoria };
+    const va = { inst: instalarUnToque, jun: abrirJuntos, plan: planRehacer, info: vistaInfo, cal: vistaCalendario, comp: invitarHoja, wid: vistaWidgets, conf: () => ir('perfil'), sus: () => vistaSuscripcion(), hist: vistaHistoria };
     h.querySelectorAll('.cj-it').forEach((b) => b.addEventListener('click', () => { vibra(); menuCerrar(); entrandoPon(false); (va[b.dataset.cj] || (() => {}))(); }));
     $('#cjX').onclick = menuCerrar; h.addEventListener('click', (e) => { if (e && e.target === h) menuCerrar(); });
   }

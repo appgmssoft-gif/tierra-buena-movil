@@ -1,31 +1,283 @@
 {
- "_nota": "F941 · Oferta de suscripción «Tierra Buena Plus». APAGADA por defecto (oferta_activa:false). Precios en CLP = HIPÓTESIS para probar; los precios finales los fijan las tiendas por escalón. Textos neutros y cordiales. La Biblia, la oración, Mi iglesia y el árbol son gratis para siempre y las gotas no se compran.",
+ "_nota": "F941 · Oferta «Tierra Buena Plus». APAGADA por defecto (oferta_activa:false). F1196-F1197: «tarjetas» = los 3 planes de la pantalla Suscripción (Plus persona, Familia, Iglesia), cada uno mensual y anual; precios INVENTADOS como hipótesis; el cobro no está implementado y el plan Iglesia aún no se puede contratar. F1197: la app pasa a ser de pago. GRATIS = la Biblia y lo que otras apps regalan (planes de lectura, notas, resaltado, copia con cuenta, oración) más la ayuda en crisis; DE PAGO = contenido propio (jardín completo, planes de vida, música, juegos), personalización, copia del jardín y las herramientas de la iglesia. «comparativa» es lo que se muestra como Gratis / Plus / Plan Iglesia; para sumar algo, agregar una fila (nivel: gratis | plus | iglesia) o un ítem con pronto:true en una tarjeta. Nada se bloquea todavía en la app: esto describe el reparto propuesto.",
  "oferta_activa": false,
  "dias_cuidado_minimo": 7,
  "gracia_dias": 7,
  "planes": {
-  "mensual": { "nombre": "Mensual", "precio_clp": 2490, "periodo": "mes", "nota": "Se renueva cada mes. Puedes cancelar cuando quieras desde la tienda.", "id_tienda": { "apple": "tb_plus_mensual", "google": "tb_plus_mensual" } },
-  "anual": { "nombre": "Anual", "precio_clp": 24900, "periodo": "año", "nota": "Equivale a unos 2.075 al mes: dos meses de regalo. Se renueva cada año.", "id_tienda": { "apple": "tb_plus_anual", "google": "tb_plus_anual" } }
+  "mensual": {
+   "nombre": "Mensual",
+   "precio_clp": 2490,
+   "periodo": "mes",
+   "nota": "Se renueva cada mes. Puedes cancelar cuando quieras desde la tienda.",
+   "id_tienda": {
+    "apple": "tb_plus_mensual",
+    "google": "tb_plus_mensual"
+   }
+  },
+  "anual": {
+   "nombre": "Anual",
+   "precio_clp": 24900,
+   "periodo": "año",
+   "nota": "Equivale a unos 2.075 al mes: dos meses de regalo. Se renueva cada año.",
+   "id_tienda": {
+    "apple": "tb_plus_anual",
+    "google": "tb_plus_anual"
+   }
+  }
  },
  "incluye": [
-  "Copia de tu jardín y tus notas en la nube, para usar Tierra Buena en otro teléfono.",
-  "Más temas de color y tipos de letra.",
-  "Recordatorios a tu medida.",
-  "Exportar tus notas y versículos guardados a PDF.",
-  "Apoyas que la app siga creciendo, sin anuncios."
+  "Tu jardín completo: los 3 hábitats, animales y decoraciones desde el inicio.",
+  "Todos los planes de vida, todas las áreas de Mi crecimiento, la música y los juegos completos.",
+  "Copia de tu jardín y tu avance en la nube, para usar Tierra Buena en otro teléfono.",
+  "Más temas de color y tipos de letra, recordatorios a tu medida y exportar a PDF.",
+  "Apoyas que la app siga creciendo."
  ],
  "siempre_gratis": [
-  "La Biblia, los planes de lectura y la lectura del día.",
-  "Tu oración y Mi iglesia.",
-  "Tu árbol, tus gotas y todo lo que se desbloquea con ellas."
+  "La Biblia completa, escucharla y buscar en ella.",
+  "Planes de lectura, versículo del día, resaltar, notas y guardados, con copia en tu cuenta.",
+  "Tu oración, Hoy lo hago y los cursos de Aprender.",
+  "Ayuda y contactos y Salud mental: siempre, para que nadie se quede sin apoyo.",
+  "Tu árbol y tu primer hábitat.",
+  "Unirte a tu iglesia, pedir oración y ver los avisos."
  ],
  "textos": {
   "titulo": "Apoyar Tierra Buena",
-  "intro": "Tierra Buena es gratis y seguirá siéndolo. Si te hace bien, puedes ayudar a mantenerla con una suscripción. No es necesario y no cambia lo esencial.",
+  "intro": "La Biblia y lo esencial son gratis y seguirán siéndolo. Los planes suman tu jardín completo, más herramientas y el acompañamiento de tu iglesia.",
   "sin_tienda": "Las suscripciones se activan cuando la app esté instalada desde la tienda. Gracias por querer apoyar.",
   "vence": "Tu apoyo termina el",
   "activo": "Gracias por apoyar Tierra Buena.",
   "cancelar": "Para cambiar o cancelar tu suscripción, abre los ajustes de suscripciones de tu tienda (App Store o Google Play).",
-  "gracia": "Tu suscripción venció hace poco. Tus cosas siguen aquí; puedes renovar cuando quieras."
+  "gracia": "Tu suscripción venció hace poco. Tus cosas siguen aquí; puedes renovar cuando quieras.",
+  "planes_titulo": "Elige tu plan",
+  "planes_intro": "La Biblia, tus notas y lo esencial para vivir la fe son gratis. Los planes suman tu jardín completo, más herramientas y el acompañamiento de tu iglesia.",
+  "precios_nota": "Precios de referencia en pesos chilenos. La tienda muestra el precio final antes de que pagues.",
+  "iglesia_sin_tienda": "El Plan Iglesia lo contrata el pastor desde su panel. Aún no está disponible; cuando lo esté, te avisaremos aquí."
+ },
+ "tarjetas": [
+  {
+   "id": "plus",
+   "para": "Para ti",
+   "nombre": "Tierra Buena Plus",
+   "icono": "🌿",
+   "clase": "sb-plus",
+   "quien": "Para una persona que quiere su espacio a su medida y a salvo en cualquier teléfono.",
+   "mensual": 2490,
+   "anual": 24900,
+   "grupos": [
+    {
+     "t": "",
+     "l": [
+      "Tu jardín completo: los 3 hábitats, animales y decoraciones desde el inicio.",
+      "Todos los planes de vida, todas las áreas de Mi crecimiento, la música y los juegos completos.",
+      "Copia de tu jardín y tu avance en la nube, para usar Tierra Buena en otro teléfono.",
+      "Más temas de color y tipos de letra.",
+      "Recordatorios a tu medida.",
+      "Exportar tus notas y versículos guardados a PDF.",
+      {
+       "t": "Más paisajes y estaciones del año",
+       "pronto": true
+      }
+     ]
+    }
+   ],
+   "id_tienda": {
+    "mensual": "tb_plus_mensual",
+    "anual": "tb_plus_anual"
+   },
+   "boton": "Elegir Plus",
+   "etiqueta": "Para empezar"
+  },
+  {
+   "id": "familia",
+   "para": "Para tu hogar",
+   "nombre": "Tierra Buena Familia",
+   "icono": "🏡",
+   "clase": "sb-familia",
+   "quien": "Para una familia o un hogar: una sola suscripción y hasta 5 personas con todo Plus.",
+   "mensual": 3990,
+   "anual": 39900,
+   "grupos": [
+    {
+     "t": "",
+     "l": [
+      "Todo lo de Plus para hasta 5 personas de tu casa.",
+      "Cada persona usa su propia cuenta: nadie ve las notas ni las oraciones de otro.",
+      "Quien administra suma o quita personas cuando quiera.",
+      "Los planes de vida de familia, pensados para recorrerlos en casa.",
+      {
+       "t": "Metas del hogar para cumplir juntos",
+       "pronto": true
+      }
+     ]
+    }
+   ],
+   "id_tienda": {
+    "mensual": "tb_familia_mensual",
+    "anual": "tb_familia_anual"
+   },
+   "boton": "Elegir Familia",
+   "etiqueta": "Desde $798 por persona al mes"
+  },
+  {
+   "id": "iglesia",
+   "para": "Para tu iglesia",
+   "nombre": "Plan Iglesia",
+   "icono": "🕍",
+   "clase": "sb-iglesia",
+   "quien": "Para el pastor y toda su congregación. Lo contrata la iglesia; los miembros no pagan nada.",
+   "mensual": 14900,
+   "anual": 149000,
+   "grupos": [
+    {
+     "t": "Para el pastor y sus líderes",
+     "l": [
+      "Seguimiento de peticiones de oración y visitas: qué se pidió, a quién le toca y cuándo se hizo.",
+      "Resumen semanal, agenda, avisos y ministerios en un solo panel.",
+      "Turnos de servicio y calendario mensual.",
+      "Chat de la iglesia.",
+      {
+       "t": "Planes de lectura con tu congregación y sus resultados",
+       "pronto": true
+      }
+     ]
+    },
+    {
+     "t": "Para toda la congregación",
+     "l": [
+      "Cada miembro tiene Plus incluido mientras la iglesia tenga su plan.",
+      "Entran con el código de la iglesia, sin pagar, hasta 150 personas.",
+      "Recordatorios de agenda, avisos y turnos de servicio.",
+      "Ven cuándo su petición fue recibida."
+     ]
+    }
+   ],
+   "nota": "Si tu iglesia es pequeña o no puede pagarlo, el pastor puede pedir una beca gratuita. Para más de 150 personas, escríbenos.",
+   "id_tienda": {
+    "mensual": "tb_iglesia_mensual",
+    "anual": "tb_iglesia_anual"
+   },
+   "boton": "Contratar para mi iglesia",
+   "etiqueta": "Plus incluido para todos"
+  }
+ ],
+ "como_funciona": [
+  "Cancelas cuando quieras, desde los ajustes de suscripciones de tu tienda.",
+  "Si tu suscripción vence, tienes 7 días de gracia y luego vuelves a lo gratis. No se borra nada.",
+  "Pagando por año ahorras: son dos meses de regalo.",
+  "Puedes restaurar tus compras si cambias de teléfono."
+ ],
+ "comparativa": [
+  {
+   "area": "Palabra",
+   "filas": [
+    {
+     "t": "La Biblia completa, escucharla y buscar en ella",
+     "n": "gratis"
+    },
+    {
+     "t": "Planes de lectura y versículo del día",
+     "n": "gratis"
+    },
+    {
+     "t": "Resaltar, notas y guardados, con copia en tu cuenta",
+     "n": "gratis"
+    },
+    {
+     "t": "Imágenes de versículos para compartir",
+     "n": "gratis"
+    },
+    {
+     "t": "Más temas de color y tipos de letra",
+     "n": "plus",
+     "nota": "Gratis: los temas básicos"
+    },
+    {
+     "t": "Exportar tus notas y versículos a PDF",
+     "n": "plus"
+    }
+   ]
+  },
+  {
+   "area": "Vida",
+   "filas": [
+    {
+     "t": "Mi oración, Hoy lo hago y los cursos de Aprender",
+     "n": "gratis"
+    },
+    {
+     "t": "Ayuda y contactos, y Salud mental",
+     "n": "gratis",
+     "nota": "Siempre gratis, para que nadie se quede sin apoyo"
+    },
+    {
+     "t": "Todos los planes de vida a la vez",
+     "n": "plus",
+     "nota": "Gratis: un plan de vida a la vez"
+    },
+    {
+     "t": "Todas las áreas de Mi crecimiento y su historial",
+     "n": "plus",
+     "nota": "Gratis: un área"
+    },
+    {
+     "t": "Música y juegos completos",
+     "n": "plus",
+     "nota": "Gratis: una selección"
+    }
+   ]
+  },
+  {
+   "area": "Tu jardín",
+   "filas": [
+    {
+     "t": "Tu árbol y tu primer hábitat",
+     "n": "gratis"
+    },
+    {
+     "t": "Los 3 hábitats, animales y decoraciones desde el inicio",
+     "n": "plus",
+     "nota": "Gratis: se ganan poco a poco con gotas"
+    },
+    {
+     "t": "Copia de tu jardín y tu avance en la nube",
+     "n": "plus"
+    },
+    {
+     "t": "Recordatorios a tu medida",
+     "n": "plus",
+     "nota": "Gratis: un recordatorio diario"
+    }
+   ]
+  },
+  {
+   "area": "Mi iglesia",
+   "filas": [
+    {
+     "t": "Unirte con el código, pedir oración o visita, ver avisos y agenda",
+     "n": "gratis"
+    },
+    {
+     "t": "Pastor: crear la iglesia, recibir peticiones y publicar avisos",
+     "n": "gratis"
+    },
+    {
+     "t": "Seguimiento de visitas, resumen semanal, ministerios y agenda completa",
+     "n": "iglesia"
+    },
+    {
+     "t": "Turnos de servicio y chat de la iglesia",
+     "n": "iglesia"
+    },
+    {
+     "t": "Plus incluido para cada miembro de la congregación",
+     "n": "iglesia"
+    }
+   ]
+  }
+ ],
+ "niveles": {
+  "gratis": "Gratis",
+  "plus": "Plus",
+  "iglesia": "Plan Iglesia"
  }
 }
