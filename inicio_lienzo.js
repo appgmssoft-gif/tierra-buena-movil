@@ -659,7 +659,7 @@
       + '<g class="cap cap0">' + cielo(cl) + '<g class="plano-lejano">' + atras(fo) + '</g></g><g class="cap cap1"><path class="col c1" d="' + COL.c1 + '"/>' + fondo + '</g>'
       + '<g class="cap cap2"><path class="col c2" d="' + COL.c2 + '"/></g>'
       + '<g class="cap cap3"><path class="col c3" d="' + COL.c3 + '"/></g></g>'
-      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g><g class="esp">' + especialesEscena(est, fo) + '</g><g class="pa-dia">' + paisajeDelDia(est.habDias || 0, est.tematica) + rasgosEscena(est) + '</g>' + ambienteDelDia(est.habDias || 0, est.tematica) + '<g class="cap cap3"><g class="mundo" transform="translate(180 344) scale(' + window.TBInicio.avanceDiario(c.diasCuidado).escala + ')">' + (est.tematica === 'desierto' ? '<g transform="translate(158 -44) scale(0.9)">' + sueloDibujo('cactus') + '</g>' : est.tematica === 'costa' ? '' : arbol(c.especie, et, c.diasCuidado) + hojasTB(window.TBInicio.avanceDiario(c.diasCuidado).hojas, et)) + '</g></g>' + '<g class="tb-hierba" aria-hidden="true">' + (est.tematica === 'desierto' || est.tematica === 'costa' ? '' : hierbaTB(0, 360, 392, 90, 17)) + '</g><g class="clima">' + climaSvg(cl) + '</g></svg>'
+      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g><g class="esp">' + especialesEscena(est, fo) + '</g><g class="pa-dia">' + ((window.TBCasillas && window.TBCasillas.tiene(est.tematica)) ? window.TBCasillas.capa(est.tematica, est.habDias || 0) : paisajeDelDia(est.habDias || 0, est.tematica) + rasgosEscena(est)) + '</g>' + ambienteDelDia(est.habDias || 0, est.tematica) + '<g class="cap cap3"><g class="mundo" transform="translate(180 344) scale(' + window.TBInicio.avanceDiario(c.diasCuidado).escala + ')">' + (est.tematica === 'desierto' ? '<g transform="translate(158 -44) scale(0.9)">' + sueloDibujo('cactus') + '</g>' : est.tematica === 'costa' ? '' : arbol(c.especie, et, c.diasCuidado) + hojasTB(window.TBInicio.avanceDiario(c.diasCuidado).hojas, et)) + '</g></g>' + '<g class="tb-hierba" aria-hidden="true">' + (est.tematica === 'desierto' || est.tematica === 'costa' ? '' : hierbaTB(0, 360, 392, 90, 17)) + '</g><g class="clima">' + climaSvg(cl) + '</g></svg>'
       + '<i class="il-anillo" id="ilAnillo" aria-hidden="true"></i>'
       + '<button type="button" class="il-resp" id="ilResp" aria-label="Respirar con tu árbol. Toca para una pausa de unos 30 segundos"></button>' + mal + gotasHTML(est)  + vivEscena(est) + '</div>';
   }
@@ -752,6 +752,7 @@
     esc0.classList.add('entra'); later(() => esc0.classList.remove('entra'), 1400);
     if (r && r.diaNuevo && !quieto()) { esc0.classList.add(est.habDias >= DIAS() ? 'dorado' : 'revela'); later(() => esc0.classList.remove('dorado', 'revela'), 3400); }   // F1204: destello al llegar la capa nueva
     if (r && r.diaNuevo) later(() => { try { window.TBSonido && (est.habDias >= DIAS() ? window.TBSonido.completo() : window.TBSonido.capa()); } catch (e) { /* sin sonido */ } }, 700);   // F1204: sonido de la capa nueva del día
+    try { window.TBCasillas && window.TBCasillas.ajustar(esc0); } catch (e) { /* sin ajuste */ }   // F1214: cada pieza se ajusta a su casilla
     paralaje(esc0); ligar(cont, mi); diarioLigar(cont, est); pantalla();
   }
 
