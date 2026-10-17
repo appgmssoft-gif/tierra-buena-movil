@@ -65,7 +65,7 @@ const tbArte = (e) => { const k = TB_ARTE[e]; try { return k && window.TBApp && 
   const esPrivado = (e) => ['oracion', 'visita', 'muro', 'salud'].indexOf(e.di) >= 0 || ['sol', 'ora', 'vis', 'mie', 'dat'].indexOf(e.dp) >= 0;
   const esPastorYa = () => !!leer('tb_movil_pastor', null);
   // F904: filtro más fino: sin iglesia solo ejemplos abiertos; dentro de una iglesia, quien NO es pastor no ve ejemplos que dependen del panel del pastor (no los podría abrir)
-  const visibles = (rol) => { const d = dentroDeIglesia(), p = esPastorYa(); return EJ[rol].filter((e) => (d || !esPrivado(e)) && (e.tab !== 'pastor' || p || !d || rol === 'pastor')); };
+  const visibles = (rol) => { const d = dentroDeIglesia(), p = esPastorYa(); return EJ[rol].filter((e) => (d || !esPrivado(e)) && (e.tab !== 'pastor' || p || !d || rol === 'pastor')).slice(0, 3); };   // F1178: solo 3 ejemplos
 
   // Carrusel de tarjetas (F902): se desliza con el dedo, tiene flechas, puntos y pausa. Sin animación continua: solo avanza una tarjeta cada 14 s mientras se ve en pantalla.
   function pintarEjemplosCompleto(caja, rol) {

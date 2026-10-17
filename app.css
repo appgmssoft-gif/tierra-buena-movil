@@ -1043,3 +1043,66 @@ html[data-contraste=alto] .card,html[data-contraste=alto] .chip,html[data-contra
 .rol-dia{margin-top:12px}
 .pet-seg{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .chat-hilo{display:flex;flex-direction:column;gap:10px;margin:12px 0}.chat-msg{padding:12px 14px;border-radius:18px;background:color-mix(in srgb,var(--tinta) 6%,transparent);border:1px solid color-mix(in srgb,var(--oro) 30%,transparent)}.chat-msg.mio{background:color-mix(in srgb,var(--verde) 14%,transparent)}.chat-msg.oculto{opacity:.7}.chat-quien{margin:0 0 4px;font-size:.9rem}.chat-txt{margin:0;line-height:1.45;overflow-wrap:anywhere}.chat-normas{margin-top:12px}.chat-escribir{margin-top:12px}
+
+/* F1178 · Mi iglesia (miembro): portada corta con fichas */
+.mi-ayuda{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 6px}
+.mi-ayuda-bt{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:84px;padding:12px 8px;border:1px solid var(--linea);border-radius:20px;background:linear-gradient(160deg,color-mix(in srgb,var(--oro) 20%,var(--tarjeta)),var(--tarjeta));color:var(--tinta);font:inherit;cursor:pointer}
+.mi-ayuda-bt span{font-size:1.7rem;line-height:1}.mi-ayuda-bt b{font:700 1rem/1.15 "TB Titulo",Georgia,serif}
+.mi-ayuda-bt:active,.mi-ficha:active{transform:scale(.97)}
+.mi-sub{margin:20px 2px 10px;font:700 1.08rem/1.2 "TB Titulo",Georgia,serif}
+.mi-fichas{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mi-ficha{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:14px;min-height:92px;border:1px solid var(--linea);border-radius:18px;background:var(--tarjeta);color:var(--tinta);font:inherit;text-align:left;cursor:pointer}
+.mi-ficha-ic{font-size:1.5rem;line-height:1;margin-bottom:4px}.mi-ficha b{font-size:1rem;line-height:1.2}.mi-ficha small{color:var(--suave,inherit);opacity:.75;font-size:.82rem;line-height:1.25}
+.mi-prox{display:block;width:100%;text-align:left;margin:10px 0 0}
+.mi-cuenta-fila{margin-top:14px;border:1px solid var(--linea);border-radius:18px;background:var(--tarjeta)}
+
+/* F1178 · Plaza de mi iglesia: escena ilustrada con puntos tocables (sin listas) */
+.mi-guia{text-align:center;margin:10px 0 8px}
+.mi-plaza{position:relative;aspect-ratio:360/450;width:100%;max-width:520px;margin:0 auto 14px;border-radius:26px;overflow:hidden;border:1px solid var(--linea);box-shadow:0 14px 30px -18px rgba(30,30,60,.55);isolation:isolate}
+.mi-esc{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0}
+.mi-pt{position:absolute;transform:translate(-50%,-50%);z-index:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:0;border:0;background:none;color:#2b2233;font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.mi-pt-ic{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.92);box-shadow:0 6px 14px -6px rgba(20,20,40,.6),inset 0 0 0 2px rgba(255,255,255,.7);font-size:1.5rem;line-height:1;transition:transform .2s}
+.mi-pt-n{max-width:96px;padding:2px 9px;border-radius:999px;background:rgba(255,255,255,.94);font:700 .74rem/1.2 system-ui,sans-serif;text-align:center;box-shadow:0 3px 8px -4px rgba(20,20,40,.5)}
+.mi-pt:active .mi-pt-ic{transform:scale(.9)}
+.mi-pt:focus-visible .mi-pt-ic{outline:3px solid var(--oro);outline-offset:2px}
+.mi-pt-g .mi-pt-ic{width:62px;height:62px;font-size:1.8rem}
+.mi-pt-pide .mi-pt-ic{width:60px;height:60px;font-size:1.7rem;background:#fff6d8;box-shadow:0 0 0 4px rgba(255,214,102,.55),0 8px 18px -6px rgba(20,20,40,.6)}
+.mi-pt-pide .mi-pt-n{background:#fff6d8}
+.mi-pt-c .mi-pt-ic{width:40px;height:40px;font-size:1.05rem}.mi-pt-c .mi-pt-n{font-size:.66rem}
+@media (prefers-reduced-motion:no-preference){html:not([data-anim=off]) .mi-pt-pide .mi-pt-ic{animation:mi-brilla 3.2s ease-in-out infinite}}
+@keyframes mi-brilla{50%{box-shadow:0 0 0 9px rgba(255,214,102,.2),0 8px 18px -6px rgba(20,20,40,.6)}}
+
+/* F1178 · Mi iglesia: carrusel «Para ti hoy» + cuadrícula con tamaños distintos + chips */
+.mi-car{margin:14px 0 4px}
+.mi-car-pista{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:2px 2px 8px;border-radius:24px}
+.mi-car-pista::-webkit-scrollbar{display:none}
+.mi-sl{position:relative;flex:0 0 86%;scroll-snap-align:center;min-height:176px;border-radius:24px;padding:18px;color:#fff;display:flex;align-items:flex-end;overflow:hidden;box-shadow:0 18px 34px -20px rgba(30,20,5,.6)}
+.mi-sl-big{position:absolute;right:-6px;top:-8px;font-size:5.6rem;line-height:1;opacity:.28;transform:rotate(-8deg);pointer-events:none}
+.mi-sl-tx{position:relative;display:flex;flex-direction:column;gap:5px;min-width:0}
+.mi-sl-tx small{font:700 .72rem/1 system-ui,sans-serif;letter-spacing:.09em;text-transform:uppercase;opacity:.85}
+.mi-sl-tx b{font:700 1.3rem/1.15 "TB Titulo",Georgia,serif;text-shadow:0 1px 8px rgba(0,0,0,.25)}
+.mi-sl-tx span{font-size:.92rem;line-height:1.35;opacity:.95}
+.mi-sl-dos{display:flex;flex-wrap:wrap;gap:8px}
+.mi-sl-bt{align-self:flex-start;margin-top:6px;min-height:40px;padding:9px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.6);background:rgba(255,255,255,.22);color:#fff;font:700 .85rem/1 inherit;font-family:inherit;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);cursor:pointer}
+.mi-sl-dos .mi-sl-bt{margin-top:6px}
+.mi-car-pts{display:flex;justify-content:center;gap:6px}
+.mi-car-pts i{width:7px;height:7px;border-radius:99px;background:color-mix(in srgb,var(--tinta) 25%,transparent);transition:width .3s,background .3s}
+.mi-car-pts i.on{width:20px;background:var(--oro)}
+.mi-bento{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:minmax(96px,auto);gap:10px}
+.mi-b{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;gap:2px;padding:14px;border:1px solid var(--linea);border-radius:22px;color:var(--tinta);font:inherit;text-align:left;cursor:pointer;min-height:96px}
+.mi-b b{font-size:1.02rem;line-height:1.2;position:relative}.mi-b small{font-size:.82rem;line-height:1.25;opacity:.75;position:relative}
+.mi-b-big{position:absolute;right:8px;top:6px;font-size:2.6rem;line-height:1;opacity:.9;filter:drop-shadow(0 4px 6px rgba(0,0,0,.18))}
+.mb-alto{grid-row:span 2}.mb-alto .mi-b-big{font-size:4.4rem;right:10px;top:12px}
+.mb-ancho{grid-column:span 2;flex-direction:row;align-items:center;justify-content:flex-start;gap:12px;min-height:84px}
+.mb-ancho .mi-b-big{position:static;font-size:2rem}.mi-b-tx{display:flex;flex-direction:column;flex:1;min-width:0}
+.mi-b-pts{display:flex;gap:4px}.mi-b-pts i{width:8px;height:8px;border-radius:50%;background:var(--oro);opacity:.7}.mi-b-pts i:nth-child(2){opacity:.45}.mi-b-pts i:nth-child(3){opacity:.25}
+.mb1{background:linear-gradient(160deg,color-mix(in srgb,#46874f 28%,var(--tarjeta)),var(--tarjeta))}
+.mb2{background:linear-gradient(160deg,color-mix(in srgb,#d99a32 30%,var(--tarjeta)),var(--tarjeta))}
+.mb3{background:linear-gradient(160deg,color-mix(in srgb,#a8623d 26%,var(--tarjeta)),var(--tarjeta))}
+.mb4{background:linear-gradient(90deg,color-mix(in srgb,#2f7b9c 26%,var(--tarjeta)),var(--tarjeta))}
+.mb5{background:linear-gradient(160deg,color-mix(in srgb,#7456a0 26%,var(--tarjeta)),var(--tarjeta))}
+.mb6{background:linear-gradient(160deg,color-mix(in srgb,#d99a32 22%,var(--tarjeta)),color-mix(in srgb,#46874f 14%,var(--tarjeta)))}
+.mi-b:active,.mi-sl-bt:active,.mi-chip:active{transform:scale(.97)}
+.mi-chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 2px 10px;margin:0 -2px}
+.mi-chips::-webkit-scrollbar{display:none}
+.mi-chip{flex:none;display:flex;align-items:center;gap:8px;min-height:46px;padding:0 16px;border:1px solid var(--linea);border-radius:999px;background:var(--tarjeta);color:var(--tinta);font:600 .9rem/1 inherit;font-family:inherit;cursor:pointer;white-space:nowrap}

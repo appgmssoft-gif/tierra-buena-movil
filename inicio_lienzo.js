@@ -654,10 +654,10 @@
 
   // ---------- Textos ----------
   function estadoTxt(est, r) {
-    const c = est.ciclo, e = window.TBInicio.etapa(c.diasCuidado), av = window.TBInicio.avanceDiario(c.diasCuidado), dia = 'Día ' + c.diasCuidado + ' de ' + DIAS() + ' · ' + (ETAPAS[e] || 'Brote') + ' · ' + Math.round(av.fraccion * 100) + '% de la etapa';
+    const c = est.ciclo, e = window.TBInicio.etapa(c.diasCuidado), av = window.TBInicio.avanceDiario(c.diasCuidado), falta = Math.max(0, DIAS() - c.diasCuidado), dia = 'Día ' + c.diasCuidado + ' de ' + DIAS() + ' · ' + (ETAPAS[e] || 'Brote') + (falta ? ' · Faltan ' + falta + (falta === 1 ? ' día' : ' días') : '');   // F1178: se muestra cuánto falta, en días reales
     if (r && r.cicloNuevo) { const s = CAT && CAT.especies && CAT.especies[c.especie]; return 'Empieza un árbol nuevo' + (s ? ': ' + s.nombre : '') + '. El anterior ya forma parte del paisaje.'; }
     if (est.maleza.length) return 'Hay maleza en el pasto. Puedes tocarla para quitarla; así tu árbol sigue creciendo.';
-    if (c.cerrado) return 'Tu árbol está completo. Tu lugar va en el día ' + (est.habDias || 0) + ' de 30.';   // F1090: el árbol madura en 10 días
+    if (c.cerrado) return 'Tu árbol está completo. Tu lugar va en el día ' + (est.habDias || 0) + ' de ' + ((CAT && CAT.ciclo && CAT.ciclo.habitat_dias) || 15) + '.';   // F1090: el árbol madura en 10 días
     if (r && r.diaNuevo) return 'Hoy tu árbol creció un día más. ' + dia;
     return dia;
   }

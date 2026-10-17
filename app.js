@@ -290,7 +290,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Acertijos de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Letras entre las hojas': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => !CABECERAS_ILUSTRADAS ? '' : `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1177';
+  const APP_VERSION = 'F1178';
   // F1171: respaldo si movimiento.js no cargó (pruebas o caché vieja): mismo criterio que TBMov.quieto().
   const MOV_QUIETO = () => { try { if (window.TBMov) return window.TBMov.quieto(); const h = document.documentElement; return h.getAttribute('data-anim') === 'off' || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
@@ -785,56 +785,75 @@
   const K_DISP = 'tb_movil_disponibilidad';
   const DISP_OPC = [['entre', 'Entre semana'], ['fin', 'Fines de semana'], ['manana', 'Mañanas'], ['tarde', 'Tardes'], ['noche', 'Noches']];
   const dispLeer = () => { const v = leer(K_DISP); return Array.isArray(v) ? v.filter((x) => DISP_OPC.some((o) => o[0] === x)) : []; };
-  // F1166 · Mi iglesia ordenada: 4 grupos plegables. Recuerda cuáles quedaron abiertos mientras la app esté abierta.
-  const miAbierto = new Set(['Pedir ayuda', 'Mi iglesia', 'Servir']);
+  // F1178 · Mi iglesia del miembro, rehecha: una portada corta (sin desplazarse mucho) y dos subpantallas («Servir» y «Mi cuenta»).
+  // Antes eran 4 acordeones con ~20 bloques; ahora: 2 botones grandes de ayuda + 6 fichas + 2 entradas. Todo cabe casi sin bajar.
+  const ficha = (ico, titulo, ayuda, ir) => `<button type="button" class="mi-ficha" data-ir="${ir}"><span class="mi-ficha-ic" aria-hidden="true">${icono(ico)}</span><b>${titulo}</b><small>${ayuda}</small></button>`;
+  const filaIr = (ico, titulo, ayuda, ir) => `<button type="button" class="fila" data-ir="${ir}"><span class="fila-ico t2" aria-hidden="true">${icono(ico)}</span><span class="fila-txt">${titulo}<small>${ayuda}</small></span><span class="flecha" aria-hidden="true">›</span></button>`;
+  function cablearMiembro(id) {
+    document.querySelectorAll('[data-chat]').forEach((b) => b.addEventListener('click', () => vistaChat({ rol: 'miembro', codigo: id.codigo, clave: id.clave, nombre: id.nombre })));
+    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ juntos: abrirJuntos, oracion: vistaOracion, agenda: (i) => vistaAgenda(modoMiembro(i)), avisos: (i) => vistaAvisos(modoMiembro(i)), ministerios: vistaMinisterios, muro: vistaMuro, accion: vistaAccion, visita: vistaVisita, mioracion: () => vistaMiOracion(), crec: () => vistaCrecimiento(), privacidad: vistaPrivacidad, ayuda: () => vistaPreguntas(id), servir: vistaMiembroServir, cuenta: vistaMiembroCuenta }[b.dataset.ir] || vistaVisita)(id)));
+  }
   function vistaMiembro(id) {
     const ig = leer(K_IG);
     $('#pantalla').innerHTML = `
       ${areaHero('area-iglesia')}<p class="area-tag area-tag-miembro">Tu comunidad</p><section class="saludo"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML(id.nombre, perfilLeer(), false)}<div><p class="suave m0">${saludoHora()}</p><h1>Hola, ${esc(id.nombre)}</h1><p class="suave m0">⛪ ${ig ? esc(ig.nombre) : 'Tu iglesia'}</p></div></section>
-      <details class="pf-grupo mi-grupo" data-mg="Pedir ayuda"${miAbierto.has('Pedir ayuda') ? ' open' : ''}><summary>Pedir ayuda</summary>
-      <div class="grid">${activa('🙏', 'Pedir oración', 'Cuéntale a tu pastor por qué orar.', 'oracion')}${activa('🤝', 'Pedir visita', 'Pide que tu pastor te visite.', 'visita')}</div>
-      </details>
-      <details class="pf-grupo mi-grupo" data-mg="Mi iglesia"${miAbierto.has('Mi iglesia') ? ' open' : ''}><summary>Mi iglesia</summary>
-      <div class="grid">${activa('📅', 'Agenda', 'Actividades de tu iglesia y de tus grupos.', 'agenda')}${activa('📣', 'Avisos', 'Mensajes de tu pastor y de los líderes.', 'avisos')}${activa('🧱', 'Muro', 'Peticiones que tu pastor compartió, para orar juntos.', 'muro')}${activa('🌟', 'Acción del mes', 'Lo que viviremos juntos este mes.', 'accion')}</div>
-      <div class="lista"><button type="button" class="fila" data-chat="1"><span class="fila-txt">Chat de mi iglesia<small>Bendecir, unirnos y organizar. Sin conflictos en público.</small></span><span class="flecha" aria-hidden="true">›</span></button></div>
-      <section class="card cuidar-pastor"><b>Cuidar a tu pastor</b><p class="suave m0t">Tu pastor también es una persona. Estas son formas concretas de acompañarlo:</p><ul class="ayuda-pasos"><li>Ora por él y por su familia, por su nombre.</li><li>Agradécele con una palabra sincera, en persona o por escrito.</li><li>Respeta sus días de descanso: no todo es urgente.</li><li>Ofrece una ayuda concreta: un servicio, transporte o una compra para el aseo.</li><li>Si ves una carga que no puede con todo, dile que cuentas con él.</li></ul></section>
-      </details>
-      <details class="pf-grupo mi-grupo" data-mg="Servir"${miAbierto.has('Servir') ? ' open' : ''}><summary>Servir</summary>
-        <div class="card"><div class="t">Mis turnos</div><div id="misTurnos"><p class="suave m0">Cargando tus turnos…</p></div></div>
+      <section class="mi-car" aria-label="Para ti hoy" aria-roledescription="carrusel">
+        <div class="mi-car-pista" id="miCar" tabindex="0">
+          <article class="mi-sl c1"><span class="mi-sl-big" aria-hidden="true">🌟</span><div class="mi-sl-tx"><small>Acción del mes</small><b id="miAccTema">Lo que viviremos juntos</b><span id="miAccRef">Un paso pequeño, con tu iglesia.</span><button type="button" class="mi-sl-bt" data-ir="accion">Ver cómo vivirla</button></div></article>
+          <article class="mi-sl c2"><span class="mi-sl-big" aria-hidden="true">🕍</span><div class="mi-sl-tx"><small>Tu próximo servicio</small><b id="miSrvT">Revisando tus turnos…</b><span id="miSrvD">Aquí verás cuándo te toca servir.</span><button type="button" class="mi-sl-bt" data-ir="servir">Ir a Servir</button></div></article>
+          <article class="mi-sl c5"><span class="mi-sl-big" aria-hidden="true">🧱</span><div class="mi-sl-tx"><small>Orar juntos</small><b>Peticiones del Muro</b><span>Lo que tu pastor compartió para que oremos unidos.</span><button type="button" class="mi-sl-bt" data-ir="muro">Orar ahora</button></div></article>
+          <article class="mi-sl c4"><span class="mi-sl-big" aria-hidden="true">🙏</span><div class="mi-sl-tx"><small>¿Necesitas apoyo?</small><b>Tu pastor está para ti</b><span>Cuéntale por qué orar o pide que te visite.</span><div class="mi-sl-dos"><button type="button" class="mi-sl-bt" data-ir="oracion">Pedir oración</button><button type="button" class="mi-sl-bt" data-ir="visita">Pedir visita</button></div></div></article>
+        </div>
+        <div class="mi-car-pts" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>
+      </section>
+      <h2 class="mi-sub">Tu iglesia</h2>
+      <div class="mi-bento">
+        <button type="button" class="mi-b mb-alto mb1" data-ir="agenda"><span class="mi-b-big" aria-hidden="true">📅</span><b>Agenda</b><small>Lo que viene en tu iglesia y tus grupos</small></button>
+        <button type="button" class="mi-b mb2" data-ir="avisos"><span class="mi-b-big" aria-hidden="true">🔔</span><b>Avisos</b><small>De tu pastor</small></button>
+        <button type="button" class="mi-b mb3" data-ir="muro"><span class="mi-b-big" aria-hidden="true">🧱</span><b>Muro</b><small>Orar juntos</small></button>
+        <button type="button" class="mi-b mb-ancho mb4" data-chat="1"><span class="mi-b-big" aria-hidden="true">💬</span><span class="mi-b-tx"><b>Chat de mi iglesia</b><small>Bendecir, unirnos y organizar</small></span><span class="mi-b-pts" aria-hidden="true"><i></i><i></i><i></i></span></button>
+        <button type="button" class="mi-b mb5" data-ir="servir"><span class="mi-b-big" aria-hidden="true">🤲</span><b>Servir</b><small>Turnos y grupos</small></button>
+        <button type="button" class="mi-b mb6" data-ir="accion"><span class="mi-b-big" aria-hidden="true">🌟</span><b>Acción del mes</b><small>Juntos este mes</small></button>
+      </div>
+      <h2 class="mi-sub">Mi espacio</h2>
+      <div class="mi-chips" role="group" aria-label="Mi espacio">
+        <button type="button" class="mi-chip" data-ir="juntos"><span aria-hidden="true">🤲</span>Juntos hacemos el bien</button>
+        <button type="button" class="mi-chip" data-ir="ministerios"><span aria-hidden="true">🕍</span>Mis ministerios</button>
+        <button type="button" class="mi-chip" data-ir="privacidad"><span aria-hidden="true">🔒</span>Privacidad</button>
+        <button type="button" class="mi-chip" data-ir="ayuda"><span aria-hidden="true">❓</span>Preguntas</button>
+        <button type="button" class="mi-chip" data-ir="cuenta"><span aria-hidden="true">🔑</span>Mi cuenta</button>
+      </div>`;
+    cablearMiembro(id);
+    // Puntos del carrusel
+    const pista = $('#miCar'); if (pista) { const pts = document.querySelectorAll('.mi-car-pts i'); pista.addEventListener('scroll', () => { const w = (pista.firstElementChild ? pista.firstElementChild.getBoundingClientRect().width : 1) + 10, i = Math.max(0, Math.min(pts.length - 1, Math.round(pista.scrollLeft / w))); pts.forEach((p, j) => p.classList.toggle('on', j === i)); }, { passive: true }); }
+    // Acción del mes (datos locales)
+    fetch('accion_mes.json').then((r) => r.json()).then((j) => { const x = j[String(new Date().getMonth() + 1)]; if (!x) return; const t = $('#miAccTema'), r2 = $('#miAccRef'); if (t) t.textContent = x.tema; if (r2) r2.textContent = x.referencia; }).catch(() => { /* sin datos: queda el texto base */ });
+    // Próximo turno (14 días)
+    (async () => {
+      const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+      const r = await rpcRaw('turno_miembro_listar', { p_codigo: id.codigo, p_clave: id.clave, p_desde: hoy.toISOString(), p_hasta: new Date(hoy.getTime() + 14 * 86400000).toISOString() });
+      const t = $('#miSrvT'), d2 = $('#miSrvD'); if (!t || !d2) return;
+      if (!r.ok) { t.textContent = 'Sin conexión'; d2.textContent = 'No pudimos cargar tus turnos ahora.'; return; }
+      const f = (r.data || [])[0];
+      if (!f) { t.textContent = 'Sin turnos por ahora'; d2.textContent = 'Cuéntanos cuándo puedes servir y tu pastor te tendrá en cuenta.'; return; }
+      const d = new Date(f.inicio);
+      t.textContent = d.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' }) + ' · ' + d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+      d2.textContent = f.titulo;
+    })();
+  }
+
+  function vistaMiembroServir(id) {
+    $('#pantalla').innerHTML = `${cabecera('Servir', 'Mi iglesia')}<p class="suave">Tus turnos, cuándo puedes servir y los grupos de tu iglesia.</p>
+      <div class="card"><div class="t">Mis turnos</div><div id="misTurnos"><p class="suave m0">Cargando tus turnos…</p></div></div>
       <div id="turLider"></div>
       <div class="card"><b>¿Cuándo puedes servir?</b><p class="suave m0t">Marca lo que te sirve. Por ahora solo lo ves tú.</p>
         <div class="chips" role="group" aria-label="Mi disponibilidad">${DISP_OPC.map(([k, t]) => `<button type="button" class="chip${dispLeer().indexOf(k) >= 0 ? ' on' : ''}" data-disp="${k}" aria-pressed="${dispLeer().indexOf(k) >= 0}">${t}</button>`).join('')}</div>
         <p class="suave m0t" id="dispMsg" aria-live="polite"></p></div>
-      <div class="grid">${activa('🕍', 'Mis ministerios', 'Los grupos donde sirves y quién los lidera.', 'ministerios')}${activa('🤲', 'Juntos hacemos el bien', 'Ideas y movimientos para servir con tu iglesia.', 'juntos')}</div>
-        <div class="card"><div class="t">Quién sirve este mes</div><div id="quienSirve"><p class="suave m0">Cargando el rol de la iglesia…</p></div></div>
-      </details>
-      <details class="pf-grupo mi-grupo" data-mg="Mi cuenta y ayuda"${miAbierto.has('Mi cuenta y ayuda') ? ' open' : ''}><summary>Mi cuenta y ayuda</summary>
-      <div class="grid">${activa('🔒', 'Mi privacidad', 'Qué ve tu pastor, descargar o borrar tus datos.', 'privacidad')}${activa('❓', 'Preguntas frecuentes', 'Respuestas cortas sobre cómo usar la app.', 'ayuda')}</div>
-      <div id="tbEjem" class="tb-ejem-caja"></div>
-      ${leer(K_CUENTA)
-        ? `<div class="card"><div class="t"><span aria-hidden="true">${svg('correo', 22)}</span>Sesión iniciada</div><p class="suave m0t">${esc(leer(K_CUENTA).correo)}. Tu iglesia queda guardada en tu cuenta: en otro teléfono entras solo con tu correo y contraseña.</p><button type="button" class="btn sec" id="cuentaSalir">Cerrar sesión</button></div>`
-        : `<div class="card"><div class="t"><span aria-hidden="true">${svg('correo', 22)}</span>Guardar mi iglesia con mi correo</div><p class="suave m0t">Crea una cuenta (o entra con la que ya tienes) y tu iglesia te sigue a cualquier teléfono, sin copiar llaves.</p><button type="button" class="btn sec" id="cuentaIr">Entrar o crear cuenta</button></div>`}
-      <div class="card"><div class="t"><span aria-hidden="true">🔑</span>Pasar mi iglesia a otro dispositivo</div>
-        <p class="suave m0t">Copia tu llave y pégala en tu otro teléfono o tablet, en Perfil → «Recuperar mi iglesia». Guárdala como una contraseña: quien la tenga entra como tú.</p>
-        <button type="button" class="btn sec" id="verLlave">Mostrar mi llave</button>
-        <div id="llaveBox" hidden><textarea id="llaveTxt" rows="3" readonly spellcheck="false"></textarea><button type="button" class="btn" id="copiarLlave">📋 Copiar mi llave</button><p id="llaveMsg" class="ok" role="status"></p></div></div>
-      ${bloqueInstalar()}
-      </details>
-      <button id="salir" class="btn sec sep28">Salir de mi iglesia</button>`;
-    document.querySelectorAll('[data-mg]').forEach((d) => d.addEventListener('toggle', () => { const n = d.dataset.mg; if (d.open) miAbierto.add(n); else miAbierto.delete(n); }));
-    pintarInstalar($('[data-instalar-box]'));
-    try { if (window.TBEjemplos && $('#tbEjem')) window.TBEjemplos.pintar($('#tbEjem'), 'miembro'); } catch (e) { /* sin ejemplos */ }
-    const cs = $('#cuentaSalir'); if (cs) cs.onclick = () => { if (confirm('¿Cerrar sesión? Tu iglesia sigue guardada en tu cuenta; para volver a entrar necesitarás tu correo y contraseña. Tus notas personales (oración, crecimiento) quedan guardadas en tu cuenta y vuelven cuando entres.')) cerrarSesionCuenta(); };
-    const ci = $('#cuentaIr'); if (ci) ci.onclick = () => vistaCuenta('entrar');
-    $('#verLlave').onclick = () => {
-      let t = ''; try { t = 'PULPITO-ID-' + btoa(JSON.stringify({ c: id.codigo, k: id.clave })); } catch (e) { t = ''; }
-      $('#llaveTxt').value = t; $('#llaveBox').hidden = false; $('#verLlave').hidden = true; $('#llaveTxt').focus(); $('#llaveTxt').select();
-    };
-    $('#copiarLlave').onclick = async () => {
-      const t = $('#llaveTxt'); t.select();
-      try { await navigator.clipboard.writeText(t.value); $('#llaveMsg').textContent = 'Llave copiada. Ahora pégala en tu otro dispositivo.'; }
-      catch (e) { try { document.execCommand('copy'); $('#llaveMsg').textContent = 'Llave copiada.'; } catch (e2) { $('#llaveMsg').textContent = 'Mantén presionado el recuadro y elige «Copiar».'; } }
-    };
+      <div class="lista">${filaIr('🕍', 'Mis ministerios', 'Los grupos donde sirves y quién los lidera', 'ministerios')}${filaIr('🤲', 'Juntos hacemos el bien', 'Ideas para servir con tu iglesia', 'juntos')}</div>
+      <div class="card"><div class="t">Quién sirve este mes</div><div id="quienSirve"><p class="suave m0">Cargando el rol de la iglesia…</p></div></div>
+      <details class="pf-grupo mi-grupo"><summary>Cuidar a tu pastor</summary><section class="cuidar-pastor"><p class="suave m0t">Tu pastor también es una persona. Formas concretas de acompañarlo:</p><ul class="ayuda-pasos"><li>Ora por él y por su familia, por su nombre.</li><li>Agradécele con una palabra sincera, en persona o por escrito.</li><li>Respeta sus días de descanso: no todo es urgente.</li><li>Ofrece una ayuda concreta: un servicio, transporte o una compra para el aseo.</li><li>Si ves una carga que no puede con todo, dile que cuentas con él.</li></ul></section></details>`;
+    volverA('Mi iglesia', () => vistaMiembro(id));
+    cablearMiembro(id);
     // F1038 · Mis turnos: los servicios que el pastor me asignó en los próximos 14 días.
     (async () => {
       const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
@@ -844,8 +863,7 @@
       const filas = r.data || [];
       c.innerHTML = filas.length ? filas.map((t) => { const d = new Date(t.inicio); return '<p class="m0 t2"><b>' + esc(d.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' })) + ' · ' + esc(d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })) + '</b><br>' + esc(t.titulo) + '</p>'; }).join('<hr class="sep16">') : '<p class="suave m0">Por ahora no tienes turnos asignados en las próximas dos semanas.</p>';
     })();
-    document.querySelectorAll('[data-chat]').forEach((b) => b.addEventListener('click', () => vistaChat({ rol: 'miembro', codigo: id.codigo, clave: id.clave, nombre: id.nombre })));
-    // F1045 · Rol de la iglesia: quién sirve en los próximos 30 días (lo ve cualquier miembro). Requiere 19_SQL_F1045_ROL_IGLESIA.sql.
+    // F1045 · Rol de la iglesia: quién sirve en los próximos 30 días.
     (async () => {
       const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
       const r = await rpcRaw('turno_iglesia_listar', { p_codigo: id.codigo, p_clave: id.clave, p_desde: hoy.toISOString(), p_hasta: new Date(hoy.getTime() + 30 * 86400000).toISOString() });
@@ -861,7 +879,7 @@
       });
       c.innerHTML = html;
     })();
-    // F1039 · Si lidero un ministerio, veo «Turnos de mi ministerio» para asignar a mi gente.
+    // F1039 · Si lidero un ministerio, veo «Turnos de mi ministerio».
     misMinisterios(id).then((r) => {
       const c = $('#turLider'); if (!c || !r.ok) return;
       const ls = r.lista.filter((x) => x.es_lider && x.id);
@@ -874,7 +892,36 @@
       guardar(K_DISP, nuevo); vibra(); try { rpcRaw('disponibilidad_guardar', { p_codigo: id.codigo, p_clave: id.clave, p_franjas: nuevo }).catch(() => { /* sin red: queda en el teléfono */ }); } catch (e) { /* sin red */ } b.classList.toggle('on', nuevo.indexOf(k) >= 0); b.setAttribute('aria-pressed', String(nuevo.indexOf(k) >= 0));
       const m = $('#dispMsg'); if (m) m.textContent = nuevo.length ? 'Guardado en tu cuenta.' : 'Puedes marcar cuando quieras.';
     }));
-    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ juntos: abrirJuntos, oracion: vistaOracion, agenda: (i) => vistaAgenda(modoMiembro(i)), avisos: (i) => vistaAvisos(modoMiembro(i)), ministerios: vistaMinisterios, muro: vistaMuro, accion: vistaAccion, visita: vistaVisita, mioracion: () => vistaMiOracion(), crec: () => vistaCrecimiento(), privacidad: vistaPrivacidad, ayuda: () => vistaPreguntas(id) }[b.dataset.ir] || vistaVisita)(id)));
+  }
+
+  function vistaMiembroCuenta(id) {
+    $('#pantalla').innerHTML = `${cabecera('Mi cuenta y ayuda', 'Mi iglesia')}
+      <div class="lista">${filaIr('🔒', 'Mi privacidad', 'Qué ve tu pastor, descargar o borrar tus datos', 'privacidad')}${filaIr('❓', 'Preguntas frecuentes', 'Respuestas cortas sobre cómo usar la app', 'ayuda')}</div>
+      <div id="tbEjem" class="tb-ejem-caja"></div>
+      ${leer(K_CUENTA)
+        ? `<div class="card"><div class="t"><span aria-hidden="true">${svg('correo', 22)}</span>Sesión iniciada</div><p class="suave m0t">${esc(leer(K_CUENTA).correo)}. Tu iglesia queda guardada en tu cuenta: en otro teléfono entras solo con tu correo y contraseña.</p><button type="button" class="btn sec" id="cuentaSalir">Cerrar sesión</button></div>`
+        : `<div class="card"><div class="t"><span aria-hidden="true">${svg('correo', 22)}</span>Guardar mi iglesia con mi correo</div><p class="suave m0t">Crea una cuenta (o entra con la que ya tienes) y tu iglesia te sigue a cualquier teléfono, sin copiar llaves.</p><button type="button" class="btn sec" id="cuentaIr">Entrar o crear cuenta</button></div>`}
+      <div class="card"><div class="t"><span aria-hidden="true">🔑</span>Pasar mi iglesia a otro dispositivo</div>
+        <p class="suave m0t">Copia tu llave y pégala en tu otro teléfono o tablet, en Perfil → «Recuperar mi iglesia». Guárdala como una contraseña: quien la tenga entra como tú.</p>
+        <button type="button" class="btn sec" id="verLlave">Mostrar mi llave</button>
+        <div id="llaveBox" hidden><textarea id="llaveTxt" rows="3" readonly spellcheck="false"></textarea><button type="button" class="btn" id="copiarLlave">📋 Copiar mi llave</button><p id="llaveMsg" class="ok" role="status"></p></div></div>
+      ${bloqueInstalar()}
+      <button id="salir" class="btn sec sep28">Salir de mi iglesia</button>`;
+    volverA('Mi iglesia', () => vistaMiembro(id));
+    cablearMiembro(id);
+    pintarInstalar($('[data-instalar-box]'));
+    try { if (window.TBEjemplos && $('#tbEjem')) window.TBEjemplos.pintar($('#tbEjem'), 'miembro'); } catch (e) { /* sin ejemplos */ }
+    const cs = $('#cuentaSalir'); if (cs) cs.onclick = () => { if (confirm('¿Cerrar sesión? Tu iglesia sigue guardada en tu cuenta; para volver a entrar necesitarás tu correo y contraseña. Tus notas personales (oración, crecimiento) quedan guardadas en tu cuenta y vuelven cuando entres.')) cerrarSesionCuenta(); };
+    const ci = $('#cuentaIr'); if (ci) ci.onclick = () => vistaCuenta('entrar');
+    $('#verLlave').onclick = () => {
+      let t = ''; try { t = 'PULPITO-ID-' + btoa(JSON.stringify({ c: id.codigo, k: id.clave })); } catch (e) { t = ''; }
+      $('#llaveTxt').value = t; $('#llaveBox').hidden = false; $('#verLlave').hidden = true; $('#llaveTxt').focus(); $('#llaveTxt').select();
+    };
+    $('#copiarLlave').onclick = async () => {
+      const t = $('#llaveTxt'); t.select();
+      try { await navigator.clipboard.writeText(t.value); $('#llaveMsg').textContent = 'Llave copiada. Ahora pégala en tu otro dispositivo.'; }
+      catch (e) { try { document.execCommand('copy'); $('#llaveMsg').textContent = 'Llave copiada.'; } catch (e2) { $('#llaveMsg').textContent = 'Mantén presionado el recuadro y elige «Copiar».'; } }
+    };
     $('#salir').onclick = async () => {
       if (!confirm('¿Salir de esta iglesia? Se borrará tu nombre en la iglesia y en este teléfono.')) return;
       await rpc('miembro_eliminar', { p_codigo: id.codigo, p_clave: id.clave });
@@ -956,7 +1003,7 @@
     ['🔑', 'Olvidé mi contraseña', 'En «Entrar con mi correo» toca «¿Olvidaste tu contraseña?». Te llega un correo con un enlace; revisa también «spam».'],
     ['🛠️', 'No puedo entrar o crear mi cuenta', 'En esa pantalla toca «¿No funciona? Revisar la conexión»: te dice qué falla. Si el correo de confirmación no llega, usa «Reenviar el correo de confirmación».'],
     ['🗑️', '¿Cómo borro mis datos?', 'En «Mi privacidad» puedes descargarlos, apagar y borrar la copia de tu cuenta, o salir de la iglesia para borrar tu nombre de su lista.', 'privacidad'],
-    ['🌳', '¿Qué es el Inicio y cómo crece mi árbol?', 'Es tu lugar tranquilo. Al empezar eliges un lugar (bosque nativo, desierto florido o costa del Pacífico) y su árbol crece mientras lees y vives la Palabra: madura en 10 días. El lugar se completa en 30 días, con tres detalles que van apareciendo de 10 en 10. Si pasas varios días sin entrar, puede aparecer maleza en tu jardín.'],
+    ['🌳', '¿Qué es el Inicio y cómo crece mi árbol?', 'Es tu lugar tranquilo. Al empezar eliges un lugar (bosque nativo, desierto florido o costa del Pacífico) y su árbol crece mientras lees y vives la Palabra: madura en 15 días, uno por cada día que entras a Inicio. El lugar se completa también en 15 días, con detalles nuevos que van apareciendo en el camino. Verás siempre cuántos días faltan. Si pasas varios días sin entrar, puede aparecer maleza en tu jardín.'],
     ['💧', '¿Qué son las gotas de rocío y cómo las gano?', 'Las ganas al leer un capítulo, al hacer un paso de «Hoy lo hago», al avanzar un día de un plan, al jugar (con 6 aciertos de cada 10) y con la trivia diaria. Hay un máximo por día. No vencen, no se compran con dinero y las usas en tu Inicio.'],
     ['📖', '¿Cómo cambio la versión de la Biblia?', 'En Palabra toca «Leer la Biblia» y elige la versión que prefieras. Los libros que vas leyendo quedan guardados para leer sin internet.'],
     ['🗓', '¿Cómo sigo un plan de lectura?', 'En Palabra toca «Plan de lectura», elige uno y marca cada día cuando lo leas. Mientras tengas uno en curso, esa tarjeta dice «Mi plan» y te lleva al día que toca.'],
@@ -4262,11 +4309,10 @@
     const FRASES = ['Hoy basta con dar un buen paso.', 'Lo pequeño, hecho con cariño, cuenta.', 'Respira. Vas bien.', 'Una palabra amable también es una semilla.', 'No tienes que poder con todo hoy.', 'Lo que siembras con paciencia, crece.', 'Haz una cosa buena y déjala ir.', 'Pregunta cómo está alguien. En serio.', 'La calma también se practica.', 'Hay buena tierra donde estás parado.', 'Descansar es parte del trabajo.', 'Sé el aviso bueno de alguien hoy.'];
     const hoy = new Date(), h0 = hoy.getHours(), saludo = h0 < 6 ? 'Qué bueno verte despierto' : h0 < 12 ? 'Buenos días' : h0 < 19 ? 'Buenas tardes' : 'Buenas noches';
     let k = (hoy.getFullYear() * 366 + hoy.getMonth() * 31 + hoy.getDate()) % FRASES.length;
-    $('#pantalla').innerHTML = `<section class="inicio-limpio${window.TBLienzo ? ' il-con-lienzo' : ''}" id="inicioLimpio" aria-label="Inicio"><button type="button" class="il-juntos il-paisaje" id="ilPais" aria-label="Elegir paisaje y clima" title="Tu paisaje"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 19l6-10 4 6 3-4 7 8z"/><circle cx="17" cy="6" r="2"/></svg></button><button type="button" class="il-juntos il-juegos" id="ilJuegos" aria-label="Juegos" title="Juegos"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="10" rx="5"/><path d="M8 12h3M9.5 10.5v3"/><circle cx="15.5" cy="11" r=".7"/><circle cx="17.7" cy="13" r=".7"/></svg></button><button type="button" class="il-juntos" id="ilJuntos" aria-label="Juntos hacemos el bien" title="Juntos hacemos el bien">${svg('gente', 22)}</button><p class="il-sal">${saludo}${n ? ', ' + esc(n) : ''}</p><time class="il-hora" id="ilHora"></time><p class="il-frase" id="ilFrase" aria-live="off"></p><div id="ilLienzo"></div></section>`;
+    $('#pantalla').innerHTML = `<section class="inicio-limpio${window.TBLienzo ? ' il-con-lienzo' : ''}" id="inicioLimpio" aria-label="Inicio"><button type="button" class="il-juntos il-paisaje" id="ilPais" aria-label="Elegir paisaje y clima" title="Tu paisaje"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 19l6-10 4 6 3-4 7 8z"/><circle cx="17" cy="6" r="2"/></svg></button><button type="button" class="il-juntos il-juegos" id="ilJuegos" aria-label="Juegos" title="Juegos"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="10" rx="5"/><path d="M8 12h3M9.5 10.5v3"/><circle cx="15.5" cy="11" r=".7"/><circle cx="17.7" cy="13" r=".7"/></svg></button><p class="il-sal">${saludo}${n ? ', ' + esc(n) : ''}</p><time class="il-hora" id="ilHora"></time><p class="il-frase" id="ilFrase" aria-live="off"></p><div id="ilLienzo"></div></section>`;
     const sec = $('#inicioLimpio'), fr = $('#ilFrase');
     const bp = $('#ilPais'); if (bp) bp.onclick = () => { vibra(); if (window.TBLienzo && window.TBLienzo.paisajeHoja) window.TBLienzo.paisajeHoja(() => { const c = $('#ilLienzo'); if (c) window.TBLienzo.montar(c); }); };
     const bg = $('#ilJuegos'); if (bg) bg.onclick = () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) { /* sin vibración */ } ir('palabra'); vistaJuegos(); };
-    const bj = $('#ilJuntos'); if (bj) bj.onclick = () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) { /* sin vibración */ } abrirJuntos(); };
     const quieto = () => MOV_QUIETO();
     fr.textContent = FRASES[k]; calmaResp.push(setTimeout(() => { if (fr.isConnected) fr.classList.add('on'); }, 120));
     const reloj = $('#ilHora'), horaTxt = () => { try { return new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; } };   // F928: reloj pequeño, se actualiza con el mismo temporizador de las frases (sin otro)
