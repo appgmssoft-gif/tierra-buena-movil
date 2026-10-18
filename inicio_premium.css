@@ -42,3 +42,133 @@
 .ip-con-fondo .il-dias i.on{background:linear-gradient(135deg,#fff3cf 0%,#e2b455 45%,#a8761f 100%);box-shadow:0 0 0 1px rgba(122,82,16,.55),0 2px 5px rgba(60,40,8,.35),inset 0 1px 0 rgba(255,255,255,.8)}
 .ip-con-fondo .il-dias i.ahora{width:13px;height:13px;border-radius:3px;transform:rotate(45deg);background:linear-gradient(135deg,#fffbe8,#f1c75e 40%,#b9741a);box-shadow:0 0 0 2px rgba(255,255,255,.75),0 0 0 3px rgba(185,116,26,.6),0 0 14px 3px rgba(242,193,78,.65),inset 0 1px 0 #fff}
 .ip-con-fondo .il-dias{gap:2px}
+
+/* ===================================================================================================
+   F1219 · Acabado premium, pasada 2: tinte por lugar, barra de accesos con gemas, esquinas, adorno del encabezado y pantalla de elegir lugar.
+   Todo es estático (sin animaciones nuevas, por el parpadeo) y sin desenfoque (rendimiento.css lo apaga en todo el sitio): el «cristal» es color + luz.
+   =================================================================================================== */
+
+/* ---------- Tinte por lugar: el oro es la firma; el lugar solo cambia el matiz del cristal ---------- */
+.ip-con-fondo{--ipt:255,247,230;--ipb:201,162,74}
+.ip-con-fondo[data-lugar="bosque"]{--ipt:244,251,238;--ipb:164,170,76}
+.ip-con-fondo[data-lugar="desierto"]{--ipt:255,241,216;--ipb:218,150,60}
+.ip-con-fondo[data-lugar="costa"]{--ipt:236,248,252;--ipb:138,176,174}
+
+/* ---------- Barra de accesos: marco doble, luz en el borde y una gema de color por acceso ---------- */
+.ip-con-fondo .il-barra-in{position:relative;padding:5px;border-radius:29px;
+  background:linear-gradient(180deg,rgba(255,255,255,.95) 0%,rgba(var(--ipt),.88) 100%);border:1px solid rgba(var(--ipb),.66);
+  box-shadow:0 16px 30px -12px rgba(28,22,8,.5),0 3px 8px rgba(28,22,8,.14),0 0 0 3px rgba(255,255,255,.3),inset 0 1px 0 #fff,inset 0 -14px 22px -18px rgba(var(--ipb),.6)}
+.ip-con-fondo .il-barra-in::before{content:"";position:absolute;left:28px;right:28px;top:0;height:1px;background:linear-gradient(90deg,transparent,#fff,transparent);pointer-events:none}
+.ip-con-fondo .ib-bt{min-height:56px;gap:3px;padding:6px 2px 5px;font-size:.72rem;font-weight:700;letter-spacing:.03em}
+.ip-con-fondo .ib-ic{width:32px;height:32px;border-radius:12px;
+  background:linear-gradient(158deg,#fff 0%,color-mix(in srgb,currentColor 15%,#fff) 100%);
+  box-shadow:0 0 0 1px color-mix(in srgb,currentColor 38%,transparent),0 7px 12px -7px color-mix(in srgb,currentColor 80%,transparent),inset 0 1px 0 #fff,inset 0 -7px 10px -8px color-mix(in srgb,currentColor 50%,transparent)}
+.ip-con-fondo .ib-bt+.ib-bt::before{top:14px;bottom:14px}
+.inicio-limpio.il-con-lienzo.ip-con-fondo{padding-top:82px}
+.ip-con-fondo .ib-bt.nuevo::after{top:4px;left:calc(50% + 10px);width:10px;height:10px;box-shadow:0 0 0 2px #fff,0 0 10px 2px rgba(217,154,50,.7)}
+.ip-con-fondo .ib-tri.nuevo::after{box-shadow:0 0 0 2px #fff,0 0 10px 2px rgba(63,167,150,.7)}
+
+/* ---------- Esquinas (perfil y efectos): mismo cristal cálido con filete dorado, solo mientras se ve el Inicio ---------- */
+body:has(.ip-con-fondo) .btn-menu{background:linear-gradient(165deg,#fffdf6,#f5e6c4)!important;
+  box-shadow:0 0 0 1px rgba(201,162,74,.72),0 0 0 4px rgba(255,255,255,.34),0 10px 20px -8px rgba(30,25,10,.5),inset 0 1px 0 #fff}
+body:has(.ip-con-fondo) .tb-rapido{opacity:.88;background:linear-gradient(165deg,#fffdf6,#f5e6c4);
+  box-shadow:0 0 0 1px rgba(201,162,74,.72),0 0 0 4px rgba(255,255,255,.34),0 10px 20px -8px rgba(30,25,10,.5),inset 0 1px 0 #fff}
+
+/* ---------- Cierre del encabezado: adorno fino bajo la frase (no mueve nada: va suelto debajo del texto) ---------- */
+.ip-con-fondo .il-frase::after{content:"";position:absolute;left:50%;bottom:-24px;width:132px;height:14px;margin-left:-66px;pointer-events:none;opacity:.95;
+  background:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='132'%20height='14'%20viewBox='0%200%20132%2014'%3E%3Cdefs%3E%3ClinearGradient%20id='a'%3E%3Cstop%20offset='0'%20stop-color='%23c9a24a'%20stop-opacity='0'/%3E%3Cstop%20offset='1'%20stop-color='%23c9a24a'/%3E%3C/linearGradient%3E%3ClinearGradient%20id='b'%3E%3Cstop%20offset='0'%20stop-color='%23c9a24a'/%3E%3Cstop%20offset='1'%20stop-color='%23c9a24a'%20stop-opacity='0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20x='2'%20y='6.5'%20width='52'%20height='1'%20fill='url(%23a)'/%3E%3Crect%20x='78'%20y='6.5'%20width='52'%20height='1'%20fill='url(%23b)'/%3E%3Ccircle%20cx='58'%20cy='7'%20r='1.3'%20fill='%23c9a24a'/%3E%3Ccircle%20cx='74'%20cy='7'%20r='1.3'%20fill='%23c9a24a'/%3E%3Cpath%20d='M66%201.5%2071.5%207%2066%2012.5%2060.5%207Z'%20fill='%23d9a441'/%3E%3Cpath%20d='M66%204.3%2068.7%207%2066%209.7%2063.3%207Z'%20fill='%23fff3cf'/%3E%3C/svg%3E") center/contain no-repeat}
+
+/* ---------- Elegir lugar (lo primero que se ve): título con adorno, tarjetas con filete dorado y botón con dos estados claros ---------- */
+.il-elige h2::after{content:"";display:block;width:132px;height:14px;margin:12px auto 0;background:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='132'%20height='14'%20viewBox='0%200%20132%2014'%3E%3Cdefs%3E%3ClinearGradient%20id='a'%3E%3Cstop%20offset='0'%20stop-color='%23c9a24a'%20stop-opacity='0'/%3E%3Cstop%20offset='1'%20stop-color='%23c9a24a'/%3E%3C/linearGradient%3E%3ClinearGradient%20id='b'%3E%3Cstop%20offset='0'%20stop-color='%23c9a24a'/%3E%3Cstop%20offset='1'%20stop-color='%23c9a24a'%20stop-opacity='0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20x='2'%20y='6.5'%20width='52'%20height='1'%20fill='url(%23a)'/%3E%3Crect%20x='78'%20y='6.5'%20width='52'%20height='1'%20fill='url(%23b)'/%3E%3Ccircle%20cx='58'%20cy='7'%20r='1.3'%20fill='%23c9a24a'/%3E%3Ccircle%20cx='74'%20cy='7'%20r='1.3'%20fill='%23c9a24a'/%3E%3Cpath%20d='M66%201.5%2071.5%207%2066%2012.5%2060.5%207Z'%20fill='%23d9a441'/%3E%3Cpath%20d='M66%204.3%2068.7%207%2066%209.7%2063.3%207Z'%20fill='%23fff3cf'/%3E%3C/svg%3E") center/contain no-repeat}
+.il-semilla.il-lugar:not(.on){box-shadow:0 0 0 1px rgba(201,162,74,.55),0 0 0 4px rgba(255,255,255,.3),0 20px 34px -16px rgba(30,24,8,.55)}
+.il-plantar:disabled{opacity:1;color:#7d5a1a;background:linear-gradient(180deg,rgba(255,252,242,.92),rgba(246,232,198,.8));
+  border:1px solid rgba(201,162,74,.6);box-shadow:0 0 0 3px rgba(255,255,255,.28),0 10px 20px -12px rgba(30,24,8,.45),inset 0 1px 0 #fff;text-shadow:none}
+.il-plantar:not(:disabled){color:#fff;background:linear-gradient(180deg,#eac260 0%,#c58a26 55%,#a8761f 100%);border:1px solid rgba(122,82,16,.6);
+  text-shadow:0 1px 2px rgba(70,44,4,.45);box-shadow:0 0 0 3px rgba(255,255,255,.3),0 14px 26px -10px rgba(185,121,29,.75),inset 0 1px 0 rgba(255,255,255,.6),inset 0 -8px 14px -10px rgba(90,56,6,.5)}
+
+@media (prefers-color-scheme:dark){
+  .ip-con-fondo{--ipt:50,43,29;--ipb:214,170,84}
+  .ip-con-fondo[data-lugar="bosque"]{--ipt:34,46,32;--ipb:176,184,92}
+  .ip-con-fondo[data-lugar="desierto"]{--ipt:56,42,26;--ipb:226,164,74}
+  .ip-con-fondo[data-lugar="costa"]{--ipt:28,44,52;--ipb:140,190,188}
+  .ip-con-fondo .il-barra-in{background:linear-gradient(180deg,rgba(78,68,46,.9),rgba(var(--ipt),.9));
+    box-shadow:0 16px 30px -12px rgba(0,0,0,.75),0 0 0 3px rgba(255,255,255,.07),inset 0 1px 0 rgba(255,255,255,.16),inset 0 -14px 22px -18px rgba(var(--ipb),.5)}
+  .ip-con-fondo .il-barra-in::before{background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent)}
+  .ip-con-fondo .ib-ic{background:linear-gradient(158deg,rgba(255,255,255,.18),color-mix(in srgb,currentColor 20%,rgba(30,26,18,.9)));
+    box-shadow:0 0 0 1px color-mix(in srgb,currentColor 45%,transparent),0 7px 12px -7px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.22)}
+  .ip-con-fondo .ib-bt.nuevo::after{box-shadow:0 0 0 2px rgba(30,26,18,.95),0 0 10px 2px rgba(217,154,50,.6)}
+  body:has(.ip-con-fondo) .btn-menu{background:linear-gradient(165deg,rgba(72,62,42,.96),rgba(34,29,20,.96))!important;
+    box-shadow:0 0 0 1px rgba(214,170,84,.7),0 0 0 4px rgba(255,255,255,.07),0 10px 20px -8px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.16)}
+  body:has(.ip-con-fondo) .tb-rapido{background:linear-gradient(165deg,rgba(72,62,42,.96),rgba(34,29,20,.96));
+    box-shadow:0 0 0 1px rgba(214,170,84,.7),0 0 0 4px rgba(255,255,255,.07),0 10px 20px -8px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.16)}
+  .il-semilla.il-lugar:not(.on){box-shadow:0 0 0 1px rgba(214,170,84,.6),0 0 0 4px rgba(255,255,255,.06),0 20px 34px -16px rgba(0,0,0,.7)}
+  .il-plantar:disabled{color:#e9cf93;background:linear-gradient(180deg,rgba(70,60,40,.9),rgba(40,34,22,.85));border-color:rgba(214,170,84,.55);box-shadow:0 0 0 3px rgba(255,255,255,.06),inset 0 1px 0 rgba(255,255,255,.14)}
+}
+
+/* ---------- Ahorro (data-eco=2): la barra de accesos conserva el tinte del lugar en vez de un crema plano ---------- */
+html[data-eco="2"] .ip-con-fondo .il-barra-in{background:linear-gradient(180deg,#fffdf6,rgb(var(--ipt)))}
+
+/* ---------- Modo oscuro del teléfono: el cielo del Inicio cambia por HORA, no por modo, y siempre es claro.
+   El encabezado (saludo, hora, frase) debe conservar tinta oscura; solo la barra de accesos, que es cristal oscuro, usa letra clara. ---------- */
+@media (prefers-color-scheme:dark){
+  .inicio-limpio.il-con-lienzo.ip-con-fondo .il-sal,.inicio-limpio.il-con-lienzo.ip-con-fondo .il-hora::after{color:#7a5514;text-shadow:0 1px 10px rgba(255,255,255,.7)}
+  .ip-con-fondo #ilHora{color:#241a0b;text-shadow:0 2px 22px rgba(255,255,255,.85),0 0 1px rgba(255,255,255,.6)}
+  .ip-con-fondo .il-frase{color:#3a2d17;text-shadow:0 1px 14px rgba(255,255,255,.9)}
+  html[data-eco="2"] .ip-con-fondo .il-barra-in{background:linear-gradient(180deg,#4a4130,rgb(var(--ipt)))}
+}
+
+/* ===== F1220 · Detalles chicos (estáticos) ===== */
+/* Luz de contacto de la escena con el matiz del lugar (antes: un verde oscuro igual para todos) */
+.ip-con-fondo[data-lugar="desierto"] .il-escena{filter:drop-shadow(0 18px 22px rgba(70,36,8,.34)) saturate(1.08) contrast(1.03)}
+.ip-con-fondo[data-lugar="costa"] .il-escena{filter:drop-shadow(0 18px 22px rgba(12,48,62,.32)) saturate(1.06) contrast(1.03)}
+/* Pista inferior: filete del lugar y letra algo más firme */
+.ip-con-fondo .il-guia{border-color:rgba(var(--ipb),.6);box-shadow:0 0 0 1px rgba(var(--ipb),.4),0 0 0 3px rgba(255,255,255,.22),0 8px 20px -10px rgba(30,25,10,.45),inset 0 1px 0 #fff;font-weight:600}
+/* Hora: línea dorada bajo los números más fina y con puntas que se desvanecen */
+.ip-con-fondo .il-frase::before{height:1px;width:56px;margin-left:-28px;background:linear-gradient(90deg,transparent,#d9a441,transparent)}
+/* Gemas del diario: la de hoy con un halo más suave y las hechas con brillo de faceta */
+.ip-con-fondo .il-dias i.on{background:linear-gradient(135deg,#fff7dc 0%,#e8bd5c 42%,#a8761f 100%)}
+/* Primer toque: los accesos y esquinas se hunden un poco al presionar */
+.ip-con-fondo .ib-bt:active .ib-ic{transform:translateY(0) scale(.94)}
+body:has(.ip-con-fondo) .btn-menu:active,body:has(.ip-con-fondo) .tb-rapido:active{transform:scale(.92)}
+
+/* ===== F1221 · Fase 1 (bordes y fondo del Inicio). Estático, sin desenfoque. ===== */
+/* Marco de luz: resplandor interior en los bordes de la pantalla con el tono del lugar + filete fino blanco a 8 px del borde */
+.ip-fondo{--ed:34,62,44;--hz:255,242,206}
+body:has(.ip-con-fondo[data-lugar="bosque"]) .ip-fondo{--ed:22,58,38;--hz:255,244,214}
+body:has(.ip-con-fondo[data-lugar="desierto"]) .ip-fondo{--ed:96,52,16;--hz:255,226,170}
+body:has(.ip-con-fondo[data-lugar="costa"]) .ip-fondo{--ed:14,60,78;--hz:255,240,214}
+/* Luz del horizonte según la hora (el cielo cambia por hora, no por modo oscuro) */
+body:has(.ip-con-fondo[data-franja="alba"]) .ip-fondo{--hz:255,196,160}
+body:has(.ip-con-fondo[data-franja="tarde"]) .ip-fondo{--hz:255,184,120}
+body:has(.ip-con-fondo[data-franja="noche"]) .ip-fondo{--hz:206,196,255}
+.ip-fondo::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:2;border-radius:0;
+  background:radial-gradient(95% 26% at 50% 45%,rgba(var(--hz),.34),rgba(var(--hz),0) 72%);
+  box-shadow:inset 0 0 90px 10px rgba(var(--ed),.34),inset 0 0 0 1px rgba(255,255,255,.18);
+  outline:1px solid rgba(255,255,255,.3);outline-offset:-9px}
+/* Cielo: ligera caída de tono arriba para que la hora y la frase tengan donde apoyarse */
+.ip-fondo::after{background:
+  linear-gradient(180deg,rgba(var(--ed),.16) 0%,rgba(var(--ed),0) 22%),
+  radial-gradient(120% 70% at 50% 8%,rgba(255,238,200,.38),rgba(255,238,200,0) 60%),
+  radial-gradient(130% 100% at 50% 45%,rgba(0,0,0,0) 55%,rgba(18,28,18,.38) 100%),
+  linear-gradient(180deg,rgba(0,0,0,0) 62%,rgba(16,32,18,.34) 100%)}
+html[data-contraste="alto"] .ip-fondo::before{outline:0;box-shadow:none}
+
+/* ===== F1222 · Fase 2 (Vivero: cabecera, gotas, paisaje y hábitats) + detalle de la barra inferior ===== */
+.ha-viv .ha-cab{background:radial-gradient(120% 140% at 12% 0%,rgba(255,255,255,.28),rgba(255,255,255,0) 55%),linear-gradient(135deg,#6fb572,#2f6b3f 85%)}
+.ha-viv .ha-ic{background:linear-gradient(160deg,rgba(255,255,255,.38),rgba(255,255,255,.14));border-color:rgba(246,220,154,.75);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 0 0 3px rgba(255,255,255,.12),0 8px 16px -6px rgba(0,0,0,.4)}
+.ha-viv .ha-cab::after{height:3px;background:linear-gradient(90deg,transparent,#f6dc9a 30%,#fff3cf 50%,#f6dc9a 70%,transparent)}
+/* Saldo de gotas: pastilla de cristal con filete dorado (antes: borde negro) */
+.ha-cuerpo .il-viv-saldo-bt{border:1px solid rgba(201,162,74,.75);color:#1f4a66;background:linear-gradient(180deg,#ffffff,#e6f3fa);
+  box-shadow:0 0 0 3px rgba(255,255,255,.55),0 10px 18px -10px rgba(30,60,90,.5),inset 0 1px 0 #fff}
+/* «Tu paisaje»: marco doble */
+.viv-paisaje{box-shadow:0 0 0 3px rgba(255,255,255,.4),0 12px 22px -14px rgba(60,40,10,.6),inset 0 1px 0 rgba(255,255,255,.8)}
+/* Títulos de paso con gema dorada */
+.ha-cuerpo .viv-paso{display:flex;align-items:center;gap:9px;color:#6b4a14;letter-spacing:.14em}
+.ha-cuerpo .viv-paso::before{content:"";flex:none;width:8px;height:8px;border-radius:2px;transform:rotate(45deg);background:linear-gradient(135deg,#fff3cf,#e2b455 50%,#a8761f);box-shadow:0 0 0 1px rgba(122,82,16,.5)}
+/* Tarjetas de hábitat: profundidad y filete (el borde dorado del activo se conserva) */
+.ha-cuerpo .viv-hab{border-radius:24px;background:linear-gradient(180deg,#fffdf7,#f6efde);box-shadow:0 0 0 3px rgba(255,255,255,.5),0 16px 26px -16px rgba(60,40,10,.6),inset 0 1px 0 #fff}
+/* Mensaje del hábitat activo: cita con filete, no un párrafo suelto en negrita */
+.ha-cuerpo .il-viv-ok2{margin:14px 0;padding:12px 14px 12px 16px;border-radius:14px;border-left:3px solid #d9a441;background:linear-gradient(90deg,rgba(217,164,65,.16),rgba(217,164,65,.04));color:#6b4a14;font:italic 500 .98rem/1.45 Fraunces,"TB Titulo",Georgia,serif}
+/* Detalle en el Inicio: barra inferior con marco doble dorado */
+body:has(.ip-con-fondo) .barra{box-shadow:0 0 0 1px rgba(201,162,74,.5),0 0 0 4px rgba(255,255,255,.22),0 14px 28px -10px rgba(20,16,6,.5),inset 0 1px 0 rgba(255,255,255,.9)}
+.ha-cuerpo .viv-habitats{padding-bottom:18px;margin-bottom:-8px}
