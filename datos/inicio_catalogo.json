@@ -553,6 +553,13 @@
       "origen": "nativo de Chile (norte)",
       "mensaje": "En el desierto, quien sabe guardar agua en sus raíces y ramas florece cuando llega la lluvia.",
       "dato": "El chañar crece en el desierto del norte de Chile, junto a los valles de los ríos. Su corteza verde guarda agua y en primavera se cubre de flores amarillas."
+    },
+    "quenoa": {
+      "nombre": "Queñoa",
+      "otro": "Polylepis",
+      "origen": "nativo de Chile (altiplano y cordillera)",
+      "mensaje": "Donde casi nada crece, ella sigue en pie. La constancia en lo alto también da sombra a otros.",
+      "dato": "Es uno de los árboles que crecen a mayor altura en el mundo: vive sobre los 4.000 metros. Su corteza rojiza se desprende en láminas finas que lo protegen del frío."
     }
   },
   "semillas": {
@@ -1558,7 +1565,18 @@
       "precio": 150,
       "fondo": "montanas",
       "mensaje": "En lo alto, la nieve guarda el agua que llega a todo el valle. Cuidar las alturas también es cuidar lo de abajo.",
-      "dato": "Aquí se pueden plantar especies de la zona cordillerana, como algunas añañucas que crecen entre rocas y laderas."
+      "dato": "Aquí se pueden plantar especies de la zona cordillerana, como algunas añañucas que crecen entre rocas y laderas.",
+      "arbol": "quenoa",
+      "rasgos": [
+        "Llareta",
+        "Vicuña",
+        "Vizcacha"
+      ],
+      "rasgos_ids": [
+        "llareta",
+        "vicuna",
+        "vizcacha"
+      ]
     },
     "costa": {
       "nombre": "Costa del Pacífico",

@@ -80,3 +80,18 @@ html[data-eco="2"] .il-barra-in{-webkit-backdrop-filter:none;backdrop-filter:non
 
 /* La ficha de acción del Vivero queda fija abajo de su pantalla, con filete dorado */
 .ha-cuerpo .viv-accion{bottom:calc(8px + env(safe-area-inset-bottom,0px));border:1px solid color-mix(in srgb,var(--oro,#c9a24a) 42%,transparent)}
+
+/* F1233 · Vivero más claro: lugares con tres estados, ficha del lugar y ayudas cortas */
+.viv-ayuda{margin:0 0 8px;font-size:.84rem;line-height:1.45;color:var(--suave)}
+.viv-hab.sel{outline:2px solid color-mix(in srgb,var(--oro,#c9a24a) 70%,transparent);outline-offset:1px}
+.viv-hab.lock .viv-thumb{opacity:.62}
+.viv-hab.lock span{color:var(--suave)}
+.viv-lugar{margin:0 0 14px;padding:12px 14px;border-radius:18px;border:1px solid color-mix(in srgb,var(--oro,#c9a24a) 38%,transparent);background:color-mix(in srgb,var(--oro,#c9a24a) 8%,transparent);display:grid;gap:8px}
+.viv-lugar h4{margin:0;font:600 1.05rem/1.3 Fraunces,Georgia,serif}
+.viv-lugar .il-viv-dato,.viv-lugar .il-viv-pre{margin:0;font-size:.86rem;line-height:1.45}
+.viv-lugar .il-viv-bt{width:100%}
+.viv-ganar{margin-left:6px;padding-left:8px;border-left:1px solid color-mix(in srgb,currentColor 30%,transparent);font-size:.78rem;font-weight:700;opacity:.85}
+.viv-ganar-bt{width:100%;margin-top:6px}
+/* F1234 · La ficha de la planta o ave ya no flota sobre la pantalla (tapaba la ficha del lugar): va justo debajo de la fila que la elige */
+.ha-cuerpo .viv-accion{position:static;bottom:auto;margin-top:12px;box-shadow:none}
+.ha-cuerpo .viv-grid .il-viv-tile{width:100%}

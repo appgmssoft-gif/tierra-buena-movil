@@ -140,6 +140,8 @@
         soplo(0, 1.3, 0.03, 380, 1500); pluck(NOTAS.E5, 0.05, 0.9, 0.06, 0.8); pluck(NOTAS.B4, 0.2, 1.1, 0.055, 0.9); nota(NOTAS.G4, 0.12, 1.5, 0.04, { eco: 0.8, corte: 1500, ataque: 0.08, sinCoro: true });
       } else if (h === 'costa') {                // una ola que sube y se retira, y una campanita de cristal
         soplo(0, 1.5, 0.034, 260, 2600); soplo(0.9, 1.0, 0.018, 2600, 500); nota(NOTAS.D6, 0.25, 1.4, 0.045, { eco: 0.95, brillo: 0.3, ataque: 0.004, corte: 6200 }); pluck(NOTAS.A5, 0.45, 1.0, 0.05, 0.9);
+      } else if (h === 'cordillera') {           // F1232: viento frío de altura, un bordón grave y notas de quena que suben, como el aire delgado
+        soplo(0, 1.6, 0.03, 1200, 5200); nota(NOTAS.D4, 0.05, 1.8, 0.04, { eco: 0.8, corte: 1100, ataque: 0.12, sinCoro: true }); pluck(NOTAS.A5, 0.3, 1.2, 0.05, 0.9); pluck(NOTAS.E5, 0.5, 1.4, 0.045, 0.9); nota(NOTAS.D6, 0.7, 1.6, 0.03, { eco: 0.95, brillo: 0.3, ataque: 0.01, corte: 5200 });
       } else {                                   // bosque: hojas que se mecen y dos golpes de madera
         soplo(0, 1.1, 0.026, 2400, 6200); pluck(NOTAS.A4, 0.08, 0.8, 0.07, 0.7); pluck(NOTAS.D5, 0.24, 1.0, 0.06, 0.8);
       }
