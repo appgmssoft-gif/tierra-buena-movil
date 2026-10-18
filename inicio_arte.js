@@ -80,46 +80,6 @@
   }
 
 
-  // ---------- Foto del lugar completo (F1208) ----------
-  // Tarjeta vertical 1080x1350 para compartir: postal del lugar + título + diez puntos dorados. Se dibuja en un canvas (la política de seguridad permite img-src data:).
-  function lienzoTarjeta(o) {
-    const W = 1080, H = 1350, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
-    const x = cv.getContext('2d'), P = postal(o.lugar); if (!x || !P) return Promise.reject(new Error('sin-postal'));
-    const svg = P.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="810" ').replace('preserveAspectRatio="xMidYMid slice"', 'preserveAspectRatio="xMidYMid slice"');
-    const img = new Image(), url = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
-    const serif = 'Fraunces,"TB Titulo",Georgia,serif', sans = 'system-ui,-apple-system,"Segoe UI",sans-serif';
-    return new Promise((ok, fail) => {
-      img.onload = () => {
-        try {
-          const fondo = x.createLinearGradient(0, 0, 0, H); fondo.addColorStop(0, '#fbf6e8'); fondo.addColorStop(1, '#efe3c3'); x.fillStyle = fondo; x.fillRect(0, 0, W, H);
-          x.drawImage(img, 0, 0, 1080, 810);
-          const vel = x.createLinearGradient(0, 560, 0, 810); vel.addColorStop(0, 'rgba(251,246,232,0)'); vel.addColorStop(1, 'rgba(251,246,232,1)'); x.fillStyle = vel; x.fillRect(0, 560, W, 252);
-          x.textAlign = 'center'; x.fillStyle = '#9a6a1a'; x.font = '700 30px ' + sans; if ('letterSpacing' in x) x.letterSpacing = '6px';
-          x.fillText('MI LUGAR QUEDÓ COMPLETO', W / 2, 872); if ('letterSpacing' in x) x.letterSpacing = '0px';
-          x.fillStyle = '#2a2418'; x.font = '600 84px ' + serif; x.fillText(o.nombre, W / 2, 976);
-          if (o.arbol) { x.fillStyle = '#6b5a3a'; x.font = 'italic 500 42px ' + serif; x.fillText(o.arbol, W / 2, 1040); }
-          for (let i = 0; i < o.dias; i++) { const cx = W / 2 + (i - (o.dias - 1) / 2) * 62, g = x.createRadialGradient(cx - 4, 1118, 2, cx, 1120, 17); g.addColorStop(0, i === o.dias - 1 ? '#ffe9a8' : '#a9d27f'); g.addColorStop(1, i === o.dias - 1 ? '#d99a32' : '#46874f'); x.fillStyle = g; x.beginPath(); x.arc(cx, 1120, i === o.dias - 1 ? 19 : 15, 0, 7); x.fill(); }
-          x.fillStyle = '#4a3f28'; x.font = '500 38px ' + sans; x.fillText('Lo cuidé ' + o.dias + ' días, uno a uno.', W / 2, 1196);
-          x.fillStyle = '#2f6b3f'; x.font = '600 44px ' + serif; x.fillText('Tierra Buena', W / 2, 1288);
-          x.fillStyle = '#8a7a58'; x.font = '500 28px ' + sans; x.fillText('Vivir lo que aprendemos', W / 2, 1326);
-          cv.toBlob((b) => (b ? ok(b) : fail(new Error('sin-blob'))), 'image/png');
-        } catch (e) { fail(e); }
-      };
-      img.onerror = () => fail(new Error('sin-imagen')); img.src = url;
-    });
-  }
-  // Comparte (hoja del teléfono) o descarga la tarjeta. Devuelve 'compartido', 'descargado' o 'cancelado'; nunca lanza.
-  function compartir(o) {
-    return lienzoTarjeta(o).then((blob) => {
-      const f = (typeof File === 'function') ? new File([blob], 'mi-lugar-tierra-buena.png', { type: 'image/png' }) : null;
-      if (f && navigator.canShare && navigator.canShare({ files: [f] }) && navigator.share) {
-        return navigator.share({ files: [f], title: 'Mi lugar en Tierra Buena', text: 'Mi lugar quedó completo en Tierra Buena.' }).then(() => 'compartido', (e) => (e && e.name === 'AbortError' ? 'cancelado' : 'fallo'));
-      }
-      const u = URL.createObjectURL(blob), a = document.createElement('a'); a.href = u; a.download = 'mi-lugar-tierra-buena.png'; document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(() => URL.revokeObjectURL(u), 4000); return 'descargado';
-    }).catch(() => 'fallo');
-  }
-
   const LEMA = { bosque: 'Niebla, helechos y el canto del chucao.', desierto: 'Cuando llueve, el desierto florece.', costa: 'Viento, sal y gaviotas al amanecer.' };
   const PIEZAS = { bosque: bosque, desierto: desierto, costa: costa };
   // Devuelve el SVG de la postal del lugar, o null si ese lugar no tiene postal propia.
@@ -127,5 +87,5 @@
     const f = PIEZAS[h]; if (!f) return null;
     try { return '<svg class="il-postal-svg" viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">' + f() + '</svg>'; } catch (e) { return null; }
   }
-  window.TBArte = { postal: postal, lema: (h) => LEMA[h] || '', compartir: compartir, tarjeta: lienzoTarjeta };
+  window.TBArte = { postal: postal, lema: (h) => LEMA[h] || '' };
 })();

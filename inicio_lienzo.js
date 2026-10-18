@@ -748,8 +748,7 @@
     if (cont.parentNode && cont.parentNode.classList) cont.parentNode.classList.remove('il-eligiendo');
     const guia = lsGet(KGUIA) !== '1';
     cont.innerHTML = escena(est) + '<div class="il-datos"><div class="il-franja">' + puntosDias(est) + '<p class="il-gotas" id="ilGotas" aria-live="polite">' + gotasTexto(est) + '</p></div><p class="il-estado" id="ilEstado" role="status" aria-live="polite"></p>'
-      + (est.habDias >= DIAS() && window.TBArte && window.TBArte.postal(est.tematica) ? '<button type="button" class="il-compartir" id="ilComp"><span aria-hidden="true">✦</span> Compartir mi lugar</button><p class="il-comp-msg" id="ilCompMsg" role="status" aria-live="polite"></p>' : '')
-      + (guia ? '<p class="il-guia" id="ilGuia">Toca el tronco para respirar un momento.</p>' : '')
+      + (guia ? '<p class="il-guia" id="ilGuia">Toca tu lugar para respirar un momento.</p>' : '')
       + '<div class="il-fila"><button type="button" class="il-btn-msg" id="ilMsgBtn" aria-expanded="false" aria-controls="ilMsg">' + ic(IC.libro) + 'Mensajes de hoy</button>'
       + '<button type="button" class="il-btn-msg" id="ilTriBtn" aria-expanded="false" aria-controls="ilTri"></button>'
       + '<button type="button" class="il-btn-msg" id="ilVivBtn" aria-expanded="false" aria-controls="ilViv">' + ic(IC.hoja) + 'Vivero</button></div>'
@@ -784,14 +783,6 @@
   function ligar(cont, mi) {
     const T = window.TBInicio, estado = $('#ilEstado', cont);
     const rb = $('#ilResp', cont); if (rb) rb.onclick = () => respirar(cont);
-    const cb = $('#ilComp', cont); if (cb) cb.onclick = () => {   // F1208: foto del lugar completo para compartir
-      const e = T.cargar(), t = (CAT.tematicas || {})[e.tematica] || {}, sp = CAT.especies && CAT.especies[e.ciclo.especie], msg = $('#ilCompMsg', cont);
-      cb.disabled = true; if (msg) msg.textContent = 'Preparando tu foto…';
-      window.TBArte.compartir({ lugar: e.tematica, nombre: t.nombre || 'Mi lugar', arbol: e.tematica === 'costa' ? '' : (sp ? 'Árbol: ' + sp.nombre : ''), dias: DIAS() }).then((r) => {
-        cb.disabled = false; sonido('capa');
-        if (msg) msg.textContent = r === 'descargado' ? 'Tu foto se guardó en el teléfono.' : r === 'fallo' ? 'No se pudo preparar la foto. Inténtalo de nuevo.' : '';
-      });
-    };
     Array.prototype.forEach.call(cont.querySelectorAll('.il-maleza'), (b) => {
       b.onclick = () => {
         const x = T.sanar(b.getAttribute('data-id')); if (!x.ok) return; sonido('sana');

@@ -1,0 +1,44 @@
+/* F1217 · Inicio premium: tipografía fina, cristal con filete dorado, viñeta y luz. Sin atributo style (CSP); nada se anima aquí. */
+
+/* ---------- Encabezado: jerarquía clara y aire ---------- */
+.ip-con-fondo .il-sal{font-size:.62rem;font-weight:700;letter-spacing:.36em;text-transform:uppercase;color:#85601c;text-shadow:0 1px 10px rgba(255,255,255,.7)}
+.ip-con-fondo #ilHora{font-weight:300;font-size:3.1rem;letter-spacing:-.04em;color:#241a0b;text-shadow:0 2px 22px rgba(255,255,255,.85),0 0 1px rgba(255,255,255,.6)}
+.ip-con-fondo .il-hora::after{font-weight:600;letter-spacing:.2em;color:#85601c;opacity:.85}
+.ip-con-fondo .il-frase{font-style:italic;font-weight:400;font-size:.95rem;line-height:1.4;color:#3a2d17;max-width:19em;text-shadow:0 1px 14px rgba(255,255,255,.9)}
+
+/* ---------- Dock superior: sin choque con el botón de ajustes ---------- */
+.il-pill{left:auto;right:68px;border-radius:999px;background:linear-gradient(165deg,rgba(255,255,255,.8),rgba(255,244,220,.5));border:1px solid rgba(255,255,255,.75);box-shadow:0 0 0 1px rgba(201,162,74,.4),0 10px 26px -8px rgba(30,25,10,.4),inset 0 1px 0 #fff;-webkit-backdrop-filter:blur(14px) saturate(1.5);backdrop-filter:blur(14px) saturate(1.5)}
+.tb-rapido{background:linear-gradient(165deg,rgba(255,255,255,.8),rgba(255,244,220,.5));border:1px solid rgba(255,255,255,.75);box-shadow:0 0 0 1px rgba(201,162,74,.4),0 10px 26px -8px rgba(30,25,10,.4),inset 0 1px 0 #fff;-webkit-backdrop-filter:blur(14px) saturate(1.5);backdrop-filter:blur(14px) saturate(1.5)}
+
+/* ---------- Tres accesos: baldosas de cristal iguales, filete dorado y sombra larga ---------- */
+.ip-con-fondo .il-fila{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:min(100%,348px);margin:6px auto 0}
+.ip-con-fondo .il-fila .il-btn-msg{min-height:74px;padding:10px 6px;border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font-size:.74rem;font-weight:650;letter-spacing:.03em;line-height:1.15;color:#3a2a0f;
+  background:linear-gradient(165deg,rgba(255,255,255,.84) 0%,rgba(255,246,224,.5) 100%);border:1px solid rgba(255,255,255,.8);
+  box-shadow:0 0 0 1px rgba(201,162,74,.42),0 18px 34px -14px rgba(25,20,8,.55),0 3px 8px rgba(25,20,8,.12),inset 0 1px 0 #fff,inset 0 -10px 18px -12px rgba(201,162,74,.35);
+  -webkit-backdrop-filter:blur(16px) saturate(1.6);backdrop-filter:blur(16px) saturate(1.6);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s}
+.ip-con-fondo .il-fila .il-btn-msg:active{transform:translateY(1px) scale(.97)}
+.ip-con-fondo .il-fila .il-btn-msg svg{color:#a8761f;filter:drop-shadow(0 2px 3px rgba(168,118,31,.35))}
+.ip-con-fondo .il-fila .il-btn-msg small{font-size:.66rem;font-weight:700;letter-spacing:.06em;color:#a8761f}
+
+/* ---------- Pista y gotas: más discretas, mismo cristal ---------- */
+.ip-con-fondo .il-guia{font-weight:500;font-size:.7rem;letter-spacing:.04em;color:#5a4116;background:rgba(255,250,238,.55);border:1px solid rgba(255,255,255,.7);box-shadow:0 0 0 1px rgba(201,162,74,.3),0 8px 20px -10px rgba(30,25,10,.4);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+
+/* ---------- Luz y viñeta del paisaje de fondo: bordes más profundos, luz cálida arriba, base oscura para leer ---------- */
+.ip-fondo::after{content:"";position:absolute;inset:0;pointer-events:none;background:
+  radial-gradient(120% 70% at 50% 8%,rgba(255,238,200,.38),rgba(255,238,200,0) 60%),
+  radial-gradient(130% 100% at 50% 45%,rgba(0,0,0,0) 55%,rgba(18,28,18,.38) 100%),
+  linear-gradient(180deg,rgba(0,0,0,0) 62%,rgba(16,32,18,.34) 100%)}
+.ip-con-fondo .il-escena{filter:drop-shadow(0 18px 22px rgba(20,40,25,.34)) saturate(1.06) contrast(1.03)}
+
+@media (prefers-color-scheme:dark){
+  .ip-con-fondo .il-fila .il-btn-msg{color:#f6ecd4;background:linear-gradient(165deg,rgba(60,52,36,.72),rgba(30,26,18,.5));border-color:rgba(255,255,255,.14);box-shadow:0 0 0 1px rgba(214,170,84,.45),0 18px 34px -14px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.14)}
+  .ip-con-fondo #ilHora{color:#fbf2dc;text-shadow:0 2px 22px rgba(0,0,0,.5)}
+  .ip-con-fondo .il-frase{color:#f1e6c9;text-shadow:0 1px 14px rgba(0,0,0,.55)}
+  .ip-con-fondo .il-sal,.ip-con-fondo .il-hora::after{color:#e2bd6c;text-shadow:none}
+}
+
+/* ---------- Diario de días: gemas con filete dorado en vez de bolitas (F1217) ---------- */
+.ip-con-fondo .il-dias i{width:9px;height:9px;border-radius:2px;transform:rotate(45deg);background:linear-gradient(135deg,rgba(255,255,255,.55),rgba(255,244,214,.25));box-shadow:0 0 0 1px rgba(168,118,31,.45),0 2px 4px rgba(30,25,10,.25)}
+.ip-con-fondo .il-dias i.on{background:linear-gradient(135deg,#fff3cf 0%,#e2b455 45%,#a8761f 100%);box-shadow:0 0 0 1px rgba(122,82,16,.55),0 2px 5px rgba(60,40,8,.35),inset 0 1px 0 rgba(255,255,255,.8)}
+.ip-con-fondo .il-dias i.ahora{width:13px;height:13px;border-radius:3px;transform:rotate(45deg);background:linear-gradient(135deg,#fffbe8,#f1c75e 40%,#b9741a);box-shadow:0 0 0 2px rgba(255,255,255,.75),0 0 0 3px rgba(185,116,26,.6),0 0 14px 3px rgba(242,193,78,.65),inset 0 1px 0 #fff}
+.ip-con-fondo .il-dias{gap:2px}

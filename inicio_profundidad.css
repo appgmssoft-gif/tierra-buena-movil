@@ -72,5 +72,3 @@ html[data-contraste="alto"] .ip-fondo::after{content:"";position:absolute;inset:
 .inicio-limpio.ip-con-fondo[data-lugar=costa] .il-escena .col.c2{fill:#ecd3a4}
 .inicio-limpio.ip-con-fondo[data-lugar=costa] .il-escena .col.c3{fill:#e0c48c}
 
-/* Día 10: con el botón de compartir, la pista de respirar se oculta para que las fichas queden sobre la barra */
-.inicio-limpio.ip-con-fondo:has(.il-compartir) .il-guia{display:none}

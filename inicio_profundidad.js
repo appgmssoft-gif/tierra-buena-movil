@@ -160,7 +160,7 @@
       + '<linearGradient id="ipPie" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14231a" stop-opacity="0"/><stop offset="1" stop-color="#14231a" stop-opacity=".14"/></linearGradient>'
       + '<filter id="ipDesenf" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="1.8"/></filter>'
       + '<filter id="ipSuave" x="-30%" y="-80%" width="160%" height="260%"><feGaussianBlur stdDeviation="5"/></filter>'
-      + '<filter id="ipRayoF" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="7"/></filter>'
+      + '<filter id="ipRayoF" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="14"/></filter>'
       + '<filter id="ipGrano" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 .2  0 0 0 0 .15  0 0 0 0 .1  0 0 0 .55 -.18"/></filter>'
       + '</defs>'
       + '<rect width="' + W + '" height="' + H + '" fill="url(#ipCielo)"/>'

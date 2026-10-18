@@ -63,17 +63,6 @@
 @keyframes pt-brilla{50%{opacity:.25}}
 @keyframes pt-vuela{50%{transform:translate(14px,-4px)}}
 
-/* ---------- Compartir mi lugar (día 10) ---------- */
-.il-compartir{appearance:none;-webkit-appearance:none;margin:4px 0 0;min-height:48px;padding:10px 22px;border:0;border-radius:999px;font:600 .95rem/1 inherit;font-family:inherit;color:#fff;cursor:pointer;
-  background:linear-gradient(135deg,#d99a32,#b9741a);box-shadow:0 8px 20px color-mix(in srgb,#b9741a 38%,transparent);transition:transform .2s}
-.il-compartir:active{transform:scale(.96)}.il-compartir:disabled{opacity:.6}
-.il-compartir:focus-visible{outline:3px solid color-mix(in srgb,var(--oro) 70%,transparent);outline-offset:3px}
-.il-comp-msg{margin:0;font-size:.8rem;color:var(--suave);min-height:0}.il-comp-msg:empty{display:none}
-@media (prefers-reduced-motion:no-preference){html:not([data-anim=off]):not([data-eco="2"]) .il-compartir{animation:il-late 2.8s ease-in-out infinite}}
-/* Con el botón de compartir (día 10) la escena cede un poco más de espacio para que las fichas sigan sobre la barra */
-.inicio-limpio.il-con-lienzo:has(.il-compartir) .il-escena{width:min(100vw,520px,max(300px,calc((100svh - 540px) * 1.16)))}
-.il-compartir{min-height:44px;padding:8px 20px;margin-top:2px}
-
 /* ---------- Encabezado del Inicio (F1209): saludo pequeño, hora grande, frase con filete dorado ---------- */
 .inicio-limpio.il-con-lienzo .il-sal{font-size:.72rem;letter-spacing:.2em;color:color-mix(in srgb,var(--oro) 52%,var(--tinta))}
 .inicio-limpio.il-con-lienzo .il-hora{margin-top:-6px;font:500 2.7rem/1 Fraunces,"TB Titulo",Georgia,serif;letter-spacing:-.02em;color:var(--tinta);text-shadow:0 2px 18px color-mix(in srgb,var(--papel) 85%,transparent)}
