@@ -116,6 +116,21 @@ const NAMES=['Árbol esbelto','Planta','Árbol grande','Suelo ancho','Animal','D
 const G={};Object.keys(HAB).forEach(k=>{const h=HAB[k];G[k]=[{label:'Estructura',s:-1,vars:V[k]?V[k][0]:[{...h.st,fp:'4×2'}]}].concat(NAMES.map((l,s)=>{const it=h.items.find(i=>i.s===s);return {label:l,s,vars:V[k]?V[k][s+1]:(it?[it]:[])}}).filter(g=>g.vars.length))});
   const SL=[{x:46,y:270,w:64,h:98,fp:'1×2',k:.58,l:1},{x:52,y:348,w:44,h:46,fp:'1×1',k:1.02,l:4},{x:120,y:302,w:80,h:88,fp:'2×2',k:.78,l:2},{x:232,y:334,w:88,h:42,fp:'2×1',k:.95,l:3},{x:290,y:398,w:60,h:40,fp:'1×1',k:1.3,l:5},{x:160,y:372,w:40,h:34,fp:'1×1',k:1.15,l:4},{x:322,y:318,w:44,h:40,fp:'1×1',k:.86,l:2}];
   const ST={x:268,y:266,w:120,h:104,k:.6,l:1};
+  // F1229 · Composición propia por lugar. Cada lugar reparte sus piezas en dos grupos a los lados del árbol emblemático (centro libre, x 125-235)
+  // y en tres profundidades (lejos y < 310 con bruma, medio, cerca), sin que se toquen. Índice = tipo de casilla (s): 0 árbol esbelto, 1 planta,
+  // 2 árbol grande, 3 suelo ancho, 4 animal, 5 detalle pequeño, 6 ambiente. x,y = pie de la pieza; w,h = caja máxima; k = escala.
+  const LAY={
+    bosque:{ST:{x:288,y:314,w:120,h:120,k:.9,l:1},SL:[
+      {x:30,y:296,w:70,h:120,k:.85,l:1,fp:'1×2'},{x:34,y:384,w:54,h:56,k:1.3,l:4,fp:'1×1'},{x:94,y:346,w:84,h:110,k:.86,l:2,fp:'2×2'},{x:298,y:384,w:92,h:50,k:.95,l:3,fp:'2×1'},
+      {x:212,y:382,w:56,h:50,k:1.4,l:5,fp:'1×1'},{x:98,y:390,w:56,h:44,k:1.4,l:4,fp:'1×1'},{x:256,y:354,w:40,h:44,k:1.1,l:2,fp:'1×1'}]}
+    ,desierto:{ST:{x:276,y:298,w:122,h:116,k:.9,l:1},SL:[
+      {x:38,y:308,w:60,h:112,k:.85,l:1,fp:'1×2'},{x:34,y:376,w:56,h:50,k:1.3,l:4,fp:'1×1'},{x:108,y:344,w:72,h:104,k:.9,l:2,fp:'2×2'},{x:306,y:352,w:90,h:44,k:1,l:3,fp:'2×1'},
+      {x:256,y:390,w:68,h:44,k:1.3,l:5,fp:'1×1'},{x:136,y:392,w:44,h:50,k:1.3,l:4,fp:'1×1'},{x:160,y:322,w:40,h:48,k:1.2,l:2,fp:'1×1'}]}
+    ,costa:{ST:{x:270,y:268,w:124,h:120,k:.66,l:1},SL:[
+      {x:50,y:304,w:64,h:112,k:.85,l:1,fp:'1×2'},{x:98,y:352,w:52,h:56,k:1.2,l:4,fp:'1×1'},{x:172,y:326,w:84,h:92,k:.9,l:2,fp:'2×2'},{x:298,y:340,w:90,h:44,k:1,l:3,fp:'2×1'},
+      {x:238,y:388,w:60,h:50,k:1.4,l:5,fp:'1×1'},{x:132,y:392,w:50,h:44,k:1.4,l:4,fp:'1×1'},{x:320,y:386,w:40,h:56,k:1.2,l:2,fp:'1×1'}]}
+  };
+  const lay=hab=>LAY[hab]||{ST,SL};
   // Día en que llega cada casilla (índice de G): estructura al cerrar el día 10; ambiente con la atmósfera del día 9.
   const DIA_SLOT={1:3,3:4,0:5,4:6,2:7,5:8,6:9};
   const KSEL='tb_casillas_sel';
@@ -128,7 +143,7 @@ const G={};Object.keys(HAB).forEach(k=>{const h=HAB[k];G[k]=[{label:'Estructura'
   // Piezas visibles ese día, de lejos a cerca. Devuelve marcado SVG (sin style).
   function capa(hab,dias){
     const g=G[hab];if(!g)return '';const h=HAB[hab],p=h.p,d=Math.max(0,Math.floor(dias||0));
-    const sl=i=>i===0?ST:SL[g[i].s];
+    const L=lay(hab),sl=i=>i===0?L.ST:L.SL[g[i].s];
     const lista=g.map((x,i)=>({i,v:x.vars[elegida(hab,i)],sl:sl(i),dia:llega(g,i)})).filter(e=>e.v&&d>=e.dia).sort((a,b)=>a.sl.y-b.sl.y);
     if(!lista.length)return '';
     const pc=e=>`<g class="pc-w${e.dia===d?' nueva':''}" filter="url(#casPulido)"><g class="pc" data-x="${e.sl.x}" data-y="${e.sl.y}" data-w="${e.sl.w}" data-h="${e.sl.h}" data-k="${e.sl.k}" transform="translate(${e.sl.x} ${e.sl.y}) scale(${e.sl.k})">${e.v.f(p)}</g></g>`;
@@ -144,6 +159,6 @@ const G={};Object.keys(HAB).forEach(k=>{const h=HAB[k];G[k]=[{label:'Estructura'
       e.setAttribute('transform',`translate(${e.dataset.x} ${e.dataset.y}) scale(${k.toFixed(3)})`);e.dataset.s=k.toFixed(3);
     });
   }
-  const api={HAB,G,SL,ST,capa,ajustar,elegir,elegida,llega,tiene:h=>!!G[h]};
+  const api={HAB,G,SL,ST,LAY,capa,ajustar,elegir,elegida,llega,tiene:h=>!!G[h]};
   if(typeof window!=='undefined')window.TBCasillas=api;if(typeof module!=='undefined')module.exports=api;
 })();

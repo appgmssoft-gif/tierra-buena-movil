@@ -33,6 +33,16 @@
         hoy: { fecha: (g.hoy && g.hoy.fecha) || null, lectura: +(g.hoy && g.hoy.lectura) || 0, vida: +(g.hoy && g.hoy.vida) || 0, plan: +(g.hoy && g.hoy.plan) || 0, oracion: +(g.hoy && g.hoy.oracion) || 0 } };
       const w = x.vivero || {}; b.vivero = { desbloqueados: Array.isArray(w.desbloqueados) ? w.desbloqueados.filter((s) => typeof s === 'string') : [],
         plantas: Array.isArray(w.plantas) ? w.plantas.filter((p) => p && p.id && p.casilla) : [], aves: Array.isArray(w.aves) ? w.aves.filter((p) => p && p.id) : [], ambientes: Array.isArray(w.ambientes) ? w.ambientes.filter((s) => typeof s === 'string').slice(0, 6) : [] };
+      // F1229 · «Jardín del mundo» ya no existe: la cuenta pasa al bosque nativo (con su pewén) y se devuelven las gotas de esa compra, una sola vez.
+      const dj = b.vivero.desbloqueados.filter((k) => k !== 'tem_jardin' && k !== 'lug_jardin');
+      if (dj.length !== b.vivero.desbloqueados.length || b.tematica === 'jardin') {
+        if (b.vivero.desbloqueados.indexOf('tem_jardin') >= 0) b.gotas.saldo += 150;
+        b.vivero.desbloqueados = dj;
+        if (b.tematica === 'jardin') {
+          b.tematica = 'bosque'; if (!b.eligiendo) b.ciclo.especie = 'araucaria';
+          ['tem_bosque', 'lug_bosque'].forEach((k) => { if (b.vivero.desbloqueados.indexOf(k) < 0) b.vivero.desbloqueados.push(k); });
+        }
+      }
       const q = x.cosechas || {}; b.cosechas = { total: Math.max(0, Math.floor(+q.total || 0)), pend: Array.isArray(q.pend) ? q.pend.filter((f) => f && f.id && f.casilla).slice(0, 12) : [], ult: q.ult && typeof q.ult === 'object' ? Object.keys(q.ult).slice(-60).reduce((o, k) => { if (typeof q.ult[k] === 'string') o[k] = q.ult[k]; return o; }, {}) : {} };   // F959: frutos
       const t = x.trivia || {}; b.trivia = { fecha: typeof t.fecha === 'string' ? t.fecha : null, i: Number.isInteger(t.i) ? t.i : null, ok: !!t.ok, elegida: Number.isInteger(t.elegida) ? t.elegida : null };   // F961: trivia diaria
     } catch (e) { return nuevo(); }

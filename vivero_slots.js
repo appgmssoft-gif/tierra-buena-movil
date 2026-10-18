@@ -10,7 +10,7 @@
   // Lugar del catálogo (paisajes) → hábitat del Vivero. Humedal y río son hábitats propios.
   const LUGAR_HABITAT = { bosque: 'bosque', desierto: 'desierto', montanas: 'cordillera', volcan: 'cordillera', costa: 'costa', lago: 'humedal', rio: 'rio' };
   // Estado de cada hábitat: 'disponible' se puede elegir; 'proximamente' existe en el modelo pero aún no se abre.
-  const HABITATS = { bosque: 'disponible', desierto: 'disponible', cordillera: 'disponible', costa: 'disponible', jardin: 'disponible', humedal: 'proximamente', rio: 'proximamente' };
+  const HABITATS = { bosque: 'disponible', desierto: 'disponible', cordillera: 'disponible', costa: 'disponible', humedal: 'proximamente', rio: 'proximamente' };
   const FAUNA = ['cisne', 'guanaco', 'zorro', 'huemul', 'gaviota'];
 
   function slotDe(item) {

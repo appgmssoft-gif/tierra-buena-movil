@@ -631,30 +631,6 @@
         "costa"
       ]
     },
-    "lavanda": {
-      "nombre": "Lavanda",
-      "precio": 18,
-      "casillas": [
-        "pasto-1",
-        "pasto-2",
-        "pasto-3",
-        "pasto-4",
-        "pasto-5",
-        "pasto-6",
-        "pasto-7",
-        "pasto-8",
-        "pasto-9",
-        "pasto-10",
-        "pasto-11",
-        "pasto-12"
-      ],
-      "mensaje": "Lo que da calma a otros también calma a quien lo planta.",
-      "dato": "Es originaria del Mediterráneo y muy aromática. Atrae a las abejas y las mariposas.",
-      "dias": 2,
-      "habitat": [
-        "jardin"
-      ]
-    },
     "pasto_alto": {
       "nombre": "Pasto alto",
       "precio": 5,
@@ -675,222 +651,6 @@
       ],
       "mensaje": "Lo sencillo también embellece. Un pequeño verde ya cambia el lugar.",
       "dato": "Los pastos alimentan a gran parte del mundo: el trigo, el arroz y el maíz también son pastos."
-    },
-    "bambu": {
-      "nombre": "Bambú",
-      "precio": 10,
-      "dias": 1,
-      "casillas": [
-        "pasto-1",
-        "pasto-2",
-        "pasto-3",
-        "pasto-4",
-        "pasto-5",
-        "pasto-6",
-        "pasto-7",
-        "pasto-8",
-        "pasto-9",
-        "pasto-10",
-        "pasto-11",
-        "pasto-12"
-      ],
-      "mensaje": "Primero crece hacia adentro y luego se dispara hacia arriba. A veces el avance no se ve, pero está.",
-      "dato": "Algunas especies llegan a crecer cerca de un metro en un solo día. Es un pasto gigante, no un árbol, y su tallo es hueco y flexible.",
-      "habitat": [
-        "jardin"
-      ]
-    },
-    "flor_de_loto": {
-      "nombre": "Flor de loto",
-      "precio": 12,
-      "dias": 1,
-      "casillas": [
-        "pasto-1",
-        "pasto-2",
-        "pasto-3",
-        "pasto-4",
-        "pasto-5",
-        "pasto-6",
-        "pasto-7",
-        "pasto-8",
-        "pasto-9",
-        "pasto-10",
-        "pasto-11",
-        "pasto-12"
-      ],
-      "mensaje": "Nace en aguas quietas y se abre limpia. Se puede florecer desde cualquier lugar.",
-      "dato": "Sus hojas repelen el agua y la suciedad. Se han hecho germinar semillas de loto de más de mil años de antigüedad.",
-      "habitat": [
-        "jardin"
-      ]
-    },
-    "bonsai": {
-      "nombre": "Bonsái",
-      "precio": 15,
-      "dias": 2,
-      "casillas": [
-        "pasto-1",
-        "pasto-2",
-        "pasto-3",
-        "pasto-4",
-        "pasto-5",
-        "pasto-6",
-        "pasto-7",
-        "pasto-8",
-        "pasto-9",
-        "pasto-10",
-        "pasto-11",
-        "pasto-12"
-      ],
-      "mensaje": "Cuidar con calma, un poco cada día, también es una forma de arte.",
-      "dato": "Es el arte de cultivar un árbol pequeño en una maceta mediante poda y cuidado constante. Algunos ejemplares superan los 400 años.",
-      "habitat": [
-        "jardin"
-      ]
-    },
-    "planta_fantasma": {
-      "nombre": "Planta fantasma",
-      "precio": 22,
-      "dias": 2,
-      "casillas": [
-        "pasto-1",
-        "pasto-2",
-        "pasto-3",
-        "pasto-4",
-        "pasto-5",
-        "pasto-6",
-        "pasto-7",
-        "pasto-8",
-        "pasto-9",
-        "pasto-10",
-        "pasto-11",
-        "pasto-12"
-      ],
-      "mensaje": "No todo lo que crece necesita sol. Hay fuerzas que sostienen en silencio.",
-      "dato": "Es blanca porque no tiene clorofila: no hace fotosíntesis y obtiene su alimento de hongos del suelo conectados a las raíces de árboles.",
-      "habitat": [
-        "jardin"
-      ]
-    },
-    "welwitschia": {
-      "nombre": "Welwitschia",
-      "precio": 28,
-      "dias": 3,
-      "casillas": [
-        "pasto-1",
-        "pasto-2",
-        "pasto-3",
-        "pasto-4",
-        "pasto-5",
-        "pasto-6",
-        "pasto-7",
-        "pasto-8",
-        "pasto-9",
-        "pasto-10",
-        "pasto-11",
-        "pasto-12"
-      ],
-      "mensaje": "Resistir con lo justo también es crecer. Menos puede ser suficiente.",
-      "dato": "Vive en el desierto de Namibia y en toda su vida produce solo dos hojas que no dejan de crecer. Puede vivir más de mil años.",
-      "habitat": [
-        "jardin"
-      ]
-    },
-    "dracaena_cinnabari": {
-      "nombre": "Drago de Socotra",
-      "precio": 32,
-      "dias": 3,
-      "casillas": [
-        "pasto-1",
-        "pasto-2",
-        "pasto-3",
-        "pasto-4",
-        "pasto-5",
-        "pasto-6",
-        "pasto-7",
-        "pasto-8",
-        "pasto-9",
-        "pasto-10",
-        "pasto-11",
-        "pasto-12"
-      ],
-      "mensaje": "Quien se adapta, encuentra la forma de captar lo que le hace falta.",
-      "dato": "Crece solo en la isla de Socotra, en Yemen. Su copa en forma de paraguas atrapa la niebla y su savia es de color rojo intenso.",
-      "habitat": [
-        "jardin"
-      ]
-    },
-    "orquidea_subterranea": {
-      "nombre": "Orquídea subterránea",
-      "precio": 35,
-      "dias": 3,
-      "casillas": [
-        "pasto-1",
-        "pasto-2",
-        "pasto-3",
-        "pasto-4",
-        "pasto-5",
-        "pasto-6",
-        "pasto-7",
-        "pasto-8",
-        "pasto-9",
-        "pasto-10",
-        "pasto-11",
-        "pasto-12"
-      ],
-      "mensaje": "Hay vidas que florecen en lo escondido. No todo avance necesita verse.",
-      "dato": "Rhizanthella gardneri, de Australia, pasa toda su vida bajo tierra, incluso al florecer. No hace fotosíntesis y es una de las orquídeas más raras.",
-      "habitat": [
-        "jardin"
-      ]
-    },
-    "secuoya_roja": {
-      "nombre": "Secuoya roja",
-      "precio": 40,
-      "dias": 4,
-      "casillas": [
-        "pasto-1",
-        "pasto-2",
-        "pasto-3",
-        "pasto-4",
-        "pasto-5",
-        "pasto-6",
-        "pasto-7",
-        "pasto-8",
-        "pasto-9",
-        "pasto-10",
-        "pasto-11",
-        "pasto-12"
-      ],
-      "mensaje": "Las alturas grandes empiezan con raíces que se entrelazan. Nadie crece del todo solo.",
-      "dato": "Es el árbol más alto del mundo: puede superar los 110 metros. Vive en la costa de California y algunas pasan los 2.000 años.",
-      "habitat": [
-        "jardin"
-      ]
-    },
-    "rafflesia": {
-      "nombre": "Rafflesia de Arnold",
-      "precio": 45,
-      "dias": 3,
-      "casillas": [
-        "pasto-1",
-        "pasto-2",
-        "pasto-3",
-        "pasto-4",
-        "pasto-5",
-        "pasto-6",
-        "pasto-7",
-        "pasto-8",
-        "pasto-9",
-        "pasto-10",
-        "pasto-11",
-        "pasto-12"
-      ],
-      "mensaje": "Lo extraordinario también existe y merece cuidado. Cada ser vivo tiene su lugar.",
-      "dato": "Es una de las flores más grandes del mundo: puede medir cerca de un metro. No tiene raíces, hojas ni tallo y vive como parásita de una liana en los bosques de Sumatra y Borneo.",
-      "habitat": [
-        "jardin"
-      ]
     },
     "llareta": {
       "nombre": "Llareta",
@@ -1104,15 +864,6 @@
       "precio": 150,
       "mensaje": "Hay momentos para mirar desde lo alto y recordar lo que importa. Se avanza mejor sin apuro.",
       "dato": "Su envergadura llega a unos 3,3 metros y pasa muchas horas volando. Es Monumento Natural desde 2006 y está en el escudo de Chile."
-    },
-    "gorrion": {
-      "nombre": "Gorrión",
-      "precio": 80,
-      "mensaje": "Lo pequeño también es visto y cuidado. Nadie pasa inadvertido.",
-      "dato": "No es nativo de Chile: llegó desde Europa hace más de un siglo y hoy vive cerca de las personas, en plazas, techos y jardines.",
-      "habitat": [
-        "jardin"
-      ]
     }
   },
   "economia": {
@@ -1452,26 +1203,16 @@
   },
   "orden_semillas": [
     "pasto_alto",
-    "bambu",
-    "flor_de_loto",
     "ananuca",
-    "bonsai",
     "chilco",
-    "lavanda",
     "chachacoma",
     "copihue",
     "notro",
-    "planta_fantasma",
     "llareta",
     "pata_de_guanaco",
     "ulmo",
-    "welwitschia",
     "chagual",
-    "dracaena_cinnabari",
-    "garra_de_leon",
-    "orquidea_subterranea",
-    "secuoya_roja",
-    "rafflesia"
+    "garra_de_leon"
   ],
   "trivia": [
     {
@@ -1812,13 +1553,6 @@
         "zorro"
       ]
     },
-    "jardin": {
-      "nombre": "Jardín del mundo",
-      "precio": 150,
-      "fondo": "colinas",
-      "mensaje": "Plantas de distintos rincones del planeta reunidas en un mismo jardín. Cada una cuenta una forma distinta de crecer.",
-      "dato": "Aquí se pueden plantar especies de otros continentes, como el loto, el bambú, el bonsái, la secuoya roja o la rafflesia de Sumatra."
-    },
     "cordillera": {
       "nombre": "Cordillera",
       "precio": 150,
@@ -1851,7 +1585,6 @@
       "precio": 60,
       "habitat": [
         "bosque",
-        "jardin",
         "costa"
       ],
       "t": "Pequeñas luces que aparecen al atardecer, como estrellas que bajan a jugar.",

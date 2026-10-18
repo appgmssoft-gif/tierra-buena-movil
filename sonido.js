@@ -135,6 +135,15 @@
       nota(NOTAS.G3, 0, 1.6, 0.06, { eco: 0.5, corte: 900, ataque: 0.05, sinCoro: true });
       [[NOTAS.D5, 0.18], [NOTAS.G5, 0.3], [NOTAS.B5, 0.42], [NOTAS.D6, 0.56]].forEach((n) => pluck(n[0], n[1], 0.9, 0.07, 0.8)); soplo(0.12, 0.8, 0.025, 700, 3600);
     }),
+    lugar(h) { ok(function () {                  // F1229: la firma sonora de cada lugar (suena justo después de «capa»): misma familia de madera y mismas notas de Tierra Buena, con el material propio del sitio
+      if (h === 'desierto') {                    // viento cálido y notas huecas que bajan, como una kalimba al atardecer
+        soplo(0, 1.3, 0.03, 380, 1500); pluck(NOTAS.E5, 0.05, 0.9, 0.06, 0.8); pluck(NOTAS.B4, 0.2, 1.1, 0.055, 0.9); nota(NOTAS.G4, 0.12, 1.5, 0.04, { eco: 0.8, corte: 1500, ataque: 0.08, sinCoro: true });
+      } else if (h === 'costa') {                // una ola que sube y se retira, y una campanita de cristal
+        soplo(0, 1.5, 0.034, 260, 2600); soplo(0.9, 1.0, 0.018, 2600, 500); nota(NOTAS.D6, 0.25, 1.4, 0.045, { eco: 0.95, brillo: 0.3, ataque: 0.004, corte: 6200 }); pluck(NOTAS.A5, 0.45, 1.0, 0.05, 0.9);
+      } else {                                   // bosque: hojas que se mecen y dos golpes de madera
+        soplo(0, 1.1, 0.026, 2400, 6200); pluck(NOTAS.A4, 0.08, 0.8, 0.07, 0.7); pluck(NOTAS.D5, 0.24, 1.0, 0.06, 0.8);
+      }
+    })(); },
     completo: ok(function () {                   // F1204: tu lugar quedó completo (día 10): la apertura en pequeño, con madera. Tierra, brote, acorde abierto y destello.
       nota(NOTAS.G3, 0, 3.4, 0.06, { eco: 0.5, corte: 1200, ataque: 0.4, sinCoro: true });
       [[NOTAS.G5, 0], [NOTAS.A5, 0.2], [NOTAS.D6, 0.4], [NOTAS.B5, 0.7], [NOTAS.G6, 1.0]].forEach((n) => pluck(n[0] / 2, n[1], 1.2, 0.085, 0.9));
@@ -150,7 +159,7 @@
   document.addEventListener('visibilitychange', () => { try { if (!ctx) return; if (document.hidden) { if (ctx.state === 'running') ctx.suspend(); } else if (activo() && ctx.state === 'suspended' && API._sono) ctx.resume(); } catch (e) { /* sin audio */ } });
   // F915: SIN SONIDOS DOBLES. Si otro sonido DISTINTO sonó hace menos de 0,3 s, los sonidos «suaves» (toque, abre, vuelve, suave, tab) se callan:
   // suena uno solo, el primero. Los momentos importantes (firma, logro, éxito, aviso, error, campana, juntos, semilla, calma, respira) y las teclas siempre suenan.
-  const FUERTES = ['firma', 'exito', 'logro', 'aviso', 'error', 'campana', 'juntos', 'semilla', 'sana', 'gota', 'calma', 'respira', 'suerte', 'tecla', 'iglesia', 'armar', 'recordatorio', 'palabra', 'vida', 'salvo', 'mensaje', 'llega', 'capa', 'completo', 'punto'];
+  const FUERTES = ['firma', 'exito', 'logro', 'aviso', 'error', 'campana', 'juntos', 'semilla', 'sana', 'gota', 'calma', 'respira', 'suerte', 'tecla', 'iglesia', 'armar', 'recordatorio', 'palabra', 'vida', 'salvo', 'mensaje', 'llega', 'capa', 'lugar', 'completo', 'punto'];
   let ultNom = '', ultMs = 0;
   Object.keys(API).forEach((k) => {
     const f = API[k]; if (typeof f !== 'function' || k === 'activo' || k === 'poner') return;
