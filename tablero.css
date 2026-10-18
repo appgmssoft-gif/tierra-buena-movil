@@ -452,9 +452,9 @@ body.tb-full #pantalla { padding-bottom: 0; }
 .tbl-campo { background-image: none !important; }
 
 /* Arreo: rebeldes, zorro y estados */
-.tbl-oveja.rebelde img { filter: hue-rotate(-35deg) saturate(1.35) drop-shadow(0 3px 3px rgba(0,0,0,.35)); }
+.tbl-oveja.rebelde img { filter: drop-shadow(0 3px 3px rgba(0,0,0,.3)); }
 .tbl-oveja.zorro { width: 60px; height: 60px; }
-.tbl-oveja.zorro img { filter: drop-shadow(0 3px 3px rgba(0,0,0,.45)); }
+.tbl-oveja.zorro img { filter: drop-shadow(0 3px 3px rgba(0,0,0,.35)); }
 .tbl-oveja.tocada img { animation: tblMal .3s ease; }
 .tbl-oveja.espantado { animation-play-state: paused; }
 .tbl-oveja.espantado.llevada { transform: translateX(40px) scale(.4); }
@@ -540,7 +540,7 @@ body.tb-full .ambiente i, body.tb-full .ambiente::before, body.tb-full .ambiente
 .tbl-arreo .tbl-oveja.mov { left: 0; top: 0; animation: none; will-change: transform; }
 .tbl-oveja.mov.llevada { opacity: 0; scale: .4; transition: opacity .3s ease, scale .3s ease; }
 .tbl-oveja.mov.espantado.llevada { scale: .4; }
-.tbl-oveja.dorada img { filter: sepia(1) saturate(4) hue-rotate(-12deg) brightness(1.15) drop-shadow(0 0 8px #ffd34d); }
+.tbl-oveja.dorada img { filter: drop-shadow(0 0 8px rgba(255,211,77,.8)); }
 .tbl-oveja.avispero img { filter: drop-shadow(0 3px 3px rgba(0,0,0,.45)); }
 .tbl-oveja.picado img { animation: tblMal .3s ease; }
 @media (prefers-reduced-motion: no-preference) { .tbl-oveja.avispero img { animation: tblZumba .5s ease-in-out infinite; } }
@@ -550,7 +550,12 @@ body.tb-full .ambiente i, body.tb-full .ambiente::before, body.tb-full .ambiente
 .tbl-cosecha .tbl-caida.mov { left: 0; top: 0; animation: none; will-change: transform; width: 52px; height: 52px; }
 .tbl-caida img { width: 48px; height: 48px; display: block; pointer-events: none; filter: drop-shadow(0 3px 3px rgba(0,0,0,.4)); }
 .tbl-caida.mov.tocada { opacity: 0; scale: 1.4; transition: opacity .2s ease, scale .2s ease; }
-.tbl-caida.dorada img { filter: sepia(1) saturate(5) hue-rotate(-8deg) brightness(1.2) drop-shadow(0 0 10px #ffd34d); }
+.tbl-caida.dorada img { filter: drop-shadow(0 0 10px rgba(255,211,77,.85)); }
 .tbl-caida.rocio img { filter: drop-shadow(0 0 8px #9fd8ff); }
 @media (prefers-reduced-motion: no-preference) { .tbl-caida.dorada img { animation: tblDoradaBrilla 1s ease-in-out infinite; } }
 @keyframes tblDoradaBrilla { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+
+/* F1248 · Ovejas en fuga: prado claro y fresco (antes verde oscuro con puntos) y sombras suaves, para que las figuras se vean limpias */
+.tbl-arreo { background-color: #7cc55e; background-image: radial-gradient(ellipse at 25% 12%, rgba(255,255,220,.5), transparent 55%), repeating-linear-gradient(100deg, rgba(255,255,255,.08) 0 30px, rgba(255,255,255,0) 30px 60px), linear-gradient(170deg, #93d86f, #4f9a46); background-size: 100% 100%; border: 3px solid #7b5230; box-shadow: inset 0 0 0 3px rgba(255,255,255,.2), inset 0 -14px 24px rgba(20,70,30,.28); }
+.tbl-arreo .tbl-oveja { filter: drop-shadow(0 3px 3px rgba(20,50,20,.28)); }
+.tbl-arreo .tbl-oveja.dorada { filter: drop-shadow(0 0 9px rgba(255,214,90,.9)); }

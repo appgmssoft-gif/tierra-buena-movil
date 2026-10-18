@@ -725,7 +725,7 @@
   const INTRO_MINI = {
     memoria: { ico: MINI('memoria', 'tbl-intro-fig'), titulo: 'Pares del huerto', pasos: ['Toca una carta y luego otra.', 'Si son iguales, quedan juntas.', 'Encuentra las 6 parejas para ganar 2 gotas.'] },
     cosecha: { ico: MINI('cosecha', 'tbl-intro-fig'), titulo: 'Atrapa la cosecha', pasos: ['Toca las frutas y verduras que caen: cada una suma 1 punto. La manzana dorada vale 3.', 'Lo que no se come (piedra, hueso, araña, bota) resta 1 y corta tu racha. Cada 5 seguidas dan un punto extra.', 'La gota de rocío suma 3 segundos. 20 segundos: 14 puntos dan 2 gotas, 7 dan 1.'] },
-    arreo: { ico: MINI('arreo', 'tbl-intro-fig'), titulo: 'Ovejas en fuga', pasos: ['Toca cada oveja para llevarla al corral. Aparecen por todos lados. Las rebeldes (más oscuras) piden dos toques y la dorada vale 3.', 'Espanta al zorro antes de que cruce: si no, se lleva una oveja.', '¡No toques el avispero! Te quita 2 ovejas. 22 segundos: 16 ovejas dan 2 gotas, 9 dan 1.'] },
+    arreo: { ico: MINI('arreo', 'tbl-intro-fig'), titulo: 'Ovejas en fuga', pasos: ['Toca cada oveja para llevarla al corral. Aparecen por todos lados. Las de cuernos (carneros) piden dos toques y la dorada vale 3.', 'Espanta al zorro antes de que cruce: si no, se lleva una oveja.', '¡No toques el avispero! Te quita 2 ovejas. 22 segundos: 16 ovejas dan 2 gotas, 9 dan 1.'] },
     reto: { ico: MINI('preguntas', 'tbl-intro-fig'), titulo: 'Cinco preguntas', pasos: ['Cinco preguntas cortas de tres tipos.', 'Cada acierto da 1 gota (máximo 4).', 'Fallar no tiene castigo.'] },
     eco: { ico: MINI('eco', 'tbl-intro-fig'), titulo: 'Ojo de halcón', pasos: ['Mira en qué orden se iluminan los animales.', 'Repite la secuencia tocándolos igual.', 'Cada ronda suma un animal. 4 rondas dan 2 gotas; 2 rondas, 1.'] }
   };
@@ -837,10 +837,10 @@
     maiz: '<svg viewBox="0 0 40 40"><ellipse cx="20" cy="22" rx="8" ry="14" fill="#f2c230"/><path d="M15 14v16M20 9v26M25 14v16" stroke="#d9a02b" stroke-width="1.5"/><path d="M12 24c-4-2-5 6 0 10M28 24c4-2 5 6 0 10" stroke="#7cc08a" stroke-width="3" fill="none" stroke-linecap="round"/></svg>',
     papa: '<svg viewBox="0 0 40 40"><ellipse cx="20" cy="22" rx="16" ry="11" fill="#b98a4e"/><circle cx="13" cy="20" r="1.6" fill="#7a5530"/><circle cx="24" cy="25" r="1.6" fill="#7a5530"/><circle cx="28" cy="18" r="1.2" fill="#7a5530"/></svg>',
     frutilla: '<svg viewBox="0 0 40 40"><path d="M20 36c-9-4-14-12-13-19 6-5 20-5 26 0 1 7-4 15-13 19z" fill="#e0344b"/><path d="M12 17l4-4 4 4 4-4 4 4 4-4" stroke="#7cc08a" stroke-width="2.5" fill="none" stroke-linejoin="round"/></svg>',
-    piedra: '<svg viewBox="0 0 40 40"><path d="M7 28l5-14 9-5 10 4 5 12-6 7H13z" fill="#8c8a84"/><path d="M12 22l8-2 8 3" stroke="#5f5d58" stroke-width="1.5" fill="none"/></svg>',
-    hueso: '<svg viewBox="0 0 40 40"><g fill="#efe6d2" stroke="#8a7a60" stroke-width="1.5"><rect x="12" y="17" width="16" height="6" rx="3"/><circle cx="10" cy="16" r="4"/><circle cx="10" cy="24" r="4"/><circle cx="30" cy="16" r="4"/><circle cx="30" cy="24" r="4"/></g></svg>',
-    arana: '<svg viewBox="0 0 40 40"><path d="M20 4v8M10 10l8 6M30 10l-8 6M6 20h10M34 20H24M10 30l8-6M30 30l-8-6" stroke="#2b2218" stroke-width="2" fill="none"/><circle cx="20" cy="24" r="7" fill="#2b2218"/><circle cx="20" cy="14" r="4" fill="#2b2218"/></svg>',
-    bota: '<svg viewBox="0 0 40 40"><path d="M14 6h9v18h11v7c0 3-2 4-4 4H10c-3 0-4-2-4-4V22c0-3 2-4 4-4h4z" fill="#6b4a2b"/><path d="M14 30h20" stroke="#3b2612" stroke-width="2.5"/></svg>'
+    piedra: '<svg viewBox="0 0 64 64" stroke="#6b4a3a" stroke-linejoin="round" stroke-linecap="round" stroke-width="3"><defs><linearGradient id="cP" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c9cdd3"/><stop offset="1" stop-color="#8f959e"/></linearGradient></defs><path d="M9 44c-2-12 6-24 16-27 8-3 19 0 25 9 5 8 3 17-3 21-6 4-30 4-38-3z" fill="url(#cP)"/><path d="M19 27c3-5 8-7 12-7" fill="none" stroke="#fff" stroke-width="3" opacity=".7"/><path d="M34 40l5-5 4 4" fill="none" stroke="#6b4a3a" stroke-width="2" opacity=".5"/></svg>',
+    hueso: '<svg viewBox="0 0 64 64" stroke="#6b4a3a" stroke-linejoin="round" stroke-linecap="round" stroke-width="3"><g fill="#fff6e2"><rect x="17" y="27" width="30" height="10" rx="5"/><circle cx="14" cy="26" r="6.5"/><circle cx="14" cy="38" r="6.5"/><circle cx="50" cy="26" r="6.5"/><circle cx="50" cy="38" r="6.5"/></g><g fill="#fff6e2" stroke="none"><rect x="18" y="28.5" width="28" height="7" rx="3.5"/><circle cx="14" cy="26" r="5"/><circle cx="14" cy="38" r="5"/><circle cx="50" cy="26" r="5"/><circle cx="50" cy="38" r="5"/></g><path d="M20 30h20" stroke="#fff" stroke-width="2" opacity=".9"/></svg>',
+    arana: '<svg viewBox="0 0 64 64" stroke="#6b4a3a" stroke-linejoin="round" stroke-linecap="round" stroke-width="3"><path d="M22 30L9 20M22 36L7 38M24 42L12 54M42 30l13-10M42 36l15 2M40 42l12 12" fill="none"/><defs><linearGradient id="cA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a7bd0"/><stop offset="1" stop-color="#6a4aa6"/></linearGradient></defs><ellipse cx="32" cy="38" rx="13" ry="12" fill="url(#cA)"/><circle cx="32" cy="24" r="9" fill="url(#cA)"/><circle cx="28.5" cy="23" r="3" fill="#fff" stroke="none"/><circle cx="35.5" cy="23" r="3" fill="#fff" stroke="none"/><circle cx="29" cy="23.5" r="1.4" fill="#2a1a3a" stroke="none"/><circle cx="35" cy="23.5" r="1.4" fill="#2a1a3a" stroke="none"/><path d="M29 28.5c2 1.6 4 1.6 6 0" fill="none" stroke-width="2"/><path d="M24 34c3-3 8-4 12-2" fill="none" stroke="#fff" stroke-width="2.4" opacity=".4"/></svg>',
+    bota: '<svg viewBox="0 0 64 64" stroke="#6b4a3a" stroke-linejoin="round" stroke-linecap="round" stroke-width="3"><defs><linearGradient id="cB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c58a52"/><stop offset="1" stop-color="#8f5a30"/></linearGradient></defs><path d="M22 8h16v26l16 6c3 1 4 3 4 6v4c0 3-2 5-5 5H12c-3 0-5-2-5-5v-6c0-3 2-5 5-6l10-4z" fill="url(#cB)"/><path d="M7 50h51" stroke-width="3"/><path d="M22 14h16" stroke="#e8c79a" stroke-width="3" opacity=".8"/><path d="M26 24h8M26 29h8" stroke-width="2" fill="none" opacity=".6"/></svg>'
   };
   // F1247 · Atrapa la cosecha: 20 s. Frutas y verduras suman, la manzana dorada vale 3, la gota de rocío da 3 s más y lo que no se come resta y corta la racha.
   // Cada cosa cae por su propio camino (recto, con vaivén o en diagonal); cada tanto llega una lluvia de cosecha.
@@ -872,7 +872,7 @@
         const nombre = tipo === 'rara' ? raras[Math.floor(Math.random() * raras.length)] : frutas[Math.floor(Math.random() * frutas.length)];
         const it = document.createElement('button'); it.type = 'button'; it.className = 'tbl-caida mov ' + tipo;
         it.setAttribute('aria-label', { rara: 'Cosa que no se come: no la toques', dorada: 'Manzana dorada: vale 3', rocio: 'Gota de rocío: suma 3 segundos', fruta: 'Para comer' }[tipo]);
-        it.innerHTML = tipo === 'rara' ? COSA[nombre] : tipo === 'dorada' ? FIG('manzana') : tipo === 'rocio' ? '<img src="img/tablero/rocio.svg" alt="">' : FIG(nombre);
+        it.innerHTML = tipo === 'rara' ? COSA[nombre] : tipo === 'dorada' ? FIG('manzana-dorada') : tipo === 'rocio' ? '<img src="img/tablero/rocio.svg" alt="">' : FIG(nombre);
         const c = camino(); campo.appendChild(it);
         const anim = it.animate(c.kf, { duration: c.dur, easing: 'linear', fill: 'forwards' });
         it.addEventListener('pointerdown', (ev) => {
@@ -916,7 +916,7 @@
       const pinta = () => { marca.textContent = `Corral: ${n} · Zorro: ${zorro} · ${Math.max(0, Math.ceil((DUR - (Date.now() - t0)) / 1000))} s`; };
       const aviso = (txt, cls) => { const p = document.createElement('span'); p.className = 'tbl-pop ' + cls; p.textContent = txt; p.style.left = '50%'; p.style.top = '40%'; campo.appendChild(p); setTimeout(() => p.remove(), 800); };
       const TAM = 64, ETQ = { oveja: 'Oveja', rebelde: 'Oveja rebelde: tócala dos veces', dorada: 'Oveja dorada: vale 3', zorro: 'Zorro: tócalo para espantarlo', avispero: 'Avispero: no lo toques' };
-      const IMG = { zorro: 'img/tablero/deco/eco-zorro.svg', avispero: 'img/tablero/deco/avispero.svg' };
+      const IMG = { oveja: 'img/tablero/deco/oveja.svg', rebelde: 'img/tablero/deco/oveja-rebelde.svg', dorada: 'img/tablero/deco/oveja-dorada.svg', zorro: 'img/tablero/deco/zorro.svg', avispero: 'img/tablero/deco/avispero.svg' };   // F1248: figuras propias, sin filtros de color
       const al = (a, b) => a + Math.random() * (b - a);
       const ruta = (tipo) => {                                      // F1246: cada aparición tiene su propio camino por todo el campo
         const W = campo.clientWidth || 300, H = campo.clientHeight || 220, p = progreso(), y0 = al(0.08, 0.78) * (H - TAM), x0 = al(0.08, 0.8) * (W - TAM);
@@ -933,7 +933,7 @@
       };
       const crear = (tipo) => {
         const o = document.createElement('button'); o.type = 'button'; o.className = 'tbl-oveja mov ' + tipo; o.setAttribute('aria-label', ETQ[tipo]);
-        const img = document.createElement('img'); img.src = IMG[tipo] || 'img/tablero/deco/eco-oveja.svg'; img.alt = ''; o.appendChild(img);
+        const img = document.createElement('img'); img.src = IMG[tipo]; img.alt = ''; o.appendChild(img);
         o.dataset.falta = tipo === 'rebelde' ? '2' : '1';
         const rt = ruta(tipo); campo.appendChild(o);
         const anim = o.animate(rt.kf, { duration: rt.dur, easing: rt.perm ? 'ease-out' : 'linear', fill: 'forwards' });
