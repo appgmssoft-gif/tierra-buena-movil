@@ -1384,3 +1384,75 @@ button.lc-card{cursor:pointer}
 .ch-fila{display:flex;align-items:flex-end;gap:8px}.ch-fila textarea{flex:1;min-width:0;margin:0;border-radius:18px;resize:none}
 .ch-env{flex:none;width:auto;min-height:46px;margin:0;padding:0 18px;border-radius:99px}
 @media (prefers-reduced-motion:no-preference){html:not([data-anim=off]) .chat-msg{animation:hac-sube .35s ease-out backwards}html:not([data-anim=off]) .chat-msg:last-child{animation-delay:.08s}}
+
+/* F1238 · Área de pastor: panel con héroe y tarjetas (mismo sistema que Palabra y Vida) */
+.mi-b-n{position:absolute;left:12px;top:10px;min-width:26px;height:26px;padding:0 8px;border-radius:13px;background:var(--oro);color:#2b1d08;font:800 .85rem/26px system-ui,sans-serif;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.pas-hero{position:relative;overflow:hidden}
+.pas-hero::after{content:"";position:absolute;right:-30px;bottom:-40px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.28),rgba(255,255,255,0) 70%);pointer-events:none}
+.pas-hero .mi-sl-big{filter:drop-shadow(0 6px 8px rgba(0,0,0,.2))}
+@media (prefers-reduced-motion:no-preference){
+  html:not([data-anim=off]) .pas-hero .mi-sl-big{animation:pas-ave 6s ease-in-out infinite;will-change:transform}
+  html:not([data-anim=off]) main .mi-bento .mi-b:nth-child(3){animation-delay:.16s}
+  html:not([data-anim=off]) .mi-b-n{animation:pas-late 2.4s ease-in-out infinite}
+}
+@keyframes pas-ave{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-5px) rotate(2deg)}}
+@keyframes pas-late{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+
+/* F1239 · Pastor: Oraciones y Visitas con grupos por estado y franja de color */
+.ped-card,.vis-card{position:relative;overflow:hidden;border-left:5px solid var(--linea)}
+.ped-recibida,.vis-solicitada{border-left-color:var(--oro);background:linear-gradient(90deg,color-mix(in srgb,var(--oro) 14%,var(--tarjeta)),var(--tarjeta))}
+.ped-en_oracion,.vis-aceptada,.vis-agendada{border-left-color:#7456a0;background:linear-gradient(90deg,color-mix(in srgb,#7456a0 14%,var(--tarjeta)),var(--tarjeta))}
+.ped-atendida,.vis-realizada{border-left-color:#46874f;background:linear-gradient(90deg,color-mix(in srgb,#46874f 16%,var(--tarjeta)),var(--tarjeta))}
+.vis-no_disponible{border-left-color:#8a8a8a;opacity:.85}
+@media (prefers-reduced-motion:no-preference){
+  html:not([data-anim=off]) main .ped-card,html:not([data-anim=off]) main .vis-card{animation:hac-sube .4s ease-out backwards}
+  html:not([data-anim=off]) main .ped-card:nth-of-type(2),html:not([data-anim=off]) main .vis-card:nth-of-type(2){animation-delay:.07s}
+}
+
+/* F1240 · Pastor: Solicitudes y Miembros */
+.sol-card{border-left:5px solid var(--oro);background:linear-gradient(90deg,color-mix(in srgb,var(--oro) 14%,var(--tarjeta)),var(--tarjeta))}
+.sol-card .t{gap:10px}
+.mie-fila2{cursor:default}
+.mie-fila2:active{transform:none}
+.mie-letra{margin:16px 2px 6px;font:700 1rem/1 "TB Titulo",Georgia,serif;color:var(--oro)}
+@media (prefers-reduced-motion:no-preference){
+  html:not([data-anim=off]) main .sol-card,html:not([data-anim=off]) main .mie-fila2{animation:hac-sube .35s ease-out backwards}
+  html:not([data-anim=off]) main .sol-card:nth-of-type(2){animation-delay:.07s}
+}
+
+/* F1241 · Pastor: Bienvenida y Disponibilidad */
+.bie-card{border-left:5px solid #46874f}
+.bie-card .t{gap:10px;align-items:center}.bie-card .t b{display:block}.bie-sem{display:block;font-size:.82rem}
+.bie-card .mi-barra{width:100%;height:8px;margin:10px 0 2px;accent-color:#46874f}
+.bie-listo{background:linear-gradient(90deg,color-mix(in srgb,#46874f 18%,var(--tarjeta)),var(--tarjeta))}
+.dis-fila{cursor:default;align-items:flex-start}.dis-fila:active{transform:none}
+.dis-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.dis-chip{font-size:.8rem;padding:4px 10px;border-radius:99px;background:color-mix(in srgb,var(--oro) 18%,var(--tarjeta));border:1px solid color-mix(in srgb,var(--oro) 40%,transparent)}
+@media (prefers-reduced-motion:no-preference){
+  html:not([data-anim=off]) main .bie-card,html:not([data-anim=off]) main .dis-fila{animation:hac-sube .35s ease-out backwards}
+  html:not([data-anim=off]) main .bie-card:nth-of-type(2){animation-delay:.07s}
+}
+
+/* F1242 · Pastor: Mi calendario y Datos y código */
+.cal-card{display:flex;gap:12px;align-items:flex-start;border-left:5px solid var(--oro)}
+.cal-f{flex:none;width:52px;padding:6px 0;border-radius:14px;text-align:center;background:linear-gradient(160deg,color-mix(in srgb,var(--oro) 34%,var(--tarjeta)),var(--tarjeta));border:1px solid var(--linea)}
+.cal-f b{display:block;font:700 1.35rem/1 "TB Titulo",Georgia,serif}.cal-f small{display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;opacity:.75}
+.cal-tx{flex:1;min-width:0}
+.cal-visita{border-left-color:#3f78a8}.cal-reunion{border-left-color:#7456a0}.cal-predica{border-left-color:#b8782a}.cal-personal{border-left-color:#6b6b6b}.cal-descanso{border-left-color:#46874f}
+.dat-cod{border-left:5px solid var(--oro);background:linear-gradient(90deg,color-mix(in srgb,var(--oro) 14%,var(--tarjeta)),var(--tarjeta))}
+.dat-seg{border-left:5px solid #c0504a}
+@media (prefers-reduced-motion:no-preference){
+  html:not([data-anim=off]) main .cal-card,html:not([data-anim=off]) main .dat-cod{animation:hac-sube .35s ease-out backwards}
+  html:not([data-anim=off]) main .cal-card:nth-of-type(2){animation-delay:.07s}
+}
+
+/* F1243 · Pastor: Ministerios (lista y detalle) */
+.pas-min .pas-min-h{background:linear-gradient(135deg,var(--mc,#46874f),color-mix(in srgb,var(--mc,#46874f) 45%,#10201a))}
+.min-persona{cursor:default;align-items:flex-start}.min-persona:active{transform:none}
+.min-persona .mi-curso-ic{background:linear-gradient(135deg,color-mix(in srgb,var(--mc,var(--oro)) 30%,var(--tarjeta)),var(--tarjeta))}
+.min-acc{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+@media (prefers-reduced-motion:no-preference){
+  html:not([data-anim=off]) main .min-persona{animation:hac-sube .35s ease-out backwards}
+  html:not([data-anim=off]) main .min-persona:nth-child(2){animation-delay:.06s}
+  html:not([data-anim=off]) main .min-persona:nth-child(n+3){animation-delay:.12s}
+}

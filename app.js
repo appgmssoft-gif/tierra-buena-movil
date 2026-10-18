@@ -290,7 +290,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Acertijos de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Letras entre las hojas': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => !CABECERAS_ILUSTRADAS ? '' : `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1237';
+  const APP_VERSION = 'F1243';
   // F1171: respaldo si movimiento.js no cargó (pruebas o caché vieja): mismo criterio que TBMov.quieto().
   const MOV_QUIETO = () => { try { if (window.TBMov) return window.TBMov.quieto(); const h = document.documentElement; return h.getAttribute('data-anim') === 'off' || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
@@ -3481,16 +3481,14 @@
   function vistaPastorEntrar() { if (!haySesion()) return puerta(); pastorHoja(); }
   async function vistaPastor() {
     const p = pastorLeer(); if (!p) return vistaPastorEntrar();
-    const fil = (cls, ico, tit, sub, ir3, n) => `<button type="button" class="fila" data-pp="${ir3}"><span class="fila-ico ${cls}" aria-hidden="true">${ico}</span><span class="fila-txt">${tit}<small>${sub}</small></span><span class="insignia" id="n-${ir3}" hidden></span><span class="flecha" aria-hidden="true">›</span></button>`;
     $('#pantalla').innerHTML = `${areaHero('area-pastor')}<section class="saludo"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML('P', { g: perfilLeer().g, e: 'svg:escudo' }, false)}<div><p class="suave m0">Modo pastor</p><h1 id="pIgl">Mi iglesia</h1><p class="suave m0">Código <b>${esc(p.codigo)}</b></p></div></section>
-      <p class="suave" id="pResumen" aria-live="polite">Revisando lo de hoy…</p>
-      <h2 class="sep">Mi agenda</h2><div class="lista">${fil('t2', svg('calendario', 22), 'Mi calendario', 'Visitas, reuniones y descanso. Solo tú lo ves', 'mcal')}</div>
-      <h2 class="sep">Para atender hoy</h2><div class="lista">${fil('t3', svg('compartir', 22), 'Visitas', 'Quién pide que lo visites', 'vis')}${fil('t2', svg('corazon', 22), 'Oraciones', 'Peticiones recibidas', 'ora')}${fil('t1', svg('gente', 22), 'Solicitudes', 'Quién quiere unirse', 'sol')}</div>
-      <h2 class="sep">Código de tu iglesia</h2><div class="card pas-cod"><p class="suave m0">Compártelo con tus miembros para que se unan a tu iglesia.</p><p class="pas-cod-num" id="pCodNum">${esc(p.codigo || '—')}</p><div class="hoja-bt"><button type="button" class="btn" id="pCodCopiar">Copiar código</button><button type="button" class="btn sec" id="pCodCompartir">Compartir</button></div><details class="pas-llave"><summary>Llave para mi otro teléfono (privada)</summary><p class="suave">Es como una contraseña: no la compartas con nadie.</p><button type="button" class="btn sec" id="pLlaveCopiar">Copiar llave</button></details></div>
-      <h2 class="sep">Mi iglesia</h2>
-      <details class="pf-grupo" open><summary>Personas</summary><div class="lista">${fil('t4', svg('gente', 22), 'Miembros', 'Quiénes forman tu iglesia', 'mie')}${fil('t4', svg('brote', 22), 'Bienvenida', 'Primeras 4 semanas de quienes llegan', 'bien')}${fil('t1', svg('gente', 22), 'Disponibilidad', 'Quiénes pueden servir y cuándo', 'disp')}</div></details>
-<details class="pf-grupo" open><summary>Comunicación</summary><div class="lista">${fil('t2', svg('compartir', 22), 'Chat', 'Iglesia, pastor y líderes, y conversaciones', 'chat')}${fil('t3', svg('altavoz', 22), 'Avisos', 'Mensajes para todos o un grupo', 'avi')}${fil('t2', svg('calendario', 22), 'Agenda', 'Actividades y reuniones', 'age')}</div></details>
-<details class="pf-grupo" open><summary>Organización</summary><div class="lista">${fil('t1', svg('iglesia', 22), 'Ministerios y líderes', 'Grupos, personas y líderes', 'min')}${fil('t4', svg('bloques', 22), 'Datos y código', 'Nombre, eslogan y código', 'dat')}</div></details>
+      ${heroInt('c2 pas-hero', '🕊️', 'Hoy en tu iglesia', 'Para atender hoy', '<span id="pResumen" aria-live="polite">Revisando lo de hoy…</span>')}
+      <h2 class="mi-sub">Para atender hoy</h2><div class="mi-bento">${bento('mb3', '🏠', 'Visitas', 'Quién pide que lo visites', 'vis', 'pp')}${bento('mb5', '🤲', 'Oraciones', 'Peticiones recibidas', 'ora', 'pp')}${bento('mb-ancho mb1', '🙋', 'Solicitudes', 'Quién quiere unirse a tu iglesia', 'sol', 'pp')}</div>
+      <h2 class="mi-sub">Mi agenda</h2><div class="mi-bento">${bento('mb-ancho mb4', '🗓', 'Mi calendario', 'Visitas, reuniones y descanso. Solo tú lo ves', 'mcal', 'pp')}</div>
+      <h2 class="mi-sub">Código de tu iglesia</h2><div class="card pas-cod"><p class="suave m0">Compártelo con tus miembros para que se unan a tu iglesia.</p><p class="pas-cod-num" id="pCodNum">${esc(p.codigo || '—')}</p><div class="hoja-bt"><button type="button" class="btn" id="pCodCopiar">Copiar código</button><button type="button" class="btn sec" id="pCodCompartir">Compartir</button></div><details class="pas-llave"><summary>Llave para mi otro teléfono (privada)</summary><p class="suave">Es como una contraseña: no la compartas con nadie.</p><button type="button" class="btn sec" id="pLlaveCopiar">Copiar llave</button></details></div>
+      <h2 class="mi-sub">Personas</h2><div class="mi-bento">${bento('mb-alto mb1', '👥', 'Miembros', 'Quiénes forman tu iglesia', 'mie', 'pp')}${bento('mb2', '🌱', 'Bienvenida', 'Primeras 4 semanas', 'bien', 'pp')}${bento('mb6', '🕐', 'Disponibilidad', 'Quiénes pueden servir', 'disp', 'pp')}</div>
+      <h2 class="mi-sub">Comunicación</h2><div class="mi-bento">${bento('mb-ancho mb4', '💬', 'Chat', 'Iglesia, pastor y líderes, y conversaciones', 'chat', 'pp')}${bento('mb3', '📣', 'Avisos', 'Para todos o un grupo', 'avi', 'pp')}${bento('mb2', '📅', 'Agenda', 'Actividades y reuniones', 'age', 'pp')}</div>
+      <h2 class="mi-sub">Organización</h2><div class="mi-bento">${bento('mb5', '🕍', 'Ministerios y líderes', 'Grupos, personas y líderes', 'min', 'pp')}${bento('mb6', '📝', 'Datos y código', 'Nombre, eslogan y código', 'dat', 'pp')}</div>
 
       <div id="tbEjem" class="tb-ejem-caja"></div>
       <p class="suave sep16">${svg('escudo', 16)} Las finanzas se administran solo desde el computador.</p>
@@ -3509,7 +3507,7 @@
     if ($('#pLlaveCopiar')) $('#pLlaveCopiar').onclick = () => copiarTxt('PULPITO-PASTOR-' + btoa(JSON.stringify({ c: p.codigo, s: p.secreto })), $('#pLlaveCopiar'), 'Llave copiada ✓');
     document.querySelectorAll('[data-pp]').forEach((b) => b.addEventListener('click', () => ({ sol: pSolicitudes, ora: pOraciones, vis: pVisitas, mie: pMiembros, min: pMinisterios, age: () => vistaAgenda(modoPastor(p)), avi: () => vistaAvisos(modoPastor(p)), mcal: () => pCalendario(p), disp: () => pDisponibilidad(p), bien: () => pBienvenida(p), chat: () => vistaChat({ rol: 'pastor', codigo: p.codigo, secreto: p.secreto }), dat: pDatos }[b.dataset.pp])(p)));
     $('#pSalir').onclick = () => { if (confirm('¿Salir del modo pastor en este teléfono? Tu llave se borra de aquí (sigue en tu computador).')) { borrar(K_PASTOR); borrar('tb_movil_juntos_cache'); barraRefrescar('perfil'); ir('perfil'); } };
-    const ins = (k, n) => { const e = $('#n-' + k); if (e && n > 0) { e.textContent = n > 99 ? '99+' : String(n); e.hidden = false; } };
+    const ins = (k, n) => { if (!(n > 0)) return; const t = document.querySelector('[data-pp="' + k + '"]'); if (!t) return; let e = t.querySelector('.mi-b-n'); if (!e) { e = document.createElement('span'); e.className = 'mi-b-n'; t.appendChild(e); } e.textContent = n > 99 ? '99+' : String(n); e.setAttribute('aria-label', e.textContent + ' por atender'); };
     // F1032 · Resumen del pastor: una frase con lo que requiere atención hoy (sin rankings ni cifras en rojo)
     const cuentas = { sol: 0, ora: 0, vis: 0 };
     const pintaResumen = () => {
@@ -3531,7 +3529,7 @@
     const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
     const hasta = new Date(hoy.getTime() + 14 * 86400000);
     const etiqueta = (d) => d.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' });
-    $('#pantalla').innerHTML = `${cabecera('Mi calendario', 'Panel')}<p class="suave">Tu agenda personal: visitas, reuniones, prédicas y descanso. Solo la ves tú.</p>
+    $('#pantalla').innerHTML = `${cabecera('Mi calendario', 'Panel')}<div id="calHero">${heroInt('c3 pas-hero', '🗓', 'Solo tú lo ves', 'Mi calendario', 'Visitas, reuniones, prédicas y descanso.')}</div>
       <div class="cr-acc"><button type="button" class="btn sec" id="calNuevo" aria-expanded="false" aria-controls="calForm">+ Agregar a mi calendario</button><button type="button" class="btn sec" id="calVerMes">Ver el mes</button></div>
       <div id="calForm" class="card" hidden>
         <label for="calT">¿Qué es?</label><input id="calT" type="text" maxlength="80" placeholder="Ej.: Visitar a la familia Soto">
@@ -3550,14 +3548,15 @@
       const caja = $('#calLista'); if (!caja) return;
       if (!r.ok) { caja.innerHTML = '<p class="suave">No pudimos abrir tu calendario. Revisa tu conexión y vuelve a intentarlo.</p>'; return; }
       const evs = r.data || [];
+      if ($('#calHero')) $('#calHero').innerHTML = heroInt('c3 pas-hero', '🗓', 'Próximos 14 días', evs.length ? evs.length + (evs.length === 1 ? ' cosa agendada' : ' cosas agendadas') : 'Calendario libre', evs.length ? 'Visitas, reuniones, prédicas y descanso. Solo tú lo ves.' : 'Un espacio libre también es parte del servicio.');
       if (!evs.length) { caja.innerHTML = '<p class="suave">No tienes nada agendado en las próximas dos semanas. Un espacio libre también es parte del servicio.</p>'; return; }
       let dia = '', html = '';
       evs.forEach((e) => {
         const d = new Date(e.inicio), clave = d.toDateString();
-        if (clave !== dia) { dia = clave; html += `<h3 class="sep">${esc(etiqueta(d))}</h3>`; }
+        if (clave !== dia) { dia = clave; html += `<h3 class="mi-sub">${esc(etiqueta(d))}</h3>`; }
         const hora = d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
         const tipo = (CAL_TIPOS.find((t) => t[0] === e.tipo) || [0, 'Personal'])[1];
-        html += `<div class="card item"><p class="m0"><b>${esc(hora)} · ${esc(e.titulo)}</b></p><p class="suave m0t">${esc(tipo)}${e.detalle ? ' · ' + esc(e.detalle) : ''}</p><button type="button" class="btn sec chico" data-caldel="${esc(e.id)}">Quitar</button></div>`;
+        html += `<div class="card item cal-card cal-${esc(e.tipo || 'personal')}"><span class="cal-f" aria-hidden="true"><b>${d.getDate()}</b><small>${esc(d.toLocaleDateString('es-CL', { month: 'short' }).replace('.', ''))}</small></span><div class="cal-tx"><p class="m0"><b>${esc(hora)} · ${esc(e.titulo)}</b></p><p class="suave m0t">${esc(tipo)}${e.detalle ? ' · ' + esc(e.detalle) : ''}</p><button type="button" class="btn sec chico" data-caldel="${esc(e.id)}">Quitar</button></div></div>`;
       });
       caja.innerHTML = html;
       caja.querySelectorAll('[data-caldel]').forEach((b) => b.addEventListener('click', async () => {
@@ -3612,7 +3611,7 @@
       let dia = '', html = '';
       filas.forEach((t) => {
         const d = new Date(t.inicio), clave = d.toDateString();
-        if (clave !== dia) { dia = clave; html += `<h3 class="sep">${esc(etiqueta(d))}</h3>`; }
+        if (clave !== dia) { dia = clave; html += `<h3 class="mi-sub">${esc(etiqueta(d))}</h3>`; }
         const hora = d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
         html += `<div class="card item"><p class="m0"><b>${esc(hora)} · ${esc(t.titulo)}</b></p><p class="suave m0t">${esc(t.miembro)}</p><button type="button" class="btn sec chico" data-turdel="${esc(t.id)}">Quitar turno</button></div>`;
       });
@@ -3684,7 +3683,7 @@
   const BIEN_MOTIVO = { 'sin-permiso': 'No pudimos confirmar tu clave de pastor. Revisa tu conexión.', 'miembro-invalido': 'Elige a una persona de tu iglesia.', 'paso-invalido': 'Ese paso no existe.', 'demasiados': 'Agregaste muchas personas en poco tiempo. Espera una hora.', 'no-existe': 'Esa persona ya no está en el seguimiento.' };
   async function pBienvenida(p) {
     const msg = (t, ok) => { const m = $('#bieMsg'); if (m) { m.textContent = t; m.className = ok ? 'ok suave' : 'suave'; } };
-    $('#pantalla').innerHTML = `${cabecera('Bienvenida', 'Mi iglesia')}<p class="suave">Las primeras cuatro semanas importan. Marca lo que ya hiciste con cada persona nueva. Solo lo ves tú.</p>
+    $('#pantalla').innerHTML = `${cabecera('Bienvenida', 'Mi iglesia')}<div id="bieHero">${heroInt('c4 pas-hero', '🌱', 'Primeras 4 semanas', 'Bienvenida', 'Marca lo que ya hiciste con cada persona nueva. Solo lo ves tú.')}</div>
       <div class="card"><label for="bieM">Agregar a una persona nueva</label><select id="bieM"><option value="">Cargando personas…</option></select>
         <button type="button" class="btn" id="bieAgregar">Empezar su seguimiento</button></div>
       <p class="suave" id="bieMsg" role="status"></p>
@@ -3695,12 +3694,14 @@
       const caja = $('#bieLista'); if (!caja) return;
       if (!r.ok) { caja.innerHTML = '<p class="suave">No pudimos abrir el seguimiento. Revisa tu conexión.</p>'; return; }
       const filas = r.data || [];
+      const hechos = (f) => BIEN_PASOS.filter((x) => !!f[x[0]]).length, listos = filas.filter((f) => hechos(f) === BIEN_PASOS.length).length;
+      if ($('#bieHero')) $('#bieHero').innerHTML = heroInt('c4 pas-hero', '🌱', 'Primeras 4 semanas', filas.length ? filas.length + (filas.length === 1 ? ' persona en seguimiento' : ' personas en seguimiento') : 'Bienvenida', filas.length ? (listos ? listos + (listos === 1 ? ' ya tiene los 4 pasos.' : ' ya tienen los 4 pasos.') : 'Marca lo que ya hiciste con cada persona. Solo lo ves tú.') : 'Marca lo que ya hiciste con cada persona nueva. Solo lo ves tú.');
       if (!filas.length) { caja.innerHTML = '<p class="suave">Todavía no empezaste el seguimiento de nadie. Elige a una persona nueva arriba.</p>'; return; }
       caja.innerHTML = filas.map((f) => {
         const dias = Math.floor((Date.now() - new Date(f.iniciado).getTime()) / 86400000);
         const semana = Math.min(4, Math.floor(dias / 7) + 1);
         const pasos = BIEN_PASOS.map((x) => { const on = !!f[x[0]]; return `<button type="button" class="chip${on ? ' on' : ''}" data-bpm="${esc(f.miembro_id)}" data-bpp="${x[0]}" data-bph="${on ? '0' : '1'}" aria-pressed="${on}">${esc(x[1])}</button>`; }).join('');
-        return `<div class="card item"><p class="m0"><b>${esc(f.nombre)}</b></p><p class="suave m0t">${dias > 28 ? 'Más de 4 semanas desde que llegó' : 'Semana ' + semana + ' de 4'}</p><div class="chips" role="group" aria-label="Pasos con ${esc(f.nombre)}">${pasos}</div></div>`;
+        const nh = hechos(f); return `<div class="card item bie-card${nh === BIEN_PASOS.length ? ' bie-listo' : ''}"><div class="t"><span class="muro-ini" aria-hidden="true">${esc((f.nombre || '?').trim().charAt(0).toUpperCase())}</span><span><b>${esc(f.nombre)}</b><small class="suave bie-sem">${dias > 28 ? 'Más de 4 semanas desde que llegó' : 'Semana ' + semana + ' de 4'} · ${nh} de ${BIEN_PASOS.length} pasos</small></span></div><progress class="mi-barra" max="${BIEN_PASOS.length}" value="${nh}" aria-label="Avance de la bienvenida"></progress><div class="chips" role="group" aria-label="Pasos con ${esc(f.nombre)}">${pasos}</div></div>`;
       }).join('');
       caja.querySelectorAll('[data-bpm]').forEach((b) => b.addEventListener('click', async () => {
         const rr = await prpc('bienvenida_marcar', p, { p_miembro: b.dataset.bpm, p_paso: b.dataset.bpp, p_hecho: b.dataset.bph === '1' });
@@ -3836,14 +3837,16 @@
   // F1033 · Disponibilidad de los miembros, para organizar turnos. Requiere 16_SQL_F1033_DISPONIBILIDAD.sql.
   async function pDisponibilidad(p) {
     const NOMB = { entre: 'Entre semana', fin: 'Fines de semana', manana: 'Mañanas', tarde: 'Tardes', noche: 'Noches' };
-    $('#pantalla').innerHTML = `${cabecera('Disponibilidad', 'Panel')}<p class="suave">Quiénes pueden servir y cuándo. Lo marcan los miembros desde su panel.</p><div id="dispLista" class="lista"><p class="suave">Cargando…</p></div><button type="button" class="btn sec sep16" id="verTurnos">Asignar turnos de servicio</button>`;
+    $('#pantalla').innerHTML = `${cabecera('Disponibilidad', 'Panel')}<div id="dispHero">${heroInt('c3 pas-hero', '🕐', 'Para armar turnos', 'Disponibilidad', 'Quiénes pueden servir y cuándo. Lo marcan los miembros desde su panel.')}</div><div id="dispLista" class="mi-lista"><p class="suave">Cargando…</p></div><button type="button" class="btn sec sep16" id="verTurnos">Asignar turnos de servicio</button>`;
     volverA('Panel', vistaPastor);
     $('#verTurnos').onclick = () => pTurnos(p);
     const r = await prpc('disponibilidad_pastor_listar', p);
     const caja = $('#dispLista'); if (!caja) return;
     if (!r.ok) { caja.innerHTML = '<p class="suave">No pudimos cargar la disponibilidad. Revisa tu conexión.</p>'; return; }
     const filas = r.data || [];
-    caja.innerHTML = filas.length ? filas.map((f) => `<div class="card item"><b>${esc(f.miembro)}</b><p class="suave m0t">${(f.franjas || []).map((x) => esc(NOMB[x] || x)).join(' · ')}</p></div>`).join('') : '<p class="suave">Todavía nadie marcó cuándo puede servir.</p>';
+    const EMO = { entre: '🗓', fin: '🌤', manana: '🌅', tarde: '☀️', noche: '🌙' };
+    if ($('#dispHero')) $('#dispHero').innerHTML = heroInt('c3 pas-hero', '🕐', 'Para armar turnos', filas.length ? filas.length + (filas.length === 1 ? ' persona puede servir' : ' personas pueden servir') : 'Disponibilidad', filas.length ? 'Así planeas turnos sin choques.' : 'Lo marcan los miembros desde su panel.');
+    caja.innerHTML = filas.length ? filas.map((f) => `<div class="mi-curso dis-fila"><span class="mi-curso-ic" aria-hidden="true">${esc((f.miembro || '?').trim().charAt(0).toUpperCase())}</span><span class="mi-curso-tx"><b>${esc(f.miembro)}</b><span class="dis-chips">${(f.franjas || []).map((x) => `<span class="dis-chip">${EMO[x] || ''} ${esc(NOMB[x] || x)}</span>`).join('')}</span></span></div>`).join('') : '<p class="suave">Todavía nadie marcó cuándo puede servir.</p>';
   }
   // F1039 · Turnos de un ministerio que yo lidero. Requiere 18_SQL_F1039_TURNOS_LIDERES.sql.
   async function vistaTurnosLider(id, min) {
@@ -3902,24 +3905,26 @@
   }
   const pCab = (tit, extra) => `${cabecera(tit, 'Panel')}${extra || ''}<p class="suave" id="pmsg">Cargando…</p><div id="plista"></div>`;
   async function pSolicitudes(p) {
-    $('#pantalla').innerHTML = pCab('Solicitudes'); volverA('Panel', vistaPastor);
+    $('#pantalla').innerHTML = pCab('Solicitudes', '<div id="pHero"></div>'); volverA('Panel', vistaPastor);
     const r = await prpc('solicitud_pastor_listar', p), m = $('#pmsg'); if (!m) return;
     if (!r.ok) { m.textContent = errTxt(r.error); return; }
-    const l = r.data || []; m.textContent = l.length ? 'Personas que piden unirse. Confirma que las conoces antes de aprobar.' : 'No hay solicitudes pendientes. 🎉';
-    $('#plista').innerHTML = l.map((s) => `<div class="card item"><div class="t"><span aria-hidden="true">${svg('persona', 20)}</span>${esc(s.nombre_visible)}</div>${s.nombre_completo ? `<p class="m0t">${esc(s.nombre_completo)}</p>` : ''}${s.nota ? `<p class="suave m0t">«${esc(s.nota)}»</p>` : ''}<p class="suave m0t">${esc(fecha(s.creado_en))}</p><div class="fab-acc"><button type="button" class="btn chico" data-ap="${esc(s.id)}">Aprobar</button><button type="button" class="btn sec chico" data-re="${esc(s.id)}">Rechazar</button></div></div>`).join('');
-    const resolver = (id, si) => async () => { const r2 = await prpc('solicitud_pastor_resolver', p, { p_id: id, p_aprobar: si, p_mensaje: si ? 'Bienvenido a la iglesia' : null }); const x = r2.ok ? r2.data : null; if (x === 'aprobada' || x === 'rechazada' || x === 'no-existe') return pSolicitudes(p); m.textContent = x === 'iglesia-llena' ? 'La iglesia llegó a su límite de personas.' : errTxt(r2.error); };
+    const l = r.data || []; m.hidden = true;
+    if ($('#pHero')) $('#pHero').innerHTML = heroInt('c1 pas-hero', '🙋', 'Quieren unirse', l.length ? l.length + (l.length === 1 ? ' persona espera' : ' personas esperan') : 'Nadie esperando', l.length ? 'Confirma que las conoces antes de aprobar.' : 'Cuando alguien use tu código, aparecerá aquí.');
+    $('#plista').innerHTML = l.map((s) => `<div class="card item sol-card"><div class="t"><span class="muro-ini" aria-hidden="true">${esc((s.nombre_visible || '?').trim().charAt(0).toUpperCase())}</span>${esc(s.nombre_visible)}</div>${s.nombre_completo ? `<p class="m0t">${esc(s.nombre_completo)}</p>` : ''}${s.nota ? `<p class="suave m0t">«${esc(s.nota)}»</p>` : ''}<p class="suave m0t">${esc(fecha(s.creado_en))}</p><div class="fab-acc"><button type="button" class="btn chico" data-ap="${esc(s.id)}">Aprobar</button><button type="button" class="btn sec chico" data-re="${esc(s.id)}">Rechazar</button></div></div>`).join('');
+    const resolver = (id, si) => async () => { const r2 = await prpc('solicitud_pastor_resolver', p, { p_id: id, p_aprobar: si, p_mensaje: si ? 'Bienvenido a la iglesia' : null }); const x = r2.ok ? r2.data : null; if (x === 'aprobada' || x === 'rechazada' || x === 'no-existe') return pSolicitudes(p); m.hidden = false; m.textContent = x === 'iglesia-llena' ? 'La iglesia llegó a su límite de personas.' : errTxt(r2.error); };
     document.querySelectorAll('[data-ap]').forEach((b) => b.addEventListener('click', resolver(b.dataset.ap, true)));
     document.querySelectorAll('[data-re]').forEach((b) => b.addEventListener('click', () => { if (confirm('¿Rechazar esta solicitud?')) resolver(b.dataset.re, false)(); }));
   }
   // F1129 · Miembros: buscador, orden alfabético por letra y lista por tramos de 25 («Mostrar más»).
   async function pMiembros(p) {
-    $('#pantalla').innerHTML = pCab('Miembros', '<div class="mie-buscar"><input id="mieQ" type="search" placeholder="Buscar por nombre" aria-label="Buscar miembro" autocomplete="off"></div>');
+    $('#pantalla').innerHTML = pCab('Miembros', '<div id="pHero"></div><div class="mie-buscar"><input id="mieQ" type="search" placeholder="Buscar por nombre" aria-label="Buscar miembro" autocomplete="off"></div>');
     volverA('Panel', vistaPastor);
     const r = await prpc('miembros_pastor_listar', p), m = $('#pmsg'); if (!m) return;
     if (!r.ok) { m.textContent = errTxt(r.error); return; }
     const todos = (r.data || []).slice().sort((x, y) => String(x.nombre_visible || '').localeCompare(String(y.nombre_visible || ''), 'es', { sensitivity: 'base' }));
     const hace30 = Date.now() - 30 * 864e5, nuevos = todos.filter((x) => x.creado_en && new Date(x.creado_en).getTime() >= hace30).length;
-    m.textContent = todos.length + (todos.length === 1 ? ' persona en tu iglesia.' : ' personas en tu iglesia.') + (nuevos ? ' ' + nuevos + (nuevos === 1 ? ' llegó' : ' llegaron') + ' en el último mes.' : '');
+    m.hidden = true;
+    if ($('#pHero')) $('#pHero').innerHTML = heroInt('c4 pas-hero', '👥', 'Tu iglesia', todos.length + (todos.length === 1 ? ' persona' : ' personas'), nuevos ? nuevos + (nuevos === 1 ? ' llegó' : ' llegaron') + ' en el último mes.' : 'Aquí verás a quienes se unan.');
     let tope = 25;
     const pinta = () => {
       const q = ($('#mieQ').value || '').trim().toLowerCase();
@@ -3927,8 +3932,8 @@
       let h = '', letra = null;
       lista.slice(0, tope).forEach((x) => {
         const l = (String(x.nombre_visible || '?').trim().charAt(0) || '?').toUpperCase();
-        if (l !== letra) { if (letra !== null) h += '</div>'; letra = l; h += `<h3 class="mie-letra">${esc(l)}</h3><div class="lista">`; }
-        h += `<div class="fila mie-fila">${avatarHTML(x.nombre_visible, { g: (x.nombre_visible || '').length % 8, e: '' }, false).replace('class="avatar', 'class="avatar mini')}<span class="fila-txt">${esc(x.nombre_visible)}<small>Desde ${esc(mesAnio(x.creado_en))}</small></span></div>`;
+        if (l !== letra) { if (letra !== null) h += '</div>'; letra = l; h += `<h3 class="mie-letra">${esc(l)}</h3><div class="mi-lista">`; }
+        const nuevo = x.creado_en && new Date(x.creado_en).getTime() >= hace30; h += `<div class="mi-curso mie-fila2${nuevo ? ' hecho' : ''}">${avatarHTML(x.nombre_visible, { g: (x.nombre_visible || '').length % 8, e: '' }, false).replace('class="avatar', 'class="avatar mini')}<span class="mi-curso-tx"><b>${esc(x.nombre_visible)}</b><small>Desde ${esc(mesAnio(x.creado_en))}</small></span>${nuevo ? '<span class="mi-curso-est">Nueva</span>' : ''}</div>`;
       });
       if (letra !== null) h += '</div>';
       if (!lista.length) h = '<p class="suave">No hay nadie con ese nombre.</p>';
@@ -3952,53 +3957,59 @@
     caja.innerHTML = l.map((x) => `<div class="card item muro-card"><div class="muro-cab"><span class="muro-ini" aria-hidden="true">${esc((x.nombre || '🙏').trim().charAt(0).toUpperCase())}</span><span><b>${esc(x.nombre || 'Alguien de tu iglesia')}</b></span></div><p class="muro-txt">${esc(x.texto)}</p>${x.orando != null ? `<p class="suave m0t">${svg('corazon', 16)} ${Math.max(0, Number(x.orando) || 0)} ${Number(x.orando) === 1 ? 'persona ora' : 'personas oran'}</p>` : ''}</div>`).join('');
   }
   async function pOraciones(p) {
-    $('#pantalla').innerHTML = pCab('Oraciones'); volverA('Panel', vistaPastor);
+    $('#pantalla').innerHTML = pCab('Oraciones', '<div id="pHero"></div>'); volverA('Panel', vistaPastor);
     let r = await prpc('peticion_pastor_listar_v2', p); if (!r.ok && r.falta) r = await prpc('peticion_pastor_listar', p);
     const m = $('#pmsg'); if (!m) return; if (!r.ok) { m.textContent = errTxt(r.error); return; }
-    const l = r.data || []; m.textContent = l.length ? 'Peticiones nuevas. Al marcarlas, la persona ve que las viste.' : 'No hay peticiones nuevas.';
-    $('#plista').innerHTML = l.map((x) => `<div class="card item"><div class="t"><span aria-hidden="true">${svg('paloma', 20)}</span>${x.anonima ? 'Anónima' : esc(x.nombre || 'Sin nombre')}${x.tipo ? `<span class="etiqueta">${esc(x.tipo)}</span>` : ''}</div><p class="m0t">${esc(x.texto)}</p><p class="suave m0t">${esc(fecha(x.creado_en))}${x.publica ? ' · quiere que se comparta en el muro' : ''}</p><div class="fab-acc"><button type="button" class="btn chico" data-vi="${esc(x.id)}">Ya la vi</button>${x.publica && !x.aprobada ? `<button type="button" class="btn sec chico" data-pu="${esc(x.id)}" data-an="${x.anonima ? 1 : 0}">Compartir en el muro</button>` : ''}</div></div>`).join('');
-    document.querySelectorAll('[data-vi]').forEach((b) => b.addEventListener('click', async () => { await prpc('peticion_pastor_marcar_vista', p, { p_id: b.dataset.vi }); pOraciones(p); }));
+    const l = r.data || [];
     // F1048 · Seguimiento de cada petición: recibida, en oración o atendida (lo ve solo el pastor). Requiere 21_SQL_F1048_PETICIONES_SEGUIMIENTO.sql.
     const PET_ESTADOS = [['recibida', 'Recibida'], ['en_oracion', 'En oración'], ['atendida', 'Atendida']];
     const qe = await prpc('peticion_seguimiento_listar', p);
     const est = {}; if (qe.ok) (qe.data || []).forEach((e) => { est[e.peticion_id] = e.estado; });
-    document.querySelectorAll('#plista .card').forEach((c, i) => {
-      const x = l[i]; if (!x || !x.id) return;
-      const actual = est[x.id] || 'recibida';
-      const caja = document.createElement('div'); caja.className = 'pet-seg'; caja.setAttribute('role', 'group'); caja.setAttribute('aria-label', 'Seguimiento de la petición');
-      caja.innerHTML = PET_ESTADOS.map(([k, t]) => '<button type="button" class="chip' + (actual === k ? ' on' : '') + '" data-pes="' + k + '" data-pid="' + esc(x.id) + '" aria-pressed="' + (actual === k) + '">' + t + '</button>').join('');
-      c.appendChild(caja);
-    });
+    const de = (x) => est[x.id] || 'recibida';
+    const nNuevas = l.filter((x) => de(x) === 'recibida').length;
+    if ($('#pHero')) $('#pHero').innerHTML = heroInt('c5 pas-hero', '🤲', 'Peticiones de tu iglesia', l.length ? nNuevas + (nNuevas === 1 ? ' por atender' : ' por atender') : 'Todo al día', l.length ? 'Al marcarlas, la persona ve que las viste.' : 'Cuando alguien pida oración, aparecerá aquí.');
+    m.hidden = true;
+    const tarjeta = (x) => { const a = de(x); return `<div class="card item ped-card ped-${a}" data-pet="${esc(x.id)}"><div class="t"><span aria-hidden="true">${svg('paloma', 20)}</span>${x.anonima ? 'Anónima' : esc(x.nombre || 'Sin nombre')}${x.tipo ? `<span class="etiqueta">${esc(x.tipo)}</span>` : ''}</div><p class="m0t">${esc(x.texto)}</p><p class="suave m0t">${esc(fecha(x.creado_en))}${x.publica ? ' · quiere que se comparta en el muro' : ''}</p><div class="fab-acc"><button type="button" class="btn chico" data-vi="${esc(x.id)}">Ya la vi</button>${x.publica && !x.aprobada ? `<button type="button" class="btn sec chico" data-pu="${esc(x.id)}" data-an="${x.anonima ? 1 : 0}">Compartir en el muro</button>` : ''}</div><div class="pet-seg" role="group" aria-label="Seguimiento de la petición">${PET_ESTADOS.map(([k, t]) => '<button type="button" class="chip' + (a === k ? ' on' : '') + '" data-pes="' + k + '" data-pid="' + esc(x.id) + '" aria-pressed="' + (a === k) + '">' + t + '</button>').join('')}</div></div>`; };
+    const grupo = (tit, k) => { const g = l.filter((x) => de(x) === k); return g.length ? `<h2 class="mi-sub">${tit} · ${g.length}</h2>${g.map(tarjeta).join('')}` : ''; };
+    $('#plista').innerHTML = l.length ? grupo('Nuevas', 'recibida') + grupo('En oración', 'en_oracion') + grupo('Atendidas', 'atendida') : '';
+    document.querySelectorAll('[data-vi]').forEach((b) => b.addEventListener('click', async () => { await prpc('peticion_pastor_marcar_vista', p, { p_id: b.dataset.vi }); pOraciones(p); }));
     document.querySelectorAll('[data-pes]').forEach((b) => b.addEventListener('click', async () => {
       const rr = await prpc('peticion_seguimiento_fijar', p, { p_peticion: b.dataset.pid, p_estado: b.dataset.pes });
       const x = rr.ok ? primera(rr.data) : null;
-      if (x && x.ok) pOraciones(p); else m.textContent = 'No se pudo guardar el seguimiento. Revisa tu conexión.';
+      if (x && x.ok) pOraciones(p); else { m.hidden = false; m.textContent = 'No se pudo guardar el seguimiento. Revisa tu conexión.'; }
     }));
     document.querySelectorAll('[data-pu]').forEach((b) => b.addEventListener('click', async () => { await prpc('peticion_pastor_publicar', p, { p_id: b.dataset.pu, p_ocultar_nombre: b.dataset.an === '1' }); await prpc('peticion_pastor_marcar_vista', p, { p_id: b.dataset.pu }); pOraciones(p); }));
   }
   const ESTADO_V = { solicitada: 'Nueva', aceptada: 'Aceptada', agendada: 'Agendada', realizada: 'Realizada', no_disponible: 'No disponible' };
   async function pVisitas(p) {
-    $('#pantalla').innerHTML = pCab('Visitas'); volverA('Panel', vistaPastor);
+    $('#pantalla').innerHTML = pCab('Visitas', '<div id="pHero"></div>'); volverA('Panel', vistaPastor);
     const r = await prpc('visita_pastor_listar', p), m = $('#pmsg'); if (!m) return; if (!r.ok) { m.textContent = errTxt(r.error); return; }
-    const l = r.data || []; m.textContent = l.length ? 'Pedidos de visita. La dirección aparece cuando aceptas.' : 'No hay pedidos de visita abiertos.';
-    $('#plista').innerHTML = l.map((v) => `<div class="card item"><div class="t"><span aria-hidden="true">${svg('gente', 20)}</span>${esc(v.nombre || 'Sin nombre')}<span class="etiqueta">${esc(ESTADO_V[v.estado] || v.estado)}</span></div><p class="m0t"><b>${esc(v.tipo)}</b>${v.urgencia ? ' · ' + esc(v.urgencia) : ''}</p><p class="m0t">${esc(v.motivo)}</p>${v.horarios ? `<p class="suave m0t">${svg('reloj', 16)} ${esc(v.horarios)}</p>` : ''}${v.telefono ? `<p class="suave m0t">${svg('telefono', 16)} ${esc(v.telefono)}</p>` : ''}${v.direccion ? `<p class="suave m0t">${svg('lugar', 16)} ${esc(v.direccion)}</p>` : ''}
+    const l = r.data || [];
+    const nNuevas = l.filter((v) => v.estado === 'solicitada').length;
+    if ($('#pHero')) $('#pHero').innerHTML = heroInt('c3 pas-hero', '🏠', 'Pedidos de visita', l.length ? nNuevas + (nNuevas === 1 ? ' nueva' : ' nuevas') : 'Sin pedidos abiertos', l.length ? 'La dirección aparece cuando aceptas.' : 'Cuando alguien pida que lo visites, aparecerá aquí.');
+    m.hidden = true;
+    const tarjeta = (v) => `<div class="card item vis-card vis-${esc(v.estado)}"><div class="t"><span aria-hidden="true">${svg('gente', 20)}</span>${esc(v.nombre || 'Sin nombre')}<span class="etiqueta">${esc(ESTADO_V[v.estado] || v.estado)}</span></div><p class="m0t"><b>${esc(v.tipo)}</b>${v.urgencia ? ' · ' + esc(v.urgencia) : ''}</p><p class="m0t">${esc(v.motivo)}</p>${v.horarios ? `<p class="suave m0t">${svg('reloj', 16)} ${esc(v.horarios)}</p>` : ''}${v.telefono ? `<p class="suave m0t">${svg('telefono', 16)} ${esc(v.telefono)}</p>` : ''}${v.direccion ? `<p class="suave m0t">${svg('lugar', 16)} ${esc(v.direccion)}</p>` : ''}
       <label for="vr-${esc(v.id)}">Mensaje para la persona</label><input id="vr-${esc(v.id)}" type="text" maxlength="200" value="${esc(v.respuesta || '')}"><label for="vc-${esc(v.id)}">Cuándo (si agendas)</label><input id="vc-${esc(v.id)}" type="text" maxlength="60" value="${esc(v.cuando || '')}" placeholder="Sábado 5 pm">
-      <div class="fab-acc"><button type="button" class="btn chico" data-ve="aceptada" data-id="${esc(v.id)}">Aceptar</button><button type="button" class="btn sec chico" data-ve="agendada" data-id="${esc(v.id)}">Agendar</button><button type="button" class="btn sec chico" data-ve="realizada" data-id="${esc(v.id)}">Realizada</button><button type="button" class="btn sec chico" data-ve="no_disponible" data-id="${esc(v.id)}">No puedo</button></div></div>`).join('');
+      <div class="fab-acc"><button type="button" class="btn chico" data-ve="aceptada" data-id="${esc(v.id)}">Aceptar</button><button type="button" class="btn sec chico" data-ve="agendada" data-id="${esc(v.id)}">Agendar</button><button type="button" class="btn sec chico" data-ve="realizada" data-id="${esc(v.id)}">Realizada</button><button type="button" class="btn sec chico" data-ve="no_disponible" data-id="${esc(v.id)}">No puedo</button></div></div>`;
+    const grupo = (tit, ests) => { const g = l.filter((v) => ests.indexOf(v.estado) >= 0); return g.length ? `<h2 class="mi-sub">${tit} · ${g.length}</h2>${g.map(tarjeta).join('')}` : ''; };
+    $('#plista').innerHTML = l.length ? grupo('Nuevas', ['solicitada']) + grupo('Por hacer', ['aceptada', 'agendada']) + grupo('Cerradas', ['realizada', 'no_disponible']) : '';
     document.querySelectorAll('[data-ve]').forEach((b) => b.addEventListener('click', async () => {
       const id = b.dataset.id, cu = $('#vc-' + id).value.trim();
-      if (b.dataset.ve === 'agendada' && !cu) return (m.textContent = 'Escribe cuándo será la visita para agendarla.');
+      if (b.dataset.ve === 'agendada' && !cu) { m.hidden = false; return (m.textContent = 'Escribe cuándo será la visita para agendarla.'); }
       const r2 = await prpc('visita_pastor_responder', p, { p_id: id, p_estado: b.dataset.ve, p_respuesta: $('#vr-' + id).value.trim() || null, p_cuando: cu || null });
-      r2.ok && r2.data ? pVisitas(p) : (m.textContent = errTxt(r2.error));
+      if (r2.ok && r2.data) pVisitas(p); else { m.hidden = false; m.textContent = errTxt(r2.error); }
     }));
   }
   const ICONOS_MIN = ['👥', '🎵', '👶', '🧒', '📖', '🙏', '🤝', '🍞', '🎤', '🎬', '💒', '🌱'], COLORES_MIN = ['#4f8a5b', '#b8893a', '#4a7fb0', '#c4604a', '#7a55b0', '#2f8f86', '#c25b86', '#6b6b6b'];
   async function pMinisterios(p) {
-    $('#pantalla').innerHTML = pCab('Ministerios'); volverA('Panel', vistaPastor);
+    $('#pantalla').innerHTML = pCab('Ministerios', '<div id="pHero"></div>'); volverA('Panel', vistaPastor);
     const r = await prpc('ministerio_pastor_listar', p), m = $('#pmsg'); if (!m) return;
     if (!r.ok) { m.textContent = r.falta ? 'Los ministerios aún no están activados. Avisa a quien administra la app.' : errTxt(r.error); return; }
-    const l = r.data || []; m.textContent = l.length ? 'Toca un ministerio para sumar personas y elegir líderes.' : 'Aún no hay ministerios. Crea el primero abajo.';
-    $('#plista').innerHTML = `<div class="grid">${l.map((x) => `<button type="button" class="card min-card" data-mc="${esc(x.color)}" data-mi="${esc(x.id)}"><div class="t"><span class="min-ico" aria-hidden="true">${esc(x.icono || '👥')}</span>${esc(x.nombre)}<span class="flecha" aria-hidden="true">›</span></div><p class="suave m0t">${Number(x.miembros) || 0} personas${x.lideres ? ' · Lidera: ' + esc(x.lideres) : ' · sin líder'}</p></button>`).join('')}</div>
-      <div class="card sep16"><div class="t"><span aria-hidden="true">${svg('mas', 20)}</span>Nuevo ministerio</div><label for="mnn">Nombre</label><input id="mnn" type="text" maxlength="40"><label for="mni">Ícono</label><select id="mni">${ICONOS_MIN.map((i) => `<option>${i}</option>`).join('')}</select><label for="mnc">Color</label><select id="mnc">${COLORES_MIN.map((c, i) => `<option value="${c}">Color ${i + 1}</option>`).join('')}</select><p id="mnerr" class="error" role="alert" hidden></p><button type="button" class="btn" id="mnok">Crear ministerio</button></div>`;
+    const l = r.data || []; m.hidden = true;
+    const sinL = l.filter((x) => !x.lideres).length;
+    if ($('#pHero')) $('#pHero').innerHTML = heroInt('c2 pas-hero', '🕍', 'Grupos de tu iglesia', l.length ? l.length + (l.length === 1 ? ' ministerio' : ' ministerios') : 'Crea el primero', l.length ? (sinL ? sinL + (sinL === 1 ? ' sin líder todavía. Toca uno para elegirlo.' : ' sin líder todavía. Toca uno para elegirlos.') : 'Todos tienen líder. Toca uno para sumar personas.') : 'Un ministerio es un grupo que sirve junto: música, niños, aseo…');
+    $('#plista').innerHTML = `${l.length ? '<h2 class="mi-sub">Tus ministerios</h2>' : ''}<div class="grid">${l.map((x) => `<button type="button" class="card min-card" data-mc="${esc(x.color)}" data-mi="${esc(x.id)}"><div class="t"><span class="min-ico" aria-hidden="true">${esc(x.icono || '👥')}</span>${esc(x.nombre)}<span class="flecha" aria-hidden="true">›</span></div><p class="suave m0t">${Number(x.miembros) || 0} personas${x.lideres ? ' · Lidera: ' + esc(x.lideres) : ' · sin líder'}</p></button>`).join('')}</div>
+      <h2 class="mi-sub">Crear otro</h2><div class="card dat-cod"><div class="t"><span aria-hidden="true">${svg('mas', 20)}</span>Nuevo ministerio</div><label for="mnn">Nombre</label><input id="mnn" type="text" maxlength="40"><label for="mni">Ícono</label><select id="mni">${ICONOS_MIN.map((i) => `<option>${i}</option>`).join('')}</select><label for="mnc">Color</label><select id="mnc">${COLORES_MIN.map((c, i) => `<option value="${c}">Color ${i + 1}</option>`).join('')}</select><p id="mnerr" class="error" role="alert" hidden></p><button type="button" class="btn" id="mnok">Crear ministerio</button></div>`;
     pintaColores();
     document.querySelectorAll('[data-mi]').forEach((b) => b.addEventListener('click', () => pMinisterio(p, l.find((x) => x.id === b.dataset.mi))));
     $('#mnok').onclick = async () => {
@@ -4009,24 +4020,27 @@
   }
   async function pMinisterio(p, mi) {
     if (!mi) return pMinisterios(p);
-    $('#pantalla').innerHTML = `${cabecera(mi.nombre, 'Ministerios')}<p class="suave" id="pmsg">Cargando…</p><div id="plista"></div>`; volverA('Ministerios', () => pMinisterios(p));
+    $('#pantalla').innerHTML = `${cabecera(mi.nombre, 'Ministerios')}<div id="pHero" class="pas-min" data-mc="${esc(mi.color || '')}">${heroInt('c2 pas-hero pas-min-h', esc(mi.icono || '👥'), 'Ministerio', esc(mi.nombre), 'Marca quién sirve aquí y quién lidera.')}</div><p class="suave" id="pmsg">Cargando…</p><div id="plista"></div>`; pintaColores(); volverA('Ministerios', () => pMinisterios(p));
     const r = await prpc('ministerio_pastor_personas', p, { p_ministerio: mi.id }), m = $('#pmsg'); if (!m) return;
     if (!r.ok) { m.textContent = errTxt(r.error); return; }
-    const l = r.data || []; m.textContent = l.length ? 'Marca quién sirve aquí y quién lidera. Un líder puede crear actividades y avisos de este grupo.' : 'Aún no hay personas en la iglesia para sumar.';
-    $('#plista').innerHTML = `<div class="lista">${l.map((x) => `<div class="fila persona"><span class="fila-txt">${esc(x.nombre)}<small>${x.es_lider ? '⭐ Líder' : x.asignado ? 'Sirve aquí' : 'No está en este grupo'}</small></span><button type="button" class="chip${x.asignado ? ' on' : ''}" data-as="${esc(x.miembro_id)}" data-l="${x.es_lider ? 1 : 0}" data-a="${x.asignado ? 1 : 0}">${x.asignado ? 'Quitar' : 'Sumar'}</button>${x.asignado ? `<button type="button" class="chip${x.es_lider ? ' on' : ''}" data-li="${esc(x.miembro_id)}" data-l="${x.es_lider ? 1 : 0}">${x.es_lider ? 'Quitar líder' : 'Hacer líder'}</button>` : ''}</div>`).join('')}</div><button type="button" class="btn sec sep16" id="mnDel">Borrar este ministerio</button>`;
-    const cambia = async (idm, asig, lid) => { const r2 = await prpc('ministerio_asignar', p, { p_ministerio: mi.id, p_miembro: idm, p_asignado: asig, p_lider: lid }); r2.ok ? pMinisterio(p, mi) : (m.textContent = errTxt(r2.error)); };
+    const l = r.data || []; m.hidden = true;
+    const nSirven = l.filter((x) => x.asignado).length, nLid = l.filter((x) => x.es_lider).length;
+    if ($('#pHero')) $('#pHero').innerHTML = heroInt('c2 pas-hero pas-min-h', esc(mi.icono || '👥'), 'Ministerio', esc(mi.nombre), l.length ? nSirven + (nSirven === 1 ? ' persona sirve' : ' personas sirven') + (nLid ? ' · ' + nLid + (nLid === 1 ? ' líder' : ' líderes') : ' · sin líder') + '. Un líder puede crear actividades y avisos.' : 'Aún no hay personas en la iglesia para sumar.');
+    $('#plista').innerHTML = `<h2 class="mi-sub">Personas</h2><div class="mi-lista">${l.map((x) => `<div class="mi-curso min-persona${x.asignado ? ' hecho' : ''}"><span class="mi-curso-ic" aria-hidden="true">${esc((x.nombre || '?').trim().charAt(0).toUpperCase())}</span><span class="mi-curso-tx"><b>${esc(x.nombre)}</b><small>${x.es_lider ? '⭐ Líder' : x.asignado ? 'Sirve aquí' : 'No está en este grupo'}</small><span class="min-acc"><button type="button" class="chip${x.asignado ? ' on' : ''}" data-as="${esc(x.miembro_id)}" data-l="${x.es_lider ? 1 : 0}" data-a="${x.asignado ? 1 : 0}">${x.asignado ? 'Quitar' : 'Sumar'}</button>${x.asignado ? `<button type="button" class="chip${x.es_lider ? ' on' : ''}" data-li="${esc(x.miembro_id)}" data-l="${x.es_lider ? 1 : 0}">${x.es_lider ? 'Quitar líder' : 'Hacer líder'}</button>` : ''}</span></span></div>`).join('')}</div><h2 class="mi-sub">Zona delicada</h2><div class="card dat-seg"><p class="suave m0">Si borras el ministerio, sus actividades y avisos también se borran.</p><button type="button" class="btn sec sep16" id="mnDel">Borrar este ministerio</button></div>`;
+    const cambia = async (idm, asig, lid) => { const r2 = await prpc('ministerio_asignar', p, { p_ministerio: mi.id, p_miembro: idm, p_asignado: asig, p_lider: lid }); if (r2.ok) pMinisterio(p, mi); else { m.hidden = false; m.textContent = errTxt(r2.error); } };
     document.querySelectorAll('[data-as]').forEach((b) => b.addEventListener('click', () => cambia(b.dataset.as, b.dataset.a !== '1', false)));
     document.querySelectorAll('[data-li]').forEach((b) => b.addEventListener('click', () => cambia(b.dataset.li, true, b.dataset.l !== '1')));
     $('#mnDel').onclick = async () => { if (!confirm('¿Borrar el ministerio «' + mi.nombre + '»? Sus actividades y avisos también se borran.')) return; await prpc('ministerio_borrar', p, { p_ministerio: mi.id }); pMinisterios(p); };
   }
   async function pDatos(p) {
-    $('#pantalla').innerHTML = `${cabecera('Datos y código', 'Panel')}<p class="suave" id="pmsg">Cargando…</p><div id="plista"></div>`; volverA('Panel', vistaPastor);
+    $('#pantalla').innerHTML = `${cabecera('Datos y código', 'Panel')}<div id="pHero">${heroInt('c1 pas-hero', '🕍', 'Tu iglesia', 'Datos y código', 'Nombre, eslogan y el código para invitar.')}</div><p class="suave" id="pmsg">Cargando…</p><div id="plista"></div>`; volverA('Panel', vistaPastor);
     const r = await rpc('iglesia_perfil', { p_codigo: p.codigo }), m = $('#pmsg'); if (!m) return;
-    const d = (r.ok && r.data) || {}; m.textContent = '';
+    const d = (r.ok && r.data) || {}; m.textContent = ''; m.hidden = true;
+    if (d.nombre && $('#pHero')) $('#pHero').innerHTML = heroInt('c1 pas-hero', '🕍', 'Tu iglesia', esc(d.nombre), d.eslogan ? esc(d.eslogan) : 'Código ' + esc(p.codigo));
     const enlace = location.origin + location.pathname + '?c=' + p.codigo;
-    $('#plista').innerHTML = `<div class="card"><div class="t"><span aria-hidden="true">${svg('iglesia', 20)}</span>Código de tu iglesia</div><p class="codigo-grande">${esc(p.codigo)}</p><p class="suave m0">Compártelo con tus hermanos para que se unan.</p><button type="button" class="btn sec" id="dCopiar">${svg('copiar', 18)} Copiar enlace de invitación</button><p id="dmsg" class="ok" role="status"></p></div>
-      <div class="card sep16"><label for="dn">Nombre de la iglesia</label><input id="dn" type="text" maxlength="60" value="${esc(d.nombre || '')}"><label for="de">Eslogan</label><input id="de" type="text" maxlength="80" value="${esc(d.eslogan || '')}"><p id="derr" class="error" role="alert" hidden></p><button type="button" class="btn" id="dGuardar">Guardar</button></div>
-      <div class="card sep16"><div class="t"><span aria-hidden="true">${svg('ciclo', 20)}</span>Cambiar el código</div><p class="suave m0t">Si el código se filtró, crea uno nuevo. El anterior deja de servir y tendrás que copiar de nuevo la llave desde el computador.</p><button type="button" class="btn sec" id="dRotar">Crear un código nuevo</button></div>`;
+    $('#plista').innerHTML = `<h2 class="mi-sub">Para invitar</h2><div class="card dat-cod"><div class="t"><span aria-hidden="true">${svg('iglesia', 20)}</span>Código de tu iglesia</div><p class="codigo-grande">${esc(p.codigo)}</p><p class="suave m0">Compártelo con tus hermanos para que se unan.</p><button type="button" class="btn sec" id="dCopiar">${svg('copiar', 18)} Copiar enlace de invitación</button><p id="dmsg" class="ok" role="status"></p></div>
+      <h2 class="mi-sub">Cómo te ven</h2><div class="card"><label for="dn">Nombre de la iglesia</label><input id="dn" type="text" maxlength="60" value="${esc(d.nombre || '')}"><label for="de">Eslogan</label><input id="de" type="text" maxlength="80" value="${esc(d.eslogan || '')}"><p id="derr" class="error" role="alert" hidden></p><button type="button" class="btn" id="dGuardar">Guardar</button></div>
+      <h2 class="mi-sub">Seguridad</h2><div class="card dat-seg"><div class="t"><span aria-hidden="true">${svg('ciclo', 20)}</span>Cambiar el código</div><p class="suave m0t">Si el código se filtró, crea uno nuevo. El anterior deja de servir y tendrás que copiar de nuevo la llave desde el computador.</p><button type="button" class="btn sec" id="dRotar">Crear un código nuevo</button></div>`;
     $('#dCopiar').onclick = async () => { try { await navigator.clipboard.writeText(enlace); $('#dmsg').textContent = 'Enlace copiado.'; } catch (e) { $('#dmsg').textContent = enlace; } };
     $('#dGuardar').onclick = async () => { const r2 = await prpc('iglesia_guardar_perfil', p, { p_nombre: $('#dn').value.trim(), p_eslogan: $('#de').value.trim() || null }); const er = $('#derr'); if (r2.ok && r2.data) { er.hidden = true; $('#dmsg').textContent = 'Guardado.'; } else { er.textContent = 'No se pudo guardar. Revisa el nombre (2 a 60 letras) y tu conexión.'; er.hidden = false; } };
     $('#dRotar').onclick = async () => { if (!confirm('¿Crear un código nuevo? El actual dejará de servir.')) return; const r2 = await prpc('iglesia_rotar_codigo', p), x = r2.ok ? primera(r2.data) : null; if (x && x.ok && x.codigo_nuevo) { guardar(K_PASTOR, { codigo: x.codigo_nuevo, secreto: p.secreto }); alert('Tu código nuevo es ' + x.codigo_nuevo + '. En el computador, toca «Cambiar el código» o copia de nuevo la llave.'); vistaPastor(); } else $('#dmsg').textContent = 'No se pudo cambiar el código.'; };
