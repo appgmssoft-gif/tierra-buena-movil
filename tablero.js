@@ -727,7 +727,7 @@
     cosecha: { ico: MINI('cosecha', 'tbl-intro-fig'), titulo: 'Atrapa la cosecha', pasos: ['Toca las frutas y verduras que caen: cada una suma 1 punto. La manzana dorada vale 3.', 'Lo que no se come (piedra, hueso, araña, bota) resta 1 y corta tu racha. Cada 5 seguidas dan un punto extra.', 'La gota de rocío suma 3 segundos. 20 segundos: 14 puntos dan 2 gotas, 7 dan 1.'] },
     arreo: { ico: MINI('arreo', 'tbl-intro-fig'), titulo: 'Ovejas en fuga', pasos: ['Toca cada oveja para llevarla al corral. Aparecen por todos lados. Las de cuernos (carneros) piden dos toques y la dorada vale 3.', 'Espanta al zorro antes de que cruce: si no, se lleva una oveja.', '¡No toques el avispero! Te quita 2 ovejas. 22 segundos: 16 ovejas dan 2 gotas, 9 dan 1.'] },
     reto: { ico: MINI('preguntas', 'tbl-intro-fig'), titulo: 'Cinco preguntas', pasos: ['Cinco preguntas cortas de tres tipos.', 'Cada acierto da 1 gota (máximo 4).', 'Fallar no tiene castigo.'] },
-    eco: { ico: MINI('eco', 'tbl-intro-fig'), titulo: 'Ojo de halcón', pasos: ['Mira en qué orden se iluminan los animales.', 'Repite la secuencia tocándolos igual.', 'Cada ronda suma un animal. 4 rondas dan 2 gotas; 2 rondas, 1.'] }
+    eco: { ico: MINI('eco', 'tbl-intro-fig'), titulo: 'Ojo de halcón', pasos: ['Mira en qué orden se iluminan los animales.', 'Repite la secuencia tocándolos igual.', 'Cada ronda suma un animal y llegan amigos nuevos. 6 rondas dan 2 gotas; 3 rondas, 1. Puedes ver la secuencia de nuevo una vez.'] }
   };
   function miniIntro(clave, juego) {
     return new Promise((res) => {
@@ -976,30 +976,41 @@
   // F1146 · Eco de la montaña (nuevo): los animales se iluminan en orden; repite la secuencia tocándolos igual.
   function miniEco() {
     return new Promise((res) => {
-      const OPC = ['eco-oveja', 'eco-llama', 'eco-zorro', 'eco-pinguino'], NOMBRE_ECO = { 'eco-oveja': 'Oveja', 'eco-llama': 'Llama', 'eco-zorro': 'Zorro', 'eco-pinguino': 'Pingüino' };
+      const OPC = ['eco-oveja', 'eco-llama', 'eco-zorro', 'eco-pinguino', 'eco-condor', 'eco-pudu'], NOMBRE_ECO = { 'eco-oveja': 'Oveja', 'eco-llama': 'Llama', 'eco-zorro': 'Zorro', 'eco-pinguino': 'Pingüino', 'eco-condor': 'Cóndor', 'eco-pudu': 'Pudú' };
+      const LLEGA = { 4: 4, 7: 5 };                                   // ronda en la que aparece cada animal nuevo (índice 4 = cóndor, 5 = pudú)
+      let activos = 4, ayuda = 1;
       const caja = mini('Ojo de halcón', 'Mira en qué orden se iluminan los animales y repítelo tocándolos.'); caja.classList.add('compacta');
       const marca = document.createElement('p'); marca.className = 'tbl-marca'; caja.appendChild(marca);
       const grid = document.createElement('div'); grid.className = 'tbl-eco'; caja.appendChild(grid);
-      const btns = OPC.map((n, i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'tbl-eco-b c' + (i + 1); b.setAttribute('aria-label', NOMBRE_ECO[n]); b.innerHTML = FIG(n); b.disabled = true; grid.appendChild(b); return b; });
+      const btns = OPC.map((n, i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'tbl-eco-b c' + (i + 1); b.setAttribute('aria-label', NOMBRE_ECO[n]); b.innerHTML = FIG(n); b.disabled = true; if (i >= 4) b.hidden = true; grid.appendChild(b); return b; });
       const seq = []; let paso = 0, listo = false, mostrando = false;
       const vivo = () => caja.isConnected && !listo;
       const cerrar = (n) => { if (listo) return; listo = true; caja.remove(); res(n); };
       const esperar = (ms) => new Promise((r) => setTimeout(r, reducido() ? Math.min(ms, 80) : ms));
+      const luzMs = () => Math.max(260, 540 - 28 * (seq.length - 1)), huecoMs = () => Math.max(110, 210 - 10 * (seq.length - 1));   // cada ronda se ilumina más rápido
+      const ver = document.createElement('button'); ver.type = 'button'; ver.className = 'tbl-eco-ver'; ver.hidden = true; caja.appendChild(ver);
+      const pintaVer = () => { ver.hidden = mostrando || !ayuda || !vivo(); ver.textContent = 'Ver de nuevo (' + ayuda + ')'; };
       async function mostrar() {
-        mostrando = true; btns.forEach((b) => { b.disabled = true; }); marca.textContent = 'Mira con atención…';
+        mostrando = true; btns.forEach((b) => { b.disabled = true; }); marca.textContent = 'Mira con atención…'; pintaVer();
         await esperar(450);
         for (const i of seq) {
           if (!vivo()) return;
-          btns[i].classList.add('luz'); son('carta', i); await esperar(520); btns[i].classList.remove('luz'); await esperar(200);
+          btns[i].classList.add('luz'); son('carta', i); await esperar(luzMs()); btns[i].classList.remove('luz'); await esperar(huecoMs());
         }
         if (!vivo()) return;
-        mostrando = false; paso = 0; btns.forEach((b) => { b.disabled = false; }); marca.textContent = 'Tu turno · ronda ' + seq.length;
+        mostrando = false; paso = 0; btns.forEach((b, i) => { b.disabled = i >= activos; }); marca.textContent = 'Tu turno · ronda ' + seq.length; pintaVer();
       }
-      function ronda() { seq.push(Math.floor(Math.random() * OPC.length)); mostrar(); }
+      ver.addEventListener('click', () => { if (mostrando || !ayuda || !vivo()) return; ayuda--; mostrar(); });
+      function ronda() {
+        const nueva = LLEGA[seq.length + 1];
+        if (nueva !== undefined) { activos = nueva + 1; btns[nueva].hidden = false; grid.classList.toggle('seis', activos > 4); marca.textContent = '¡Llegó un amigo nuevo: ' + NOMBRE_ECO[OPC[nueva]] + '!'; }
+        seq.push(Math.floor(Math.random() * activos)); setTimeout(mostrar, nueva !== undefined ? 1100 : 0);
+      }
       function fallo() {
-        btns.forEach((b) => { b.disabled = true; }); son('error'); grid.classList.add('mal');
-        const n = Math.max(0, seq.length - 1), g = n >= 4 ? 2 : n >= 2 ? 1 : 0;
-        marca.textContent = `Llegaste a ${n} ${n === 1 ? 'ronda' : 'rondas'}. ` + (g ? `Ganas ${g} ${g === 1 ? 'gota' : 'gotas'}.` : 'Esta vez no hubo gotas.');
+        btns.forEach((b) => { b.disabled = true; }); son('error'); grid.classList.add('mal'); ver.hidden = true;
+        const buena = btns[seq[paso]]; if (buena) buena.classList.add('luz');          // muestra el animal correcto
+        const n = Math.max(0, seq.length - 1), g = n >= 6 ? 2 : n >= 3 ? 1 : 0;
+        marca.textContent = `Era el ${NOMBRE_ECO[OPC[seq[paso]]].toLowerCase()}. Llegaste a ${n} ${n === 1 ? 'ronda' : 'rondas'}. ` + (g ? `Ganas ${g} ${g === 1 ? 'gota' : 'gotas'}.` : 'Esta vez no hubo gotas.');
         botonMini(caja, 'Seguir', () => cerrar(g));
       }
       btns.forEach((b, i) => b.addEventListener('click', () => {
@@ -1025,7 +1036,12 @@
       const banco = await cargarRetos();
       if (!banco.length) { res(0); return; }
       const caja = mini('Cinco preguntas', 'Cinco desafíos rápidos. Un acierto = 1 gota (máximo 4). Sin castigo.');
-      const rondas = mezclar(banco).slice(0, Math.min(5, banco.length));
+      // F1251 · Siempre una mezcla: 2 de opción múltiple, 1 «¿cuál no encaja?», 1 verdadero o falso y 1 más (nunca cinco verdadero/falso seguidos).
+      const rondas = (() => {
+        const rev = mezclar(banco), tom = (t, k) => rev.filter((x) => x.tipo === t).slice(0, k), sel = [...tom('quiz', 2), ...tom('intruso', 1), ...tom('vf', 1)];
+        for (const x of rev) { if (sel.length >= 5) break; if (!sel.includes(x)) sel.push(x); }
+        return mezclar(sel).slice(0, Math.min(5, banco.length));
+      })();
       let i = 0, gotasReto = 0, listo = false;
       const cerrar = (n) => { if (listo) return; listo = true; caja.remove(); res(n); };
       const rotulo = { quiz: 'Pregunta', intruso: '¿Cuál NO encaja?', vf: '¿Verdadero o falso?' };

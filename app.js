@@ -290,7 +290,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Acertijos de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Letras entre las hojas': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => !CABECERAS_ILUSTRADAS ? '' : `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1249';
+  const APP_VERSION = 'F1252';
   // F1171: respaldo si movimiento.js no cargó (pruebas o caché vieja): mismo criterio que TBMov.quieto().
   const MOV_QUIETO = () => { try { if (window.TBMov) return window.TBMov.quieto(); const h = document.documentElement; return h.getAttribute('data-anim') === 'off' || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
@@ -1417,10 +1417,12 @@
     return `<svg class="hoy-escena" viewBox="0 0 400 420" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">${estrellas}${astro}${nubes}<path class="h-col1" d="M0 336 Q90 296 190 326 T400 308 V420 H0z"/><path class="h-col2" d="M0 372 Q110 344 220 366 T400 352 V420 H0z"/></svg>`;
   }
   // F944 · JUEGOS (fase A): entrada común. Cada juego se enchufa aquí con su vista y llama a juegoTerminar(id, aciertos, total).
+  // F1252 · Barajar de verdad (Fisher-Yates). El antiguo .sort(() => Math.random() - 0.5) deja el primer elemento casi siempre en A o D (36 % y 31 %), y en Mente en juego la correcta nace primera.
+  const barajarFY = (a, rnd) => { const b = a.slice(), r = rnd || Math.random; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
   const K_JUEGOS = 'tb_movil_juegos';
   const JUEGOS = [
     ['tablero', '🎲', 'Tablero de Tierra Buena', 'Un camino con sorpresas: rocío, preguntas, atajos y tormentas que te hacen retroceder.'],   // F1123 · Fase 1 del tablero (tablero.js)
-    ['minijuegos', '🕹️', 'Minijuegos', 'Ovejas en fuga, Pares del huerto, Atrapa la cosecha y Cinco preguntas. Cada uno explica su regla antes de empezar.'],
+    ['minijuegos', '🕹️', 'Minijuegos', 'Ovejas en fuga, Pares del huerto, Atrapa la cosecha, Ojo de halcón y Cinco preguntas. Cada uno explica su regla antes de empezar.'],
     ['mente', '🧠', 'Mente en juego', 'Trivia rápida: ciencia, animales, Chile, espacio y adivinanzas. Con racha y comodín.'],
     ['raices', '📖', 'Acertijos de la Palabra', 'Preguntas sobre lo que leíste, con el versículo que explica la respuesta.'],
     ['memoria', '🃏', 'Pares del huerto', 'Encuentra las parejas del huerto. Cada pareja completa da gotas para tu Vivero.'],   // F1145 · reemplaza «Completa el versículo» (pendiente de la Fase 1 del tablero)
@@ -1432,14 +1434,14 @@
     const j = leer(K_JUEGOS) || { n: 0, p: {} }; j.n = (j.n || 0) + 1; j.p = j.p || {};
     const q = j.p[id] || { n: 0, mejor: 0 }; q.n++; q.mejor = Math.max(q.mejor, Number(aciertos) || 0); j.p[id] = q; guardar(K_JUEGOS, j);
     // F1069: una gota al terminar, solo si se acertó al menos el 60 % de las preguntas (decisión del usuario)
-    if (total > 0 && aciertos / total >= 0.6) gotaGanar('juego'); return q;
+    let gano = false; if (total > 0 && aciertos / total >= 0.6) gano = gotaGanar('juego'); return Object.assign({}, q, { gano });
   }
   // F945 · «RAÍCES» (juego B): preguntas con el versículo que explica la respuesta. Reto del día = 5 fijas por fecha; «Otras 5» = al azar.
   function raicesElegir(bank, diario) {
     let sem = 0; const f = diario ? hoyTxt() : String(Date.now()); for (let i = 0; i < f.length; i++) sem = (sem * 31 + f.charCodeAt(i)) >>> 0;
     const azar = () => { sem = (sem * 1664525 + 1013904223) >>> 0; return sem / 4294967296; };
     const ult = leer(K_BIB), vistas = diario ? [] : ((leer(K_JUEGOS) || {}).vistas_raices || []);   // F1093: «Otras cinco» prefiere preguntas que aún no viste
-    const a = bank.slice().sort(() => azar() - 0.5).sort((x, y) => (vistas.includes(x.id) ? 1 : 0) - (vistas.includes(y.id) ? 1 : 0));
+    const a = barajarFY(bank, azar).sort((x, y) => (vistas.includes(x.id) ? 1 : 0) - (vistas.includes(y.id) ? 1 : 0));
     const del = ult ? a.filter((q) => q.cod === ult.cod) : [];   // primero las del libro que leíste por última vez
     return del.slice(0, 2).concat(a.filter((q) => !del.slice(0, 2).includes(q))).slice(0, 5);
   }
@@ -1451,7 +1453,7 @@
   async function juegoMente(volver) {
     const RONDAS = 10, TIEMPO = 12000, PASO = 100, C = { rosa: 1 };
     const sonido = (n) => { try { if (window.TBSonido && TBSonido[n]) TBSonido[n](); } catch (e) { /* el sonido nunca rompe el juego */ } };
-    const mezcla = (a) => a.slice().sort(() => Math.random() - 0.5);
+    const mezcla = (a) => barajarFY(a);
     let banco;
     try { banco = (await datoCargar('mente_en_juego')).preguntas || []; } catch (e) { banco = []; }
     if (!banco.length) { $('#pantalla').innerHTML = `${cabecera('Mente en juego', 'Juegos')}<div class="ju"><p class="suave">No pudimos cargar las preguntas. Vuelve a intentarlo en un momento.</p></div>`; $('#volver').onclick = volver; return; }
@@ -1541,7 +1543,7 @@
     function fin() {
       parar();
       const pct = Math.round(st.aciertos / N * 100);
-      try { juegoTerminar('mente', st.aciertos, N); } catch (e) { /* sin registro: la partida igual se muestra */ }
+      let gano = false; try { gano = juegoTerminar('mente', st.aciertos, N).gano; } catch (e) { /* sin registro: la partida igual se muestra */ }
       sonido('logro');
       $('#pantalla').innerHTML = `<div class="mente mente-fin">
         <header class="mente-top"><button type="button" class="volver" id="volver">‹ Juegos</button><b>Mente en juego</b><span></span></header>
@@ -1550,7 +1552,7 @@
           <h2>${st.aciertos} de ${N} correctas</h2>
           <p class="mente-pts-grande">${st.puntos} puntos</p>
           <ul class="mente-stats"><li><b>${st.mejorRacha}</b><small>mejor racha</small></li><li><b>${pct}%</b><small>de acierto</small></li></ul>
-          <p class="suave">${pct >= 60 ? 'Ganaste una gota de rocío para tu Vivero.' : 'Sigue practicando: cada partida se nota.'}</p>
+          <p class="suave">${gano ? 'Ganaste una gota de rocío para tu Vivero.' : pct >= 60 ? 'Muy buena partida. Hoy ya alcanzaste el tope de gotas por juegos.' : 'Sigue practicando: cada partida se nota.'}</p>
           <div class="mente-botones"><button type="button" class="btn sec" id="mOtra2">Jugar otra vez</button><button type="button" class="btn" id="mVolver">Volver a Juegos</button></div>
         </div></div>`;
       $('#volver').onclick = salir;
@@ -1567,7 +1569,7 @@
       ['arreo', '<img class="mini-fig" src="img/tablero/mini/arreo.svg" alt="">', 'Ovejas en fuga', 'Toca las ovejas que cruzan el campo para llevarlas al corral.'],
       ['memoria', '<img class="mini-fig" src="img/tablero/mini/memoria.svg" alt="">', 'Pares del huerto', 'Encuentra las 6 parejas dando vuelta las cartas.'],
       ['cosecha', '<img class="mini-fig" src="img/tablero/mini/cosecha.svg" alt="">', 'Atrapa la cosecha', 'Frutas, verduras y una dorada que vale 3. Ojo con lo que no se come.'],
-      ['eco', '<img class="mini-fig" src="img/tablero/mini/eco.svg" alt="">', 'Ojo de halcón', 'Mira, memoriza y repite el orden de los animales. Cada ronda suma uno.'],
+      ['eco', '<img class="mini-fig" src="img/tablero/mini/eco.svg" alt="">', 'Ojo de halcón', 'Mira, memoriza y repite el orden de los animales. Cada ronda suma uno y llegan amigos nuevos.'],
       ['reto', '<img class="mini-fig" src="img/tablero/mini/preguntas.svg" alt="">', 'Cinco preguntas', 'Cinco preguntas cortas de cultura, naturaleza y Chile.']
     ];
     $('#pantalla').innerHTML = `${cabecera('Minijuegos', 'Juegos')}<div class="ju"><p class="suave">Juegos rápidos, sin prisa y sin castigo. Cada uno te explica su regla antes de empezar.</p><div class="mini-grid">${M.map(([k, ic, t, d]) => `<button type="button" class="mini-card" data-mini="${k}"><span class="mini-ico" aria-hidden="true">${ic}</span><b>${esc(t)}</b><small>${esc(d)}</small></button>`).join('')}</div></div>`;
@@ -1580,7 +1582,7 @@
     const son = (n) => { try { if (window.TBSonido && window.TBSonido[n]) window.TBSonido[n](); } catch (e) { /* sin sonido */ } };
     const qs = cfg.items; let i = 0, ac = 0, racha = 0; const marcas = [];   // F1093: racha suave (sin vidas ni castigo) y repaso de lo fallado
     const pregunta = () => {
-      const q = qs[i], ord = q.o.map((t, k) => k).sort(() => Math.random() - 0.5);
+      const q = qs[i], ord = barajarFY(q.o.map((t, k) => k));
       const prog = qs.map((x, k) => `<i class="ju-h${k < i ? (marcas[k] ? ' bien' : ' mal') : k === i ? ' ahora' : ''}"></i>`).join('');
       $('#pantalla').innerHTML = `${cabecera(cfg.titulo, 'Juegos')}<div class="ju"><div class="ju-prog" role="img" aria-label="Pregunta ${i + 1} de ${qs.length}">${prog}</div>
         <p class="ju-cuenta">${cfg.repaso ? 'Repaso · ' : ''}Pregunta ${i + 1} de ${qs.length}${racha >= 2 ? `<span class="ju-racha"> · ${racha} seguidas</span>` : ''}</p>${q.ref ? `<p class="ju-ref-q">${esc(q.ref)}</p>` : ''}<h2 class="ju-p">${esc(limpiaTexto(q.p))}</h2>
@@ -1597,11 +1599,11 @@
     };
     const fin = () => {
       if (cfg.alFinal) { try { cfg.alFinal(ac, qs.length); } catch (e) { /* sin progreso */ } }   // F1107
-      if (!cfg.repaso) juegoTerminar(cfg.id, ac, qs.length);   // el repaso no cuenta como partida ni da gota (evita repetir para ganar)
+      const gano = !cfg.repaso && juegoTerminar(cfg.id, ac, qs.length).gano;   // el repaso no cuenta como partida ni da gota (evita repetir para ganar)
       son('logro');
       const falladas = qs.filter((x, k) => !marcas[k]);
       const msg = cfg.repaso ? (ac === qs.length ? 'Ya las tienes. Lo que fallaste, ahora lo sabes.' : 'Cada repaso deja algo. Puedes repetirlo cuando quieras.') : (ac >= 4 ? 'Muy buen repaso de la Palabra.' : ac >= 2 ? 'Buen avance. Cada repaso deja algo.' : 'Lo importante es volver a leer. Puedes intentarlo otra vez.');
-      $('#pantalla').innerHTML = `${cabecera(cfg.titulo, 'Juegos')}<div class="ju">${JU_HERO(ac)}<h2 class="ju-fin">${ac} de ${qs.length}</h2><p class="suave">${msg}${!cfg.repaso && ac > 0 ? ' Una gota de rocío te espera en el Inicio.' : ''}</p>
+      $('#pantalla').innerHTML = `${cabecera(cfg.titulo, 'Juegos')}<div class="ju">${JU_HERO(ac)}<h2 class="ju-fin">${ac} de ${qs.length}</h2><p class="suave">${msg}${gano ? ' Una gota de rocío te espera en el Inicio.' : ''}</p>
         ${falladas.length ? `<button type="button" class="ju-sig" id="rzRepaso">Repasar lo que fallé (${falladas.length}) <span aria-hidden="true">›</span></button>` : ''}
         <button type="button" class="ju-sig${falladas.length ? ' ju-sec' : ''}" id="rzOtra">Jugar otra vez <span aria-hidden="true">›</span></button></div>`;
       volverA('Juegos', cfg.volver); $('#rzOtra').onclick = () => cfg.otra();
@@ -1697,7 +1699,7 @@
     $('#pantalla').innerHTML = `${cabecera('Completa el versículo', 'Juegos')}<div class="ju">${JU_HERO(1)}<p class="suave">Preparando versículos…</p></div>`; volverA('Juegos', volver);
     const jugar = async () => {
       const mios = []; const rs = rg(K_RES); Object.keys(rs).forEach((k) => { const [c, cap] = k.split('.'); (rs[k] || []).forEach((v) => mios.push(c + '.' + cap + '.' + v)); });
-      const mezcla = (a) => a.slice().sort(() => Math.random() - 0.5), pool = mezcla(mios).slice(0, 6).concat(mezcla(VERSICULOS)).filter((x, k, a) => a.indexOf(x) === k).slice(0, 12);
+      const mezcla = (a) => barajarFY(a), pool = mezcla(mios).slice(0, 6).concat(mezcla(VERSICULOS)).filter((x, k, a) => a.indexOf(x) === k).slice(0, 12);
       const vs = [];
       for (const r of pool) { if (vs.length >= 8) break; const [c, cap, v] = r.split('.'); try { const lib = await libroCargar(c); const t = limpiaTexto((lib[cap - 1] || [])[v - 1] || ''); if (t.split(' ').length >= 6) vs.push({ c, cap: +cap, v: +v, t, mio: mios.indexOf(r) >= 0 }); } catch (e) { break; } }
       if (vs.length < 4) { $('#pantalla').innerHTML = `${cabecera('Completa el versículo', 'Juegos')}<div class="ju"><p class="suave">Completa el versículo necesita abrir la Biblia al menos una vez con internet para tener los versículos. Puedes volver cuando la hayas leído.</p></div>`; volverA('Juegos', volver); return; }
@@ -1786,10 +1788,10 @@
 
     const jugarNivel = (idx) => {
       const mi = Math.floor(idx / 6), k = idx % 6, m = mapa(mi), cfg = { N: m.N, dirs: m.dirs, min: m.min, max: m.max, n: nPalabras(mi, k) };
-      const pool = todasLas.filter((w) => w.length >= cfg.min && w.length <= cfg.max).sort(() => Math.random() - 0.5);
+      const pool = barajarFY(todasLas.filter((w) => w.length >= cfg.min && w.length <= cfg.max));
       let lista = pool.slice(0, cfg.n);
       let tab = colocar(lista, cfg.N, cfg.dirs);
-      for (let r = 0; r < 25 && lista.some((w) => !tab.pos[w]); r++) { lista = pool.slice().sort(() => Math.random() - 0.5).slice(0, cfg.n); tab = colocar(lista, cfg.N, cfg.dirs); }
+      for (let r = 0; r < 25 && lista.some((w) => !tab.pos[w]); r++) { lista = barajarFY(pool).slice(0, cfg.n); tab = colocar(lista, cfg.N, cfg.dirs); }
       const { g, pos } = tab, colocadas = lista.filter((w) => pos[w]), N = cfg.N;
       const halladas = new Set(), ok = new Set(); let sel = [], pista = null, aviso = 'Toca la primera letra de una palabra.', pistas = 0, deshaceres = 0;
       const celdasDe = (w) => { const p = pos[w], r = []; for (let q = 0; q < w.length; q++) r.push((p.f + p.dr * q) * N + p.c + p.dc * q); return r; };
@@ -2713,7 +2715,7 @@
   // ---------- F883 · Mi Biblia, planes de lectura, logros ----------
   const hoyTxt = () => diaTxt(new Date());
   // F931 (I4): leer un capítulo o cumplir una acción de Vida da gotas de rocío en el Inicio (con topes diarios; sin Inicio o sin árbol elegido no pasa nada).
-  function gotaGanar(origen) { try { if (window.TBInicio && !window.TBInicio.cargar().eligiendo && window.TBInicio.ganar(origen)) toastBib('Una gota de rocío te espera en el Inicio'); } catch (e) { /* sin Inicio */ } }
+  function gotaGanar(origen) { try { if (window.TBInicio && !window.TBInicio.cargar().eligiendo && window.TBInicio.ganar(origen)) { toastBib('Una gota de rocío te espera en el Inicio'); return true; } } catch (e) { /* sin Inicio */ } return false; }   // F1252: devuelve si de verdad se ganó (hay tope diario)
   function leidoMarcar(cod, cap) { const l = leer(K_LEIDOS) || {}; if (l[cod + '.' + cap] === hoyTxt()) return; l[cod + '.' + cap] = hoyTxt(); guardar(K_LEIDOS, l); gotaGanar('lectura'); }
   const nLeidos = () => Object.keys(leer(K_LEIDOS) || {}).length;
   const leidosHoy = () => Object.values(leer(K_LEIDOS) || {}).filter((d) => d === hoyTxt()).length;
