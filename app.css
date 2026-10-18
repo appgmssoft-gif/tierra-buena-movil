@@ -665,7 +665,7 @@ body.entrando main{padding-bottom:calc(28px + var(--sa-b))}
   html:not([data-anim=off]) .grid-ent>.card:nth-child(1){animation-delay:.18s}html:not([data-anim=off]) .grid-ent>.card:nth-child(2){animation-delay:.3s}html:not([data-anim=off]) .grid-ent>.card:nth-child(3){animation-delay:.42s}
   @keyframes cod-onda{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(1.9)}}
   @keyframes hero-flota{50%{transform:translateY(-6px) rotate(-3deg)}}
-  @keyframes hero-brilla{0%{left:-60%}55%,100%{left:130%}}
+  @keyframes hero-brilla{0%{transform:translateX(0) skewX(-20deg)}55%,100%{transform:translateX(500%) skewX(-20deg)}}
   @keyframes hv-cae{0%{opacity:0;transform:translate(0,0) rotate(0)}12%{opacity:.8}100%{opacity:0;transform:translate(26px,190px) rotate(200deg)}}
   @keyframes tb-sube{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
   @keyframes tb-baja{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:none}}
@@ -1069,8 +1069,9 @@ html[data-contraste=alto] .card,html[data-contraste=alto] .chip,html[data-contra
 .mi-pt-pide .mi-pt-ic{width:60px;height:60px;font-size:1.7rem;background:#fff6d8;box-shadow:0 0 0 4px rgba(255,214,102,.55),0 8px 18px -6px rgba(20,20,40,.6)}
 .mi-pt-pide .mi-pt-n{background:#fff6d8}
 .mi-pt-c .mi-pt-ic{width:40px;height:40px;font-size:1.05rem}.mi-pt-c .mi-pt-n{font-size:.66rem}
-@media (prefers-reduced-motion:no-preference){html:not([data-anim=off]) .mi-pt-pide .mi-pt-ic{animation:mi-brilla 3.2s ease-in-out infinite}}
-@keyframes mi-brilla{50%{box-shadow:0 0 0 9px rgba(255,214,102,.2),0 8px 18px -6px rgba(20,20,40,.6)}}
+@media (prefers-reduced-motion:no-preference){html:not([data-anim=off]) .mi-pt-pide .mi-pt-ic::after{animation:mi-brilla 3.2s ease-in-out infinite}}
+@keyframes mi-brilla{0%,100%{opacity:0}50%{opacity:1}}
+.mi-pt-pide .mi-pt-ic{position:relative}.mi-pt-pide .mi-pt-ic::after{content:"";position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 9px rgba(255,214,102,.2);opacity:0;pointer-events:none}
 
 /* F1178 · Mi iglesia: carrusel «Para ti hoy» + cuadrícula con tamaños distintos + chips */
 .mi-car{margin:14px 0 4px}

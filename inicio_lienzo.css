@@ -123,8 +123,8 @@ html[data-anim=off] .cap,html[data-anim=off] .il-maleza,html[data-anim=off] .il-
 /* F930 · I3: maleza y sanación. Sin brillo mientras haya maleza (un solo filtro, sin animar); al limpiar la última vuelve con un resplandor corto. */
 .il-escena.apagado .arbol{filter:saturate(.55) brightness(.94)}
 .il-escena .arbol{transition:filter .9s ease}
-html:not([data-anim=off]) .il-escena.brilla .arbol{animation:il-brilla 1.6s ease-out 1}
-@keyframes il-brilla{0%{filter:brightness(1.35) saturate(1.2)}100%{filter:none}}
+html:not([data-anim=off]) .il-escena.brilla .arbol{transform-origin:50% 100%;animation:il-brilla 1.6s ease-out 1}
+@keyframes il-brilla{0%{transform:scale(1.035)}100%{transform:scale(1)}}
 .il-luz{position:absolute;left:50%;top:50%;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:radial-gradient(circle,#fff6c8 0,var(--oro,#e8c76a) 60%,transparent 100%);pointer-events:none;animation:il-luz .8s ease-out forwards}
 @keyframes il-luz{0%{opacity:.95;transform:translate(0,0) scale(.6)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1.2)}}
 @media (prefers-reduced-motion:reduce){.il-luz,.il-escena.brilla .arbol{animation:none!important}}
@@ -289,7 +289,7 @@ html[data-eco="2"] .estr circle{animation:none!important}
 .il-btn-msg.nuevo{position:relative;border-color:color-mix(in srgb,#3fa796 60%,transparent)}
 .il-btn-msg.nuevo::after{content:"";position:absolute;top:7px;right:10px;width:9px;height:9px;border-radius:50%;background:#3fa796}
 html:not([data-anim=off]) .il-btn-msg.nuevo::after{animation:il-tri-lat 1.8s ease-in-out 3}
-@keyframes il-tri-lat{0%,100%{box-shadow:0 0 0 0 rgba(63,167,150,.55)}50%{box-shadow:0 0 0 6px rgba(63,167,150,0)}}
+@keyframes il-tri-lat{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.7);opacity:.35}}
 @media (prefers-reduced-motion:reduce){.il-tri-op.pop,.il-btn-msg.nuevo::after{animation:none!important}}
 html[data-eco="2"] .il-tri-op.pop,html[data-eco="2"] .il-btn-msg.nuevo::after{animation:none!important}
 
@@ -560,3 +560,57 @@ html[data-eco="2"] .am-rayo,html[data-eco="2"] .am-p{animation:none!important}
 .il-estado{margin:4px auto;text-align:center;max-width:420px}.il-estado:empty{display:none}
 @media (prefers-reduced-motion:no-preference){.il-franja{animation:il-franja-in .7s ease-out .3s backwards}}
 @keyframes il-franja-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* F1255 · Aves nuevas: cada una con su lugar propio, sin pisarse con las del mismo hábitat */
+.il-ave.a-chincol{left:78%;top:49%}.il-ave.a-rayadito{left:30%;top:46%}.il-ave.a-minero{left:80%;top:93%}.il-ave.a-picaflor_arica{left:46%;top:77%}.il-ave.a-gaviota_dom{left:70%;top:24%}
+html:not([data-anim=off]) .il-ave.a-chincol svg,html:not([data-anim=off]) .il-ave.a-rayadito svg{animation:il-salta 3.4s ease-in-out infinite}
+/* F1255 · Ambientes: partículas suaves; solo transform y opacidad */
+.il-amb{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:hidden}.il-amb i{position:absolute;display:block;opacity:0}
+.il-amb i:nth-child(1){left:12%;top:30%;animation-delay:0s}.il-amb i:nth-child(2){left:34%;top:22%;animation-delay:2.3s}.il-amb i:nth-child(3){left:56%;top:34%;animation-delay:4.1s}.il-amb i:nth-child(4){left:76%;top:26%;animation-delay:1.2s}.il-amb i:nth-child(5){left:90%;top:20%;animation-delay:3.2s}
+.amb-mariposas i{width:10px;height:8px;border-radius:60% 40% 60% 40%;background:#f2a03a;box-shadow:inset -3px 0 0 #fbd38a;animation:amb-vuela 9s ease-in-out infinite}
+.amb-hojas i{width:8px;height:5px;border-radius:0 100% 0 100%;background:#b9803f;animation:amb-cae 11s linear infinite}
+.amb-petalos i{width:6px;height:4px;border-radius:50%;background:#f0a0b8;animation:amb-cae 9s linear infinite}
+.amb-neblina i{left:-30%!important;width:70%;height:16%;border-radius:50%;background:radial-gradient(ellipse,rgba(255,255,255,.6),rgba(255,255,255,0) 70%);animation:amb-niebla 22s linear infinite}
+.amb-neblina i:nth-child(1){top:52%!important}.amb-neblina i:nth-child(2){top:62%!important;animation-delay:-8s}.amb-neblina i:nth-child(3){top:44%!important;animation-delay:-15s}
+.amb-brisa i{width:44px;height:2px;border-radius:2px;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.7),rgba(255,255,255,0));animation:amb-brisa 6s ease-in-out infinite}
+.amb-fugaces i{left:62%!important;top:12%!important;width:46px;height:2px;background:linear-gradient(90deg,rgba(255,244,176,0),#fff4b0);transform:rotate(28deg);animation:amb-fugaz 14s ease-in infinite}
+@keyframes amb-vuela{0%,100%{opacity:0;transform:translate(0,0)}20%{opacity:.9}50%{transform:translate(46px,-18px)}80%{opacity:.9;transform:translate(84px,8px)}}
+@keyframes amb-cae{0%{opacity:0;transform:translate(0,0) rotate(0)}12%{opacity:.9}100%{opacity:0;transform:translate(36px,150px) rotate(260deg)}}
+@keyframes amb-niebla{0%{opacity:0;transform:translateX(0)}20%,80%{opacity:.85}100%{opacity:0;transform:translateX(190%)}}
+@keyframes amb-brisa{0%{opacity:0;transform:translateX(-16px)}40%{opacity:.8}100%{opacity:0;transform:translateX(96px)}}
+@keyframes amb-fugaz{0%,92%{opacity:0;transform:rotate(28deg) translateX(0)}94%{opacity:1}100%{opacity:0;transform:rotate(28deg) translateX(-90px)}}
+@media (prefers-reduced-motion:reduce){.il-amb i{animation:none;opacity:.7}.amb-fugaces i{display:none}}
+html[data-eco="2"] .il-amb i{animation:none;opacity:.7}html[data-eco="2"] .amb-fugaces i{display:none}
+.viv-regalo{border-color:var(--oro,#c9a24a)}.viv-regalo .vp-ic{font-size:22px}.viv-regalo .vp-go{font-weight:700;color:var(--oro,#a9821f)}
+
+/* F1256 · Profundidad: el pasto va del horizonte (80%) al primer plano (98%). Tamaño = 0.6 + 0.65 × cercanía; lo lejano es un poco más pálido; lo cercano tapa a lo lejano. Solo clases (CSP). */
+.il-planta.s-pasto-1{transform:scale(0.79);transform-origin:50% 0;z-index:84;opacity:0.93}
+.il-planta.s-pasto-2{transform:scale(1.05);transform-origin:50% 0;z-index:92;opacity:0.97}
+.il-planta.s-pasto-3{transform:scale(0.67);transform-origin:50% 0;z-index:80;opacity:0.91}
+.il-planta.s-pasto-4{transform:scale(0.67);transform-origin:50% 0;z-index:80;opacity:0.91}
+.il-planta.s-pasto-5{transform:scale(1.05);transform-origin:50% 0;z-index:92;opacity:0.97}
+.il-planta.s-pasto-6{transform:scale(0.83);transform-origin:50% 0;z-index:85;opacity:0.94}
+.il-planta.s-pasto-7{transform:scale(1.15);transform-origin:50% 0;z-index:95;opacity:0.98}
+.il-planta.s-pasto-8{transform:scale(1.19);transform-origin:50% 0;z-index:96;opacity:0.99}
+.il-planta.s-pasto-9{transform:scale(1.22);transform-origin:50% 0;z-index:97;opacity:0.99}
+.il-planta.s-pasto-10{transform:scale(1.25);transform-origin:50% 0;z-index:98;opacity:1.0}
+.il-planta.s-pasto-11{transform:scale(0.99);transform-origin:50% 0;z-index:90;opacity:0.96}
+.il-planta.s-pasto-12{transform:scale(1.12);transform-origin:50% 0;z-index:94;opacity:0.98}
+/* Aves de suelo: misma regla según su altura; las de aire, un poco más chicas por estar lejos */
+.il-ave.a-chucao{transform:scale(1.02);transform-origin:50% 0;z-index:91}.il-ave.a-queltehue{transform:scale(1.12);transform-origin:50% 0;z-index:94}.il-ave.a-minero{transform:scale(1.09);transform-origin:50% 0;z-index:93}
+.il-ave.l-cielo{transform:scale(.85);transform-origin:50% 0}.il-ave.a-picaflor,.il-ave.a-picaflor_arica{transform:scale(.95);transform-origin:50% 0}
+/* Colores de las miniaturas de ambiente (antes iban en style="", que la CSP bloquea) */
+.il-luci-mini.am-mariposas{background:#f2a03a;box-shadow:0 0 6px 1px rgba(242,160,58,.6)}.il-luci-mini.am-hojas{background:#b9803f;box-shadow:none;border-radius:0 100% 0 100%}.il-luci-mini.am-petalos{background:#f0a0b8;box-shadow:none}.il-luci-mini.am-neblina{background:#dfe9ef;box-shadow:0 0 8px 3px rgba(223,233,239,.9)}.il-luci-mini.am-brisa{background:#cfe6f4;box-shadow:none;height:3px;border-radius:2px;width:16px}.il-luci-mini.am-fugaces{background:#fff4b0}
+
+/* F1258 · Animaciones de 60 fps en cualquier teléfono: solo transform y opacidad, pocas capas y aisladas.
+   La capa propia (will-change) solo existe mientras algo se mueve; en Equilibrado y Ahorro se suelta para liberar memoria. */
+html:not([data-eco="1"]):not([data-eco="2"]):not([data-anim=off]) .il-planta svg,
+html:not([data-eco="1"]):not([data-eco="2"]):not([data-anim=off]) .il-ave svg,
+html:not([data-eco="1"]):not([data-eco="2"]):not([data-anim=off]) .il-amb i,
+html:not([data-eco="1"]):not([data-eco="2"]):not([data-anim=off]) .il-luci{will-change:transform,opacity}
+.il-amb,.il-luci-grupo{contain:layout paint style}
+.il-planta,.il-ave{contain:layout style}
+/* Con la app tapada o en segundo plano nada se anima (ya lo pausa rendimiento.js; esto lo asegura al abrir una hoja) */
+html.tb-tapada .il-planta svg,html.tb-tapada .il-ave svg,html.tb-tapada .il-amb i,html.tb-tapada .il-luci{animation-play-state:paused!important}
+/* Pantallas de poca fluidez: sin partículas extra, la escena principal sigue viva */
+@media (update:slow){.il-amb i{animation:none;opacity:.6}.amb-fugaces i{display:none}}

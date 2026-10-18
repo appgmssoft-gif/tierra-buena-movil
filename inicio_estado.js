@@ -16,7 +16,7 @@
 
   const nuevo = () => ({ v: VERSION, ciclo: { n: 1, especie: null, inicio: null, diasCuidado: 0, ultimoDia: null, ultimaVisita: null, cerrado: false, diaPendiente: false },
     eligiendo: true, tematica: null, habDias: 0, paisaje: [], maleza: [], gotas: { saldo: 0, total: 0, pendientes: [], hoy: { fecha: null, lectura: 0, vida: 0 } },
-    vivero: { desbloqueados: [], plantas: [], aves: [], ambientes: [] }, cosechas: { total: 0, pend: [], ult: {} }, trivia: { fecha: null, i: null, ok: false, elegida: null } });
+    vivero: { desbloqueados: [], plantas: [], aves: [], ambientes: [] }, regalo: { tester: false }, cosechas: { total: 0, pend: [], ult: {} }, trivia: { fecha: null, i: null, ok: false, elegida: null } });
 
   function migrar(x) {                                      // dato dañado o de otra versión → se rescata lo que sirve; nunca error en pantalla
     const b = nuevo(); if (!x || typeof x !== 'object') return b;
@@ -33,6 +33,7 @@
         hoy: { fecha: (g.hoy && g.hoy.fecha) || null, lectura: +(g.hoy && g.hoy.lectura) || 0, vida: +(g.hoy && g.hoy.vida) || 0, plan: +(g.hoy && g.hoy.plan) || 0, oracion: +(g.hoy && g.hoy.oracion) || 0 } };
       const w = x.vivero || {}; b.vivero = { desbloqueados: Array.isArray(w.desbloqueados) ? w.desbloqueados.filter((s) => typeof s === 'string') : [],
         plantas: Array.isArray(w.plantas) ? w.plantas.filter((p) => p && p.id && p.casilla) : [], aves: Array.isArray(w.aves) ? w.aves.filter((p) => p && p.id) : [], ambientes: Array.isArray(w.ambientes) ? w.ambientes.filter((s) => typeof s === 'string').slice(0, 6) : [] };
+      b.regalo = { tester: !!(x.regalo && x.regalo.tester) };   // F1255: pack de regalo, una sola vez
       // F1237 · La tienda de «especiales» de Tu paisaje se retiró (sin entrada en el Vivero y repetía los rasgos de cada lugar): se devuelven las gotas de lo comprado, una sola vez.
       const RET = { nenufares: 40, cisne: 80, piedras: 30, sauce: 60, helechos: 40, tronco: 60, guanaco: 80, flores_altura: 40, rocas_volcanicas: 30, araucarias: 70, gaviota: 50, conchas: 30, cactus: 40, zorro: 80, huemul: 90 };
       let dev = 0; b.vivero.desbloqueados = b.vivero.desbloqueados.filter((k) => { if (k.indexOf('esp_') !== 0) return true; dev += RET[k.slice(4)] || 0; return false; });
@@ -89,6 +90,16 @@
     const usadas = new Set([].concat(e.maleza.map((m) => m.casilla), e.gotas.pendientes.map((g) => g.casilla), e.vivero.plantas.map((p) => p.casilla), e.paisaje.map((p) => p.casilla)));
     const lista = pref || cat().casillas[grupo] || []; return lista.find((c) => !usadas.has(c)) || null;
   }
+  // F1255 · Ubicación: de las casillas libres, la más lejos de las plantas ya puestas (izquierda-derecha), para que el pasto se vea repartido.
+  const SLOT_X = { 'pasto-1': 14, 'pasto-2': 30, 'pasto-3': 36, 'pasto-4': 64, 'pasto-5': 70, 'pasto-6': 86, 'pasto-7': 8, 'pasto-8': 92, 'pasto-9': 20, 'pasto-10': 41, 'pasto-11': 58, 'pasto-12': 78 };
+  const SLOT_Y = { 'pasto-1': 84, 'pasto-2': 92, 'pasto-3': 80, 'pasto-4': 80, 'pasto-5': 92, 'pasto-6': 85, 'pasto-7': 95, 'pasto-8': 96, 'pasto-9': 97, 'pasto-10': 98, 'pasto-11': 90, 'pasto-12': 94 };
+  function casillaLejana(e, pref) {
+    const usadas = new Set([].concat(e.maleza.map((m) => m.casilla), e.gotas.pendientes.map((g) => g.casilla), e.vivero.plantas.map((p) => p.casilla), e.paisaje.map((p) => p.casilla)));
+    const libres = (pref || cat().casillas.pasto || []).filter((c) => !usadas.has(c)); if (!libres.length) return null;
+    const puestas = e.vivero.plantas.map((p) => p.casilla).filter((c) => SLOT_X[c] != null); if (!puestas.length) return libres.find((c) => c === 'pasto-4') || libres[0];
+    let mejor = libres[0], md = -1; libres.forEach((c) => { const x = SLOT_X[c]; if (x == null) return; const d = Math.min.apply(null, puestas.map((q) => Math.abs(SLOT_X[q] - x) + 0.6 * Math.abs(SLOT_Y[q] - SLOT_Y[c])));   /* F1256: lejos en ancho y también en profundidad */ if (d > md) { md = d; mejor = c; } }); return mejor;
+  }
+  function reclamarRegalo() { const e = cargar(); if (e.regalo && e.regalo.tester) return { ok: false, motivo: 'ya' }; e.gotas.saldo += 300; e.regalo = { tester: true }; guardar(e); return { ok: true, gotas: 300 }; }
   function paisajeNuevo(e) {                                // el árbol maduro pasa al fondo
     const c = e.ciclo; const cas = casillaLibre(e, 'fondo') || ('fondo-' + (((c.n - 1) % (cat().casillas.fondo.length || 6)) + 1));
     e.paisaje = e.paisaje.filter((p) => p.casilla !== cas); e.paisaje.push({ ciclo: c.n, especie: c.especie, casilla: cas }); e.paisaje = e.paisaje.slice(-(cat().ciclo.paisaje_guardado || 6));
@@ -173,7 +184,7 @@
   function plantar(id) {                                   // planta una semilla ya desbloqueada en una casilla libre permitida
     const e = cargar(), it = cat().semillas[id]; if (!it || e.vivero.desbloqueados.indexOf('sem_' + id) < 0) return { ok: false, motivo: 'no-desbloqueada' };
     if (it.habitat && it.habitat.indexOf(e.tematica) < 0) return { ok: false, motivo: 'otra-tematica' };   // F965/F1067: una planta de hábitat se planta solo con ese hábitat como fondo (nunca cambia el fondo sola)
-    const cas = casillaLibre(e, 'pasto', it.casillas); if (!cas) return { ok: false, motivo: 'sin-lugar' };
+    const cas = casillaLejana(e, it.casillas); if (!cas) return { ok: false, motivo: 'sin-lugar' };   // F1255: se reparte por el pasto, no se amontona
     e.vivero.plantas.push({ id, casilla: cas, en: hoy() }); guardar(e); return { ok: true, casilla: cas };
   }
   function elegirTematica(id) {                            // F965: usa una temática ya comprada; null la quita. Devuelve { ok, motivo }
@@ -198,7 +209,7 @@
     e.vivero.ambientes = e.vivero.ambientes || [];
     const i = e.vivero.ambientes.indexOf(id);
     if (si === false) { if (i >= 0) e.vivero.ambientes.splice(i, 1); guardar(e); return { ok: true }; }
-    if (i < 0) e.vivero.ambientes.push(id); guardar(e); return { ok: true };
+    if (i < 0) { if (e.vivero.ambientes.filter((k) => { const q = (cat().ambientes || {})[k]; return !q || !q.habitat || q.habitat.indexOf(e.tematica) >= 0; }).length >= 2) return { ok: false, motivo: 'maximo' }; e.vivero.ambientes.push(id); } guardar(e); return { ok: true };   // F1255: máximo 2 a la vez
   }
   // F1074 · Primera elección: el lugar del jardín (bosque, desierto o costa). Compra el hábitat, lo activa y su árbol emblemático es el primero.
   const HABITATS_INICIALES = ['bosque', 'desierto', 'costa'];
@@ -241,6 +252,6 @@
     return { ok: true, acierto, correcta: ord.indexOf(q.c), explicacion: q.e, gotas: g };
   }
 
-  const api = { elegirHabitatInicial, visibleEn, avanceDiario, entornoVisible, config(o) { if (o && o.catalogo) CAT = o.catalogo; if (o && o.hoy) HOY = o.hoy; if (o && o.almacen) ALM = o.almacen; }, cargar, guardar, estado: cargar, etapa, malezaPara, elegirPrimera, visita, sanar, ganar, ganarDirecto, restarDirecto, recolectar, comprar, tiene, plantar, activarAve, activarAmbiente, mensajeActual,   triviaHoy, responderTrivia, elegirTematica, K };
+  const api = { reclamarRegalo, elegirHabitatInicial, visibleEn, avanceDiario, entornoVisible, config(o) { if (o && o.catalogo) CAT = o.catalogo; if (o && o.hoy) HOY = o.hoy; if (o && o.almacen) ALM = o.almacen; }, cargar, guardar, estado: cargar, etapa, malezaPara, elegirPrimera, visita, sanar, ganar, ganarDirecto, restarDirecto, recolectar, comprar, tiene, plantar, activarAve, activarAmbiente, mensajeActual,   triviaHoy, responderTrivia, elegirTematica, K };
   if (typeof window !== 'undefined') window.TBInicio = api; if (typeof module !== 'undefined') module.exports = api;
 })();

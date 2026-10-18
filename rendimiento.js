@@ -11,6 +11,7 @@
   const A = () => window.TBApp || {};
   const leer = () => { try { const v = localStorage.getItem(K); return v === '0' || v === '1' || v === '2' ? v : 'auto'; } catch (e) { return 'auto'; } };
   const poner = (v) => { try { localStorage.setItem(K, v); } catch (e) { /* sin guardar */ } };
+  let ultimaMedida = null;              // F1256: última medida de fluidez (para revisar en el teléfono)
   let nivelAuto = 0;                     // lo que decidió la medición (solo se sube, nunca baja hasta reabrir)
   // F1167 · Equilibrado: pausa solo las animaciones que NUNCA terminan (bucles decorativos: plantas, nubes, luces).
   // Las de un solo uso (un dado que rueda, una aparición) siguen. Solo reanuda las que pausó él; las que pausa el
@@ -66,7 +67,7 @@
   // F1171 · Foco: si hay una hoja o ventana encima (Efectos, perfil, código…), el fondo queda tapado: se pausa (CSS: html.tb-tapada).
   // Además, el portero de visibilidad ya no corre cada 0,7 s: corre cuando cambia la pantalla y, como red de seguridad, cada 3 s.
   const tapar = () => { try { H.classList.toggle('tb-tapada', !!document.querySelector('#tbHoja,#tbRap,[aria-modal="true"]')); } catch (e) { /* sin selector */ } };
-  let deb = 0; const luego = () => { if (deb) return; deb = setTimeout(() => { deb = 0; marcar(); revelar(); tapar(); if (H.getAttribute('data-eco') === '1') bucles(true); gateVisibilidad(); }, 350); };
+  let deb = 0; const luego = () => { if (deb) return; deb = setTimeout(() => { deb = 0; try { Array.prototype.forEach.call(document.querySelectorAll('img:not([decoding])'), (i) => { i.decoding = 'async'; }); } catch (e) { /* sin imágenes */ } marcar(); revelar(); tapar(); if (H.getAttribute('data-eco') === '1') bucles(true); gateVisibilidad(); }, 350); };
   function iniciarPausas() {
     sels = buscarAnimadas();
     if (typeof IntersectionObserver === 'function') io = new IntersectionObserver((en) => { en.forEach((e) => e.target.classList.toggle('tb-fuera', !e.isIntersecting)); }, { rootMargin: '60px' });
@@ -81,7 +82,7 @@
     if (typeof requestAnimationFrame !== 'function' || document.hidden) return fin(60);
     let n = 0, t0 = 0, ult = 0, lentos = 0;
     const paso = (t) => {
-      if (!t0) { t0 = t; ult = t; } else { if (t - ult > 34) lentos++; ult = t; n++; }
+      if (!t0) { t0 = t; ult = t; } else { if (t - ult > 20) lentos++;   /* F1256: pasa de 20 ms = se perdió un cuadro de los 16,7 ms que pide 60 fps */ ult = t; n++; }
       if (t - t0 < ms && !document.hidden) requestAnimationFrame(paso); else { const s = Math.max(1, (t - t0) / 1000); fin(Math.min(60, n / s), lentos / Math.max(1, n)); }
     };
     requestAnimationFrame(paso);
@@ -90,18 +91,26 @@
   // y en celulares de pocos núcleos o poca memoria arranca directo en «Ahorro», que es el nivel que sí libera el hilo.
   function vigilar() {
     if (leer() !== 'auto') return;
-    try { const c = navigator.hardwareConcurrency || 8, m = navigator.deviceMemory || 4; if (c <= 4 || m <= 2) { nivelAuto = 2; aplicar(); } } catch (e) { /* sin datos */ }
+    try { const c = navigator.hardwareConcurrency || 8, m = navigator.deviceMemory || 4; if (m <= 2) { nivelAuto = 2; aplicar(); } else if (c <= 4) { nivelAuto = 1; aplicar(); }   /* F1256: poca memoria → Ahorro; pocos núcleos → Equilibrado y la medición decide si hace falta más */ } catch (e) { /* sin datos */ }
     // F1168 · Tablet (lado menor ≥ 600 px): arranca en Equilibrado. Medido: en Completo bajaba a 12–20 fps; en Equilibrado, 45–60 fps.
     try { if (Math.min(window.innerWidth, window.innerHeight) >= 600 && nivelAuto < 1) { nivelAuto = 1; aplicar(); } } catch (e) { /* sin medida de pantalla */ }
     try { if (navigator.getBattery) navigator.getBattery().then((b) => { if (!b.charging && b.level <= 0.2 && nivelAuto < 1) { nivelAuto = 1; aplicar(); } }); } catch (e) { /* sin batería */ }
-    let midiendo = false, ultima = 0, tCambio = 0;
+    let midiendo = false, ultima = 0, tCambio = 0, malas = 0;
     const ronda = () => {
       if (midiendo || leer() !== 'auto') return;
       midiendo = true; ultima = Date.now();
       medir(1600, (fps, lentos) => {
         midiendo = false;
-        if ((fps < 38 || lentos > 0.25) && nivelAuto < 2) { nivelAuto = 2; aplicar(); }
-        setTimeout(ronda, nivelAuto >= 2 ? 120000 : 45000);
+        // F1256 · Meta: 60 fps fluidos en cada teléfono. Si baja de 56 fps o pierde más del 8 % de los cuadros, sube UN nivel
+        // (Completo → Equilibrado → Ahorro) y vuelve a medir pronto, para quedarse en el nivel más rico que sí da 60 fps.
+        // Dos medidas malas seguidas, o una muy mala (< 45 fps), para no reaccionar a un tropiezo de apertura.
+        ultimaMedida = { fps: Math.round(fps), lentos: Math.round(lentos * 100) };
+        const mala = fps < 56 || lentos > 0.08;
+        malas = mala ? malas + 1 : 0;
+        let proxima = nivelAuto >= 2 ? 120000 : 45000;
+        if (mala && nivelAuto < 2 && (malas >= 2 || fps < 45)) { nivelAuto++; malas = 0; aplicar(); proxima = 9000; }
+        else if (mala && nivelAuto < 2) proxima = 5000;
+        setTimeout(ronda, proxima);
       });
     };
     // Al cambiar de pantalla, si aún no está en Ahorro, mide esa pantalla (como mucho cada 15 s).
@@ -182,5 +191,5 @@
   aplicar();
   const arranque = () => { iniciarPausas(); vigilar(); boton(); setInterval(gateVisibilidad, 3000); };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', arranque); else arranque();
-  window.TBRendimiento = { nivel: () => H.getAttribute('data-eco'), abrir: hoja };
+  window.TBRendimiento = { nivel: () => H.getAttribute('data-eco'), medida: () => ultimaMedida, probar: (ms) => new Promise((ok) => medir(ms || 2000, (fps, l) => ok({ fps: Math.round(fps), cuadrosLentosPct: Math.round((l || 0) * 100), nivel: H.getAttribute('data-eco') }))), abrir: hoja };
 })();

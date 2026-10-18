@@ -103,3 +103,46 @@ html[data-eco="2"] .il-barra-in{-webkit-backdrop-filter:none;backdrop-filter:non
 #hojaPaisaje .pa-compra .btn{margin-top:10px;width:100%}
 #hojaPaisaje .pa-compra .btn:disabled{opacity:.55}
 #hojaPaisaje .pa-como{margin:10px 0 0;font-size:.85rem}
+
+/* F1257 · Vivero más bonito y fácil de querer: tarjetas suaves, un mismo radio, luz cálida de oro y verde, estados claros (tuyo / en tu Inicio / bloqueado). Solo bordes, sombras suaves y color: nada que pese en el teléfono. */
+.ha-cuerpo .il-viv{--r:18px;--sombra:0 6px 16px -10px rgba(40,60,40,.38)}
+.ha-cuerpo .viv-titulo{font:600 1.35rem/1.2 Fraunces,Georgia,serif;letter-spacing:0}
+.ha-cuerpo .viv-paso{display:flex;align-items:center;gap:8px;margin:18px 0 6px;font:600 1rem/1.2 Fraunces,Georgia,serif;color:var(--tinta);letter-spacing:0}
+.ha-cuerpo .viv-paso::before{content:"";width:8px;height:8px;border-radius:50% 0 50% 0;background:var(--verde,#6fae6e);flex:none}
+.ha-cuerpo .viv-ayuda{margin:0 0 8px;font-size:.84rem;line-height:1.45;color:var(--suave)}
+/* Lugares: tarjetas con paisaje y nombre sobre fondo suave */
+.ha-cuerpo .viv-hab{padding:6px 6px 10px;border-radius:var(--r);background:var(--tarjeta,#fff);box-shadow:var(--sombra);gap:5px;transition:transform .15s ease,box-shadow .15s ease}
+.ha-cuerpo .viv-hab .viv-thumb{display:block;width:100%;height:auto;border-radius:calc(var(--r) - 6px)}
+.ha-cuerpo .viv-hab b{padding:0 4px;font:600 .95rem/1.2 Fraunces,Georgia,serif}
+.ha-cuerpo .viv-hab span{padding:0 4px;font-size:.76rem;font-weight:600}
+.ha-cuerpo .viv-hab.on{border-color:var(--oro,#c9a24a);box-shadow:0 0 0 1.5px var(--oro,#c9a24a) inset,var(--sombra)}
+.ha-cuerpo .viv-hab.sel{outline:none;transform:translateY(-2px)}
+.ha-cuerpo .viv-hab.lock{background:color-mix(in srgb,var(--tinta) 4%,var(--tarjeta,#fff))}
+/* Ficha del lugar y de cada cosa: tarjeta cálida con título serif */
+.ha-cuerpo .viv-lugar,.ha-cuerpo .viv-accion{border-radius:var(--r);box-shadow:var(--sombra);background:linear-gradient(180deg,color-mix(in srgb,var(--oro,#c9a24a) 11%,var(--tarjeta,#fff)),var(--tarjeta,#fff))}
+.ha-cuerpo .il-viv-ficha h4{font:600 1.12rem/1.3 Fraunces,Georgia,serif}
+.ha-cuerpo .il-viv-rasgo{margin:2px 0 10px;font-size:.86rem;line-height:1.45;color:var(--suave)}
+/* Filtros: píldoras suaves */
+.ha-cuerpo .viv-pill{min-height:40px;padding:8px 18px;border-radius:999px;background:var(--tarjeta,#fff);box-shadow:var(--sombra);transition:background .15s ease}
+.ha-cuerpo .viv-pill.on{background:color-mix(in srgb,var(--verde,#6fae6e) 30%,var(--tarjeta,#fff));border-color:var(--verde,#6fae6e);font-weight:600}
+/* Cosas (plantas, aves, ambientes): arte grande y estados claros */
+.ha-cuerpo .viv-grid{gap:12px}
+.ha-cuerpo .il-viv-tile{position:relative;padding:6px 6px 10px;border-radius:var(--r);background:var(--tarjeta,#fff);box-shadow:var(--sombra);gap:6px;transition:transform .15s ease,box-shadow .15s ease}
+.ha-cuerpo .il-viv-arte{height:84px;border-radius:calc(var(--r) - 6px);background:linear-gradient(180deg,color-mix(in srgb,#a9d8f3 38%,transparent) 0,color-mix(in srgb,#f1f8ef 40%,transparent) 55%,color-mix(in srgb,#86b97a 40%,transparent) 100%)}
+.ha-cuerpo .il-viv-tile b{font:600 .88rem/1.2 Fraunces,Georgia,serif}
+.ha-cuerpo .il-viv-tile.sel{border-color:var(--oro,#c9a24a);background:color-mix(in srgb,var(--oro,#c9a24a) 9%,var(--tarjeta,#fff));box-shadow:0 0 0 1.5px var(--oro,#c9a24a) inset,var(--sombra);transform:translateY(-2px)}
+.ha-cuerpo .il-viv-chip{padding:3px 10px;border-radius:999px;background:color-mix(in srgb,#7fc4e6 18%,transparent);color:#2f7ea6}
+.ha-cuerpo .il-viv-chip.ok{background:color-mix(in srgb,var(--verde,#6fae6e) 22%,transparent);color:color-mix(in srgb,var(--verde,#6fae6e) 60%,var(--tinta))}
+.ha-cuerpo .il-viv-tile.mio .il-viv-arte{box-shadow:none}
+.ha-cuerpo .il-viv-tile.mio::after{content:"✓";position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;background:var(--verde,#6fae6e);color:#fff;font:700 .72rem/20px system-ui,sans-serif;text-align:center}
+/* Botones principales: dorado cálido, redondos, con buen toque */
+.ha-cuerpo .il-viv-main:not(:disabled){border:0;border-radius:999px;min-height:48px;color:#fff;font-weight:700;background:linear-gradient(180deg,#eac260,#c58a26);box-shadow:0 8px 18px -10px rgba(168,118,31,.8)}
+.ha-cuerpo .il-viv-main:disabled{border-radius:999px;min-height:48px}
+.ha-cuerpo .il-viv-main:not(:disabled):active{transform:scale(.98)}
+/* Tarjetas de Tu paisaje y de regalo */
+.ha-cuerpo .viv-paisaje{border-radius:var(--r);box-shadow:var(--sombra);margin-bottom:8px}
+.ha-cuerpo .viv-regalo{background:linear-gradient(135deg,color-mix(in srgb,var(--oro,#c9a24a) 20%,var(--tarjeta,#fff)),color-mix(in srgb,#f0a0b8 14%,var(--tarjeta,#fff)))}
+.ha-cuerpo .viv-regalo .vp-go{padding:6px 14px;border-radius:999px;background:linear-gradient(180deg,#eac260,#c58a26);color:#fff!important;font-size:.82rem}
+.ha-cuerpo .il-viv-est{min-height:1.2em;margin:10px 0 0;text-align:center;font-size:.86rem;color:var(--oro,#a9821f);font-weight:600}
+.ha-cuerpo .viv-vacio{margin:10px 0;padding:14px;border-radius:var(--r);text-align:center;font-size:.88rem;color:var(--suave);background:color-mix(in srgb,var(--tinta) 4%,transparent)}
+@media (prefers-reduced-motion:reduce){.ha-cuerpo .viv-hab,.ha-cuerpo .il-viv-tile,.ha-cuerpo .viv-pill{transition:none}.ha-cuerpo .viv-hab.sel,.ha-cuerpo .il-viv-tile.sel{transform:none}}
