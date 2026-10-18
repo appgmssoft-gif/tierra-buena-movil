@@ -53,6 +53,7 @@
 .ip-con-fondo[data-lugar="bosque"]{--ipt:244,251,238;--ipb:164,170,76}
 .ip-con-fondo[data-lugar="desierto"]{--ipt:255,241,216;--ipb:218,150,60}
 .ip-con-fondo[data-lugar="costa"]{--ipt:236,248,252;--ipb:138,176,174}
+.ip-con-fondo[data-lugar="cordillera"]{--ipt:240,246,252;--ipb:150,170,196}
 
 /* ---------- Barra de accesos: marco doble, luz en el borde y una gema de color por acceso ---------- */
 .ip-con-fondo .il-barra-in{position:relative;padding:5px;border-radius:29px;
@@ -91,6 +92,7 @@ body:has(.ip-con-fondo) .tb-rapido{opacity:.88;background:linear-gradient(165deg
   .ip-con-fondo[data-lugar="bosque"]{--ipt:34,46,32;--ipb:176,184,92}
   .ip-con-fondo[data-lugar="desierto"]{--ipt:56,42,26;--ipb:226,164,74}
   .ip-con-fondo[data-lugar="costa"]{--ipt:28,44,52;--ipb:140,190,188}
+  .ip-con-fondo[data-lugar="cordillera"]{--ipt:32,40,54;--ipb:156,176,206}
   .ip-con-fondo .il-barra-in{background:linear-gradient(180deg,rgba(78,68,46,.9),rgba(var(--ipt),.9));
     box-shadow:0 16px 30px -12px rgba(0,0,0,.75),0 0 0 3px rgba(255,255,255,.07),inset 0 1px 0 rgba(255,255,255,.16),inset 0 -14px 22px -18px rgba(var(--ipb),.5)}
   .ip-con-fondo .il-barra-in::before{background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent)}
@@ -121,6 +123,7 @@ html[data-eco="2"] .ip-con-fondo .il-barra-in{background:linear-gradient(180deg,
 /* Luz de contacto de la escena con el matiz del lugar (antes: un verde oscuro igual para todos) */
 .ip-con-fondo[data-lugar="desierto"] .il-escena{filter:drop-shadow(0 18px 22px rgba(70,36,8,.34)) saturate(1.08) contrast(1.03)}
 .ip-con-fondo[data-lugar="costa"] .il-escena{filter:drop-shadow(0 18px 22px rgba(12,48,62,.32)) saturate(1.06) contrast(1.03)}
+.ip-con-fondo[data-lugar="cordillera"] .il-escena{filter:drop-shadow(0 18px 22px rgba(28,40,62,.32)) saturate(1.04) contrast(1.03)}
 /* Pista inferior: filete del lugar y letra algo más firme */
 .ip-con-fondo .il-guia{border-color:rgba(var(--ipb),.6);box-shadow:0 0 0 1px rgba(var(--ipb),.4),0 0 0 3px rgba(255,255,255,.22),0 8px 20px -10px rgba(30,25,10,.45),inset 0 1px 0 #fff;font-weight:600}
 /* Hora: línea dorada bajo los números más fina y con puntas que se desvanecen */
@@ -137,6 +140,7 @@ body:has(.ip-con-fondo) .btn-menu:active,body:has(.ip-con-fondo) .tb-rapido:acti
 body:has(.ip-con-fondo[data-lugar="bosque"]) .ip-fondo{--ed:22,58,38;--hz:255,244,214}
 body:has(.ip-con-fondo[data-lugar="desierto"]) .ip-fondo{--ed:96,52,16;--hz:255,226,170}
 body:has(.ip-con-fondo[data-lugar="costa"]) .ip-fondo{--ed:14,60,78;--hz:255,240,214}
+body:has(.ip-con-fondo[data-lugar="cordillera"]) .ip-fondo{--ed:30,44,70;--hz:255,236,206}
 /* Luz del horizonte según la hora (el cielo cambia por hora, no por modo oscuro) */
 body:has(.ip-con-fondo[data-franja="alba"]) .ip-fondo{--hz:255,196,160}
 body:has(.ip-con-fondo[data-franja="tarde"]) .ip-fondo{--hz:255,184,120}

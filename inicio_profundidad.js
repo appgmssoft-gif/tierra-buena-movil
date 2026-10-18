@@ -23,6 +23,7 @@
   const LUGAR = {
     bosque:  { lejos: '#b4c4dc', medio: '#8fa9b8', cerro: '#6f9a82', c1: '#9cc98a', c2: '#80b574', c3: '#64a05e', suelo: '#4f8a55', follaje: '#27553b', follaje2: '#3a7a4d', bruma: '#ffffff' },
     desierto:{ lejos: '#e8c4a0', medio: '#dba982', cerro: '#cf9467', c1: '#e3b27a', c2: '#d29a62', c3: '#bd8350', suelo: '#a56b3b', follaje: '#5b4a2c', follaje2: '#7a6a3a', bruma: '#fff1dc' },
+    cordillera: { lejos: '#c3d2e6', medio: '#9bb2cb', cerro: '#8ea3b6', c1: '#d9d09c', c2: '#c9be88', c3: '#b2a574', suelo: '#80775a', follaje: '#5a6440', follaje2: '#7a8750', bruma: '#ffffff' },   // F1231: altiplano, tonos fríos arriba y paja dorada abajo
     costa:   { lejos: '#b9d3e0', medio: '#8cc3d1', cerro: '#7aa9b4', c1: '#f0dcb4', c2: '#e6cb98', c3: '#d6b87c', suelo: '#bf9f64', follaje: '#5d7a4a', follaje2: '#86a063', bruma: '#ffffff' }
   };
 
@@ -93,6 +94,7 @@
       + '<path d="M-6.4-59Q0-70 6.4-59Z" fill="#c0392b"/><path d="M0-68.5V-72" stroke="#3a3f4a" stroke-width="1" stroke-linecap="round"/>'
       + (lit ? '<circle cx="0" cy="-54.5" r="' + (noche ? 22 : 13) + '" fill="url(#ipHalo)" opacity="' + (noche ? .95 : .6) + '"/>' : '') + '</g>';
   }
+  const faroHeroe = () => { try { return !!(window.TBCasillas && window.TBCasillas.elegida('costa', 0) === 0); } catch (e) { return false; } };
   function capilla(x, y, k, fr) {
     const lit = fr === 'noche' || fr === 'tarde' || fr === 'alba', w = luzV(lit);
     return '<g transform="translate(' + x + ' ' + y + ') scale(' + k + ')">'
@@ -146,8 +148,28 @@
         + ondas(10, 380, 336, 360, 7, 5, p.suelo, .2) + ondas(10, 380, 374, 420, 8, 9, p.suelo, .18)
         + '<g class="ip-bruma b2"><rect x="-20" y="372" width="430" height="52" fill="url(#ipBruma)"/></g>';
     }
+    if (lugar === 'cordillera') {   // F1231 · Fase 2a: volcán nevado, dos cordones, bofedal y laguna altiplánica con reflejo
+      return '<defs><linearGradient id=\"ipVolc\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#b3c4dc\"/><stop offset=\"1\" stop-color=\"#e4ecf4\"/></linearGradient>'
+        + '<linearGradient id=\"ipNieve\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fff\"/><stop offset=\"1\" stop-color=\"#d6e2f0\"/></linearGradient>'
+        + '<linearGradient id=\"ipLaguna\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#b9dbe8\"/><stop offset=\"1\" stop-color=\"#6fa4c0\"/></linearGradient></defs>'
+        + '<path fill=\"' + p.lejos + '\" opacity=\".55\" d=\"M0 330L0 262L30 238L58 252L96 214L126 240L160 226L196 262L230 246L262 270L330 252L360 232L390 248L390 330Z\"/>'   // cordón lejano, pálido
+        + '<path fill=\"url(#ipVolc)\" d=\"M136 346L258 200Q274 168 290 152Q300 146 310 152Q326 168 342 200L462 346Z\"/>'   // volcán de cumbre truncada
+        + '<path fill=\"#7d96b4\" opacity=\".3\" d=\"M310 152Q326 168 342 200L462 346L322 346Z\"/>'   // lado en sombra
+        + '<path fill=\"none\" stroke=\"#6f87a6\" stroke-opacity=\".3\" stroke-width=\"1.1\" stroke-linecap=\"round\" d=\"M284 214L274 262M298 206L296 270M318 210L330 266M334 224L352 280\"/>'   // quebradas
+        + '<path fill=\"url(#ipNieve)\" d=\"M258 200Q274 168 290 152Q300 146 310 152Q326 168 342 200L332 194L324 212L314 196L304 214L294 196L284 212L274 196L266 210Z\"/>'   // casquete de nieve
+        + '<path fill=\"none\" stroke=\"#fff\" stroke-opacity=\".6\" stroke-width=\"1.4\" stroke-linecap=\"round\" d=\"M262 196L290 152L302 147\"/>'   // filo iluminado
+        + '<path fill=\"' + p.medio + '\" d=\"M-10 346L-10 268L24 238L50 206L76 236L106 192L138 230L172 256L200 292L226 346Z\"/>'   // cordón cercano a la izquierda
+        + '<path fill=\"#6f87a6\" opacity=\".28\" d=\"M106 192L138 230L172 256L200 292L226 346L150 346Z\"/>'
+        + '<g fill=\"url(#ipNieve)\"><path d=\"M50 206L64 226L56 222L50 232L40 224Z\"/><path d=\"M106 192L120 214L112 210L106 220L96 210Z\"/></g>'
+        + '<g class=\"ip-bruma b1\"><rect x=\"-20\" y=\"290\" width=\"430\" height=\"60\" fill=\"url(#ipBruma)\"/></g>'
+        + '<path fill=\"#b9bd86\" opacity=\".9\" d=\"M0 350Q90 338 190 346T390 342V376H0Z\"/>'   // bofedal
+        + '<path fill=\"url(#ipLaguna)\" d=\"M22 356Q70 342 134 346Q212 342 266 356Q214 372 134 370Q62 372 22 356Z\"/>'   // laguna
+        + '<path fill=\"none\" stroke=\"#fff\" stroke-opacity=\".55\" stroke-width=\"1.2\" stroke-linecap=\"round\" d=\"M60 356H108M130 352H190M96 362H170M200 358H238\"/>'
+        + '<path fill=\"none\" stroke=\"#fff\" stroke-opacity=\".4\" stroke-width=\"1\" d=\"M22 356Q70 342 134 346Q212 342 266 356\"/>'
+        + '<g class=\"ip-bruma b2\"><rect x=\"-20\" y=\"346\" width=\"430\" height=\"44\" fill=\"url(#ipBruma)\"/></g>';
+    }
     if (lugar === 'costa') {
-      return '<defs><linearGradient id="ipHoriz" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".6"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'
+      return '<defs><linearGradient id=\"ipHoriz\" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".6"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'
         + '<linearGradient id="ipRoca" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9fb0b8"/><stop offset="1" stop-color="#5e707c"/></linearGradient></defs>'
         + '<path fill="' + p.lejos + '" opacity=".8" d="M0 318C60 304 110 296 170 306C220 314 262 322 310 330L0 330Z"/>'                                    // cabo lejano
         + '<path fill="' + p.lejos + '" opacity=".5" d="M240 330C280 318 330 312 390 316L390 332Z"/>'
@@ -156,7 +178,7 @@
         + '<path fill="url(#ipRoca)" d="M-10 336L-10 292Q10 272 38 280Q60 284 78 298Q96 310 118 336Z"/>'                                                  // acantilado con estratos
         + '<path fill="' + p.follaje2 + '" d="M-10 292Q10 272 38 280Q60 284 78 298Q60 292 40 290Q16 288 -10 300Z"/>'
         + '<path fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1" d="M-4 306H70M0 316H90M4 326H104"/>'
-        + faro(30, 279, 1.15, franja())
+        + (faroHeroe() ? '' : faro(30, 279, 1.15, franja()))   // F1230: si la estructura elegida ya es el faro, no se dibuja otro de fondo
         + '<path fill="#6c808c" d="M300 334L303 308L309 298L315 310L319 334Z"/><path fill="#fff" opacity=".28" d="M303 308L309 298L310 334L303 334Z"/>'   // farellón
         + '<path fill="#6c808c" d="M326 334L328 318L333 311L338 320L341 334Z"/><ellipse cx="320" cy="334" rx="28" ry="3" fill="#fff" opacity=".6"/>'
         + '<ellipse cx="310" cy="338" rx="6" ry="14" fill="#35505e" opacity=".18"/>'
@@ -228,6 +250,7 @@
     + '<path fill="#5a8a48" d="M-14 150H-34Q-46 150 -46 138V104Q-46 94 -36 94Q-28 94 -28 104V130H-14Z"/><path fill="#8ebd6a" opacity=".45" d="M-46 138V104Q-46 94 -40 94Q-42 120-41 150H-34Q-46 150 -46 138Z"/>'
     + '<path fill="none" stroke="#e9d9a8" stroke-opacity=".7" stroke-width="1" stroke-linecap="round" d="M-9 22l-3-2M9 34l3-2M-9 58l-3-2M9 80l3-2M-9 104l-3-2M9 126l3-2M-9 150l-3-2M9 176l3-2M-9 200l-3-2"/>'
     + '<ellipse cx="0" cy="2" rx="9" ry="5" fill="#f08fb0"/><ellipse cx="0" cy="1" rx="5" ry="3" fill="#ffd0e0"/></g>';
+  const llareta = (x, y, k) => '<g transform="translate(' + x + ' ' + y + ') scale(' + k + ')"><ellipse cx="2" cy="1" rx="22" ry="4" fill="#2a2a12" opacity=".2"/><path fill="#8d9f4a" d="M-22 0Q-24-16-8-20Q4-26 16-18Q26-12 22 0Z"/><path fill="#b4c266" d="M-18-4Q-18-14-6-17Q4-22 12-15Q4-14-2-8Q-10-4-18-4Z"/><g fill="#dfe79a" opacity=".85"><circle cx="-8" cy="-12" r="1.6"/><circle cx="2" cy="-16" r="1.5"/><circle cx="11" cy="-10" r="1.5"/><circle cx="-1" cy="-8" r="1.3"/></g></g>';
   const DES2 = '<defs><filter id="ipDes2" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation=".6"/></filter></defs>';
   function decor(lugar, p) {
     if (lugar === 'bosque') {
@@ -243,6 +266,10 @@
     if (lugar === 'desierto') {
       return DES2 + '<g filter="url(#ipDes2)">' + cactus(374, 560) + roca(64, 750, 40, 24, '#b07a4c', '#7a4a28') + roca(316, 752, 30, 17, '#bd8a5a', '#85532f')
         + ananuca(42, 744, 1) + ananuca(338, 742, .9) + ananuca(104, 756, .55) + piedras(190, 760, 5, '#c9a173', '#a77a4c') + '</g>';
+    }
+    if (lugar === 'cordillera') {   // F1231: rocas frías, llaretas (cojines de altura), una añañuca entre piedras
+      return DES2 + '<g filter="url(#ipDes2)">' + roca(366, 748, 52, 32, '#8d939b', '#565d66', '#9aa85a') + roca(48, 750, 38, 22, '#9aa0a8', '#5f666f', '#a7b566')
+        + llareta(318, 742, 1.25) + llareta(96, 756, .95) + llareta(204, 764, .7) + ananuca(332, 748, .62) + piedras(150, 766, 6, '#a9adb3', '#80858d') + '</g>';
     }
     return DES2 + '<g filter="url(#ipDes2)">'
       + '<path d="M-12 746Q36 724 98 738" fill="none" stroke="#8d7456" stroke-width="11" stroke-linecap="round"/><path d="M-10 742Q36 721 96 734" fill="none" stroke="#b8a07e" stroke-width="3" stroke-linecap="round" opacity=".7"/><circle cx="24" cy="735" r="2.6" fill="#6f5a40"/>'
@@ -261,6 +288,10 @@
       g = '<g class="ip-fp" filter="url(#ipDesenf)"><path fill="' + p.follaje + '" d="' + pasto(26, 820, 16, 170, 1.9, 21) + pasto(372, 826, 18, 190, 1.9, 33) + '"/>'
         + '<path fill="' + p.follaje2 + '" opacity=".85" d="' + pasto(-4, 700, 10, 110, 1.4, 5) + pasto(396, 690, 10, 110, 1.4, 9) + '"/>'
         + '<ellipse cx="46" cy="846" rx="64" ry="22" fill="#8a5a33"/><ellipse cx="350" cy="848" rx="70" ry="24" fill="#8a5a33"/></g>';
+    } else if (lugar === 'cordillera') {   // F1231: ichu (paja brava) dorada y rocas grises que enmarcan
+      g = '<g class="ip-fp" filter="url(#ipDesenf)"><path fill="#a99a56" d="' + pasto(22, 828, 22, 190, 1.7, 61) + pasto(372, 832, 22, 210, 1.7, 67) + '"/>'
+        + '<path fill="' + p.follaje2 + '" opacity=".85" d="' + pasto(-6, 716, 12, 118, 1.3, 13) + pasto(398, 702, 12, 118, 1.3, 19) + '"/>'
+        + '<ellipse cx="60" cy="850" rx="58" ry="20" fill="#6b6f78"/><ellipse cx="340" cy="852" rx="66" ry="22" fill="#5f636c"/></g>';
     } else {
       g = '<g class="ip-fp" filter="url(#ipDesenf)"><path fill="' + p.follaje + '" d="' + pasto(20, 828, 20, 200, 1.6, 41) + pasto(372, 832, 22, 220, 1.6, 47) + '"/>'
         + '<path fill="' + p.follaje2 + '" opacity=".9" d="' + pasto(-6, 720, 12, 120, 1.3, 3) + pasto(398, 704, 12, 120, 1.3, 8) + '"/>'
@@ -285,6 +316,7 @@
       return o;
     }
     if (lugar === 'costa') o += gaviota(66, 300, 1.1, 'a1') + gaviota(104, 322, .75, 'a2') + gaviota(292, 276, .9, 'a3');
+    else if (lugar === 'cordillera') o += gaviota(190, 118, 1.9, 'a1') + gaviota(240, 152, 1.1, 'a2');   // F1231: aves grandes que planean (cóndores), sin mariposas ni hojas
     else {
       const M = lugar === 'desierto' ? [[86, 540, 1.6, '#f6a41f', '#fff0b0'], [310, 590, 1.3, '#e8452c', '#ffd0a8'], [232, 480, 1.05, '#ffd23c', '#fff7c0']] : [[74, 520, 1.65, '#3d7fd6', '#bfe0ff'], [318, 610, 1.3, '#f08a2c', '#ffe2a8'], [236, 470, 1.05, '#8a5ad6', '#e6d6ff']];
       M.forEach((q, i) => { o += mariposa(q[0], q[1], q[2], q[3], q[4], 'm' + (i + 1)); });
@@ -300,7 +332,7 @@
 
   // Partículas en tres grupos (luciérnagas, polen, destellos de sal), cada grupo se mueve como una sola capa
   function particulas(lugar, noche) {
-    const R = azar(lugar.length * 97 + 3), col = noche ? '#fff4b8' : (lugar === 'desierto' ? '#fff1c4' : lugar === 'costa' ? '#ffffff' : '#fff7c8');
+    const R = azar(lugar.length * 97 + 3), col = noche ? '#fff4b8' : (lugar === 'desierto' ? '#fff1c4' : lugar === 'costa' || lugar === 'cordillera' ? '#ffffff' : '#fff7c8');
     let out = '';
     for (let g = 1; g <= 3; g++) {
       let c = '';
@@ -340,7 +372,7 @@
   }
 
   function construir(lugar) {
-    const fr = franja(), c = CIELO[fr], p = LUGAR[lugar] || LUGAR.bosque, sx = lugar === 'costa' ? 268 : lugar === 'bosque' ? 200 : 292, sy = fr === 'noche' ? 188 : lugar === 'desierto' ? 300 : lugar === 'costa' ? 262 : 192;   // F1223: de noche la luna sube y se ve sobre el paisaje
+    const fr = franja(), c = CIELO[fr], p = LUGAR[lugar] || LUGAR.bosque, sx = lugar === 'costa' ? 268 : lugar === 'bosque' ? 200 : lugar === 'cordillera' ? 96 : 292, sy = fr === 'noche' ? 188 : lugar === 'desierto' ? 300 : lugar === 'costa' ? 262 : lugar === 'cordillera' ? 176 : 192;   // F1223: de noche la luna sube y se ve sobre el paisaje
     const sc = lugar === 'desierto' ? 34 : 26, noche = fr === 'noche';
     let rayos = ''; [[-210, 560, 40], [-120, 640, 30], [-30, 700, 46], [60, 720, 28], [150, 700, 36]].forEach((q, i) => { rayos += '<path d="M' + sx + ' ' + sy + 'L' + (sx + q[0] - q[2]) + ' ' + q[1] + 'L' + (sx + q[0] + q[2]) + ' ' + q[1] + 'Z"/>'; });
     return '<svg class="ip-svg" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">'
