@@ -373,8 +373,8 @@ body.tb-full #pantalla { padding-bottom: 0; }
 
 /* ===== F1146 · Minijuegos: ilustraciones, giro de cartas, cosecha con feedback y Eco del pastor ===== */
 .tbl-fig, .tbl-intro-fig, .mini-fig { display: block; pointer-events: none; }
-.tbl-intro-fig { width: 3.4rem; height: 3.4rem; margin: 0 auto; filter: drop-shadow(0 3px 6px rgba(0,0,0,.5)); }
-.mini-fig { width: 2.6rem; height: 2.6rem; }
+.tbl-intro-fig { width: 5.2rem; height: 3.4rem; margin: 0 auto; filter: drop-shadow(0 3px 6px rgba(0,0,0,.5)); }
+.mini-fig { width: 4rem; height: 4rem; filter: drop-shadow(0 3px 3px rgba(0,0,0,.25)); }
 .tbl-mini { border: 3px double #d9a441; box-shadow: 0 12px 30px rgba(0,0,0,.55), inset 0 0 40px rgba(255,220,150,.07); background: linear-gradient(170deg, #1f3a2b, #0c1a13); }
 .tbl-mini .tbl-marca { color: #ffe9a8; }
 .tbl-icono img { width: 28px; height: 28px; display: block; }
@@ -523,3 +523,34 @@ body.tb-full #pantalla { padding-bottom: 0; }
 .tbl-tapa-hoja.der { background-image: linear-gradient(#e7b75a, #e7b75a), linear-gradient(#e7b75a, #e7b75a), linear-gradient(#e7b75a, #e7b75a), linear-gradient(#e7b75a, #e7b75a), repeating-linear-gradient(-6deg, rgba(20,10,4,0) 0 13px, rgba(20,10,4,.28) 13px 14px), linear-gradient(170deg, #a57442, #4f2f16);
   background-size: 44px 4px, 4px 44px, 44px 4px, 4px 44px, auto, auto; background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat, repeat;
   background-position: right 12px top 12px, right 12px top 12px, right 12px bottom 12px, right 12px bottom 12px, 0 0, 0 0; }
+
+/* F1244 · Juegos sin parpadeo: lo que no se ve, no se anima.
+   El tablero tapa toda la pantalla: el fondo vivo, las luciérnagas y la aurora de la app se detienen mientras está abierto.
+   En los demás juegos (el fondo se ve) se detienen solo las partes pequeñas y de más costo: luciérnagas, polen y aurora. */
+body.tb-full.tb-tapa #fondoVivo *, body.tb-full.tb-tapa .ambiente, body.tb-full.tb-tapa .ambiente *,
+body.tb-full.tb-tapa .ambiente::before, body.tb-full.tb-tapa .ambiente::after { animation: none !important; }
+body.tb-full .ambiente i, body.tb-full .ambiente::before, body.tb-full .ambiente::after, body.tb-full #fondoVivo .fv-gpolen * { animation: none !important; }
+
+/* F1245 · Figuras claras: contorno grueso y colores propios; íconos de menú que muestran el juego */
+.tbl-intro-fig { width: 5.2rem; height: 5.2rem; }
+.tbl-mem .tbl-carta .tbl-carta-c img { width: 82%; height: 82%; }
+.tbl-eco-b img { filter: drop-shadow(0 2px 2px rgba(0,0,0,.3)); }
+
+/* F1246 · Ovejas en fuga: se mueven por todo el campo con Web Animations (transform), hay avispero y oveja dorada */
+.tbl-arreo .tbl-oveja.mov { left: 0; top: 0; animation: none; will-change: transform; }
+.tbl-oveja.mov.llevada { opacity: 0; scale: .4; transition: opacity .3s ease, scale .3s ease; }
+.tbl-oveja.mov.espantado.llevada { scale: .4; }
+.tbl-oveja.dorada img { filter: sepia(1) saturate(4) hue-rotate(-12deg) brightness(1.15) drop-shadow(0 0 8px #ffd34d); }
+.tbl-oveja.avispero img { filter: drop-shadow(0 3px 3px rgba(0,0,0,.45)); }
+.tbl-oveja.picado img { animation: tblMal .3s ease; }
+@media (prefers-reduced-motion: no-preference) { .tbl-oveja.avispero img { animation: tblZumba .5s ease-in-out infinite; } }
+@keyframes tblZumba { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
+
+/* F1247 · Atrapa la cosecha: caen por su propio camino (Web Animations), con manzana dorada, gota de rocío y racha */
+.tbl-cosecha .tbl-caida.mov { left: 0; top: 0; animation: none; will-change: transform; width: 52px; height: 52px; }
+.tbl-caida img { width: 48px; height: 48px; display: block; pointer-events: none; filter: drop-shadow(0 3px 3px rgba(0,0,0,.4)); }
+.tbl-caida.mov.tocada { opacity: 0; scale: 1.4; transition: opacity .2s ease, scale .2s ease; }
+.tbl-caida.dorada img { filter: sepia(1) saturate(5) hue-rotate(-8deg) brightness(1.2) drop-shadow(0 0 10px #ffd34d); }
+.tbl-caida.rocio img { filter: drop-shadow(0 0 8px #9fd8ff); }
+@media (prefers-reduced-motion: no-preference) { .tbl-caida.dorada img { animation: tblDoradaBrilla 1s ease-in-out infinite; } }
+@keyframes tblDoradaBrilla { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }

@@ -290,7 +290,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Acertijos de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Letras entre las hojas': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => !CABECERAS_ILUSTRADAS ? '' : `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1243';
+  const APP_VERSION = 'F1247';
   // F1171: respaldo si movimiento.js no cargó (pruebas o caché vieja): mismo criterio que TBMov.quieto().
   const MOV_QUIETO = () => { try { if (window.TBMov) return window.TBMov.quieto(); const h = document.documentElement; return h.getAttribute('data-anim') === 'off' || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
@@ -1420,7 +1420,7 @@
   const K_JUEGOS = 'tb_movil_juegos';
   const JUEGOS = [
     ['tablero', '🎲', 'Tablero de Tierra Buena', 'Un camino con sorpresas: rocío, preguntas, atajos y tormentas que te hacen retroceder.'],   // F1123 · Fase 1 del tablero (tablero.js)
-    ['minijuegos', '🕹️', 'Minijuegos', 'Ovejas en fuga, Pares del huerto, Cosecha de cosas raras y Ojo de halcón. Cada uno explica su regla antes de empezar.'],
+    ['minijuegos', '🕹️', 'Minijuegos', 'Ovejas en fuga, Pares del huerto, Atrapa la cosecha y Cinco preguntas. Cada uno explica su regla antes de empezar.'],
     ['mente', '🧠', 'Mente en juego', 'Trivia rápida: ciencia, animales, Chile, espacio y adivinanzas. Con racha y comodín.'],
     ['raices', '📖', 'Acertijos de la Palabra', 'Preguntas sobre lo que leíste, con el versículo que explica la respuesta.'],
     ['memoria', '🃏', 'Pares del huerto', 'Encuentra las parejas del huerto. Cada pareja completa da gotas para tu Vivero.'],   // F1145 · reemplaza «Completa el versículo» (pendiente de la Fase 1 del tablero)
@@ -1492,7 +1492,7 @@
     function arrancarTiempo() {
       parar(); st.restante = TIEMPO; st.listo = false;
       const barra = () => document.getElementById('mTiempo');
-      const pinta = () => { const b = barra(); if (!b) { parar(); return; } b.style.width = Math.max(0, st.restante / TIEMPO * 100) + '%'; b.classList.toggle('poca', st.restante <= 4000); };
+      const pinta = () => { const b = barra(); if (!b) { parar(); return; } b.style.transform = 'scaleX(' + Math.max(0, st.restante / TIEMPO) + ')'; b.classList.toggle('poca', st.restante <= 4000); };
       pinta();
       st.timer = setInterval(() => {
         if (!document.getElementById('mTiempo')) { parar(); return; }
@@ -1564,11 +1564,11 @@
   // F1138 · Minijuegos sueltos: tarjetas con lo que hace cada uno. Cada juego abre con su tarjeta de instrucciones.
   function vistaMinijuegos(volver) {
     const M = [
-      ['arreo', '<img class="mini-fig" src="img/tablero/deco/oveja.svg" alt="">', 'Ovejas en fuga', 'Toca las ovejas que cruzan el campo para llevarlas al corral.'],
-      ['memoria', '<img class="mini-fig" src="img/tablero/deco/flor.svg" alt="">', 'Pares del huerto', 'Encuentra las 6 parejas dando vuelta las cartas.'],
-      ['cosecha', '<img class="mini-fig" src="img/tablero/deco/arbol.svg" alt="">', 'Cosecha de cosas raras', 'Las frutas suman; lo que no es fruta resta.'],
-      ['eco', '<img class="mini-fig" src="img/tablero/deco/llama.svg" alt="">', 'Eco de la montaña', 'Repite la secuencia de animales. Cada ronda suma uno.'],
-      ['reto', '<img class="mini-fig" src="img/tablero/deco/sol.svg" alt="">', 'Ojo de halcón', 'Cinco preguntas cortas de cultura, naturaleza y Chile.']
+      ['arreo', '<img class="mini-fig" src="img/tablero/mini/arreo.svg" alt="">', 'Ovejas en fuga', 'Toca las ovejas que cruzan el campo para llevarlas al corral.'],
+      ['memoria', '<img class="mini-fig" src="img/tablero/mini/memoria.svg" alt="">', 'Pares del huerto', 'Encuentra las 6 parejas dando vuelta las cartas.'],
+      ['cosecha', '<img class="mini-fig" src="img/tablero/mini/cosecha.svg" alt="">', 'Atrapa la cosecha', 'Frutas, verduras y una dorada que vale 3. Ojo con lo que no se come.'],
+      ['eco', '<img class="mini-fig" src="img/tablero/mini/eco.svg" alt="">', 'Ojo de halcón', 'Mira, memoriza y repite el orden de los animales. Cada ronda suma uno.'],
+      ['reto', '<img class="mini-fig" src="img/tablero/mini/preguntas.svg" alt="">', 'Cinco preguntas', 'Cinco preguntas cortas de cultura, naturaleza y Chile.']
     ];
     $('#pantalla').innerHTML = `${cabecera('Minijuegos', 'Juegos')}<div class="ju"><p class="suave">Juegos rápidos, sin prisa y sin castigo. Cada uno te explica su regla antes de empezar.</p><div class="mini-grid">${M.map(([k, ic, t, d]) => `<button type="button" class="mini-card" data-mini="${k}"><span class="mini-ico" aria-hidden="true">${ic}</span><b>${esc(t)}</b><small>${esc(d)}</small></button>`).join('')}</div></div>`;
     $('#volver').onclick = volver;
@@ -1968,7 +1968,7 @@
 
   // Pantalla única de Juegos. Sin jugador, solo se pide crearlo. Con jugador, todo vive aquí con pestañas.
   function vistaJuegos(tab) {
-    document.body.classList.remove('tb-full');   // F1126: al volver, vuelve la barra inferior
+    document.body.classList.remove('tb-full', 'tb-tapa');   // F1126: al volver, vuelve la barra inferior (F1244: y el fondo animado)
     const jug = jugadorLeer(), j = leer(K_JUEGOS) || { n: 0 }, n = Number(j.n) || 0;
     if (!jug) {
       $('#pantalla').innerHTML = `${cabecera('Juegos', 'Palabra')}${jFormulario(null, true)}`;

@@ -721,12 +721,13 @@
   // F1137 · Cada minijuego explica su regla antes de empezar. El tiempo corre solo al tocar «¡Empezar!».
   // F1146 · Ilustraciones de los juegos (SVG propio), sin emojis
   const FIG = (n, c) => `<img class="${c || 'tbl-fig'}" src="img/tablero/deco/${n}.svg" alt="">`;
+  const MINI = (n, c) => `<img class="${c || 'tbl-fig'}" src="img/tablero/mini/${n}.svg" alt="">`;   // F1245: íconos grandes de cada minijuego
   const INTRO_MINI = {
-    memoria: { ico: FIG('flor', 'tbl-intro-fig'), titulo: 'Pares del huerto', pasos: ['Toca una carta y luego otra.', 'Si son iguales, quedan juntas.', 'Encuentra las 6 parejas para ganar 2 gotas.'] },
-    cosecha: { ico: FIG('arbol', 'tbl-intro-fig'), titulo: 'Cosecha de cosas raras', pasos: ['Toca las frutas que caen: cada una suma 1 punto.', 'Las cosas raras (piedra, hueso, araña, bota) restan 1.', 'Tienes 12 segundos: 6 puntos dan 2 gotas, 3 dan 1.'] },
-    arreo: { ico: FIG('oveja', 'tbl-intro-fig'), titulo: 'Ovejas en fuga', pasos: ['Toca cada oveja para llevarla al corral. Las rebeldes necesitan dos toques.', 'Tres toques seguidos traen una oveja extra.', 'Espanta al zorro antes de que cruce: si no, se lleva una oveja. 18 segundos.'] },
-    reto: { ico: FIG('sol', 'tbl-intro-fig'), titulo: 'Ojo de halcón', pasos: ['Cinco preguntas cortas de tres tipos.', 'Cada acierto da 1 gota (máximo 4).', 'Fallar no tiene castigo.'] },
-    eco: { ico: FIG('llama', 'tbl-intro-fig'), titulo: 'Eco de la montaña', pasos: ['Mira en qué orden se iluminan los animales.', 'Repite la secuencia tocándolos igual.', 'Cada ronda suma un animal. 4 rondas dan 2 gotas; 2 rondas, 1.'] }
+    memoria: { ico: MINI('memoria', 'tbl-intro-fig'), titulo: 'Pares del huerto', pasos: ['Toca una carta y luego otra.', 'Si son iguales, quedan juntas.', 'Encuentra las 6 parejas para ganar 2 gotas.'] },
+    cosecha: { ico: MINI('cosecha', 'tbl-intro-fig'), titulo: 'Atrapa la cosecha', pasos: ['Toca las frutas y verduras que caen: cada una suma 1 punto. La manzana dorada vale 3.', 'Lo que no se come (piedra, hueso, araña, bota) resta 1 y corta tu racha. Cada 5 seguidas dan un punto extra.', 'La gota de rocío suma 3 segundos. 20 segundos: 14 puntos dan 2 gotas, 7 dan 1.'] },
+    arreo: { ico: MINI('arreo', 'tbl-intro-fig'), titulo: 'Ovejas en fuga', pasos: ['Toca cada oveja para llevarla al corral. Aparecen por todos lados. Las rebeldes (más oscuras) piden dos toques y la dorada vale 3.', 'Espanta al zorro antes de que cruce: si no, se lleva una oveja.', '¡No toques el avispero! Te quita 2 ovejas. 22 segundos: 16 ovejas dan 2 gotas, 9 dan 1.'] },
+    reto: { ico: MINI('preguntas', 'tbl-intro-fig'), titulo: 'Cinco preguntas', pasos: ['Cinco preguntas cortas de tres tipos.', 'Cada acierto da 1 gota (máximo 4).', 'Fallar no tiene castigo.'] },
+    eco: { ico: MINI('eco', 'tbl-intro-fig'), titulo: 'Ojo de halcón', pasos: ['Mira en qué orden se iluminan los animales.', 'Repite la secuencia tocándolos igual.', 'Cada ronda suma un animal. 4 rondas dan 2 gotas; 2 rondas, 1.'] }
   };
   function miniIntro(clave, juego) {
     return new Promise((res) => {
@@ -780,10 +781,10 @@
     const main = document.getElementById('pantalla'); if (!main || !INTRO_MINI[clave]) return;
     E = cargar(); $ = {};
     const ico = ICONO[clave] || '🧠', titulo = INTRO_MINI[clave].titulo, icoFig = INTRO_MINI[clave].ico;
-    document.body.classList.add('tb-full');
+    document.body.classList.add('tb-full', 'tb-tapa');
     main.innerHTML = `<section class="tbl tbl-solo" aria-label="${esc(titulo)}"><header class="tbl-top"><button type="button" class="volver" id="tblVolver">‹ Minijuegos</button><div class="tbl-tit"><span class="tbl-icono" aria-hidden="true">${icoFig}</span><div><b>${esc(titulo)}</b><small>Minijuego suelto</small></div></div></header><div class="tbl-mesa" id="tblMesa"></div></section>`;
     $.mesa = document.getElementById('tblMesa');
-    const salirAlMenu = () => { document.body.classList.remove('tb-full'); if (volver) volver(); };
+    const salirAlMenu = () => { document.body.classList.remove('tb-full', 'tb-tapa'); if (volver) volver(); };
     document.getElementById('tblVolver').addEventListener('click', salirAlMenu);
     jugarMini(clave).then((n) => {
       if (n) { try { if (window.TBInicio && TBInicio.ganarDirecto) TBInicio.ganarDirecto(n); } catch (e) { /* sin Vivero: no pasa nada */ } }
@@ -801,7 +802,7 @@
   // F1146 · Pares del huerto con ilustraciones: cartas que giran en 3D, contador de parejas y brillo al acertar.
   function miniMemoria() {
     return new Promise((res) => {
-      const figs = ['cactus', 'arbol', 'flor', 'llama', 'pez', 'sol'], cartas = barajar(figs.concat(figs));
+      const figs = ['manzana', 'uva', 'choclo', 'zanahoria', 'papa', 'palta'], cartas = barajar(figs.concat(figs));
       const caja = mini('Pares del huerto', 'Encuentra las parejas. Sin prisa y sin castigo.');
       const marca = document.createElement('p'); marca.className = 'tbl-marca'; marca.textContent = 'Parejas: 0 de 6'; caja.appendChild(marca);
       const grid = document.createElement('div'); grid.className = 'tbl-mem'; caja.appendChild(grid);
@@ -841,90 +842,132 @@
     arana: '<svg viewBox="0 0 40 40"><path d="M20 4v8M10 10l8 6M30 10l-8 6M6 20h10M34 20H24M10 30l8-6M30 30l-8-6" stroke="#2b2218" stroke-width="2" fill="none"/><circle cx="20" cy="24" r="7" fill="#2b2218"/><circle cx="20" cy="14" r="4" fill="#2b2218"/></svg>',
     bota: '<svg viewBox="0 0 40 40"><path d="M14 6h9v18h11v7c0 3-2 4-4 4H10c-3 0-4-2-4-4V22c0-3 2-4 4-4h4z" fill="#6b4a2b"/><path d="M14 30h20" stroke="#3b2612" stroke-width="2.5"/></svg>'
   };
-  function miniCosecha() {                                          // Cosecha de cosas raras: 12 s. Frutas suman, cosas raras restan.
+  // F1247 · Atrapa la cosecha: 20 s. Frutas y verduras suman, la manzana dorada vale 3, la gota de rocío da 3 s más y lo que no se come resta y corta la racha.
+  // Cada cosa cae por su propio camino (recto, con vaivén o en diagonal); cada tanto llega una lluvia de cosecha.
+  function miniCosecha() {
     return new Promise((res) => {
-      const caja = mini('Cosecha de cosas raras', 'Toca las frutas que caen. Lo que no es fruta resta.');
+      const caja = mini('Atrapa la cosecha', 'Toca lo que se come. La dorada vale 3. Lo que no se come, resta.');
       const campo = document.createElement('div'); campo.className = 'tbl-cosecha'; caja.appendChild(campo);
       const marca = document.createElement('p'); marca.className = 'tbl-marca'; caja.appendChild(marca);
-      let pts = 0, fin = false, listo = false; const DUR = 12000, t0 = Date.now();
-      const frutas = ['manzana', 'uva', 'maiz', 'papa', 'frutilla'], raras = ['piedra', 'hueso', 'arana', 'bota'];
-      const pinta = () => { marca.textContent = 'Puntos: ' + pts + ' · ' + Math.max(0, Math.ceil((DUR - (Date.now() - t0)) / 1000)) + ' s'; };
+      let pts = 0, racha = 0, extra = 0, fin = false, listo = false, lluvia = 0; const DUR = 20000, t0 = Date.now();
+      const frutas = ['manzana', 'uva', 'choclo', 'zanahoria', 'papa', 'palta'], raras = ['piedra', 'hueso', 'arana', 'bota'], TAM = 48;
+      const resta = () => Math.max(0, DUR + extra - (Date.now() - t0)), progreso = () => Math.min(1, (Date.now() - t0) / (DUR + extra));
+      const pinta = () => { marca.textContent = 'Puntos: ' + pts + (racha >= 2 ? ' · Racha ×' + racha : '') + ' · ' + Math.ceil(resta() / 1000) + ' s'; };
+      const al = (a, b) => a + Math.random() * (b - a);
       const pop = (ev, txt, cls) => {                              // «+1» o «−1» donde se tocó
         const r = campo.getBoundingClientRect(), p = document.createElement('span'); p.className = 'tbl-pop ' + cls; p.textContent = txt;
         p.style.left = (ev.clientX - r.left) + 'px'; p.style.top = (ev.clientY - r.top) + 'px'; campo.appendChild(p); setTimeout(() => p.remove(), 700);
       };
+      const camino = () => {                                       // cada cosa cae por su propio camino
+        const W = campo.clientWidth || 300, H = campo.clientHeight || 220, x = al(0.04, 0.88) * (W - TAM), p = progreso(), dur = Math.round(al(3000, 4200) * (1 - 0.38 * p)), r = Math.random(), kf = [];
+        if (r < 0.4) { kf.push({ transform: 'translate(' + x + 'px,' + (-TAM) + 'px)' }, { transform: 'translate(' + x + 'px,' + H + 'px)' }); }
+        else if (r < 0.75) { for (let i = 0; i <= 6; i++) kf.push({ transform: 'translate(' + Math.max(0, Math.min(W - TAM, x + (i % 2 ? 1 : -1) * 38 * (i ? 1 : 0))) + 'px,' + (-TAM + (H + TAM) * (i / 6)) + 'px)' }); }
+        else { const dx = (Math.random() < 0.5 ? -1 : 1) * al(60, 120), x2 = Math.max(0, Math.min(W - TAM, x + dx)); kf.push({ transform: 'translate(' + x + 'px,' + (-TAM) + 'px)' }, { transform: 'translate(' + x2 + 'px,' + H + 'px)' }); }
+        return { kf, dur };
+      };
       const caer = () => {
         if (fin || !campo.isConnected) return;
-        const rara = Math.random() < 0.35, nombre = rara ? raras[Math.floor(Math.random() * raras.length)] : frutas[Math.floor(Math.random() * frutas.length)];
-        const it = document.createElement('button'); it.type = 'button'; it.className = 'tbl-caida ' + (rara ? 'rara' : 'fruta'); it.setAttribute('aria-label', rara ? 'Cosa rara' : 'Fruta');
-        it.innerHTML = COSA[nombre];
-        it.style.left = (8 + Math.random() * 78) + '%'; it.style.animationDuration = (3.2 + Math.random() * 1.2) + 's';
+        const r = Math.random(), p = progreso(), pr = 0.22 + 0.12 * p;
+        const tipo = r < 0.05 ? 'dorada' : r < 0.09 && extra < 9000 ? 'rocio' : r < 0.09 + pr ? 'rara' : 'fruta';
+        const nombre = tipo === 'rara' ? raras[Math.floor(Math.random() * raras.length)] : frutas[Math.floor(Math.random() * frutas.length)];
+        const it = document.createElement('button'); it.type = 'button'; it.className = 'tbl-caida mov ' + tipo;
+        it.setAttribute('aria-label', { rara: 'Cosa que no se come: no la toques', dorada: 'Manzana dorada: vale 3', rocio: 'Gota de rocío: suma 3 segundos', fruta: 'Para comer' }[tipo]);
+        it.innerHTML = tipo === 'rara' ? COSA[nombre] : tipo === 'dorada' ? FIG('manzana') : tipo === 'rocio' ? '<img src="img/tablero/rocio.svg" alt="">' : FIG(nombre);
+        const c = camino(); campo.appendChild(it);
+        const anim = it.animate(c.kf, { duration: c.dur, easing: 'linear', fill: 'forwards' });
         it.addEventListener('pointerdown', (ev) => {
-          ev.preventDefault(); if (fin || it.dataset.h) return; it.dataset.h = '1';
-          if (rara) { pts = Math.max(0, pts - 1); son('error'); pop(ev, '−1', 'mal'); }
-          else { pts++; son('rocio'); pop(ev, '+1', 'bien'); chispas(ev.clientX, ev.clientY, 6, '#bfe6a6'); }
-          it.classList.add('tocada'); setTimeout(() => it.remove(), 180); pinta();
+          ev.preventDefault(); if (fin || it.dataset.h) return; it.dataset.h = '1'; anim.pause();
+          if (tipo === 'rara') { pts = Math.max(0, pts - 1); racha = 0; son('error'); pop(ev, '−1', 'mal'); }
+          else if (tipo === 'rocio') { extra += 3000; son('atajo'); pop(ev, '+3 s', 'bien'); chispas(ev.clientX, ev.clientY, 8, '#bfe6ff'); }
+          else {
+            racha++; let g = tipo === 'dorada' ? 3 : 1; if (racha % 5 === 0) { g++; pop(ev, '¡Racha! +' + g, 'bien'); } else pop(ev, '+' + g, 'bien');
+            pts += g; son(tipo === 'dorada' ? 'atajo' : 'rocio'); chispas(ev.clientX, ev.clientY, tipo === 'dorada' ? 12 : 6, tipo === 'dorada' ? '#ffe27a' : '#bfe6a6');
+          }
+          it.classList.add('tocada'); setTimeout(() => it.remove(), 200); pinta();
         });
-        it.addEventListener('animationend', () => it.remove());
-        campo.appendChild(it);
+        anim.onfinish = () => it.remove();
       };
-      const iv = setInterval(caer, 520), tick = setInterval(pinta, 250); pinta(); caer();
-      setTimeout(() => {
-        fin = true; clearInterval(iv); clearInterval(tick);
-        const n = pts >= 6 ? 2 : pts >= 3 ? 1 : 0;
+      const sig = () => {                                          // cada vez más seguido; cada ~6 s llega una lluvia de cosecha
+        if (fin || !campo.isConnected) return;
+        const p = progreso(); caer();
+        if (Date.now() - lluvia > 6000 && p > 0.2) { lluvia = Date.now(); for (let i = 1; i <= 3; i++) setTimeout(caer, i * 160); }
+        setTimeout(sig, (640 - 300 * p) * al(0.8, 1.2));
+      };
+      const tick = setInterval(() => { pinta(); if (resta() <= 0) terminar(); }, 120);
+      const terminar = () => {
+        if (fin) return; fin = true; clearInterval(tick);
+        const n = pts >= 14 ? 2 : pts >= 7 ? 1 : 0;
         marca.textContent = `¡Cosecha de ${pts} ${pts === 1 ? 'punto' : 'puntos'}! ${n ? 'Ganas ' + n + ' ' + (n === 1 ? 'gota' : 'gotas') + '.' : 'Esta vez no hubo gotas.'}`;
         botonMini(caja, 'Seguir', () => { if (listo) return; listo = true; caja.remove(); res(n); });
-      }, DUR);
+      };
+      pinta(); sig();
     });
   }
   // F1151 · Ovejas en fuga con reglas: ovejas normales, rebeldes (hay que tocarlas dos veces), zorro (espantarlo antes de que cruce)
   // y racha: tres toques seguidos traen una oveja extra. Más rápido a medida que avanza.
   function miniArreo() {
     return new Promise((res) => {
-      const caja = mini('Ovejas en fuga', 'Lleva las ovejas al corral. Cuidado con el zorro.');
+      const caja = mini('Ovejas en fuga', 'Lleva las ovejas al corral. Cuidado con el zorro y el avispero.');
       const campo = document.createElement('div'); campo.className = 'tbl-cosecha tbl-arreo'; caja.appendChild(campo);
       const marca = document.createElement('p'); marca.className = 'tbl-marca'; caja.appendChild(marca);
       const corral = document.createElement('div'); corral.className = 'tbl-corral'; corral.textContent = 'Corral'; caja.appendChild(corral);
-      let n = 0, zorro = 0, racha = 0, ultimo = 0, fin = false, listo = false; const DUR = 18000, t0 = Date.now();
+      let n = 0, zorro = 0, racha = 0, ultimo = 0, fin = false, listo = false; const DUR = 22000, t0 = Date.now();
       const progreso = () => Math.min(1, (Date.now() - t0) / DUR);
       const pinta = () => { marca.textContent = `Corral: ${n} · Zorro: ${zorro} · ${Math.max(0, Math.ceil((DUR - (Date.now() - t0)) / 1000))} s`; };
       const aviso = (txt, cls) => { const p = document.createElement('span'); p.className = 'tbl-pop ' + cls; p.textContent = txt; p.style.left = '50%'; p.style.top = '40%'; campo.appendChild(p); setTimeout(() => p.remove(), 800); };
+      const TAM = 64, ETQ = { oveja: 'Oveja', rebelde: 'Oveja rebelde: tócala dos veces', dorada: 'Oveja dorada: vale 3', zorro: 'Zorro: tócalo para espantarlo', avispero: 'Avispero: no lo toques' };
+      const IMG = { zorro: 'img/tablero/deco/eco-zorro.svg', avispero: 'img/tablero/deco/avispero.svg' };
+      const al = (a, b) => a + Math.random() * (b - a);
+      const ruta = (tipo) => {                                      // F1246: cada aparición tiene su propio camino por todo el campo
+        const W = campo.clientWidth || 300, H = campo.clientHeight || 220, p = progreso(), y0 = al(0.08, 0.78) * (H - TAM), x0 = al(0.08, 0.8) * (W - TAM);
+        const r = Math.random(); let modo = r < 0.5 ? 'cruza' : r < 0.72 ? 'zigzag' : r < 0.88 ? 'baja' : 'salta';
+        if (tipo === 'dorada') modo = Math.random() < 0.5 ? 'salta' : 'zigzag';
+        if (tipo === 'avispero') modo = Math.random() < 0.6 ? 'zigzag' : 'baja';
+        const rapido = tipo === 'dorada' || tipo === 'avispero' ? 0.75 : tipo === 'zorro' ? 0.85 : 1, dur = Math.round((4300 - 1700 * p) * al(0.85, 1.15) * rapido);
+        if (modo === 'salta') { const e = 'translate(' + x0 + 'px,' + y0 + 'px)'; return { dur: 1500 + (1 - p) * 900, perm: true, kf: [{ transform: e + ' scale(0)', offset: 0 }, { transform: e + ' scale(1.15)', offset: 0.12 }, { transform: e + ' scale(1)', offset: 0.2 }, { transform: e + ' scale(1)', offset: 0.85 }, { transform: e + ' scale(0)', offset: 1 }] }; }
+        if (modo === 'baja') { const arriba = Math.random() < 0.5, d = arriba ? 1 : -1, x = al(0.05, 0.85) * (W - TAM), ya = arriba ? -TAM : H, yb = arriba ? H : -TAM; return { dur, kf: [{ transform: 'translate(' + x + 'px,' + ya + 'px)' }, { transform: 'translate(' + (x + d * al(-30, 30)) + 'px,' + yb + 'px)' }] }; }
+        const izq = Math.random() < 0.65, xa = izq ? -TAM : W, xb = izq ? W : -TAM, f = izq ? 1 : -1, kf = [];
+        const pasos = modo === 'zigzag' ? 6 : 1;
+        for (let i = 0; i <= pasos; i++) { const x = xa + (xb - xa) * (i / pasos), y = Math.max(0, Math.min(H - TAM, y0 + (modo === 'zigzag' ? (i % 2 ? 1 : -1) * al(25, 55) : 0))); kf.push({ transform: 'translate(' + x + 'px,' + y + 'px) scaleX(' + f + ')' }); }
+        return { dur, kf };
+      };
       const crear = (tipo) => {
-        const o = document.createElement('button'); o.type = 'button'; o.className = 'tbl-oveja ' + tipo;
-        o.setAttribute('aria-label', tipo === 'zorro' ? 'Zorro: tócalo para espantarlo' : tipo === 'rebelde' ? 'Oveja rebelde: tócala dos veces' : 'Oveja');
-        const img = document.createElement('img'); img.src = tipo === 'zorro' ? 'img/piezas/zorro.svg' : 'img/tablero/deco/oveja.svg'; img.alt = ''; o.appendChild(img);
+        const o = document.createElement('button'); o.type = 'button'; o.className = 'tbl-oveja mov ' + tipo; o.setAttribute('aria-label', ETQ[tipo]);
+        const img = document.createElement('img'); img.src = IMG[tipo] || 'img/tablero/deco/eco-oveja.svg'; img.alt = ''; o.appendChild(img);
         o.dataset.falta = tipo === 'rebelde' ? '2' : '1';
-        const dur = (4.4 - 1.9 * progreso()) * (0.85 + Math.random() * 0.3) * (tipo === 'zorro' ? 0.8 : 1);
-        o.style.top = (8 + Math.random() * 74) + '%'; o.style.animationDuration = dur.toFixed(2) + 's';
+        const rt = ruta(tipo); campo.appendChild(o);
+        const anim = o.animate(rt.kf, { duration: rt.dur, easing: rt.perm ? 'ease-out' : 'linear', fill: 'forwards' });
         o.addEventListener('pointerdown', (ev) => {
           ev.preventDefault(); if (fin || o.dataset.h) return;
           o.dataset.falta = String(Number(o.dataset.falta) - 1);
           if (Number(o.dataset.falta) > 0) { o.classList.add('tocada'); son('carta'); return; }   // rebelde: primer toque
-          o.dataset.h = '1';
+          o.dataset.h = '1'; anim.pause();
           if (tipo === 'zorro') { o.classList.add('espantado'); aviso('¡Zorro espantado!', 'bien'); son('pausa'); chispas(ev.clientX, ev.clientY, 8, '#ffd8a0'); }
+          else if (tipo === 'avispero') { n = Math.max(0, n - 2); racha = 0; aviso('¡Avispas! −2', 'mal'); son('error'); chispas(ev.clientX, ev.clientY, 10, '#ff8a6a'); o.classList.add('picado'); }
           else {
             const ahora = Date.now(); racha = ahora - ultimo < 1500 ? racha + 1 : 1; ultimo = ahora;
-            n++; if (racha > 0 && racha % 3 === 0) { n++; aviso('¡En fila! +1', 'bien'); son('atajo'); }
-            son('rocio'); chispas(ev.clientX, ev.clientY, 6, '#fff1b8');
+            n += tipo === 'dorada' ? 3 : 1; if (tipo === 'dorada') { aviso('¡Dorada! +3', 'bien'); son('atajo'); }
+            if (racha > 0 && racha % 3 === 0) { n++; aviso('¡En fila! +1', 'bien'); son('atajo'); }
+            son('rocio'); chispas(ev.clientX, ev.clientY, tipo === 'dorada' ? 12 : 6, '#fff1b8');
           }
-          o.classList.add('llevada'); setTimeout(() => o.remove(), 320); pinta();
+          o.classList.add('llevada'); setTimeout(() => o.remove(), 340); pinta();
         });
-        o.addEventListener('animationend', () => {
-          if (tipo === 'zorro' && !o.dataset.h && !fin) { zorro++; aviso('¡Se llevó una oveja!', 'mal'); son('error'); pinta(); }
+        anim.onfinish = () => {
+          if (tipo === 'zorro' && !o.dataset.h && !fin) { zorro++; n = Math.max(0, n - 1); aviso('¡Se llevó una oveja!', 'mal'); son('error'); pinta(); }
           o.remove();
-        });
-        campo.appendChild(o);
+        };
       };
-      const cadena = () => {                                       // la siguiente aparición depende del avance: cada vez más seguido
+      const cadena = () => {                                       // la siguiente aparición depende del avance: cada vez más seguido y con más peligros
         if (fin || !campo.isConnected) return;
-        const r = Math.random(), tipo = r < 0.14 ? 'zorro' : r < 0.36 ? 'rebelde' : 'oveja';
+        const p = progreso(), r = Math.random(), pz = 0.08 + 0.05 * p, pa = 0.10 + 0.10 * p, pd = 0.05, pr = 0.16 + 0.05 * p;
+        const tipo = r < pz ? 'zorro' : r < pz + pa ? 'avispero' : r < pz + pa + pd ? 'dorada' : r < pz + pa + pd + pr ? 'rebelde' : 'oveja';
         crear(tipo);
-        setTimeout(cadena, (1000 - 480 * progreso()) * (0.8 + Math.random() * 0.4));
+        setTimeout(cadena, (850 - 400 * p) * al(0.8, 1.2));
       };
       const tick = setInterval(pinta, 250); pinta(); cadena();
       setTimeout(() => {
         fin = true; clearInterval(tick);
-        const neto = n - zorro, g = neto >= 8 ? 2 : neto >= 4 ? 1 : 0;
+        const g = n >= 16 ? 2 : n >= 9 ? 1 : 0;
         marca.textContent = `¡Corral con ${n} ${n === 1 ? 'oveja' : 'ovejas'}! El zorro se llevó ${zorro}. ${g ? 'Ganas ' + g + ' ' + (g === 1 ? 'gota' : 'gotas') + '.' : 'Esta vez no fue suficiente.'}`;
         botonMini(caja, 'Seguir', () => { if (listo) return; listo = true; caja.remove(); res(g); });
       }, DUR);
@@ -933,11 +976,11 @@
   // F1146 · Eco de la montaña (nuevo): los animales se iluminan en orden; repite la secuencia tocándolos igual.
   function miniEco() {
     return new Promise((res) => {
-      const OPC = ['oveja', 'llama', 'pez', 'ave'];
-      const caja = mini('Eco de la montaña', 'Mira en qué orden se iluminan los animales y repítelo tocándolos.'); caja.classList.add('compacta');
+      const OPC = ['eco-oveja', 'eco-llama', 'eco-zorro', 'eco-pinguino'], NOMBRE_ECO = { 'eco-oveja': 'Oveja', 'eco-llama': 'Llama', 'eco-zorro': 'Zorro', 'eco-pinguino': 'Pingüino' };
+      const caja = mini('Ojo de halcón', 'Mira en qué orden se iluminan los animales y repítelo tocándolos.'); caja.classList.add('compacta');
       const marca = document.createElement('p'); marca.className = 'tbl-marca'; caja.appendChild(marca);
       const grid = document.createElement('div'); grid.className = 'tbl-eco'; caja.appendChild(grid);
-      const btns = OPC.map((n, i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'tbl-eco-b c' + (i + 1); b.setAttribute('aria-label', n); b.innerHTML = FIG(n); b.disabled = true; grid.appendChild(b); return b; });
+      const btns = OPC.map((n, i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'tbl-eco-b c' + (i + 1); b.setAttribute('aria-label', NOMBRE_ECO[n]); b.innerHTML = FIG(n); b.disabled = true; grid.appendChild(b); return b; });
       const seq = []; let paso = 0, listo = false, mostrando = false;
       const vivo = () => caja.isConnected && !listo;
       const cerrar = (n) => { if (listo) return; listo = true; caja.remove(); res(n); };
@@ -981,7 +1024,7 @@
     return new Promise(async (res) => {
       const banco = await cargarRetos();
       if (!banco.length) { res(0); return; }
-      const caja = mini('Ojo de halcón', 'Cinco desafíos rápidos. Un acierto = 1 gota (máximo 4). Sin castigo.');
+      const caja = mini('Cinco preguntas', 'Cinco desafíos rápidos. Un acierto = 1 gota (máximo 4). Sin castigo.');
       const rondas = mezclar(banco).slice(0, Math.min(5, banco.length));
       let i = 0, gotasReto = 0, listo = false;
       const cerrar = (n) => { if (listo) return; listo = true; caja.remove(); res(n); };
@@ -1091,7 +1134,7 @@
     const main = document.getElementById('pantalla'); if (!main) return;
     REPLAY = opc.rejugar || null; VOLVER = volver || null; SALA = opc.sala || null;
     E = REPLAY ? Object.assign(nuevoEstado(), { tablero: REPLAY }) : cargar(); ocupado = false; $ = {};
-    document.body.classList.add('tb-full');
+    document.body.classList.add('tb-full', 'tb-tapa');   // F1244: el tablero tapa todo; el fondo animado se apaga mientras está abierto
     main.innerHTML = `<section class="tbl" id="tbl" aria-label="Tablero de Tierra Buena">
       <header class="tbl-top">
         <button type="button" class="volver" id="tblVolver">‹ Juegos</button>
