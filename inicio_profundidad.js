@@ -13,7 +13,7 @@
   // ---------- Hora del día: cielos claros y luminosos (el texto del Inicio es oscuro) ----------
   function franja() { const h = new Date().getHours(); return h < 5 ? 'noche' : h < 8 ? 'alba' : h < 12 ? 'manana' : h < 17 ? 'dia' : h < 20 ? 'tarde' : 'noche'; }
   const CIELO = {
-    noche:  { a: '#aab6ea', b: '#d8cdf2', c: '#ffdccd', luz: '#fff0d6', disco: '#fffaf0', luna: true,  rayo: .10 },
+    noche:  { a: '#8e9ad8', b: '#c9bdec', c: '#f3d6d0', luz: '#fff0d6', disco: '#fffaf0', luna: true,  rayo: .10 },
     alba:   { a: '#b9d2f0', b: '#f6cdb8', c: '#ffe6bd', luz: '#ffd391', disco: '#fff2c9', luna: false, rayo: .30 },
     manana: { a: '#a9d8f3', b: '#cfeaf5', c: '#fff3d3', luz: '#fff2bd', disco: '#fffbe6', luna: false, rayo: .26 },
     dia:    { a: '#a0d1f1', b: '#c4e4f4', c: '#f1f8ef', luz: '#fffbe3', disco: '#ffffff', luna: false, rayo: .22 },
@@ -63,46 +63,192 @@
   }
 
   // ---------- Paisajes por lugar (viewBox 390×844) ----------
+  // F1225 · Fase 3: lejanías con perspectiva aérea (más lejos = más pálido), luz de borde y siluetas con carácter.
+  const cresta = (fn, x0, x1, base) => { let d = 'M' + x0 + ' ' + f(fn(x0)); for (let x = x0 + 6; x <= x1; x += 6) d += 'L' + x + ' ' + f(fn(x)); return d + 'L' + x1 + ' ' + base + 'L' + x0 + ' ' + base + 'Z'; };
+  const filo = (fn, x0, x1) => { let d = 'M' + x0 + ' ' + f(fn(x0)); for (let x = x0 + 6; x <= x1; x += 6) d += 'L' + x + ' ' + f(fn(x)); return d; };
+  function copasR(fn, x0, x1, sem, rmin, rmax, paso, c1, c2) {   // copas redondeadas (bosque nativo) con un toque de luz arriba a la izquierda
+    const R = azar(sem); let a = '', b = '';
+    for (let x = x0; x < x1; x += paso * (.6 + R() * .8)) { const r = rmin + R() * (rmax - rmin), y = fn(x) + r * .25;
+      a += '<ellipse cx="' + f(x) + '" cy="' + f(y) + '" rx="' + f(r) + '" ry="' + f(r * 1.12) + '"/>'; b += '<ellipse cx="' + f(x - r * .3) + '" cy="' + f(y - r * .38) + '" rx="' + f(r * .5) + '" ry="' + f(r * .55) + '"/>'; }
+    return '<g fill="' + c1 + '">' + a + '</g><g fill="' + c2 + '" opacity=".5">' + b + '</g>';
+  }
+  function ondas(x0, x1, y0, y1, n, sem, col, op) {   // marcas finas de arena o de agua
+    const R = azar(sem); let d = '';
+    for (let i = 0; i < n; i++) { const x = x0 + R() * (x1 - x0), y = y0 + R() * (y1 - y0), w = 14 + R() * 30; d += 'M' + f(x) + ' ' + f(y) + 'q' + f(w / 4) + ' -2.2 ' + f(w / 2) + ' 0t' + f(w / 2) + ' 0'; }
+    return '<path fill="none" stroke="' + col + '" stroke-opacity="' + op + '" stroke-width="1" stroke-linecap="round" d="' + d + '"/>';
+  }
+  // F1228 · Fase 6: construcciones emblemáticas (faro, capilla chilota, iglesia de adobe). De noche sus luces se encienden.
+  const luzV = (lit) => lit ? '#ffd77a' : '#62768e';
+  function faro(x, y, k, fr) {
+    const noche = fr === 'noche', lit = noche || fr === 'tarde' || fr === 'alba';
+    return '<g transform="translate(' + x + ' ' + y + ') scale(' + k + ')">'
+      + '<defs><linearGradient id="ipHazL" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#fff4b8" stop-opacity=".6"/><stop offset="1" stop-color="#fff4b8" stop-opacity="0"/></linearGradient><linearGradient id="ipHazR" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff4b8" stop-opacity=".6"/><stop offset="1" stop-color="#fff4b8" stop-opacity="0"/></linearGradient></defs>'
+      + (noche ? '<g class="ip-haz" transform="translate(0 -54)"><path d="M0 0L-170-20L-170 20Z" fill="url(#ipHazL)"/><path d="M0 0L170-20L170 20Z" fill="url(#ipHazR)"/></g>' : '')
+      + '<path d="M-36 6Q-10-4 12-2Q34-4 48 8Z" fill="#86a063"/>'
+      + '<path d="M-32-9L-21-18L-10-9Z" fill="#c0392b"/><rect x="-30" y="-9" width="20" height="9" fill="#f7f4ee"/><rect x="-24" y="-6" width="4" height="6" fill="#7a4f2e"/><rect x="-18" y="-7" width="4" height="3.5" fill="' + luzV(lit) + '"/>'   // casa del farero
+      + '<path d="M-9 0L-6-48H6L9 0Z" fill="#f7f4ee"/><path d="M3 0L6-48H6.2L9 0Z" fill="#b9a98f" opacity=".5"/><path d="M2.5-48L6-48L9 0L2.5 0Z" fill="#b9a98f" opacity=".35"/>'
+      + '<path d="M-8.2-12H8.2L7.8-20H-7.8Z" fill="#c0392b"/><path d="M-7.1-34H7.1L6.7-42H-6.7Z" fill="#c0392b"/>'
+      + '<rect x="-9.5" y="-50" width="19" height="2.4" rx=".6" fill="#3a3f4a"/><path d="M-8.5-50V-53M-4-50V-53M0-50V-53M4-50V-53M8.5-50V-53" stroke="#3a3f4a" stroke-width=".7"/>'
+      + '<rect x="-4.6" y="-59" width="9.2" height="9" fill="' + (lit ? '#fff3b0' : '#cfe3ee') + '" stroke="#3a3f4a" stroke-width=".8"/><path d="M0-59V-50M-2.3-59V-50M2.3-59V-50" stroke="#3a3f4a" stroke-width=".5"/>'
+      + '<path d="M-6.4-59Q0-70 6.4-59Z" fill="#c0392b"/><path d="M0-68.5V-72" stroke="#3a3f4a" stroke-width="1" stroke-linecap="round"/>'
+      + (lit ? '<circle cx="0" cy="-54.5" r="' + (noche ? 22 : 13) + '" fill="url(#ipHalo)" opacity="' + (noche ? .95 : .6) + '"/>' : '') + '</g>';
+  }
+  function capilla(x, y, k, fr) {
+    const lit = fr === 'noche' || fr === 'tarde' || fr === 'alba', w = luzV(lit);
+    return '<g transform="translate(' + x + ' ' + y + ') scale(' + k + ')">'
+      + '<ellipse cx="2" cy="1.6" rx="27" ry="3.2" fill="#10200f" opacity=".22"/>'
+      + '<path fill="#f1e4c8" d="M-18 0V-20L0-32L18-20V0Z"/><path fill="#b99a6c" opacity=".35" d="M7 0V-27L18-20V0Z"/>'
+      + '<path fill="none" stroke="#b99a6c" stroke-opacity=".5" stroke-width=".6" d="M-18-4H18M-18-8H18M-18-12H18M-18-16H17M-12-20H12"/>'
+      + '<path fill="none" stroke="#5a7fb5" stroke-width="1.5" stroke-linejoin="round" d="M-18 0V-20L0-32L18-20V0"/>'
+      + '<rect x="-8" y="-45" width="16" height="45" fill="#f1e4c8"/><path fill="#b99a6c" opacity=".35" d="M3-45H8V0H3Z"/><path fill="none" stroke="#b99a6c" stroke-opacity=".5" stroke-width=".6" d="M-8-8H8M-8-12H8M-8-16H8M-8-20H8M-8-24H8M-8-28H8"/>'
+      + '<path d="M-8 0V-45M8 0V-45" stroke="#5a7fb5" stroke-width="1.2"/>'
+      + '<path d="M-3-39V-32Q0-29 3-32V-39Q0-42-3-39Z" fill="#3d3225"/><circle cx="0" cy="-34" r="1.4" fill="#c9a24a"/>'
+      + '<path d="M-10-45L0-66L10-45Z" fill="#5a7fb5"/><path d="M0-66L10-45H3Z" fill="#2f4f80" opacity=".55"/><path d="M-10-45H10" stroke="#3f5f90" stroke-width="1"/>'
+      + '<path d="M0-66V-74M-3-71.5H3" stroke="#6b4a2a" stroke-width="1.3" stroke-linecap="round"/>'
+      + '<path d="M-3.2 0V-9Q0-13 3.2-9V0Z" fill="#7a4f2e"/><path d="M-3.2-9Q0-13 3.2-9" fill="none" stroke="#5a7fb5" stroke-width=".9"/>'
+      + '<path d="M-14-6V-12Q-12-15-10-12V-6Z" fill="' + w + '"/><path d="M10-6V-12Q12-15 14-12V-6Z" fill="' + w + '"/>'
+      + (lit ? '<circle cx="-12" cy="-9" r="9" fill="url(#ipHalo)" opacity=".8"/><circle cx="12" cy="-9" r="9" fill="url(#ipHalo)" opacity=".8"/>' : '') + '</g>';
+  }
+  function iglesiaAdobe(x, y, k, fr) {
+    const lit = fr === 'noche' || fr === 'tarde' || fr === 'alba', w = luzV(lit);
+    return '<g transform="translate(' + x + ' ' + y + ') scale(' + k + ')">'
+      + '<ellipse cx="0" cy="1.6" rx="34" ry="3.2" fill="#4a2a10" opacity=".22"/>'
+      + '<path d="M-40 0H-26V-5H-40Z" fill="#d8c29a"/>'
+      + '<path d="M-22 0V-18Q-22-20-20-20H14Q16-20 16-18V0Z" fill="#f6ecd8"/><path d="M8 0V-20H16V0Z" fill="#a8825a" opacity=".42"/><path d="M-23-20H17V-22.4H-23Z" fill="#e6d3b0"/>'
+      + '<path d="M-22 0V-44H-9V0Z" fill="#f6ecd8"/><path d="M-13 0V-44H-9V0Z" fill="#c9a878" opacity=".3"/><path d="M-23-44H-8V-46.4H-23Z" fill="#e6d3b0"/>'
+      + '<path d="M-19-38V-31Q-15.5-27.5-12-31V-38Q-15.5-42-19-38Z" fill="#4a3a2a"/><path d="M-17.4-32.5Q-15.5-30-13.6-32.5Z" fill="#c9a24a"/><circle cx="-15.5" cy="-33" r="1.5" fill="#c9a24a"/>'
+      + '<path d="M-15.5-46.4V-55M-19.5-52H-11.5" stroke="#6b4a2a" stroke-width="1.5" stroke-linecap="round"/>'
+      + '<path d="M-3 0V-9Q0-13 3-9V0Z" fill="#6b4a2a"/><path d="M-4-9Q0-14 4-9" fill="none" stroke="#e6d3b0" stroke-width="1"/>'
+      + '<rect x="8" y="-13" width="3.4" height="4.6" rx="1.2" fill="' + w + '"/><rect x="-6" y="-14" width="0" height="0"/>'
+      + '<path d="M16 0H21.5L16-9Z" fill="#e6d3b0"/>'
+      + '<path fill="none" stroke="#c9a878" stroke-opacity=".5" stroke-width=".6" d="M-22-6H16M-22-12H16M-22-30H-9M-22-24H-9"/>'
+      + '<path d="M27 0Q28.5-10 26-17" fill="none" stroke="#6b4a2a" stroke-width="2.2" stroke-linecap="round"/><ellipse cx="24" cy="-21" rx="10.5" ry="7" fill="#8a9a4a"/><ellipse cx="32" cy="-24" rx="9" ry="6.4" fill="#6f8a3c"/><ellipse cx="21" cy="-23" rx="5" ry="2.6" fill="#b8c878" opacity=".55"/>'
+      + (lit ? '<circle cx="9.7" cy="-11" r="9" fill="url(#ipHalo)" opacity=".8"/>' : '') + '</g>';
+  }
+
   function paisaje(lugar, p) {
     if (lugar === 'desierto') {
-      return ''
-        + '<path fill="' + p.lejos + '" d="M0 322 L0 300 L40 296 L58 268 L128 266 L146 296 L214 300 L236 282 L300 280 L322 298 L390 302 L390 322Z"/>'      // mesas lejanas
-        + '<path fill="' + p.medio + '" d="M0 340 C50 322 96 312 150 326 C206 340 250 318 300 314 C340 311 366 322 390 330 L390 372 L0 372Z"/>'
+      const d1 = (x) => 340 - 14 * Math.sin(x / 48 + .4) - 6 * Math.sin(x / 19), d2 = (x) => 366 - 16 * Math.sin(x / 55 + 2.2) - 5 * Math.sin(x / 17 + 1);
+      return '<defs><linearGradient id="ipMesa" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3d8b4"/><stop offset="1" stop-color="' + p.lejos + '"/></linearGradient>'
+        + '<linearGradient id="ipDunaL" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".3"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#6e3f1e" stop-opacity=".2"/></linearGradient></defs>'
+        + '<path fill="#c9bccf" opacity=".78" d="M96 302Q146 278 173 238Q180 226 187 238Q216 278 266 302Z"/>'                                  // volcán lejano, azulado por la distancia
+        + '<path fill="#8f7fa0" opacity=".2" d="M180 228Q216 278 266 302L204 302Z"/><path fill="#fff" opacity=".85" d="M169 247Q174 237 180 229Q186 237 191 247Q186 243 182 250Q178 244 175 251Q172 245 169 247Z"/>'
+        + '<path fill="url(#ipMesa)" d="M0 322L0 300L40 296L58 268L128 266L146 296L214 300L236 282L300 280L322 298L390 302L390 322Z"/>'      // mesas lejanas con estratos
+        + '<path fill="#b97c4c" opacity=".16" d="M104 266L128 266L146 296L118 296ZM272 280L300 280L322 298L288 298Z"/>'
+        + '<path fill="none" stroke="' + p.medio + '" stroke-opacity=".4" stroke-width="1.1" d="M60 274H127M62 282H133M64 290H141M216 291H236M238 289H300M240 296H318"/>'
+        + '<path fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="1.3" stroke-linecap="round" d="M58 268L128 266M236 282L300 280"/>'
+        + '<path fill="' + p.medio + '" d="' + cresta(d1, 0, 390, 372) + '"/><path fill="url(#ipDunaL)" d="' + cresta(d1, 0, 390, 372) + '"/>'
+        + '<path fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="1.4" d="' + filo(d1, 0, 390) + '"/>'
+        + iglesiaAdobe(96, f(d1(96)) + 3, 1.2, franja())
         + '<g class="ip-bruma b1"><rect x="-20" y="318" width="430" height="46" fill="url(#ipBruma)"/></g>'
-        + '<path fill="' + p.cerro + '" d="M0 372 C40 350 100 346 160 364 C220 382 270 352 330 348 C358 346 376 352 390 358 L390 430 L0 430Z"/>'
-        + '<path fill="#fff" opacity=".22" d="M160 364 C220 382 270 352 330 348 L330 352 C270 358 220 392 160 370Z"/>'                                    // lado iluminado de la duna
+        + '<path fill="' + p.cerro + '" d="' + cresta(d2, 0, 390, 430) + '"/><path fill="url(#ipDunaL)" d="' + cresta(d2, 0, 390, 430) + '"/>'
+        + '<path fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="1.6" d="' + filo(d2, 0, 390) + '"/>'
+        + ondas(10, 380, 336, 360, 7, 5, p.suelo, .2) + ondas(10, 380, 374, 420, 8, 9, p.suelo, .18)
         + '<g class="ip-bruma b2"><rect x="-20" y="372" width="430" height="52" fill="url(#ipBruma)"/></g>';
     }
     if (lugar === 'costa') {
-      return ''
-        + '<path fill="' + p.lejos + '" opacity=".8" d="M0 318 C60 304 110 296 170 306 C220 314 262 322 310 330 L0 330Z"/>'                           // cabo lejano
+      return '<defs><linearGradient id="ipHoriz" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".6"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'
+        + '<linearGradient id="ipRoca" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9fb0b8"/><stop offset="1" stop-color="#5e707c"/></linearGradient></defs>'
+        + '<path fill="' + p.lejos + '" opacity=".8" d="M0 318C60 304 110 296 170 306C220 314 262 322 310 330L0 330Z"/>'                                    // cabo lejano
+        + '<path fill="' + p.lejos + '" opacity=".5" d="M240 330C280 318 330 312 390 316L390 332Z"/>'
         + '<rect x="0" y="322" width="390" height="150" fill="url(#ipMar)"/>'
+        + '<rect x="0" y="322" width="390" height="34" fill="url(#ipHoriz)"/>'                                                                           // brillo del horizonte
+        + '<path fill="url(#ipRoca)" d="M-10 336L-10 292Q10 272 38 280Q60 284 78 298Q96 310 118 336Z"/>'                                                  // acantilado con estratos
+        + '<path fill="' + p.follaje2 + '" d="M-10 292Q10 272 38 280Q60 284 78 298Q60 292 40 290Q16 288 -10 300Z"/>'
+        + '<path fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1" d="M-4 306H70M0 316H90M4 326H104"/>'
+        + faro(30, 279, 1.15, franja())
+        + '<path fill="#6c808c" d="M300 334L303 308L309 298L315 310L319 334Z"/><path fill="#fff" opacity=".28" d="M303 308L309 298L310 334L303 334Z"/>'   // farellón
+        + '<path fill="#6c808c" d="M326 334L328 318L333 311L338 320L341 334Z"/><ellipse cx="320" cy="334" rx="28" ry="3" fill="#fff" opacity=".6"/>'
+        + '<ellipse cx="310" cy="338" rx="6" ry="14" fill="#35505e" opacity=".18"/>'
         + '<g fill="#fff" opacity=".9">' + destellos(268, 326, 430, 7) + '</g>'
-        + '<path class="ip-ola o1" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.4" d="M0 392 C30 386 60 398 90 392 S150 386 180 392 S240 398 270 392 S330 386 390 392"/>'
-        + '<path class="ip-ola o2" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="1.8" d="M-10 420 C20 412 52 426 84 418 S146 410 178 418 S244 426 276 418 S340 410 400 418"/>'
+        + '<path class="ip-ola o1" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.4" d="M0 392C30 386 60 398 90 392S150 386 180 392S240 398 270 392S330 386 390 392"/>'
+        + '<path class="ip-ola o2" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="1.8" d="M-10 420C20 412 52 426 84 418S146 410 178 418S244 426 276 418S340 410 400 418"/>'
+        + ondas(10, 380, 340, 370, 9, 3, '#fff', .45) + ondas(10, 380, 372, 440, 8, 6, '#fff', .35)
         + '<g class="ip-bruma b1"><rect x="-20" y="306" width="430" height="34" fill="url(#ipBruma)"/></g>'
-        + '<path fill="' + p.c1 + '" d="M0 458 C60 440 120 452 190 446 C260 440 330 436 390 448 L390 520 L0 520Z"/>'
-        + '<path fill="none" stroke="#fff" stroke-opacity=".9" stroke-width="3" stroke-linecap="round" d="M0 458 C60 440 120 452 190 446 C260 440 330 436 390 448"/>'; // espuma en la orilla
+        + '<path fill="' + p.c1 + '" d="M0 458C60 440 120 452 190 446C260 440 330 436 390 448L390 520L0 520Z"/>'
+        + '<path fill="none" stroke="#fff" stroke-opacity=".9" stroke-width="3" stroke-linecap="round" d="M0 458C60 440 120 452 190 446C260 440 330 436 390 448"/>';   // espuma en la orilla
     }
-    return ''   // bosque: cordillera nevada, pewenes, niebla
-      + '<path fill="' + p.lejos + '" d="M0 330 L0 262 L34 236 L52 214 L66 228 L92 196 L118 156 L136 176 L152 168 L176 204 L202 232 L226 190 L254 150 L272 120 L296 158 L312 146 L340 190 L364 214 L390 204 L390 330Z"/>'
-      + '<g fill="#fff" opacity=".92"><path d="M118 156 L136 176 L128 172 L122 182 L112 172 L104 178Z"/><path d="M272 120 L296 158 L286 152 L278 164 L268 150 L256 158 L254 150Z"/><path d="M92 196 L104 206 L96 204 L90 212 L80 204Z"/><path d="M226 190 L238 206 L230 202 L224 212 L214 204Z"/></g>'
-      + '<g fill="#7d96b4" opacity=".35"><path d="M118 156 L136 176 L152 168 L176 204 L150 330 L118 330Z"/><path d="M272 120 L296 158 L312 146 L340 190 L316 330 L272 330Z"/></g>'   // lado en sombra
+    const rB = (x) => 352 - 11 * Math.sin(x / 64 + 2.4) - 6 * Math.sin(x / 25 + .5), rA = (x) => 300 - 13 * Math.sin(x / 52 + .6) - 7 * Math.sin(x / 21 + 1.3);   // bosque: cordillera nevada en dos filas, cerros con copas redondas y niebla
+    return '<defs><linearGradient id="ipMA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + p.lejos + '"/><stop offset="1" stop-color="#e2ebf3"/></linearGradient>'
+      + '<linearGradient id="ipNieve" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#d6e2f0"/></linearGradient></defs>'
+      + '<path fill="' + p.lejos + '" opacity=".45" d="M0 304L40 262L84 284L150 236L206 272L248 244L312 270L360 246L390 262L390 330L0 330Z"/>'              // fila lejana, más pálida
+      + '<path fill="url(#ipMA)" d="M0 330L0 262L34 236L52 214L66 228L92 196L118 156L136 176L152 168L176 204L202 232L226 190L254 150L272 120L296 158L312 146L340 190L364 214L390 204L390 330Z"/>'
+      + '<g fill="#7d96b4" opacity=".35"><path d="M118 156L136 176L152 168L176 204L150 330L118 330Z"/><path d="M272 120L296 158L312 146L340 190L316 330L272 330Z"/></g>'   // lado en sombra
+      + '<path fill="none" stroke="#6f87a6" stroke-opacity=".3" stroke-width="1.1" stroke-linecap="round" d="M126 178L131 216M137 178L146 232M284 160L289 212M297 160L307 228M254 152L246 196M106 178L100 214"/>'   // quebradas
+      + '<path fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" d="M92 196L118 156M226 190L254 150L272 120"/>'   // filo iluminado
+      + '<g fill="url(#ipNieve)"><path d="M118 156L136 176L128 172L122 182L112 172L104 178Z"/><path d="M272 120L296 158L286 152L278 164L268 150L256 158L254 150Z"/><path d="M92 196L104 206L96 204L90 212L80 204Z"/><path d="M226 190L238 206L230 202L224 212L214 204Z"/></g>'
       + '<g class="ip-bruma b1"><rect x="-20" y="236" width="430" height="70" fill="url(#ipBruma)"/></g>'
-      + '<path fill="' + p.medio + '" d="M0 330 C40 296 90 288 140 304 C190 320 232 286 290 282 C330 280 362 296 390 310 L390 380 L0 380Z"/>'
-      + '<path fill="' + p.cerro + '" d="' + copas(318, -6, 400, 24, 9, 11) + '"/>'
-      + '<g class="ip-bruma b2"><rect x="-20" y="288" width="430" height="64" fill="url(#ipBruma)"/></g>';
+      + '<path fill="' + p.medio + '" d="' + cresta(rA, -6, 396, 400) + '"/>'
+      + copasR(rA, -6, 396, 11, 6, 11, 9, p.cerro, '#a4cfa2')
+      + '<g class="ip-bruma b2"><rect x="-20" y="288" width="430" height="64" fill="url(#ipBruma)"/></g>'
+      + '<path fill="#6f9e86" d="' + cresta(rB, -6, 396, 430) + '"/>' + copasR(rB, -6, 396, 7, 9, 15, 11, '#4d8568', '#9cc9a0')   // segunda fila: cerros verdes más cerca
+      + '<path fill="none" stroke="#fff" stroke-opacity=".3" stroke-width="1.2" d="' + filo(rB, -6, 396) + '"/>'
+      + capilla(312, f(rB(312)) + 5, 1.2, franja()) + copasR(rB, 284, 289, 3, 9, 11, 20, '#4d8568', '#9cc9a0') + copasR(rB, 340, 345, 5, 8, 10, 20, '#4d8568', '#9cc9a0');
   }
 
   function colinas(lugar, p) {
+    const rim = (d) => '<path fill="none" stroke="#fff" stroke-opacity=".4" stroke-width="1.6" stroke-linecap="round" d="' + d + '"/>';
+    const luz = (cx, cy, rx) => '<ellipse cx="' + cx + '" cy="' + cy + '" rx="' + rx + '" ry="' + f(rx * .14) + '" fill="' + p.bruma + '" opacity=".16" filter="url(#ipSuave)"/>';   // charco de luz sobre el pasto
+    const cola = ' L390 ' + H + ' L0 ' + H + 'Z';
     if (lugar === 'costa') {
-      return ''
-        + '<path fill="url(#ipC2)" d="M0 506 C80 488 160 500 240 494 C310 490 356 496 390 500 L390 ' + H + ' L0 ' + H + 'Z"/>'
-        + '<path fill="url(#ipC3)" d="M0 600 C70 584 140 596 210 588 C290 580 340 590 390 596 L390 ' + H + ' L0 ' + H + 'Z"/>';
+      const a = 'M0 506C80 488 160 500 240 494C310 490 356 496 390 500', b = 'M0 600C70 584 140 596 210 588C290 580 340 590 390 596';
+      return '<path fill="url(#ipC2)" d="' + a + cola + '"/>' + rim(a) + ondas(10, 380, 520, 590, 8, 13, p.suelo, .22) + luz(120, 540, 100)
+        + '<path fill="url(#ipC3)" d="' + b + cola + '"/>' + rim(b) + ondas(10, 380, 612, 700, 8, 17, p.suelo, .22);
     }
-    return '<path fill="url(#ipC1)" d="M0 392 C60 366 130 378 200 372 C270 366 330 372 390 382 L390 ' + H + ' L0 ' + H + 'Z"/>'
-      + '<path fill="url(#ipC2)" d="M0 452 C80 424 150 444 230 436 C300 428 350 436 390 446 L390 ' + H + ' L0 ' + H + 'Z"/>'
-      + '<path fill="url(#ipC3)" d="M0 540 C70 516 150 532 230 524 C300 516 350 526 390 534 L390 ' + H + ' L0 ' + H + 'Z"/>';
+    const a = 'M0 392C60 366 130 378 200 372C270 366 330 372 390 382', b = 'M0 452C80 424 150 444 230 436C300 428 350 436 390 446', c = 'M0 540C70 516 150 532 230 524C300 516 350 526 390 534';
+    return '<path fill="url(#ipC1)" d="' + a + cola + '"/>' + rim(a) + luz(260, 420, 120)
+      + '<path fill="url(#ipC2)" d="' + b + cola + '"/>' + rim(b) + luz(110, 500, 110) + (lugar === 'desierto' ? ondas(10, 380, 462, 520, 8, 21, p.suelo, .2) : '')
+      + '<path fill="url(#ipC3)" d="' + c + cola + '"/>' + rim(c) + luz(280, 590, 120);
+  }
+
+  // F1226 · Fase 4: suelo y primer plano. Piezas de detalle (flores, hongos, rocas, conchas) en los bordes; el centro queda libre para el árbol.
+  const pet = (n, rx, ry, off, col, op) => { let o = ''; for (let i = 0; i < n; i++) o += '<ellipse cx="0" cy="' + -off + '" rx="' + rx + '" ry="' + ry + '" transform="rotate(' + f(i * 360 / n) + ')" fill="' + col + '"' + (op ? ' opacity="' + op + '"' : '') + '/>'; return o; };
+  const flor6 = (x, y, k, c1, c2, c3) => '<g transform="translate(' + x + ' ' + y + ') scale(' + k + ')">' + pet(6, 4.2, 8.5, 8, c1) + pet(6, 2, 5, 7, c2, .85) + '<circle r="3.4" fill="' + c3 + '"/><circle cx="-1" cy="-1" r="1.1" fill="#fff" opacity=".6"/></g>';
+  const tallo = (x0, y0, x1, y1, col, w) => '<path d="M' + x0 + ' ' + y0 + 'Q' + f(x0 + (x1 - x0) * .15) + ' ' + f((y0 + y1) / 2) + ' ' + x1 + ' ' + y1 + '" fill="none" stroke="' + col + '" stroke-width="' + (w || 1.6) + '" stroke-linecap="round"/>';
+  const hojaF = (x, y, l, r, c) => '<path transform="translate(' + x + ' ' + y + ') rotate(' + r + ')" d="M0 0Q' + f(l * .3) + ' ' + f(-l * .22) + ' ' + l + ' 0Q' + f(l * .3) + ' ' + f(l * .2) + ' 0 0Z" fill="' + c + '"/>';
+  const roca = (cx, cy, rx, ry, c1, c2, musgo) => '<g transform="translate(' + cx + ' ' + cy + ')">'
+    + '<ellipse cx="' + f(rx * .1) + '" cy="1" rx="' + f(rx * 1.1) + '" ry="' + f(ry * .22) + '" fill="#10200f" opacity=".22"/>'
+    + '<path fill="' + c1 + '" d="M' + -rx + ' 0C' + -rx + ' ' + f(-ry * 1.1) + ' ' + f(rx * .2) + ' ' + f(-ry * 1.5) + ' ' + f(rx * .8) + ' ' + f(-ry * .8) + 'C' + f(rx * 1.05) + ' ' + f(-ry * .4) + ' ' + rx + ' 0 ' + rx + ' 0Z"/>'
+    + '<path fill="' + c2 + '" opacity=".45" d="M' + f(rx * .2) + ' 0C' + f(rx * .3) + ' ' + f(-ry * .9) + ' ' + f(rx * .7) + ' ' + f(-ry * .95) + ' ' + f(rx * .8) + ' ' + f(-ry * .8) + 'C' + f(rx * 1.05) + ' ' + f(-ry * .4) + ' ' + rx + ' 0 ' + rx + ' 0Z"/>'
+    + '<ellipse cx="' + f(-rx * .35) + '" cy="' + f(-ry * .78) + '" rx="' + f(rx * .3) + '" ry="' + f(ry * .13) + '" fill="#fff" opacity=".4" transform="rotate(-18 ' + f(-rx * .35) + ' ' + f(-ry * .78) + ')"/>'
+    + (musgo ? '<path fill="' + musgo + '" d="M' + f(-rx * .72) + ' ' + f(-ry * .5) + 'C' + f(-rx * .5) + ' ' + f(-ry * 1.38) + ' ' + f(rx * .3) + ' ' + f(-ry * 1.62) + ' ' + f(rx * .72) + ' ' + f(-ry * .95) + 'C' + f(rx * .3) + ' ' + f(-ry * 1.12) + ' ' + f(-rx * .3) + ' ' + f(-ry * 1.05) + ' ' + f(-rx * .72) + ' ' + f(-ry * .5) + 'Z"/>' : '') + '</g>';
+  const hongo = (x, y, k) => '<g transform="translate(' + x + ' ' + y + ') scale(' + k + ')"><path d="M-2.4 0L-3.2-9Q0-11 3.2-9L2.4 0Z" fill="#efe3c8"/><path d="M-13-9Q-13-23 0-23Q13-23 13-9Q0-6-13-9Z" fill="#c8362f"/><path d="M-13-9Q0-6 13-9Q0-4-13-9Z" fill="#8f1f1c" opacity=".5"/><ellipse cx="-5" cy="-18" rx="4" ry="2" fill="#fff" opacity=".28"/><circle cx="-4" cy="-16" r="1.8" fill="#fff" opacity=".92"/><circle cx="4.5" cy="-14" r="1.4" fill="#fff" opacity=".92"/><circle cx="0" cy="-20" r="1.1" fill="#fff"/></g>';
+  const campana = (x, y, k, r) => '<g transform="translate(' + x + ' ' + y + ') rotate(' + r + ') scale(' + k + ')"><path d="M0 0C-3 5-10 11-12 22L-14 25Q0 30 14 25L12 22C10 11 3 5 0 0Z" fill="#c9213f"/><path d="M-4 6C-8 12-10 18-11 24" stroke="#f26b86" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".85"/><path d="M-14 25Q0 31 14 25" fill="none" stroke="#fbd0d8" stroke-width="2.4" stroke-linecap="round"/><path d="M-3 26V33M0 27V35M3 26V33" stroke="#f3d46b" stroke-width="1" stroke-linecap="round"/><g fill="#f3d46b"><circle cx="-3" cy="33" r="1.1"/><circle cx="0" cy="35" r="1.1"/><circle cx="3" cy="33" r="1.1"/></g></g>';
+  const concha = (x, y, k, r, c1, c2) => '<g transform="translate(' + x + ' ' + y + ') rotate(' + r + ') scale(' + k + ')"><path d="M0 0L-15-17Q-8-27 0-26Q8-27 15-17Z" fill="' + c1 + '"/><path d="M0 0L-15-17M0 0L-9-23M0 0L0-26M0 0L9-23M0 0L15-17" stroke="' + c2 + '" stroke-width="1" fill="none" opacity=".7"/><path d="M-5 0H5L3 3.4H-3Z" fill="' + c2 + '"/><path d="M-12-18Q0-23 12-18" stroke="#fff" stroke-opacity=".55" fill="none"/></g>';
+  const estrellaMar = (x, y, k, r, c) => { let d = '', pts = ''; for (let i = 0; i < 10; i++) { const a = (i * 36 - 90) * Math.PI / 180, rr = i % 2 ? 6.5 : 17; d += (i ? 'L' : 'M') + f(Math.cos(a) * rr) + ' ' + f(Math.sin(a) * rr); }
+    for (let i = 0; i < 5; i++) { const a = (i * 72 - 90) * Math.PI / 180; pts += '<circle cx="' + f(Math.cos(a) * 9) + '" cy="' + f(Math.sin(a) * 9) + '" r="1.1"/><circle cx="' + f(Math.cos(a) * 13) + '" cy="' + f(Math.sin(a) * 13) + '" r=".9"/>'; }
+    return '<g transform="translate(' + x + ' ' + y + ') rotate(' + r + ') scale(' + k + ')"><path d="' + d + 'Z" fill="' + c + '" stroke="#b5502f" stroke-width=".9" stroke-linejoin="round"/><g fill="#ffe3b8" opacity=".85">' + pts + '</g><circle r="2" fill="#ffe3b8"/></g>'; };
+  const piedras = (x, y, sem, c1, c2) => { const R = azar(sem); let o = ''; for (let i = 0; i < 7; i++) { const dx = (R() - .5) * 46, dy = (R() - .5) * 16, rx = 3 + R() * 5; o += '<ellipse cx="' + f(x + dx) + '" cy="' + f(y + dy) + '" rx="' + f(rx) + '" ry="' + f(rx * .66) + '" fill="' + (i % 2 ? c1 : c2) + '"/><ellipse cx="' + f(x + dx - rx * .3) + '" cy="' + f(y + dy - rx * .25) + '" rx="' + f(rx * .4) + '" ry="' + f(rx * .2) + '" fill="#fff" opacity=".45"/>'; } return o; };
+  const ananuca = (x, y, k) => '<g class="ip-fl" transform="translate(' + x + ' ' + y + ') scale(' + k + ')">'
+    + hojaF(0, 0, 40, -128, '#78a04a') + hojaF(2, 0, 46, -98, '#6a9442') + hojaF(-2, 0, 36, -158, '#86ad54')
+    + [[-16, -44, .85], [2, -62, 1.1], [17, -40, .8], [-5, -28, .65], [24, -57, .72]].map((q) => tallo(0, 0, q[0], q[1], '#6b8a3a', 1.5) + flor6(q[0], q[1], q[2], '#e8452c', '#f6a02a', '#3a1f12')).join('') + '</g>';
+  const cactus = (x, y) => '<g transform="translate(' + x + ' ' + y + ')">'
+    + '<path fill="#5a8a48" d="M-14 230V16Q-14 0 0 0Q14 0 14 16V230Z"/><path fill="#8ebd6a" opacity=".5" d="M-14 230V16Q-14 0 -6 0Q-9 40-8 230Z"/><path fill="#33602c" opacity=".35" d="M14 230V16Q14 0 6 0Q9 40 8 230Z"/>'
+    + '<path fill="none" stroke="#3b6b34" stroke-opacity=".55" stroke-width="1.2" d="M-6 6V230M0 2V230M6 6V230"/>'
+    + '<path fill="#5a8a48" d="M-14 150H-34Q-46 150 -46 138V104Q-46 94 -36 94Q-28 94 -28 104V130H-14Z"/><path fill="#8ebd6a" opacity=".45" d="M-46 138V104Q-46 94 -40 94Q-42 120-41 150H-34Q-46 150 -46 138Z"/>'
+    + '<path fill="none" stroke="#e9d9a8" stroke-opacity=".7" stroke-width="1" stroke-linecap="round" d="M-9 22l-3-2M9 34l3-2M-9 58l-3-2M9 80l3-2M-9 104l-3-2M9 126l3-2M-9 150l-3-2M9 176l3-2M-9 200l-3-2"/>'
+    + '<ellipse cx="0" cy="2" rx="9" ry="5" fill="#f08fb0"/><ellipse cx="0" cy="1" rx="5" ry="3" fill="#ffd0e0"/></g>';
+  const DES2 = '<defs><filter id="ipDes2" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation=".6"/></filter></defs>';
+  function decor(lugar, p) {
+    if (lugar === 'bosque') {
+      const vid = '<g class="ip-fl v">' + tallo(-8, 500, 24, 560, '#3b6b3f', 3).replace('Q', 'C').replace(/ (\d+) (\d+)"/, ' 44 576 24 626"')
+        + '<path d="M-8 500C34 530 44 576 24 626C12 656 30 690 20 726" fill="none" stroke="#3b6b3f" stroke-width="3" stroke-linecap="round"/>'
+        + hojaF(30, 536, 22, 20, '#4a8a4c') + hojaF(40, 582, 24, -30, '#5a9a58') + hojaF(24, 636, 22, 24, '#4a8a4c') + hojaF(26, 690, 20, -26, '#5a9a58') + hojaF(18, 716, 18, 30, '#4a8a4c')
+        + '<path d="M34 540L36 552M38 586L36 600M23 640L26 654" stroke="#3b6b3f" stroke-width="1.4" stroke-linecap="round"/>'
+        + campana(36, 552, 1, 8) + campana(36, 600, .85, -10) + campana(26, 654, .95, 6) + '</g>';
+      return DES2 + '<g filter="url(#ipDes2)">' + roca(366, 748, 52, 32, '#7f8c82', '#4c5a52', '#6faa59') + roca(46, 746, 38, 22, '#8a968b', '#566359', '#7bb562')
+        + hongo(330, 748, 1.35) + hongo(352, 752, .95) + hongo(314, 754, .8) + vid
+        + '<g fill="#d8a64a" opacity=".85"><ellipse cx="96" cy="724" rx="6" ry="2.8" transform="rotate(24 96 724)"/><ellipse cx="300" cy="712" rx="5" ry="2.4" transform="rotate(-20 300 712)"/></g><g fill="#c97a3a" opacity=".8"><ellipse cx="74" cy="752" rx="5" ry="2.4" transform="rotate(-30 74 752)"/></g></g>';
+    }
+    if (lugar === 'desierto') {
+      return DES2 + '<g filter="url(#ipDes2)">' + cactus(374, 560) + roca(64, 750, 40, 24, '#b07a4c', '#7a4a28') + roca(316, 752, 30, 17, '#bd8a5a', '#85532f')
+        + ananuca(42, 744, 1) + ananuca(338, 742, .9) + ananuca(104, 756, .55) + piedras(190, 760, 5, '#c9a173', '#a77a4c') + '</g>';
+    }
+    return DES2 + '<g filter="url(#ipDes2)">'
+      + '<path d="M-12 746Q36 724 98 738" fill="none" stroke="#8d7456" stroke-width="11" stroke-linecap="round"/><path d="M-10 742Q36 721 96 734" fill="none" stroke="#b8a07e" stroke-width="3" stroke-linecap="round" opacity=".7"/><circle cx="24" cy="735" r="2.6" fill="#6f5a40"/>'
+      + roca(366, 748, 50, 30, '#7d8d94', '#46565f') + '<ellipse cx="350" cy="750" rx="44" ry="4" fill="#fff" opacity=".45"/>'
+      + estrellaMar(52, 712, 1.1, -18, '#f08a4b') + estrellaMar(344, 700, .7, 30, '#e8704a') + concha(318, 730, 1.25, 14, '#f3dcc4', '#c9976b') + concha(104, 752, .85, -34, '#f6e4d2', '#d0a07a')
+      + piedras(60, 758, 3, '#8f9aa0', '#c9c2b2') + piedras(220, 764, 8, '#a3a8aa', '#d6cfbf') + '</g>';
   }
 
   // Primer plano: follaje grande, oscuro y desenfocado que enmarca la pantalla (profundidad de campo)
@@ -120,7 +266,36 @@
         + '<path fill="' + p.follaje2 + '" opacity=".9" d="' + pasto(-6, 720, 12, 120, 1.3, 3) + pasto(398, 704, 12, 120, 1.3, 8) + '"/>'
         + '<ellipse cx="64" cy="850" rx="58" ry="20" fill="#7a6a58"/><ellipse cx="338" cy="852" rx="66" ry="22" fill="#6f6050"/></g>';
     }
-    return g;
+    return g + decor(lugar, p);
+  }
+
+  // F1227 · Fase 5: vida y movimiento (mariposas, gaviotas, luciérnagas, estrella fugaz, hojas y pétalos) y tinte según la hora.
+  const ALA = (c1, c2) => '<path d="M0-1C4-13 17-16 18-6C18 1 9 3 0 0Z" fill="' + c1 + '" stroke="#2a1d3a" stroke-opacity=".5" stroke-width=".7"/><path d="M0 1C8 3 15 8 11 13C7 15 2 9 0 4Z" fill="' + c1 + '" opacity=".92" stroke="#2a1d3a" stroke-opacity=".45" stroke-width=".7"/><circle cx="11.5" cy="-7" r="2.3" fill="' + c2 + '"/><circle cx="8" cy="8" r="1.6" fill="' + c2 + '"/><path d="M3-3C8-9 13-10 15-7" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width=".8"/>';
+  const mariposa = (x, y, k, c1, c2, cl) => '<g transform="translate(' + x + ' ' + y + ') scale(' + k + ')"><g class="ip-mp ' + cl + '"><g class="ip-ala">' + ALA(c1, c2) + '<g transform="scale(-1 1)">' + ALA(c1, c2) + '</g></g>'
+    + '<ellipse cx="0" cy="1" rx="1.4" ry="6.4" fill="#2a1d3a"/><path d="M0-5Q-3-10-6-11M0-5Q3-10 6-11" stroke="#2a1d3a" stroke-width=".7" fill="none" stroke-linecap="round"/></g></g>';
+  const gaviota = (x, y, k, cl) => '<g transform="translate(' + x + ' ' + y + ') scale(' + k + ')"><g class="ip-ave ' + cl + '"><path transform="translate(0 1.6)" d="M0 0Q6-8 12 0Q18-8 24 0" fill="none" stroke="#6f7f8f" stroke-opacity=".45" stroke-width="2.2" stroke-linecap="round"/><path d="M0 0Q6-8 12 0Q18-8 24 0" fill="none" stroke="#f6f9fb" stroke-width="2" stroke-linecap="round"/></g></g>';
+  function vida(lugar, fr) {
+    const noche = fr === 'noche', R = azar(lugar.length * 211 + 5); let o = '', bk = '';
+    for (let i = 0; i < 9; i++) { const x = 15 + R() * 360, y = 380 + R() * 330, r = 7 + R() * 9; bk += '<circle cx="' + f(x) + '" cy="' + f(y) + '" r="' + f(r) + '" fill="#fff" opacity=".1"/><circle cx="' + f(x) + '" cy="' + f(y) + '" r="' + f(r) + '" fill="none" stroke="#fff" stroke-opacity=".16" stroke-width=".8"/>'; }
+    o += '<g class="ip-bok">' + bk + '</g>';
+    if (noche) {
+      for (let i = 0; i < 16; i++) o += '<g transform="translate(' + f(20 + R() * 350) + ' ' + f(380 + R() * 340) + ')"><g class="ip-lu l' + (i % 3 + 1) + '"><circle r="9" fill="url(#ipHalo)"/><circle r="1.7" fill="#fff6b0"/></g></g>';
+      o += '<defs><linearGradient id="ipFug" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>'
+        + '<g transform="translate(300 70)"><g class="ip-fug"><path d="M0 0L-64 24" stroke="url(#ipFug)" stroke-width="1.8" stroke-linecap="round"/><circle r="1.9" fill="#fff"/></g></g>';
+      return o;
+    }
+    if (lugar === 'costa') o += gaviota(66, 300, 1.1, 'a1') + gaviota(104, 322, .75, 'a2') + gaviota(292, 276, .9, 'a3');
+    else {
+      const M = lugar === 'desierto' ? [[86, 540, 1.6, '#f6a41f', '#fff0b0'], [310, 590, 1.3, '#e8452c', '#ffd0a8'], [232, 480, 1.05, '#ffd23c', '#fff7c0']] : [[74, 520, 1.65, '#3d7fd6', '#bfe0ff'], [318, 610, 1.3, '#f08a2c', '#ffe2a8'], [236, 470, 1.05, '#8a5ad6', '#e6d6ff']];
+      M.forEach((q, i) => { o += mariposa(q[0], q[1], q[2], q[3], q[4], 'm' + (i + 1)); });
+      const C = lugar === 'desierto' ? ['#e8452c', '#f6a02a', '#e8452c', '#f6a02a', '#ffd23c', '#e8452c'] : ['#d8a64a', '#7fb25a', '#c97a3a', '#d8a64a', '#7fb25a', '#e0b85c'];
+      for (let i = 0; i < 6; i++) o += '<g transform="translate(' + f(24 + R() * 340) + ' ' + f(300 + R() * 160) + ')"><g class="ip-hc h' + (i + 1) + '">' + hojaF(0, 0, lugar === 'desierto' ? 7 : 11, 20 + i * 40, C[i]) + '</g></g>';
+    }
+    return o;
+  }
+  function tinte(fr) {   // un velo de color según la hora, muy suave para no quitar legibilidad al texto
+    const t = { noche: ['#4e5bb0', .2], tarde: ['#ff9a5a', .1], alba: ['#ffb3c6', .09] }[fr];
+    return t ? '<rect width="' + W + '" height="' + H + '" fill="' + t[0] + '" opacity="' + t[1] + '" class="ip-tinte ip-t-' + fr + '"/>' : '';
   }
 
   // Partículas en tres grupos (luciérnagas, polen, destellos de sal), cada grupo se mueve como una sola capa
@@ -135,15 +310,37 @@
     return out;
   }
 
-  function nubes() {
-    const nube = (x, y, k) => '<g transform="translate(' + x + ' ' + y + ') scale(' + k + ')"><ellipse cx="0" cy="0" rx="62" ry="13"/><ellipse cx="-26" cy="-9" rx="30" ry="14"/><ellipse cx="14" cy="-14" rx="34" ry="16"/><ellipse cx="42" cy="-4" rx="26" ry="10"/></g>';
-    return '<g class="ip-nube n1" fill="#fff" opacity=".62" filter="url(#ipSuave)">' + nube(70, 196, 1) + '</g>'
-      + '<g class="ip-nube n2" fill="#fff" opacity=".5" filter="url(#ipSuave)">' + nube(250, 262, .8) + '</g>'
-      + '<g class="ip-nube n3" fill="#fff" opacity=".42" filter="url(#ipSuave)">' + nube(330, 150, .6) + '</g>';
+  // F1223 · Fase 2 del cielo: nubes con volumen (cuerpo claro sobre una sombra tintada por la hora), cirros, estrellas y aves lejanas.
+  const NUBE = {
+    noche: ['#f2edff', '#b9b3dd'], alba: ['#fff5e6', '#f0c6bb'], manana: ['#ffffff', '#c8dcec'],
+    dia: ['#ffffff', '#c1d8ec'], tarde: ['#fff1de', '#e8b6a6']
+  };
+  function nubes(fr) {
+    const [luz, som] = NUBE[fr] || NUBE.dia;
+    const cum = (x, y, k, op, cl) => '<g class="ip-nube ' + cl + '" opacity="' + op + '" filter="url(#ipNubeF)"><g transform="translate(' + x + ' ' + y + ') scale(' + k + ')">'
+      + '<path fill="' + som + '" d="M-74 10C-88 10-90-5-74-8-74-24-50-29-41-16-37-38-3-43 8-23 21-36 50-30 50-10 68-12 80-3 73 10Z"/>'
+      + '<path fill="' + luz + '" d="M-72 3C-85 3-87-10-72-13-72-27-50-31-41-20-37-40-4-45 7-26 20-38 47-32 47-14 64-15 75-7 69 3Z"/>'
+      + '<ellipse cx="-8" cy="-31" rx="16" ry="6" fill="#fff" opacity=".7"/></g></g>';
+    const cirro = (d, w, op) => '<path d="' + d + '" fill="none" stroke="' + luz + '" stroke-width="' + w + '" stroke-linecap="round" opacity="' + op + '"/>';
+    return '<g filter="url(#ipCirroF)">' + cirro('M-10 96C60 84 140 90 230 74', 4, .38) + cirro('M120 124C200 114 290 118 400 102', 3, .3) + cirro('M-20 150C40 144 90 146 150 138', 2.4, .28) + '</g>'
+      + cum(62, 204, 1, .82, 'n1') + cum(262, 268, .78, .7, 'n2') + cum(336, 148, .56, .66, 'n3') + cum(150, 252, .5, .5, 'n4');
+  }
+  function estrellas(lugar) {
+    const R = azar(lugar.length * 131 + 11); let a = '', b = '', c = '', br = '';
+    for (let i = 0; i < 38; i++) {
+      const x = 8 + R() * 372, y = 14 + R() * 250, r = .6 + R() * 1.1, e = '<circle cx="' + f(x) + '" cy="' + f(y) + '" r="' + f(r) + '"/>';
+      if (i % 3 === 0) a += e; else if (i % 3 === 1) b += e; else c += e;
+      if (i % 9 === 0) br += '<g transform="translate(' + f(x) + ' ' + f(y) + ')"><path d="M0-5V5M-5 0H5" stroke="#fffbe8" stroke-width=".7" stroke-linecap="round" opacity=".8"/><circle r="6" fill="url(#ipHalo)" opacity=".5"/></g>';
+    }
+    return '<g class="ip-estr" fill="#fffdf2"><g class="t1">' + a + '</g><g class="t2">' + b + '</g><g class="t3">' + c + '</g>' + br + '</g>';
+  }
+  function aves() {
+    const v = (x, y, k, cl) => '<g class="ip-ave ' + cl + '"><path transform="translate(' + x + ' ' + y + ') scale(' + k + ')" d="M0 0Q5-6 10 0Q15-6 20 0" fill="none" stroke="#4a5a6a" stroke-width="1.4" stroke-linecap="round" opacity=".6"/></g>';
+    return v(58, 128, 1, 'a1') + v(86, 116, .7, 'a2') + v(300, 104, .8, 'a3');
   }
 
   function construir(lugar) {
-    const fr = franja(), c = CIELO[fr], p = LUGAR[lugar] || LUGAR.bosque, sx = lugar === 'costa' ? 268 : lugar === 'bosque' ? 200 : 292, sy = lugar === 'desierto' ? 300 : lugar === 'costa' ? 262 : 192;
+    const fr = franja(), c = CIELO[fr], p = LUGAR[lugar] || LUGAR.bosque, sx = lugar === 'costa' ? 268 : lugar === 'bosque' ? 200 : 292, sy = fr === 'noche' ? 188 : lugar === 'desierto' ? 300 : lugar === 'costa' ? 262 : 192;   // F1223: de noche la luna sube y se ve sobre el paisaje
     const sc = lugar === 'desierto' ? 34 : 26, noche = fr === 'noche';
     let rayos = ''; [[-210, 560, 40], [-120, 640, 30], [-30, 700, 46], [60, 720, 28], [150, 700, 36]].forEach((q, i) => { rayos += '<path d="M' + sx + ' ' + sy + 'L' + (sx + q[0] - q[2]) + ' ' + q[1] + 'L' + (sx + q[0] + q[2]) + ' ' + q[1] + 'Z"/>'; });
     return '<svg class="ip-svg" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">'
@@ -159,6 +356,10 @@
       + '<radialGradient id="ipVig" cx=".5" cy=".45" r=".78"><stop offset=".55" stop-color="#1a1208" stop-opacity="0"/><stop offset="1" stop-color="#1a1208" stop-opacity=".34"/></radialGradient>'
       + '<linearGradient id="ipPie" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14231a" stop-opacity="0"/><stop offset="1" stop-color="#14231a" stop-opacity=".14"/></linearGradient>'
       + '<filter id="ipDesenf" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="1.8"/></filter>'
+      + '<radialGradient id="ipHalo"><stop offset="0" stop-color="' + c.luz + '" stop-opacity=".75"/><stop offset="1" stop-color="' + c.luz + '" stop-opacity="0"/></radialGradient>'
+      + '<radialGradient id="ipDisco" cx=".38" cy=".34" r=".8"><stop offset="0" stop-color="#fff"/><stop offset=".55" stop-color="' + c.disco + '"/><stop offset="1" stop-color="' + (c.luna ? '#e1d8ee' : c.luz) + '"/></radialGradient>'
+      + '<filter id="ipNubeF" x="-15%" y="-40%" width="130%" height="180%"><feGaussianBlur stdDeviation="1.4"/></filter>'
+      + '<filter id="ipCirroF" x="-10%" y="-100%" width="120%" height="300%"><feGaussianBlur stdDeviation="2.2"/></filter>'
       + '<filter id="ipSuave" x="-30%" y="-80%" width="160%" height="260%"><feGaussianBlur stdDeviation="5"/></filter>'
       + '<filter id="ipRayoF" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="14"/></filter>'
       + '<filter id="ipGrano" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 .2  0 0 0 0 .15  0 0 0 0 .1  0 0 0 .55 -.18"/></filter>'
@@ -166,13 +367,16 @@
       + '<rect width="' + W + '" height="' + H + '" fill="url(#ipCielo)"/>'
       + '<rect width="' + W + '" height="' + H + '" fill="url(#ipLuz)"/>'
       + '<g class="ip-rayos" fill="url(#ipRayo)" filter="url(#ipRayoF)">' + rayos + '</g>'
-      + '<g class="ip-astro"><circle cx="' + sx + '" cy="' + sy + '" r="' + (sc * 1.9) + '" fill="' + c.luz + '" opacity=".35"/><circle cx="' + sx + '" cy="' + sy + '" r="' + sc + '" fill="' + c.disco + '"/>' + (c.luna ? '<circle cx="' + (sx - 9) + '" cy="' + (sy - 6) + '" r="5" fill="#e9dfcf" opacity=".6"/><circle cx="' + (sx + 8) + '" cy="' + (sy + 8) + '" r="3.2" fill="#e9dfcf" opacity=".55"/>' : '') + '</g>'
-      + nubes()
+      + (noche ? estrellas(lugar) : '')
+      + '<g class="ip-astro"><circle cx="' + sx + '" cy="' + sy + '" r="' + (sc * 4.2) + '" fill="url(#ipHalo)" opacity=".55"/><circle cx="' + sx + '" cy="' + sy + '" r="' + (sc * 1.9) + '" fill="url(#ipHalo)" opacity=".8"/><circle cx="' + sx + '" cy="' + sy + '" r="' + (sc * 1.35) + '" fill="none" stroke="' + c.luz + '" stroke-width="1.2" opacity=".5"/><circle cx="' + sx + '" cy="' + sy + '" r="' + sc + '" fill="url(#ipDisco)"/>' + (c.luna ? '<circle cx="' + (sx - 9) + '" cy="' + (sy - 6) + '" r="5.5" fill="#d9cfe6" opacity=".55"/><circle cx="' + (sx + 8) + '" cy="' + (sy + 8) + '" r="3.4" fill="#d9cfe6" opacity=".5"/><circle cx="' + (sx + 10) + '" cy="' + (sy - 10) + '" r="2.2" fill="#d9cfe6" opacity=".45"/>' : '') + '</g>'
+      + nubes(fr) + (noche ? '' : aves())
       + paisaje(lugar, p)
       + colinas(lugar, p)
       + '<rect y="560" width="' + W + '" height="' + (H - 560) + '" fill="url(#ipPie)"/>'
       + particulas(lugar, c.luna)
+      + vida(lugar, fr)
       + primerPlano(lugar, p)
+      + tinte(fr)
       + '<rect width="' + W + '" height="' + H + '" fill="url(#ipVig)"/>'
       + '<rect width="' + W + '" height="' + H + '" filter="url(#ipGrano)" opacity=".5" class="ip-grano"/>'
       + '</svg>';

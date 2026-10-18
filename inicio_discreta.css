@@ -1,0 +1,22 @@
+/* F1223 · Inicio por fases · Fase 1: barra de accesos discreta.
+   Antes: tira ancha de cristal dorado con texto, centrada y con sombra. Ahora: cuatro iconos pequeños,
+   casi transparentes, en la esquina superior derecha (frente al botón de menú), sin texto ni sombra.
+   Se carga después de inicio_barra.css e inicio_premium.css. Los nombres siguen en aria-label. */
+html .il-barra{justify-content:flex-end;padding:calc(12px + var(--sa-t,0px)) calc(12px + var(--sa-r,0px)) 0 12px}
+html .il-barra .il-barra-in,html .ip-con-fondo .il-barra-in,html[data-eco="2"] .ip-con-fondo .il-barra-in,html[data-eco="2"] .il-barra-in{
+  width:auto;padding:2px;gap:0;border-radius:22px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);box-shadow:none;
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+html .ip-con-fondo .il-barra-in::before{display:none}
+html .ip-con-fondo .ib-bt,html .ib-bt{flex:none;width:40px;min-height:40px;height:40px;padding:0;gap:0;border-radius:50%;color:rgba(58,42,15,.7)}
+html .ib-bt+.ib-bt::before{display:none}
+html .ib-bt .ib-t{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+html .ip-con-fondo .ib-ic,html .ib-ic{width:auto;height:auto;background:none;border-radius:0;box-shadow:none;color:rgba(58,42,15,.66)}
+html .ib-tri .ib-ic,html .ib-viv .ib-ic,html .ib-jue .ib-ic{color:rgba(58,42,15,.66)}
+html .ib-bt:active{background:rgba(201,162,74,.2)}
+html .ip-con-fondo .ib-bt.nuevo::after,html .ib-bt.nuevo::after{top:7px;left:auto;right:7px;width:7px;height:7px;box-shadow:0 0 0 1.5px rgba(255,255,255,.7)}
+@media (prefers-color-scheme:dark){
+  html .il-barra .il-barra-in,html .ip-con-fondo .il-barra-in,html[data-eco="2"] .ip-con-fondo .il-barra-in,html[data-eco="2"] .il-barra-in{background:rgba(20,16,10,.26);border-color:rgba(255,255,255,.14);box-shadow:none}
+  html .ip-con-fondo .ib-bt,html .ib-bt{color:rgba(246,236,212,.78)}
+  html .ip-con-fondo .ib-ic,html .ib-ic,html .ib-tri .ib-ic,html .ib-viv .ib-ic,html .ib-jue .ib-ic{color:rgba(246,236,212,.74);background:none;box-shadow:none}
+  html .ip-con-fondo .ib-bt.nuevo::after,html .ib-bt.nuevo::after{box-shadow:0 0 0 1.5px rgba(20,16,10,.6)}
+}
