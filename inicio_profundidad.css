@@ -1,0 +1,76 @@
+/* F1216 · Inicio: profundidad y acabado premium. Solo transform y opacity se animan; todo queda quieto con
+   Animaciones «Apagadas», Ahorro (data-eco=2) o «reducir movimiento». Sin atributo style (CSP). */
+
+/* ---------- Fondo de varios planos, fijo detrás de todo el Inicio ---------- */
+.inicio-limpio.ip-con-fondo{isolation:isolate}
+.ip-fondo{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;background:#cfe6f2}
+.ip-svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ip-grano{mix-blend-mode:multiply}
+
+/* La escena propia se funde con el paisaje: sin fondo, sin recorte */
+.ip-con-fondo .il-escena{filter:drop-shadow(0 10px 14px rgba(20,40,25,.22))}
+
+/* ---------- Encabezado: más compacto y con luz, para que el árbol respire ---------- */
+.inicio-limpio.il-con-lienzo.ip-con-fondo{gap:2px}
+.ip-con-fondo .il-sal{font-size:.7rem;letter-spacing:.22em;color:#6b4a14;text-shadow:0 1px 8px rgba(255,255,255,.75)}
+.ip-con-fondo .il-hora{text-shadow:0 2px 14px rgba(255,255,255,.7),0 0 2px rgba(255,255,255,.5)}
+.ip-con-fondo #ilHora{font-size:2.35rem;line-height:1}
+.ip-con-fondo .il-frase{min-height:0;font-size:.98rem;line-height:1.32;color:#3b2f1b;text-shadow:0 1px 10px rgba(255,255,255,.8);max-width:20em;margin-left:auto;margin-right:auto}
+
+/* Escena un poco más abajo (antes subía 52–64 px y el árbol pisaba la frase) y datos más justos */
+.inicio-limpio.il-con-lienzo.ip-con-fondo .il-escena{margin-top:-6px;margin-bottom:-30px}
+.ip-con-fondo .il-datos{gap:4px;padding-top:2px}
+.ip-con-fondo .il-franja{margin:2px auto 0;gap:6px}
+.ip-con-fondo .il-guia{font-size:.72rem;white-space:nowrap;font-weight:600;color:#6b480d;margin:2px 0 0;padding:5px 14px;border-radius:999px;background:rgba(255,250,238,.78);border:1px solid rgba(201,162,74,.4);box-shadow:0 4px 12px rgba(40,30,10,.14);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+/* El sol y la luna los dibuja el paisaje de atrás; la escena conserva nubes, lluvia y arcoíris */
+.ip-con-fondo .clima .cl-sol,.ip-con-fondo .clima .cl-luna{display:none}
+
+/* ---------- Piezas de cristal y oro ---------- */
+.ip-con-fondo .il-franja .il-gotas{background:linear-gradient(180deg,rgba(255,255,255,.82),rgba(255,248,232,.62));border:1px solid rgba(201,162,74,.55);box-shadow:0 6px 18px rgba(40,30,10,.18),inset 0 1px 0 rgba(255,255,255,.9);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.ip-con-fondo .il-fila .il-btn-msg{background:linear-gradient(180deg,rgba(255,255,255,.86),rgba(255,247,230,.66));border:1px solid rgba(201,162,74,.5);box-shadow:0 10px 24px rgba(40,30,10,.2),inset 0 1px 0 rgba(255,255,255,.95);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.ip-con-fondo .il-fila .il-btn-msg .il-ic{color:#b8801f;filter:drop-shadow(0 1px 0 rgba(255,255,255,.8))}
+.ip-con-fondo .il-pt{filter:drop-shadow(0 2px 3px rgba(20,40,25,.3))}
+.ip-con-fondo .il-pill{background:linear-gradient(180deg,rgba(255,255,255,.8),rgba(255,247,230,.6));border:1px solid rgba(201,162,74,.5);box-shadow:0 8px 20px rgba(40,30,10,.18),inset 0 1px 0 rgba(255,255,255,.9)}
+
+/* ---------- Movimiento (solo transform y opacity; pocos grupos) ---------- */
+@media (prefers-reduced-motion:no-preference){
+  html:not([data-anim=off]):not([data-eco="2"]) .ip-fondo{animation:ip-entra 1.2s ease-out both}
+  html:not([data-anim=off]):not([data-eco="2"]) .ip-rayos{animation:ip-respira 9s ease-in-out infinite}
+  html:not([data-anim=off]):not([data-eco="2"]) .ip-astro{transform-box:fill-box;transform-origin:center;animation:ip-late 8s ease-in-out infinite}
+  html:not([data-anim=off]):not([data-eco="2"]) .ip-nube{animation:ip-deriva 60s ease-in-out infinite alternate}
+  html:not([data-anim=off]):not([data-eco="2"]) .ip-nube.n2{animation-duration:78s;animation-delay:-20s}
+  html:not([data-anim=off]):not([data-eco="2"]) .ip-nube.n3{animation-duration:95s;animation-delay:-45s}
+  html:not([data-anim=off]):not([data-eco="2"]) .ip-bruma{animation:ip-bruma 28s ease-in-out infinite alternate}
+  html:not([data-anim=off]):not([data-eco="2"]) .ip-bruma.b2{animation-duration:36s;animation-delay:-12s}
+  html:not([data-anim=off]):not([data-eco="2"]) .ip-ola{animation:ip-ola 7s ease-in-out infinite alternate}
+  html:not([data-anim=off]):not([data-eco="2"]) .ip-ola.o2{animation-duration:9s;animation-delay:-3s}
+  html:not([data-anim=off]):not([data-eco="2"]) .ip-part.p1{animation:ip-sube 17s ease-in-out infinite alternate}
+  html:not([data-anim=off]):not([data-eco="2"]) .ip-part.p2{animation:ip-sube 23s ease-in-out -7s infinite alternate}
+  html:not([data-anim=off]):not([data-eco="2"]) .ip-part.p3{animation:ip-sube 29s ease-in-out -13s infinite alternate}
+  html:not([data-anim=off]):not([data-eco="2"]) .ip-fp{transform-box:view-box;transform-origin:50% 100%;animation:ip-brisa 11s ease-in-out infinite alternate}
+}
+@keyframes ip-entra{from{opacity:0}to{opacity:1}}
+@keyframes ip-respira{0%,100%{opacity:.7}50%{opacity:1}}
+@keyframes ip-late{50%{transform:scale(1.05);opacity:.94}}
+@keyframes ip-deriva{from{transform:translateX(-22px)}to{transform:translateX(26px)}}
+@keyframes ip-bruma{from{transform:translateX(-18px);opacity:.75}to{transform:translateX(18px);opacity:1}}
+@keyframes ip-ola{from{transform:translateX(-10px)}to{transform:translateX(10px)}}
+@keyframes ip-sube{0%{transform:translate(-6px,6px);opacity:.55}100%{transform:translate(8px,-14px);opacity:1}}
+@keyframes ip-brisa{from{transform:rotate(-.35deg)}to{transform:rotate(.35deg)}}
+
+/* Modo claro del sistema y contraste alto: el texto del Inicio sigue legible sobre el cielo */
+html[data-contraste="alto"] .ip-fondo::after{content:"";position:absolute;inset:0;background:rgba(255,255,255,.35)}
+
+/* Las colinas propias de la escena toman los colores del paisaje (antes salían grises y lavadas) */
+.inicio-limpio.ip-con-fondo[data-lugar=bosque] .il-escena .col.c1{fill:#8fc07f}
+.inicio-limpio.ip-con-fondo[data-lugar=bosque] .il-escena .col.c2{fill:#79ad6d}
+.inicio-limpio.ip-con-fondo[data-lugar=bosque] .il-escena .col.c3{fill:#63985f}
+.inicio-limpio.ip-con-fondo[data-lugar=desierto] .il-escena .col.c1{fill:#ecc48c}
+.inicio-limpio.ip-con-fondo[data-lugar=desierto] .il-escena .col.c2{fill:#dfaa70}
+.inicio-limpio.ip-con-fondo[data-lugar=desierto] .il-escena .col.c3{fill:#cf9558}
+.inicio-limpio.ip-con-fondo[data-lugar=costa] .il-escena .col.c1{fill:#f4e4bf}
+.inicio-limpio.ip-con-fondo[data-lugar=costa] .il-escena .col.c2{fill:#ecd3a4}
+.inicio-limpio.ip-con-fondo[data-lugar=costa] .il-escena .col.c3{fill:#e0c48c}
+
+/* Día 10: con el botón de compartir, la pista de respirar se oculta para que las fichas queden sobre la barra */
+.inicio-limpio.ip-con-fondo:has(.il-compartir) .il-guia{display:none}
