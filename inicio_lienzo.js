@@ -525,6 +525,7 @@
     const linFondo = !fondoOk ? '' : fondoAct ? '<p class="il-viv-ok2">Tu jardín es <b>' + esc(nomHab(hab)) + '</b>. Lo que plantes y llames aquí se queda aquí.</p>' : '<button type="button" class="btn sec" data-ac="fondo" data-id="' + esc(hab) + '">Poner este fondo en mi jardín</button>';
     const pillsG = '<button type="button" class="il-viv-saldo il-viv-saldo-bt" data-ac="tab" data-id="gotas" aria-label="Ver cómo ganar gotas">' + ic(IC.gota, 16) + saldo + (saldo === 1 ? ' gota' : ' gotas') + '</button>'
     return '<div class="il-viv-cab viv-top"><h3 class="viv-titulo">Vivero</h3><div class="viv-pills">' + pillsG + '</div></div>'
+      + paisajeTarjeta()
       + '<h4 class="viv-paso">1. Elige tu entorno (Hábitat)</h4><div class="viv-habitats" role="group" aria-label="Hábitats del Vivero">' + haba + '</div>' + linFondo
       + '<h4 class="viv-paso">2. Decoraciones para este entorno</h4><div class="viv-filtros" role="group" aria-label="Tipo de decoración">' + pill('flores', 'Plantas') + pill('aves', 'Aves') + pill('paisaje', 'Ambiental') + '</div>'
       + '<div class="il-viv-car viv-grid" role="list" aria-label="Decoraciones del entorno">' + lista.map((i) => tile(tipoV, i)).join('') + '</div>'
@@ -599,38 +600,7 @@
     try { es.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) { /* sin desplazamiento */ }
     later(() => es.classList.remove('camara'), 1900);
   }
-  function ligarViv(cont, mi) {
-    const T = window.TBInicio, bt = $('#ilVivBtn', cont), pn = $('#ilViv', cont); if (!bt || !pn) return;
-    const pinta = (conservar) => { const car = $('.il-viv-car', pn), sl = car ? car.scrollLeft : 0; pn.innerHTML = vivPanel(T.cargar()); const c2 = $('.il-viv-car', pn); if (c2 && conservar) c2.scrollLeft = sl; };
-    const abre = (si) => { vivAbierto = si; pn.hidden = !si; bt.setAttribute('aria-expanded', String(si)); bt.innerHTML = ic(IC.hoja) + (si ? 'Cerrar el vivero' : 'Vivero'); if (si) { pinta(true); if (!quieto()) { pn.classList.remove('entra'); void pn.offsetWidth; pn.classList.add('entra'); } try { pn.scrollIntoView({ behavior: quieto() ? 'auto' : 'smooth', block: 'nearest' }); } catch (e) { /* sin scroll */ } } };
-    bt.onclick = () => { vivMsg = ''; abre(pn.hidden); };
-    pn.onclick = (ev) => {
-      const b = ev.target.closest('[data-ac]'); if (!b || b.disabled) return; const ac = b.getAttribute('data-ac'), tipo = b.getAttribute('data-tipo'), id = b.getAttribute('data-id'); let r;
-      if (ac === 'fondo') { const r = window.TBInicio.elegirTematica(id); if (!r.ok) { vivMsg = 'No se pudo cambiar el fondo.'; pinta(true); return; } vivMsg = 'Tu jardín ahora es el de ' + nomHab(id) + '.'; sonido('suave'); pintar(cont, mi, { repinta: true }); return; }
-      // F1066: tocar un hábitat solo lo muestra; el fondo cambia únicamente con el botón «Poner este fondo»
-      if (ac === 'habitat') { vivGrupo = id; vivMsg = ''; pinta(false); sonido('suave'); try { const act = $('.viv-hab.on', pn); if (act && act.scrollIntoView) act.scrollIntoView({ behavior: quieto() ? 'auto' : 'smooth', block: 'nearest', inline: 'center' }); } catch (e) { /* sin desplazamiento */ } return; }
-      if (ac === 'comprar-tema') { vivGrupo = id; const r = window.TBInicio.comprar('tema', id); if (r && r.ok) { vivMsg = '¡Hábitat desbloqueado! Ya puedes activarlo.'; sonido('logro'); } else { const m = { 'sin-gotas': 'Te faltan gotas para este hábitat. Toca «Ganar gotas» para sumar.', 'ya-tienes': 'Ya tienes este hábitat.' }; vivMsg = m[r && r.motivo] || 'No se pudo desbloquear ahora.'; } pinta(false); return; }
-      if (ac === 'tab' && id === 'gotas') { vivSel = { tipo: 'gotas', id: 'gotas' }; vivMsg = ''; pinta(false); sonido('suave'); return; }
-      if (ac === 'grupo') { vivGrupo = id; const tp = vivSel && vivSel.tipo === 'ave' ? 'ave' : 'semilla', p = listaDe(tp).filter((i) => enGrupo(tp, i, id))[0]; if (p) vivSel = { tipo: tp, id: p }; vivMsg = ''; pinta(false); sonido('suave'); return; }
-      if (ac === 'ira') { if (id === 'trivia') { abre(false); const tt = $('#ilTriBtn', cont); if (tt) { tt.click(); try { tt.scrollIntoView({ behavior: quieto() ? 'auto' : 'smooth', block: 'center' }); } catch (e) { /* sin scroll */ } } return; } try { if (window.TBApp && window.TBApp.irA) window.TBApp.irA(id); } catch (e) { /* sin ir */ } return; }
-      if (ac === 'tab' && id === 'paisaje') { vivTab = 'paisaje'; vivMsg = ''; pinta(false); sonido('suave'); return; }
-      if (ac === 'tab') { const e = T.cargar(), v = e.vivero || { desbloqueados: [] }, lista = id === 'aves' ? Object.keys(CAT.aves || {}) : (CAT.orden_semillas || Object.keys(CAT.semillas || {})), pre = id === 'aves' ? 'ave_' : 'sem_', p1 = lista.find((i) => v.desbloqueados.indexOf(pre + i) < 0) || lista[0]; vivSel = { tipo: id === 'aves' ? 'ave' : 'semilla', id: p1 }; vivTab = id === 'aves' ? 'aves' : 'flores'; vivMsg = ''; pinta(false); sonido('suave'); return; }
-      if (ac === 'ver') { vivSel = { tipo, id }; vivMsg = ''; pinta(true); sonido('suave'); try { const s = $('.il-viv-tile.sel', pn); if (s && s.scrollIntoView) s.scrollIntoView({ behavior: quieto() ? 'auto' : 'smooth', block: 'nearest', inline: 'center' }); } catch (e) { /* sin scroll */ } return; }
-      if (ac === 'tema-comprar') { r = T.comprar('tema', id); if (r.ok) vivMsg = 'Listo: ya tienes esta temática. Úsala para cambiar el paisaje.'; }
-      else if (ac === 'tema-usar') { r = T.elegirTematica(id); if (r.ok) { vivMsg = 'Temática activa.'; try { pintar(cont, mi, { repinta: true }); } catch (er) { /* sin repintar */ } return; } }
-      else if (ac === 'comprar') { r = tipo === 'esp' ? T.comprarEspecial(id) : T.comprar(tipo, id); if (r.ok) vivMsg = tipo === 'esp' ? 'Listo: ya está en tu paisaje.' : 'Listo: ya es tuyo.'; }
-      else if (ac === 'plantar') { r = T.plantar(id); if (r.ok) vivMsg = 'Plantada en el pasto.'; }
-      else if (ac === 'fondoyplantar') { const r1 = T.elegirTematica(b.getAttribute('data-h')); r = r1.ok ? T.plantar(id) : r1; if (r.ok) vivMsg = 'Plantada. Tu jardín ahora es el de ' + nomHab(b.getAttribute('data-h')) + '.'; }
-      else if (ac === 'ambiente') { const act = ((T.cargar().vivero.ambientes) || []).indexOf(id) >= 0; r = T.activarAmbiente(id, !act); if (r.ok) vivMsg = act ? 'Las luciérnagas se apagaron.' : 'Las luciérnagas llegaron a tu paisaje.'; }
-      else { const act = (T.cargar().vivero.aves || []).some((a) => a.id === id); r = T.activarAve(id, !act); if (r.ok) vivMsg = act ? 'Se guardó el ave.' : 'El ave llegó al árbol.'; }
-      if (!r.ok) { vivMsg = MOT[r.motivo] || 'No se pudo.'; pinta(true); return; }
-      sonido(ac === 'ave' ? 'suave' : 'semilla'); vivAbierto = true; pintar(cont, mi, { repinta: true });
-      // F1067 · La cámara acompaña la acción: se acerca a lo que se plantó o llamó
-      if (ac === 'plantar' || ac === 'fondoyplantar') camara(cont, '.il-planta.p-' + id);
-      else if (ac === 'ave' && (T.cargar().vivero.aves || []).some((a) => a.id === id)) camara(cont, '.il-ave.a-' + id);
-    };
-    if (vivAbierto) abre(true);
-  }
+  // F1218: el Vivero ahora es una pantalla propia: ver abrirVivero() más abajo.
   // F999 · Hierba: mechones con varios verdes sobre el suelo (determinista: el mismo dibujo siempre).
   function hierbaTB(x0, x1, yb, n, seed) {
     let k = seed || 11; const r = () => (k = (k * 9301 + 49297) % 233280) / 233280;
@@ -745,21 +715,19 @@
     const T = window.TBInicio; let r = (extra && extra.r) || {};
     if (!extra || (!extra.plantado && !extra.repinta)) { r = T.visita(); if (r.eligiendo) return vistaEleccion(cont, mi); }
     const est = T.cargar(); if (est.eligiendo) return vistaEleccion(cont, mi);
+    ultimo = { cont, mi };   // F1218: las pantallas propias repintan el jardín desde aquí
     if (cont.parentNode && cont.parentNode.classList) cont.parentNode.classList.remove('il-eligiendo');
     const guia = lsGet(KGUIA) !== '1';
     cont.innerHTML = escena(est) + '<div class="il-datos"><div class="il-franja">' + puntosDias(est) + '<p class="il-gotas" id="ilGotas" aria-live="polite">' + gotasTexto(est) + '</p></div><p class="il-estado" id="ilEstado" role="status" aria-live="polite"></p>'
       + (guia ? '<p class="il-guia" id="ilGuia">Toca tu lugar para respirar un momento.</p>' : '')
-      + '<div class="il-fila"><button type="button" class="il-btn-msg" id="ilMsgBtn" aria-expanded="false" aria-controls="ilMsg">' + ic(IC.libro) + 'Mensajes de hoy</button>'
-      + '<button type="button" class="il-btn-msg" id="ilTriBtn" aria-expanded="false" aria-controls="ilTri"></button>'
-      + '<button type="button" class="il-btn-msg" id="ilVivBtn" aria-expanded="false" aria-controls="ilViv">' + ic(IC.hoja) + 'Vivero</button></div>'
-      + '<div class="il-msg" id="ilMsg" hidden></div><div class="il-msg il-tri" id="ilTri" hidden></div><section class="il-viv" id="ilViv" aria-label="Vivero" hidden></section></div>';
+      + '</div>';   // F1218: Mensajes de hoy, Trivia y Vivero ya no viven aquí; se abren desde la barra superior
     const esc0 = $('#ilEscena', cont);
     if (r.panoramica && !quieto()) { esc0.classList.add('pano'); later(() => esc0.classList.remove('pano'), 3000); } else if ((extra && extra.plantado) && !quieto()) { esc0.classList.add('brota'); later(() => esc0.classList.remove('brota'), 1800); }
     esc0.classList.add('entra'); later(() => esc0.classList.remove('entra'), 1400);
     if (r && r.diaNuevo && !quieto()) { esc0.classList.add(est.habDias >= DIAS() ? 'dorado' : 'revela'); later(() => esc0.classList.remove('dorado', 'revela'), 3400); }   // F1204: destello al llegar la capa nueva
     if (r && r.diaNuevo) later(() => { try { window.TBSonido && (est.habDias >= DIAS() ? window.TBSonido.completo() : window.TBSonido.capa()); } catch (e) { /* sin sonido */ } }, 700);   // F1204: sonido de la capa nueva del día
     try { window.TBCasillas && window.TBCasillas.ajustar(esc0); } catch (e) { /* sin ajuste */ }   // F1214: cada pieza se ajusta a su casilla
-    paralaje(esc0); ligar(cont, mi); diarioLigar(cont, est); pantalla();
+    paralaje(esc0); ligar(cont, mi); diarioLigar(cont, est); pantalla(); barraMarcar();
   }
 
   function paralaje(esc0) {                                   // el fondo se mueve apenas mientras se arrastra el dedo; al soltar vuelve solo (transición CSS). Sin dedo, no hay trabajo.
@@ -800,44 +768,6 @@
         const g = $('#ilGotas', cont); if (g) g.innerHTML = gotasTexto(T.cargar());
       };
     });
-    ligarViv(cont, mi);
-    const tb = $('#ilTriBtn', cont), tc = $('#ilTri', cont);                   // F961 · Trivia diaria de naturaleza
-    if (tb && tc) {
-      const marca = () => { const t = T.triviaHoy(); tb.classList.toggle('nuevo', !!t && !t.resuelta); tb.innerHTML = ic(IC.mundo) + (t && t.resuelta ? '<span>Trivia de hoy</span><small>lista</small>' : '<span>Trivia</span><small>+' + (t ? t.gotas : 3) + ' gotas</small>'); };   // F1203: dos líneas cortas para que el botón no crezca
-      const pintaTri = (anim) => {
-        const t = T.triviaHoy(); if (!t) { tc.innerHTML = '<p class="il-tri-ay">Por ahora no hay pregunta. Vuelve mañana.</p>'; return; }
-        const ops = t.opciones.map((o, i) => { let cl = 'il-tri-op'; if (t.resuelta) { if (i === t.correcta) cl += ' ok'; else if (i === t.elegida) cl += ' mal'; } return '<button type="button" class="' + cl + '" data-i="' + i + '"' + (t.resuelta ? ' disabled' : '') + '><i aria-hidden="true">' + 'ABC'.charAt(i) + '</i><span>' + esc(o) + '</span></button>'; }).join('');
-        const res = t.resuelta ? '<p class="il-tri-res ' + (t.ok ? 'ok' : 'mal') + '" role="status">' + (t.ok ? '¡Correcto! Ganaste ' + t.gotas + ' gotas.' : 'Casi. La respuesta correcta quedó marcada en verde.') + '</p><p class="il-tri-exp">' + esc(t.explicacion) + '</p><p class="il-manana">Mañana, otra pregunta de naturaleza.</p>'
-          : '<p class="il-tri-ay">Una pregunta por día para todos. Si aciertas, ganas ' + t.gotas + ' gotas; si no, aprendes algo y mañana hay otra.</p>';
-        tc.innerHTML = '<article class="il-mc il-mc-trivia"><header>' + ic(IC.mundo, 20) + '<span>Trivia del día · naturaleza</span></header><p class="il-tri-q">' + esc(t.pregunta) + '</p><div class="il-tri-ops" role="group" aria-label="Opciones de respuesta">' + ops + '</div>' + res + '</article>';
-        if (anim) { tc.classList.remove('entra'); void tc.offsetWidth; tc.classList.add('entra'); }
-        Array.prototype.forEach.call(tc.querySelectorAll('.il-tri-op'), (b) => {
-          b.onclick = () => {
-            const r = T.responderTrivia(+b.getAttribute('data-i')); if (!r.ok) return; sonido(r.acierto ? 'exito' : 'suave'); pintaTri(false);
-            const bo = $('.il-tri-op.ok', tc); if (bo && r.acierto) { bo.classList.add('pop'); luces(bo); const ar = $('.il-mc-trivia', tc); if (ar) luces(ar); }
-            const g = $('#ilGotas', cont); if (g) g.innerHTML = gotasTexto(T.cargar()); marca();
-          };
-        });
-      };
-      marca();
-      tb.onclick = () => { const abre = tc.hidden; tc.hidden = !abre; tb.setAttribute('aria-expanded', String(abre)); if (abre) pintaTri(true); };
-    }
-    const mb = $('#ilMsgBtn', cont), mc = $('#ilMsg', cont);
-    const ICM = { arbol: IC.hoja, planeta: IC.mundo, vida: IC.brote }, ETQ = { arbol: 'Del árbol · para admirarlo', planeta: 'Para el planeta · para respetarlo', vida: 'Para crecer · personas y sociedad' };
-    const fecha = () => { try { const t = new Date().toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' }); return t.charAt(0).toUpperCase() + t.slice(1); } catch (e) { return 'Hoy'; } };
-    const pinta = () => {
-      const m = T.mensajeActual(0); if (!m || !m.items || !m.items.length) { mc.textContent = 'Este árbol aún no tiene mensajes.'; return; }
-      const tarj = m.items.map((x, i) => '<article class="il-mc il-mc-' + x.clave + ' d' + i + '"><header>' + ic(ICM[x.clave] || IC.hoja, 20) + '<span>' + esc(ETQ[x.clave] || x.titulo) + '</span></header>'
-        + (x.clave === 'vida' && x.titulo ? '<p class="il-tema">' + esc(x.titulo) + '</p>' : '') + '<p class="il-vida">' + esc(x.texto) + '</p>'
-        + '</article>').join('');
-      mc.innerHTML = '<div class="il-msg-cab"><h3>' + esc(m.titulo) + '</h3><p class="il-fecha">' + esc(fecha()) + ' · tres mensajes de hoy</p></div>' + tarj
-        + '<p class="il-como">' + esc(m.como || 'Cuidar este árbol se parece a cuidarnos: un poco cada día, con paciencia y sin exigencias.') + '</p><p class="il-manana">Mañana se abren tres mensajes nuevos.</p>';
-      Array.prototype.forEach.call(mc.querySelectorAll('.il-mini'), (b) => { b.onclick = () => { const x = m.items[+b.getAttribute('data-i')]; try { navigator.share({ title: m.titulo, text: x.texto }); } catch (e) { /* no compartido */ } }; });
-    };
-    mb.onclick = () => {
-      const abre = mc.hidden; mc.hidden = !abre; mb.setAttribute('aria-expanded', String(abre)); mb.innerHTML = ic(IC.libro) + (abre ? 'Cerrar los mensajes' : 'Mensajes de hoy');
-      if (abre) { pinta(); mc.classList.remove('entra'); void mc.offsetWidth; mc.classList.add('entra'); }
-    };
   }
 
   // ---------- Respirar (se toca el tronco): 3 ciclos de 4 s al inhalar y 6 s al exhalar ----------
@@ -860,15 +790,162 @@
   }
   function liberar() { if (vela) { try { vela.release(); } catch (e) { /* ya liberada */ } vela = null; } }
 
+  // ---------- F1218 · Barra superior: Mensajes de hoy, Trivia, Vivero (y Juegos) ----------
+  // Cada acceso se abre como una pantalla propia (hoja a pantalla casi completa) y ya no vive debajo del fondo del Inicio.
+  // «Tu paisaje» pasa a vivir dentro del Vivero.
+  let ultimo = null, hojasAb = [];
+  const KMSG = 'tb_inicio_mensaje_visto';
+  const hoyClave = () => { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); };
+  const IC_JUEGOS = '<rect x="3" y="7" width="18" height="10" rx="5"/><path d="M8 12h3M9.5 10.5v3"/><circle cx="15.5" cy="11" r=".7"/><circle cx="17.7" cy="13" r=".7"/>';
+  const IC_PAIS = '<path d="M2 19l6-10 4 6 3-4 7 8z"/><circle cx="17" cy="6" r="2"/>';
+  const IC_X = '<path d="M6 6l12 12M18 6L6 18"/>';
+  // Dibujo suave de cada cabecera (blanco translúcido sobre el color del área; solo decoración).
+  const DECO = {
+    msg: '<svg class="ha-deco" viewBox="0 0 120 72" aria-hidden="true" focusable="false"><circle cx="88" cy="28" r="17" fill="#fff" opacity=".22"/><circle cx="88" cy="28" r="9" fill="#fff" opacity=".5"/><g stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".5"><path d="M88 4v6M106 12l-4 4M70 12l4 4M114 28h-6M62 28h6"/></g><path d="M42 66c10-6 22-6 30 0V44c-8-6-20-6-30 0z" fill="#fff" opacity=".38"/><path d="M72 66c8-6 20-6 30 0V44c-10-6-22-6-30 0z" fill="#fff" opacity=".55"/></svg>',
+    tri: '<svg class="ha-deco" viewBox="0 0 120 72" aria-hidden="true" focusable="false"><circle cx="86" cy="36" r="24" fill="#fff" opacity=".2"/><path d="M77 29a9 9 0 1 1 13 8c-3 2-4 3-4 7" stroke="#fff" stroke-width="4.5" fill="none" stroke-linecap="round" opacity=".75"/><circle cx="86" cy="53" r="2.8" fill="#fff" opacity=".85"/><path d="M109 12l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#fff" opacity=".65"/><path d="M52 50l1.5 3.5 3.5 1.5-3.5 1.5L52 60l-1.5-3.5L47 55l3.5-1.5z" fill="#fff" opacity=".5"/></svg>',
+    viv: '<svg class="ha-deco" viewBox="0 0 120 72" aria-hidden="true" focusable="false"><ellipse cx="86" cy="64" rx="28" ry="5" fill="#fff" opacity=".25"/><path d="M86 64V34" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".75"/><path d="M86 42c-15 0-23-8-23-21 15 0 23 8 23 21z" fill="#fff" opacity=".5"/><path d="M86 35c12 0 21-7 21-19-12 0-21 7-21 19z" fill="#fff" opacity=".68"/><circle cx="108" cy="48" r="2.3" fill="#fff" opacity=".6"/><circle cx="58" cy="46" r="1.9" fill="#fff" opacity=".5"/></svg>'
+  };
+  function cerrarHojas(salvo) { hojasAb.slice().forEach((x) => { if (x.id !== salvo) x.cerrar(); }); }
+  function hojaArea(o) {
+    cerrarHojas(o.id);
+    const prev = document.activeElement, h = document.createElement('div');
+    h.className = 'hoja hoja-area ha-' + o.clase; h.id = 'hoja' + o.id; h.setAttribute('role', 'dialog'); h.setAttribute('aria-modal', 'true'); h.setAttribute('aria-label', o.titulo);
+    h.innerHTML = '<div class="hoja-in ha-in"><header class="ha-cab"><i class="hoja-asa" aria-hidden="true"></i><span class="ha-ic">' + ic(o.icono, 26) + '</span><div class="ha-tx"><h3>' + esc(o.titulo) + '</h3><p class="ha-sub">' + esc(o.sub || '') + '</p></div>'
+      + '<button type="button" class="ha-x" aria-label="Cerrar ' + esc(o.titulo) + '">' + ic(IC_X, 20) + '</button>' + (DECO[o.clase] || '') + '</header><div class="ha-cuerpo"></div></div>';
+    const r = { id: o.id, h, cuerpo: h.querySelector('.ha-cuerpo'), sub: h.querySelector('.ha-sub') };
+    const tecla = (e) => { if (e.key === 'Escape' && !document.getElementById('hojaPaisaje')) { e.stopPropagation(); r.cerrar(); } };
+    r.cerrar = () => {
+      document.removeEventListener('keydown', tecla, true);
+      const k = hojasAb.indexOf(r); if (k >= 0) hojasAb.splice(k, 1);
+      try { h.remove(); } catch (e) { /* ya cerrada */ }
+      try { if (prev && prev.isConnected && prev.focus) prev.focus({ preventScroll: true }); } catch (e) { /* sin foco */ }
+    };
+    h.addEventListener('click', (e) => { if (e.target === h) r.cerrar(); });
+    h.querySelector('.ha-x').onclick = r.cerrar;
+    document.addEventListener('keydown', tecla, true);
+    document.body.appendChild(h); hojasAb.push(r); sonido('suave');
+    try { h.querySelector('.ha-x').focus({ preventScroll: true }); } catch (e) { /* sin foco */ }
+    return r;
+  }
+  const fechaHoy = () => { try { const t = new Date().toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' }); return t.charAt(0).toUpperCase() + t.slice(1); } catch (e) { return 'Hoy'; } };
+  const conCatalogo = (fn) => { catalogo().then((c) => { if (!c || !window.TBInicio) return; try { window.TBInicio.config({ catalogo: c }); fn(window.TBInicio); } catch (e) { /* sin abrir */ } }); };
+  const gotasAhora = () => { const g = $('#ilGotas'); if (g && window.TBInicio) { try { g.innerHTML = gotasTexto(window.TBInicio.cargar()); } catch (e) { /* sin gotas */ } } };
+  function repintaJardin() { if (ultimo && ultimo.cont && ultimo.cont.isConnected) pintar(ultimo.cont, ultimo.mi, { repinta: true }); }
+
+  // Mensajes de hoy
+  function abrirMensajes() {
+    conCatalogo((T) => {
+      const ICM = { arbol: IC.hoja, planeta: IC.mundo, vida: IC.brote }, ETQ = { arbol: 'Del árbol · para admirarlo', planeta: 'Para el planeta · para respetarlo', vida: 'Para crecer · personas y sociedad' };
+      const m = T.mensajeActual(0), hj = hojaArea({ id: 'Mensajes', clase: 'msg', icono: IC.libro, titulo: 'Mensajes de hoy', sub: fechaHoy() + (m && m.titulo ? ' · ' + m.titulo : '') });
+      if (!m || !m.items || !m.items.length) { hj.cuerpo.innerHTML = '<p class="il-tri-ay">Este árbol aún no tiene mensajes.</p>'; return; }
+      const tarj = m.items.map((x, i) => '<article class="il-mc il-mc-' + x.clave + ' d' + i + '"><header>' + ic(ICM[x.clave] || IC.hoja, 20) + '<span>' + esc(ETQ[x.clave] || x.titulo) + '</span></header>'
+        + (x.clave === 'vida' && x.titulo ? '<p class="il-tema">' + esc(x.titulo) + '</p>' : '') + '<p class="il-vida">' + esc(x.texto) + '</p></article>').join('');
+      hj.cuerpo.innerHTML = '<div class="il-msg entra">' + tarj + '<p class="il-como">' + esc(m.como || 'Cuidar este árbol se parece a cuidarnos: un poco cada día, con paciencia y sin exigencias.') + '</p><p class="il-manana">Mañana se abren tres mensajes nuevos.</p></div>';
+      lsSet(KMSG, hoyClave()); barraMarcar();
+    });
+  }
+
+  // Trivia del día
+  function abrirTrivia() {
+    conCatalogo((T) => {
+      const hj = hojaArea({ id: 'Trivia', clase: 'tri', icono: IC.mundo, titulo: 'Trivia del día', sub: 'Una pregunta por día · naturaleza' });
+      const tc = document.createElement('div'); tc.className = 'il-msg il-tri'; hj.cuerpo.appendChild(tc);
+      const pinta = (anim) => {
+        const t = T.triviaHoy(); if (!t) { tc.innerHTML = '<p class="il-tri-ay">Por ahora no hay pregunta. Vuelve mañana.</p>'; return; }
+        hj.sub.textContent = t.resuelta ? (t.ok ? 'Ya la respondiste hoy · acertaste' : 'Ya la respondiste hoy') : 'Una pregunta por día · +' + t.gotas + ' gotas si aciertas';
+        const ops = t.opciones.map((o, i) => { let cl = 'il-tri-op'; if (t.resuelta) { if (i === t.correcta) cl += ' ok'; else if (i === t.elegida) cl += ' mal'; } return '<button type="button" class="' + cl + '" data-i="' + i + '"' + (t.resuelta ? ' disabled' : '') + '><i aria-hidden="true">' + 'ABC'.charAt(i) + '</i><span>' + esc(o) + '</span></button>'; }).join('');
+        const res = t.resuelta ? '<p class="il-tri-res ' + (t.ok ? 'ok' : 'mal') + '" role="status">' + (t.ok ? '¡Correcto! Ganaste ' + t.gotas + ' gotas.' : 'Casi. La respuesta correcta quedó marcada en verde.') + '</p><p class="il-tri-exp">' + esc(t.explicacion) + '</p><p class="il-manana">Mañana, otra pregunta de naturaleza.</p>'
+          : '<p class="il-tri-ay">Una pregunta por día para todos. Si aciertas, ganas ' + t.gotas + ' gotas; si no, aprendes algo y mañana hay otra.</p>';
+        tc.innerHTML = '<article class="il-mc il-mc-trivia"><header>' + ic(IC.mundo, 20) + '<span>Trivia del día · naturaleza</span></header><p class="il-tri-q">' + esc(t.pregunta) + '</p><div class="il-tri-ops" role="group" aria-label="Opciones de respuesta">' + ops + '</div>' + res + '</article>';
+        if (anim) { tc.classList.remove('entra'); void tc.offsetWidth; tc.classList.add('entra'); }
+        Array.prototype.forEach.call(tc.querySelectorAll('.il-tri-op'), (b) => {
+          b.onclick = () => {
+            const r = T.responderTrivia(+b.getAttribute('data-i')); if (!r.ok) return; sonido(r.acierto ? 'exito' : 'suave'); pinta(false);
+            const bo = $('.il-tri-op.ok', tc); if (bo && r.acierto) { bo.classList.add('pop'); luces(bo); const ar = $('.il-mc-trivia', tc); if (ar) luces(ar); }
+            gotasAhora(); barraMarcar();
+          };
+        });
+      };
+      pinta(true);
+    });
+  }
+
+  // Vivero (incluye «Tu paisaje»)
+  function paisajeTarjeta() {
+    const nom = (lista, id) => { const x = lista.find((q) => q[0] === id); return x ? String(x[1]).replace(/^[^A-Za-zÁÉÍÓÚÑáéíóúñ]+/, '') : ''; };
+    return '<button type="button" class="viv-paisaje" data-ac="paisaje"><span class="vp-ic">' + ic(IC_PAIS, 24) + '</span><span class="vp-tx"><b>Tu paisaje</b><small>' + esc(nom(FONDOS, fondoActual())) + ' · ' + esc(nom(CLIMAS, climaActual())) + '</small></span><span class="vp-go" aria-hidden="true">›</span></button>';
+  }
+  function abrirVivero() {
+    conCatalogo((T) => {
+      vivMsg = '';
+      const hj = hojaArea({ id: 'Vivero', clase: 'viv', icono: IC.hoja, titulo: 'Vivero', sub: 'Hábitats, plantas, aves y tu paisaje' });
+      const pn = document.createElement('section'); pn.className = 'il-viv'; pn.setAttribute('aria-label', 'Vivero'); hj.cuerpo.appendChild(pn);
+      const pinta = (conservar) => { const car = $('.il-viv-car', pn), sl = car ? car.scrollLeft : 0; pn.innerHTML = vivPanel(T.cargar()); const c2 = $('.il-viv-car', pn); if (c2 && conservar) c2.scrollLeft = sl; };
+      const verJardin = (sel) => { hj.cerrar(); repintaJardin(); if (ultimo) camara(ultimo.cont, sel); };   // al plantar o llamar un ave: se cierra el Vivero y la cámara muestra el resultado
+      pn.onclick = (ev) => {
+        const b = ev.target.closest('[data-ac]'); if (!b || b.disabled) return; const ac = b.getAttribute('data-ac'), tipo = b.getAttribute('data-tipo'), id = b.getAttribute('data-id'); let r;
+        if (ac === 'paisaje') { paisajeHoja(() => { repintaJardin(); pinta(true); }); return; }
+        if (ac === 'fondo') { const r1 = T.elegirTematica(id); if (!r1.ok) { vivMsg = 'No se pudo cambiar el fondo.'; pinta(true); return; } vivMsg = 'Tu jardín ahora es el de ' + nomHab(id) + '.'; sonido('suave'); repintaJardin(); pinta(true); return; }
+        // F1066: tocar un hábitat solo lo muestra; el fondo cambia únicamente con el botón «Poner este fondo»
+        if (ac === 'habitat') { vivGrupo = id; vivMsg = ''; pinta(false); sonido('suave'); try { const act = $('.viv-hab.on', pn); if (act && act.scrollIntoView) act.scrollIntoView({ behavior: quieto() ? 'auto' : 'smooth', block: 'nearest', inline: 'center' }); } catch (e) { /* sin desplazamiento */ } return; }
+        if (ac === 'comprar-tema') { vivGrupo = id; const r2 = T.comprar('tema', id); if (r2 && r2.ok) { vivMsg = '¡Hábitat desbloqueado! Ya puedes activarlo.'; sonido('logro'); } else { const m = { 'sin-gotas': 'Te faltan gotas para este hábitat. Toca «Ganar gotas» para sumar.', 'ya-tienes': 'Ya tienes este hábitat.' }; vivMsg = m[r2 && r2.motivo] || 'No se pudo desbloquear ahora.'; } pinta(false); gotasAhora(); return; }
+        if (ac === 'tab' && id === 'gotas') { vivSel = { tipo: 'gotas', id: 'gotas' }; vivMsg = ''; pinta(false); sonido('suave'); return; }
+        if (ac === 'grupo') { vivGrupo = id; const tp = vivSel && vivSel.tipo === 'ave' ? 'ave' : 'semilla', p = listaDe(tp).filter((i) => enGrupo(tp, i, id))[0]; if (p) vivSel = { tipo: tp, id: p }; vivMsg = ''; pinta(false); sonido('suave'); return; }
+        if (ac === 'ira') { hj.cerrar(); if (id === 'trivia') abrirTrivia(); else { try { if (window.TBApp && window.TBApp.irA) window.TBApp.irA(id); } catch (e) { /* sin ir */ } } return; }
+        if (ac === 'tab' && id === 'paisaje') { vivTab = 'paisaje'; vivMsg = ''; pinta(false); sonido('suave'); return; }
+        if (ac === 'tab') { const e = T.cargar(), v = e.vivero || { desbloqueados: [] }, lista = id === 'aves' ? Object.keys(CAT.aves || {}) : (CAT.orden_semillas || Object.keys(CAT.semillas || {})), pre = id === 'aves' ? 'ave_' : 'sem_', p1 = lista.find((i) => v.desbloqueados.indexOf(pre + i) < 0) || lista[0]; vivSel = { tipo: id === 'aves' ? 'ave' : 'semilla', id: p1 }; vivTab = id === 'aves' ? 'aves' : 'flores'; vivMsg = ''; pinta(false); sonido('suave'); return; }
+        if (ac === 'ver') { vivSel = { tipo, id }; vivMsg = ''; pinta(true); sonido('suave'); try { const s = $('.il-viv-tile.sel', pn); if (s && s.scrollIntoView) s.scrollIntoView({ behavior: quieto() ? 'auto' : 'smooth', block: 'nearest', inline: 'center' }); } catch (e) { /* sin scroll */ } return; }
+        if (ac === 'tema-comprar') { r = T.comprar('tema', id); if (r.ok) vivMsg = 'Listo: ya tienes esta temática. Úsala para cambiar el paisaje.'; }
+        else if (ac === 'tema-usar') { r = T.elegirTematica(id); if (r.ok) { vivMsg = 'Temática activa.'; repintaJardin(); pinta(true); return; } }
+        else if (ac === 'comprar') { r = tipo === 'esp' ? T.comprarEspecial(id) : T.comprar(tipo, id); if (r.ok) vivMsg = tipo === 'esp' ? 'Listo: ya está en tu paisaje.' : 'Listo: ya es tuyo.'; }
+        else if (ac === 'plantar') { r = T.plantar(id); if (r.ok) vivMsg = 'Plantada en el pasto.'; }
+        else if (ac === 'fondoyplantar') { const r1 = T.elegirTematica(b.getAttribute('data-h')); r = r1.ok ? T.plantar(id) : r1; if (r.ok) vivMsg = 'Plantada. Tu jardín ahora es el de ' + nomHab(b.getAttribute('data-h')) + '.'; }
+        else if (ac === 'ambiente') { const act = ((T.cargar().vivero.ambientes) || []).indexOf(id) >= 0; r = T.activarAmbiente(id, !act); if (r.ok) vivMsg = act ? 'Las luciérnagas se apagaron.' : 'Las luciérnagas llegaron a tu paisaje.'; }
+        else { const act = (T.cargar().vivero.aves || []).some((a) => a.id === id); r = T.activarAve(id, !act); if (r.ok) vivMsg = act ? 'Se guardó el ave.' : 'El ave llegó al árbol.'; }
+        if (!r.ok) { vivMsg = MOT[r.motivo] || 'No se pudo.'; pinta(true); return; }
+        sonido(ac === 'ave' ? 'suave' : 'semilla'); gotasAhora();
+        // F1067 · La cámara acompaña la acción: se acerca a lo que se plantó o llamó (ahora con el Vivero ya cerrado, para que se vea)
+        if (ac === 'plantar' || ac === 'fondoyplantar') return verJardin('.il-planta.p-' + id);
+        if (ac === 'ave' && (T.cargar().vivero.aves || []).some((a) => a.id === id)) return verJardin('.il-ave.a-' + id);
+        repintaJardin(); pinta(true);
+      };
+      pinta(false);
+    });
+  }
+
+  // La barra: el marcado lo da el Inicio (barraHTML) y los toques se ligan aquí (ligarBarra). Juegos lo resuelve la app.
+  function barraHTML() {
+    const b = (k, t, al, d) => '<button type="button" class="ib-bt ib-' + k + '" data-ab="' + k + '" aria-label="' + esc(al) + '"><span class="ib-ic">' + ic(d, 22) + '</span><span class="ib-t">' + esc(t) + '</span></button>';
+    return '<div class="il-barra" id="ilBarra"><div class="il-barra-in" role="toolbar" aria-label="Accesos del Inicio">'
+      + b('msg', 'Mensajes', 'Mensajes de hoy', IC.libro) + b('tri', 'Trivia', 'Trivia del día', IC.mundo) + b('viv', 'Vivero', 'Vivero y tu paisaje', IC.hoja) + b('jue', 'Juegos', 'Juegos', IC_JUEGOS) + '</div></div>';
+  }
+  function barraMarcar() {
+    const bar = $('#ilBarra'); if (!bar) return; let t = null;
+    try { t = CAT && window.TBInicio ? window.TBInicio.triviaHoy() : null; } catch (e) { t = null; }
+    const pon = (k, on) => { const b = bar.querySelector('[data-ab="' + k + '"]'); if (b) b.classList.toggle('nuevo', !!on); };
+    pon('tri', !!t && !t.resuelta); pon('msg', lsGet(KMSG) !== hoyClave());
+  }
+  function ligarBarra(juegos) {
+    const bar = $('#ilBarra'); if (!bar) return;
+    Array.prototype.forEach.call(bar.querySelectorAll('[data-ab]'), (b) => {
+      b.onclick = () => {
+        try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) { /* sin vibración */ }
+        const k = b.getAttribute('data-ab');
+        if (k === 'msg') abrirMensajes(); else if (k === 'tri') abrirTrivia(); else if (k === 'viv') abrirVivero(); else if (k === 'jue' && juegos) juegos();
+      };
+    });
+    barraMarcar();
+  }
+
   // ---------- Entrada y salida ----------
   function catalogo() {
     if (CAT) return Promise.resolve(CAT);
     if (!cargando) cargando = fetch('datos/inicio_catalogo.json').then((r) => { if (!r.ok) throw new Error('catalogo'); return r.json(); }).then((c) => { CAT = c; return c; }).catch(() => { cargando = null; return null; });
     return cargando;
   }
-  function soltar() { gen++; timers.forEach(clearTimeout); timers = []; if (resp) { resp.forEach(clearTimeout); resp = null; } if (raf) { cancelAnimationFrame(raf); raf = 0; } liberar(); }
+  function soltar0() { gen++; timers.forEach(clearTimeout); timers = []; if (resp) { resp.forEach(clearTimeout); resp = null; } if (raf) { cancelAnimationFrame(raf); raf = 0; } liberar(); }
   function montar(cont) {
-    if (!cont || !window.TBInicio) return; soltar(); const mi = gen;
+    if (!cont || !window.TBInicio) return; soltar0(); const mi = gen;
     cont.innerHTML = '<p class="il-carga">Preparando tu jardín…</p>';
     catalogo().then((c) => {
       if (mi !== gen || !cont.isConnected) return;
@@ -877,6 +954,6 @@
     });
   }
 
-  const api = { paisajeHoja, montar, soltar, arbol, escena, estadoTxt, ETAPAS, FORMA, FONDO, paisaje: paisajeDelDia, paisajeHab: PAISAJE_HAB, slotsDia: SLOTS_DIA, config(c) { CAT = c; } };
+  const api = { paisajeHoja, montar, soltar() { cerrarHojas(); soltar0(); }, barraHTML, ligarBarra, abrirMensajes, abrirTrivia, abrirVivero, arbol, escena, estadoTxt, ETAPAS, FORMA, FONDO, paisaje: paisajeDelDia, paisajeHab: PAISAJE_HAB, slotsDia: SLOTS_DIA, config(c) { CAT = c; } };
   if (typeof window !== 'undefined') window.TBLienzo = api; if (typeof module !== 'undefined') module.exports = api;
 })();

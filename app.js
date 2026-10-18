@@ -290,7 +290,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Acertijos de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Letras entre las hojas': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => !CABECERAS_ILUSTRADAS ? '' : `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1217';
+  const APP_VERSION = 'F1218';
   // F1171: respaldo si movimiento.js no cargó (pruebas o caché vieja): mismo criterio que TBMov.quieto().
   const MOV_QUIETO = () => { try { if (window.TBMov) return window.TBMov.quieto(); const h = document.documentElement; return h.getAttribute('data-anim') === 'off' || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
@@ -4463,10 +4463,9 @@
     const SEED = (hoy.getFullYear() * 366 + hoy.getMonth() * 31 + hoy.getDate());
     FRASES.unshift(FH[SEED % 3], FE[(SEED + 1) % 3], FH[(SEED + 1) % 3], FE[SEED % 3]);
     let k = 0;
-    $('#pantalla').innerHTML = `<section class="inicio-limpio${window.TBLienzo ? ' il-con-lienzo' : ''}" id="inicioLimpio" aria-label="Inicio"><div class="il-pill" role="group" aria-label="Paisaje y juegos"><button type="button" class="il-juntos il-paisaje" id="ilPais" aria-label="Elegir paisaje y clima" title="Tu paisaje"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 19l6-10 4 6 3-4 7 8z"/><circle cx="17" cy="6" r="2"/></svg></button><button type="button" class="il-juntos il-juegos" id="ilJuegos" aria-label="Juegos" title="Juegos"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="10" rx="5"/><path d="M8 12h3M9.5 10.5v3"/><circle cx="15.5" cy="11" r=".7"/><circle cx="17.7" cy="13" r=".7"/></svg></button></div><p class="il-sal">${saludo}${n ? ', ' + esc(n) : ''}</p><time class="il-hora" id="ilHora"></time><p class="il-frase" id="ilFrase" aria-live="off"></p><div id="ilLienzo"></div></section>`;
+    $('#pantalla').innerHTML = `<section class="inicio-limpio${window.TBLienzo ? ' il-con-lienzo' : ''}" id="inicioLimpio" aria-label="Inicio">${window.TBLienzo && window.TBLienzo.barraHTML ? window.TBLienzo.barraHTML() : ''}<p class="il-sal">${saludo}${n ? ', ' + esc(n) : ''}</p><time class="il-hora" id="ilHora"></time><p class="il-frase" id="ilFrase" aria-live="off"></p><div id="ilLienzo"></div></section>`;
     const sec = $('#inicioLimpio'), fr = $('#ilFrase');
-    const bp = $('#ilPais'); if (bp) bp.onclick = () => { vibra(); if (window.TBLienzo && window.TBLienzo.paisajeHoja) window.TBLienzo.paisajeHoja(() => { const c = $('#ilLienzo'); if (c) window.TBLienzo.montar(c); }); };
-    const bg = $('#ilJuegos'); if (bg) bg.onclick = () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) { /* sin vibración */ } ir('palabra'); vistaJuegos(); };
+    if (window.TBLienzo && window.TBLienzo.ligarBarra) window.TBLienzo.ligarBarra(() => { ir('palabra'); vistaJuegos(); });   // F1218: barra superior (Mensajes, Trivia, Vivero y Juegos)
     const quieto = () => MOV_QUIETO();
     fr.textContent = FRASES[k]; calmaResp.push(setTimeout(() => { if (fr.isConnected) fr.classList.add('on'); }, 120));
     const reloj = $('#ilHora'), horaTxt = () => { try { return new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; } };   // F928: reloj pequeño, se actualiza con el mismo temporizador de las frases (sin otro)
