@@ -159,25 +159,34 @@
       + el('tr-h2', x - r * 0.14, y - r * 0.16, r * 0.72, r * 0.4, a) + el('tr-h3', x - r * 0.32, y - r * 0.28, r * 0.3, r * 0.18, a);
   }
   function pewen(n) {
-    const m = Math.max(2, Math.min(6, n));
-    let g = '<path d="M0 0 C-3 -60 3 -130 0 -200" fill="none" stroke="#5f7a3a" stroke-width="12" stroke-linecap="round"/><path d="M-4 -6 C-6 -60 -2 -120 -4 -186" fill="none" stroke="#84a05a" stroke-width="4" stroke-linecap="round"/>';   // F1090: tronco verde explícito
-    for (let y = -12; y > -190; y -= 14) g += p('tr-h2', 'M-5 ' + y + ' L-11 ' + (y - 5) + ' L-4 ' + (y - 7) + 'Z M5 ' + (y - 4) + ' L11 ' + (y - 9) + ' L4 ' + (y - 11) + 'Z');   // F1088: bordes en punta del tronco verde
+    // F1215 · Pewén real: fuste largo, recto y esbelto de corteza gris parda con anillos; ramas solo arriba, en verticilos que suben
+    // como candelabro, con cordones de hojas escamosas punzantes verde oscuro; copa compacta tipo paraguas y piñas arriba.
+    const m = Math.max(5, Math.min(7, n + 2)), f1 = (v) => v.toFixed(1);
+    let g = '<path d="M-9 0 C-6 -4 -5.4 -30 -5 -80 C-4.6 -130 -4.2 -170 -3.4 -204 L3.4 -204 C4.2 -170 4.6 -130 5 -80 C5.4 -30 6 -4 9 0Z" fill="#6b5848"/>'
+      + '<path d="M1.2 0 C2.4 -40 2.6 -120 1.6 -204 L3.4 -204 C4.2 -170 4.6 -130 5 -80 C5.4 -30 6 -4 9 0Z" fill="#54443a" opacity=".55"/>'
+      + '<path d="M-5.6 -6 C-5.2 -70 -4.6 -150 -3.4 -200" fill="none" stroke="#8a7560" stroke-width="1.4" stroke-linecap="round" opacity=".7"/>';
+    for (let y = -8; y > -200; y -= 7.5) { const w = 5.6 - (-y / 200) * 2.2; g += '<path d="M' + f1(-w) + ' ' + y + ' q' + f1(w) + ' 1.6 ' + f1(2 * w) + ' 0" fill="none" stroke="#3f3128" stroke-width=".8" opacity=".55"/>'; }
+    g += '<path d="M-3 -96 l-7 6 M3 -84 l8 5 M-3 -72 l-6 7" stroke="#5a4636" stroke-width="1.6" stroke-linecap="round" fill="none"/>';   // muñones de ramas caídas: el fuste bajo queda limpio
+    const pt = (x0, y0, cx, cy, x1, y1, t) => { const u = 1 - t; return [u * u * x0 + 2 * u * t * cx + t * t * x1, u * u * y0 + 2 * u * t * cy + t * t * y1]; };
     for (let i = 0; i < m; i++) {
-      const t = m === 1 ? 0 : i / (m - 1), y = -40 - t * 126, L = 62 - t * 22, yt = y - 10 - t * 10, r = 15 - t * 3;
-      g += p('tr-t t1', 'M-5 ' + (y + 1).toFixed(1) + ' q5 -2.5 10 0');                    // cicatriz del verticilo en la corteza
-      g += '<ellipse cx="0" cy="' + (y + 2).toFixed(1) + '" rx="6" ry="3.5" fill="#8a6040"/>';   // F1079: nudo del verticilo
+      const t = m === 1 ? 0 : i / (m - 1), y = -112 - t * 80, L = 60 - t * 26, yt = y - 4 - t * 18;
       for (const s of [-1, 1]) {
-        g += pewenBrazo(0, y, s * L, yt, 6) + pewenPuas(0, y, s * L, yt, s) + pewenMata(s * L, yt, r, s);                 // rama gruesa con hojas en punta
-        g += pewenBrazo(0, y + 5, s * L * 0.5, y + 24, 3) + pewenMata(s * L * 0.5, y + 24, 9 - t * 1.5, s);   // rama baja, colgante
+        const x1 = s * L, cx = s * L * 0.55, cy = y + 3 - t * 4;
+        g += '<path d="M0 ' + y + ' Q' + f1(cx) + ' ' + f1(cy) + ' ' + f1(x1) + ' ' + f1(yt) + '" fill="none" stroke="#5b4a3c" stroke-width="' + f1(3.4 - t * 0.9) + '" stroke-linecap="round"/>';
+        let sp = '', cord = '';
+        for (let k = 0; k <= 8; k++) {
+          const tt = 0.34 + k * 0.083, q = pt(0, y, cx, cy, x1, yt, tt), q2 = pt(0, y, cx, cy, x1, yt, Math.min(1, tt + 0.05));
+          const ux = q2[0] - q[0], uy = q2[1] - q[1], Ln = Math.hypot(ux, uy) || 1, nx = -uy / Ln, ny = ux / Ln;
+          for (const sd of [-1, 1]) sp += '<path class="' + (sd > 0 ? 'tr-h2' : 'tr-h') + '" d="M' + f1(q[0]) + ' ' + f1(q[1]) + ' L' + f1(q[0] + nx * sd * 7 + ux / Ln * 3) + ' ' + f1(q[1] + ny * sd * 7 + uy / Ln * 3) + ' L' + f1(q[0] + ux / Ln * 4) + ' ' + f1(q[1] + uy / Ln * 4) + 'Z"/>';
+        }
+        const p0 = pt(0, y, cx, cy, x1, yt, 0.3), p1 = pt(0, y, cx, cy, x1, yt, 0.62);
+        cord = '<path class="tr-ram2" d="M' + f1(p0[0]) + ' ' + f1(p0[1]) + ' Q' + f1(p1[0] * 1.02) + ' ' + f1(p1[1] - 1) + ' ' + f1(x1) + ' ' + f1(yt) + '" fill="none" stroke-width="' + f1(10 - t * 2) + '" stroke-linecap="round"/>';
+        g += cord + sp + '<path class="tr-ram3" d="M' + f1(p0[0]) + ' ' + f1(p0[1] - 2.2) + ' Q' + f1(p1[0]) + ' ' + f1(p1[1] - 3.4) + ' ' + f1(x1) + ' ' + f1(yt - 2.4) + '" fill="none" stroke-width="2.2" stroke-linecap="round" opacity=".55"/>' + el('tr-h', x1, yt - 1, 6.5, 4.6, s * -14);
       }
     }
-    // piñas (conos) sobre las ramas altas
-    const pinas = [[-40, -184], [40, -184]].map((q) => { const x = q[0], y = q[1];
-      return '<path d="M' + x + ' ' + (y - 10) + ' C' + (x + 7) + ' ' + (y - 6) + ' ' + (x + 6) + ' ' + (y + 7) + ' ' + x + ' ' + (y + 11) + ' C' + (x - 6) + ' ' + (y + 7) + ' ' + (x - 7) + ' ' + (y - 6) + ' ' + x + ' ' + (y - 10) + 'Z" fill="#7a5230"/>'
-        + '<path d="M' + (x - 4) + ' ' + (y - 4) + ' L' + (x + 4) + ' ' + (y - 4) + 'M' + (x - 5) + ' ' + (y + 1) + ' L' + (x + 5) + ' ' + (y + 1) + 'M' + (x - 3) + ' ' + (y + 6) + ' L' + (x + 3) + ' ' + (y + 6) + '" stroke="#4f3320" stroke-width="0.9" fill="none"/>'; }).join('');
-    // copa superior: ancha y plana, formada por varias matas juntas
-    return g + pinas + el('tr-h', 0, -186, 30, 12) + el('tr-h2', -10, -193, 16, 8) + el('tr-h2', 12, -195, 14, 7)
-      + el('tr-h', -22, -176, 13, 7, -20) + el('tr-h', 22, -176, 13, 7, 20);
+    g += '<ellipse cx="-17" cy="-199" rx="3.6" ry="4.6" fill="#6d6a2c"/><ellipse cx="17" cy="-201" rx="3.6" ry="4.6" fill="#6d6a2c"/>';   // piñas
+    return g + el('tr-h', 0, -206, 21, 7.5) + el('tr-h2', -9, -210, 12, 5) + el('tr-h2', 10, -211, 11, 4.6) + el('tr-h3', -6, -213, 6, 2.6)
+      + el('tr-h', -19, -197, 10, 5, -16) + el('tr-h', 19, -198, 10, 5, 16);
   }
   function frondoso(forma, especie, dias) {
     // F1058/F1059/F1066 · Pewén: copa en verticilos (ver pewen()); gana verticilos con los días.
@@ -659,7 +668,7 @@
       + '<g class="cap cap0">' + cielo(cl) + '<g class="plano-lejano">' + atras(fo) + '</g></g><g class="cap cap1"><path class="col c1" d="' + COL.c1 + '"/>' + fondo + '</g>'
       + '<g class="cap cap2"><path class="col c2" d="' + COL.c2 + '"/></g>'
       + '<g class="cap cap3"><path class="col c3" d="' + COL.c3 + '"/></g></g>'
-      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g><g class="esp">' + especialesEscena(est, fo) + '</g><g class="pa-dia">' + ((window.TBCasillas && window.TBCasillas.tiene(est.tematica)) ? window.TBCasillas.capa(est.tematica, est.habDias || 0) : paisajeDelDia(est.habDias || 0, est.tematica) + rasgosEscena(est)) + '</g>' + ambienteDelDia(est.habDias || 0, est.tematica) + '<g class="cap cap3"><g class="mundo" transform="translate(180 344) scale(' + window.TBInicio.avanceDiario(c.diasCuidado).escala + ')">' + (est.tematica === 'desierto' ? '<g transform="translate(158 -44) scale(0.9)">' + sueloDibujo('cactus') + '</g>' : est.tematica === 'costa' ? '' : arbol(c.especie, et, c.diasCuidado) + hojasTB(window.TBInicio.avanceDiario(c.diasCuidado).hojas, et)) + '</g></g>' + '<g class="tb-hierba" aria-hidden="true">' + (est.tematica === 'desierto' || est.tematica === 'costa' ? '' : hierbaTB(0, 360, 392, 90, 17)) + '</g><g class="clima">' + climaSvg(cl) + '</g></svg>'
+      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g><g class="esp">' + especialesEscena(est, fo) + '</g><g class="pa-dia">' + ((window.TBCasillas && window.TBCasillas.tiene(est.tematica)) ? window.TBCasillas.capa(est.tematica, est.habDias || 0) : paisajeDelDia(est.habDias || 0, est.tematica) + rasgosEscena(est)) + '</g>' + ambienteDelDia(est.habDias || 0, est.tematica) + '<g class="cap cap3"><g class="mundo" transform="translate(180 344) scale(' + (window.TBInicio.avanceDiario(c.diasCuidado).escala * 0.78).toFixed(3) + ')">' + (est.tematica === 'desierto' ? '<g transform="translate(158 -44) scale(0.9)">' + sueloDibujo('cactus') + '</g>' : est.tematica === 'costa' ? '' : arbol(c.especie, et, c.diasCuidado) + hojasTB(window.TBInicio.avanceDiario(c.diasCuidado).hojas, et)) + '</g></g>' + '<g class="tb-hierba" aria-hidden="true">' + (est.tematica === 'desierto' || est.tematica === 'costa' ? '' : hierbaTB(0, 360, 392, 90, 17)) + '</g><g class="clima">' + climaSvg(cl) + '</g></svg>'
       + '<i class="il-anillo" id="ilAnillo" aria-hidden="true"></i>'
       + '<button type="button" class="il-resp" id="ilResp" aria-label="Respirar con tu árbol. Toca para una pausa de unos 30 segundos"></button>' + mal + gotasHTML(est)  + vivEscena(est) + '</div>';
   }
@@ -738,12 +747,10 @@
     const est = T.cargar(); if (est.eligiendo) return vistaEleccion(cont, mi);
     if (cont.parentNode && cont.parentNode.classList) cont.parentNode.classList.remove('il-eligiendo');
     const guia = lsGet(KGUIA) !== '1';
-    cont.innerHTML = escena(est) + '<div class="il-datos"><div class="il-tarjeta"><p class="il-etiqueta">Día ' + Math.max(1, Math.min(DIAS(), est.habDias || (est.ciclo && est.ciclo.diasCuidado) || 1)) + ' de ' + DIAS() + ' · tu lugar</p><p class="il-nombre" id="ilNombre">' + nombreArbol(est) + '</p><p class="il-estado" id="ilEstado" role="status" aria-live="polite">' + esc(estadoVisible(est, r)) + '</p>'
-      + puntosDias(est) + '<p class="il-hoy' + ((r && r.diaNuevo) ? ' nuevo' : '') + '" id="ilHoy"><span class="il-hoy-brillo" aria-hidden="true">✦</span><span id="ilHoyTx">' + esc(hoyCapa(est)) + '</span></p>'
-      + '<p class="il-gotas" id="ilGotas" aria-live="polite">' + gotasTexto(est) + '</p>'
+    cont.innerHTML = escena(est) + '<div class="il-datos"><div class="il-franja">' + puntosDias(est) + '<p class="il-gotas" id="ilGotas" aria-live="polite">' + gotasTexto(est) + '</p></div><p class="il-estado" id="ilEstado" role="status" aria-live="polite"></p>'
       + (est.habDias >= DIAS() && window.TBArte && window.TBArte.postal(est.tematica) ? '<button type="button" class="il-compartir" id="ilComp"><span aria-hidden="true">✦</span> Compartir mi lugar</button><p class="il-comp-msg" id="ilCompMsg" role="status" aria-live="polite"></p>' : '')
       + (guia ? '<p class="il-guia" id="ilGuia">Toca el tronco para respirar un momento.</p>' : '')
-      + '</div><div class="il-fila"><button type="button" class="il-btn-msg" id="ilMsgBtn" aria-expanded="false" aria-controls="ilMsg">' + ic(IC.libro) + 'Mensajes de hoy</button>'
+      + '<div class="il-fila"><button type="button" class="il-btn-msg" id="ilMsgBtn" aria-expanded="false" aria-controls="ilMsg">' + ic(IC.libro) + 'Mensajes de hoy</button>'
       + '<button type="button" class="il-btn-msg" id="ilTriBtn" aria-expanded="false" aria-controls="ilTri"></button>'
       + '<button type="button" class="il-btn-msg" id="ilVivBtn" aria-expanded="false" aria-controls="ilViv">' + ic(IC.hoja) + 'Vivero</button></div>'
       + '<div class="il-msg" id="ilMsg" hidden></div><div class="il-msg il-tri" id="ilTri" hidden></div><section class="il-viv" id="ilViv" aria-label="Vivero" hidden></section></div>';

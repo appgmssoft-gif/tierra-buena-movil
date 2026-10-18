@@ -549,3 +549,14 @@ html[data-eco="2"] .am-rayo,html[data-eco="2"] .am-p{animation:none!important}
 .il-pt{height:28px}.il-dias{margin:-5px 0 -8px}
 .il-hoy{min-height:2.6em;align-items:center}
 @media (max-height:860px){.il-tarjeta .il-guia{display:none}}
+
+/* F1215 · cordón de hojas del pewén */
+.tr-ram2{stroke:#35603c}@media (prefers-color-scheme:dark){.tr-ram2{stroke:#4d8454}}
+.tr-ram3{stroke:var(--h3,#7aa05c)}
+
+/* F1215 · Sin tarjeta de información: solo una franja ligera con los días y las gotas; el mensaje de estado aparece solo cuando hay algo que decir */
+.il-franja{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin:10px auto 4px;max-width:420px}
+.il-franja .il-gotas{margin:0;padding:5px 12px;border-radius:999px;font-size:.9rem;background:rgba(255,255,255,.55);box-shadow:0 1px 6px rgba(80,60,20,.12)}
+.il-estado{margin:4px auto;text-align:center;max-width:420px}.il-estado:empty{display:none}
+@media (prefers-reduced-motion:no-preference){.il-franja{animation:il-franja-in .7s ease-out .3s backwards}}
+@keyframes il-franja-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
