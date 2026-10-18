@@ -42,7 +42,7 @@
     const T = window.TBInicio; if (!T) return;
     const cat = await fetch('datos/inicio_catalogo.json').then((r) => r.json());
     const e = T.cargar();
-    [['semillas', 'sem_'], ['aves', 'ave_'], ['ambientes', 'amb_'], ['tematicas', 'tem_'], ['lugares', 'lug_'], ['climas', 'cli_'], ['especiales', 'esp_']]
+    [['semillas', 'sem_'], ['aves', 'ave_'], ['ambientes', 'amb_'], ['tematicas', 'tem_'], ['lugares', 'lug_'], ['climas', 'cli_']]
       .forEach(([grupo, pre]) => Object.keys(cat[grupo] || {}).forEach((k) => { const c = pre + k; if (e.vivero.desbloqueados.indexOf(c) < 0) e.vivero.desbloqueados.push(c); }));
     T.guardar(e); location.reload();
   }

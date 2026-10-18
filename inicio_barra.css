@@ -95,3 +95,11 @@ html[data-eco="2"] .il-barra-in{-webkit-backdrop-filter:none;backdrop-filter:non
 /* F1234 · La ficha de la planta o ave ya no flota sobre la pantalla (tapaba la ficha del lugar): va justo debajo de la fila que la elige */
 .ha-cuerpo .viv-accion{position:static;bottom:auto;margin-top:12px;box-shadow:none}
 .ha-cuerpo .viv-grid .il-viv-tile{width:100%}
+
+/* F1235 · «Tu paisaje»: mismo lenguaje que el Vivero (tres estados; tocar un bloqueado solo lo muestra) */
+#hojaPaisaje .pa-op>span{font-weight:700}
+#hojaPaisaje .pa-op.on small{color:var(--tinta);font-weight:700}
+#hojaPaisaje .pa-op.bloq.sel{opacity:1;border-style:solid;border-color:var(--oro);box-shadow:0 0 0 3px color-mix(in srgb,var(--oro) 22%,transparent)}
+#hojaPaisaje .pa-compra .btn{margin-top:10px;width:100%}
+#hojaPaisaje .pa-compra .btn:disabled{opacity:.55}
+#hojaPaisaje .pa-como{margin:10px 0 0;font-size:.85rem}

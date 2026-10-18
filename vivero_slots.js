@@ -11,7 +11,6 @@
   const LUGAR_HABITAT = { bosque: 'bosque', desierto: 'desierto', montanas: 'cordillera', volcan: 'cordillera', costa: 'costa', lago: 'humedal', rio: 'rio' };
   // Estado de cada hábitat: 'disponible' se puede elegir; 'proximamente' existe en el modelo pero aún no se abre.
   const HABITATS = { bosque: 'disponible', desierto: 'disponible', cordillera: 'disponible', costa: 'disponible', humedal: 'proximamente', rio: 'proximamente' };
-  const FAUNA = ['cisne', 'guanaco', 'zorro', 'huemul', 'gaviota'];
 
   function slotDe(item) {
     if (!item) return null;
@@ -42,10 +41,6 @@
     const out = [];
     Object.keys(C.aves || {}).forEach((k) => out.push({ id: 'ave_' + k, nombre: C.aves[k].nombre || k, kind: 'ave', habitat: C.aves[k].habitat || null, precio: C.aves[k].precio || 0 }));
     Object.keys(C.semillas || {}).forEach((k) => out.push({ id: 'planta_' + k, nombre: C.semillas[k].nombre || k, kind: 'semilla', habitat: C.semillas[k].habitat || null, precio: C.semillas[k].precio || 0 }));
-    Object.keys(C.especiales || {}).forEach((k) => {
-      const e = C.especiales[k];
-      out.push({ id: 'esp_' + k, nombre: e.nombre || k, kind: FAUNA.indexOf(k) >= 0 ? 'fauna' : 'semilla', lugar: e.lugar, habitat: null, precio: e.precio || 0 });
-    });
     return out;
   }
 
