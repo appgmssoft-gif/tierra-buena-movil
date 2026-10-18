@@ -657,7 +657,10 @@
     "pasto-12"
    ],
    "mensaje": "Lo sencillo también embellece. Un pequeño verde ya cambia el lugar.",
-   "dato": "Los pastos alimentan a gran parte del mundo: el trigo, el arroz y el maíz también son pastos."
+   "dato": "Los pastos alimentan a gran parte del mundo: el trigo, el arroz y el maíz también son pastos.",
+   "habitat": [
+    "bosque"
+   ]
   },
   "llareta": {
    "nombre": "Llareta",
@@ -834,7 +837,10 @@
    "nombre": "Golondrina",
    "precio": 90,
    "mensaje": "Siempre se puede volver a empezar. Su canto anuncia la primavera, y cada comienzo trae esperanza.",
-   "dato": "Mide unos 13,5 cm y atrapa insectos al vuelo. Anida en aleros y cavidades, y su canto anuncia la primavera en el sur de Chile."
+   "dato": "Mide unos 13,5 cm y atrapa insectos al vuelo. Anida en aleros y cavidades, y su canto anuncia la primavera en el sur de Chile.",
+   "habitat": [
+    "bosque"
+   ]
   },
   "chucao": {
    "habitat": [
@@ -1513,8 +1519,7 @@
    "nombre": "Luciérnagas",
    "precio": 60,
    "habitat": [
-    "bosque",
-    "costa"
+    "bosque"
    ],
    "t": "Pequeñas luces que aparecen al atardecer, como estrellas que bajan a jugar.",
    "mensaje": "Una luz pequeña también guía. Cada gesto amable ilumina un poco el camino de los demás.",
@@ -1545,8 +1550,7 @@
    "nombre": "Pétalos",
    "precio": 50,
    "habitat": [
-    "desierto",
-    "costa"
+    "desierto"
    ],
    "t": "Pétalos que la brisa lleva por el aire.",
    "mensaje": "Lo que florece también se comparte.",
@@ -1588,6 +1592,123 @@
    "t": "De vez en cuando, una estrella cruza el cielo.",
    "mensaje": "Un instante breve también deja huella.",
    "dato": "Una estrella fugaz es un trocito de roca espacial que se enciende al entrar en la atmósfera."
+  }
+ },
+ "estructuras": {
+  "cabana": {
+   "nombre": "Cabaña de alerce",
+   "habitat": [
+    "bosque"
+   ],
+   "v": 0,
+   "precio": 0,
+   "dato": "Tablas de alerce, la madera noble del sur de Chile. Viene incluida con tu lugar."
+  },
+  "casa_arbol": {
+   "nombre": "Casa del árbol",
+   "habitat": [
+    "bosque"
+   ],
+   "v": 1,
+   "precio": 90,
+   "dato": "Un refugio entre las ramas para mirar el bosque desde arriba."
+  },
+  "refugio_adobe": {
+   "nombre": "Refugio de adobe",
+   "habitat": [
+    "desierto"
+   ],
+   "v": 0,
+   "precio": 0,
+   "dato": "Barro y paja: así se construye en el norte desde hace siglos. Viene incluido con tu lugar."
+  },
+  "mirador_piedra": {
+   "nombre": "Mirador de piedra",
+   "habitat": [
+    "desierto"
+   ],
+   "v": 1,
+   "precio": 90,
+   "dato": "Una torre baja para ver el desierto florido desde lo alto."
+  },
+  "templo": {
+   "nombre": "Templo del desierto",
+   "habitat": [
+    "desierto"
+   ],
+   "v": 2,
+   "precio": 250,
+   "dato": "Un templo de piedra con una luz turquesa que se enciende al anochecer."
+  },
+  "faro": {
+   "nombre": "Faro",
+   "habitat": [
+    "costa"
+   ],
+   "v": 0,
+   "precio": 0,
+   "dato": "Guía a los barcos en la noche. Viene incluido con tu lugar."
+  },
+  "caseta": {
+   "nombre": "Caseta de pescadores",
+   "habitat": [
+    "costa"
+   ],
+   "v": 1,
+   "precio": 90,
+   "dato": "Para guardar redes y botes después de la faena."
+  },
+  "torre_salvavidas": {
+   "nombre": "Torre salvavidas",
+   "habitat": [
+    "costa"
+   ],
+   "v": 2,
+   "precio": 250,
+   "dato": "Desde aquí se cuida la playa."
+  },
+  "refugio_piedra": {
+   "nombre": "Refugio de piedra",
+   "habitat": [
+    "cordillera"
+   ],
+   "v": 0,
+   "precio": 0,
+   "dato": "Muros de piedra y techo de paja brava para pasar la noche en altura. Viene incluido con tu lugar."
+  },
+  "iglesia_adobe": {
+   "nombre": "Iglesia de adobe blanca",
+   "habitat": [
+    "cordillera"
+   ],
+   "v": 1,
+   "precio": 90,
+   "dato": "Simple y blanca bajo el cielo azul, como las capillas del altiplano."
+  },
+  "observatorio": {
+   "nombre": "Observatorio de altura",
+   "habitat": [
+    "cordillera"
+   ],
+   "v": 2,
+   "precio": 250,
+   "dato": "El cielo más limpio se ve desde lo alto."
+  },
+  "refugio_lenador": {
+   "nombre": "Refugio de leñador",
+   "habitat": [
+    "bosque"
+   ],
+   "v": 2,
+   "precio": 250,
+   "dato": "Troncos apilados y humo en la chimenea: el hogar de quien cuida el bosque."
+  }
+ },
+ "variantes": {
+  "nota": "F1261 · Variantes de las casillas (1 a 7) de cada lugar. La variante 0 viene incluida; las demás se obtienen con gotas.",
+  "precios": {
+   "1": 40,
+   "2": 70
   }
  }
 }

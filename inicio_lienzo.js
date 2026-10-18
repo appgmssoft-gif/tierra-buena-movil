@@ -367,7 +367,7 @@
   function gotasTexto0(est) { const g = est.gotas || {}, n = (g.pendientes || []).length; return (g.saldo || g.total || n) ? ic(IC.gota, 16) + (g.saldo || 0) + (g.saldo === 1 ? ' gota guardada' : ' gotas guardadas') + (n ? ' · ' + n + ' por recoger' : '') : ''; }
   // F933: el Vivero con contenido visual. Cada semilla y ave tiene su dibujo, hay una vista previa grande de lo que se obtiene y el avance hacia su precio.
   // Todo se anima con transform/opacity y se queda quieto en «reducir movimiento»/Ahorro. Sin atributo style (CSP): los tamaños salen de clases y de atributos SVG.
-  let vivAbierto = false, vivMsg = '', vivSel = null, vivTab = 'flores';
+  let vivAbierto = false, vivMsg = '', vivSel = null, vivTab = 'flores', vivEst = null, vivDec = null;
   const g = (a, col) => '<g fill="none" stroke="' + (col || '#5c8f63') + '" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">' + a + '</g>';
   // F936: cada flor se dibuja en su propia caja (w×h) con la altura real relativa: la lavanda es una mata alta, la pata de guanaco una alfombra baja.
   const DIM = { copihue: [34, 56], ananuca: [30, 44], pata_de_guanaco: [46, 24], lavanda: [28, 56], pasto_alto: [34, 40], bambu: [34, 70], flor_de_loto: [44, 34], bonsai: [44, 44], planta_fantasma: [30, 40], welwitschia: [62, 26], dracaena_cinnabari: [58, 60], orquidea_subterranea: [40, 34], secuoya_roja: [34, 70], rafflesia: [48, 28], llareta: [56, 40], chagual: [44, 70], notro: [40, 64], chilco: [40, 46], ulmo: [46, 60], garra_de_leon: [40, 40], chachacoma: [36, 40] };
@@ -474,8 +474,8 @@
     const sem = listaDe('semilla'), aves = listaDe('ave');
     const plantada = (id) => (v.plantas || []).some((q) => q.id === id), activa = (id) => (v.aves || []).some((a) => a.id === id), ambActiva = (id) => (v.ambientes || []).indexOf(id) >= 0;
     if (!vivSel || !catDe(vivSel.tipo)[vivSel.id]) { const p1 = sem.find((i) => !tengo('sem_' + i)); vivSel = p1 ? { tipo: 'semilla', id: p1 } : { tipo: 'semilla', id: sem[0] }; }
-    const amb = vivTab === 'paisaje';
-    if (!amb) vivTab = vivSel.tipo === 'ave' ? 'aves' : 'flores';
+    const amb = vivTab === 'paisaje', estr = vivTab === 'estructuras', deco = vivTab === 'decoracion';   // F1260: pestaña Estructuras
+    if (!amb && !estr && !deco) vivTab = vivSel.tipo === 'ave' ? 'aves' : 'flores';
     if (!amb && vivSel.tipo === 'ambiente') vivSel = { tipo: 'semilla', id: sem[0] };   // F1055: fuera de «Ambiental», una semilla o ave
     let tipoV = vivSel.tipo === 'ave' ? 'ave' : vivSel.tipo === 'ambiente' ? 'ambiente' : 'semilla', habs = Object.keys(CAT.tematicas || {});
     if (!vivGrupo || habs.indexOf(vivGrupo) < 0) vivGrupo = est.tematica && habs.indexOf(est.tematica) >= 0 ? est.tematica : habs[0];
@@ -512,14 +512,52 @@
       : faltaH ? '<p class="il-viv-pre">Te faltan ' + faltaH + ' gotas para obtener este lugar.</p><button type="button" class="btn il-viv-bt il-viv-main" disabled>Obtener por ' + precioH + ' gotas</button><button type="button" class="btn sec il-viv-bt viv-ganar-bt" data-ac="tab" data-id="gotas">Cómo ganar gotas</button>'
       : '<button type="button" class="btn il-viv-bt il-viv-main" data-ac="comprar-tema" data-id="' + esc(hab) + '">Obtener por ' + precioH + ' gotas</button>';
     const lugarFicha = '<div class="viv-lugar"><h4>' + esc(nomHab(hab)) + '</h4><p class="il-viv-dato">' + esc(TH.dato || '') + '</p>' + accH + '</div>';
+    // F1260 · Estructuras: cada lugar vende solo las suyas (catálogo `estructuras`); la primera viene incluida y las otras se obtienen con gotas.
+    const estSVG = (h, v, cls, si) => { const C = window.TBCasillas, va = C && C.G[h] && C.G[h][si || 0] && C.G[h][si || 0].vars[v]; if (!va) return ''; return '<svg class="' + cls + '" viewBox="-76 -168 152 178" aria-hidden="true" focusable="false"><ellipse cx="0" cy="2" rx="62" ry="7" fill="#1b2a2a" opacity=".12"/>' + va.f(C.HAB[h].p) + '</svg>'; };
+    let estHTML = '';
+    if (estr) {
+      const EC = CAT.estructuras || {}, ids = Object.keys(EC).filter((i) => (EC[i].habitat || [])[0] === hab).sort((a, b) => EC[a].v - EC[b].v);
+      const mioE = (i) => !(EC[i].precio > 0) || tengo('est_' + i), puestaE = (i) => { try { return window.TBCasillas.elegida(hab, 0) === EC[i].v; } catch (e) { return false; } };
+      if (!vivEst || ids.indexOf(vivEst) < 0) vivEst = ids.filter(puestaE)[0] || ids[0];
+      const tileE = (i) => { const it2 = EC[i], m = mioE(i), pu = puestaE(i);
+        return '<button type="button" class="il-viv-tile viv-est-tile' + (vivEst === i ? ' sel' : '') + (m ? ' mio' : '') + '" role="listitem" data-ac="ver-est" data-id="' + esc(i) + '" aria-pressed="' + (vivEst === i) + '"><span class="il-viv-arte">' + estSVG(hab, it2.v, 'viv-est-svg') + '</span><b>' + esc(it2.nombre) + '</b>'
+          + (m ? '<span class="il-viv-chip ok">' + (pu ? 'En tu lugar' : it2.precio > 0 ? 'Tuya' : 'Incluida') + '</span>' : '<span class="il-viv-chip">' + ic(IC.gota, 13) + it2.precio + '</span>') + '</button>'; };
+      const e1 = EC[vivEst], falE = e1 ? Math.max(0, e1.precio - saldo) : 0;
+      let accE = '';
+      if (e1) {
+        if (puestaE(vivEst)) accE = '<p class="il-viv-ok2">✓ Esta es la estructura de tu lugar.</p>';
+        else if (mioE(vivEst)) accE = fondoOk ? '<button type="button" class="btn il-viv-bt il-viv-main" data-ac="usar-est" data-id="' + esc(vivEst) + '">Usar en mi lugar</button>' : '<p class="il-viv-pre">Es tuya. Para usarla, primero obtén el lugar «' + esc(nomHab(hab)) + '» (paso 1, arriba).</p>';
+        else accE = '<p class="suave m0">' + (falE ? 'Te faltan ' + falE + ' gotas.' : 'Ya tienes las gotas necesarias.') + '</p><button type="button" class="btn il-viv-bt il-viv-main" data-ac="comprar-est" data-id="' + esc(vivEst) + '"' + (falE ? ' disabled' : '') + '>' + (falE ? 'Aún faltan gotas' : 'Obtener por ' + e1.precio + ' gotas') + '</button>' + (falE ? '<button type="button" class="btn sec il-viv-bt viv-ganar-bt" data-ac="tab" data-id="gotas">Cómo ganar gotas</button>' : '');
+      }
+      estHTML = '<div class="il-viv-car viv-grid" role="list" aria-label="Estructuras de este lugar">' + ids.map(tileE).join('') + '</div>'
+        + (e1 ? '<div class="il-viv-ficha viv-accion"><div class="viv-est-prev">' + estSVG(hab, e1.v, 'viv-est-grande') + '</div><h4>' + esc(e1.nombre) + '</h4><p class="il-viv-rasgo">' + esc(e1.dato) + '</p><p class="viv-ayuda">Aparece en tu lugar cuando completa su día 10.</p>' + accE + '</div>' : '<p class="viv-vacio">Pronto habrá estructuras para este lugar.</p>');
+    }
+    if (deco) {   // F1261 · Decoración: las 7 casillas del lugar, 3 variantes cada una; solo del hábitat que miras
+      const C = window.TBCasillas, G = (C && C.G[hab]) || [], PR = (CAT.variantes || {}).precios || {};
+      const claveD = (si, n) => 'var_' + hab + '_' + si + '_' + n, precD = (n) => PR[n] || 0;
+      const mioD = (si, n) => n === 0 || tengo(claveD(si, n)), puD = (si, n) => { try { return C.elegida(hab, si) === n; } catch (e) { return false; } };
+      const tileD = (si, n, va) => { const m = mioD(si, n), pu = puD(si, n), s2 = vivDec && vivDec.si === si && vivDec.n === n;
+        return '<button type="button" class="il-viv-tile viv-est-tile' + (s2 ? ' sel' : '') + (m ? ' mio' : '') + '" role="listitem" data-ac="ver-dec" data-si="' + si + '" data-n="' + n + '" aria-pressed="' + s2 + '"><span class="il-viv-arte">' + estSVG(hab, n, 'viv-est-svg', si) + '</span><b>' + esc(va.n) + '</b>'
+          + (m ? '<span class="il-viv-chip ok">' + (pu ? 'En tu lugar' : n === 0 ? 'Incluida' : 'Tuya') + '</span>' : '<span class="il-viv-chip">' + ic(IC.gota, 13) + precD(n) + '</span>') + '</button>'; };
+      if (!vivDec || !G[vivDec.si]) vivDec = { si: 1, n: 0 };
+      estHTML = G.map((g, si) => si === 0 ? '' : '<h5 class="viv-sub">' + esc(g.label) + '</h5><div class="il-viv-car viv-grid" role="list" aria-label="' + esc(g.label) + '">' + g.vars.map((va, n) => tileD(si, n, va)).join('') + '</div>').join('');
+      const g1 = G[vivDec.si], v1 = g1 && g1.vars[vivDec.n];
+      if (v1) {
+        const pr1 = precD(vivDec.n), fal1 = Math.max(0, pr1 - saldo), m1 = mioD(vivDec.si, vivDec.n); let a1;
+        if (puD(vivDec.si, vivDec.n)) a1 = '<p class="il-viv-ok2">✓ Esta es la que tiene tu lugar.</p>';
+        else if (m1) a1 = fondoOk ? '<button type="button" class="btn il-viv-bt il-viv-main" data-ac="usar-dec">Usar en mi lugar</button>' : '<p class="il-viv-pre">Para usarla, primero obtén el lugar «' + esc(nomHab(hab)) + '».</p>';
+        else a1 = '<p class="suave m0">' + (fal1 ? 'Te faltan ' + fal1 + ' gotas.' : 'Ya tienes las gotas necesarias.') + '</p><button type="button" class="btn il-viv-bt il-viv-main" data-ac="comprar-dec"' + (fal1 ? ' disabled' : '') + '>' + (fal1 ? 'Aún faltan gotas' : 'Obtener por ' + pr1 + ' gotas') + '</button>' + (fal1 ? '<button type="button" class="btn sec il-viv-bt viv-ganar-bt" data-ac="tab" data-id="gotas">Cómo ganar gotas</button>' : '');
+        estHTML += '<div class="il-viv-ficha viv-accion"><div class="viv-est-prev">' + estSVG(hab, vivDec.n, 'viv-est-grande', vivDec.si) + '</div><h4>' + esc(v1.n) + '</h4><p class="il-viv-rasgo">' + esc(g1.label) + ' de ' + esc(nomHab(hab)) + '</p>' + a1 + '</div>';
+      }
+    }
     const pillsG = '<button type="button" class="il-viv-saldo il-viv-saldo-bt" data-ac="tab" data-id="gotas" aria-label="Ver cómo ganar gotas">' + ic(IC.gota, 16) + saldo + (saldo === 1 ? ' gota' : ' gotas') + '<span class="viv-ganar">+ Ganar</span></button>'
     return '<div class="il-viv-cab viv-top"><h3 class="viv-titulo">Vivero</h3><div class="viv-pills">' + pillsG + '</div></div>'
       + (est.regalo && est.regalo.tester ? '' : '<button type="button" class="viv-paisaje viv-regalo" data-ac="regalo"><span class="vp-ic">🎁</span><span class="vp-tx"><b>Tienda de regalo</b><small>Pack para testers: 300 gotas gratis</small></span><span class="vp-go">Recibir</span></button>')
       + paisajeTarjeta()
       + '<h4 class="viv-paso">1. Elige un lugar</h4><p class="viv-ayuda">Toca un lugar para verlo. Tu árbol y todo lo que pongas viven en el lugar que uses.</p><div class="viv-habitats" role="group" aria-label="Lugares del Vivero">' + haba + '</div>' + lugarFicha
-      + '<h4 class="viv-paso">2. Cosas para ' + esc(nomHab(hab)) + '</h4>' + (fondoOk ? '' : '<p class="viv-ayuda">Puedes mirar todo. Para ponerlo en tu Inicio, primero necesitas este lugar.</p>') + '<div class="viv-filtros" role="group" aria-label="Tipo de cosa">' + pill('flores', 'Plantas') + pill('aves', 'Aves') + pill('paisaje', 'Ambiente') + '</div>'
-      + '<div class="il-viv-car viv-grid" role="list" aria-label="Cosas para este lugar">' + lista.map((i) => tile(tipoV, i)).join('') + '</div>'
-      + (!lista.length ? '<p class="viv-vacio">' + (amb ? 'Pronto habrá decoraciones para este lugar.' : 'Aún no hay ' + (vivTab === 'aves' ? 'aves' : 'plantas') + ' para este lugar.') + '</p>' : '<div class="il-viv-ficha viv-accion"><h4>' + esc(it.nombre) + '</h4><p class="il-viv-rasgo">' + esc(vivSel.tipo === 'ave' ? ((AVES[vivSel.id] || {}).t || '') : vivSel.tipo === 'ambiente' ? ((catDe('ambiente')[vivSel.id] || {}).t || '') : (TAM[vivSel.id] || '')) + '</p>' + acc + '</div>')
+      + '<h4 class="viv-paso">2. Cosas para ' + esc(nomHab(hab)) + '</h4>' + (fondoOk ? '' : '<p class="viv-ayuda">Puedes mirar todo. Para ponerlo en tu Inicio, primero necesitas este lugar.</p>') + '<div class="viv-filtros" role="group" aria-label="Tipo de cosa">' + pill('estructuras', 'Estructuras') + pill('decoracion', 'Decoración') + pill('flores', 'Plantas') + pill('aves', 'Aves') + pill('paisaje', 'Ambiente') + '</div>'
+      + (estr || deco ? estHTML : '<div class="il-viv-car viv-grid" role="list" aria-label="Cosas para este lugar">' + lista.map((i) => tile(tipoV, i)).join('') + '</div>'
+      + (!lista.length ? '<p class="viv-vacio">' + (amb ? 'Pronto habrá decoraciones para este lugar.' : 'Aún no hay ' + (vivTab === 'aves' ? 'aves' : 'plantas') + ' para este lugar.') + '</p>' : '<div class="il-viv-ficha viv-accion"><h4>' + esc(it.nombre) + '</h4><p class="il-viv-rasgo">' + esc(vivSel.tipo === 'ave' ? ((AVES[vivSel.id] || {}).t || '') : vivSel.tipo === 'ambiente' ? ((catDe('ambiente')[vivSel.id] || {}).t || '') : (TAM[vivSel.id] || '')) + '</p>' + acc + '</div>'))
       + '<p class="il-viv-est" role="status" aria-live="polite">' + esc(vivMsg) + '</p>';
   }
   // F1011 · Obtener gotas, como la captura: se abre desde la píldora de gotas del Vivero y vuelve con la misma píldora (lo que ya ganaste queda guardado).
@@ -860,8 +898,16 @@
         if (ac === 'paisaje') { paisajeHoja(() => { repintaJardin(); pinta(true); }); return; }
         if (ac === 'fondo') { const r1 = T.elegirTematica(id); if (!r1.ok) { vivMsg = 'No se pudo cambiar el lugar.'; pinta(true); return; } vivMsg = 'Tu Inicio ahora es el lugar «' + nomHab(id) + '».'; sonido('suave'); repintaJardin(); pinta(true); return; }
         // F1066/F1233: tocar un lugar solo lo muestra; el lugar cambia con «Usar este lugar en mi Inicio» y se compra con «Obtener por N gotas» (dos pasos: tocar la tarjeta nunca gasta)
-        if (ac === 'habitat') { vivGrupo = id; vivMsg = ''; pinta(false); sonido('suave'); try { const act = $('.viv-hab.on', pn); if (act && act.scrollIntoView) act.scrollIntoView({ behavior: quieto() ? 'auto' : 'smooth', block: 'nearest', inline: 'center' }); } catch (e) { /* sin desplazamiento */ } return; }
+        if (ac === 'habitat') { vivGrupo = id; vivEst = null; vivDec = null; vivMsg = ''; pinta(false); sonido('suave'); try { const act = $('.viv-hab.on', pn); if (act && act.scrollIntoView) act.scrollIntoView({ behavior: quieto() ? 'auto' : 'smooth', block: 'nearest', inline: 'center' }); } catch (e) { /* sin desplazamiento */ } return; }
         if (ac === 'comprar-tema') { vivGrupo = id; const r2 = T.comprar('tema', id); if (r2 && r2.ok) { vivMsg = '¡Lugar obtenido! Ahora puedes usarlo en tu Inicio.'; sonido('logro'); } else { const m = { 'sin-gotas': 'Te faltan gotas para este lugar. Toca «Cómo ganar gotas».', 'ya-tienes': 'Ya tienes este lugar.' }; vivMsg = m[r2 && r2.motivo] || 'No se pudo desbloquear ahora.'; } pinta(false); gotasAhora(); return; }
+        if (ac === 'tab' && id === 'decoracion') { vivTab = 'decoracion'; vivDec = null; vivMsg = ''; pinta(false); sonido('suave'); return; }
+        if (ac === 'ver-dec') { vivDec = { si: +b.getAttribute('data-si'), n: +b.getAttribute('data-n') }; vivMsg = ''; pinta(true); sonido('suave'); try { const f = $('.viv-accion', pn); if (f && f.scrollIntoView) f.scrollIntoView({ behavior: quieto() ? 'auto' : 'smooth', block: 'nearest' }); } catch (e) { /* sin scroll */ } return; }
+        if (ac === 'comprar-dec' && vivDec) { const PR = (CAT.variantes || {}).precios || {}, r4 = T.comprarClave('var_' + vivGrupo + '_' + vivDec.si + '_' + vivDec.n, PR[vivDec.n] || 0); vivMsg = r4.ok ? '¡Obtenida! Toca «Usar en mi lugar».' : r4.motivo === 'faltan-gotas' ? 'Te faltan gotas. Toca «Cómo ganar gotas».' : 'No se pudo obtener ahora.'; if (r4.ok) sonido('logro'); pinta(true); gotasAhora(); return; }
+        if (ac === 'usar-dec' && vivDec && window.TBCasillas) { window.TBCasillas.elegir(vivGrupo, vivDec.si, vivDec.n); vivMsg = 'Quedó en tu lugar.'; sonido('suave'); repintaJardin(); pinta(true); return; }
+        if (ac === 'tab' && id === 'estructuras') { vivTab = 'estructuras'; vivEst = null; vivMsg = ''; pinta(false); sonido('suave'); return; }
+        if (ac === 'ver-est') { vivEst = id; vivMsg = ''; pinta(true); sonido('suave'); try { const f = $('.viv-accion', pn); if (f && f.scrollIntoView) f.scrollIntoView({ behavior: quieto() ? 'auto' : 'smooth', block: 'nearest' }); } catch (e) { /* sin scroll */ } return; }
+        if (ac === 'comprar-est') { const r3 = T.comprar('estructura', id); if (r3 && r3.ok) { vivMsg = '¡Estructura obtenida! Toca «Usar en mi lugar».'; sonido('logro'); } else vivMsg = r3 && r3.motivo === 'faltan-gotas' ? 'Te faltan gotas. Toca «Cómo ganar gotas».' : 'No se pudo obtener ahora.'; pinta(true); gotasAhora(); return; }
+        if (ac === 'usar-est') { const it3 = (CAT.estructuras || {})[id]; if (it3 && window.TBCasillas) { window.TBCasillas.elegir((it3.habitat || [])[0], 0, it3.v); vivMsg = '«' + it3.nombre + '» quedó en tu lugar.'; sonido('suave'); repintaJardin(); } pinta(true); return; }
         if (ac === 'tab' && id === 'gotas') { vivSel = { tipo: 'gotas', id: 'gotas' }; vivMsg = ''; pinta(false); sonido('suave'); return; }
         if (ac === 'grupo') { vivGrupo = id; const tp = vivSel && vivSel.tipo === 'ave' ? 'ave' : 'semilla', p = listaDe(tp).filter((i) => enGrupo(tp, i, id))[0]; if (p) vivSel = { tipo: tp, id: p }; vivMsg = ''; pinta(false); sonido('suave'); return; }
         if (ac === 'ira') { hj.cerrar(); if (id === 'trivia') abrirTrivia(); else { try { if (window.TBApp && window.TBApp.irA) window.TBApp.irA(id); } catch (e) { /* sin ir */ } } return; }

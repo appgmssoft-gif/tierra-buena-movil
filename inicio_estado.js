@@ -169,8 +169,20 @@
     const h = it.habitat && it.habitat.length ? it.habitat : ['general'];
     return h.indexOf('general') >= 0 || (!!tem && h.indexOf(tem) >= 0);
   }
-  const PREF = { semilla: 'sem_', ave: 'ave_', ambiente: 'amb_', lugar: 'lug_', clima: 'cli_', tema: 'tem_' }, LISTA = { semilla: 'semillas', ave: 'aves', ambiente: 'ambientes', lugar: 'lugares', clima: 'climas', tema: 'tematicas' }, GRATIS = { lugar: 'colinas', clima: 'natural' };
+  const PREF = { semilla: 'sem_', ave: 'ave_', ambiente: 'amb_', lugar: 'lug_', clima: 'cli_', tema: 'tem_', estructura: 'est_' }, LISTA = { semilla: 'semillas', ave: 'aves', ambiente: 'ambientes', lugar: 'lugares', clima: 'climas', tema: 'tematicas', estructura: 'estructuras' }, GRATIS = { lugar: 'colinas', clima: 'natural' };
   function tiene(tipo, id) { if (GRATIS[tipo] === id) return true; return cargar().vivero.desbloqueados.indexOf(PREF[tipo] + id) >= 0; }
+  // F1261 · Variantes de casillas: compra genérica por clave (var_<lugar>_<casilla>_<n>).
+  function comprarClave(clave, precio) {
+    const e = cargar(); if (e.vivero.desbloqueados.indexOf(clave) >= 0) return { ok: false, motivo: 'ya-tienes' };
+    if (e.gotas.saldo < precio) return { ok: false, motivo: 'faltan-gotas' };
+    e.gotas.saldo -= precio; e.vivero.desbloqueados.push(clave); guardar(e); return { ok: true, motivo: null };
+  }
+  // F1261 · Variantes de casillas: compra genérica por clave (var_<lugar>_<casilla>_<n>).
+  function comprarClave(clave, precio) {
+    const e = cargar(); if (e.vivero.desbloqueados.indexOf(clave) >= 0) return { ok: false, motivo: 'ya-tienes' };
+    if (e.gotas.saldo < precio) return { ok: false, motivo: 'faltan-gotas' };
+    e.gotas.saldo -= precio; e.vivero.desbloqueados.push(clave); guardar(e); return { ok: true, motivo: null };
+  }
   function comprar(tipo, id) {                             // tipo: 'semilla' | 'ave' | 'lugar' | 'clima'. Devuelve { ok, motivo }
     const e = cargar(), it = (cat()[LISTA[tipo]] || {})[id]; if (!it) return { ok: false, motivo: 'no-existe' };
     const clave = PREF[tipo] + id; if (e.vivero.desbloqueados.indexOf(clave) >= 0) return { ok: false, motivo: 'ya-tienes' };
@@ -252,6 +264,6 @@
     return { ok: true, acierto, correcta: ord.indexOf(q.c), explicacion: q.e, gotas: g };
   }
 
-  const api = { reclamarRegalo, elegirHabitatInicial, visibleEn, avanceDiario, entornoVisible, config(o) { if (o && o.catalogo) CAT = o.catalogo; if (o && o.hoy) HOY = o.hoy; if (o && o.almacen) ALM = o.almacen; }, cargar, guardar, estado: cargar, etapa, malezaPara, elegirPrimera, visita, sanar, ganar, ganarDirecto, restarDirecto, recolectar, comprar, tiene, plantar, activarAve, activarAmbiente, mensajeActual,   triviaHoy, responderTrivia, elegirTematica, K };
+  const api = { comprarClave, reclamarRegalo, elegirHabitatInicial, visibleEn, avanceDiario, entornoVisible, config(o) { if (o && o.catalogo) CAT = o.catalogo; if (o && o.hoy) HOY = o.hoy; if (o && o.almacen) ALM = o.almacen; }, cargar, guardar, estado: cargar, etapa, malezaPara, elegirPrimera, visita, sanar, ganar, ganarDirecto, restarDirecto, recolectar, comprar, tiene, plantar, activarAve, activarAmbiente, mensajeActual,   triviaHoy, responderTrivia, elegirTematica, K };
   if (typeof window !== 'undefined') window.TBInicio = api; if (typeof module !== 'undefined') module.exports = api;
 })();
