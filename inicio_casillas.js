@@ -178,7 +178,7 @@ const G={};Object.keys(HAB).forEach(k=>{const h=HAB[k];G[k]=[{label:'Estructura'
       {x:242,y:396,w:62,h:48,k:1.35,l:5,fp:'1×1'},{x:138,y:394,w:48,h:50,k:1.3,l:4,fp:'1×1'},{x:170,y:326,w:40,h:46,k:1.2,l:2,fp:'1×1'}]}
   };
   const lay=hab=>LAY[hab]||{ST,SL};
-  // Día en que llega cada casilla (índice de G): estructura al cerrar el día 10; ambiente con la atmósfera del día 9.
+  // Día en que llega cada casilla (índice de G): estructura desde el día 1 (F1263); ambiente con la atmósfera del día 9.
   const DIA_SLOT={1:3,3:4,0:5,4:6,2:7,5:8,6:9,7:8};
   const KSEL='tb_casillas_sel';
   const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
@@ -186,7 +186,7 @@ const G={};Object.keys(HAB).forEach(k=>{const h=HAB[k];G[k]=[{label:'Estructura'
   function leerSel(){try{return JSON.parse(lsGet(KSEL)||'{}')||{}}catch(e){return {}}}
   function elegida(hab,i){const s=leerSel()[hab];const n=(G[hab]||[])[i];if(!n)return -1;const v=s&&typeof s[i]==='number'?s[i]:0;return v<n.vars.length?v:0}
   function elegir(hab,i,v){const s=leerSel();s[hab]=s[hab]||[];s[hab][i]=v;lsSet(KSEL,JSON.stringify(s))}
-  function llega(g,i){return i===0?10:(DIA_SLOT[g[i].s]||10)}
+  function llega(g,i){return i===0?1:(DIA_SLOT[g[i].s]||10)}   // F1263: la estructura se ve desde el día 1 (antes llegaba el día 10 y nadie la veía)
   // Piezas visibles ese día, de lejos a cerca. Devuelve marcado SVG (sin style).
   function capa(hab,dias){
     const g=G[hab];if(!g)return '';const h=HAB[hab],p=h.p,d=Math.max(0,Math.floor(dias||0));

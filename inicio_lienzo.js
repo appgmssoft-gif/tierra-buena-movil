@@ -513,7 +513,7 @@
       : '<button type="button" class="btn il-viv-bt il-viv-main" data-ac="comprar-tema" data-id="' + esc(hab) + '">Obtener por ' + precioH + ' gotas</button>';
     const lugarFicha = '<div class="viv-lugar"><h4>' + esc(nomHab(hab)) + '</h4><p class="il-viv-dato">' + esc(TH.dato || '') + '</p>' + accH + '</div>';
     // F1260 · Estructuras: cada lugar vende solo las suyas (catálogo `estructuras`); la primera viene incluida y las otras se obtienen con gotas.
-    const estSVG = (h, v, cls, si) => { const C = window.TBCasillas, va = C && C.G[h] && C.G[h][si || 0] && C.G[h][si || 0].vars[v]; if (!va) return ''; return '<svg class="' + cls + '" viewBox="-76 -168 152 178" aria-hidden="true" focusable="false"><ellipse cx="0" cy="2" rx="62" ry="7" fill="#1b2a2a" opacity=".12"/>' + va.f(C.HAB[h].p) + '</svg>'; };
+    const estSVG = (h, v, cls, si) => { const C = window.TBCasillas, va = C && C.G[h] && C.G[h][si || 0] && C.G[h][si || 0].vars[v]; if (!va) return ''; return '<svg class="' + cls + '"' + (si ? ' data-fit="1"' : '') + ' viewBox="-76 -168 152 178" aria-hidden="true" focusable="false"><ellipse cx="0" cy="2" rx="62" ry="7" fill="#1b2a2a" opacity=".12"/>' + va.f(C.HAB[h].p) + '</svg>'; };
     let estHTML = '';
     if (estr) {
       const EC = CAT.estructuras || {}, ids = Object.keys(EC).filter((i) => (EC[i].habitat || [])[0] === hab).sort((a, b) => EC[a].v - EC[b].v);
@@ -530,7 +530,7 @@
         else accE = '<p class="suave m0">' + (falE ? 'Te faltan ' + falE + ' gotas.' : 'Ya tienes las gotas necesarias.') + '</p><button type="button" class="btn il-viv-bt il-viv-main" data-ac="comprar-est" data-id="' + esc(vivEst) + '"' + (falE ? ' disabled' : '') + '>' + (falE ? 'Aún faltan gotas' : 'Obtener por ' + e1.precio + ' gotas') + '</button>' + (falE ? '<button type="button" class="btn sec il-viv-bt viv-ganar-bt" data-ac="tab" data-id="gotas">Cómo ganar gotas</button>' : '');
       }
       estHTML = '<div class="il-viv-car viv-grid" role="list" aria-label="Estructuras de este lugar">' + ids.map(tileE).join('') + '</div>'
-        + (e1 ? '<div class="il-viv-ficha viv-accion"><div class="viv-est-prev">' + estSVG(hab, e1.v, 'viv-est-grande') + '</div><h4>' + esc(e1.nombre) + '</h4><p class="il-viv-rasgo">' + esc(e1.dato) + '</p><p class="viv-ayuda">Aparece en tu lugar cuando completa su día 10.</p>' + accE + '</div>' : '<p class="viv-vacio">Pronto habrá estructuras para este lugar.</p>');
+        + (e1 ? '<div class="il-viv-ficha viv-accion"><div class="viv-est-prev">' + estSVG(hab, e1.v, 'viv-est-grande') + '</div><h4>' + esc(e1.nombre) + '</h4><p class="il-viv-rasgo">' + esc(e1.dato) + '</p><p class="viv-ayuda">Se ve en tu lugar desde el primer día.</p>' + accE + '</div>' : '<p class="viv-vacio">Pronto habrá estructuras para este lugar.</p>');
     }
     if (deco) {   // F1261 · Decoración: las 7 casillas del lugar, 3 variantes cada una; solo del hábitat que miras
       const C = window.TBCasillas, G = (C && C.G[hab]) || [], PR = (CAT.variantes || {}).precios || {};
@@ -669,9 +669,10 @@
 
   // F1204 · «Hoy apareció…»: cada día una frase cuenta qué capa nueva llegó a tu lugar; diez puntos muestran el camino hasta el día 10.
   const HOY_CAPA = {
-    bosque: ['Hoy empezó tu bosque: cielo, suelo y luz.', 'Hoy apareció el plano lejano: cerros verdes entre la bruma.', 'Hoy brotó un copihue, la flor del bosque.', 'Hoy llegó un primer detalle al suelo del bosque.', 'Hoy crecieron los helechos, a la sombra.', 'Hoy tu lugar ganó vida: lo que llegó sigue creciendo.', 'Hoy llegó el chucao, un ave café entre las hojas.', 'Hoy tu pewén abrió sus ramas y llegó otro detalle.', 'Hoy llegó la atmósfera: rayos de luz y luciérnagas.', 'Tu lugar quedó completo. Gracias por cuidarlo cada día.'],
-    desierto: ['Hoy empezó tu desierto: cielo, arena y luz.', 'Hoy apareció la mesa lejana sobre las dunas.', 'Hoy floreció una añañuca, roja sobre la arena.', 'Hoy el aire se aquietó: sol y arena en calma.', 'Hoy llegó el guanaco, todavía pequeño.', 'Hoy tu lugar ganó vida: lo que llegó sigue creciendo.', 'Hoy apareció el zorro, atento entre las dunas.', 'Hoy tu lugar se llenó un poco más de vida.', 'Hoy llegó la atmósfera: luz tibia y polvo dorado.', 'Tu lugar quedó completo. Gracias por cuidarlo cada día.'],
-    costa: ['Hoy empezó tu costa: cielo, arena y luz.', 'Hoy apareció el horizonte del mar.', 'Hoy brotó un chagual junto a la arena.', 'Hoy el mar dejó una piedra en la orilla.', 'Hoy el mar trajo conchas a la playa.', 'Hoy tu lugar ganó vida: lo que llegó sigue creciendo.', 'Hoy una gaviota cruzó sobre el mar.', 'Hoy la espuma llegó más suave a la orilla.', 'Hoy llegó la atmósfera: brillos de mar y brisa.', 'Tu lugar quedó completo. Gracias por cuidarlo cada día.']
+    bosque: ['Hoy empezó tu bosque: cielo, suelo, luz y tu estructura.', 'Hoy apareció el plano lejano: cerros verdes entre la bruma.', 'Hoy brotó un copihue, la flor del bosque.', 'Hoy llegó un primer detalle al suelo del bosque.', 'Hoy crecieron los helechos, a la sombra.', 'Hoy tu lugar ganó vida: lo que llegó sigue creciendo.', 'Hoy llegó el chucao, un ave café entre las hojas.', 'Hoy tu pewén abrió sus ramas y llegó otro detalle.', 'Hoy llegó la atmósfera: rayos de luz y luciérnagas.', 'Tu lugar quedó completo. Gracias por cuidarlo cada día.'],
+    desierto: ['Hoy empezó tu desierto: cielo, arena, luz y tu estructura.', 'Hoy apareció la mesa lejana sobre las dunas.', 'Hoy floreció una añañuca, roja sobre la arena.', 'Hoy el aire se aquietó: sol y arena en calma.', 'Hoy llegó el guanaco, todavía pequeño.', 'Hoy tu lugar ganó vida: lo que llegó sigue creciendo.', 'Hoy apareció el zorro, atento entre las dunas.', 'Hoy tu lugar se llenó un poco más de vida.', 'Hoy llegó la atmósfera: luz tibia y polvo dorado.', 'Tu lugar quedó completo. Gracias por cuidarlo cada día.'],
+    cordillera: ['Hoy empezó tu cordillera: cielo, cumbres, luz y tu estructura.', 'Hoy apareció la cordillera lejana, con nieve en la cima.', 'Hoy brotó una planta de altura, firme contra el frío.', 'Hoy la montaña dejó algo nuevo en el suelo.', 'Hoy creció un árbol de altura, a su ritmo.', 'Hoy apareció un animal de la cordillera, atento y tranquilo.', 'Hoy tu lugar ganó otro árbol, más grande.', 'Hoy llegó un pequeño detalle entre las piedras.', 'Hoy llegó la atmósfera: una luz cálida en el aire fino de la altura.', 'Tu lugar quedó completo. Gracias por cuidarlo cada día.'],
+    costa: ['Hoy empezó tu costa: cielo, arena, luz y tu estructura.', 'Hoy apareció el horizonte del mar.', 'Hoy brotó un chagual junto a la arena.', 'Hoy el mar dejó una piedra en la orilla.', 'Hoy el mar trajo conchas a la playa.', 'Hoy tu lugar ganó vida: lo que llegó sigue creciendo.', 'Hoy una gaviota cruzó sobre el mar.', 'Hoy la espuma llegó más suave a la orilla.', 'Hoy llegó la atmósfera: brillos de mar y brisa.', 'Tu lugar quedó completo. Gracias por cuidarlo cada día.']
   };
   function hoyCapa(est) { const l = HOY_CAPA[est.tematica] || HOY_CAPA.bosque, d = Math.max(1, Math.min(l.length, est.habDias || (est.ciclo && est.ciclo.diasCuidado) || 1)); return l[d - 1]; }
   function diaActual(est) { const t = DIAS(); return Math.max(1, Math.min(t, est.habDias || (est.ciclo && est.ciclo.diasCuidado) || 1)); }
@@ -719,6 +720,20 @@
   }
 
   // ---------- Jardín ----------
+  // F1264 · Vivero: cada dibujo chico (decoración) se acerca a su tamaño real para que se vea en la tarjeta y en la ficha; sin atributo style (CSP).
+  function fitVistas(raiz) {
+    try {
+      raiz.querySelectorAll('svg[data-fit]').forEach((sv) => {
+        const sd = sv.firstElementChild; if (sd) sd.setAttribute('display', 'none');
+        const ns = sv.querySelectorAll('.sd'); ns.forEach((n) => n.setAttribute('display', 'none'));
+        let b = null; try { b = sv.getBBox(); } catch (e) { b = null; }
+        ns.forEach((n) => n.removeAttribute('display')); if (sd) sd.removeAttribute('display');
+        if (!b || !b.width || !b.height) return;
+        const w = Math.max(b.width + 16, 52), hh = Math.max(b.height + 14, 46), cx = b.x + b.width / 2, bot = Math.max(b.y + b.height, 0) + 6;
+        sv.setAttribute('viewBox', (cx - w / 2).toFixed(1) + ' ' + (bot - hh).toFixed(1) + ' ' + w.toFixed(1) + ' ' + hh.toFixed(1)); sv.removeAttribute('data-fit');
+      });
+    } catch (e) { /* sin ajuste */ }
+  }
   function pintar(cont, mi, extra) {
     if (mi !== gen || !cont.isConnected) return;
     const T = window.TBInicio; let r = (extra && extra.r) || {};
@@ -890,7 +905,7 @@
       vivMsg = '';
       const hj = hojaArea({ id: 'Vivero', clase: 'viv', icono: IC.hoja, titulo: 'Vivero', sub: 'Lugares, plantas y aves' });
       const pn = document.createElement('section'); pn.className = 'il-viv'; pn.setAttribute('aria-label', 'Vivero'); hj.cuerpo.appendChild(pn);
-      const pinta = (conservar) => { const car = $('.il-viv-car', pn), sl = car ? car.scrollLeft : 0, sc = hj.cuerpo, st = sc.scrollTop; pn.innerHTML = vivPanel(T.cargar()); const c2 = $('.il-viv-car', pn); if (c2 && conservar) c2.scrollLeft = sl; sc.scrollTop = st; };   // F1254: el panel ya no salta al elegir
+      const pinta = (conservar) => { const car = $('.il-viv-car', pn), sl = car ? car.scrollLeft : 0, sc = hj.cuerpo, st = sc.scrollTop; pn.innerHTML = vivPanel(T.cargar()); fitVistas(pn); const c2 = $('.il-viv-car', pn); if (c2 && conservar) c2.scrollLeft = sl; sc.scrollTop = st; };   // F1254: el panel ya no salta al elegir
       const verJardin = (sel) => { hj.cerrar(); repintaJardin(); if (ultimo) camara(ultimo.cont, sel); };   // al plantar o llamar un ave: se cierra el Vivero y la cámara muestra el resultado
       pn.onclick = (ev) => {
         const b = ev.target.closest('[data-ac]'); if (!b || b.disabled) return; const ac = b.getAttribute('data-ac'), tipo = b.getAttribute('data-tipo'), id = b.getAttribute('data-id'); let r;
