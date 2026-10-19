@@ -62,23 +62,6 @@
   const cat = () => CAT || { ciclo: { dias: 30, etapas: [{ id: 'brote', desde: 1 }, { id: 'raiz', desde: 8 }, { id: 'ramas', desde: 15 }, { id: 'frondoso', desde: 22 }], maleza_max: 5, paisaje_guardado: 12 }, orden_especies: ['araucaria'], primera_eleccion: ['araucaria'], especies: {}, semillas: {}, aves: {}, economia: { origenes: {}, pendientes_max: 30, aves_activas_max: 2 }, maleza: { tipos: ['hoja_seca'], tabla: [] }, casillas: { pasto: [], fondo: [] } };
 
   // Etapa del árbol según los días de cuidado (0 = aún no hay árbol: se está eligiendo la semilla).
-  // F1005 · Avance diario: cada día se nota. La escala crece del 78 % al 100 % a lo largo del ciclo, y dentro de cada etapa se ve el porcentaje.
-  function avanceDiario(dias) {
-    const c = cat().ciclo, tot = c.dias || 10, d = Math.max(1, Math.min(tot, dias || 1));
-    const e = etapa(d), idx = Math.max(0, c.etapas.findIndex((s) => s.id === e));
-    const ini = c.etapas[idx].desde, fin = idx + 1 < c.etapas.length ? c.etapas[idx + 1].desde : tot + 1;
-    const fraccion = Math.min(1, Math.max(0, (d - ini) / (fin - ini)));
-    // F1015: crecimiento que se nota desde el día 2: sube rápido al comienzo y luego se suaviza. Hojas nuevas cada día en la copa.
-    const avance = Math.max(0, d - 1) / Math.max(1, tot - 1);   // F1070: crecimiento lineal: cada día se nota
-    const escala = 0.55 + 0.45 * avance;
-    const hojas = Math.min(42, Math.round(d * 1.4));
-    return { dia: d, total: tot, etapa: e, fraccion: Math.round(fraccion * 100) / 100, escala: Math.round(escala * 1000) / 1000, hojas: hojas };
-  }
-  // F1006 · Entorno que crece con el árbol: cuántos elementos comprados se ven según el día (todos al día 30).
-  function entornoVisible(total, dia) {
-    const tot = cat().ciclo.dias || 10; if (!total) return 0;
-    return Math.min(total, Math.max(1, Math.ceil(total * Math.min(Math.max(1, dia || 1), tot) / tot)));
-  }
   function etapa(dias) { const et = cat().ciclo.etapas; let r = null; if (dias >= 1) for (const s of et) if (dias >= s.desde) r = s.id; return r; }
   // Cuánta maleza corresponde a una ausencia (en días completos SIN entrar). 0 o 1 día sin entrar = ninguna (gracia).
   function malezaPara(ausencia) { let n = 0; for (const f of cat().maleza.tabla) if (ausencia >= f.ausencia) n = f.cantidad; return Math.min(n, cat().ciclo.maleza_max || 5); }
@@ -268,6 +251,6 @@
     return { ok: true, acierto, correcta: ord.indexOf(q.c), explicacion: q.e, gotas: g };
   }
 
-  const api = { comprarClave, reclamarRegalo, elegirHabitatInicial, visibleEn, avanceDiario, entornoVisible, config(o) { if (o && o.catalogo) CAT = o.catalogo; if (o && o.hoy) HOY = o.hoy; if (o && o.almacen) ALM = o.almacen; }, cargar, guardar, estado: cargar, etapa, malezaPara, elegirPrimera, visita, sanar, ganar, ganarDirecto, restarDirecto, recolectar, comprar, tiene, plantar, activarAve, activarAmbiente, mensajeActual,   triviaHoy, responderTrivia, elegirTematica, K };
+  const api = { comprarClave, reclamarRegalo, elegirHabitatInicial, visibleEn, config(o) { if (o && o.catalogo) CAT = o.catalogo; if (o && o.hoy) HOY = o.hoy; if (o && o.almacen) ALM = o.almacen; }, cargar, guardar, estado: cargar, etapa, malezaPara, elegirPrimera, visita, sanar, ganar, ganarDirecto, restarDirecto, recolectar, comprar, tiene, plantar, activarAve, activarAmbiente, mensajeActual,   triviaHoy, responderTrivia, elegirTematica, K };
   if (typeof window !== 'undefined') window.TBInicio = api; if (typeof module !== 'undefined') module.exports = api;
 })();

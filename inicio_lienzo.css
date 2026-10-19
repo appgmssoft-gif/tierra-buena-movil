@@ -152,9 +152,6 @@ html:not([data-anim=off]) .il-gota svg{animation:il-gota-brilla 1.6s ease-out 1}
 .il-gotas{margin:0;min-height:1.2em;font-size:.82rem;color:var(--suave);display:flex;align-items:center;justify-content:center}.il-gotas:empty{display:none}.il-gotas .il-ic{margin-right:5px;color:#7fc4e6}
 @media (prefers-reduced-motion:reduce){.il-gota svg{animation:none!important}.il-gota{transition:none!important}}
 html[data-eco="2"] .il-gota svg{animation:none!important}
-
-/* F932 · I5: Vivero. Botones en fila con aire; panel que sube suave (sin ventana emergente); flores y aves en el paisaje. */
-.il-fila{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin-top:16px;width:100%}.il-fila .il-btn-msg{margin-top:0}
 .il-viv{width:100%;margin-top:16px;padding:30px 28px 34px;border-radius:22px;background:var(--vidrio,transparent);border:1px solid color-mix(in srgb,var(--suave) 22%,transparent);text-align:left}
 .il-viv[hidden]{display:none}
 .il-viv.entra{animation:il-viv-sube .5s ease-out 1}
@@ -397,8 +394,6 @@ html[data-eco="2"] .il-tri-op.pop,html[data-eco="2"] .il-btn-msg.nuevo::after{an
 .og-h{min-width:0}
 .og-h>span,.og-h>b{min-width:0;overflow-wrap:anywhere}
 @media (max-width:360px){.og-h{letter-spacing:.02em;font-size:.72rem}}
-.il-fila{padding-bottom:28px}
-.il-fila .il-btn-msg{white-space:normal;text-align:center;line-height:1.25;max-width:100%}
 .viv-filtros{padding-right:16px;scroll-padding-inline:16px}
 .viv-filtros>*{flex:0 0 auto}
 /* F1040 · Barra inferior: «Mi iglesia» no se corta en teléfonos de 360 px */
@@ -448,14 +443,6 @@ html[data-eco="2"] .il-escena.camara .il-svg{animation:none}
 
 /* F1202 · Jardín protagonista (fase 2): tarjeta de vidrio legible, acciones en cuadrícula y espacio libre sobre la barra inferior */
 .inicio-limpio.il-con-lienzo{padding-bottom:calc(136px + env(safe-area-inset-bottom,0px))}
-.il-tarjeta{width:100%;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 18px;border-radius:22px;background:color-mix(in srgb,var(--papel) 88%,transparent);border:1px solid color-mix(in srgb,var(--suave) 20%,transparent);box-shadow:0 10px 30px rgba(40,30,15,.10);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
-.il-tarjeta .il-nombre{color:var(--tinta)}
-.il-tarjeta .il-estado{color:color-mix(in srgb,var(--tinta) 82%,var(--papel))}
-.il-tarjeta .il-gotas{color:color-mix(in srgb,var(--tinta) 78%,var(--papel))}
-.il-tarjeta .il-guia{color:color-mix(in srgb,var(--oro) 70%,var(--tinta))}
-.il-fila{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px;padding:0 22px 8px;box-sizing:border-box}
-.il-fila .il-btn-msg{width:100%;margin-top:0;min-height:52px;white-space:normal;text-align:center;line-height:1.25}
-html[data-eco="2"] .il-tarjeta{-webkit-backdrop-filter:none;backdrop-filter:none;background:var(--papel)}
 
 /* F1203 · Cabecera sin choques, escena más arriba (menos cielo vacío), capas por día y atmósfera del día 9 */
 .il-pill{top:-4px}
@@ -488,67 +475,21 @@ html[data-eco="2"] .am-rayo,html[data-eco="2"] .am-p{animation:none!important}
 /* F1203 · Acciones como tres fichas de igual tamaño, siempre visibles sobre la barra inferior */
 .inicio-limpio.il-con-lienzo .il-escena{margin-bottom:-32px}
 .il-datos{position:relative;z-index:2}
-.il-fila{grid-template-columns:repeat(3,1fr);gap:10px}
-.il-fila .il-btn-msg{flex-direction:column;gap:5px;min-height:68px;padding:9px 6px;font-size:.78rem;line-height:1.2;border-radius:18px}
-.il-fila .il-btn-msg .il-ic{margin:0}
-.il-fila .il-btn-msg span{display:block}
-.il-fila .il-btn-msg small{display:block;font-size:.72rem;color:color-mix(in srgb,var(--tinta) 70%,var(--papel))}
-.il-fila{padding-bottom:12px}
-/* F1203 · Tarjeta más compacta: el estado y la guía ocupan menos y las fichas quedan libres de la barra */
-.il-tarjeta{padding:13px 16px;gap:5px}
-.il-tarjeta .il-guia{font-size:.8rem}
 
 /* F1204 · Fichas siempre sobre la barra: la escena se achica en pantallas bajas y el estado se limita a 2 líneas */
 .inicio-limpio.il-con-lienzo .il-escena{width:min(100vw,520px,max(300px,calc((100svh - 420px) * 1.16)))}
-.il-tarjeta .il-estado{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:.86rem;line-height:1.3;min-height:0}
 
 /* F1204 · Inicio: la escena sube (menos cielo vacío), la tarjeta y las fichas se compactan y todo queda sobre la barra inferior */
 .inicio-limpio.il-con-lienzo .il-escena{margin-top:-52px}
-.il-tarjeta{padding:11px 16px;gap:4px}
-.il-tarjeta .il-nombre{font-size:1.08rem}
-.il-fila{gap:9px;padding-bottom:6px}
-.il-fila .il-btn-msg{min-height:60px;padding:8px 6px;gap:3px}
 .inicio-limpio.il-con-lienzo{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))}
-
-/* F1204 · «Hoy apareció…», diez puntos de camino y destello de la capa nueva (revela) / cierre dorado del día 10 (dorado). Solo transform/opacity; quieto con «reducir movimiento» y Ahorro. */
-.il-dias{display:flex;gap:6px;justify-content:center;align-items:center;margin:2px 0 1px}
-.il-dias i{width:9px;height:9px;border-radius:50%;background:color-mix(in srgb,var(--tinta) 14%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--tinta) 16%,transparent)}
-.il-dias i.on{background:linear-gradient(145deg,#8fc06a,#46874f);box-shadow:0 1px 3px rgba(40,70,30,.35)}
-.il-dias i.ahora{width:13px;height:13px;background:radial-gradient(circle at 35% 30%,#ffe9a8,#d99a32);box-shadow:0 0 0 3px color-mix(in srgb,#d99a32 25%,transparent),0 2px 6px rgba(150,100,20,.4)}
-.il-hoy{margin:3px 0 0;display:flex;gap:7px;align-items:flex-start;justify-content:center;text-align:left;font-size:.88rem;line-height:1.3;font-weight:600;color:color-mix(in srgb,#8a5a12 78%,var(--tinta));font-family:"TB Titulo",Georgia,serif}
-.il-hoy-brillo{flex:none;color:#d99a32;font-size:.9rem;line-height:1.35}
 .il-escena::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;border-radius:50%;background:radial-gradient(ellipse 60% 45% at 50% 70%,rgba(255,236,170,.75),rgba(255,236,170,0) 70%)}
-.il-escena.dorado::after{background:radial-gradient(ellipse 85% 70% at 50% 62%,rgba(255,214,110,.9),rgba(255,200,90,.35) 45%,rgba(255,200,90,0) 75%)}
-@media (prefers-reduced-motion:no-preference){
-  html:not([data-anim=off]):not([data-eco="2"]) .il-escena.revela::after{animation:il-revela 2.6s ease-out 1}
-  html:not([data-anim=off]):not([data-eco="2"]) .il-escena.dorado::after{animation:il-revela 3.2s ease-in-out 1}
-  html:not([data-anim=off]):not([data-eco="2"]) .il-hoy.nuevo{animation:il-hoy-entra .9s cubic-bezier(.2,.8,.3,1) .35s backwards}
-  html:not([data-anim=off]):not([data-eco="2"]) .il-hoy.nuevo .il-hoy-brillo{animation:il-chispa 1.8s ease-in-out .6s 2}
-  html:not([data-anim=off]):not([data-eco="2"]) .il-dias i.ahora{animation:il-late 2.4s ease-in-out infinite}
-}
 @keyframes il-revela{0%{opacity:0;transform:scale(.8)}35%{opacity:1}100%{opacity:0;transform:scale(1.12)}}
-@keyframes il-hoy-entra{from{opacity:0;transform:translateY(8px)}}
+
 @keyframes il-chispa{50%{transform:scale(1.5) rotate(20deg);opacity:.6}}
 @keyframes il-late{50%{transform:scale(1.18)}}
 /* hueco para la nueva línea */
 .il-datos{gap:8px}
-.il-fila .il-btn-msg{min-height:54px}
-.il-tarjeta{padding:9px 14px;gap:3px}
-.il-tarjeta .il-estado:empty{display:none}
-.il-hoy{font-size:.85rem}
-@media (max-height:800px){.il-tarjeta .il-guia{display:none}}
-.il-datos{gap:6px}.il-fila{padding-bottom:0;gap:8px}.il-fila .il-btn-msg{min-height:50px;padding:6px}
-/* F1205 · Diario del lugar: cada punto es un botón con área de toque amplia */
-.il-dias{gap:0}
-.il-pt{appearance:none;-webkit-appearance:none;border:0;background:none;padding:0;margin:0;width:26px;height:34px;display:grid;place-items:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.il-pt i{transition:transform .2s}
-.il-pt:active i{transform:scale(1.5)}
-.il-pt.sel i{box-shadow:0 0 0 3px color-mix(in srgb,var(--tinta) 22%,transparent)}
-.il-pt:focus-visible{outline:2px solid #d99a32;outline-offset:-3px;border-radius:50%}
-.il-dias{margin:-4px 0 -6px}
-.il-pt{height:28px}.il-dias{margin:-5px 0 -8px}
-.il-hoy{min-height:2.6em;align-items:center}
-@media (max-height:860px){.il-tarjeta .il-guia{display:none}}
+.il-datos{gap:6px}
 
 /* F1215 · cordón de hojas del pewén */
 .tr-ram2{stroke:#35603c}@media (prefers-color-scheme:dark){.tr-ram2{stroke:#4d8454}}

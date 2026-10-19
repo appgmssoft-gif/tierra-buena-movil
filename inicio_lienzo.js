@@ -30,17 +30,6 @@
   const ci = (cls, x, y, r) => '<circle class="' + cls + '" cx="' + x + '" cy="' + y + '" r="' + r + '"/>';
   const el = (cls, x, y, rx, ry, rot) => '<ellipse class="' + cls + '" cx="' + x + '" cy="' + y + '" rx="' + rx + '" ry="' + ry + '"' + (rot ? ' transform="rotate(' + rot + ' ' + x + ' ' + y + ')"' : '') + '/>';
 
-  // F1067 · Suelo por hábitat: cada hábitat tiene su propio suelo (solo lo que le corresponde) y crece por días hasta un ambiente completo.
-  // Posiciones fijas (SLOTS_DIA): a los lados y delante del árbol, nunca sobre el tronco ni la copa.
-  const SLOTS_DIA = [[14, 338], [346, 338], [70, 334], [120, 392], [44, 350], [316, 350], [262, 362], [296, 334], [96, 362], [26, 372], [334, 372], [290, 330], [236, 396], [150, 404], [210, 386], [6, 344]];
-  // Formato: [día en que aparece, id (dibujo de FLORES o de ESP), índice de SLOTS_DIA, escala]
-  const PAISAJE_HAB = {
-    bosque: [[2, 'helechos', 0, 0.9], [3, 'piedras', 1, 0.8], [4, 'copihue', 2, 0.9], [5, 'helechos', 4, 0.8], [6, 'chilco', 5, 0.8], [7, 'pasto_alto', 8, 0.9], [9, 'copihue', 3, 0.85], [10, 'piedras', 7, 0.7], [11, 'helechos', 9, 0.9], [12, 'chilco', 11, 0.8], [13, 'pasto_alto', 12, 0.95], [15, 'helechos', 14, 0.8]],
-    desierto: [[6, 'tamarugo', 2, 0.9]],   // F1089: el desierto respira: sin decoración de suelo
-    costa: [[4, 'algas', 6, 0.8], [8, 'piqueros', 8, 0.9], [2, 'piedras', 0, 0.6]],   // F1089: la playa solo lleva una piedra suave; conchas y gaviota ya son rasgos
-    cordillera: [[4, 'flamencos', 3, 0.9], [2, 'piedras', 0, 0.9], [3, 'llareta', 1, 0.8], [4, 'piedras', 2, 0.8], [5, 'chachacoma', 4, 0.9], [7, 'llareta', 5, 0.9], [8, 'ananuca', 6, 0.8], [9, 'piedras', 7, 0.7], [11, 'chachacoma', 9, 0.9], [12, 'llareta', 10, 0.8], [13, 'piedras', 11, 0.7], [14, 'chachacoma', 13, 0.8], [15, 'llareta', 12, 0.9]],
-    general: [[2, 'pasto_alto', 0, 0.9], [4, 'piedras', 2, 0.8], [7, 'pasto_alto', 4, 0.8], [10, 'piedras', 7, 0.7], [13, 'pasto_alto', 9, 0.9]]
-  };
   // Dibujo con la base en (0,0): ESP (60×40) o FLORES (caja DIM)
   function sueloDibujo(id) {
     if (ESP[id]) return '<g transform="translate(-30 -40)">' + ESP[id] + '</g>';
@@ -48,8 +37,6 @@
     return '';
   }
   // F1076 · Los días del suelo se leen sobre 30 días (el doble de la escala anterior). Sin repetir los rasgos y como máximo 3 elementos: no se sobrecarga el inicio.
-  const RASGO_SLOTS = [[44, 350], [316, 350], [210, 386]];
-  const RASGO_SLOTS_DESIERTO = [[56, 338], [276, 360], [150, 404]];   // F1090: más espacio entre rasgos   // F1089: el desierto con espacio entre sus rasgos
   // F1083 · Sombreado automático en dos tonos: cada figura rellena recibe una copia más oscura desplazada abajo-derecha (luz arriba-izquierda).
   // Se aplica a los dibujos de rasgos y suelo sin reescribirlos a mano.
   function oscurecer(hex, k) { const n = parseInt(hex.slice(1), 16); const c = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => Math.round(v * k)); return '#' + c.map((v) => v.toString(16).padStart(2, '0')).join(''); }
@@ -65,39 +52,6 @@
   function rasgoDibujo(id) {
     if (AVES[id] && AVES[id].dib) return '<g transform="translate(' + (-AVES[id].vb[0] / 2) + ' ' + (-AVES[id].vb[1]) + ')">' + sombrear(AVES[id].dib()) + '</g>';
     return sombrear(sueloDibujo(id));
-  }
-  function rasgosEscena(est) {
-    const hab = est.tematica, ids = (((CAT && CAT.tematicas) || {})[hab] || {}).rasgos_ids || [], d = est.habDias || 0;
-    if (!hab || !ids.length) return '';
-    return ids.map((id, k) => {
-      const ini = 2 * k + 3; if (d < ini) return '';   // F1203: el hábitat se completa en 10 días: los rasgos entran los días 3, 5 y 7
-      const xy = (est.tematica === 'costa' && k === 2) ? [250, 214] : (est.tematica === 'desierto' ? RASGO_SLOTS_DESIERTO[k] : RASGO_SLOTS[k]), dd = Math.min(4, d - ini + 1);   // F1088: la gaviota vuela sobre el mar
-      const esAnimal = !!AVES[id] || ['guanaco', 'zorro', 'gaviota'].indexOf(id) >= 0;
-      if (!esAnimal) {   // plantas: crecen dentro de su bloque
-        const f = Math.min(1, dd / 4), s = (0.9 * (0.5 + 0.5 * f)).toFixed(2);
-        return '<g class="ras-it" transform="translate(' + xy[0] + ' ' + xy[1] + ') scale(' + s + ')">' + rasgoDibujo(id) + '</g>';
-      }
-      // F1084 · Animales por etapas dentro de su bloque: bebé (días 1-3), joven (4-7), adulto con su pequeña familia (8-10)
-      const tam = AVES[id] ? 1.7 : 1.35, adulto = rasgoDibujo(id);
-      if (dd <= 1) return '<g class="ras-it ras-bebe" transform="translate(' + xy[0] + ' ' + xy[1] + ') scale(' + (tam * 0.5).toFixed(2) + ')">' + adulto + '</g>';
-      if (dd <= 3) return '<g class="ras-it ras-joven" transform="translate(' + xy[0] + ' ' + xy[1] + ') scale(' + (tam * 0.75).toFixed(2) + ')">' + adulto + '</g>';
-      const cria = '<g transform="translate(-34 0) scale(0.42)">' + adulto + '</g><g transform="translate(34 0) scale(0.42)">' + adulto + '</g>';
-      return '<g class="ras-it ras-familia" transform="translate(' + xy[0] + ' ' + xy[1] + ') scale(' + tam.toFixed(2) + ')">' + cria + adulto + '</g>';
-    }).join('');
-  }
-  function paisajeDelDia(dias, hab) {
-    const rs = (((CAT && CAT.tematicas) || {})[hab] || {}).rasgos_ids || [];
-    // F1088: decoración fuera de los lugares de los rasgos
-    const L = (PAISAJE_HAB[hab] || PAISAJE_HAB.general).filter((it) => rs.indexOf(it[1]) < 0 && [4, 5, 14].indexOf(it[2]) < 0).slice(0, 2), d = Math.max(0, Math.floor(dias || 0)); let g = '';   // F1087: menos es más: como máximo 3 decoraciones de suelo
-    const piezas = [];
-    L.forEach((it, i) => {
-      const ini = 4 + 4 * i; if (d < ini) return;   // F1203: la primera decoración llega el día 4 y la segunda el día 8
-      const xy = SLOTS_DIA[it[2]], prof = 0.8 + 0.4 * Math.min(1, Math.max(0, (xy[1] - 330) / 74));   // F1278: profundidad: y=330 lejos (80 %), y=404 cerca (120 %)
-      const k = (it[3] * prof * (0.55 + 0.45 * Math.min(1, (d - ini + 1) / 4))).toFixed(2);
-      piezas.push([xy[1], '<g class="pa-it" transform="translate(' + xy[0] + ' ' + xy[1] + ') scale(' + k + ')">' + sueloDibujo(it[1]) + '</g>']);
-    });
-    piezas.sort((p, q) => p[0] - q[0]).forEach((p) => { g += p[1]; });   // lo lejano primero, lo cercano encima
-    return g;
   }
 
 
@@ -640,11 +594,11 @@ ananuca: () => `<path d="M15 44 C10 36 6 30 4 22 C10 28 13 34 15 44Z" fill="#6b9
     }
     return g;
   }
-  // F1229 · Dónde se ve el cactus emblema del desierto: x, y (pie) y escala finales en la escena, sin depender del crecimiento.
+  // Cactus emblema del desierto: x, y (pie) y escala finales en la escena.
   const EMB_DES = [194, 356, 0.95];
   function escena(est) {
-    const c = est.ciclo, et = ETAPAS[window.TBInicio ? window.TBInicio.etapa(c.diasCuidado) : 'brote'] ? window.TBInicio.etapa(c.diasCuidado) : 'brote';
-    const pais = est.paisaje || [], nPais = window.TBInicio.entornoVisible(pais.length, c.diasCuidado), escAv = window.TBInicio.avanceDiario(c.diasCuidado).escala;
+    const c = est.ciclo, et = 'frondoso';   // F1281: sin crecimiento por días: el árbol siempre está maduro
+    const pais = est.paisaje || [], nPais = pais.length, escAv = 1;
   const fondo = pais.slice(0, nPais).map((q) => { const s = FONDO[q.casilla]; return s ? '<g transform="translate(' + s[0] + ' ' + s[1] + ') scale(' + (s[2] * escAv) + ')">' + arbol(q.especie, 'frondoso') + '</g>' : ''; }).join('');
     const mal = (est.maleza || []).map((m) => '<button type="button" class="il-maleza s-' + esc(m.casilla) + '" data-id="' + esc(m.id) + '" aria-label="Quitar maleza (' + esc(MALEZA[m.tipo] || 'maleza') + '). Toca para limpiarla">' + malezaIcono(m.tipo) + '</button>').join('');
     const TM = est.tematica && CAT && CAT.tematicas && CAT.tematicas[est.tematica], fo = (TM && TM.fondo) || fondoActual(), cl = climaReal(climaActual());   // F965: la temática cambia el fondo
@@ -655,48 +609,19 @@ ananuca: () => `<path d="M15 44 C10 36 6 30 4 22 C10 28 13 34 15 44Z" fill="#6b9
       + '<g class="cap cap0">' + cielo(cl) + '<g class="plano-lejano">' + atras(fo) + '</g></g><g class="cap cap1"><path class="col c1" d="' + COL.c1 + '"/>' + fondo + '</g>'
       + '<g class="cap cap2"><path class="col c2" d="' + COL.c2 + '"/></g>'
       + '<g class="cap cap3"><path class="col c3" d="' + COL.c3 + '"/></g></g>'
-      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g></svg>' + '<svg class="il-svg il-svg-dia" viewBox="0 110 360 310" preserveAspectRatio="xMidYMax meet" aria-hidden="true" focusable="false">' + '<g class="pa-dia">' + ((window.TBCasillas && window.TBCasillas.tiene(est.tematica)) ? window.TBCasillas.capa(est.tematica, est.habDias || 0) : paisajeDelDia(est.habDias || 0, est.tematica) + rasgosEscena(est)) + '</g></svg>' + '<svg class="il-svg il-svg-top" viewBox="0 110 360 310" preserveAspectRatio="xMidYMax meet" aria-hidden="true" focusable="false">' + ambienteDelDia(est.habDias || 0, est.tematica) + '<g class="cap cap3"><g class="mundo" transform="translate(180 344) scale(' + (window.TBInicio.avanceDiario(c.diasCuidado).escala * 0.78).toFixed(3) + ')">' + (est.tematica === 'desierto' ? '<g transform="translate(' + ((EMB_DES[0] - 180) / Math.max(0.05, window.TBInicio.avanceDiario(c.diasCuidado).escala * 0.78)).toFixed(1) + ' ' + ((EMB_DES[1] - 344) / Math.max(0.05, window.TBInicio.avanceDiario(c.diasCuidado).escala * 0.78)).toFixed(1) + ') scale(' + (EMB_DES[2] / 0.78).toFixed(3) + ')">' + sueloDibujo('cactus') + '</g>' : est.tematica === 'costa' ? '' : arbol(c.especie, et, c.diasCuidado) + hojasTB(window.TBInicio.avanceDiario(c.diasCuidado).hojas, et)) + '</g></g>' + '<g class="tb-hierba" aria-hidden="true">' + (est.tematica === 'desierto' || est.tematica === 'costa' ? '' : hierbaTB(0, 360, 392, 90, 17)) + '</g><g class="clima">' + climaSvg(cl) + '</g></svg>'
+      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g></svg>' + '<svg class="il-svg il-svg-dia" viewBox="0 110 360 310" preserveAspectRatio="xMidYMax meet" aria-hidden="true" focusable="false">' + '<g class="pa-dia">' + ((window.TBCasillas && window.TBCasillas.tiene(est.tematica)) ? window.TBCasillas.capa(est.tematica) : '') + '</g></svg>' + '<svg class="il-svg il-svg-top" viewBox="0 110 360 310" preserveAspectRatio="xMidYMax meet" aria-hidden="true" focusable="false">' + ambienteDelDia(9, est.tematica) + '<g class="cap cap3"><g class="mundo" transform="translate(180 344) scale(' + (0.78).toFixed(3) + ')">' + (est.tematica === 'desierto' ? '<g transform="translate(' + ((EMB_DES[0] - 180) / Math.max(0.05, 0.78)).toFixed(1) + ' ' + ((EMB_DES[1] - 344) / Math.max(0.05, 0.78)).toFixed(1) + ') scale(' + (EMB_DES[2] / 0.78).toFixed(3) + ')">' + sueloDibujo('cactus') + '</g>' : est.tematica === 'costa' ? '' : arbol(c.especie, et, c.diasCuidado) + hojasTB(42, et)) + '</g></g>' + '<g class="tb-hierba" aria-hidden="true">' + (est.tematica === 'desierto' || est.tematica === 'costa' ? '' : hierbaTB(0, 360, 392, 90, 17)) + '</g><g class="clima">' + climaSvg(cl) + '</g></svg>'
       + '<i class="il-anillo" id="ilAnillo" aria-hidden="true"></i>'
       + '<button type="button" class="il-resp" id="ilResp" aria-label="Respirar con tu árbol. Toca para una pausa de unos 30 segundos"></button>' + mal + gotasHTML(est)  + vivEscena(est) + '</div>';
   }
 
   // ---------- Textos ----------
-  function estadoTxt(est, r) {
-    const c = est.ciclo, e = window.TBInicio.etapa(c.diasCuidado), av = window.TBInicio.avanceDiario(c.diasCuidado), falta = Math.max(0, DIAS() - c.diasCuidado), dia = 'Día ' + c.diasCuidado + ' de ' + DIAS() + ' · ' + String(ETAPAS[e] || 'Brote').replace('Echando raíces', 'Raíces') + (falta ? ' · Quedan ' + falta : '');   // F1178: se muestra cuánto falta, en días reales
+  function estadoTxt(est, r) {   // F1281: sin días; solo habla cuando pasa algo
+    const c = est.ciclo;
     if (r && r.cicloNuevo) { const s = CAT && CAT.especies && CAT.especies[c.especie]; return 'Empieza un árbol nuevo' + (s ? ': ' + s.nombre : '') + '. El anterior ya forma parte del paisaje.'; }
-    if (est.maleza.length) return 'Hay maleza en el pasto. Puedes tocarla para quitarla; así tu árbol sigue creciendo.';
-    if (c.cerrado && est.tematica === 'costa' && (est.habDias || 0) >= DIAS()) return '';
-    if (c.cerrado && est.tematica === 'costa') return 'Tu lugar está completo: día ' + (est.habDias || 0) + ' de ' + ((CAT && CAT.ciclo && CAT.ciclo.habitat_dias) || 10) + '.';
-    if (c.cerrado && (est.habDias || 0) >= ((CAT && CAT.ciclo && CAT.ciclo.habitat_dias) || 10)) return '';
-    if (c.cerrado) return 'Tu árbol está completo. Tu lugar va en el día ' + (est.habDias || 0) + ' de ' + ((CAT && CAT.ciclo && CAT.ciclo.habitat_dias) || 10) + '.';   // F1090: el árbol madura en 10 días
-    if (r && r.diaNuevo) return 'Creció un día · ' + dia.replace(/^Día /,'día ');
-    return dia;
+    if (est.maleza.length) return 'Hay maleza en el pasto. Puedes tocarla para quitarla.';
+    return '';
   }
-  // F1204: el día normal lo cuentan los diez puntos y la frase «Hoy apareció…»; el estado solo habla cuando pasa algo
-  const estadoVisible = (est, r) => { const t = estadoTxt(est, r); return /^Día \d+ de \d+/.test(t) ? '' : t; };
 
-  // F1204 · «Hoy apareció…»: cada día una frase cuenta qué capa nueva llegó a tu lugar; diez puntos muestran el camino hasta el día 10.
-  const HOY_CAPA = {
-    bosque: ['Hoy empezó tu bosque: cielo, suelo, luz y tu estructura.', 'Hoy apareció el plano lejano: cerros verdes entre la bruma.', 'Hoy brotó un copihue, la flor del bosque.', 'Hoy llegó un primer detalle al suelo del bosque.', 'Hoy crecieron los helechos, a la sombra.', 'Hoy tu lugar ganó vida: lo que llegó sigue creciendo.', 'Hoy llegó el chucao, un ave café entre las hojas.', 'Hoy tu pewén abrió sus ramas y llegó otro detalle.', 'Hoy llegó la atmósfera: rayos de luz y luciérnagas.', 'Tu lugar quedó completo. Gracias por cuidarlo cada día.'],
-    desierto: ['Hoy empezó tu desierto: cielo, arena, luz y tu estructura.', 'Hoy apareció la mesa lejana sobre las dunas.', 'Hoy floreció una añañuca, roja sobre la arena.', 'Hoy el aire se aquietó: sol y arena en calma.', 'Hoy llegó el guanaco, todavía pequeño.', 'Hoy tu lugar ganó vida: lo que llegó sigue creciendo.', 'Hoy apareció el zorro, atento entre las dunas.', 'Hoy tu lugar se llenó un poco más de vida.', 'Hoy llegó la atmósfera: luz tibia y polvo dorado.', 'Tu lugar quedó completo. Gracias por cuidarlo cada día.'],
-    cordillera: ['Hoy empezó tu cordillera: cielo, cumbres, luz y tu estructura.', 'Hoy apareció la cordillera lejana, con nieve en la cima.', 'Hoy brotó una planta de altura, firme contra el frío.', 'Hoy la montaña dejó algo nuevo en el suelo.', 'Hoy creció un árbol de altura, a su ritmo.', 'Hoy apareció un animal de la cordillera, atento y tranquilo.', 'Hoy tu lugar ganó otro árbol, más grande.', 'Hoy llegó un pequeño detalle entre las piedras.', 'Hoy llegó la atmósfera: una luz cálida en el aire fino de la altura.', 'Tu lugar quedó completo. Gracias por cuidarlo cada día.'],
-    costa: ['Hoy empezó tu costa: cielo, arena, luz y tu estructura.', 'Hoy apareció el horizonte del mar.', 'Hoy brotó un chagual junto a la arena.', 'Hoy el mar dejó una piedra en la orilla.', 'Hoy el mar trajo conchas a la playa.', 'Hoy tu lugar ganó vida: lo que llegó sigue creciendo.', 'Hoy una gaviota cruzó sobre el mar.', 'Hoy la espuma llegó más suave a la orilla.', 'Hoy llegó la atmósfera: brillos de mar y brisa.', 'Tu lugar quedó completo. Gracias por cuidarlo cada día.']
-  };
-  function hoyCapa(est) { const l = HOY_CAPA[est.tematica] || HOY_CAPA.bosque, d = Math.max(1, Math.min(l.length, est.habDias || (est.ciclo && est.ciclo.diasCuidado) || 1)); return l[d - 1]; }
-  function diaActual(est) { const t = DIAS(); return Math.max(1, Math.min(t, est.habDias || (est.ciclo && est.ciclo.diasCuidado) || 1)); }
-  function puntosDias(est) { const t = DIAS(), d = diaActual(est); let h = ''; for (let i = 1; i <= t; i++) h += '<button type="button" class="il-pt" data-d="' + i + '" aria-label="Día ' + i + (i < d ? ': ver qué apareció' : i === d ? ': hoy' : ': aún no llega') + '"><i' + (i < d ? ' class="on"' : i === d ? ' class="ahora"' : '') + '></i></button>'; return '<div class="il-dias" role="group" aria-label="Diario de tu lugar: día ' + d + ' de ' + t + '">' + h + '</div>'; }
-  // F1205 · Diario del lugar: tocar un punto cuenta qué apareció ese día; volver a tocar el de hoy regresa a la frase de hoy.
-  function diarioLigar(cont, est) {
-    const tx = $('#ilHoyTx', cont), hoyD = diaActual(est), l = HOY_CAPA[est.tematica] || HOY_CAPA.bosque; if (!tx) return;
-    Array.prototype.forEach.call(cont.querySelectorAll('.il-pt'), (b) => {
-      b.onclick = () => {
-        const d = +b.getAttribute('data-d');
-        try { window.TBSonido && window.TBSonido.punto(d, d > hoyD); } catch (e) { /* sin sonido */ }   // F1206
-        tx.textContent = d === hoyD ? l[d - 1] : d < hoyD ? 'Día ' + d + ' · ' + l[d - 1].replace(/^Hoy /, '').replace(/^./, (c) => c.toUpperCase()) : 'El día ' + d + ' aún no llega. Tu lugar sigue creciendo.';
-        Array.prototype.forEach.call(cont.querySelectorAll('.il-pt'), (z) => z.classList.toggle('sel', z === b));
-      };
-    });
-  }
   function nombreArbol(est) { if (est.tematica === 'costa') return esc((CAT.tematicas.costa || {}).nombre || 'Costa del Pacífico');   // F1090: en la playa no se dibuja árbol
     const s = CAT && CAT.especies && CAT.especies[est.ciclo.especie]; return s ? esc(s.nombre) + (s.otro ? ' <span>· ' + esc(s.otro) + '</span>' : '') : 'Tu árbol'; }
 
@@ -757,11 +682,8 @@ ananuca: () => `<path d="M15 44 C10 36 6 30 4 22 C10 28 13 34 15 44Z" fill="#6b9
     const esc0 = $('#ilEscena', cont);
     if (r.panoramica && !quieto()) { esc0.classList.add('pano'); later(() => esc0.classList.remove('pano'), 3000); } else if ((extra && extra.plantado) && !quieto()) { esc0.classList.add('brota'); later(() => esc0.classList.remove('brota'), 1800); }
     if (!(extra && extra.repinta)) { esc0.classList.add('entra'); later(() => esc0.classList.remove('entra'), 1400); }   // F1272: la entrada solo al abrir, no en cada repintado
-    if (r && r.diaNuevo && !quieto()) { esc0.classList.add(est.habDias >= DIAS() ? 'dorado' : 'revela'); later(() => esc0.classList.remove('dorado', 'revela'), 3400); }   // F1204: destello al llegar la capa nueva
-    if (r && r.diaNuevo) later(() => { try { window.TBSonido && (est.habDias >= DIAS() ? window.TBSonido.completo() : window.TBSonido.capa()); } catch (e) { /* sin sonido */ } }, 700);
-    if (r && r.diaNuevo && !(est.habDias >= DIAS())) later(() => { try { window.TBSonido && window.TBSonido.lugar && window.TBSonido.lugar(est.tematica); } catch (e) { /* sin sonido */ } }, 1100);   // F1229: firma sonora del lugar   // F1204: sonido de la capa nueva del día
     try { window.TBCasillas && window.TBCasillas.ajustar(esc0); } catch (e) { /* sin ajuste */ }   // F1214: cada pieza se ajusta a su casilla
-    paralaje(esc0); ligar(cont, mi); diarioLigar(cont, est); pantalla(); barraMarcar();
+    paralaje(esc0); ligar(cont, mi); pantalla(); barraMarcar();
   }
 
   function paralaje(esc0) {                                   // el fondo se mueve apenas mientras se arrastra el dedo; al soltar vuelve solo (transición CSS). Sin dedo, no hay trabajo.
@@ -998,6 +920,6 @@ ananuca: () => `<path d="M15 44 C10 36 6 30 4 22 C10 28 13 34 15 44Z" fill="#6b9
     });
   }
 
-  const api = { paisajeHoja, montar, soltar() { cerrarHojas(); soltar0(); }, barraHTML, ligarBarra, abrirMensajes, abrirTrivia, abrirVivero, arbol, escena, estadoTxt, ETAPAS, FORMA, FONDO, paisaje: paisajeDelDia, paisajeHab: PAISAJE_HAB, slotsDia: SLOTS_DIA, config(c) { CAT = c; } };
+  const api = { paisajeHoja, montar, soltar() { cerrarHojas(); soltar0(); }, barraHTML, ligarBarra, abrirMensajes, abrirTrivia, abrirVivero, arbol, escena, estadoTxt, ETAPAS, FORMA, FONDO, config(c) { CAT = c; } };
   if (typeof window !== 'undefined') window.TBLienzo = api; if (typeof module !== 'undefined') module.exports = api;
 })();

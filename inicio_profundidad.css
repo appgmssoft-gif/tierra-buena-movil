@@ -27,9 +27,6 @@
 
 /* ---------- Piezas de cristal y oro ---------- */
 .ip-con-fondo .il-franja .il-gotas{background:linear-gradient(180deg,rgba(255,255,255,.82),rgba(255,248,232,.62));border:1px solid rgba(201,162,74,.55);box-shadow:0 6px 18px rgba(40,30,10,.18),inset 0 1px 0 rgba(255,255,255,.9);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
-.ip-con-fondo .il-fila .il-btn-msg{background:linear-gradient(180deg,rgba(255,255,255,.86),rgba(255,247,230,.66));border:1px solid rgba(201,162,74,.5);box-shadow:0 10px 24px rgba(40,30,10,.2),inset 0 1px 0 rgba(255,255,255,.95);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
-.ip-con-fondo .il-fila .il-btn-msg .il-ic{color:#b8801f;filter:drop-shadow(0 1px 0 rgba(255,255,255,.8))}
-.ip-con-fondo .il-pt{filter:drop-shadow(0 2px 3px rgba(20,40,25,.3))}
 .ip-con-fondo .il-pill{background:linear-gradient(180deg,rgba(255,255,255,.8),rgba(255,247,230,.6));border:1px solid rgba(201,162,74,.5);box-shadow:0 8px 20px rgba(40,30,10,.18),inset 0 1px 0 rgba(255,255,255,.9)}
 
 /* ---------- Movimiento (solo transform y opacity; pocos grupos) ---------- */

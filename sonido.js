@@ -176,7 +176,6 @@
       despertar();
       if (!listo && !ctx) return;
       const t = por(ev && ev.target); if (!t) return;
-      if (t.closest('.il-pt')) return;   // F1206: el diario del lugar trae su propia nota
       if (t.closest('.tbl')) return;   // F1123: el tablero trae sus propios sonidos (tablero.js); aquí no suena lo general
       const tab = t.closest('.tab');
       if (tab && tab.getAttribute('data-tab') === 'iglesia') return API.iglesia();   // F918

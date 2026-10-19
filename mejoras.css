@@ -57,4 +57,3 @@ html .inicio-limpio.il-con-lienzo .il-escena {
    ya no obligan a recalcular los filtros en cada cuadro. Solo se quita el fundido individual de cada pieza (la escena entera
    ya entra con su fundido); la pieza NUEVA conserva su animación de aparición. */
 .il-svg-dia { will-change: transform; }
-.casillas .pc-w:not(.nueva) { animation: none; }

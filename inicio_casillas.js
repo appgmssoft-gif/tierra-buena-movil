@@ -163,37 +163,40 @@ const G={};Object.keys(HAB).forEach(k=>{const h=HAB[k];G[k]=[{label:'Estructura'
   // F1229 · Composición propia por lugar. Cada lugar reparte sus piezas en dos grupos a los lados del árbol emblemático (centro libre, x 125-235)
   // y en tres profundidades (lejos y < 310 con bruma, medio, cerca), sin que se toquen. Índice = tipo de casilla (s): 0 árbol esbelto, 1 planta,
   // 2 árbol grande, 3 suelo ancho, 4 animal, 5 detalle pequeño, 6 ambiente. x,y = pie de la pieza; w,h = caja máxima; k = escala.
+  // F1281 · Distribución única y despejada (sin crecimiento por días: todo está listo desde el inicio).
+  // Dos grupos a los lados con el centro libre (x 125-235), tres profundidades (lejos y<310, medio, cerca) y SIN cajas que se toquen
+  // (≥ 6 px entre piezas; se comprueba en prueba-f1281). Cada lugar solo cambia la altura de su estructura. Índice = tipo de casilla (s).
+  const BASE=()=>[
+    {x:28,y:300,w:40,h:110,k:.85,l:1,fp:'1×2'},   // 0 árbol esbelto (lejos, izquierda)
+    {x:28,y:394,w:44,h:50,k:1.3,l:4,fp:'1×1'},    // 1 planta (cerca, izquierda)
+    {x:92,y:350,w:66,h:88,k:.88,l:2,fp:'2×2'},    // 2 árbol grande (medio, izquierda)
+    {x:296,y:352,w:84,h:36,k:.95,l:3,fp:'2×1'},   // 3 suelo ancho (medio, derecha)
+    {x:104,y:412,w:48,h:42,k:1.35,l:4,fp:'1×1'},  // 4 animal (cerca)
+    {x:328,y:404,w:44,h:40,k:1.3,l:5,fp:'1×1'},   // 5 detalle pequeño (cerca, derecha)
+    {x:262,y:404,w:44,h:42,k:1.3,l:4,fp:'1×1'}    // 6 ambiente (cerca)
+  ];
+  const mk=(st,extra)=>({ST:st,SL:BASE().concat(extra||[])});
   const LAY={
-    bosque:{ST:{x:288,y:314,w:120,h:120,k:.9,l:1},SL:[
-      {x:30,y:296,w:70,h:120,k:.85,l:1,fp:'1×2'},{x:34,y:384,w:54,h:56,k:1.3,l:4,fp:'1×1'},{x:94,y:346,w:84,h:110,k:.86,l:2,fp:'2×2'},{x:298,y:384,w:92,h:50,k:.95,l:3,fp:'2×1'},
-      {x:212,y:382,w:56,h:50,k:1.4,l:5,fp:'1×1'},{x:98,y:390,w:56,h:44,k:1.4,l:4,fp:'1×1'},{x:256,y:354,w:40,h:44,k:1.1,l:2,fp:'1×1'}]}
-    ,desierto:{ST:{x:276,y:298,w:122,h:116,k:.9,l:1},SL:[
-      {x:38,y:308,w:60,h:112,k:.85,l:1,fp:'1×2'},{x:34,y:376,w:56,h:50,k:1.3,l:4,fp:'1×1'},{x:108,y:344,w:72,h:104,k:.9,l:2,fp:'2×2'},{x:306,y:352,w:90,h:44,k:1,l:3,fp:'2×1'},
-      {x:256,y:390,w:68,h:44,k:1.3,l:5,fp:'1×1'},{x:136,y:392,w:44,h:50,k:1.3,l:4,fp:'1×1'},{x:160,y:322,w:40,h:48,k:1.2,l:2,fp:'1×1'}]}
-    ,costa:{ST:{x:270,y:268,w:124,h:120,k:.66,l:1},SL:[
-      {x:50,y:304,w:64,h:112,k:.85,l:1,fp:'1×2'},{x:98,y:352,w:52,h:56,k:1.2,l:4,fp:'1×1'},{x:172,y:326,w:84,h:92,k:.9,l:2,fp:'2×2'},{x:298,y:340,w:90,h:44,k:1,l:3,fp:'2×1'},
-      {x:238,y:388,w:60,h:50,k:1.4,l:5,fp:'1×1'},{x:132,y:392,w:50,h:44,k:1.4,l:4,fp:'1×1'},{x:320,y:386,w:40,h:56,k:1.2,l:2,fp:'1×1'},{x:176,y:216,w:112,h:64,k:1.35,l:1,fp:'2×1'}]}
-    ,cordillera:{ST:{x:284,y:306,w:124,h:118,k:.88,l:1},SL:[
-      {x:40,y:306,w:62,h:116,k:.85,l:1,fp:'1×2'},{x:36,y:384,w:56,h:54,k:1.3,l:4,fp:'1×1'},{x:112,y:346,w:78,h:104,k:.88,l:2,fp:'2×2'},{x:304,y:366,w:90,h:46,k:1,l:3,fp:'2×1'},
-      {x:242,y:396,w:62,h:48,k:1.35,l:5,fp:'1×1'},{x:138,y:394,w:48,h:50,k:1.3,l:4,fp:'1×1'},{x:170,y:326,w:40,h:46,k:1.2,l:2,fp:'1×1'}]}
+    bosque:mk({x:292,y:306,w:112,h:112,k:.9,l:1}),
+    desierto:mk({x:290,y:300,w:112,h:106,k:.9,l:1}),
+    costa:mk({x:292,y:292,w:112,h:112,k:.66,l:1},[{x:170,y:216,w:104,h:64,k:1.35,l:1,fp:'2×1'}]),
+    cordillera:mk({x:292,y:306,w:112,h:108,k:.88,l:1})
   };
   const lay=hab=>LAY[hab]||{ST,SL};
-  // Día en que llega cada casilla (índice de G): estructura desde el día 1 (F1263); ambiente con la atmósfera del día 9.
-  const DIA_SLOT={1:3,3:4,0:5,4:6,2:7,5:8,6:9,7:8};
   const KSEL='tb_casillas_sel';
   const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
   const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){/* sin guardar */}};
   function leerSel(){try{return JSON.parse(lsGet(KSEL)||'{}')||{}}catch(e){return {}}}
   function elegida(hab,i){const s=leerSel()[hab];const n=(G[hab]||[])[i];if(!n)return -1;const v=s&&typeof s[i]==='number'?s[i]:0;return v<n.vars.length?v:0}
   function elegir(hab,i,v){const s=leerSel();s[hab]=s[hab]||[];s[hab][i]=v;lsSet(KSEL,JSON.stringify(s))}
-  function llega(g,i){return i===0?1:Math.min(3,Math.ceil((DIA_SLOT[g[i].s]||9)/3))}   // F1279: ciclo de 3 días   // F1263: la estructura se ve desde el día 1 (antes llegaba el día 10 y nadie la veía)
+  function llega(g,i){return 1}   // F1279: ciclo de 3 días   // F1263: la estructura se ve desde el día 1 (antes llegaba el día 10 y nadie la veía)
   // Piezas visibles ese día, de lejos a cerca. Devuelve marcado SVG (sin style).
   function capa(hab,dias){
     const g=G[hab];if(!g)return '';const h=HAB[hab],p=h.p,d=Math.max(0,Math.floor(dias||0));
     const L=lay(hab),sl=i=>i===0?L.ST:L.SL[g[i].s];
-    const lista=g.map((x,i)=>({i,v:x.vars[elegida(hab,i)],sl:sl(i),dia:llega(g,i)})).filter(e=>e.v&&d>=e.dia).sort((a,b)=>a.sl.y-b.sl.y);
+    const lista=g.map((x,i)=>({i,v:x.vars[elegida(hab,i)],sl:sl(i),dia:llega(g,i)})).filter(e=>e.v).sort((a,b)=>a.sl.y-b.sl.y);
     if(!lista.length)return '';
-    const pc=e=>`<g class="pc-w${e.dia===d?' nueva':''}" filter="url(#casPulido)"><g class="pc" data-x="${e.sl.x}" data-y="${e.sl.y}" data-w="${e.sl.w}" data-h="${e.sl.h}" data-k="${e.sl.k}" transform="translate(${e.sl.x} ${e.sl.y}) scale(${e.sl.k})">${e.v.f(p)}</g></g>`;
+    const pc=e=>`<g class="pc-w" filter="url(#casPulido)"><g class="pc" data-x="${e.sl.x}" data-y="${e.sl.y}" data-w="${e.sl.w}" data-h="${e.sl.h}" data-k="${e.sl.k}" transform="translate(${e.sl.x} ${e.sl.y}) scale(${e.sl.k})">${e.v.f(p)}</g></g>`;
     const lej=lista.filter(e=>e.sl.y<310),cer=lista.filter(e=>e.sl.y>=310);
     return `<g class="casillas" data-lugar="${hab}" aria-hidden="true"><defs>${FILTRO}<linearGradient id="casBruma" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4efe0" stop-opacity="0"/><stop offset=".5" stop-color="#f4efe0" stop-opacity=".34"/><stop offset="1" stop-color="#f4efe0" stop-opacity="0"/></linearGradient></defs>${lej.map(pc).join('')}<rect class="cas-bruma" x="-40" y="262" width="440" height="46" fill="url(#casBruma)"/>${cer.map(pc).join('')}</g>`;
   }
