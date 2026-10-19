@@ -186,7 +186,7 @@ const G={};Object.keys(HAB).forEach(k=>{const h=HAB[k];G[k]=[{label:'Estructura'
   function leerSel(){try{return JSON.parse(lsGet(KSEL)||'{}')||{}}catch(e){return {}}}
   function elegida(hab,i){const s=leerSel()[hab];const n=(G[hab]||[])[i];if(!n)return -1;const v=s&&typeof s[i]==='number'?s[i]:0;return v<n.vars.length?v:0}
   function elegir(hab,i,v){const s=leerSel();s[hab]=s[hab]||[];s[hab][i]=v;lsSet(KSEL,JSON.stringify(s))}
-  function llega(g,i){return i===0?1:(DIA_SLOT[g[i].s]||10)}   // F1263: la estructura se ve desde el día 1 (antes llegaba el día 10 y nadie la veía)
+  function llega(g,i){return i===0?1:Math.min(3,Math.ceil((DIA_SLOT[g[i].s]||9)/3))}   // F1279: ciclo de 3 días   // F1263: la estructura se ve desde el día 1 (antes llegaba el día 10 y nadie la veía)
   // Piezas visibles ese día, de lejos a cerca. Devuelve marcado SVG (sin style).
   function capa(hab,dias){
     const g=G[hab];if(!g)return '';const h=HAB[hab],p=h.p,d=Math.max(0,Math.floor(dias||0));

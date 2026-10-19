@@ -1,30 +1,13 @@
 {
  "_nota": "F929 · Catálogo del Inicio «Tierra Buena». Solo lectura; cambiar textos no toca el código. Cada árbol tiene `mensaje` (al elegirlo) y `vida`: mensajes (5 a 6) para la vida personal (uno distinto por día de cuidado). Datos VERIFICADOS el 7 oct (CONAF, SAG, Min. Medio Ambiente): araucaria, canelo, alerce. Por verificar: quillay, roble, palma chilena, cerezo, sauce, semillas y aves. Lenguaje: neutro y cordial. Los mensajes son de crecimiento personal y de cuidado de la naturaleza y el planeta (no religiosos). El jacarandá (F930) es la opción más colorida. F933: cada día se desbloquean 3 mensajes: `arbol` (+`arbol_comun`) = dato real; `planeta` (+`planeta_comun`) = respeto a la naturaleza; `vida` (+`vida_comun`) = crecer como personas y sociedad. Rotan solos por fecha. F934: datos VERIFICADOS el 7 oct con fuentes (CONAF/Árboles Nativos de Chile, SAG, Reforestemos, UC, prensa): quillay, roble, palma chilena, sauce chileno, jacarandá, cerezo (exportación), copihue, desierto florido, cóndor y Pando. Sin verificar aún: araucaria (parte), canelo (parte), lavanda, chucao, queltehue, picaflor, golondrina, gorrión y los bancos comunes de árbol/planeta (conocimiento general). F961: plantas nuevas (bonsái, loto, rafflesia, drago de Socotra, secuoya roja, bambú, welwitschia, planta fantasma, orquídea subterránea y pasto alto) y trivia diaria. Datos de estas plantas y de la trivia: conocimiento general, POR VERIFICAR con fuente antes de publicar. F965: temáticas (bosque nativo, desierto florido). Las plantas con `habitat` solo se plantan con esa temática activa; las demás son generales. Árboles principales por temática: pendiente (falta dibujar especies de desierto). Datos de temáticas: conocimiento general, por verificar. F966: decisión de coherencia: plantas de otros continentes solo en la temática «Jardín del mundo». Solo pasto alto queda general. Chile: bosque nativo y desierto florido. F968: verificados con fuentes picaflor (redobservadores, The Clinic, guía de campo) y gorrión (redobservadores, SciELO: especie introducida, no nativa). Lavanda: sin cambios. F969: el gorrión (exótico) solo puede activarse con la temática Jardín del mundo; las aves nativas son generales. F970: lavanda verificada (originaria del Mediterráneo; aromática; atrae abejas y mariposas). F971: temáticas Cordillera y Costa del Pacífico. Añañuca: desierto, cordillera y costa (el género tiene especies en las tres). Pata de guanaco: desierto y costa. Verificado con fichas de especies (MMA) y registros de Rhodophiala. F972: llareta (cordillera) y chagual (costa), verificadas con fichas MMA y fuentes botánicas. F973: notro y chilco (bosque nativo), verificados con fuentes (Smith-Ramírez & Armesto 1998, Revista Chilena de Historia Natural, Kew POWO, ficha de uso del chilco). F974: ulmo (bosque), garra de león (desierto y costa), chachacoma (cordillera). Regla: cada temática Chile con al menos 3 plantas propias o compartidas.",
  "ciclo": {
-  "dias": 10,
-  "etapas": [
-   {
-    "id": "brote",
-    "desde": 1
-   },
-   {
-    "id": "raiz",
-    "desde": 3
-   },
-   {
-    "id": "ramas",
-    "desde": 6
-   },
-   {
-    "id": "frondoso",
-    "desde": 9
-   }
-  ],
+  "dias": 3,
+  "etapas": [{"id": "brote", "desde": 1}, {"id": "ramas", "desde": 2}, {"id": "frondoso", "desde": 3}],
   "gracia_dias": 1,
   "maleza_max": 5,
   "paisaje_guardado": 6,
-  "habitat_dias": 10,
-  "bloque_dias": 4
+  "habitat_dias": 3,
+  "bloque_dias": 1
  },
  "primera_eleccion": [
   "araucaria",
@@ -758,30 +741,6 @@
    "mensaje": "Crece junto al agua, donde la sombra y la humedad la cuidan. Cerca de lo que fluye, todo florece mejor.",
    "dato": "Sus flores colgantes son rojas con pétalos morados y las visitan picaflores. Sus frutos dulces, los chanchitos, eran comidos por pueblos originarios."
   },
-  "ulmo": {
-   "nombre": "Ulmo",
-   "precio": 25,
-   "dias": 4,
-   "casillas": [
-    "pasto-1",
-    "pasto-2",
-    "pasto-3",
-    "pasto-4",
-    "pasto-5",
-    "pasto-6",
-    "pasto-7",
-    "pasto-8",
-    "pasto-9",
-    "pasto-10",
-    "pasto-11",
-    "pasto-12"
-   ],
-   "habitat": [
-    "bosque"
-   ],
-   "mensaje": "Llena el bosque de flores blancas cuando el verano empieza. Lo grande también nace de algo pequeño.",
-   "dato": "Es un árbol siempreverde del sur de Chile que puede superar los 12 metros. Sus flores blancas y perfumadas florecen en febrero y marzo, y de su néctar sale la miel de ulmo."
-  },
   "garra_de_leon": {
    "nombre": "Garra de león",
    "precio": 35,
@@ -1134,7 +1093,6 @@
   "notro",
   "llareta",
   "pata_de_guanaco",
-  "ulmo",
   "chagual",
   "garra_de_leon"
  ],
@@ -1524,17 +1482,6 @@
    "t": "Pequeñas luces que aparecen al atardecer, como estrellas que bajan a jugar.",
    "mensaje": "Una luz pequeña también guía. Cada gesto amable ilumina un poco el camino de los demás.",
    "dato": "Las luciérnagas producen su luz con una reacción química en el abdomen, casi sin calor."
-  },
-  "mariposas": {
-   "nombre": "Mariposas",
-   "precio": 50,
-   "habitat": [
-    "bosque",
-    "desierto"
-   ],
-   "t": "Mariposas que pasan volando entre las flores.",
-   "mensaje": "Pasan despacio y dejan color. Un gesto pequeño también se nota.",
-   "dato": "Las mariposas ayudan a polinizar las flores mientras buscan néctar."
   },
   "hojas": {
    "nombre": "Hojas al viento",

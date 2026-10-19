@@ -5,6 +5,9 @@
 'use strict';
 (function () {
   const K = 'tb_inicio_v1', VERSION = 1;
+  // F1278 · Versiones de prueba: al subir LIMPIO, el jardín (claves tb_inicio_* y tb_casillas_*) empieza de cero en cada teléfono. No toca Biblia, notas ni juegos.
+  const LIMPIO = 'limpio-1280';
+  try { const a0 = typeof localStorage !== 'undefined' ? localStorage : null; if (a0 && a0.getItem('tb_limpio_jardin') !== LIMPIO) { Object.keys(a0).filter((k) => /^tb_(inicio|casillas)_/.test(k)).forEach((k) => a0.removeItem(k)); a0.setItem('tb_limpio_jardin', LIMPIO); } } catch (err) { /* sin almacenamiento */ }
   let CAT = null, HOY = null, ALM = null;                 // catálogo, reloj y almacén inyectables (para las pruebas)
   const almacen = () => ALM || (typeof localStorage !== 'undefined' ? localStorage : null);
   const iso = (d) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
@@ -15,8 +18,9 @@
   const idc = (p) => p + Math.random().toString(36).slice(2, 7);
 
   const nuevo = () => ({ v: VERSION, ciclo: { n: 1, especie: null, inicio: null, diasCuidado: 0, ultimoDia: null, ultimaVisita: null, cerrado: false, diaPendiente: false },
-    eligiendo: true, tematica: null, habDias: 0, paisaje: [], maleza: [], gotas: { saldo: 0, total: 0, pendientes: [], hoy: { fecha: null, lectura: 0, vida: 0 } },
-    vivero: { desbloqueados: [], plantas: [], aves: [], ambientes: [] }, regalo: { tester: false }, cosechas: { total: 0, pend: [], ult: {} }, trivia: { fecha: null, i: null, ok: false, elegida: null } });
+    eligiendo: true, tematica: null, habDias: 0, paisaje: [], maleza: [], gotas: { saldo: 600, total: 600, pendientes: [],   // F1279: pack inicial de 600 gotas
+       hoy: { fecha: null, lectura: 0, vida: 0 } },
+    vivero: { desbloqueados: [], plantas: [], aves: [], ambientes: [] }, regalo: { tester: true }, cosechas: { total: 0, pend: [], ult: {} }, trivia: { fecha: null, i: null, ok: false, elegida: null } });
 
   function migrar(x) {                                      // dato dañado o de otra versión → se rescata lo que sirve; nunca error en pantalla
     const b = nuevo(); if (!x || typeof x !== 'object') return b;

@@ -567,7 +567,7 @@ html:not([data-anim=off]) .il-ave.a-chincol svg,html:not([data-anim=off]) .il-av
 /* F1255 · Ambientes: partículas suaves; solo transform y opacidad */
 .il-amb{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:hidden}.il-amb i{position:absolute;display:block;opacity:0}
 .il-amb i:nth-child(1){left:12%;top:30%;animation-delay:0s}.il-amb i:nth-child(2){left:34%;top:22%;animation-delay:2.3s}.il-amb i:nth-child(3){left:56%;top:34%;animation-delay:4.1s}.il-amb i:nth-child(4){left:76%;top:26%;animation-delay:1.2s}.il-amb i:nth-child(5){left:90%;top:20%;animation-delay:3.2s}
-.amb-mariposas i{width:10px;height:8px;border-radius:60% 40% 60% 40%;background:#f2a03a;box-shadow:inset -3px 0 0 #fbd38a;animation:amb-vuela 9s ease-in-out infinite}
+
 .amb-hojas i{width:8px;height:5px;border-radius:0 100% 0 100%;background:#b9803f;animation:amb-cae 11s linear infinite}
 .amb-petalos i{width:6px;height:4px;border-radius:50%;background:#f0a0b8;animation:amb-cae 9s linear infinite}
 .amb-neblina i{left:-30%!important;width:70%;height:16%;border-radius:50%;background:radial-gradient(ellipse,rgba(255,255,255,.6),rgba(255,255,255,0) 70%);animation:amb-niebla 22s linear infinite}
@@ -600,7 +600,7 @@ html[data-eco="2"] .il-amb i{animation:none;opacity:.7}html[data-eco="2"] .amb-f
 .il-ave.a-chucao{transform:scale(1.02);transform-origin:50% 0;z-index:91}.il-ave.a-queltehue{transform:scale(1.12);transform-origin:50% 0;z-index:94}.il-ave.a-minero{transform:scale(1.09);transform-origin:50% 0;z-index:93}
 .il-ave.l-cielo{transform:scale(.85);transform-origin:50% 0}.il-ave.a-picaflor,.il-ave.a-picaflor_arica{transform:scale(.95);transform-origin:50% 0}
 /* Colores de las miniaturas de ambiente (antes iban en style="", que la CSP bloquea) */
-.il-luci-mini.am-mariposas{background:#f2a03a;box-shadow:0 0 6px 1px rgba(242,160,58,.6)}.il-luci-mini.am-hojas{background:#b9803f;box-shadow:none;border-radius:0 100% 0 100%}.il-luci-mini.am-petalos{background:#f0a0b8;box-shadow:none}.il-luci-mini.am-neblina{background:#dfe9ef;box-shadow:0 0 8px 3px rgba(223,233,239,.9)}.il-luci-mini.am-brisa{background:#cfe6f4;box-shadow:none;height:3px;border-radius:2px;width:16px}.il-luci-mini.am-fugaces{background:#fff4b0}
+.il-luci-mini.am-hojas{background:#b9803f;box-shadow:none;border-radius:0 100% 0 100%}.il-luci-mini.am-petalos{background:#f0a0b8;box-shadow:none}.il-luci-mini.am-neblina{background:#dfe9ef;box-shadow:0 0 8px 3px rgba(223,233,239,.9)}.il-luci-mini.am-brisa{background:#cfe6f4;box-shadow:none;height:3px;border-radius:2px;width:16px}.il-luci-mini.am-fugaces{background:#fff4b0}
 
 /* F1258 · Animaciones de 60 fps en cualquier teléfono: solo transform y opacidad, pocas capas y aisladas.
    La capa propia (will-change) solo existe mientras algo se mueve; en Equilibrado y Ahorro se suelta para liberar memoria. */
@@ -614,3 +614,6 @@ html:not([data-eco="1"]):not([data-eco="2"]):not([data-anim=off]) .il-luci{will-
 html.tb-tapada .il-planta svg,html.tb-tapada .il-ave svg,html.tb-tapada .il-amb i,html.tb-tapada .il-luci{animation-play-state:paused!important}
 /* Pantallas de poca fluidez: sin partículas extra, la escena principal sigue viva */
 @media (update:slow){.il-amb i{animation:none;opacity:.6}.amb-fugaces i{display:none}}
+
+/* F1277 · Sin tarjeta: el contenedor solo se ve cuando hay un mensaje (respirar, maleza) */
+.il-datos:not(:has(.il-estado:not(:empty))){display:none}

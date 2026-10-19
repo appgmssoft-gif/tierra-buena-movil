@@ -37,3 +37,24 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     transform: none;
   }
 }
+
+/* F1278 · La escena del Inicio se adapta a cualquier pantalla: ocupa el ancho disponible (hasta 960 px en tablets)
+   y nunca pasa del alto libre entre las barras (el dibujo escala por proporción 360:310, así que no se deforma).
+   Reemplaza el tope fijo de 520 px y la reserva de 420/500 px que era para la tarjeta eliminada. */
+html .inicio-limpio.il-con-lienzo .il-escena {
+  --il-reserva: 150px;
+  width: min(100vw, 960px, max(280px, calc((100vh - var(--il-reserva) - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) * 1.16)));
+}
+@supports (height: 100svh) {
+  html .inicio-limpio.il-con-lienzo .il-escena {
+    width: min(100vw, 960px, max(280px, calc((100svh - var(--il-reserva) - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) * 1.16)));
+  }
+}
+
+/* F1280 · Los efectos se quedan; cambia cómo se dibujan.
+   El Inicio son 3 capas con el mismo encuadre: fondo animado | piezas con filtro de iluminación | ambiente y árbol.
+   La capa de piezas no tiene animaciones propias, así que se dibuja UNA vez (capa propia) y las nubes, brillos o el árbol
+   ya no obligan a recalcular los filtros en cada cuadro. Solo se quita el fundido individual de cada pieza (la escena entera
+   ya entra con su fundido); la pieza NUEVA conserva su animación de aparición. */
+.il-svg-dia { will-change: transform; }
+.casillas .pc-w:not(.nueva) { animation: none; }
