@@ -5,7 +5,6 @@
 .inicio-limpio.ip-con-fondo{isolation:isolate}
 .ip-fondo{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;background:#cfe6f2}
 .ip-svg{position:absolute;inset:0;width:100%;height:100%;display:block}
-.ip-grano{mix-blend-mode:multiply}
 
 /* La escena propia se funde con el paisaje: sin fondo, sin recorte */
 .ip-con-fondo .il-escena{filter:drop-shadow(0 10px 14px rgba(20,40,25,.22))}
@@ -44,7 +43,6 @@
   html:not([data-anim=off]):not([data-eco="2"]) .ip-part.p1{animation:ip-sube 17s ease-in-out infinite alternate}
   html:not([data-anim=off]):not([data-eco="2"]) .ip-part.p2{animation:ip-sube 23s ease-in-out -7s infinite alternate}
   html:not([data-anim=off]):not([data-eco="2"]) .ip-part.p3{animation:ip-sube 29s ease-in-out -13s infinite alternate}
-  html:not([data-anim=off]):not([data-eco="2"]) .ip-fp{transform-box:view-box;transform-origin:50% 100%;animation:ip-brisa 11s ease-in-out infinite alternate}
 }
 @keyframes ip-entra{from{opacity:0}to{opacity:1}}
 @keyframes ip-respira{0%,100%{opacity:.7}50%{opacity:1}}
@@ -53,7 +51,6 @@
 @keyframes ip-bruma{from{transform:translateX(-18px);opacity:.75}to{transform:translateX(18px);opacity:1}}
 @keyframes ip-ola{from{transform:translateX(-10px)}to{transform:translateX(10px)}}
 @keyframes ip-sube{0%{transform:translate(-6px,6px);opacity:.55}100%{transform:translate(8px,-14px);opacity:1}}
-@keyframes ip-brisa{from{transform:rotate(-.35deg)}to{transform:rotate(.35deg)}}
 
 /* Modo claro del sistema y contraste alto: el texto del Inicio sigue legible sobre el cielo */
 html[data-contraste="alto"] .ip-fondo::after{content:"";position:absolute;inset:0;background:rgba(255,255,255,.35)}

@@ -226,7 +226,6 @@
   // F1226 · Fase 4: suelo y primer plano. Piezas de detalle (flores, hongos, rocas, conchas) en los bordes; el centro queda libre para el árbol.
   const pet = (n, rx, ry, off, col, op) => { let o = ''; for (let i = 0; i < n; i++) o += '<ellipse cx="0" cy="' + -off + '" rx="' + rx + '" ry="' + ry + '" transform="rotate(' + f(i * 360 / n) + ')" fill="' + col + '"' + (op ? ' opacity="' + op + '"' : '') + '/>'; return o; };
   const flor6 = (x, y, k, c1, c2, c3) => '<g transform="translate(' + x + ' ' + y + ') scale(' + k + ')">' + pet(6, 4.2, 8.5, 8, c1) + pet(6, 2, 5, 7, c2, .85) + '<circle r="3.4" fill="' + c3 + '"/><circle cx="-1" cy="-1" r="1.1" fill="#fff" opacity=".6"/></g>';
-  const tallo = (x0, y0, x1, y1, col, w) => '<path d="M' + x0 + ' ' + y0 + 'Q' + f(x0 + (x1 - x0) * .15) + ' ' + f((y0 + y1) / 2) + ' ' + x1 + ' ' + y1 + '" fill="none" stroke="' + col + '" stroke-width="' + (w || 1.6) + '" stroke-linecap="round"/>';
   const hojaF = (x, y, l, r, c) => '<path transform="translate(' + x + ' ' + y + ') rotate(' + r + ')" d="M0 0Q' + f(l * .3) + ' ' + f(-l * .22) + ' ' + l + ' 0Q' + f(l * .3) + ' ' + f(l * .2) + ' 0 0Z" fill="' + c + '"/>';
   const roca = (cx, cy, rx, ry, c1, c2, musgo) => '<g transform="translate(' + cx + ' ' + cy + ')">'
     + '<ellipse cx="' + f(rx * .1) + '" cy="1" rx="' + f(rx * 1.1) + '" ry="' + f(ry * .22) + '" fill="#10200f" opacity=".22"/>'
@@ -234,8 +233,8 @@
     + '<path fill="' + c2 + '" opacity=".45" d="M' + f(rx * .2) + ' 0C' + f(rx * .3) + ' ' + f(-ry * .9) + ' ' + f(rx * .7) + ' ' + f(-ry * .95) + ' ' + f(rx * .8) + ' ' + f(-ry * .8) + 'C' + f(rx * 1.05) + ' ' + f(-ry * .4) + ' ' + rx + ' 0 ' + rx + ' 0Z"/>'
     + '<ellipse cx="' + f(-rx * .35) + '" cy="' + f(-ry * .78) + '" rx="' + f(rx * .3) + '" ry="' + f(ry * .13) + '" fill="#fff" opacity=".4" transform="rotate(-18 ' + f(-rx * .35) + ' ' + f(-ry * .78) + ')"/>'
     + (musgo ? '<path fill="' + musgo + '" d="M' + f(-rx * .72) + ' ' + f(-ry * .5) + 'C' + f(-rx * .5) + ' ' + f(-ry * 1.38) + ' ' + f(rx * .3) + ' ' + f(-ry * 1.62) + ' ' + f(rx * .72) + ' ' + f(-ry * .95) + 'C' + f(rx * .3) + ' ' + f(-ry * 1.12) + ' ' + f(-rx * .3) + ' ' + f(-ry * 1.05) + ' ' + f(-rx * .72) + ' ' + f(-ry * .5) + 'Z"/>' : '') + '</g>';
+  const tallo = (x0, y0, x1, y1, col, w) => '<path d=\"M' + x0 + ' ' + y0 + 'Q' + f(x0 + (x1 - x0) * .15) + ' ' + f((y0 + y1) / 2) + ' ' + x1 + ' ' + y1 + '\" fill=\"none\" stroke=\"' + col + '\" stroke-width=\"' + (w || 1.6) + '\" stroke-linecap=\"round\"/>';
   const hongo = (x, y, k) => '<g transform="translate(' + x + ' ' + y + ') scale(' + k + ')"><path d="M-2.4 0L-3.2-9Q0-11 3.2-9L2.4 0Z" fill="#efe3c8"/><path d="M-13-9Q-13-23 0-23Q13-23 13-9Q0-6-13-9Z" fill="#c8362f"/><path d="M-13-9Q0-6 13-9Q0-4-13-9Z" fill="#8f1f1c" opacity=".5"/><ellipse cx="-5" cy="-18" rx="4" ry="2" fill="#fff" opacity=".28"/><circle cx="-4" cy="-16" r="1.8" fill="#fff" opacity=".92"/><circle cx="4.5" cy="-14" r="1.4" fill="#fff" opacity=".92"/><circle cx="0" cy="-20" r="1.1" fill="#fff"/></g>';
-  const campana = (x, y, k, r) => '<g transform="translate(' + x + ' ' + y + ') rotate(' + r + ') scale(' + k + ')"><path d="M0 0C-3 5-10 11-12 22L-14 25Q0 30 14 25L12 22C10 11 3 5 0 0Z" fill="#c9213f"/><path d="M-4 6C-8 12-10 18-11 24" stroke="#f26b86" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".85"/><path d="M-14 25Q0 31 14 25" fill="none" stroke="#fbd0d8" stroke-width="2.4" stroke-linecap="round"/><path d="M-3 26V33M0 27V35M3 26V33" stroke="#f3d46b" stroke-width="1" stroke-linecap="round"/><g fill="#f3d46b"><circle cx="-3" cy="33" r="1.1"/><circle cx="0" cy="35" r="1.1"/><circle cx="3" cy="33" r="1.1"/></g></g>';
   const concha = (x, y, k, r, c1, c2) => '<g transform="translate(' + x + ' ' + y + ') rotate(' + r + ') scale(' + k + ')"><path d="M0 0L-15-17Q-8-27 0-26Q8-27 15-17Z" fill="' + c1 + '"/><path d="M0 0L-15-17M0 0L-9-23M0 0L0-26M0 0L9-23M0 0L15-17" stroke="' + c2 + '" stroke-width="1" fill="none" opacity=".7"/><path d="M-5 0H5L3 3.4H-3Z" fill="' + c2 + '"/><path d="M-12-18Q0-23 12-18" stroke="#fff" stroke-opacity=".55" fill="none"/></g>';
   const estrellaMar = (x, y, k, r, c) => { let d = '', pts = ''; for (let i = 0; i < 10; i++) { const a = (i * 36 - 90) * Math.PI / 180, rr = i % 2 ? 6.5 : 17; d += (i ? 'L' : 'M') + f(Math.cos(a) * rr) + ' ' + f(Math.sin(a) * rr); }
     for (let i = 0; i < 5; i++) { const a = (i * 72 - 90) * Math.PI / 180; pts += '<circle cx="' + f(Math.cos(a) * 9) + '" cy="' + f(Math.sin(a) * 9) + '" r="1.1"/><circle cx="' + f(Math.cos(a) * 13) + '" cy="' + f(Math.sin(a) * 13) + '" r=".9"/>'; }
@@ -253,15 +252,8 @@
   const llareta = (x, y, k) => '<g transform="translate(' + x + ' ' + y + ') scale(' + k + ')"><ellipse cx="2" cy="1" rx="22" ry="4" fill="#2a2a12" opacity=".2"/><path fill="#8d9f4a" d="M-22 0Q-24-16-8-20Q4-26 16-18Q26-12 22 0Z"/><path fill="#b4c266" d="M-18-4Q-18-14-6-17Q4-22 12-15Q4-14-2-8Q-10-4-18-4Z"/><g fill="#dfe79a" opacity=".85"><circle cx="-8" cy="-12" r="1.6"/><circle cx="2" cy="-16" r="1.5"/><circle cx="11" cy="-10" r="1.5"/><circle cx="-1" cy="-8" r="1.3"/></g></g>';
   const DES2 = '<defs><filter id="ipDes2" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation=".6"/></filter></defs>';
   function decor(lugar, p) {
-    if (lugar === 'bosque') {
-      const vid = '<g class="ip-fl v">' + tallo(-8, 500, 24, 560, '#3b6b3f', 3).replace('Q', 'C').replace(/ (\d+) (\d+)"/, ' 44 576 24 626"')
-        + '<path d="M-8 500C34 530 44 576 24 626C12 656 30 690 20 726" fill="none" stroke="#3b6b3f" stroke-width="3" stroke-linecap="round"/>'
-        + hojaF(30, 536, 22, 20, '#4a8a4c') + hojaF(40, 582, 24, -30, '#5a9a58') + hojaF(24, 636, 22, 24, '#4a8a4c') + hojaF(26, 690, 20, -26, '#5a9a58') + hojaF(18, 716, 18, 30, '#4a8a4c')
-        + '<path d="M34 540L36 552M38 586L36 600M23 640L26 654" stroke="#3b6b3f" stroke-width="1.4" stroke-linecap="round"/>'
-        + campana(36, 552, 1, 8) + campana(36, 600, .85, -10) + campana(26, 654, .95, 6) + '</g>';
-      return DES2 + '<g filter="url(#ipDes2)">' + roca(366, 748, 52, 32, '#7f8c82', '#4c5a52', '#6faa59') + roca(46, 746, 38, 22, '#8a968b', '#566359', '#7bb562')
-        + hongo(330, 748, 1.35) + hongo(352, 752, .95) + hongo(314, 754, .8) + vid
-        + '<g fill="#d8a64a" opacity=".85"><ellipse cx="96" cy="724" rx="6" ry="2.8" transform="rotate(24 96 724)"/><ellipse cx="300" cy="712" rx="5" ry="2.4" transform="rotate(-20 300 712)"/></g><g fill="#c97a3a" opacity=".8"><ellipse cx="74" cy="752" rx="5" ry="2.4" transform="rotate(-30 74 752)"/></g></g>';
+    if (lugar === 'bosque') {   // F1285: decoración mínima bajo el tronco (una roca y dos hongos) para bajar el ruido visual
+      return DES2 + '<g filter="url(#ipDes2)">' + roca(366, 748, 52, 32, '#7f8c82', '#4c5a52', '#6faa59') + hongo(322, 750, 1.2) + hongo(344, 754, .85) + '</g>';
     }
     if (lugar === 'desierto') {
       return DES2 + '<g filter="url(#ipDes2)">' + cactus(374, 560) + roca(64, 750, 40, 24, '#b07a4c', '#7a4a28') + roca(316, 752, 30, 17, '#bd8a5a', '#85532f')
@@ -282,8 +274,8 @@
   function primerPlano(lugar, p) {
     let g = '';
     if (lugar === 'bosque') {
-      const A = helecho(-14, 800, 250, -1.02, .55, 14, 76), B = helecho(404, 810, 270, -2.14, -.5, 14, 80), C = helecho(-20, 620, 170, -0.55, .5, 11, 54), D = helecho(410, 600, 160, -2.6, -.5, 11, 52);
-      g = '<g class="ip-fp" filter="url(#ipDesenf)"><path fill="' + p.follaje + '" d="' + A.hojas + B.hojas + '"/><path fill="' + p.follaje2 + '" opacity=".9" d="' + C.hojas + D.hojas + '"/></g>';
+      const A = helecho(-14, 800, 250, -1.02, .55, 14, 76), B = helecho(404, 810, 270, -2.14, -.5, 14, 80);
+      g = '<g class="ip-fp" filter="url(#ipDesenf)"><path fill="' + p.follaje + '" d="' + A.hojas + B.hojas + '"/></g>';
     } else if (lugar === 'desierto') {
       g = '<g class="ip-fp" filter="url(#ipDesenf)"><path fill="' + p.follaje + '" d="' + pasto(26, 820, 16, 170, 1.9, 21) + pasto(372, 826, 18, 190, 1.9, 33) + '"/>'
         + '<path fill="' + p.follaje2 + '" opacity=".85" d="' + pasto(-4, 700, 10, 110, 1.4, 5) + pasto(396, 690, 10, 110, 1.4, 9) + '"/>'
@@ -300,10 +292,7 @@
     return g + decor(lugar, p);
   }
 
-  // F1227 · Fase 5: vida y movimiento (mariposas, gaviotas, luciérnagas, estrella fugaz, hojas y pétalos) y tinte según la hora.
-  const ALA = (c1, c2) => '<path d="M0-1C4-13 17-16 18-6C18 1 9 3 0 0Z" fill="' + c1 + '" stroke="#2a1d3a" stroke-opacity=".5" stroke-width=".7"/><path d="M0 1C8 3 15 8 11 13C7 15 2 9 0 4Z" fill="' + c1 + '" opacity=".92" stroke="#2a1d3a" stroke-opacity=".45" stroke-width=".7"/><circle cx="11.5" cy="-7" r="2.3" fill="' + c2 + '"/><circle cx="8" cy="8" r="1.6" fill="' + c2 + '"/><path d="M3-3C8-9 13-10 15-7" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width=".8"/>';
-  const mariposa = (x, y, k, c1, c2, cl) => '<g transform="translate(' + x + ' ' + y + ') scale(' + k + ')"><g class="ip-mp ' + cl + '"><g class="ip-ala">' + ALA(c1, c2) + '<g transform="scale(-1 1)">' + ALA(c1, c2) + '</g></g>'
-    + '<ellipse cx="0" cy="1" rx="1.4" ry="6.4" fill="#2a1d3a"/><path d="M0-5Q-3-10-6-11M0-5Q3-10 6-11" stroke="#2a1d3a" stroke-width=".7" fill="none" stroke-linecap="round"/></g></g>';
+  // F1227 · Fase 5: vida y movimiento (gaviotas, luciérnagas, estrella fugaz, hojas y pétalos) y tinte según la hora.
   const gaviota = (x, y, k, cl) => '<g transform="translate(' + x + ' ' + y + ') scale(' + k + ')"><g class="ip-ave ' + cl + '"><path transform="translate(0 1.6)" d="M0 0Q6-8 12 0Q18-8 24 0" fill="none" stroke="#6f7f8f" stroke-opacity=".45" stroke-width="2.2" stroke-linecap="round"/><path d="M0 0Q6-8 12 0Q18-8 24 0" fill="none" stroke="#f6f9fb" stroke-width="2" stroke-linecap="round"/></g></g>';
   function vida(lugar, fr) {
     const noche = fr === 'noche', R = azar(lugar.length * 211 + 5); let o = '', bk = '';
@@ -316,10 +305,8 @@
       return o;
     }
     if (lugar === 'costa') o += gaviota(66, 300, 1.1, 'a1') + gaviota(104, 322, .75, 'a2') + gaviota(292, 276, .9, 'a3');
-    else if (lugar === 'cordillera') o += gaviota(190, 118, 1.9, 'a1') + gaviota(240, 152, 1.1, 'a2');   // F1231: aves grandes que planean (cóndores), sin mariposas ni hojas
+    else if (lugar === 'cordillera') o += gaviota(190, 118, 1.9, 'a1') + gaviota(240, 152, 1.1, 'a2');   // F1231: aves grandes que planean (cóndores), sin hojas
     else {
-      const M = lugar === 'desierto' ? [[86, 540, 1.6, '#f6a41f', '#fff0b0'], [310, 590, 1.3, '#e8452c', '#ffd0a8'], [232, 480, 1.05, '#ffd23c', '#fff7c0']] : [[74, 520, 1.65, '#3d7fd6', '#bfe0ff'], [318, 610, 1.3, '#f08a2c', '#ffe2a8'], [236, 470, 1.05, '#8a5ad6', '#e6d6ff']];
-      M.forEach((q, i) => { o += mariposa(q[0], q[1], q[2], q[3], q[4], 'm' + (i + 1)); });
       const C = lugar === 'desierto' ? ['#e8452c', '#f6a02a', '#e8452c', '#f6a02a', '#ffd23c', '#e8452c'] : ['#d8a64a', '#7fb25a', '#c97a3a', '#d8a64a', '#7fb25a', '#e0b85c'];
       for (let i = 0; i < 6; i++) o += '<g transform="translate(' + f(24 + R() * 340) + ' ' + f(300 + R() * 160) + ')"><g class="ip-hc h' + (i + 1) + '">' + hojaF(0, 0, lugar === 'desierto' ? 7 : 11, 20 + i * 40, C[i]) + '</g></g>';
     }
@@ -394,7 +381,6 @@
       + '<filter id="ipCirroF" x="-10%" y="-100%" width="120%" height="300%"><feGaussianBlur stdDeviation="2.2"/></filter>'
       + '<filter id="ipSuave" x="-30%" y="-80%" width="160%" height="260%"><feGaussianBlur stdDeviation="5"/></filter>'
       + '<filter id="ipRayoF" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="14"/></filter>'
-      + '<filter id="ipGrano" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 .2  0 0 0 0 .15  0 0 0 0 .1  0 0 0 .55 -.18"/></filter>'
       + '</defs>'
       + '<rect width="' + W + '" height="' + H + '" fill="url(#ipCielo)"/>'
       + '<rect width="' + W + '" height="' + H + '" fill="url(#ipLuz)"/>'
@@ -410,7 +396,6 @@
       + primerPlano(lugar, p)
       + tinte(fr)
       + '<rect width="' + W + '" height="' + H + '" fill="url(#ipVig)"/>'
-      + '<rect width="' + W + '" height="' + H + '" filter="url(#ipGrano)" opacity=".5" class="ip-grano"/>'
       + '</svg>';
   }
 
@@ -440,5 +425,5 @@
     setInterval(pronto, 60000);   // cambia de cielo al cambiar la hora
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar); else iniciar();
-  window.TBProfundidad = { poner };
+  window.TBProfundidad = { poner, construir };
 })();

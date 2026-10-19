@@ -1,16 +1,9 @@
-/* F1227 · Inicio por fases · Fase 5: vida (mariposas, gaviotas, luciérnagas, estrella fugaz, hojas y pétalos). Solo transform/opacity;
+/* F1227 · Inicio por fases · Fase 5: vida (gaviotas, luciérnagas, estrella fugaz, hojas y pétalos). Solo transform/opacity;
    todo queda quieto con Animaciones «Apagadas», Ahorro (data-eco=2) o «reducir movimiento». Sin atributo style (CSP). */
-.ip-tinte.ip-t-noche{mix-blend-mode:multiply}
-.ip-ala{transform-box:fill-box;transform-origin:50% 50%}
-.ip-mp,.ip-hc{transform-box:fill-box;transform-origin:50% 50%}
+.ip-hc{transform-box:fill-box;transform-origin:50% 50%}
 .ip-fug{opacity:0}
 .ip-lu{opacity:.85}
 @media (prefers-reduced-motion:no-preference){
-  html:not([data-anim=off]):not([data-eco="2"]) .ip-ala{animation:ip-aletea .5s ease-in-out infinite alternate}
-  html:not([data-anim=off]):not([data-eco="2"]) .ip-mp.m1{animation:ip-mp1 30s ease-in-out infinite}
-  html:not([data-anim=off]):not([data-eco="2"]) .ip-mp.m2{animation:ip-mp2 36s ease-in-out -11s infinite}
-  html:not([data-anim=off]):not([data-eco="2"]) .ip-mp.m3{animation:ip-mp1 42s ease-in-out -23s infinite}
-  html:not([data-anim=off]):not([data-eco="2"]) .ip-mp.m2 .ip-ala{animation-duration:.42s}
   html:not([data-anim=off]):not([data-eco="2"]) .ip-bok{animation:ip-sube 40s ease-in-out infinite alternate}
   html:not([data-anim=off]):not([data-eco="2"]) .ip-lu.l1{animation:ip-lupul 4.6s ease-in-out infinite,ip-ludri 15s ease-in-out infinite alternate}
   html:not([data-anim=off]):not([data-eco="2"]) .ip-lu.l2{animation:ip-lupul 6.2s ease-in-out -2s infinite,ip-ludri 19s ease-in-out -6s infinite alternate}
@@ -23,9 +16,6 @@
   html:not([data-anim=off]):not([data-eco="2"]) .ip-hc.h5{animation-duration:28s;animation-delay:-3s}
   html:not([data-anim=off]):not([data-eco="2"]) .ip-hc.h6{animation-duration:37s;animation-delay:-24s}
 }
-@keyframes ip-aletea{from{transform:scaleX(1)}to{transform:scaleX(.26)}}
-@keyframes ip-mp1{0%{transform:translate(0,0) rotate(0)}25%{transform:translate(40px,-26px) rotate(33deg)}50%{transform:translate(86px,6px) rotate(125deg)}75%{transform:translate(36px,34px) rotate(215deg)}100%{transform:translate(0,0) rotate(360deg)}}
-@keyframes ip-mp2{0%{transform:translate(0,0) rotate(0)}25%{transform:translate(-44px,-22px) rotate(-36deg)}50%{transform:translate(-90px,8px) rotate(-120deg)}75%{transform:translate(-40px,36px) rotate(-210deg)}100%{transform:translate(0,0) rotate(-360deg)}}
 @keyframes ip-lupul{0%,100%{opacity:.12}50%{opacity:1}}
 @keyframes ip-ludri{from{transform:translate(-14px,8px)}to{transform:translate(18px,-16px)}}
 @keyframes ip-fug{0%,86%{opacity:0;transform:translate(0,0)}88%{opacity:1}95%{opacity:0;transform:translate(-130px,48px)}100%{opacity:0;transform:translate(-130px,48px)}}
