@@ -24,6 +24,21 @@
     } catch (e) { /* sin API */ }
     try { Array.prototype.forEach.call(document.querySelectorAll('.rv'), (n) => { n.classList.add('rv-on'); n.classList.remove('rv'); }); } catch (e) { /* sin nada que mostrar */ }
     try { H.classList.add('tb-reactiva'); setTimeout(() => H.classList.remove('tb-reactiva'), 1100); } catch (e) { /* nada */ }
+    // F1275 · Las animaciones SIN FIN (luces, aurora, piezas del Inicio) arrancan en tandas de 10 por cuadro y no todas en el mismo instante:
+    // en tablets, crear decenas de capas a la vez se ve como un destello. Se saltan las que están fuera de pantalla (ya las pausa rendimiento.css).
+    try {
+      if (typeof requestAnimationFrame !== 'function') return;
+      const fuera = (a) => { try { const n = a.effect && a.effect.target; return !!(n && n.closest && n.closest('.tb-fuera')); } catch (e) { return false; } };
+      const sinFin = document.getAnimations().filter((a) => { try { return a.effect.getTiming().iterations === Infinity && !fuera(a); } catch (e) { return false; } });
+      sinFin.forEach((a) => { try { a.pause(); } catch (e) { /* no se pudo pausar */ } });
+      let i = 0;
+      const paso = () => {
+        if (quieto()) return;   // si las apagaron otra vez, no se reinicia nada
+        sinFin.slice(i, i + 10).forEach((a) => { try { if (a.playState === 'paused') a.play(); } catch (e) { /* ya no existe */ } });
+        i += 10; if (i < sinFin.length) requestAnimationFrame(paso);
+      };
+      requestAnimationFrame(() => requestAnimationFrame(paso));
+    } catch (e) { /* sin tandas: las animaciones arrancan juntas como antes */ }
   }
   let antes = quieto();
   try {

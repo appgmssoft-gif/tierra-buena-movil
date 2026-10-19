@@ -1,0 +1,39 @@
+/* F1270 · Mejoras generales: foco visible, toque más fluido y áreas de toque cómodas.
+   Solo añade reglas; no cambia colores ni diseños de cada pantalla. Se carga al final. */
+
+/* 1. Toque inmediato: sin retraso ni destello gris en el celular */
+button, a, [role="button"], .btn, .tab, .card {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* 2. Respuesta suave al tocar: todo botón se hunde y vuelve con transición */
+.btn, .tab, button.card {
+  transition: transform .18s ease, box-shadow .2s ease, background-color .2s ease, opacity .2s ease;
+}
+.btn:active, .tab:active, button.card:active {
+  transform: scale(.97);
+}
+
+/* 3. Foco visible con teclado y lector (no aparece al tocar con el dedo) */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--oro, #f2c94c) 85%, #fff);
+  outline-offset: 3px;
+}
+input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline-offset: 1px;
+}
+
+
+/* 5. Cuando el usuario pide menos movimiento, las transiciones casi no se notan */
+@media (prefers-reduced-motion: reduce) {
+  .btn, .tab, button.card {
+    transition: none;
+  }
+  .btn:active, .tab:active, button.card:active {
+    transform: none;
+  }
+}

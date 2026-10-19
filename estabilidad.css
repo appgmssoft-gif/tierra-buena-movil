@@ -1,0 +1,7 @@
+/* F1274 · Estabilidad visual (versión mínima). Solo el dado del tablero, que usa giros en 3D.
+   Se quitaron las capas (will-change) y la contención de pintado de F1271/F1273: sin poder probar en la tablet,
+   muchas capas pequeñas gastan memoria y pueden empeorar el parpadeo, y «contain: paint» puede recortar piezas. */
+.tbl-cubo, .tbl-cara {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
