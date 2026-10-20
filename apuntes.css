@@ -1,0 +1,77 @@
+/* apuntes.css - F1304 · Apuntes de prédicas + accesos rápidos de Estudio y Prédicas. Pensado para el pulgar: botones de 56 px o más. */
+.ap-hero{background:linear-gradient(150deg,#e6ecf3,#f3e8cf 75%)}
+@media (prefers-color-scheme:dark){.ap-hero{background:linear-gradient(150deg,#1f2a33,#2c2618 75%)}}
+.ap-tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 6px}
+.ap-tile{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-height:112px;padding:14px;border:1px solid var(--linea);border-radius:20px;background:var(--tarjeta);color:var(--tinta);font:inherit;text-align:left;cursor:pointer;box-shadow:0 4px 12px rgba(63,93,58,.08);transition:transform .15s}
+.ap-tile:active{transform:scale(.96)}
+.ap-tile span{font-size:1.9rem;line-height:1}.ap-tile b{font-size:1.05rem}.ap-tile small{color:var(--suave);font-size:.82rem}
+.ap-t-iglesia{border-color:#c9b27a}.ap-t-evento{border-color:#d9a58f}.ap-t-linea{border-color:#8fb0c9}.ap-t-otro{border-color:#b7b7a0}
+.ap-item .ap-prev{display:block;margin-top:4px;color:var(--suave);font-style:italic}
+.ap-f-iglesia{background:#f1e4bd;color:#5c4513}.ap-f-evento{background:#f6d9cc;color:#7a3a22}.ap-f-linea{background:#d6e6f3;color:#1f4a6b}.ap-f-otro{background:#e7e7da;color:#4a4a38}
+@media (prefers-color-scheme:dark){.ap-f-iglesia{background:#4a3d1a;color:#f1e4bd}.ap-f-evento{background:#4d2d20;color:#f6d9cc}.ap-f-linea{background:#1f3a50;color:#d6e6f3}.ap-f-otro{background:#3a3a2c;color:#e7e7da}}
+.ap-tit{margin:4px 0 8px;font-size:1.2rem;font-weight:700}
+.ap-fuentes{margin-bottom:10px}
+.ap-rec{display:flex;align-items:center;gap:14px;margin:0 0 10px;padding:12px 14px;border:1px solid var(--linea);border-radius:20px;background:var(--tarjeta)}
+.ap-rec.on{border-color:#c9573f;box-shadow:0 0 0 3px rgba(201,87,63,.18)}
+.ap-rec-b{position:relative;flex:none;width:72px;height:72px;border:0;border-radius:50%;background:linear-gradient(150deg,#c9573f,#9b3b2e);color:#fff;font-size:1.7rem;cursor:pointer;box-shadow:0 8px 18px rgba(155,59,46,.3);transition:transform .15s}
+.ap-rec-b:active{transform:scale(.94)}
+.ap-rec-b.on::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:3px solid rgba(201,87,63,.55);animation:apPulso 1.4s ease-out infinite}
+.ap-rec-c{display:flex;flex-direction:column;gap:2px;min-width:0}.ap-rec-c b{font-size:1.15rem}.ap-rec.on .ap-rec-c b{color:#c9573f}.ap-rec-c small{color:var(--suave);font-size:.85rem}
+@keyframes apPulso{from{transform:scale(.95);opacity:1}to{transform:scale(1.25);opacity:0}}
+.pp-quieto .ap-rec-b.on::after{animation:none}
+.ap-herr{display:flex;gap:8px;overflow-x:auto;margin:0 -4px 4px;padding:2px 4px 8px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.ap-herr::-webkit-scrollbar{display:none}
+.ap-herr button{flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:70px;min-height:60px;padding:6px 10px;border:1px solid var(--linea);border-radius:16px;background:var(--tarjeta);color:var(--tinta);font:inherit;font-size:.8rem;cursor:pointer;transition:transform .15s}
+.ap-herr button:active{transform:scale(.94)}
+.ap-herr button.on{background:var(--oro);color:var(--papel);border-color:var(--oro)}
+.ap-herr i{font-style:normal;font-size:1.35rem;line-height:1}
+.ap-aviso{min-height:1.2em;margin:0 0 4px;font-size:.85rem}
+.ap-notas{min-height:42vh;line-height:1.55;resize:vertical}
+.ap-mas{margin-top:10px}
+.ap-acc{margin-top:8px}.ap-acc .pp-borrar{display:block;width:100%;margin-top:14px}
+.ap-sinrec{margin:0 0 10px}
+/* Acceso rápido en la pantalla principal de Estudio y Prédicas */
+.pp-cta{display:flex;align-items:center;gap:14px;width:100%;min-height:76px;margin:0 0 14px;padding:14px 16px;border:0;border-radius:20px;background:linear-gradient(150deg,#3f5d3a,#2f4a2d);color:#fff;font:inherit;text-align:left;cursor:pointer;box-shadow:0 8px 20px rgba(63,93,58,.28);transition:transform .15s}
+.pp-cta:active{transform:scale(.98)}
+.pp-cta>span:first-child{font-size:2rem;line-height:1}.pp-cta>span:last-child{display:flex;flex-direction:column;gap:2px}.pp-cta b{font-size:1.1rem}.pp-cta small{opacity:.88;font-size:.86rem}
+.pp-g4{background:linear-gradient(150deg,#dfe9f2,#f3e8cf)}
+@media (prefers-color-scheme:dark){.pp-g4{background:linear-gradient(150deg,#1f2a33,#2c2618)}}
+.pp-acc .pp-ga{background:#cfe0ee;color:#1f2f3b}
+@media (max-width:360px){.ap-tiles{gap:8px}.ap-tile{min-height:100px;padding:12px}}
+
+/* F1306 · Material (hoja sobre el editor) */
+.mt-c{padding-top:12px}
+.mt-cab{display:flex;align-items:center;justify-content:space-between;gap:10px}.mt-cab h2{margin:0}
+.mt-x{flex:none;width:44px;height:44px;border:0;border-radius:50%;background:var(--papel);color:var(--tinta);font-size:1.1rem;cursor:pointer}
+.mt-dest{margin:2px 0 8px}
+.mt-tabs{flex-wrap:nowrap;overflow-x:auto;margin:8px -4px 10px;padding:0 4px 4px;scrollbar-width:none}.mt-tabs::-webkit-scrollbar{display:none}.mt-tabs .chip{flex:none}
+.mt-res{display:flex;flex-direction:column;gap:10px}
+.mt-it{padding:6px 12px 12px;border:1px solid var(--linea);border-radius:16px;background:var(--tarjeta);animation:ppSube .3s ease both}
+.mt-it.open{border-color:var(--oro)}
+.mt-top{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;padding:6px 0;border:0;background:none;color:var(--tinta);font:inherit;text-align:left;cursor:pointer}
+.mt-ico{flex:none;font-size:1.5rem;line-height:1}.mt-tt{display:flex;flex-direction:column;min-width:0}.mt-tt b{font-size:1.05rem}.mt-tt small{color:var(--suave)}
+.mt-pre{margin:0 0 8px;color:var(--suave);font-size:.92rem}
+.mt-det{margin:2px 0 8px;line-height:1.55}.mt-det p{margin:0 0 8px}
+.mt-poner{margin-top:4px;min-height:48px;background:var(--verde);font-size:.98rem}
+.mt-poner.hecho{background:color-mix(in srgb,var(--verde) 65%,var(--tarjeta))}
+
+/* F1307 · Diseños para compartir */
+.pd-prev{margin:6px 0 14px;padding:12px;border-radius:20px;background:color-mix(in srgb,var(--oro) 10%,var(--tarjeta));border:1px solid var(--linea);display:flex;justify-content:center}
+.pd-canvas{display:block;width:auto;max-width:100%;max-height:62vh;height:auto;border-radius:12px;box-shadow:0 10px 26px rgba(0,0,0,.2)}
+.pd-fmts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pd-fmt{display:flex;flex-direction:column;align-items:center;gap:2px;min-height:84px;padding:10px 6px;border:1px solid var(--linea);border-radius:16px;background:var(--tarjeta);color:var(--tinta);font:inherit;text-align:center;cursor:pointer;transition:transform .15s}
+.pd-fmt:active{transform:scale(.96)}.pd-fmt span{font-size:1.4rem;line-height:1}.pd-fmt b{font-size:.95rem}.pd-fmt small{color:var(--suave);font-size:.75rem;line-height:1.2}
+.pd-fmt.on{border-color:var(--verde);box-shadow:0 0 0 3px color-mix(in srgb,var(--verde) 25%,transparent)}
+.pd-temas{display:flex;gap:10px;overflow-x:auto;margin:0 -4px;padding:4px 4px 8px;scrollbar-width:none;-webkit-overflow-scrolling:touch}.pd-temas::-webkit-scrollbar{display:none}
+.pd-tema{flex:none;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:76px;padding:8px 6px;border:2px solid transparent;border-radius:16px;background:none;color:var(--tinta);font:inherit;font-size:.8rem;cursor:pointer}
+.pd-tema.on{border-color:var(--verde);background:var(--tarjeta)}
+.pd-sw{display:block;width:56px;height:56px;border-radius:50%;border:1px solid var(--linea);background:linear-gradient(150deg,var(--a),var(--b));position:relative}
+.pd-sw::after{content:"";position:absolute;right:6px;bottom:6px;width:16px;height:16px;border-radius:50%;background:var(--c);border:2px solid rgba(255,255,255,.7)}
+.pd-nom{text-align:center;margin:0 0 6px}
+.pd-acc{margin-top:4px}
+@media print{
+  #ppPrint.pd{background:var(--pd-bg)!important;color:var(--pd-ink)!important;font-family:var(--pd-fam);padding:22pt 24pt;border-top:12pt solid var(--pd-acc);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #ppPrint.pd h1{color:var(--pd-ink)}#ppPrint.pd h2{color:var(--pd-acc);border-bottom:1pt solid var(--pd-acc);padding-bottom:2pt}
+  #ppPrint.pd .pd-tag{margin:0 0 6pt;font:700 9pt system-ui,sans-serif;letter-spacing:.2em;color:var(--pd-acc)}
+  #ppPrint.pd .pp-pr-sub,#ppPrint.pd .pp-pr-pie{color:var(--pd-soft)}
+}

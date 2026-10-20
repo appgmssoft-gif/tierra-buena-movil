@@ -1,4 +1,4 @@
-// predicas.js - F1302 (ensayo en voz alta con grabación, lista con estados de color) · F1301 (barra fija de crear, tamaño de letra, recordatorio en calendario, pasos fijos) · F1300 (estudiar desde la Biblia, títulos sugeridos, púlpito con deslizar) · F1299 (barra de herramientas, atajos de escritura, conteo, campos que crecen) · F1298 (versiones anteriores, revisar y sugerir, dictado por voz) · F1291 (F1292: biblioteca · F1293: series, filtros, papelera, tiempo · F1294: crear fácil: pantalla «Empezar» con el pasaje, texto bíblico dentro del editor, continuar · F1295: 13 formatos de estudio del escritorio, adaptados: una pregunta por pantalla · F1296: ideas al vuelo, prédica corta/breve, varios versículos, cronómetro, resumen · F1297: fecha de predicar, próxima prédica, duplicar, tarjeta imagen, PDF) · Estudio y Prédicas en el móvil (FASE 1 de la integración del escritorio). Solo Tierra Buena Plus.
+// predicas.js - F1302 (ensayo en voz alta con grabación, lista con estados de color) · F1301 (barra fija de crear, tamaño de letra, recordatorio en calendario, pasos fijos) · F1300 (estudiar desde la Biblia, títulos sugeridos, púlpito con deslizar) · F1299 (barra de herramientas, atajos de escritura, conteo, campos que crecen) · F1298 (versiones anteriores, revisar y sugerir, dictado por voz) · F1291 (F1292: biblioteca · F1293: series, filtros, papelera, tiempo · F1294: crear fácil: pantalla «Empezar» con el pasaje, texto bíblico dentro del editor, continuar · F1295: 13 formatos de estudio del escritorio, adaptados: una pregunta por pantalla · F1296: ideas al vuelo, prédica corta/breve, varios versículos, cronómetro, resumen · F1297: fecha de predicar, próxima prédica, duplicar, tarjeta imagen, PDF) · Estudio y Prédicas en el móvil (FASE 1 de la integración del escritorio). Abierto para todos por ahora (PLANES_ACTIVOS = false).
 // Mismos nombres de campos que el escritorio (title, baseText, point1…, observeKeywords…) para poder unir ambos en una fase futura.
 // Un paso por pantalla, guardado automático, sin tocar el inicio de sesión. CSP: sin atributo style en el HTML (colores y tamaños en predicas.css / setProperty).
 'use strict';
@@ -118,7 +118,9 @@
   const cab = (atras, txt) => '<button type="button" class="volver" id="ppAtras">‹ ' + esc(txt || 'Palabra') + '</button>';
   const ADORNO = '<svg class="pp-adorno" viewBox="0 0 120 80" aria-hidden="true"><path d="M10 60 Q35 48 60 60 Q85 48 110 60 V70 Q85 58 60 70 Q35 58 10 70Z" class="pp-a1"/><path d="M60 60 V22" class="pp-a2"/><circle cx="60" cy="18" r="9" class="pp-a3"/><path d="M60 40 q-14-4-20-16 M60 34 q14-4 20-16" class="pp-a2"/></svg>';
 
-  function abrir() { if (!plus()) return vistaPlus(); vistaInicio(); }
+  // F1303 · Desbloqueado para todos mientras no se activen los planes (el dueño avisará cuándo). Para volver a cerrarlo: poner PLANES_ACTIVOS = true.
+  const PLANES_ACTIVOS = false;
+  function abrir() { if (PLANES_ACTIVOS && !plus()) return vistaPlus(); vistaInicio(); }
 
   function vistaPlus() {
     pintar(cab() + '<section class="pp-hero pp-lock">' + ADORNO + '<h1>Estudio y Prédicas</h1><p>Prepara tus estudios bíblicos y tus mensajes desde el teléfono, paso a paso y sin perderte.</p></section>' +
@@ -128,22 +130,24 @@
   }
 
   function vistaInicio() {
-    const ne = vivos(K_E).length, np = vivos(K_P).length, ni = ideasVivas().length, prox = vivos(K_P).filter((x) => x.preachDate && x.status !== 'predicada' && diasPara(x.preachDate) >= 0).sort((a, b) => (a.preachDate < b.preachDate ? -1 : 1))[0];
+    const na = window.TBApuntes ? window.TBApuntes.cuantos() : 0, ne = vivos(K_E).length, np = vivos(K_P).length, ni = ideasVivas().length, prox = vivos(K_P).filter((x) => x.preachDate && x.status !== 'predicada' && diasPara(x.preachDate) >= 0).sort((a, b) => (a.preachDate < b.preachDate ? -1 : 1))[0];
     const rec = vivos(K_E).map((x) => ['e', x]).concat(vivos(K_P).map((x) => ['p', x])).sort((a, b) => (b[1].updated || 0) - (a[1].updated || 0))[0];
     const proxHTML = prox ? (() => { const n = llenos(prox, pasosDe('p', prox)).filter(Boolean).length, t = pasosDe('p', prox).length; return '<button type="button" class="pp-prox" id="ppProx"><small>Próxima prédica · ' + cuando(prox.preachDate) + '</small><b>' + esc(tituloDe(prox, 'p')) + '</b><span>📅 ' + esc(fechaBonita(prox.preachDate)) + ' · ' + n + ' de ' + t + ' pasos listos</span></button>'; })() : '';
     const cont = rec && !(prox && rec[1].id === prox.id) ? (() => { const pasos = rec[0] === 'e' ? PASOS_E : PASOS_P, n = llenos(rec[1], pasos).filter(Boolean).length; return '<button type="button" class="pp-cont" id="ppCont"><small>Continuar donde quedaste</small><b>' + esc(tituloDe(rec[1], rec[0])) + '</b><span>' + (rec[0] === 'e' ? '📖 Estudio' : '🎙️ Prédica') + ' · ' + n + ' de ' + pasos.length + ' pasos</span><i class="pp-barra" data-w="' + Math.round(n / pasos.length * 100) + '"></i></button>'; })() : '';
-    pintar(cab() + '<section class="pp-hero">' + ADORNO + '<h1>Estudio y Prédicas</h1><p>Prepara con calma. Todo se guarda solo.</p></section>' + proxHTML + cont +
+    pintar(cab() + '<section class="pp-hero">' + ADORNO + '<h1>Estudio y Prédicas</h1><p>Prepara con calma. Todo se guarda solo.</p></section>' + '<button type="button" class="pp-cta" id="ppApun"><span aria-hidden="true">🎧</span><span><b>Tomar apuntes de una prédica</b><small>Escribe, dicta o graba lo que escuchas</small></span></button>' + proxHTML + cont +
       '<h2 class="pp-sub">Lo que ya tienes</h2>' +
       '<button type="button" class="pp-gran pp-g1" data-t="e"><span class="pp-gi" aria-hidden="true">📖</span><b>Mis estudios</b><small>' + (ne ? ne + (ne === 1 ? ' estudio' : ' estudios') : 'Aún no tienes ninguno') + '</small></button>' +
       '<button type="button" class="pp-gran pp-g2" data-t="p"><span class="pp-gi" aria-hidden="true">🎙️</span><b>Mis prédicas</b><small>' + (np ? np + (np === 1 ? ' prédica' : ' prédicas') : 'Aún no tienes ninguna') + '</small></button>' +
-      (ni ? '<button type="button" class="pp-gran pp-g1" data-t="i"><span class="pp-gi" aria-hidden="true">💡</span><b>Mis ideas</b><small>' + ni + (ni === 1 ? ' idea anotada' : ' ideas anotadas') + '</small></button>' : '') + '<button type="button" class="pp-gran pp-g3" data-t="b"><span class="pp-gi" aria-hidden="true">📚</span><b>Biblioteca de apoyo</b><small>Diccionario, personajes, ilustraciones, prédicas de ejemplo y más</small></button><div class="pp-acc" role="toolbar" aria-label="Crear"><button type="button" class="pp-nuevo pp-g1" data-n="e"><span aria-hidden="true">📖</span><b>Nuevo estudio</b></button><button type="button" class="pp-nuevo pp-g2" data-n="p"><span aria-hidden="true">🎙️</span><b>Nueva prédica</b></button><button type="button" class="pp-nuevo pp-gi2" id="ppIdea" aria-label="Anota una idea al vuelo"><span aria-hidden="true">💡</span><b>Idea</b></button></div>');
+      (ni ? '<button type="button" class="pp-gran pp-g1" data-t="i"><span class="pp-gi" aria-hidden="true">💡</span><b>Mis ideas</b><small>' + ni + (ni === 1 ? ' idea anotada' : ' ideas anotadas') + '</small></button>' : '') + '<button type="button" class="pp-gran pp-g4" data-t="a"><span class="pp-gi" aria-hidden="true">🎧</span><b>Mis apuntes de prédicas</b><small>' + (na ? na + (na === 1 ? ' apunte' : ' apuntes') : 'De tu iglesia, de un evento o de internet') + '</small></button>' + '<button type="button" class="pp-gran pp-g3" data-t="b"><span class="pp-gi" aria-hidden="true">📚</span><b>Biblioteca de apoyo</b><small>Diccionario, personajes, ilustraciones, prédicas de ejemplo y más</small></button><div class="pp-acc" role="toolbar" aria-label="Crear"><button type="button" class="pp-nuevo pp-g1" data-n="e"><span aria-hidden="true">📖</span><b>Nuevo estudio</b></button><button type="button" class="pp-nuevo pp-g2" data-n="p"><span aria-hidden="true">🎙️</span><b>Nueva prédica</b></button><button type="button" class="pp-nuevo pp-ga" id="ppApunB" aria-label="Tomar apuntes de una prédica"><span aria-hidden="true">🎧</span><b>Apuntes</b></button><button type="button" class="pp-nuevo pp-gi2" id="ppIdea" aria-label="Anota una idea al vuelo"><span aria-hidden="true">💡</span><b>Idea</b></button></div>');
     $('#ppAtras').textContent = '‹ Palabra'; $('#ppAtras').onclick = () => App().ir('palabra');
     const br = document.querySelector('.pp-cont .pp-barra'); if (br) br.style.setProperty('--w', br.dataset.w + '%');
+    const abrirAp = () => { vibra(); if (window.TBApuntes) window.TBApuntes.abrir(); };
+    const bap = $('#ppApun'), bap2 = $('#ppApunB'); if (bap) bap.onclick = abrirAp; if (bap2) bap2.onclick = abrirAp;
     const bi0 = $('#ppIdea'); if (bi0) bi0.onclick = () => { vibra(); hojaIdea('', vistaInicio); };
     const px = $('#ppProx'); if (px) px.onclick = () => { vibra(); const ps = pasosDe('p', prox), i = llenos(prox, ps).indexOf(false); if (i < 0) vistaListo('p', prox); else vistaEditor('p', prox, i); };
     const ct = $('#ppCont'); if (ct) ct.onclick = () => { vibra(); const pasos = rec[0] === 'e' ? PASOS_E : PASOS_P, i = primerVacio(rec[1], pasos); vistaEditor(rec[0], rec[1], i); };
     document.querySelectorAll('.pp-nuevo').forEach((b) => { b.onclick = () => { vibra(); vistaEmpezar(b.dataset.n); }; });
-    document.querySelectorAll('.pp-gran').forEach((b) => { b.onclick = () => { vibra(); if (b.dataset.t === 'b') vistaBiblioteca(null); else if (b.dataset.t === 'i') vistaIdeas(); else vistaLista(b.dataset.t); }; });
+    document.querySelectorAll('.pp-gran').forEach((b) => { b.onclick = () => { vibra(); if (b.dataset.t === 'a') { if (window.TBApuntes) window.TBApuntes.abrir(); } else if (b.dataset.t === 'b') vistaBiblioteca(null); else if (b.dataset.t === 'i') vistaIdeas(); else vistaLista(b.dataset.t); }; });
   }
 
   // ---------- Empezar: una sola pregunta («¿con qué texto?») y se arma todo ----------
@@ -228,18 +232,19 @@
     return grabar(k, todos.slice(-300));
   }
 
-  let textoAbierto = false;
+  let textoAbierto = false, itAnt = '', pasoAnt = -1;
   function vistaEditor(tipo, it, paso, nuevo) {
     const pasos = pasosDe(tipo, it), total = pasos.length + 1;   // el último paso es «Listo»
     if (paso >= pasos.length) return vistaListo(tipo, it);
     const P = pasos[paso], ll = llenos(it, pasos);
+    const dir = itAnt === it.id && pasoAnt >= 0 ? (paso > pasoAnt ? 'pp-d-der' : paso < pasoAnt ? 'pp-d-izq' : '') : ''; itAnt = it.id; pasoAnt = paso;
     if (tomarVersion(it, 'Al abrir', 1800000)) guardarItem(tipo, it);
-    pintar(cab() + '<div class="pp-prog" role="group" aria-label="Pasos">' + pasos.map((p, i) => '<button type="button" class="pp-dot' + (i === paso ? ' on' : '') + (ll[i] ? ' ok' : '') + '" data-i="' + i + '" aria-label="Paso ' + (i + 1) + ': ' + esc(p.t) + '"></button>').join('') + '<span class="pp-dot fin" aria-hidden="true"></span></div>' +
+    pintar(cab() + '<div class="pp-prog" role="group" aria-label="Pasos">' + pasos.map((p, i) => '<button type="button" class="pp-dot' + (i === paso ? ' on' : '') + (ll[i] ? ' ok' : '') + '" data-i="' + i + '" aria-label="Paso ' + (i + 1) + ': ' + esc(p.t) + (ll[i] ? ' (listo)' : '') + '"' + (i === paso ? ' aria-current="step"' : '') + '>' + (ll[i] && i !== paso ? '✓' : (i + 1)) + (i === paso ? '<span class="pp-dn">' + esc(p.t) + '</span>' : '') + '</button>').join('') + '<span class="pp-dot fin" aria-hidden="true"></span></div>' +
       (paso === 0 ? '<button type="button" class="pp-fmtcambia" id="ppFmt">' + (tipo === 'e' ? FMT(it.format)[1] + ' Formato: <b>' + esc(FMT(it.format)[2]) : largoDe(it)[1] + ' Largo: <b>' + esc(largoDe(it)[2])) + '</b> · Cambiar</button>' : '') + '<p class="pp-paso">Paso ' + (paso + 1) + ' de ' + total + '</p><h1 class="pp-h"><span aria-hidden="true">' + P.ico + '</span> ' + esc(P.t) + '</h1><p class="pp-guia">' + esc(P.guia) + '</p>' +
       P.campos.map((c) => '<div class="pp-campo"><div class="pp-fila-et"><label for="pp_' + c.id + '">' + esc(c.et) + '</label>' + micHTML(c.id) + '</div>' + (c.ayuda ? '<small class="suave">' + esc(c.ayuda) + '</small>' : '') +
         (c.filas === 1 ? '<input type="text" id="pp_' + c.id + '" data-c="' + c.id + '" maxlength="200" placeholder="' + esc(c.ph) + '" value="' + esc(it[c.id]) + '">' : '<textarea id="pp_' + c.id + '" data-c="' + c.id + '" rows="' + c.filas + '" maxlength="6000" placeholder="' + esc(c.ph || 'Escribe aquí…') + '">' + esc(it[c.id]) + '</textarea>') + (c.id === 'series' ? serChips(tipo) : '') + (c.id === 'title' ? '<button type="button" class="pp-sugt" id="ppSugT">✨ Sugerir un título</button><div class="pp-chips" id="ppSugTc"></div>' : '') + '</div>').join('') +
-      (paso > 0 && String(it[campoRef(tipo)] || '').trim() ? '<details class="pp-texto" id="ppTexto"' + (textoAbierto ? ' open' : '') + '><summary>📖 <b>' + esc(it[campoRef(tipo)]) + '</b> · ver el texto</summary><div id="ppTxtCuerpo" class="pp-txtc"><p class="suave">Cargando…</p></div></details>' : '') + '<div class="pp-herr" role="toolbar" aria-label="Herramientas">' + (paso > 0 && String(it[campoRef(tipo)] || '').trim() ? '<button type="button" id="ppHTexto"><i aria-hidden="true">📖</i><span>Texto</span></button>' : '') + '<button type="button" id="ppApoyo"><i aria-hidden="true">📚</i><span>Apoyo</span></button><button type="button" id="ppIdeaB"><i aria-hidden="true">💡</i><span>Idea</span></button><button type="button" id="ppVer"><i aria-hidden="true">🕘</i><span>Versiones</span></button>' + '<button type="button" id="ppHTam"><i aria-hidden="true">Aa</i><span>Letra</span></button>' + (SR ? '<button type="button" id="ppHVoz"><i aria-hidden="true">🎤</i><span>Dictar</span></button>' : '') + '</div><p class="pp-guardado" id="ppGuardado" aria-live="polite">Se guarda solo</p><p class="pp-conteo" id="ppConteo"></p>' +
-      '<div class="pp-navw"><div class="pp-atajos" id="ppAtajos" hidden role="toolbar" aria-label="Atajos de escritura"><button type="button" data-a="com">« »</button><button type="button" data-a="cita">( cita )</button><button type="button" data-a="lista">• Lista</button><button type="button" data-a="par">¶ Párrafo</button></div><div class="pp-nav">' + (paso > 0 ? '<button type="button" class="btn sec" id="ppPrev">‹ Atrás</button>' : '') + '<button type="button" class="btn" id="ppNext">' + (paso === pasos.length - 1 ? 'Terminar' : 'Siguiente: ' + esc(pasos[paso + 1].t) + ' ›') + '</button></div></div>');
+      (paso > 0 && String(it[campoRef(tipo)] || '').trim() ? '<details class="pp-texto" id="ppTexto"' + (textoAbierto ? ' open' : '') + '><summary>📖 <b>' + esc(it[campoRef(tipo)]) + '</b> · ver el texto</summary><div id="ppTxtCuerpo" class="pp-txtc"><p class="suave">Cargando…</p></div></details>' : '') + '<div class="pp-herr" role="toolbar" aria-label="Herramientas">' + (paso > 0 && String(it[campoRef(tipo)] || '').trim() ? '<button type="button" id="ppHTexto"><i aria-hidden="true">📖</i><span>Texto</span></button>' : '') + '<button type="button" id="ppMat"><i aria-hidden="true">🧰</i><span>Material</span></button>' + (tipo === 'p' && vivos(K_E).length ? '<button type="button" id="ppEstB"><i aria-hidden="true">📖</i><span>Estudios</span></button>' : '') + '<button type="button" id="ppApoyo"><i aria-hidden="true">📚</i><span>Apoyo</span></button><button type="button" id="ppIdeaB"><i aria-hidden="true">💡</i><span>Idea</span></button><button type="button" id="ppVer"><i aria-hidden="true">🕘</i><span>Versiones</span></button>' + '<button type="button" id="ppHTam"><i aria-hidden="true">Aa</i><span>Letra</span></button>' + (SR ? '<button type="button" id="ppHVoz"><i aria-hidden="true">🎤</i><span>Dictar</span></button>' : '') + '</div><p class="pp-guardado" id="ppGuardado" aria-live="polite">Se guarda solo</p><p class="pp-conteo" id="ppConteo"></p>' +
+      '<div class="pp-navw">' + (SR ? '<button type="button" class="pp-fab" id="ppFab" aria-label="Dictar con la voz" aria-pressed="false">🎤</button>' : '') + '<div class="pp-atajos" id="ppAtajos" hidden role="toolbar" aria-label="Atajos de escritura"><button type="button" data-a="com">« »</button><button type="button" data-a="cita">( cita )</button><button type="button" data-a="lista">• Lista</button><button type="button" data-a="par">¶ Párrafo</button></div><div class="pp-nav">' + (paso > 0 ? '<button type="button" class="btn sec" id="ppPrev">‹ Atrás</button>' : '') + '<button type="button" class="btn" id="ppNext">' + (paso === pasos.length - 1 ? 'Terminar' : 'Siguiente: ' + esc(pasos[paso + 1].t) + ' ›') + '</button></div></div>', dir);
     $('#ppAtras').textContent = '‹ ' + (tipo === 'e' ? 'Mis estudios' : 'Mis prédicas');
     $('#ppAtras').onclick = () => { guardarItem(tipo, it); vistaLista(tipo, false); };
     let t = 0; const g = $('#ppGuardado');
@@ -282,8 +287,16 @@
     });
     const hA = $('#ppHTam'); if (hA) hA.onclick = () => { vibra(); const n = (tamLetra() + 1) % 4; try { localStorage.setItem('tb_pp_tam', String(n)); } catch (e) { /* nada */ } const w = document.querySelector('.pp'); if (w) { w.className = w.className.replace(/pp-tam\d/, 'pp-tam' + n); } document.querySelectorAll('textarea[data-c]').forEach(crece); if (g) g.textContent = 'Letra: ' + ['pequeña', 'normal', 'grande', 'muy grande'][n]; };
     const hT = $('#ppHTexto'); if (hT) hT.onclick = () => { vibra(); const d = $('#ppTexto'); if (d) { d.open = true; try { d.scrollIntoView({ block: 'center', behavior: quieto() ? 'auto' : 'smooth' }); } catch (e) { /* nada */ } } };
+    const fab = $('#ppFab'); if (fab) fab.onclick = () => { vibra(); const el = document.getElementById('pp_' + campo); if (el) dictar(fab, el, (m) => { if (g) g.textContent = m; }); };
+    const ad = document.querySelector('.pp-dot.on'), pg = document.querySelector('.pp-prog'); if (ad && pg) pg.scrollLeft = Math.max(0, ad.offsetLeft - pg.clientWidth / 2 + ad.offsetWidth / 2);
     const hV = $('#ppHVoz'); if (hV) hV.onclick = () => { vibra(); const el = document.getElementById('pp_' + campo); if (el) dictar(hV, el, (m) => { if (g) g.textContent = m; }); };
     $('#ppIdeaB').onclick = () => { guardarYa(); hojaIdea(tituloDe(it, tipo), () => { if (g) g.textContent = 'Idea guardada ✓'; }); };
+    const bMat = $('#ppMat'); if (bMat) bMat.onclick = () => {
+      vibra(); guardarYa(); if (!window.TBMaterial) return;
+      const cp = () => P.campos.find((c) => c.id === campo) || P.campos[0], nombre = () => (P.unico ? P.t : cp().et);
+      window.TBMaterial.abrir({ pasaje: it[campoRef(tipo)], etiqueta: nombre, poner: (txt) => { const el = document.getElementById('pp_' + campo) || $('[data-c]'); if (!el) return null; el.value = (el.value.trim() ? el.value.trim() + (el.tagName === 'INPUT' ? '; ' : '\n\n') : '') + txt; el.dispatchEvent(new Event('input', { bubbles: true })); return nombre(); } });
+    };
+    const bEst = $('#ppEstB'); if (bEst) bEst.onclick = () => { vibra(); guardarYa(); hojaEstudios(() => campo, g); };
     $('#ppApoyo').onclick = () => { vibra(); guardarYa(); vistaBiblioteca({ tipo, it, paso, get campo() { return campo; }, sug: sugDe(tipo, it, paso, P) }); };
     $('#ppNext').onclick = () => { vibra(); guardarYa(); vistaEditor(tipo, it, paso + 1); };
     const pv = $('#ppPrev'); if (pv) pv.onclick = () => { guardarYa(); vistaEditor(tipo, it, paso - 1); };
@@ -377,9 +390,29 @@
     try { rec.start(); } catch (e) { detenerVoz(); aviso('No pude abrir el micrófono.'); }
   }
 
+  // F1303 · Consultar mis estudios mientras escribes una prédica (puente del escritorio, Fase 84): lista, vista previa y «Insertar» en el campo activo.
+  function hojaEstudios(getCampo, nota) {
+    const ests = vivos(K_E).slice().sort((a, b) => (b.updated || 0) - (a.updated || 0));
+    const ov = document.createElement('div'); ov.className = 'pp-hoja'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', 'Mis estudios');
+    const cierra = () => ov.remove();
+    const lista = () => {
+      ov.innerHTML = '<div class="pp-hoja-c"><h2>📖 Mis estudios</h2><p class="pp-guia">Toca uno para ver lo que escribiste y pasarlo a tu prédica.</p>' + (ests.length ? ests.map((e, i) => '<button type="button" class="pp-item" data-i="' + i + '"><b>' + esc(tituloDe(e, 'e')) + '</b><small>' + (e.format && e.format !== 'oia' ? FMT(e.format)[1] + ' ' + esc(FMT(e.format)[2]) : '📖 Observar · Interpretar · Aplicar') + '</small></button>').join('') : '<p class="suave">Aún no tienes estudios.</p>') + '<button type="button" class="pp-borrar" id="ppEX">Cerrar</button></div>';
+      ov.querySelector('#ppEX').onclick = cierra;
+      ov.querySelectorAll('.pp-item').forEach((b) => { b.onclick = () => { vibra(); ver(ests[Number(b.dataset.i)]); }; });
+    };
+    const ver = (e) => {
+      const ps = pasosDe('e', e), bloques = [];
+      ps.slice(1).forEach((p) => p.campos.forEach((c) => { const v = String(e[c.id] || '').trim(); if (v) bloques.push([p.unico ? p.t : c.et, v]); }));
+      ov.innerHTML = '<div class="pp-hoja-c"><h2>' + esc(tituloDe(e, 'e')) + '</h2>' + (bloques.length ? bloques.map((x, i) => '<div class="pp-pit"><b>' + esc(x[0]) + '</b><p>' + esc(x[1]) + '</p><button type="button" class="btn sec" data-b="' + i + '">Insertar esto</button></div>').join('') : '<p class="suave">Este estudio aún no tiene texto escrito.</p>') + '<button type="button" class="pp-borrar" id="ppEV">‹ Volver a la lista</button></div>';
+      ov.querySelector('#ppEV').onclick = lista;
+      ov.querySelectorAll('[data-b]').forEach((b) => { b.onclick = () => { vibra(); const el = document.getElementById('pp_' + getCampo()) || document.querySelector('[data-c]'); if (!el) return; const txt = bloques[Number(b.dataset.b)][1]; el.value = (el.value.trim() ? el.value.trim() + (el.tagName === 'INPUT' ? '; ' : '\n\n') : '') + txt; el.dispatchEvent(new Event('input', { bubbles: true })); if (nota) nota.textContent = 'Estudio insertado ✓'; cierra(); }; });
+    };
+    document.body.appendChild(ov); lista();
+  }
+
   // F1300 · Desde la Biblia: con versículos elegidos, un toque para estudiar o preparar una prédica con ese pasaje.
   function desdePasaje(ref) {
-    if (!plus()) return abrir();
+    if (PLANES_ACTIVOS && !plus()) return abrir();
     const ov = document.createElement('div'); ov.className = 'pp-hoja'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', 'Usar este pasaje');
     ov.innerHTML = '<div class="pp-hoja-c"><h2>📖 ' + esc(ref) + '</h2><p class="pp-guia">¿Qué quieres hacer con este pasaje?</p><button type="button" class="btn" id="ppDE">📖 Estudiarlo</button><button type="button" class="btn sec" id="ppDP">🎙️ Preparar una prédica</button><button type="button" class="pp-borrar" id="ppDX">Ahora no</button></div>';
     document.body.appendChild(ov); const cerrar = () => ov.remove();
@@ -543,7 +576,7 @@
       '<div class="pp-prog" role="group" aria-label="Pasos">' + pasos.map((p, i) => '<button type="button" class="pp-dot' + (ll[i] ? ' ok' : '') + '" data-i="' + i + '" aria-label="' + esc(p.t) + (ll[i] ? ' (con texto)' : ' (en blanco)') + '"></button>').join('') + '<span class="pp-dot fin on" aria-hidden="true"></span></div>' +
       (esE ? '<button type="button" class="btn" id="ppAPred">Crear una prédica con este estudio</button>' : '<button type="button" class="btn" id="ppPulpito">Abrir en modo púlpito</button><button type="button" class="btn sec" id="ppEns">🎙️ Ensayar en voz alta y grabar</button>') +
       (esE ? '' : fechaHTML(it) + tiempoHTML(it) + resumenHTML(it)) + '<button type="button" class="btn sec" id="ppMarca">' + (hecho ? 'Volver a «en progreso»' : (esE ? 'Marcar como completado' : 'Marcar como lista para predicar')) + '</button>' +
-      (!esE && it.status === 'lista' ? '<button type="button" class="btn sec" id="ppPred">Marcar como ya predicada</button>' : '') + '<button type="button" class="btn sec" id="ppRev">🔍 Revisar y sugerir</button><button type="button" class="btn sec" id="ppVerL">🕘 Versiones anteriores</button><button type="button" class="btn sec" id="ppComp">Compartir como texto</button><button type="button" class="btn sec" id="ppImg">Compartir como imagen</button><button type="button" class="btn sec" id="ppPdf">Imprimir o guardar como PDF</button><button type="button" class="btn sec" id="ppDup">Duplicar</button>' +
+      (!esE && it.status === 'lista' ? '<button type="button" class="btn sec" id="ppPred">Marcar como ya predicada</button>' : '') + '<button type="button" class="btn sec" id="ppRev">🔍 Revisar y sugerir</button><button type="button" class="btn sec" id="ppVerL">🕘 Versiones anteriores</button><button type="button" class="btn sec" id="ppComp">Compartir como texto</button><button type="button" class="btn" id="ppDis">🎨 Diseñar y compartir</button><button type="button" class="btn sec" id="ppImg">Compartir como imagen</button><button type="button" class="btn sec" id="ppPdf">Imprimir o guardar como PDF</button><button type="button" class="btn sec" id="ppDup">Duplicar</button>' +
       '<button type="button" class="pp-borrar" id="ppBorrar">Mover a la papelera</button><p id="ppMsg" class="suave pp-nota" role="status"></p>');
     $('#ppAtras').textContent = '‹ ' + (esE ? 'Mis estudios' : 'Mis prédicas'); $('#ppAtras').onclick = () => vistaLista(tipo, false);
     document.querySelectorAll('.pp-dot[data-i]').forEach((d) => { d.onclick = () => vistaEditor(tipo, it, Number(d.dataset.i)); });
@@ -560,6 +593,7 @@
     const fe = $('#ppFecha'); if (fe) fe.onchange = () => { it.preachDate = fe.value || ''; guardarItem(tipo, it); vistaListo(tipo, it); };
     $('#ppDup').onclick = () => { vibra(); const c = JSON.parse(JSON.stringify(it)); c.id = uid(esE ? 'study' : 'sermon'); delete c.borrado; delete c.preachDate; delete c.versions; delete c.studyId; c.status = 'borrador'; if (esE) c.topic = tituloDe(it, tipo) + ' (copia)'; else c.title = tituloDe(it, tipo) + ' (copia)'; guardarItem(tipo, c); vistaEditor(tipo, c, 0, false); };
     $('#ppPdf').onclick = () => { vibra(); if (!imprimir(it, tipo)) msg('No se pudo abrir la impresión desde aquí.'); };
+    $('#ppDis').onclick = () => { vibra(); if (window.TBDisenos) window.TBDisenos.abrir(tipo, it, () => vistaListo(tipo, it)); };
     $('#ppImg').onclick = async () => {
       msg('Preparando la imagen…'); const b = await tarjetaPNG(it, tipo); if (!b) { msg('No se pudo crear la imagen.'); return; }
       const f = new File([b], 'tarjeta-tierra-buena.png', { type: 'image/png' });

@@ -228,3 +228,23 @@
 .pp-st-en_progreso{background:color-mix(in srgb,var(--oro) 28%,transparent)}
 .pp-st-lista,.pp-st-completado{background:color-mix(in srgb,var(--verde) 28%,transparent)}
 .pp-st-predicada{background:color-mix(in srgb,var(--tinta) 18%,transparent)}
+
+/* F1305 · Editor pensado para el pulgar: pasos con nombre, transición según la dirección, botón flotante de dictar */
+.pp-prog{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;gap:6px;padding-bottom:6px;-webkit-overflow-scrolling:touch}
+.pp-prog::-webkit-scrollbar{display:none}
+.pp-dot{flex:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;width:auto;min-width:36px;height:36px;padding:0 8px;font:inherit;font-size:.85rem;font-weight:700;color:var(--suave)}
+.pp-dot.ok{color:#fff}
+.pp-dot.on{padding:0 14px;transform:none;color:var(--tinta);background:color-mix(in srgb,var(--oro) 20%,var(--tarjeta))}
+.pp-dot.on.ok{color:var(--tinta)}
+.pp-dot .pp-dn{max-width:42vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pp-dot.fin{width:22px;min-width:22px;height:22px;padding:0}
+.pp-d-der .pp-h,.pp-d-der .pp-guia,.pp-d-der .pp-campo{animation:ppDer .32s cubic-bezier(.2,.8,.2,1) both}
+.pp-d-izq .pp-h,.pp-d-izq .pp-guia,.pp-d-izq .pp-campo{animation:ppIzq .32s cubic-bezier(.2,.8,.2,1) both}
+@keyframes ppDer{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
+@keyframes ppIzq{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
+.pp-navw{position:sticky}
+.pp-fab{position:absolute;right:6px;top:-66px;z-index:6;width:56px;height:56px;border:0;border-radius:50%;background:linear-gradient(150deg,#d4a959,#b8893a);color:#2b2218;font-size:1.45rem;cursor:pointer;box-shadow:0 8px 20px rgba(120,86,24,.35);transition:transform .15s}
+.pp-fab:active{transform:scale(.92)}
+.pp-fab.on{background:linear-gradient(150deg,#c9573f,#9b3b2e);color:#fff;animation:ppPulso 1.4s ease-out infinite}
+.pp-quieto .pp-d-der .pp-h,.pp-quieto .pp-d-der .pp-guia,.pp-quieto .pp-d-der .pp-campo,.pp-quieto .pp-d-izq .pp-h,.pp-quieto .pp-d-izq .pp-guia,.pp-quieto .pp-d-izq .pp-campo,.pp-quieto .pp-fab.on{animation:none}
+@media (prefers-reduced-motion:reduce){.pp-d-der .pp-h,.pp-d-der .pp-guia,.pp-d-der .pp-campo,.pp-d-izq .pp-h,.pp-d-izq .pp-guia,.pp-d-izq .pp-campo,.pp-fab.on{animation:none}}
