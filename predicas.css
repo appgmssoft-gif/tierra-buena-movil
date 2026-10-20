@@ -89,3 +89,65 @@
 .pp-reparto li{display:flex;justify-content:space-between;padding:8px 12px;border-radius:12px;background:var(--papel);animation:ppSube .35s ease both}
 .pp-reparto li:nth-child(2){animation-delay:.05s}.pp-reparto li:nth-child(3){animation-delay:.1s}.pp-reparto li:nth-child(4){animation-delay:.15s}.pp-reparto li:nth-child(5){animation-delay:.2s}.pp-reparto li:nth-child(6){animation-delay:.25s}
 .pp-reparto b{color:var(--oro)}
+
+/* F1294 · Crear fácil: Empezar, continuar, texto bíblico dentro del editor, botones fijos abajo */
+.pp-sub{margin:20px 0 8px;font-size:1.02rem;color:var(--suave);font-weight:700}
+.pp-crear{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pp-nuevo{display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-height:112px;padding:16px;border:1px solid var(--linea);border-radius:20px;background:var(--tarjeta);color:var(--tinta);font:inherit;text-align:left;cursor:pointer;transition:transform .18s ease}
+.pp-nuevo:active{transform:scale(.97)}
+.pp-nuevo span{font-size:1.8rem;line-height:1}.pp-nuevo b{font-size:1.08rem}.pp-nuevo small{color:var(--suave);font-size:.85rem}
+.pp-cont{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:2px;width:100%;padding:16px 16px 20px;border:2px solid var(--verde);border-radius:20px;background:var(--tarjeta);color:var(--tinta);font:inherit;text-align:left;cursor:pointer;margin:0 0 4px}
+.pp-cont small{color:var(--verde);font-weight:700}.pp-cont b{font-size:1.15rem}.pp-cont span{color:var(--suave);font-size:.9rem}
+.pp-cont .pp-barra{position:absolute;left:0;bottom:0;height:5px;width:var(--w,0%);background:var(--verde);border-radius:0 4px 0 0}
+.pp-vista{min-height:64px;margin:6px 0 12px;padding:12px 14px;border-radius:14px;background:var(--tarjeta);border:1px dashed var(--linea)}
+.pp-vista p{margin:0 0 4px}.pp-ok-l{font-weight:700;color:var(--verde)}.pp-prev{font-family:Literata,Georgia,serif;font-size:1rem;line-height:1.5}
+#ppRef{font-size:1.15rem}
+.pp .btn+.btn{margin-top:10px}
+.pp-texto{margin:0 0 14px;border:1px solid var(--linea);border-radius:14px;background:var(--tarjeta)}
+.pp-texto summary{min-height:48px;display:flex;align-items:center;padding:0 14px;cursor:pointer;list-style:none}
+.pp-texto summary::-webkit-details-marker{display:none}
+.pp-txtc{max-height:42vh;overflow-y:auto;padding:4px 10px 12px;-webkit-overflow-scrolling:touch}
+.pp-v{display:block;width:100%;min-height:44px;margin:0 0 4px;padding:10px 12px;border:0;border-radius:10px;background:transparent;color:var(--tinta);font:inherit;font-family:Literata,Georgia,serif;font-size:1.02rem;line-height:1.5;text-align:left;cursor:pointer}
+.pp-v:active{background:rgba(111,156,100,.18)}.pp-v.puesto{background:rgba(111,156,100,.14)}
+.pp-v sup{color:var(--verde);font-weight:700;font-family:inherit}
+.pp-nav{position:sticky;bottom:0;z-index:5;padding:10px 0 calc(10px + env(safe-area-inset-bottom,0px));background:linear-gradient(to bottom,transparent,var(--papel) 28%)}
+
+/* F1295 · Formatos de estudio */
+.pp-fmts{display:flex;flex-direction:column;gap:8px;margin:0 0 8px}
+.pp-fmt{position:relative;display:flex;align-items:center;gap:12px;width:100%;min-height:64px;padding:12px 14px;border:1px solid var(--linea);border-radius:16px;background:var(--tarjeta);color:var(--tinta);font:inherit;text-align:left;cursor:pointer;transition:transform .15s ease}
+.pp-fmt:active{transform:scale(.98)}
+.pp-fmt.on{border:2px solid var(--verde)}
+.pp-fi{font-size:1.6rem;line-height:1}.pp-ft{display:flex;flex-direction:column;gap:1px;flex:1}.pp-ft b{font-size:1rem}.pp-ft small{color:var(--suave);font-size:.84rem}
+.pp-fmt em{font-style:normal;font-size:.78rem;font-weight:700;color:var(--verde)}
+.pp-fmtcambia{display:block;width:100%;min-height:44px;margin:0 0 6px;padding:8px 12px;border:1px dashed var(--linea);border-radius:12px;background:transparent;color:var(--tinta);font:inherit;font-size:.9rem;text-align:left;cursor:pointer}
+.pp-fmtcambia b{font-weight:700}
+
+/* F1296 · Ideas al vuelo, varios versículos, cronómetro, resumen */
+.pp [hidden]{display:none!important}
+.pp-idea{display:flex;align-items:center;gap:12px;width:100%;min-height:64px;margin:0 0 4px;padding:12px 16px;border:1px dashed var(--oro);border-radius:18px;background:var(--tarjeta);color:var(--tinta);font:inherit;text-align:left;cursor:pointer;transition:transform .15s ease}
+.pp-idea:active{transform:scale(.98)}
+.pp-idea>span:first-child{font-size:1.7rem;line-height:1}.pp-idea span span,.pp-idea>span+span{display:flex;flex-direction:column}
+.pp-idea b{font-size:1.02rem}.pp-idea small{color:var(--suave);font-size:.85rem}
+.pp-hoja{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;background:rgba(0,0,0,.45);animation:ppEntra .2s ease both}
+.pp-hoja-c{width:100%;max-height:88vh;overflow-y:auto;padding:18px 16px calc(16px + env(safe-area-inset-bottom,0px));border-radius:22px 22px 0 0;background:var(--papel);color:var(--tinta)}
+.pp-hoja-c h2{margin:0 0 10px;font-size:1.2rem}
+.pp-hoja-c textarea{width:100%;box-sizing:border-box;padding:12px;border:1px solid var(--linea);border-radius:12px;background:var(--tarjeta);color:var(--tinta);font:inherit;font-size:1.05rem}
+.pp-hoja-c .pp-nav{position:static;background:none;padding:12px 0 0}
+.pp-v.sel{background:rgba(111,156,100,.28);outline:2px solid var(--verde)}
+.pp-vins{position:sticky;bottom:6px;width:100%;margin-top:6px}
+.pp-resumen{margin:14px 0;padding:14px 16px;border:1px solid var(--linea);border-radius:16px;background:var(--tarjeta)}
+.pp-resumen h3{margin:0 0 6px;font-size:1.02rem}.pp-resumen p{margin:0 0 4px}
+.pp-pulpito .pp-pu-b.pasado{background:#9b3b2e;color:#fff}
+
+/* F1297 · Fecha de predicar, próxima prédica, imprimir */
+.pp-prox{display:flex;flex-direction:column;gap:2px;width:100%;margin:0 0 10px;padding:16px;border:2px solid var(--oro);border-radius:20px;background:var(--tarjeta);color:var(--tinta);font:inherit;text-align:left;cursor:pointer}
+.pp-prox small{color:var(--oro);font-weight:700}.pp-prox b{font-size:1.15rem}.pp-prox span{color:var(--suave);font-size:.9rem}
+.pp-fecha{margin:14px 0;padding:14px 16px;border:1px solid var(--linea);border-radius:16px;background:var(--tarjeta)}
+.pp-fecha h3{margin:0 0 8px;font-size:1.02rem}.pp-fecha label{display:block;margin:10px 0 4px}.pp-fecha p{margin:6px 0 0}
+#ppPrint{display:none}
+@media print{
+  body>*:not(#ppPrint){display:none!important}
+  #ppPrint{display:block!important;color:#000;background:#fff;font:12pt/1.5 Georgia,"Times New Roman",serif;padding:0}
+  #ppPrint h1{font-size:20pt;margin:0 0 4pt}#ppPrint h2{font-size:11pt;margin:14pt 0 2pt;text-transform:uppercase;letter-spacing:.05em;color:#3f5d3a}
+  #ppPrint p{margin:0 0 6pt}.pp-pr-sub{font-style:italic;color:#555}.pp-pr-pie{margin-top:20pt;font-size:9pt;color:#777}
+}
