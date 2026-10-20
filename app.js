@@ -854,6 +854,7 @@
         <div class="chips" role="group" aria-label="Mi disponibilidad">${DISP_OPC.map(([k, t]) => `<button type="button" class="chip${dispLeer().indexOf(k) >= 0 ? ' on' : ''}" data-disp="${k}" aria-pressed="${dispLeer().indexOf(k) >= 0}">${t}</button>`).join('')}</div>
         <p class="suave m0t" id="dispMsg" aria-live="polite"></p></div>
       <h2 class="mi-sub">Mis grupos</h2><div class="mi-bento">${bento('mb2', '🕍', 'Mis ministerios', 'Dónde sirves y quién lidera', 'ministerios')}${bento('mb1', '🤲', 'Juntos hacemos el bien', 'Ideas para servir', 'juntos')}</div>
+      <button type="button" class="mes-ir" id="verMesBtn"><span aria-hidden="true">📅</span><span><b>Ver el mes completo</b><small>Cada día, quién sirve y a qué hora</small></span><span aria-hidden="true">›</span></button>
       <h2 class="mi-sub">Quién sirve este mes</h2><div id="quienSirve" class="rol"><p class="suave m0">Cargando el rol de la iglesia…</p></div>
       <details class="pf-grupo mi-grupo"><summary>Cuidar a tu pastor</summary><section class="cuidar-pastor"><p class="suave m0t">Tu pastor también es una persona. Formas concretas de acompañarlo:</p><ul class="ayuda-pasos"><li>Ora por él y por su familia, por su nombre.</li><li>Agradécele con una palabra sincera, en persona o por escrito.</li><li>Respeta sus días de descanso: no todo es urgente.</li><li>Ofrece una ayuda concreta: un servicio, transporte o una compra para el aseo.</li><li>Si ves una carga que no puede con todo, dile que cuentas con él.</li></ul></section></details>`;
     volverA('Mi iglesia', () => vistaMiembro(id));
@@ -867,6 +868,8 @@
       const filas = r.data || [];
       c.innerHTML = filas.length ? filas.map((t) => { const d = new Date(t.inicio); return '<div class="turno"><span class="turno-f"><b>' + d.getDate() + '</b><small>' + esc(d.toLocaleDateString('es-CL', { month: 'short' })) + '</small></span><span class="turno-t"><b>' + esc(t.titulo) + '</b><small>' + esc(d.toLocaleDateString('es-CL', { weekday: 'long' })) + ' · ' + esc(d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })) + '</small></span></div>'; }).join('') : '<p class="suave m0">Por ahora no tienes turnos asignados en las próximas dos semanas.</p>';
     })();
+    // F1310 · Calendario del mes (módulo mes_iglesia.js)
+    { const vm = $('#verMesBtn'); if (vm) vm.addEventListener('click', () => { if (window.TBMesIglesia) window.TBMesIglesia.abrir(id, () => vistaMiembroServir(id)); }); }
     // F1045 · Rol de la iglesia: quién sirve en los próximos 30 días.
     (async () => {
       const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
@@ -3650,11 +3653,14 @@
     const dias = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
     $('#pantalla').innerHTML = `${cabecera('Mes', 'Mi calendario')}
       <div class="cal-mes-nav"><button type="button" class="btn sec chico" id="calAnt" aria-label="Mes anterior">‹</button><h2 class="cal-mes-tit">${esc(mesTxt)}</h2><button type="button" class="btn sec chico" id="calSig" aria-label="Mes siguiente">›</button></div>
+      <div class="cal-img-bar"><button type="button" class="btn sec" id="calImgBtn">🖼 Imagen del mes para compartir</button><p class="suave m0" id="calImgMsg" role="status" aria-live="polite">Muestra quién sirve cada día. Tu agenda personal no sale.</p></div>
       <div class="cal-grid" role="grid" aria-label="${esc(mesTxt)}">${dias.map((d) => `<span class="cal-dia-n" aria-hidden="true">${d}</span>`).join('')}</div>
       <div id="calDia" class="lista sep16"><p class="suave">Toca un día para ver lo que tienes agendado.</p></div>`;
     volverA('Mi calendario', () => pCalendario(p));
     $('#calAnt').onclick = () => pCalendarioMes(p, new Date(ref.getFullYear(), ref.getMonth() - 1, 1));
     $('#calSig').onclick = () => pCalendarioMes(p, new Date(ref.getFullYear(), ref.getMonth() + 1, 1));
+    // F1311 · Imagen del mes (calendario_imagen.js): solo servicios, no la agenda personal
+    $('#calImgBtn').onclick = () => { if (window.TBCalImagen) window.TBCalImagen.abrir(p, ref); };
     const r = await prpc('calendario_pastor_listar', p, { p_desde: primero.toISOString(), p_hasta: siguiente.toISOString() });
     // F1043 · Calendario mensual de servicios: los turnos asignados del mes aparecen con el nombre de quien sirve.
     const rt = await prpc('turno_pastor_listar', p, { p_desde: primero.toISOString(), p_hasta: siguiente.toISOString() });

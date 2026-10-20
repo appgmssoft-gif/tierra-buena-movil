@@ -1,0 +1,36 @@
+/* F1310 · Calendario del mes (miembros). Colores de la identidad: papel, tinta, verde, oro. */
+.mes-ir{display:flex;align-items:center;gap:12px;width:100%;margin:8px 0 14px;padding:12px 14px;min-height:56px;border:1px solid var(--linea);border-radius:20px;background:var(--tarjeta);color:var(--tinta);text-align:left;font:inherit;cursor:pointer;box-shadow:var(--sombra)}
+.mes-ir>span:first-child{font-size:1.5rem}
+.mes-ir>span:nth-child(2){flex:1;display:flex;flex-direction:column;gap:2px}
+.mes-ir small{opacity:.75;font-size:.8rem}
+.mes-ir>span:last-child{font-size:1.4rem;opacity:.6}
+.mes .mes-nav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:6px 0 10px}
+.mes .mes-nav b{font:700 1.25rem/1.2 "TB Titulo",Georgia,serif;text-transform:capitalize}
+.mes-flecha{min-width:48px;min-height:48px;border-radius:16px;border:1px solid var(--linea);background:var(--tarjeta);color:var(--tinta);font-size:1.5rem;cursor:pointer}
+.mes-filtros{margin:0 0 10px}
+.mes-resumen{margin:0 0 10px}
+.mes-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.mes-cab{text-align:center;font-size:.72rem;font-weight:700;opacity:.65;padding:4px 0}
+.mes-vacio{min-height:48px}
+.mes-dia{min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:1px solid transparent;border-radius:14px;background:transparent;color:var(--tinta);font:inherit;cursor:pointer;padding:4px 0}
+.mes-dia b{font-size:.95rem;font-weight:600}
+.mes-dia.con{background:var(--tarjeta);border-color:var(--linea)}
+.mes-dia.tuyo{border-color:var(--oro)}
+.mes-dia.hoy b{text-decoration:underline;text-underline-offset:3px}
+.mes-dia.sel{background:var(--verde);color:#fff;border-color:var(--verde)}
+.mes-dia.sel .mes-pt{background:#fff}
+.mes-pts{display:flex;gap:3px;min-height:6px;align-items:center}
+.mes-pt{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--verde)}
+.mes-pt.mio{background:var(--oro)}
+.mes-leyenda{margin:10px 0 0;font-size:.8rem;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.mes-det{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.mes-fila{display:flex;gap:12px;align-items:center;padding:10px 12px;border:1px solid var(--linea);border-radius:18px;background:var(--tarjeta)}
+.mes-fila.mio{border-color:var(--oro);box-shadow:inset 4px 0 0 var(--oro)}
+.mes-hora{flex:none;min-width:56px;font-weight:700;font-size:.9rem;color:var(--verde)}
+.mes-fila-tx{display:flex;flex-direction:column;gap:2px;min-width:0}
+.mes-fila-tx small{opacity:.75;font-size:.8rem}
+@media (min-width:600px){.mes-grid{gap:8px}.mes-dia{min-height:64px}}
+
+/* F1311 · Imagen del mes (panel del pastor) */
+.cal-img-bar{display:flex;flex-direction:column;gap:6px;margin:8px 0 12px}
+.cal-img-bar .btn{width:100%;min-height:48px}
