@@ -290,7 +290,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Acertijos de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Letras entre las hojas': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => !CABECERAS_ILUSTRADAS ? '' : `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1293';
+  const APP_VERSION = 'F1302';
   // F1171: respaldo si movimiento.js no cargó (pruebas o caché vieja): mismo criterio que TBMov.quieto().
   const MOV_QUIETO = () => { try { if (window.TBMov) return window.TBMov.quieto(); const h = document.documentElement; return h.getAttribute('data-anim') === 'off' || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
@@ -2114,7 +2114,7 @@
       if (!n) { if (p) p.classList.remove('on'); return; }
       if (!p) {
         const bt = (id, ic, tx) => `<button type="button" id="${id}" class="lec-b">${svg(ic, 20)}<span>${tx}</span></button>`;
-        p = nuevoEl(`<div id="lecAcc" class="lec-acc" role="toolbar" aria-label="Versículos elegidos"><div class="lec-col" role="group" aria-label="Resaltar con color">${[0, 1, 2, 3].map((i) => `<button type="button" class="col-dot rc${i}" data-rc="${i}" aria-label="Resaltar ${COL_NOM[i]}"></button>`).join('')}<button type="button" class="col-dot quita" id="aQuita" aria-label="Quitar resalte">${svg('x', 14)}</button><button type="button" id="aX" class="col-x" aria-label="Quitar la selección">${svg('x', 18)}</button></div><div class="lec-fil">${bt('aNota', 'pluma', 'Nota')}${bt('aMarc', 'marcador', 'Guardar')}${bt('aImg', 'imagen', 'Imagen')}${bt('aCop', 'copiar', 'Copiar')}${bt('aCom', 'compartir', 'Enviar')}</div></div>`);
+        p = nuevoEl(`<div id="lecAcc" class="lec-acc" role="toolbar" aria-label="Versículos elegidos"><div class="lec-col" role="group" aria-label="Resaltar con color">${[0, 1, 2, 3].map((i) => `<button type="button" class="col-dot rc${i}" data-rc="${i}" aria-label="Resaltar ${COL_NOM[i]}"></button>`).join('')}<button type="button" class="col-dot quita" id="aQuita" aria-label="Quitar resalte">${svg('x', 14)}</button><button type="button" id="aX" class="col-x" aria-label="Quitar la selección">${svg('x', 18)}</button></div><div class="lec-fil">${bt('aNota', 'pluma', 'Nota')}${bt('aMarc', 'marcador', 'Guardar')}${bt('aImg', 'imagen', 'Imagen')}${bt('aCop', 'copiar', 'Copiar')}${bt('aCom', 'compartir', 'Enviar')}${bt('aEst', 'libro', 'Estudiar')}</div></div>`);
         if (!p) return; document.body.appendChild(p);
         $('#aX').onclick = () => lecLimpiar();
         const poner = (ci) => {
@@ -2130,6 +2130,7 @@
           selOrd().forEach((v) => { ya.delete(v); delete cs[kv(v)]; }); if (ya.size) rs[k] = [...ya].sort((x, y) => x - y); else delete rs[k];
           guardar(K_RES, rs); guardar(K_RESCOL, cs); lecPintar(); toastBib('Resalte quitado'); lecLimpiar();
         };
+        $('#aEst').onclick = () => { try { const vs = selOrd(), inf = libroInfo(lec.cod), t = citaVersos(inf[1], lec.cap, vs); lecLimpiar(); if (window.TBPredicas && window.TBPredicas.desdePasaje) window.TBPredicas.desdePasaje(t); } catch (e) { /* sin estudio */ } };   // F1300: estudiar o predicar los versículos elegidos
         $('#aNota').onclick = () => lecNota();
         $('#aMarc').onclick = () => {
           const vs = selOrd(), inf = libroInfo(lec.cod); let l = lista(K_MARC); const ya = vs.every((v) => l.some((x) => x.k === kv(v)));

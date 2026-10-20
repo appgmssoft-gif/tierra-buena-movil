@@ -17,7 +17,7 @@
   // ¿Venció hace poco (dentro de la gracia)? Sirve para un mensaje cordial, nunca para bloquear algo.
   function enGracia(ahora) { const e = leer(); const t = ahora || Date.now(); return !!(e && ESTADOS_OK.indexOf(e.estado) >= 0 && e.vence && e.vence < t && e.vence + graciaMs() > t); }
   // La oferta se muestra solo si está encendida desde el catálogo, la persona ya lleva días de cuidado y aún no apoya. Nunca en lectura ni oración (lo decide quien la llama).
-  function ofertaVisible(diasCuidado) { return !!(CAT && CAT.oferta_activa === true && (+diasCuidado || 0) >= (+CAT.dias_cuidado_minimo || 7) && !tengoPlus()); }
+  function ofertaVisible(diasCuidado) { return !!(CAT && CAT.oferta_activa === true && (+diasCuidado || 0) >= (CAT.dias_cuidado_minimo != null ? +CAT.dias_cuidado_minimo : 7) && !tengoPlus()); }
   const clp = (n) => '$' + String(Math.round(+n || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' CLP';
   function precioTexto(periodo) { const p = CAT && CAT.planes && CAT.planes[periodo]; return p ? clp(p.precio_clp) + ' por ' + p.periodo : ''; }
   function ahorroAnual() { const m = CAT && CAT.planes && CAT.planes.mensual, a = CAT && CAT.planes && CAT.planes.anual; if (!m || !a) return 0; return Math.max(0, Math.round((1 - a.precio_clp / (m.precio_clp * 12)) * 100)); }

@@ -1,4 +1,4 @@
-// predicas.js - F1291 (F1292: biblioteca · F1293: series, filtros, papelera, tiempo · F1294: crear fácil: pantalla «Empezar» con el pasaje, texto bíblico dentro del editor, continuar · F1295: 13 formatos de estudio del escritorio, adaptados: una pregunta por pantalla · F1296: ideas al vuelo, prédica corta/breve, varios versículos, cronómetro, resumen · F1297: fecha de predicar, próxima prédica, duplicar, tarjeta imagen, PDF) · Estudio y Prédicas en el móvil (FASE 1 de la integración del escritorio). Solo Tierra Buena Plus.
+// predicas.js - F1302 (ensayo en voz alta con grabación, lista con estados de color) · F1301 (barra fija de crear, tamaño de letra, recordatorio en calendario, pasos fijos) · F1300 (estudiar desde la Biblia, títulos sugeridos, púlpito con deslizar) · F1299 (barra de herramientas, atajos de escritura, conteo, campos que crecen) · F1298 (versiones anteriores, revisar y sugerir, dictado por voz) · F1291 (F1292: biblioteca · F1293: series, filtros, papelera, tiempo · F1294: crear fácil: pantalla «Empezar» con el pasaje, texto bíblico dentro del editor, continuar · F1295: 13 formatos de estudio del escritorio, adaptados: una pregunta por pantalla · F1296: ideas al vuelo, prédica corta/breve, varios versículos, cronómetro, resumen · F1297: fecha de predicar, próxima prédica, duplicar, tarjeta imagen, PDF) · Estudio y Prédicas en el móvil (FASE 1 de la integración del escritorio). Solo Tierra Buena Plus.
 // Mismos nombres de campos que el escritorio (title, baseText, point1…, observeKeywords…) para poder unir ambos en una fase futura.
 // Un paso por pantalla, guardado automático, sin tocar el inicio de sesión. CSP: sin atributo style en el HTML (colores y tamaños en predicas.css / setProperty).
 'use strict';
@@ -108,10 +108,11 @@
   const ultimoLeido = () => { try { const u = App().leer('tb_movil_biblia_ultimo'), b = App().biblia; const L = u && b && b.libros.find((l) => l[0] === u.cod); return L ? L[1] + ' ' + Number(u.cap) : ''; } catch (e) { return ''; } };
 
   // ---------- Pantallas ----------
+  const tamLetra = () => { try { const n = Number(localStorage.getItem('tb_pp_tam')); return n >= 0 && n <= 3 ? n : 1; } catch (e) { return 1; } };
   let envuelto = null;
   const pintar = (html, extra) => {
-    const p = $('#pantalla'); if (!p) return;
-    p.innerHTML = '<div class="pp' + (quieto() ? ' pp-quieto' : '') + (extra ? ' ' + extra : '') + '">' + html + '</div>';
+    const p = $('#pantalla'); if (!p) return; try { if (typeof detenerVoz === 'function') detenerVoz(); } catch (e) { /* nada */ }
+    p.innerHTML = '<div class="pp pp-tam' + tamLetra() + (quieto() ? ' pp-quieto' : '') + (extra ? ' ' + extra : '') + '">' + html + '</div>';
     envuelto = p.firstChild; try { window.scrollTo(0, 0); } catch (e) { /* nada */ }
   };
   const cab = (atras, txt) => '<button type="button" class="volver" id="ppAtras">‹ ' + esc(txt || 'Palabra') + '</button>';
@@ -120,9 +121,8 @@
   function abrir() { if (!plus()) return vistaPlus(); vistaInicio(); }
 
   function vistaPlus() {
-    pintar(cab() + '<section class="pp-hero pp-lock">' + ADORNO + '<p class="pp-chip">Incluido en Plus</p><h1>Estudio y Prédicas</h1><p>Prepara tus estudios bíblicos y tus mensajes desde el teléfono, paso a paso y sin perderte.</p></section>' +
-      '<ul class="pp-lista-in"><li><b>Estudio bíblico guiado</b><span>Observar, interpretar y aplicar, un paso por pantalla.</span></li><li><b>Prédicas con esquema</b><span>Idea principal, tres puntos, ilustraciones y llamado.</span></li><li><b>Modo púlpito</b><span>Letra grande para predicar con el teléfono.</span></li><li><b>En todos tus equipos</b><span>Se guardan en tu cuenta.</span></li></ul>' +
-      '<button type="button" class="btn" id="ppPlanes">Ver planes</button><p class="suave pp-nota">La Biblia, la oración y la ayuda en crisis siguen gratis.</p>');
+    pintar(cab() + '<section class="pp-hero pp-lock">' + ADORNO + '<h1>Estudio y Prédicas</h1><p>Prepara tus estudios bíblicos y tus mensajes desde el teléfono, paso a paso y sin perderte.</p></section>' +
+      '<button type="button" class="btn" id="ppPlanes">Ver planes</button>');
     $('#ppAtras').onclick = () => App().ir('palabra');
     $('#ppPlanes').onclick = () => { vibra(); if (App().apoyar) App().apoyar(); };
   }
@@ -133,11 +133,10 @@
     const proxHTML = prox ? (() => { const n = llenos(prox, pasosDe('p', prox)).filter(Boolean).length, t = pasosDe('p', prox).length; return '<button type="button" class="pp-prox" id="ppProx"><small>Próxima prédica · ' + cuando(prox.preachDate) + '</small><b>' + esc(tituloDe(prox, 'p')) + '</b><span>📅 ' + esc(fechaBonita(prox.preachDate)) + ' · ' + n + ' de ' + t + ' pasos listos</span></button>'; })() : '';
     const cont = rec && !(prox && rec[1].id === prox.id) ? (() => { const pasos = rec[0] === 'e' ? PASOS_E : PASOS_P, n = llenos(rec[1], pasos).filter(Boolean).length; return '<button type="button" class="pp-cont" id="ppCont"><small>Continuar donde quedaste</small><b>' + esc(tituloDe(rec[1], rec[0])) + '</b><span>' + (rec[0] === 'e' ? '📖 Estudio' : '🎙️ Prédica') + ' · ' + n + ' de ' + pasos.length + ' pasos</span><i class="pp-barra" data-w="' + Math.round(n / pasos.length * 100) + '"></i></button>'; })() : '';
     pintar(cab() + '<section class="pp-hero">' + ADORNO + '<h1>Estudio y Prédicas</h1><p>Prepara con calma. Todo se guarda solo.</p></section>' + proxHTML + cont +
-      '<button type="button" class="pp-idea" id="ppIdea"><span aria-hidden="true">💡</span><span><b>Anota una idea al vuelo</b><small>Después la conviertes en estudio o prédica</small></span></button><h2 class="pp-sub">Crear algo nuevo</h2><div class="pp-crear"><button type="button" class="pp-nuevo pp-g1" data-n="e"><span aria-hidden="true">📖</span><b>Nuevo estudio</b><small>Parte de un pasaje</small></button><button type="button" class="pp-nuevo pp-g2" data-n="p"><span aria-hidden="true">🎙️</span><b>Nueva prédica</b><small>Tu mensaje paso a paso</small></button></div>' +
       '<h2 class="pp-sub">Lo que ya tienes</h2>' +
       '<button type="button" class="pp-gran pp-g1" data-t="e"><span class="pp-gi" aria-hidden="true">📖</span><b>Mis estudios</b><small>' + (ne ? ne + (ne === 1 ? ' estudio' : ' estudios') : 'Aún no tienes ninguno') + '</small></button>' +
       '<button type="button" class="pp-gran pp-g2" data-t="p"><span class="pp-gi" aria-hidden="true">🎙️</span><b>Mis prédicas</b><small>' + (np ? np + (np === 1 ? ' prédica' : ' prédicas') : 'Aún no tienes ninguna') + '</small></button>' +
-      (ni ? '<button type="button" class="pp-gran pp-g1" data-t="i"><span class="pp-gi" aria-hidden="true">💡</span><b>Mis ideas</b><small>' + ni + (ni === 1 ? ' idea anotada' : ' ideas anotadas') + '</small></button>' : '') + '<button type="button" class="pp-gran pp-g3" data-t="b"><span class="pp-gi" aria-hidden="true">📚</span><b>Biblioteca de apoyo</b><small>Diccionario, personajes, ilustraciones, prédicas de ejemplo y más</small></button>');
+      (ni ? '<button type="button" class="pp-gran pp-g1" data-t="i"><span class="pp-gi" aria-hidden="true">💡</span><b>Mis ideas</b><small>' + ni + (ni === 1 ? ' idea anotada' : ' ideas anotadas') + '</small></button>' : '') + '<button type="button" class="pp-gran pp-g3" data-t="b"><span class="pp-gi" aria-hidden="true">📚</span><b>Biblioteca de apoyo</b><small>Diccionario, personajes, ilustraciones, prédicas de ejemplo y más</small></button><div class="pp-acc" role="toolbar" aria-label="Crear"><button type="button" class="pp-nuevo pp-g1" data-n="e"><span aria-hidden="true">📖</span><b>Nuevo estudio</b></button><button type="button" class="pp-nuevo pp-g2" data-n="p"><span aria-hidden="true">🎙️</span><b>Nueva prédica</b></button><button type="button" class="pp-nuevo pp-gi2" id="ppIdea" aria-label="Anota una idea al vuelo"><span aria-hidden="true">💡</span><b>Idea</b></button></div>');
     $('#ppAtras').textContent = '‹ Palabra'; $('#ppAtras').onclick = () => App().ir('palabra');
     const br = document.querySelector('.pp-cont .pp-barra'); if (br) br.style.setProperty('--w', br.dataset.w + '%');
     const bi0 = $('#ppIdea'); if (bi0) bi0.onclick = () => { vibra(); hojaIdea('', vistaInicio); };
@@ -203,7 +202,7 @@
       const its = todos.filter((it) => (!flt.est || it.status === flt.est) && (!flt.serie || String(it.series || '') === flt.serie) && (!q || sinAcento(tituloDe(it, tipo) + ' ' + textoTodo(it, pasos)).indexOf(q) >= 0));
       if (!its.length) { r.innerHTML = todos.length ? '<div class="pp-vacio"><p>No hay resultados con ese filtro.</p><p class="suave">Prueba con «Todos» o una palabra más corta.</p></div>' : '<div class="pp-vacio"><p>Aún no tienes ' + (tipo === 'e' ? 'estudios' : 'prédicas') + '.</p><p class="suave">Toca el botón verde para empezar. Puedes parar y seguir cuando quieras.</p></div>'; return; }
       r.innerHTML = its.map((it, i) => { const ps = pasosDe(tipo, it), ll = llenos(it, ps), n = ll.filter(Boolean).length;
-        return '<button type="button" class="pp-item" data-id="' + esc(it.id) + '" data-i="' + i + '"><b>' + esc(tituloDe(it, tipo)) + '</b><small>' + esc(EST[it.status] || 'Borrador') + ' · ' + n + ' de ' + ps.length + ' pasos' + (tipo === 'e' && it.format && it.format !== 'oia' ? ' · ' + FMT(it.format)[1] + ' ' + esc(FMT(it.format)[2]) : '') + (tipo === 'p' && it.formato && it.formato !== 'completa' ? ' · ' + largoDe(it)[1] + ' ' + esc(largoDe(it)[2]) : '') + (tipo === 'p' && it.preachDate ? ' · 📅 ' + esc(fechaBonita(it.preachDate)) : '') + (it.series ? ' · Serie: ' + esc(it.series) : '') + '</small><i class="pp-barra" data-w="' + Math.round(n / ps.length * 100) + '"></i></button>'; }).join('');
+        return '<button type="button" class="pp-item" data-id="' + esc(it.id) + '" data-i="' + i + '"><span class="pp-st pp-st-' + esc(it.status || 'borrador') + '">' + esc(EST[it.status] || 'Borrador') + '</span><b>' + esc(tituloDe(it, tipo)) + '</b><small>' + n + ' de ' + ps.length + ' pasos' + (tipo === 'e' && it.format && it.format !== 'oia' ? ' · ' + FMT(it.format)[1] + ' ' + esc(FMT(it.format)[2]) : '') + (tipo === 'p' && it.formato && it.formato !== 'completa' ? ' · ' + largoDe(it)[1] + ' ' + esc(largoDe(it)[2]) : '') + (tipo === 'p' && it.preachDate ? ' · 📅 ' + esc(fechaBonita(it.preachDate)) : '') + (it.series ? ' · Serie: ' + esc(it.series) : '') + '</small><i class="pp-barra" data-w="' + Math.round(n / ps.length * 100) + '"></i></button>'; }).join('');
       r.querySelectorAll('.pp-item').forEach((b) => { b.style.setProperty('--d', Math.min(Number(b.dataset.i), 8) * 60 + 'ms'); const br = b.querySelector('.pp-barra'); if (br) br.style.setProperty('--w', br.dataset.w + '%'); b.onclick = () => { const it = its.find((x) => x.id === b.dataset.id); if (it) vistaEditor(tipo, it, 0, false); }; });
     };
     pintarLista(); let t = 0; $('#ppQ').addEventListener('input', () => { flt.q = $('#ppQ').value; clearTimeout(t); t = setTimeout(pintarLista, 180); });
@@ -234,12 +233,13 @@
     const pasos = pasosDe(tipo, it), total = pasos.length + 1;   // el último paso es «Listo»
     if (paso >= pasos.length) return vistaListo(tipo, it);
     const P = pasos[paso], ll = llenos(it, pasos);
+    if (tomarVersion(it, 'Al abrir', 1800000)) guardarItem(tipo, it);
     pintar(cab() + '<div class="pp-prog" role="group" aria-label="Pasos">' + pasos.map((p, i) => '<button type="button" class="pp-dot' + (i === paso ? ' on' : '') + (ll[i] ? ' ok' : '') + '" data-i="' + i + '" aria-label="Paso ' + (i + 1) + ': ' + esc(p.t) + '"></button>').join('') + '<span class="pp-dot fin" aria-hidden="true"></span></div>' +
       (paso === 0 ? '<button type="button" class="pp-fmtcambia" id="ppFmt">' + (tipo === 'e' ? FMT(it.format)[1] + ' Formato: <b>' + esc(FMT(it.format)[2]) : largoDe(it)[1] + ' Largo: <b>' + esc(largoDe(it)[2])) + '</b> · Cambiar</button>' : '') + '<p class="pp-paso">Paso ' + (paso + 1) + ' de ' + total + '</p><h1 class="pp-h"><span aria-hidden="true">' + P.ico + '</span> ' + esc(P.t) + '</h1><p class="pp-guia">' + esc(P.guia) + '</p>' +
-      P.campos.map((c) => '<div class="pp-campo"><label for="pp_' + c.id + '">' + esc(c.et) + '</label>' + (c.ayuda ? '<small class="suave">' + esc(c.ayuda) + '</small>' : '') +
-        (c.filas === 1 ? '<input type="text" id="pp_' + c.id + '" data-c="' + c.id + '" maxlength="200" placeholder="' + esc(c.ph) + '" value="' + esc(it[c.id]) + '">' : '<textarea id="pp_' + c.id + '" data-c="' + c.id + '" rows="' + c.filas + '" maxlength="6000" placeholder="' + esc(c.ph || 'Escribe aquí…') + '">' + esc(it[c.id]) + '</textarea>') + (c.id === 'series' ? serChips(tipo) : '') + '</div>').join('') +
-      (paso > 0 && String(it[campoRef(tipo)] || '').trim() ? '<details class="pp-texto" id="ppTexto"' + (textoAbierto ? ' open' : '') + '><summary>📖 <b>' + esc(it[campoRef(tipo)]) + '</b> · ver el texto</summary><div id="ppTxtCuerpo" class="pp-txtc"><p class="suave">Cargando…</p></div></details>' : '') + '<button type="button" class="pp-apoyo" id="ppApoyo">📚 Ideas y apoyo para este paso</button><button type="button" class="pp-apoyo" id="ppIdeaB">💡 Anotar una idea</button><p class="pp-guardado" id="ppGuardado" aria-live="polite">Se guarda solo</p>' +
-      '<div class="pp-nav">' + (paso > 0 ? '<button type="button" class="btn sec" id="ppPrev">‹ Atrás</button>' : '') + '<button type="button" class="btn" id="ppNext">' + (paso === pasos.length - 1 ? 'Terminar' : 'Siguiente ›') + '</button></div>');
+      P.campos.map((c) => '<div class="pp-campo"><div class="pp-fila-et"><label for="pp_' + c.id + '">' + esc(c.et) + '</label>' + micHTML(c.id) + '</div>' + (c.ayuda ? '<small class="suave">' + esc(c.ayuda) + '</small>' : '') +
+        (c.filas === 1 ? '<input type="text" id="pp_' + c.id + '" data-c="' + c.id + '" maxlength="200" placeholder="' + esc(c.ph) + '" value="' + esc(it[c.id]) + '">' : '<textarea id="pp_' + c.id + '" data-c="' + c.id + '" rows="' + c.filas + '" maxlength="6000" placeholder="' + esc(c.ph || 'Escribe aquí…') + '">' + esc(it[c.id]) + '</textarea>') + (c.id === 'series' ? serChips(tipo) : '') + (c.id === 'title' ? '<button type="button" class="pp-sugt" id="ppSugT">✨ Sugerir un título</button><div class="pp-chips" id="ppSugTc"></div>' : '') + '</div>').join('') +
+      (paso > 0 && String(it[campoRef(tipo)] || '').trim() ? '<details class="pp-texto" id="ppTexto"' + (textoAbierto ? ' open' : '') + '><summary>📖 <b>' + esc(it[campoRef(tipo)]) + '</b> · ver el texto</summary><div id="ppTxtCuerpo" class="pp-txtc"><p class="suave">Cargando…</p></div></details>' : '') + '<div class="pp-herr" role="toolbar" aria-label="Herramientas">' + (paso > 0 && String(it[campoRef(tipo)] || '').trim() ? '<button type="button" id="ppHTexto"><i aria-hidden="true">📖</i><span>Texto</span></button>' : '') + '<button type="button" id="ppApoyo"><i aria-hidden="true">📚</i><span>Apoyo</span></button><button type="button" id="ppIdeaB"><i aria-hidden="true">💡</i><span>Idea</span></button><button type="button" id="ppVer"><i aria-hidden="true">🕘</i><span>Versiones</span></button>' + '<button type="button" id="ppHTam"><i aria-hidden="true">Aa</i><span>Letra</span></button>' + (SR ? '<button type="button" id="ppHVoz"><i aria-hidden="true">🎤</i><span>Dictar</span></button>' : '') + '</div><p class="pp-guardado" id="ppGuardado" aria-live="polite">Se guarda solo</p><p class="pp-conteo" id="ppConteo"></p>' +
+      '<div class="pp-navw"><div class="pp-atajos" id="ppAtajos" hidden role="toolbar" aria-label="Atajos de escritura"><button type="button" data-a="com">« »</button><button type="button" data-a="cita">( cita )</button><button type="button" data-a="lista">• Lista</button><button type="button" data-a="par">¶ Párrafo</button></div><div class="pp-nav">' + (paso > 0 ? '<button type="button" class="btn sec" id="ppPrev">‹ Atrás</button>' : '') + '<button type="button" class="btn" id="ppNext">' + (paso === pasos.length - 1 ? 'Terminar' : 'Siguiente: ' + esc(pasos[paso + 1].t) + ' ›') + '</button></div></div>');
     $('#ppAtras').textContent = '‹ ' + (tipo === 'e' ? 'Mis estudios' : 'Mis prédicas');
     $('#ppAtras').onclick = () => { guardarItem(tipo, it); vistaLista(tipo, false); };
     let t = 0; const g = $('#ppGuardado');
@@ -262,11 +262,180 @@
       det.addEventListener('toggle', () => { textoAbierto = det.open; if (det.open) cargar(); }); if (det.open) cargar();
     }
     const fb = $('#ppFmt'); if (fb) fb.onclick = () => { guardarYa(); if (tipo === 'e') vistaFormato(it); else vistaLargo(it); };
+    document.querySelectorAll('[data-mic]').forEach((b) => { b.onclick = () => { vibra(); const el = document.getElementById('pp_' + b.dataset.mic); if (el) dictar(b, el, (m) => { if (g) g.textContent = m; }); }; });
+    const stb = $('#ppSugT'); if (stb) stb.onclick = () => { vibra(); const c = $('#ppSugTc'), o = titulosSug(it); if (!c) return; if (!o.length) { c.innerHTML = '<p class="suave">Escribe primero la idea principal o el texto base y te propongo títulos.</p>'; return; } c.innerHTML = o.map((x, i) => '<button type="button" class="chip pp-sug" data-ti="' + i + '">' + esc(x) + '</button>').join(''); c.querySelectorAll('[data-ti]').forEach((b) => { b.onclick = () => { vibra(); const el = $('#pp_title'); if (el) { el.value = o[Number(b.dataset.ti)]; el.dispatchEvent(new Event('input', { bubbles: true })); } c.innerHTML = ''; }; }); };
+    const bver = $('#ppVer'); if (bver) bver.onclick = () => { guardarYa(); vistaVersiones(tipo, it, () => vistaEditor(tipo, it, paso)); };
+    const crece = (el) => { if (el.tagName !== 'TEXTAREA') return; try { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight + 4, Math.round(window.innerHeight * 0.6)) + 'px'; } catch (e) { /* nada */ } };
+    const conteo = () => { const c = $('#ppConteo'); if (!c) return; const todo = nPal(Object.keys(snapDe(it)).map((k) => it[k]).join(' ')), esteP = nPal(P.campos.map((q) => it[q.id]).join(' ')); c.textContent = 'Este paso: ' + esteP + ' palabras · Todo: ' + todo + (tipo === 'p' && todo ? ' · ≈ ' + Math.max(1, Math.round(todo / 130)) + ' min hablando' : ''); };
+    document.querySelectorAll('textarea[data-c]').forEach((el) => { crece(el); el.addEventListener('input', () => crece(el)); }); conteo();
+    document.querySelectorAll('[data-c]').forEach((el) => el.addEventListener('input', conteo));
+    const at = $('#ppAtajos'); let tAt = 0;
+    const ponAt = () => { clearTimeout(tAt); if (at) at.hidden = false; };
+    const quitaAt = () => { clearTimeout(tAt); tAt = setTimeout(() => { const a = document.activeElement; if (at && !(a && a.matches && a.matches('[data-c]'))) at.hidden = true; }, 220); };
+    document.querySelectorAll('[data-c]').forEach((el) => { el.addEventListener('focus', ponAt); el.addEventListener('blur', quitaAt); });
+    document.querySelectorAll('#ppAtajos [data-a]').forEach((b) => {
+      b.addEventListener('pointerdown', (e) => e.preventDefault());
+      b.onclick = () => { vibra(); const el = document.getElementById('pp_' + campo); if (!el) return; const una = el.tagName === 'INPUT', ref = String(it[campoRef(tipo)] || '').trim(), a = b.dataset.a;
+        const txt = a === 'com' ? '«»' : a === 'cita' ? '(' + (ref || 'cita') + ')' : una ? '' : (a === 'lista' ? '\n• ' : '\n\n'), atras = a === 'com' ? 1 : 0; if (!txt) return;
+        const s0 = typeof el.selectionStart === 'number' ? el.selectionStart : el.value.length, e0 = typeof el.selectionEnd === 'number' ? el.selectionEnd : s0;
+        el.value = el.value.slice(0, s0) + txt + el.value.slice(e0); const pos = s0 + txt.length - atras; try { el.focus(); el.setSelectionRange(pos, pos); } catch (e) { /* nada */ } el.dispatchEvent(new Event('input', { bubbles: true })); };
+    });
+    const hA = $('#ppHTam'); if (hA) hA.onclick = () => { vibra(); const n = (tamLetra() + 1) % 4; try { localStorage.setItem('tb_pp_tam', String(n)); } catch (e) { /* nada */ } const w = document.querySelector('.pp'); if (w) { w.className = w.className.replace(/pp-tam\d/, 'pp-tam' + n); } document.querySelectorAll('textarea[data-c]').forEach(crece); if (g) g.textContent = 'Letra: ' + ['pequeña', 'normal', 'grande', 'muy grande'][n]; };
+    const hT = $('#ppHTexto'); if (hT) hT.onclick = () => { vibra(); const d = $('#ppTexto'); if (d) { d.open = true; try { d.scrollIntoView({ block: 'center', behavior: quieto() ? 'auto' : 'smooth' }); } catch (e) { /* nada */ } } };
+    const hV = $('#ppHVoz'); if (hV) hV.onclick = () => { vibra(); const el = document.getElementById('pp_' + campo); if (el) dictar(hV, el, (m) => { if (g) g.textContent = m; }); };
     $('#ppIdeaB').onclick = () => { guardarYa(); hojaIdea(tituloDe(it, tipo), () => { if (g) g.textContent = 'Idea guardada ✓'; }); };
     $('#ppApoyo').onclick = () => { vibra(); guardarYa(); vistaBiblioteca({ tipo, it, paso, get campo() { return campo; }, sug: sugDe(tipo, it, paso, P) }); };
     $('#ppNext').onclick = () => { vibra(); guardarYa(); vistaEditor(tipo, it, paso + 1); };
     const pv = $('#ppPrev'); if (pv) pv.onclick = () => { guardarYa(); vistaEditor(tipo, it, paso - 1); };
     if (nuevo && paso === 0) { const f = $('[data-c]'); if (f && !quieto()) setTimeout(() => { try { f.focus({ preventScroll: true }); } catch (e) { /* nada */ } }, 250); }
+  }
+
+  // ---------- F1298 · Versiones anteriores, revisar y sugerir, dictado por voz ----------
+  const META = new Set(['id', 'format', 'formato', 'status', 'updated', 'versions', 'borrado', 'preachDate', 'minutos', 'targetMinutes', 'studyId', 'author', 'date']);
+  const snapDe = (it) => { const o = {}; Object.keys(it).forEach((k) => { if (!META.has(k) && typeof it[k] === 'string' && it[k].trim()) o[k] = it[k]; }); return o; };
+  const nPal = (s) => (String(s || '').trim().match(/\S+/g) || []).length;
+  function tomarVersion(it, motivo, minGap) {
+    const s = snapDe(it); if (!Object.keys(s).length) return false;
+    const v = it.versions = Array.isArray(it.versions) ? it.versions : [], u = v[v.length - 1];
+    if (u && JSON.stringify(u.s) === JSON.stringify(s)) return false;
+    if (u && minGap && Date.now() - u.t < minGap) return false;
+    v.push({ t: Date.now(), s, m: motivo || '' }); while (v.length > 6) v.shift(); return true;
+  }
+  const ETQ = (() => { const m = {}; PASOS_E.concat(PASOS_P).forEach((p) => p.campos.forEach((c) => { m[c.id] = c.et; })); FORMATOS.forEach((f) => (f[6] || []).forEach((c) => { m[c[0]] = String(c[1]).replace(/^[^\wÁ-ú]+/, ''); })); m.baseText = 'Texto base'; m.centralTruth = 'La idea principal'; return m; })();
+  const cuandoVer = (t) => { const d = new Date(t), h = new Date(); const mismo = d.toDateString() === h.toDateString(); const hora = d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }); return (mismo ? 'Hoy' : d.toLocaleDateString('es-CL', { weekday: 'short', day: 'numeric', month: 'short' })) + ' · ' + hora; };
+  function vistaVersiones(tipo, it, volver) {
+    const v = (it.versions || []).slice().reverse();
+    pintar(cab() + '<h1 class="pp-h">🕘 Versiones anteriores</h1><p class="pp-guia">Se guardan solas cuando abres tu texto. Elige una para ver qué tenía y, si quieres, volver a ella. Lo de ahora no se pierde: queda como otra versión.</p>' +
+      (v.length ? v.map((x, i) => '<details class="pp-ver"><summary><b>' + esc(cuandoVer(x.t)) + '</b><small>' + esc(x.m || 'Guardada') + ' · ' + nPal(Object.keys(x.s).map((k) => x.s[k]).join(' ')) + ' palabras</small></summary>' +
+        Object.keys(x.s).map((k) => '<p class="pp-ver-c"><i>' + esc(ETQ[k] || k) + '</i>' + esc(x.s[k].length > 220 ? x.s[k].slice(0, 220) + '…' : x.s[k]) + '</p>').join('') +
+        '<button type="button" class="btn sec" data-rv="' + (v.length - 1 - i) + '">Volver a esta versión</button></details>').join('') : '<p class="suave">Todavía no hay versiones. Aparecen después de que escribas y vuelvas a abrir.</p>'));
+    $('#ppAtras').textContent = '‹ Volver'; $('#ppAtras').onclick = volver;
+    document.querySelectorAll('[data-rv]').forEach((b) => { b.onclick = () => { vibra(); const x = (it.versions || [])[Number(b.dataset.rv)]; if (!x) return; tomarVersion(it, 'Antes de volver atrás'); Object.keys(it).forEach((k) => { if (!META.has(k) && typeof it[k] === 'string') it[k] = ''; }); Object.keys(x.s).forEach((k) => { it[k] = x.s[k]; }); guardarItem(tipo, it); vistaEditor(tipo, it, 0); }; });
+  }
+
+  const PARADA = new Set('para como pero porque cuando donde este esta esto estos estas todo todos toda todas esta está tiene tienen sido ser son fue pueden puede hacer entre sobre desde hasta cada otra otro mucho muchos nuestro nuestra tambien también aunque mismo nada algo así'.split(' '));
+  const clave = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zñ\s]/g, ' ').split(/\s+/).filter((w) => w.length > 4 && !PARADA.has(w));
+  const conVerso = (s) => /\d+\s*[:.]\s*\d+/.test(String(s || ''));
+  const LLAMADOS = ['Esta semana te invito a…', 'Hoy, antes de irte, te pido que…', 'Mientras volvemos a casa, decide una cosa: …', 'Si hoy sientes esto, ven y oremos juntos.'];
+  // Revisión local (sin IA ni internet): señales sencillas y concretas. ins = texto que se puede agregar con un toque.
+  function revisar(tipo, it) {
+    const r = [], ok = (t) => r.push({ ok: true, t }), mal = (t, d, ins) => r.push({ ok: false, t, d, ins });
+    if (tipo === 'e') {
+      const o = ['observeKeywords', 'observeActions', 'observeCharacters', 'observeContext', 'oKeywords'].some((k) => String(it[k] || '').trim()), i = ['interpretHistory', 'interpretCulture', 'interpretTheology'].some((k) => String(it[k] || '').trim()), a = String(it.applyAnswers || '').trim();
+      if (!String(it.passage || '').trim()) mal('Falta el pasaje', 'Escribe el texto que estudias, por ejemplo «Juan 3:16-21».'); else ok('Tienes el pasaje.');
+      if (o) ok('Observaste lo que el texto dice.'); else mal('Falta observar', 'Antes de explicar, anota qué dice: palabras repetidas, quiénes aparecen, qué se hace.');
+      if (i) ok('Interpretaste el texto.'); else mal('Falta interpretar', 'Pregúntate qué quiso decir a quienes lo oyeron primero.');
+      if (nPal(a) >= 6) ok('Tu aplicación es concreta.'); else mal('Hazla más concreta', 'Una acción con nombre y fecha: «Esta semana voy a…». Así se cumple.', { campo: 'applyAnswers', texto: 'Esta semana voy a…' });
+      return r;
+    }
+    const f = it.formato || 'completa', pts = ['point1', 'point2', 'point3'].filter((k) => String(it[k] || '').trim()), idea = String(it.centralTruth || '').trim();
+    if (!idea) mal('Falta la idea principal', 'Una sola frase con lo que quieres que se lleven. Todo lo demás la apoya.'); else if (nPal(idea) > 30) mal('La idea principal es larga', 'Tiene ' + nPal(idea) + ' palabras. Acórtala a una frase que se pueda repetir de memoria.'); else ok('La idea principal es una frase clara.');
+    if (f === 'completa') {
+      const n = nPal(it.intro); if (!n) mal('Falta la introducción', 'Una historia corta o una pregunta abre bien el mensaje.'); else if (n < 25) mal('Introducción muy breve', 'Tiene ' + n + ' palabras. Suma una historia o una pregunta que lleve al texto.'); else ok('Tienes una introducción.');
+      if (pts.length < 2) mal('Pocos puntos', 'Un mensaje completo se entiende mejor con dos o tres puntos.'); else ok('Tienes ' + pts.length + ' puntos.');
+      if (!String(it.illustrations || '').trim()) mal('Falta una ilustración', 'Una historia o ejemplo de la vida diaria ayuda a entender y a recordar.');
+      else ok('Incluyes ilustraciones.');
+    } else if (!pts.length) mal('Falta tu mensaje', 'Escribe la idea central con el versículo que la apoya.'); else ok('Tienes tu mensaje.');
+    if (pts.length > 1) { const w = pts.map((k) => nPal(it[k])), mx = Math.max.apply(null, w), mn = Math.min.apply(null, w); if (mn && mx > mn * 2.5) mal('Puntos desparejos', 'Uno tiene ' + mx + ' palabras y otro ' + mn + '. Equilibrarlos hace más fácil seguirte.'); else ok('Tus puntos están parejos.'); }
+    const sin = pts.filter((k) => !conVerso(it[k])).map((k) => 'Punto ' + (k.slice(-1)));
+    if (pts.length) { if (sin.length) mal('Apoya con un versículo', sin.join(', ') + ' no cita ningún versículo (por ejemplo «Juan 3:16»).'); else ok('Cada punto cita un versículo.'); }
+    if (!String(it.conclusion || '').trim() && f === 'completa') mal('Falta la conclusión', 'Vuelve a la idea principal para que se quede.', idea ? { campo: 'conclusion', texto: 'Recordemos: ' + idea } : null);
+    else if (String(it.conclusion || '').trim() && idea) { const A = new Set(clave(idea)), c = clave(it.conclusion).filter((w) => A.has(w)).length; if (A.size && !c) mal('La conclusión no vuelve a la idea', 'Repite con otras palabras la idea principal para cerrar el círculo.'); else ok('La conclusión vuelve a la idea principal.'); }
+    const ll = String(it.call || '').trim();
+    if (!ll) mal('Falta el llamado', 'Pide algo concreto que puedan hacer hoy. Te dejo frases para empezar:', { campo: 'call', texto: LLAMADOS[0], varias: LLAMADOS }); else if (nPal(ll) < 8) mal('Haz el llamado más concreto', 'Di qué, cuándo y cómo. «Esta semana te invito a…» funciona bien.'); else ok('Tu llamado es concreto.');
+    const cont = {}; clave([it.intro, it.point1, it.point2, it.point3, it.conclusion].join(' ')).forEach((w) => { cont[w] = (cont[w] || 0) + 1; });
+    const top = Object.keys(cont).sort((a, b) => cont[b] - cont[a])[0]; if (top && cont[top] >= 7) mal('Repites «' + top + '»', 'Aparece ' + cont[top] + ' veces. Si es tu palabra clave, está bien; si no, varía.');
+    return r;
+  }
+  function vistaRevision(tipo, it) {
+    const r = revisar(tipo, it), faltan = r.filter((x) => !x.ok), bien = r.filter((x) => x.ok);
+    pintar(cab() + '<h1 class="pp-h">🔍 Revisar ' + (tipo === 'e' ? 'mi estudio' : 'mi prédica') + '</h1><p class="pp-guia">' + (faltan.length ? faltan.length + (faltan.length === 1 ? ' cosa puede mejorar' : ' cosas pueden mejorar') + '. Son ideas: tú decides.' : '¡Todo se ve bien! Solo falta que lo vivas.') + ' Revisa la estructura, no si es verdad ni bendecido: eso es tuyo y de Dios.</p>' +
+      faltan.map((x, i) => '<article class="pp-rev"><b>💡 ' + esc(x.t) + '</b><p>' + esc(x.d) + '</p>' + (x.ins ? (x.ins.varias ? x.ins.varias.map((v, j) => '<button type="button" class="pp-apoyo" data-ins="' + i + '" data-j="' + j + '">' + esc(v) + '</button>').join('') : '<button type="button" class="pp-apoyo" data-ins="' + i + '">Agregar «' + esc(x.ins.texto.length > 46 ? x.ins.texto.slice(0, 46) + '…' : x.ins.texto) + '»</button>') : '') + '</article>').join('') +
+      (bien.length ? '<h2 class="pp-sub">Va bien</h2><ul class="pp-bien">' + bien.map((x) => '<li>✓ ' + esc(x.t) + '</li>').join('') + '</ul>' : '') + '<button type="button" class="btn" id="ppRevVer">Seguir escribiendo</button>');
+    $('#ppAtras').textContent = '‹ Volver'; $('#ppAtras').onclick = () => vistaListo(tipo, it);
+    $('#ppRevVer').onclick = () => { vibra(); vistaEditor(tipo, it, 0); };
+    document.querySelectorAll('[data-ins]').forEach((b) => { b.onclick = () => { vibra(); const x = faltan[Number(b.dataset.ins)]; if (!x || !x.ins) return; const t = x.ins.varias ? x.ins.varias[Number(b.dataset.j) || 0] : x.ins.texto; it[x.ins.campo] = (String(it[x.ins.campo] || '').trim() ? String(it[x.ins.campo]).trim() + '\n\n' : '') + t; guardarItem(tipo, it); vistaEditor(tipo, it, Math.max(0, pasosDe(tipo, it).findIndex((p) => p.campos.some((c) => c.id === x.ins.campo)))); }; });
+  }
+
+  // Dictado: usa el reconocimiento de voz del teléfono (Chrome/Android y Safari). Si no existe, no se muestra el botón.
+  const SR = typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition);
+  let vozRec = null, vozBtn = null, vozOn = false;
+  function detenerVoz() { vozOn = false; if (vozBtn) { vozBtn.classList.remove('on'); vozBtn.setAttribute('aria-pressed', 'false'); } try { if (vozRec) vozRec.stop(); } catch (e) { /* nada */ } vozRec = null; vozBtn = null; }
+  const micHTML = (id) => SR ? '<button type="button" class="pp-mic" data-mic="' + esc(id) + '" aria-pressed="false" aria-label="Dictar con la voz">🎤 Dictar</button>' : '';
+  function dictar(btn, el, aviso) {
+    if (vozOn && vozBtn === btn) { detenerVoz(); aviso('Dictado detenido ✓'); return; }
+    detenerVoz(); let rec; try { rec = new SR(); } catch (e) { aviso('Tu teléfono no permite dictar aquí.'); return; }
+    rec.lang = 'es-CL'; rec.continuous = true; rec.interimResults = false; vozRec = rec; vozBtn = btn; vozOn = true; btn.classList.add('on'); btn.setAttribute('aria-pressed', 'true'); aviso('🎤 Escuchando… habla con calma. Toca otra vez para parar.');
+    rec.onresult = (e) => {
+      let t = ''; for (let i = e.resultIndex; i < e.results.length; i++) if (e.results[i].isFinal) t += e.results[i][0].transcript + ' ';
+      t = t.trim().replace(/\s+(nueva línea|nuevo párrafo|punto y aparte)\s*/gi, '\n').replace(/\s+(coma)\s+/gi, ', '); if (!t) return;
+      const v = el.value, fin = !v.trim() || /[.!?\n]\s*$/.test(v), una = el.tagName === 'INPUT'; if (fin) t = t.charAt(0).toUpperCase() + t.slice(1);
+      el.value = (v && !/\s$/.test(v) ? v + (una ? ' ' : ' ') : v) + t; el.dispatchEvent(new Event('input', { bubbles: true }));
+    };
+    rec.onerror = (e) => { if (e.error === 'not-allowed' || e.error === 'service-not-allowed') { detenerVoz(); aviso('Permite el micrófono para dictar (en los ajustes del navegador).'); } else if (e.error === 'network') { detenerVoz(); aviso('Dictar necesita internet.'); } };
+    rec.onend = () => { if (vozOn && vozRec === rec) { try { rec.start(); } catch (e) { detenerVoz(); } } };
+    try { rec.start(); } catch (e) { detenerVoz(); aviso('No pude abrir el micrófono.'); }
+  }
+
+  // F1300 · Desde la Biblia: con versículos elegidos, un toque para estudiar o preparar una prédica con ese pasaje.
+  function desdePasaje(ref) {
+    if (!plus()) return abrir();
+    const ov = document.createElement('div'); ov.className = 'pp-hoja'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', 'Usar este pasaje');
+    ov.innerHTML = '<div class="pp-hoja-c"><h2>📖 ' + esc(ref) + '</h2><p class="pp-guia">¿Qué quieres hacer con este pasaje?</p><button type="button" class="btn" id="ppDE">📖 Estudiarlo</button><button type="button" class="btn sec" id="ppDP">🎙️ Preparar una prédica</button><button type="button" class="pp-borrar" id="ppDX">Ahora no</button></div>';
+    document.body.appendChild(ov); const cerrar = () => ov.remove();
+    ov.querySelector('#ppDX').onclick = cerrar;
+    ov.querySelector('#ppDE').onclick = () => { vibra(); cerrar(); const e = Object.assign(nuevoE(), { passage: ref }); guardarItem('e', e); vistaEditor('e', e, 1, true); };
+    ov.querySelector('#ppDP').onclick = () => { vibra(); cerrar(); const p = nuevaP({ baseText: ref }); guardarItem('p', p); vistaEditor('p', p, 0, true); };
+  }
+  // F1300 · Títulos sugeridos (reglas sencillas, sin IA): salen de la idea principal, el pasaje y la palabra clave.
+  function titulosSug(it) {
+    const idea = String(it.centralTruth || '').replace(/[.!?¡¿]+/g, '').trim(), ref = String(it.baseText || '').trim(), r = [];
+    const may = (t) => t.charAt(0).toUpperCase() + t.slice(1);
+    if (idea) { const w = idea.split(/\s+/); r.push(may(w.slice(0, 7).join(' ')) + (w.length > 7 ? '…' : '')); }
+    const cont = {}; clave(idea + ' ' + [it.point1, it.point2, it.point3].join(' ')).forEach((x) => { cont[x] = (cont[x] || 0) + 1; });
+    const top = Object.keys(cont).sort((a, b) => cont[b] - cont[a] || b.length - a.length)[0]; if (top) r.push(may(top));
+    if (ref) { r.push('Desde ' + ref); if (top) r.push(may(top) + ' en ' + ref); }
+    return r.filter((x, i, a) => x && a.indexOf(x) === i).slice(0, 4);
+  }
+
+  // ---------- F1302 · Ensayo en voz alta: graba, escucha y compara con el tiempo (las grabaciones quedan SOLO en este teléfono) ----------
+  const bd = () => new Promise((ok, no) => { try { const r = indexedDB.open('tb_pp_audio', 1); r.onupgradeneeded = () => { r.result.createObjectStore('rec', { keyPath: 'id' }); }; r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error); } catch (e) { no(e); } });
+  const bdOp = (modo, f) => bd().then((db) => new Promise((ok, no) => { const tx = db.transaction('rec', modo), st = tx.objectStore('rec'), q = f(st); tx.oncomplete = () => ok(q && q.result); tx.onerror = () => no(tx.error); }));
+  const ensayos = (id) => bdOp('readonly', (st) => st.getAll()).then((l) => (l || []).filter((x) => x.sermon === id).sort((a, b) => b.t - a.t)).catch(() => []);
+  const mmss = (s) => Math.floor(s / 60) + ':' + String(Math.round(s) % 60).padStart(2, '0');
+  const mimeAudio = () => { try { return ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg'].find((m) => window.MediaRecorder && MediaRecorder.isTypeSupported(m)) || ''; } catch (e) { return ''; } };
+  async function vistaEnsayo(it) {
+    const meta = (it.minutos || it.targetMinutes || 0) * 60, hay = !!(navigator.mediaDevices && window.MediaRecorder);
+    pintar(cab() + '<section class="pp-hero pp-ok">' + ADORNO + '<h1>Ensayar en voz alta</h1><p>' + esc(tituloDe(it, 'p')) + '</p></section>' +
+      (hay ? '<div class="pp-rec"><button type="button" class="pp-rec-b" id="ppRecB" aria-label="Empezar a grabar"><span class="pp-rec-i" aria-hidden="true">🎙️</span></button><p class="pp-rec-t" id="ppRecT" aria-live="polite">0:00' + (meta ? ' / ' + mmss(meta) : '') + '</p><p class="suave pp-rec-m" id="ppRecM">Toca el círculo para empezar. Habla como lo harás el domingo.</p></div><div id="ppRecP"></div>' : '<p class="pp-guia">Tu navegador no permite grabar aquí. Prueba desde Chrome (Android) o Safari actualizado.</p>') +
+      '<details class="pp-texto"><summary>📄 <b>Ver mi mensaje</b> mientras ensayo</summary><div class="pp-txtc" id="ppRecTx"></div></details><h2 class="pp-sub">Mis ensayos</h2><div id="ppRecL"><p class="suave">Cargando…</p></div><p class="suave pp-nota">Las grabaciones se guardan solo en este teléfono, no se suben a ninguna parte.</p>');
+    $('#ppAtras').textContent = '‹ Volver'; $('#ppAtras').onclick = () => { parar(true); vistaListo('p', it); };
+    $('#ppRecTx').innerHTML = [['Idea principal', it.centralTruth], ['Introducción', it.intro], ['Punto I', it.point1], ['Punto II', it.point2], ['Punto III', it.point3], ['Ilustraciones', it.illustrations], ['Conclusión', it.conclusion], ['Llamado', it.call]].filter((x) => String(x[1] || '').trim()).map((x) => '<h3 class="pp-sub">' + x[0] + '</h3><p>' + esc(x[1]) + '</p>').join('') || '<p class="suave">Aún no escribiste nada.</p>';
+    const urls = []; let rec = null, trozos = [], t0 = 0, reloj = 0, stream = null;
+    function parar(descartar) { clearInterval(reloj); reloj = 0; try { if (rec && rec.state !== 'inactive') { if (descartar) rec.onstop = null; rec.stop(); } } catch (e) { /* nada */ } try { if (stream) stream.getTracks().forEach((x) => x.stop()); } catch (e) { /* nada */ } if (descartar) urls.forEach((u) => { try { URL.revokeObjectURL(u); } catch (e) { /* nada */ } }); rec = null; stream = null; }
+    async function lista() {
+      const l = await ensayos(it.id), c = $('#ppRecL'); if (!c) return;
+      c.innerHTML = l.length ? l.map((x) => '<article class="pp-ens" data-e="' + esc(x.id) + '"><div class="pp-ens-c"><b>' + esc(cuandoVer(x.t)) + '</b><small>' + mmss(x.dur) + (meta ? (x.dur > meta ? ' · pasó ' + mmss(x.dur - meta) : ' · faltó ' + mmss(meta - x.dur)) : '') + '</small></div><audio controls preload="none" data-a="' + esc(x.id) + '"></audio><button type="button" class="pp-borrar" data-xe="' + esc(x.id) + '">Borrar</button></article>').join('') : '<p class="suave">Todavía no grabas ninguno.</p>';
+      c.querySelectorAll('audio[data-a]').forEach((a) => { const x = l.find((y) => y.id === a.dataset.a); if (x) { const u = URL.createObjectURL(x.blob); urls.push(u); a.src = u; } });
+      c.querySelectorAll('[data-xe]').forEach((b) => { let ya = false; b.onclick = async () => { if (!ya) { ya = true; b.textContent = '¿Seguro? Toca otra vez'; return; } await bdOp('readwrite', (st) => st.delete(b.dataset.xe)).catch(() => 0); lista(); }; });
+    }
+    lista();
+    const b = $('#ppRecB'); if (!b) return;
+    b.onclick = async () => {
+      vibra(); const m = $('#ppRecM'), tt = $('#ppRecT');
+      if (rec) { parar(false); return; }
+      try { stream = await navigator.mediaDevices.getUserMedia({ audio: true }); } catch (e) { if (m) m.textContent = 'Permite el micrófono para grabar (en los ajustes del navegador).'; return; }
+      const mime = mimeAudio(); try { rec = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream); } catch (e) { parar(true); if (m) m.textContent = 'No pude empezar a grabar.'; return; }
+      trozos = []; t0 = Date.now(); b.classList.add('on'); b.setAttribute('aria-label', 'Parar de grabar'); if (m) m.textContent = 'Grabando… toca el círculo para terminar.';
+      rec.ondataavailable = (e) => { if (e.data && e.data.size) trozos.push(e.data); };
+      rec.onstop = async () => {
+        const dur = (Date.now() - t0) / 1000, blob = new Blob(trozos, { type: (rec && rec.mimeType) || mime || 'audio/webm' }); b.classList.remove('on'); b.setAttribute('aria-label', 'Empezar a grabar'); clearInterval(reloj); if (stream) stream.getTracks().forEach((x) => x.stop()); rec = null; stream = null;
+        if (dur < 3) { if (m) m.textContent = 'Fue muy corto (menos de 3 segundos); no se guardó.'; return; }
+        try { await bdOp('readwrite', (st) => st.put({ id: uid('ens'), sermon: it.id, t: Date.now(), dur, blob })); const todos = await ensayos(it.id); for (const x of todos.slice(5)) await bdOp('readwrite', (st) => st.delete(x.id)); if (m) m.textContent = 'Guardado ✓ Escúchalo abajo. Guardo tus últimos 5 ensayos.'; } catch (e) { if (m) m.textContent = 'No pude guardar la grabación: revisa el espacio del teléfono.'; }
+        lista();
+      };
+      rec.start(1000); reloj = setInterval(() => { const s = (Date.now() - t0) / 1000; if (tt) { tt.textContent = mmss(s) + (meta ? ' / ' + mmss(meta) : ''); tt.classList.toggle('pasado', !!meta && s > meta); } }, 500);
+    };
   }
 
   function vistaFormato(it) {
@@ -311,7 +480,16 @@
   const diasPara = (iso) => Math.round((new Date(iso + 'T00:00:00') - new Date(hoyISO() + 'T00:00:00')) / 86400000);
   const cuando = (iso) => { const n = diasPara(iso); return n === 0 ? 'hoy' : n === 1 ? 'mañana' : n > 1 ? 'en ' + n + ' días' : 'hace ' + (-n) + ' días'; };
   const fechaBonita = (iso) => { try { return new Date(iso + 'T00:00:00').toLocaleDateString('es', { weekday: 'short', day: 'numeric', month: 'short' }); } catch (e) { return iso; } };
-  const fechaHTML = (it) => '<section class="pp-fecha"><h3>📅 ¿Cuándo vas a predicar?</h3><div class="pp-chips"><button type="button" class="chip pp-dia' + (it.preachDate === domingo(0) ? ' on' : '') + '" data-d="dom0">Este domingo</button><button type="button" class="chip pp-dia' + (it.preachDate === domingo(1) ? ' on' : '') + '" data-d="dom1">Próximo domingo</button>' + (it.preachDate ? '<button type="button" class="chip pp-dia" data-d="no">Quitar fecha</button>' : '') + '</div><label for="ppFecha" class="suave">O elige otro día</label><input type="date" id="ppFecha" class="pp-busca" value="' + esc(it.preachDate || '') + '">' + (it.preachDate ? '<p class="suave">' + esc(fechaBonita(it.preachDate)) + ' · ' + cuando(it.preachDate) + '</p>' : '') + '</section>';
+  // F1301 · Recordatorio en el calendario del teléfono (archivo .ics, un evento de todo el día con aviso la tarde anterior).
+  function icsDe(it) {
+    const d = String(it.preachDate || ''); if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return '';
+    const f = d.replace(/-/g, ''), sig = new Date(d + 'T12:00:00'); sig.setDate(sig.getDate() + 1);
+    const g = sig.getFullYear() + String(sig.getMonth() + 1).padStart(2, '0') + String(sig.getDate()).padStart(2, '0'), cl = (t) => String(t || '').replace(/[\\;,]/g, ' ').replace(/\s+/g, ' ').trim();
+    return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Tierra Buena//ES', 'BEGIN:VEVENT', 'UID:' + it.id + '@tierrabuena', 'DTSTAMP:' + new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z', 'DTSTART;VALUE=DATE:' + f, 'DTEND;VALUE=DATE:' + g, 'SUMMARY:Predicar: ' + cl(tituloDe(it, 'p')), 'DESCRIPTION:' + cl(it.baseText) + (it.centralTruth ? ' - ' + cl(it.centralTruth) : ''), 'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:Mañana predicas', 'TRIGGER:-PT15H', 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+  }
+  function bajarICS(it) { const t = icsDe(it); if (!t) return false; try { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([t], { type: 'text/calendar' })); a.download = 'predica.ics'; document.body.appendChild(a); a.click(); setTimeout(() => { try { URL.revokeObjectURL(a.href); a.remove(); } catch (e) { /* nada */ } }, 1500); return true; } catch (e) { return false; } }
+
+  const fechaHTML = (it) => '<section class="pp-fecha"><h3>📅 ¿Cuándo vas a predicar?</h3><div class="pp-chips"><button type="button" class="chip pp-dia' + (it.preachDate === domingo(0) ? ' on' : '') + '" data-d="dom0">Este domingo</button><button type="button" class="chip pp-dia' + (it.preachDate === domingo(1) ? ' on' : '') + '" data-d="dom1">Próximo domingo</button>' + (it.preachDate ? '<button type="button" class="chip pp-dia" data-d="no">Quitar fecha</button>' : '') + '</div><label for="ppFecha" class="suave">O elige otro día</label><input type="date" id="ppFecha" class="pp-busca" value="' + esc(it.preachDate || '') + '">' + (it.preachDate ? '<p class="suave">' + esc(fechaBonita(it.preachDate)) + ' · ' + cuando(it.preachDate) + '</p><button type="button" class="btn sec" id="ppCal">📆 Agregar al calendario (con aviso el día antes)</button>' : '') + '</section>';
   const cortar = (s, n) => { s = String(s || '').replace(/\s+/g, ' ').trim(); return s.length > n ? s.slice(0, n - 1) + '…' : s; };
   const tarjetaLineas = (it, tipo) => {
     const o = { titulo: tituloDe(it, tipo), sub: tipo === 'e' ? it.passage : it.baseText, bloques: [] };
@@ -359,24 +537,28 @@
   function vistaListo(tipo, it) {
     const pasos = pasosDe(tipo, it), ll = llenos(it, pasos), n = ll.filter(Boolean).length, esE = tipo === 'e';
     const okTxt = esE ? 'completado' : 'lista', hecho = it.status === okTxt;
+    if (tomarVersion(it, 'Al terminar', 600000)) guardarItem(tipo, it);
     pintar(cab() + '<section class="pp-hero pp-ok">' + ADORNO + '<h1>' + (n === pasos.length ? '¡Muy bien!' : 'Buen avance') + '</h1><p>' + esc(tituloDe(it, tipo)) + '</p></section>' +
       '<p class="pp-guia">' + n + ' de ' + pasos.length + ' pasos tienen texto.' + (n < pasos.length ? ' Toca un punto de arriba para completar lo que falta.' : '') + '</p>' +
       '<div class="pp-prog" role="group" aria-label="Pasos">' + pasos.map((p, i) => '<button type="button" class="pp-dot' + (ll[i] ? ' ok' : '') + '" data-i="' + i + '" aria-label="' + esc(p.t) + (ll[i] ? ' (con texto)' : ' (en blanco)') + '"></button>').join('') + '<span class="pp-dot fin on" aria-hidden="true"></span></div>' +
-      (esE ? '<button type="button" class="btn" id="ppAPred">Crear una prédica con este estudio</button>' : '<button type="button" class="btn" id="ppPulpito">Abrir en modo púlpito</button>') +
+      (esE ? '<button type="button" class="btn" id="ppAPred">Crear una prédica con este estudio</button>' : '<button type="button" class="btn" id="ppPulpito">Abrir en modo púlpito</button><button type="button" class="btn sec" id="ppEns">🎙️ Ensayar en voz alta y grabar</button>') +
       (esE ? '' : fechaHTML(it) + tiempoHTML(it) + resumenHTML(it)) + '<button type="button" class="btn sec" id="ppMarca">' + (hecho ? 'Volver a «en progreso»' : (esE ? 'Marcar como completado' : 'Marcar como lista para predicar')) + '</button>' +
-      (!esE && it.status === 'lista' ? '<button type="button" class="btn sec" id="ppPred">Marcar como ya predicada</button>' : '') + '<button type="button" class="btn sec" id="ppComp">Compartir como texto</button><button type="button" class="btn sec" id="ppImg">Compartir como imagen</button><button type="button" class="btn sec" id="ppPdf">Imprimir o guardar como PDF</button><button type="button" class="btn sec" id="ppDup">Duplicar</button>' +
+      (!esE && it.status === 'lista' ? '<button type="button" class="btn sec" id="ppPred">Marcar como ya predicada</button>' : '') + '<button type="button" class="btn sec" id="ppRev">🔍 Revisar y sugerir</button><button type="button" class="btn sec" id="ppVerL">🕘 Versiones anteriores</button><button type="button" class="btn sec" id="ppComp">Compartir como texto</button><button type="button" class="btn sec" id="ppImg">Compartir como imagen</button><button type="button" class="btn sec" id="ppPdf">Imprimir o guardar como PDF</button><button type="button" class="btn sec" id="ppDup">Duplicar</button>' +
       '<button type="button" class="pp-borrar" id="ppBorrar">Mover a la papelera</button><p id="ppMsg" class="suave pp-nota" role="status"></p>');
     $('#ppAtras').textContent = '‹ ' + (esE ? 'Mis estudios' : 'Mis prédicas'); $('#ppAtras').onclick = () => vistaLista(tipo, false);
     document.querySelectorAll('.pp-dot[data-i]').forEach((d) => { d.onclick = () => vistaEditor(tipo, it, Number(d.dataset.i)); });
     const msg = (t) => { const m = $('#ppMsg'); if (m) m.textContent = t; };
+    $('#ppRev').onclick = () => { vibra(); vistaRevision(tipo, it); };
+    $('#ppVerL').onclick = () => { vibra(); vistaVersiones(tipo, it, () => vistaListo(tipo, it)); };
     $('#ppMarca').onclick = () => { it.status = hecho ? 'en_progreso' : okTxt; guardarItem(tipo, it); vibra(); vistaListo(tipo, it); };
     const pr = $('#ppPred'); if (pr) pr.onclick = () => { it.status = 'predicada'; guardarItem(tipo, it); vibra(); vistaListo(tipo, it); };
     document.querySelectorAll('.pp-min').forEach((b) => { b.onclick = () => { it.minutos = Number(b.dataset.m); it.targetMinutes = it.minutos; guardarItem(tipo, it); vibra(); vistaListo(tipo, it); }; });
     if (esE) $('#ppAPred').onclick = () => { vibra(); const p = predicaDesdeEstudio(it); guardarItem('p', p); vistaEditor('p', p, 0, true); };
-    else $('#ppPulpito').onclick = () => { vibra(); pulpito(it); };
+    else { $('#ppPulpito').onclick = () => { vibra(); pulpito(it); }; $('#ppEns').onclick = () => { vibra(); vistaEnsayo(it); }; }
     document.querySelectorAll('.pp-dia').forEach((b) => { b.onclick = () => { it.preachDate = b.dataset.d === 'dom0' ? domingo(0) : b.dataset.d === 'dom1' ? domingo(1) : ''; guardarItem(tipo, it); vibra(); vistaListo(tipo, it); }; });
+    const bc = $('#ppCal'); if (bc) bc.onclick = () => { vibra(); msg(bajarICS(it) ? 'Listo: ábrelo para guardarlo en tu calendario.' : 'No pude crear el recordatorio desde aquí.'); };
     const fe = $('#ppFecha'); if (fe) fe.onchange = () => { it.preachDate = fe.value || ''; guardarItem(tipo, it); vistaListo(tipo, it); };
-    $('#ppDup').onclick = () => { vibra(); const c = JSON.parse(JSON.stringify(it)); c.id = uid(esE ? 'study' : 'sermon'); delete c.borrado; delete c.preachDate; delete c.studyId; c.status = 'borrador'; if (esE) c.topic = tituloDe(it, tipo) + ' (copia)'; else c.title = tituloDe(it, tipo) + ' (copia)'; guardarItem(tipo, c); vistaEditor(tipo, c, 0, false); };
+    $('#ppDup').onclick = () => { vibra(); const c = JSON.parse(JSON.stringify(it)); c.id = uid(esE ? 'study' : 'sermon'); delete c.borrado; delete c.preachDate; delete c.versions; delete c.studyId; c.status = 'borrador'; if (esE) c.topic = tituloDe(it, tipo) + ' (copia)'; else c.title = tituloDe(it, tipo) + ' (copia)'; guardarItem(tipo, c); vistaEditor(tipo, c, 0, false); };
     $('#ppPdf').onclick = () => { vibra(); if (!imprimir(it, tipo)) msg('No se pudo abrir la impresión desde aquí.'); };
     $('#ppImg').onclick = async () => {
       msg('Preparando la imagen…'); const b = await tarjetaPNG(it, tipo); if (!b) { msg('No se pudo crear la imagen.'); return; }
@@ -402,8 +584,10 @@
     let i = 0, tam = 26, lock = null, seg = 0, run = null; const rep = it.minutos ? reparto(it, it.minutos) : {}; const ov = document.createElement('div'); ov.className = 'pp-pulpito' + (quieto() ? ' pp-quieto' : ''); ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', 'Modo púlpito');
     ov.innerHTML = '<div class="pp-pu-top"><button type="button" class="pp-pu-b" id="puCerrar" aria-label="Cerrar">✕</button><span id="puNum"></span><span><button type="button" class="pp-pu-b" id="puMenos" aria-label="Letra más chica">A−</button><button type="button" class="pp-pu-b" id="puMas" aria-label="Letra más grande">A+</button></span></div><h2 id="puTit"></h2><div class="pp-pu-txt" id="puTxt"></div><div class="pp-pu-nav"><button type="button" class="pp-pu-b gr" id="puAnt">‹ Anterior</button><button type="button" class="pp-pu-b" id="puReloj" aria-label="Cronómetro: tocar para iniciar o pausar">▶ 0:00</button><button type="button" class="pp-pu-b gr" id="puSig">Siguiente ›</button></div>';
     document.body.appendChild(ov);
-    const ver = () => { $('#puTit').textContent = partes[i][0]; const tx = $('#puTxt'); tx.textContent = partes[i][1]; tx.style.setProperty('--pf', tam + 'px'); $('#puNum').textContent = (i + 1) + ' / ' + partes.length + (rep[partes[i][2]] ? ' · ≈ ' + rep[partes[i][2]] + ' min' : ''); tx.classList.remove('pp-in'); void tx.offsetWidth; tx.classList.add('pp-in'); $('#puAnt').disabled = i === 0; $('#puSig').disabled = i === partes.length - 1; };
+    const ver = () => { const pt = $('#puPts'); if (pt) { pt.innerHTML = partes.map((q, k) => '<button type="button" class="pp-pu-pt' + (k === i ? ' on' : '') + '" data-k="' + k + '" aria-label="' + esc(q[0]) + '"></button>').join(''); pt.querySelectorAll('[data-k]').forEach((b) => { b.onclick = () => { i = Number(b.dataset.k); ver(); }; }); } $('#puTit').textContent = partes[i][0]; const tx = $('#puTxt'); tx.textContent = partes[i][1]; tx.style.setProperty('--pf', tam + 'px'); $('#puNum').textContent = (i + 1) + ' / ' + partes.length + (rep[partes[i][2]] ? ' · ≈ ' + rep[partes[i][2]] + ' min' : ''); tx.classList.remove('pp-in'); void tx.offsetWidth; tx.classList.add('pp-in'); $('#puAnt').disabled = i === 0; $('#puSig').disabled = i === partes.length - 1; };
     const cerrar = () => { clearInterval(run); try { if (lock && lock.release) lock.release(); } catch (e) { /* nada */ } ov.remove(); };
+    let x0 = null; ov.addEventListener('touchstart', (e) => { x0 = e.touches && e.touches[0] ? e.touches[0].clientX : null; }, { passive: true });
+    ov.addEventListener('touchend', (e) => { if (x0 === null) return; const x1 = e.changedTouches && e.changedTouches[0] ? e.changedTouches[0].clientX : x0, d = x1 - x0; x0 = null; if (Math.abs(d) < 70) return; if (d < 0 && i < partes.length - 1) { i++; ver(); } else if (d > 0 && i > 0) { i--; ver(); } }, { passive: true });
     $('#puCerrar').onclick = cerrar; $('#puAnt').onclick = () => { if (i > 0) { i--; ver(); } }; $('#puSig').onclick = () => { if (i < partes.length - 1) { i++; ver(); } };
     $('#puMas').onclick = () => { tam = Math.min(54, tam + 4); ver(); }; $('#puMenos').onclick = () => { tam = Math.max(18, tam - 4); ver(); };
     const meta = it.minutos ? it.minutos * 60 : 0, f2 = (s) => Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
@@ -469,7 +653,7 @@
     $('#ppCopia').onclick = async () => { try { await navigator.clipboard.writeText(o.t + '\n\n' + o.x + (o.r ? '\n' + o.r : '')); msg('Copiado.'); } catch (e) { msg('No se pudo copiar desde aquí.'); } };
   }
 
-  const api = { abrir, plus, K_E, K_P, _v: { tarjetaPNG, imprimir, vistaListo, vistaIdeas, hojaIdea, vistaLargo, pasosDe, FORMATOS, vistaFormato, vistaInicio, vistaEmpezar, vistaEditor, traerPasaje }, _t: { tarjetaLineas, domingo, diasPara, cuando, resumenDe, largoDe, ideasVivas, parseRef, refTexto, POPULARES, reparto, insTxt, sinAcento, SUG_E, SUG_P, nuevoE, nuevaP, predicaDesdeEstudio, textoCompartir, llenos, PASOS_E, PASOS_P, tituloDe } };
+  const api = { abrir, desdePasaje, plus, K_E, K_P, _v: { tarjetaPNG, imprimir, vistaListo, vistaIdeas, hojaIdea, vistaLargo, pasosDe, FORMATOS, vistaFormato, vistaInicio, vistaEmpezar, vistaEditor, traerPasaje }, _t: { mmss, icsDe, titulosSug, revisar, tomarVersion, snapDe, tarjetaLineas, domingo, diasPara, cuando, resumenDe, largoDe, ideasVivas, parseRef, refTexto, POPULARES, reparto, insTxt, sinAcento, SUG_E, SUG_P, nuevoE, nuevaP, predicaDesdeEstudio, textoCompartir, llenos, PASOS_E, PASOS_P, tituloDe } };
   if (typeof window !== 'undefined') window.TBPredicas = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })();
