@@ -42,3 +42,39 @@
 @media (min-width: 1024px) {
   .ec-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 }
+
+/* F1319 · Crear: biblioteca arriba, dos estudios lado a lado */
+.ec-biblio { margin: 0 0 14px; }
+.ec-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 0 18px; }
+.ec-duo-b { display: grid; gap: 6px; align-content: start; justify-items: start; text-align: left; padding: 14px; min-height: 124px; border-radius: 18px; border: 1px solid var(--linea, #e4dccf); background: var(--superficie, #fffdf8); color: inherit; font: inherit; cursor: pointer; }
+.ec-duo-b .ec-ci { font-size: 1.6rem; }
+.ec-duo-b b { font-size: 1rem; line-height: 1.2; }
+.ec-duo-b small { color: var(--texto-suave, #5b5147); line-height: 1.35; }
+.ec-aviso { display: grid; gap: 4px; margin-top: 14px; padding: 14px; border-radius: 16px; background: var(--superficie, #fffdf8); border: 1px dashed var(--linea, #d8cfbf); }
+.ec-aviso span { color: var(--texto-suave, #5b5147); line-height: 1.4; }
+
+/* F1320 · Estudio de canciones */
+.ec-letra { white-space: pre-wrap; font: inherit; line-height: 1.5; background: var(--superficie, #fffdf8); border: 1px solid var(--linea, #e4dccf); border-radius: 14px; padding: 14px; max-height: 280px; overflow: auto; }
+.ec-campo { display: grid; gap: 6px; margin: 12px 0; font-weight: 600; }
+.ec-aviso-txt { color: #9a3b2e; margin: 6px 0; }
+.ec-lienzo { display: block; width: 100%; max-width: 420px; aspect-ratio: 1 / 1; margin: 6px auto 0; border-radius: 16px; box-shadow: 0 6px 18px rgba(0,0,0,.12); }
+.ec-prog { text-align: center; color: var(--texto-suave, #5b5147); margin: 8px 0; }
+.ec-ctl { display: flex; gap: 10px; justify-content: center; align-items: center; margin: 4px 0 12px; }
+.ec-btn { min-width: 52px; min-height: 52px; border-radius: 26px; border: 1px solid var(--linea, #e4dccf); background: var(--superficie, #fffdf8); font: inherit; font-size: 1.3rem; cursor: pointer; }
+.ec-play { min-width: 150px; font-size: 1rem; font-weight: 600; }
+/* F1324 · Video de canciones */
+.ec-video { display: block; width: 100%; max-width: 420px; margin: 12px auto; border-radius: 16px; background: #000; }
+
+/* F1325 · Estudio de videos */
+.ev-lista { margin: 0 0 16px; padding-left: 22px; display: grid; gap: 8px; }
+.ev-lista li b { display: block; }
+.ev-lista li span { display: block; color: var(--texto-suave, #5b5147); }
+.ev-lista li small { color: var(--texto-suave, #5b5147); }
+.ev-esc { display: grid; gap: 4px; padding: 14px; margin: 12px 0; border-radius: 16px; background: var(--superficie, #fffdf8); border: 1px solid var(--linea, #e4dccf); }
+.ev-fila { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ev-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+/* F1325 · Formularios de Crear: texto más compacto y campos completos */
+.ec-campo { font-size: 0.95rem; font-weight: 600; gap: 4px; margin: 8px 0; }
+.ec-campo .ea-input, .ec-campo input, .ec-campo select, .ec-campo textarea { width: 100%; box-sizing: border-box; font-weight: 400; min-height: 44px; padding: 8px 10px; border-radius: 12px; border: 1px solid var(--linea, #d8cfbf); background: #fff; color: inherit; font: inherit; }
+.ev-esc .ec-campo { margin: 4px 0; }
+.ev-btns .chip { min-height: 40px; }

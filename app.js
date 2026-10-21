@@ -290,7 +290,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Acertijos de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Letras entre las hojas': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => !CABECERAS_ILUSTRADAS ? '' : `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1317';
+  const APP_VERSION = 'F1326';
   // F1171: respaldo si movimiento.js no cargó (pruebas o caché vieja): mismo criterio que TBMov.quieto().
   const MOV_QUIETO = () => { try { if (window.TBMov) return window.TBMov.quieto(); const h = document.documentElement; return h.getAttribute('data-anim') === 'off' || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
@@ -3338,6 +3338,7 @@
   function barraRefrescar(tab) {
     const pt = $('.tab[data-tab="pastor"]'); if (pt) pt.hidden = true;                // F914: Pastor vive dentro de la 1.ª pestaña (siempre 5 espacios)
     if (tab === 'pastor') tab = 'iglesia';
+    if (tab === 'perfil') tab = 'inicio';                                             // F1321: Mi perfil vive dentro de Inicio
     const vis = Array.prototype.slice.call(document.querySelectorAll('.tab')).filter((b) => !b.hidden), bar = $('.barra');
     if (bar && bar.style && bar.style.setProperty) { bar.style.setProperty('--n', String(vis.length)); bar.style.setProperty('--i', String(Math.max(0, vis.findIndex((b) => b.dataset.tab === tab)))); }
   }
@@ -4294,13 +4295,14 @@
         ${it('cal', 'calendario', 'Fechas importantes', 'Fiestas cristianas y actividades de tu iglesia')}
         ${it('comp', 'compartir', 'Compartir la app', 'Invita a alguien que quieras')}
         ${it('wid', 'bloques', 'Versículo en mi pantalla', 'Verlo sin abrir la app')}
+        ${it('perfil', 'corazon', 'Mi perfil', 'Tu nombre, tu plan y tus datos')}
         ${it('conf', 'foco', 'Ajustes y cuenta', 'Temas, letra, sonido y datos de tu cuenta')}
         ${it('sus', 'estrella', 'Suscripción', 'Planes, precios y qué es gratis')}
         ${it('hist', 'hoja', 'Lee nuestra historia', 'Por qué existe Tierra Buena')}
       </div></nav></div>`);
     if (!h) return ir('perfil');
     document.body.appendChild(h);
-    const va = { inst: instalarUnToque, jun: abrirJuntos, plan: planRehacer, info: vistaInfo, cal: vistaCalendario, comp: invitarHoja, wid: vistaWidgets, conf: () => ir('perfil'), sus: () => vistaSuscripcion(), hist: vistaHistoria };
+    const va = { inst: instalarUnToque, jun: abrirJuntos, plan: planRehacer, info: vistaInfo, cal: vistaCalendario, comp: invitarHoja, wid: vistaWidgets, perfil: () => ir('perfil'), conf: () => ir('perfil'), sus: () => vistaSuscripcion(), hist: vistaHistoria };
     h.querySelectorAll('.cj-it').forEach((b) => b.addEventListener('click', () => { vibra(); menuCerrar(); entrandoPon(false); (va[b.dataset.cj] || (() => {}))(); }));
     $('#cjX').onclick = menuCerrar; h.addEventListener('click', (e) => { if (e && e.target === h) menuCerrar(); });
   }
@@ -4512,8 +4514,8 @@
     if (pastorLeer() && !codigoDeEnlace()) return vistaPastor();
     return vistaIglesia();
   }
-  const VISTAS = { inicio: vistaInicio, iglesia: vistaEspacioIglesia, palabra: vistaPalabra, vida: vistaVida, perfil: vistaPerfil, pastor: vistaPastor };
-  const ORDEN_TAB = ['iglesia', 'palabra', 'inicio', 'vida', 'perfil', 'pastor']; let tabPrev = '';
+  const VISTAS = { inicio: vistaInicio, iglesia: vistaEspacioIglesia, palabra: vistaPalabra, vida: vistaVida, crear: () => (window.TBEstudioCreativo ? window.TBEstudioCreativo.abrir() : vistaInicio()), perfil: vistaPerfil, pastor: vistaPastor };
+  const ORDEN_TAB = ['iglesia', 'palabra', 'inicio', 'vida', 'crear', 'perfil', 'pastor']; let tabPrev = '';
   function pantEntra(sentido) {                             // F885: la pantalla nueva entra deslizando (se apaga con «reducir movimiento» o Animaciones: más tranquilo)
     try {
       const p = $('#pantalla'); if (!p || !p.animate || MOV_QUIETO()) return;
@@ -4525,7 +4527,7 @@
   function ir(tab, directo) {
     if (!haySesion() && tab !== 'palabra') return puerta();   // F936: sin sesión solo se abre la Palabra (F1097: se lee sin cuenta)
     const sentido = ORDEN_TAB.indexOf(tab) < ORDEN_TAB.indexOf(tabPrev) ? 'atras' : 'adelante'; tabPrev = tab;
-    const tabMarca = tab === 'pastor' ? 'iglesia' : tab;
+    const tabMarca = tab === 'pastor' ? 'iglesia' : tab === 'perfil' ? 'inicio' : tab;   // F1321: Mi perfil marca Inicio
     document.querySelectorAll('.tab').forEach((b) => { if (b.dataset.tab === tabMarca) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
     barraRefrescar(tab); try { menuBoton(); } catch (e) { /* sin botón */ }
     const tp = $('#barraTop'); if (tp && tp.classList && tp.classList.remove) tp.classList.remove('on');

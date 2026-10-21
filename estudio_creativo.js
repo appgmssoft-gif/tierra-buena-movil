@@ -85,14 +85,30 @@
   }
 
   // ---------- Pantallas ----------
+  // F1319 · Estudios de video y canciones dentro de Crear. Hoy muestran lo que harán; el armado llega por etapas.
+  function vistaProximo(d) {
+    const V = d === 'videos';
+    const t = V ? '🎬 Estudio de videos' : '🎵 Estudio de canciones';
+    const g = V ? 'Arma un video con escenas: fondo, título, subtítulo y cuánto dura cada una.' : 'Crea un video con la letra de tu canción: eliges la canción, el fondo y cómo aparece cada verso.';
+    pantalla(volver('Crear') + '<h1 class="ec-h">' + t + '</h1><p class="ec-guia">' + g + '</p>' +
+      '<div class="ec-aviso" role="status"><b>Aún no disponible en el teléfono</b><span>Este estudio se construye por etapas. Te avisaremos cuando puedas usarlo aquí.</span></div>');
+    $('#ecVolver').onclick = vistaHub;
+  }
+
   function vistaHub() {
     const g = guardados();
-    pantalla(volver('Estudio y Prédicas') + '<h1 class="ec-h">🎨 Estudio creativo</h1>' +
+    pantalla('<h1 class="ec-h">🎨 Estudio creativo</h1>' +
+      '<button type="button" class="ec-cat ec-biblio" id="ecBiblio"><span class="ec-ci" aria-hidden="true">📚</span><b>Biblioteca de apoyo</b><small>Material para preparar y crear, buscable</small></button>' +
+      '<div class="ec-duo" role="group" aria-label="Estudios de video">' +
+      '<button type="button" class="ec-duo-b" data-d="videos"><span class="ec-ci" aria-hidden="true">🎬</span><b>Estudio de videos</b><small>Escenas con fondo y título</small></button>' +
+      '<button type="button" class="ec-duo-b" data-d="canciones"><span class="ec-ci" aria-hidden="true">🎵</span><b>Estudio de canciones</b><small>Videos con la letra</small></button>' +
+      '</div>' +
       '<p class="ec-guia">Elige una plantilla, escribe lo que quieres decir y compártela como imagen. Todo se hace en tu teléfono.</p>' +
       '<div class="ec-cats">' + CATS.map((c) => '<button type="button" class="ec-cat" data-c="' + c.id + '"><span class="ec-ci" aria-hidden="true">' + c.i + '</span><b>' + esc(c.n) + '</b><small>' + esc(c.a) + '</small></button>').join('') + '</div>' +
       (g.length ? '<h2 class="ec-sub">Mis diseños guardados</h2><div class="ec-lista">' + g.slice(0, 6).map((d, i) => '<button type="button" class="ec-item" data-g="' + i + '"><b>' + esc(d.titulo) + '</b><small>' + esc(d.fecha) + '</small></button>').join('') + '</div>' : ''));
-    $('#ecVolver').onclick = () => A().ir('palabra');
-    document.querySelectorAll('.ec-cat').forEach((b) => { b.onclick = () => { vibra(); vistaCategoria(CATS.find((c) => c.id === b.dataset.c)); }; });
+    $('#ecBiblio').onclick = () => { vibra(); if (window.TBPredicas) window.TBPredicas.biblioteca(); };
+    document.querySelectorAll('.ec-duo-b').forEach((b) => { b.onclick = () => { vibra(); if (b.dataset.d === 'videos' && window.TBEstudioVideos) window.TBEstudioVideos.abrir(); else if (b.dataset.d === 'canciones' && window.TBEstudioCanciones) window.TBEstudioCanciones.abrir(); else vistaProximo(b.dataset.d); }; });
+    document.querySelectorAll('.ec-cats .ec-cat').forEach((b) => { b.onclick = () => { vibra(); vistaCategoria(CATS.find((c) => c.id === b.dataset.c)); }; });
     document.querySelectorAll('.ec-item').forEach((b) => { b.onclick = () => { vibra(); const d = g[Number(b.dataset.g)]; if (d) abrirPlantilla(d.cat, d.id, d.campos); }; });
   }
 
