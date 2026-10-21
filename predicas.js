@@ -138,6 +138,7 @@
       '<h2 class="pp-sub">Lo que ya tienes</h2>' +
       '<button type="button" class="pp-gran pp-g1" data-t="e"><span class="pp-gi" aria-hidden="true">📖</span><b>Mis estudios</b><small>' + (ne ? ne + (ne === 1 ? ' estudio' : ' estudios') : 'Aún no tienes ninguno') + '</small></button>' +
       '<button type="button" class="pp-gran pp-g2" data-t="p"><span class="pp-gi" aria-hidden="true">🎙️</span><b>Mis prédicas</b><small>' + (np ? np + (np === 1 ? ' prédica' : ' prédicas') : 'Aún no tienes ninguna') + '</small></button>' +
+  '<button type="button" class="pp-gran pp-g1" data-t="c"><span class="pp-gi" aria-hidden="true">🎨</span><b>Estudio creativo</b><small>Hojas, bosquejos y fondos para compartir</small></button>' +
       (ni ? '<button type="button" class="pp-gran pp-g1" data-t="i"><span class="pp-gi" aria-hidden="true">💡</span><b>Mis ideas</b><small>' + ni + (ni === 1 ? ' idea anotada' : ' ideas anotadas') + '</small></button>' : '') + '<button type="button" class="pp-gran pp-g4" data-t="a"><span class="pp-gi" aria-hidden="true">🎧</span><b>Mis apuntes de prédicas</b><small>' + (na ? na + (na === 1 ? ' apunte' : ' apuntes') : 'De tu iglesia, de un evento o de internet') + '</small></button>' + '<button type="button" class="pp-gran pp-g3" data-t="b"><span class="pp-gi" aria-hidden="true">📚</span><b>Biblioteca de apoyo</b><small>Diccionario, personajes, ilustraciones, prédicas de ejemplo y más</small></button><div class="pp-acc" role="toolbar" aria-label="Crear"><button type="button" class="pp-nuevo pp-g1" data-n="e"><span aria-hidden="true">📖</span><b>Nuevo estudio</b></button><button type="button" class="pp-nuevo pp-g2" data-n="p"><span aria-hidden="true">🎙️</span><b>Nueva prédica</b></button><button type="button" class="pp-nuevo pp-ga" id="ppApunB" aria-label="Tomar apuntes de una prédica"><span aria-hidden="true">🎧</span><b>Apuntes</b></button><button type="button" class="pp-nuevo pp-gi2" id="ppIdea" aria-label="Anota una idea al vuelo"><span aria-hidden="true">💡</span><b>Idea</b></button></div>');
     $('#ppAtras').textContent = '‹ Palabra'; $('#ppAtras').onclick = () => App().ir('palabra');
     const br = document.querySelector('.pp-cont .pp-barra'); if (br) br.style.setProperty('--w', br.dataset.w + '%');
@@ -147,7 +148,7 @@
     const px = $('#ppProx'); if (px) px.onclick = () => { vibra(); const ps = pasosDe('p', prox), i = llenos(prox, ps).indexOf(false); if (i < 0) vistaListo('p', prox); else vistaEditor('p', prox, i); };
     const ct = $('#ppCont'); if (ct) ct.onclick = () => { vibra(); const pasos = rec[0] === 'e' ? PASOS_E : PASOS_P, i = primerVacio(rec[1], pasos); vistaEditor(rec[0], rec[1], i); };
     document.querySelectorAll('.pp-nuevo').forEach((b) => { b.onclick = () => { vibra(); vistaEmpezar(b.dataset.n); }; });
-    document.querySelectorAll('.pp-gran').forEach((b) => { b.onclick = () => { vibra(); if (b.dataset.t === 'a') { if (window.TBApuntes) window.TBApuntes.abrir(); } else if (b.dataset.t === 'b') vistaBiblioteca(null); else if (b.dataset.t === 'i') vistaIdeas(); else vistaLista(b.dataset.t); }; });
+    document.querySelectorAll('.pp-gran').forEach((b) => { b.onclick = () => { vibra(); if (b.dataset.t === 'a') { if (window.TBApuntes) window.TBApuntes.abrir(); } else if (b.dataset.t === 'b') vistaBiblioteca(null); else if (b.dataset.t === 'c') { if (window.TBEstudioCreativo) window.TBEstudioCreativo.abrir(); } else if (b.dataset.t === 'i') vistaIdeas(); else vistaLista(b.dataset.t); }; });
   }
 
   // ---------- Empezar: una sola pregunta («¿con qué texto?») y se arma todo ----------
@@ -676,6 +677,7 @@
       (o.b ? '<details class="pp-bio"><summary>Leer la historia completa</summary>' + parrafos(o.b) + '</details>' : '') + '</div>' +
       (ctx ? '<button type="button" class="btn" id="ppIns">Insertar en mi ' + (ctx.tipo === 'e' ? 'estudio' : 'prédica') + '</button>' : '') +
       (esBase ? '<button type="button" class="btn' + (ctx ? ' sec' : '') + '" id="ppBase">Usar como base de una prédica nueva</button>' : '') +
+      (o.u ? '<a class="btn" href="' + esc(o.u) + '" target="_blank" rel="noopener noreferrer">' + esc(o.l || 'Abrir el sitio') + '</a>' : '') +
       '<button type="button" class="btn sec" id="ppCopia">Copiar</button><p id="ppMsg" class="suave pp-nota" role="status"></p>');
     $('#ppAtras').textContent = '‹ ' + k.n; $('#ppAtras').onclick = () => vistaCategoria(k, ctx, q);
     const msg = (t) => { const m = $('#ppMsg'); if (m) m.textContent = t; };
