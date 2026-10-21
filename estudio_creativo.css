@@ -78,3 +78,23 @@
 .ec-campo .ea-input, .ec-campo input, .ec-campo select, .ec-campo textarea { width: 100%; box-sizing: border-box; font-weight: 400; min-height: 44px; padding: 8px 10px; border-radius: 12px; border: 1px solid var(--linea, #d8cfbf); background: #fff; color: inherit; font: inherit; }
 .ev-esc .ec-campo { margin: 4px 0; }
 .ev-btns .chip { min-height: 40px; }
+/* F1327 · Editor de escenas: en pantallas angostas, un campo por línea (no se cortan los textos de los menús) */
+.ev-fila { grid-template-columns: 1fr 1fr; }
+.ev-esc select.ea-input { font-size: 0.95rem; text-overflow: ellipsis; }
+@media (max-width: 400px) { .ev-fila { grid-template-columns: 1fr; } }
+/* F1328 · Pulido de Crear: tarjetas de igual altura y texto alineado arriba */
+.ec-duo-b { min-height: 136px; height: 100%; }
+.ec-duo { align-items: stretch; }
+.ec-biblio { margin-bottom: 4px; }
+.ec-h + .ec-guia { margin-top: 0; }
+.ec-cat:focus-visible, .ec-duo-b:focus-visible, .ec-item:focus-visible, .ec-btn:focus-visible, .chip:focus-visible, .volver:focus-visible { outline: 3px solid var(--acento, #c9a86a); outline-offset: 2px; }
+.ec-cat, .ec-duo-b, .ec-item { transition: transform 0.15s ease, box-shadow 0.15s ease; }
+@media (hover: hover) { .ec-cat:hover, .ec-duo-b:hover, .ec-item:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0,0,0,.08); } }
+@media (prefers-reduced-motion: reduce) { .ec-cat, .ec-duo-b, .ec-item { transition: none; } }
+/* F1329 · Sonido y música de los videos */
+.ev-mus { font-weight: 600; margin: 4px 0 8px; }
+#evVol { width: 100%; min-height: 44px; accent-color: var(--acento, #6b7f4e); }
+input[type="file"]#evAudio { min-height: 44px; width: 100%; }
+/* F1330 · Video de canciones */
+#vcVol { width: 100%; min-height: 44px; accent-color: var(--acento, #6b7f4e); }
+#vcMusica { min-height: 44px; width: 100%; }

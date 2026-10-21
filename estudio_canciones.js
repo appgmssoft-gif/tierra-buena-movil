@@ -65,7 +65,7 @@
       '<p class="ec-guia">Elige una canción y mira sus estrofas como diapositivas. Puedes guardar cada una como imagen para tu iglesia.</p>' +
       '<button type="button" class="ec-cat" id="ecNueva"><span class="ec-ci" aria-hidden="true">➕</span><b>Nueva canción</b><small>Escribe el título y la letra</small></button>' +
       (d.propias.length ? '<h2 class="ec-sub">Mis canciones</h2><div class="ec-lista">' + d.propias.map(fila).join('') + '</div>' : '') +
-      '<h2 class="ec-sub">Ejemplos para ver cómo queda</h2><div class="ec-lista">' + ex.map(fila).join('') + '</div>');
+      (ex.length ? '<h2 class="ec-sub">Ejemplos para ver cómo queda</h2><div class="ec-lista">' + ex.map(fila).join('') + '</div>' : '<p class="ec-aviso-txt" role="status">Los ejemplos no se pudieron cargar. Conéctate a internet una vez y vuelve a intentar.</p>'));
     enlazarVolver();
     $('#ecNueva').onclick = () => { vibra(); formulario(null); };
     document.querySelectorAll('.ec-item[data-id]').forEach((b) => {
@@ -93,7 +93,7 @@
       '</div>'));
     enlazarVolver();
     $('#ecVer').onclick = () => { vibra(); presentar(c, 0); };
-    $('#ecVideo').onclick = () => { vibra(); exportarVideo(c); };
+    $('#ecVideo').onclick = () => { vibra(); videoConfig(c); };
     $('#ecGuardar').onclick = () => { vibra(); exportar(c); };
     const ed = $('#ecEditar'); if (ed) ed.onclick = () => { vibra(); formulario(c); };
     const qu = $('#ecQuitar');
@@ -234,69 +234,87 @@
     });
   }
 
-  // Video: cada estrofa dura lo que elegiste (4, 6 u 8 s). Se graba en el teléfono y se puede ver y descargar.
-  const MIMES = ['video/mp4;codecs=avc1', 'video/mp4', 'video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'];
-  function mimeVideo() {
-    if (!window.MediaRecorder || !MediaRecorder.isTypeSupported) return '';
-    return MIMES.find((m) => MediaRecorder.isTypeSupported(m)) || '';
+  // ---------- Video de la canción (F1330): usa el mismo motor de escenas que el Estudio de videos ----------
+  const TE = () => window.TBEstudioVideos;
+  const TS = /\[(\d{1,2}):(\d{2})(?:[.:](\d{1,3}))?\]/g;
+  // Solo cuenta como etiqueta una línea corta tipo «Verso 1», «Coro», «Puente 2», «Coro x2».
+  const LABEL = /^(verso|coro|puente|estrofa|final|bridge|chorus|intro|outro)(\s*\d+|\s*x\s*\d+)?\s*:?$/i;
+  const aSeg = (m) => Number(m[1]) * 60 + Number(m[2]) + (m[3] ? Number('0.' + m[3]) : 0);
+  // Parte la letra en bloques (estrofas). Acepta letra con tiempos tipo LRC: [0:12.50] Línea.
+  function bloquesDeLetra(letra) {
+    const raw = String(letra || '').replace(/\r/g, '').trim().split('\n');
+    const sinTiempo = (l) => l.replace(TS, '').trim();
+    const conTiempos = raw.filter((l) => /\[\d{1,2}:\d{2}/.test(l)).length;
+    const sinBlancos = raw.every((l) => l.trim() !== '');
+    let grupos = [];
+    if (conTiempos && sinBlancos && raw.filter((l) => l.trim()).length > 1) {
+      // Letra con tiempo por línea y sin líneas en blanco: cada línea es una escena (agrupadas si son muchas).
+      const lineas = raw.filter((l) => sinTiempo(l)).map((l) => ({ t: (() => { TS.lastIndex = 0; const m = TS.exec(l); TS.lastIndex = 0; return m ? aSeg(m) : null; })(), texto: sinTiempo(l) }));
+      const k = Math.max(1, Math.ceil(lineas.length / 40));
+      for (let a = 0; a < lineas.length; a += k) {
+        const ch = lineas.slice(a, a + k);
+        grupos.push({ t: ch[0].t, lineas: ch.map((x) => x.texto) });
+      }
+    } else {
+      let cur = null;
+      raw.forEach((l) => {
+        if (!l.trim()) { if (cur) grupos.push(cur); cur = null; return; }
+        TS.lastIndex = 0; const m = TS.exec(l); TS.lastIndex = 0;
+        if (!cur) cur = { t: m ? aSeg(m) : null, lineas: [] };
+        if (cur.t == null && m) cur.t = aSeg(m);
+        const txt = sinTiempo(l); if (txt) cur.lineas.push(txt);
+      });
+      if (cur) grupos.push(cur);
+    }
+    return grupos.filter((g) => g.lineas.length).map((g) => {
+      const primera = g.lineas[0];
+      const etiq = LABEL.test(primera) ? primera : '';
+      const texto = (etiq ? g.lineas.slice(1) : g.lineas).join('\n');
+      return { t: g.t, label: texto ? etiq : '', texto: texto || etiq };
+    });
   }
-  function exportarVideo(c) {
-    const ests = estrofas(c.letra);
-    const seg = leer().seg || 6;
-    const mime = mimeVideo();
-    const cab = volverA('Canción', () => detalle(c)) + '<h1 class="ec-h">' + esc(c.titulo) + '</h1>';
-    if (!mime || !document.createElement('canvas').captureStream || !ests.length) {
-      pantalla(cab + '<p class="ec-guia">' + (ests.length ? 'Tu navegador no puede crear video. Usa «Guardar estrofas como imagen».' : 'Esta canción aún no tiene letra.') + '</p>');
+  // Escenas de la canción con el diseño y la animación elegidos.
+  function escenasDeCancion(c, o) {
+    const bl = bloquesDeLetra(c.letra).slice(0, 40);
+    const conTiempo = bl.length > 1 && bl.every((b) => b.t != null);
+    return bl.map((b, i) => {
+      let seg = o.seg;
+      if (conTiempo) { const nx = bl[i + 1]; seg = nx ? Math.max(1.5, Math.min(30, Math.round((nx.t - b.t) * 2) / 2)) : o.seg; }
+      return { id: 'c' + i + Date.now().toString(36), titulo: b.texto, subtitulo: b.label, seg: seg, pal: 0, lay: o.lay, est: o.est, anim: o.anim, tin: o.tin, fx: o.fx ? [o.fx] : [], sfx: '' };
+    });
+  }
+  const opcion = (lista, sel) => lista.map((o) => '<option value="' + o[0] + '"' + (o[0] === sel ? ' selected' : '') + '>' + o[1] + '</option>').join('');
+  function videoConfig(c) {
+    const t = TE();
+    const bl = bloquesDeLetra(c.letra);
+    if (!t || !bl.length) {
+      pantalla(volverA('Canción', () => detalle(c)) + '<h1 class="ec-h">' + esc(c.titulo) + '</h1><p class="ec-guia">Esta canción aún no tiene letra. Agrégala para crear el video.</p>');
       enlazarVolver(); return;
     }
-    const pal = PALETAS[leer().paleta || 0];
-    pantalla(cab +
-      '<p class="ec-guia">Se graba un video de ' + ests.length + ' estrofas, cada una ' + seg + ' s. Deja esta pantalla abierta hasta que termine.</p>' +
-      '<canvas id="ecVid" class="ec-lienzo" role="img" aria-label="Vista previa del video"></canvas>' +
-      '<p class="ec-prog" id="ecProg" aria-live="polite">Preparando…</p>' +
-      '<div id="ecResul"></div>');
+    const conT = bl.length > 1 && bl.every((b) => b.t != null);
+    pantalla(volverA('Canción', () => detalle(c)) +
+      '<h1 class="ec-h">Video de «' + esc(c.titulo) + '»</h1>' +
+      '<p class="ec-guia">' + bl.length + ' estrofas. ' + (conT ? 'La letra trae tiempos: cada estrofa dura lo que le toca en la canción.' : 'Cada estrofa dura lo que elijas abajo.') + '</p>' +
+      '<label class="ec-campo">Diseño del texto<select class="ea-input" id="vcLay">' + opcion(t._t.DISENOS, 'centro') + '</select></label>' +
+      '<label class="ec-campo">Movimiento del fondo<select class="ea-input" id="vcEst">' + opcion(t._t.FONDOS, 'aurora') + '</select></label>' +
+      '<label class="ec-campo">Aparición del texto<select class="ea-input" id="vcAnim">' + opcion(t._t.ANIMS, 'enfoque') + '</select></label>' +
+      '<label class="ec-campo">Cómo pasa a la siguiente<select class="ea-input" id="vcTin">' + opcion(t._t.TRANSICIONES, 'fade') + '</select></label>' +
+      '<label class="ec-campo">Efecto<select class="ea-input" id="vcFx">' + [['', 'Ninguno']].concat(t._t.EFECTOS).map((o) => '<option value="' + o[0] + '">' + o[1] + '</option>').join('') + '</select></label>' +
+      '<label class="ec-campo" id="vcSegL">Segundos por estrofa<select class="ea-input" id="vcSeg">' + [4, 6, 8].map((n) => '<option value="' + n + '"' + (n === 6 ? ' selected' : '') + '>' + n + ' s</option>').join('') + '</select></label>' +
+      '<label class="ec-campo">Música de la canción (opcional)<input type="file" id="vcMusica" accept="audio/*"></label>' +
+      '<label class="ec-campo">Volumen de la música: <output id="vcVolOut">60</output>%<input type="range" id="vcVol" min="0" max="100" step="5" value="60"></label>' +
+      '<p class="ec-aviso-txt" id="vcErr" role="alert" hidden></p>' +
+      '<button type="button" class="ec-cat" id="vcCrear"><span class="ec-ci" aria-hidden="true">🎬</span><b>Crear video</b><small>Se graba y se puede descargar</small></button>');
     enlazarVolver();
-    const cv = $('#ecVid');
-    const chunks = [];
-    const stream = cv.captureStream(30);
-    const track = stream.getVideoTracks()[0];
-    const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 3000000 });
-    // Pedimos un cuadro cada 200 ms: así la estrofa se mantiene en pantalla todo su tiempo aunque no cambie el dibujo.
-    const g = { rec: rec, descartar: false, t: null, tick: null };
-    grab = g;
-    rec.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
-    rec.onstop = () => {
-      clearInterval(g.tick);
-      if (grab === g) grab = null;
-      if (g.descartar) return;
-      const ext = mime.indexOf('video/mp4') === 0 ? 'mp4' : 'webm';
-      const url = URL.createObjectURL(new Blob(chunks, { type: mime.split(';')[0] }));
-      const p = $('#ecProg'); if (p) p.textContent = 'Listo. Puedes verlo y descargarlo.';
-      const r = $('#ecResul');
-      if (r) r.innerHTML = '<video class="ec-video" controls playsinline src="' + url + '"></video>' +
-        '<button type="button" class="ec-cat" id="ecBajarVid"><span class="ec-ci" aria-hidden="true">⬇️</span><b>Descargar video</b><small>Se guarda en tu teléfono</small></button>';
-      const b = $('#ecBajarVid');
-      if (b) b.onclick = () => { vibra(); const a = document.createElement('a'); a.href = url; a.download = slug(c.titulo) + '.' + ext; document.body.appendChild(a); a.click(); a.remove(); };
+    const vol = $('#vcVol'); vol.oninput = () => { $('#vcVolOut').textContent = vol.value; };
+    $('#vcCrear').onclick = () => {
+      vibra();
+      const o = { lay: $('#vcLay').value, est: $('#vcEst').value, anim: $('#vcAnim').value, tin: $('#vcTin').value, fx: $('#vcFx').value, seg: Number($('#vcSeg').value) || 6 };
+      const escs = escenasDeCancion(c, o);
+      const f = $('#vcMusica').files && $('#vcMusica').files[0];
+      t.grabarEscenas(c.titulo, escs, { atras: () => detalle(c), archivo: f || null, volumen: Number(vol.value) });
     };
-    rec.start(500);
-    // Un cuadro cada 100 ms, con la barra de avance: así cada estrofa dura exactamente su tiempo en el video.
-    let idx = 0, inicio = Date.now();
-    const cuadro = (f) => {
-      dibujar(cv, ests[idx], c.titulo, pal, f);
-      try { if (track.requestFrame) track.requestFrame(); } catch (e) { /* nada */ }
-    };
-    const avisar = () => { const p = $('#ecProg'); if (p) p.textContent = 'Grabando estrofa ' + (idx + 1) + ' de ' + ests.length; };
-    cuadro(0); avisar();
-    g.tick = setInterval(() => {
-      if (g.descartar) return;
-      if (Date.now() - inicio >= seg * 1000) {
-        idx++;
-        if (idx >= ests.length) { clearInterval(g.tick); rec.stop(); return; }
-        inicio = Date.now(); avisar();
-      }
-      cuadro(Math.min(1, (Date.now() - inicio) / (seg * 1000)));
-    }, 100);
   }
 
-  window.TBEstudioCanciones = { abrir: lista, _t: { estrofas, dibujar, envolver, PALETAS } };
+  window.TBEstudioCanciones = { abrir: lista, _t: { estrofas, bloquesDeLetra, escenasDeCancion, PALETAS } };
 })();

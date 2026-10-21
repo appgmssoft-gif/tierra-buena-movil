@@ -97,12 +97,15 @@
 
   function vistaHub() {
     const g = guardados();
-    pantalla('<h1 class="ec-h">🎨 Estudio creativo</h1>' +
+    pantalla('<h1 class="ec-h">Crear</h1>' +
+      '<p class="ec-guia">Tu estudio creativo: material para preparar, videos y plantillas para compartir.</p>' +
       '<button type="button" class="ec-cat ec-biblio" id="ecBiblio"><span class="ec-ci" aria-hidden="true">📚</span><b>Biblioteca de apoyo</b><small>Material para preparar y crear, buscable</small></button>' +
-      '<div class="ec-duo" role="group" aria-label="Estudios de video">' +
+      '<h2 class="ec-sub">Videos y canciones</h2>' +
+      '<div class="ec-duo" role="group" aria-label="Estudios de video y canciones">' +
       '<button type="button" class="ec-duo-b" data-d="videos"><span class="ec-ci" aria-hidden="true">🎬</span><b>Estudio de videos</b><small>Escenas con fondo y título</small></button>' +
       '<button type="button" class="ec-duo-b" data-d="canciones"><span class="ec-ci" aria-hidden="true">🎵</span><b>Estudio de canciones</b><small>Videos con la letra</small></button>' +
       '</div>' +
+      '<h2 class="ec-sub">Plantillas para compartir</h2>' +
       '<p class="ec-guia">Elige una plantilla, escribe lo que quieres decir y compártela como imagen. Todo se hace en tu teléfono.</p>' +
       '<div class="ec-cats">' + CATS.map((c) => '<button type="button" class="ec-cat" data-c="' + c.id + '"><span class="ec-ci" aria-hidden="true">' + c.i + '</span><b>' + esc(c.n) + '</b><small>' + esc(c.a) + '</small></button>').join('') + '</div>' +
       (g.length ? '<h2 class="ec-sub">Mis diseños guardados</h2><div class="ec-lista">' + g.slice(0, 6).map((d, i) => '<button type="button" class="ec-item" data-g="' + i + '"><b>' + esc(d.titulo) + '</b><small>' + esc(d.fecha) + '</small></button>').join('') + '</div>' : ''));
