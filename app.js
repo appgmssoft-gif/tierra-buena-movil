@@ -2930,7 +2930,19 @@
     if (!r.ok) { m.textContent = r.falta ? 'Los ministerios se están preparando en el servidor. Vuelve a intentarlo pronto.' : MOTIVOS['sin-internet']; return; }
     if (!r.lista.length) { m.innerHTML = 'Todavía no estás en ningún ministerio. Cuéntale a tu pastor en qué te gustaría servir: él te suma al grupo y aparecerá aquí.'; return; }
     m.textContent = 'Los grupos donde sirves con tu iglesia.';
-    const minCard = (x) => `<div class="card min-card" data-mc="${esc(x.color)}"><div class="t"><span class="min-ico" aria-hidden="true">${x.icono ? esc(x.icono) : svg('persona', 26)}</span>${esc(x.nombre)}${x.es_lider ? '<span class="etiqueta">Líder</span>' : ''}</div><p class="suave m0t">${x.lideres ? 'Lideran: ' + esc(x.lideres) : 'Tu pastor aún no designó líder.'}</p></div>`;
+    // F1339 · Novedades por ministerio (Fase 3, «comunicación por ministerio»): avisos nuevos y próxima actividad de
+    // cada grupo, para que abrir «Mis ministerios» valga la pena cada día. Reusa aviso_miembro_listar y
+    // agenda_miembro_listar (sin SQL nuevo); si fallan, las tarjetas se ven igual, solo sin la línea extra.
+    const [rAv, rAg] = await Promise.all([rpcRaw('aviso_miembro_listar', { p_codigo: id.codigo, p_clave: id.clave }), rpcRaw('agenda_miembro_listar', { p_codigo: id.codigo, p_clave: id.clave })]);
+    const avisos = rAv.ok ? (rAv.data || []) : [], agenda = rAg.ok ? (rAg.data || []) : [];
+    const enSemana = (x) => { const d = diasHasta(x.creado_en); return d != null && d <= 0 && d >= -7; };
+    const novedad = (nombre) => {
+      const nuevos = avisos.filter((a) => a.ministerio === nombre && enSemana(a)).length;
+      const prox = agenda.filter((e) => e.ministerio === nombre && (diasHasta(e.inicio) || 0) >= 0).sort((x, y) => new Date(x.inicio) - new Date(y.inicio))[0];
+      const partes = []; if (nuevos) partes.push(nuevos + ' ' + (nuevos === 1 ? 'aviso nuevo' : 'avisos nuevos')); if (prox) partes.push((cercania(diasHasta(prox.inicio)) || dtFmt(prox.inicio)) + ': ' + prox.titulo);
+      return partes.join(' · ');
+    };
+    const minCard = (x) => { const nv = novedad(x.nombre); return `<div class="card min-card" data-mc="${esc(x.color)}"><div class="t"><span class="min-ico" aria-hidden="true">${x.icono ? esc(x.icono) : svg('persona', 26)}</span>${esc(x.nombre)}${x.es_lider ? '<span class="etiqueta">Líder</span>' : ''}</div><p class="suave m0t">${x.lideres ? 'Lideran: ' + esc(x.lideres) : 'Tu pastor aún no designó líder.'}</p>${nv ? `<p class="min-nov">${svg('chispas', 14)} ${esc(nv)}</p>` : ''}</div>`; };
     const lidero = r.lista.filter((x) => x.es_lider), sirvo = r.lista.filter((x) => !x.es_lider), n = r.lista.length;
     $('#mihero').innerHTML = heroInt('c2', '🕍', n + (n === 1 ? ' grupo' : ' grupos'), 'Dónde sirves', lidero.length ? 'Lideras ' + lidero.length + (lidero.length === 1 ? ' de ellos.' : ' de ellos. Tu equipo cuenta contigo.') : 'Cada grupo tiene a alguien que lo lidera: habla con esa persona para saber qué toca.');
     $('#milista').innerHTML = (lidero.length && sirvo.length ? [['Los que lidero', lidero], ['Donde sirvo', sirvo]] : [[lidero.length ? 'Los que lidero' : 'Mis grupos', r.lista]]).map((g) => '<h2 class="mi-sub">' + g[0] + '</h2><div class="grid">' + g[1].map(minCard).join('') + '</div>').join('') + '<button type="button" class="btn sec" id="miTurnos">Ver mis turnos</button>';
@@ -3404,12 +3416,13 @@
     const p = pastorLeer(); if (!p) return vistaPastorEntrar();
     $('#pantalla').innerHTML = `${areaHero('area-pastor')}<section class="saludo"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML('P', { g: perfilLeer().g, e: 'svg:escudo' }, false)}<div><p class="suave m0">Modo pastor</p><h1 id="pIgl">Mi iglesia</h1><p class="suave m0">Código <b>${esc(p.codigo)}</b></p></div></section>
       ${heroInt('c2 pas-hero', '🕊️', 'Hoy en tu iglesia', 'Para atender hoy', '<span id="pResumen" aria-live="polite">Revisando lo de hoy…</span>')}
+      <div class="mi-bento">${bento('mb-ancho mb4', '🗞️', 'Resumen semanal', 'Lo de los últimos 7 días, en un solo lugar', 'rsem', 'pp')}</div>
       <h2 class="mi-sub">Mis prédicas</h2><div class="mi-bento">${bento('mb-ancho mb1', '🎙️', 'Mis prédicas', 'Graba tu mensaje, guárdalo y escúchalo', 'mpre', 'pp')}</div>
       <h2 class="mi-sub">Para atender hoy</h2><div class="mi-bento">${bento('mb3', '🏠', 'Visitas', 'Quién pide que lo visites', 'vis', 'pp')}${bento('mb5', '🤲', 'Oraciones', 'Peticiones recibidas', 'ora', 'pp')}${bento('mb-ancho mb1', '🙋', 'Solicitudes', 'Quién quiere unirse a tu iglesia', 'sol', 'pp')}</div>
       <h2 class="mi-sub">Mi agenda</h2><div class="mi-bento">${bento('mb-ancho mb4', '🗓', 'Mi calendario', 'Visitas, reuniones y descanso. Solo tú lo ves', 'mcal', 'pp')}</div>
       <h2 class="mi-sub">Código de tu iglesia</h2><div class="card pas-cod"><p class="suave m0">Compártelo con tus miembros para que se unan a tu iglesia.</p><p class="pas-cod-num" id="pCodNum">${esc(p.codigo || '—')}</p><div class="hoja-bt"><button type="button" class="btn" id="pCodCopiar">Copiar código</button><button type="button" class="btn sec" id="pCodCompartir">Compartir</button></div><details class="pas-llave"><summary>Llave para mi otro teléfono (privada)</summary><p class="suave">Es como una contraseña: no la compartas con nadie.</p><button type="button" class="btn sec" id="pLlaveCopiar">Copiar llave</button></details></div>
       <h2 class="mi-sub">Personas</h2><div class="mi-bento">${bento('mb-alto mb1', '👥', 'Miembros', 'Quiénes forman tu iglesia', 'mie', 'pp')}${bento('mb2', '🌱', 'Bienvenida', 'Primeras 4 semanas', 'bien', 'pp')}${bento('mb6', '🕐', 'Disponibilidad', 'Quiénes pueden servir', 'disp', 'pp')}</div>
-      <h2 class="mi-sub">Comunicación</h2><div class="mi-bento">${bento('mb-ancho mb4', '💬', 'Chat', 'Iglesia, pastor y líderes, y conversaciones', 'chat', 'pp')}${bento('mb3', '📣', 'Avisos', 'Para todos o un grupo', 'avi', 'pp')}${bento('mb2', '📅', 'Agenda', 'Actividades y reuniones', 'age', 'pp')}</div>
+      <h2 class="mi-sub">Comunicación</h2><div class="mi-bento">${bento('mb-ancho mb4', '💬', 'Chat', 'Iglesia, pastor y líderes, y conversaciones', 'chat', 'pp')}${bento('mb3', '📣', 'Avisos', 'Para todos o un grupo', 'avi', 'pp')}${bento('mb2', '📅', 'Agenda', 'Actividades y reuniones', 'age', 'pp')}${bento('mb-ancho mb5', '🗞️', 'Boletín de la semana', 'Junta avisos y agenda, listo para compartir', 'bol', 'pp')}</div>
       <h2 class="mi-sub">Organización</h2><div class="mi-bento">${bento('mb5', '🕍', 'Ministerios y líderes', 'Grupos, personas y líderes', 'min', 'pp')}${bento('mb6', '📝', 'Datos y código', 'Nombre, eslogan y código', 'dat', 'pp')}</div>
 
       <div id="tbEjem" class="tb-ejem-caja"></div>
@@ -3427,7 +3440,7 @@
       else copiarTxt(t, $('#pCodCompartir'), 'Copiado ✓');
     };
     if ($('#pLlaveCopiar')) $('#pLlaveCopiar').onclick = () => copiarTxt('PULPITO-PASTOR-' + btoa(JSON.stringify({ c: p.codigo, s: p.secreto })), $('#pLlaveCopiar'), 'Llave copiada ✓');
-    document.querySelectorAll('[data-pp]').forEach((b) => b.addEventListener('click', () => ({ sol: pSolicitudes, ora: pOraciones, vis: pVisitas, mie: pMiembros, min: pMinisterios, age: () => vistaAgenda(modoPastor(p)), avi: () => vistaAvisos(modoPastor(p)), mcal: () => pCalendario(p), disp: () => pDisponibilidad(p), bien: () => pBienvenida(p), chat: () => vistaChat({ rol: 'pastor', codigo: p.codigo, secreto: p.secreto }), dat: pDatos, mpre: () => window.TBMisPredicas && window.TBMisPredicas.abrir() }[b.dataset.pp])(p)));
+    document.querySelectorAll('[data-pp]').forEach((b) => b.addEventListener('click', () => ({ sol: pSolicitudes, ora: pOraciones, vis: pVisitas, mie: pMiembros, min: pMinisterios, age: () => vistaAgenda(modoPastor(p)), avi: () => vistaAvisos(modoPastor(p)), mcal: () => pCalendario(p), disp: () => pDisponibilidad(p), bien: () => pBienvenida(p), chat: () => vistaChat({ rol: 'pastor', codigo: p.codigo, secreto: p.secreto }), dat: pDatos, mpre: () => window.TBMisPredicas && window.TBMisPredicas.abrir(), rsem: pResumenSemanal, bol: pBoletin }[b.dataset.pp])(p)));
     $('#pSalir').onclick = () => { if (confirm('¿Salir del modo pastor en este teléfono? Tu llave se borra de aquí (sigue en tu computador).')) { borrar(K_PASTOR); borrar('tb_movil_juntos_cache'); barraRefrescar('perfil'); ir('perfil'); } };
     const ins = (k, n) => { if (!(n > 0)) return; const t = document.querySelector('[data-pp="' + k + '"]'); if (!t) return; let e = t.querySelector('.mi-b-n'); if (!e) { e = document.createElement('span'); e.className = 'mi-b-n'; t.appendChild(e); } e.textContent = n > 99 ? '99+' : String(n); e.setAttribute('aria-label', e.textContent + ' por atender'); };
     // F1032 · Resumen del pastor: una frase con lo que requiere atención hoy (sin rankings ni cifras en rojo)
@@ -3870,6 +3883,40 @@
     pinta();
   }
   // F947 · Muro para el pastor: ve lo que compartió y cuántas personas oran (solo un número; nadie ve quién).
+  // F1340 · Boletín de la semana (Fase 3, PLAN_MAESTRO.md §4 «boletín semanal»): junta los avisos activos y lo que
+  // viene en la agenda de los próximos 7 días en un solo texto listo para compartir con toda la iglesia.
+  // Hoy esto le toma al pastor escribirlo a mano cada semana; aquí se arma solo con lo que ya cargó en Avisos y Agenda.
+  // Reusa aviso_pastor_listar y agenda_pastor_listar (sin SQL nuevo, sin generar PDF todavía: eso queda para cuando
+  // se decida el formato final, ver TAREAS.md).
+  async function pBoletin(p) {
+    $('#pantalla').innerHTML = pCab('Boletín de la semana', '<div id="pHero"></div>');
+    volverA('Panel', vistaPastor);
+    const m = $('#pmsg');
+    const [rAv, rAg] = await Promise.all([prpc('aviso_pastor_listar', p), prpc('agenda_pastor_listar', p)]);
+    if (!m) return;
+    if (!rAv.ok || !rAg.ok) { m.textContent = 'No pudimos armar el boletín ahora. Revisa tu conexión y vuelve a intentarlo.'; return; }
+    const avisos = (rAv.data || []).slice(0, 10);
+    const proximos = (rAg.data || []).filter((e) => (diasHasta(e.inicio) || 0) >= 0 && (diasHasta(e.inicio) || 0) <= 7).sort((x, y) => new Date(x.inicio) - new Date(y.inicio));
+    const vacio = !avisos.length && !proximos.length;
+    if ($('#pHero')) $('#pHero').innerHTML = heroInt('c4 pas-hero', '🗞️', 'Listo para enviar', vacio ? 'Todavía no hay nada' : 'Tu boletín de esta semana', vacio ? 'Agrega avisos o actividades a la agenda y aparecerán aquí, listos para compartir.' : 'Se arma solo con tus Avisos y tu Agenda. Revísalo y compártelo con tu iglesia.');
+    m.hidden = true;
+    let h = '';
+    if (avisos.length) h += '<h2 class="mi-sub">Avisos</h2>' + avisos.map((a) => avisoHTML(a, false)).join('');
+    if (proximos.length) h += '<h2 class="mi-sub">Esta semana</h2>' + proximos.map((e) => `<div class="card item"><p class="t m0">${esc(e.titulo)}</p><p class="suave m0t">${esc(cercania(diasHasta(e.inicio)) || dtFmt(e.inicio))}${e.lugar ? ' · ' + esc(e.lugar) : ''}${e.ministerio ? ' · ' + esc(e.ministerio) : ''}</p></div>`).join('');
+    if (!vacio) h += `<button type="button" class="btn sep16" id="bolComp">${svg('compartir', 18)} Compartir boletín con mi iglesia</button>`;
+    $('#plista').innerHTML = h;
+    const bc = $('#bolComp');
+    if (bc) bc.onclick = async () => {
+      let nombreIgl = 'nuestra iglesia';
+      try { const ri = await rpc('iglesia_perfil', { p_codigo: p.codigo }); if (ri.ok && ri.data && ri.data.nombre) nombreIgl = ri.data.nombre; } catch (e) { /* queda el nombre genérico */ }
+      const lineas = ['📰 Boletín de ' + nombreIgl, ''];
+      if (avisos.length) { lineas.push('Avisos:'); avisos.forEach((a) => lineas.push('• ' + a.titulo + (a.ministerio ? ' (' + a.ministerio + ')' : '') + (a.texto ? ': ' + a.texto : ''))); lineas.push(''); }
+      if (proximos.length) { lineas.push('Esta semana:'); proximos.forEach((e) => lineas.push('• ' + (cercania(diasHasta(e.inicio)) || dtFmt(e.inicio)) + ' — ' + e.titulo + (e.lugar ? ' · ' + e.lugar : ''))); lineas.push(''); }
+      lineas.push('Compartido desde Tierra Buena 💚');
+      const t = lineas.join('\n');
+      try { if (navigator.share) await navigator.share({ text: t }); else { await navigator.clipboard.writeText(t); bc.textContent = 'Copiado ✓'; setTimeout(() => { bc.innerHTML = svg('compartir', 18) + ' Compartir boletín con mi iglesia'; }, 1800); } } catch (e) { /* se cerró el menú */ }
+    };
+  }
   async function pMuro(p) {
     $('#pantalla').innerHTML = `${cabecera('Muro', 'Perfil')}<p class="suave" id="pmsg">Cargando…</p><div id="muro"></div>`; volverA('Perfil', vistaPerfil);
     let r = await rpcRaw('peticion_muro', { p_codigo: p.codigo, p_secreto: p.secreto });
@@ -3880,6 +3927,58 @@
     if (!l) { m.textContent = 'No se pudo abrir el muro ahora. Revisa tu conexión e inténtalo otra vez.'; return; }
     m.textContent = l.length ? 'Peticiones que compartiste con tu iglesia. Para compartir otra, ve a Oraciones.' : 'Aún no hay peticiones compartidas. Desde Oraciones puedes compartir las que quieras.';
     caja.innerHTML = l.map((x) => `<div class="card item muro-card"><div class="muro-cab"><span class="muro-ini" aria-hidden="true">${esc((x.nombre || '🙏').trim().charAt(0).toUpperCase())}</span><span><b>${esc(x.nombre || 'Alguien de tu iglesia')}</b></span></div><p class="muro-txt">${esc(x.texto)}</p>${x.orando != null ? `<p class="suave m0t">${svg('corazon', 16)} ${Math.max(0, Number(x.orando) || 0)} ${Number(x.orando) === 1 ? 'persona ora' : 'personas oran'}</p>` : ''}</div>`).join('');
+  }
+  // F1337 · Resumen semanal del pastor (Fase 3, PLAN_MAESTRO.md §4): lo que pasó y lo que falta por cerrar en los
+  // últimos 7 días, en un solo lugar. Reusa las RPC ya existentes (sin SQL nuevo). Sin rankings ni comparaciones.
+  async function pResumenSemanal(p) {
+    $('#pantalla').innerHTML = pCab('Resumen semanal', '<div id="pHero"></div>');
+    volverA('Panel', vistaPastor);
+    const m = $('#pmsg');
+    let rOra = await prpc('peticion_pastor_listar_v2', p); if (!rOra.ok && rOra.falta) rOra = await prpc('peticion_pastor_listar', p);
+    const [rVis, rSol, rAvi, rAge] = await Promise.all([
+      prpc('visita_pastor_listar', p), prpc('solicitud_pastor_listar', p), prpc('aviso_pastor_listar', p), prpc('agenda_pastor_listar', p)
+    ]);
+    if (!m) return;
+    if (!rOra.ok || !rVis.ok) { m.textContent = 'No pudimos armar el resumen ahora. Revisa tu conexión y vuelve a intentarlo.'; return; }
+    const enSemana = (x) => { const d = diasHasta(x.creado_en); return d != null && d <= 0 && d >= -7; };
+    const ora = rOra.data || [], vis = rVis.data || [], sol = rSol.ok ? (rSol.data || []) : [], avi = rAvi.ok ? (rAvi.data || []) : [], age = rAge.ok ? (rAge.data || []) : [];
+    const oraNuevas = ora.filter(enSemana).length, oraPend = ora.length;
+    const visNuevas = vis.filter(enSemana).length, visPend = vis.filter((v) => v.estado === 'solicitada' || v.estado === 'aceptada' || v.estado === 'agendada').length;
+    const aviSemana = avi.filter(enSemana).length;
+    const proximos = age.filter((e) => { const d = diasHasta(e.inicio); return d != null && d >= 0 && d <= 7; }).sort((x, y) => new Date(x.inicio) - new Date(y.inicio));
+    const nada = !oraNuevas && !visNuevas && !sol.length && !aviSemana && !proximos.length;
+    if ($('#pHero')) $('#pHero').innerHTML = heroInt('c2 pas-hero', '🗞️', 'Últimos 7 días', nada ? 'Semana tranquila' : 'Lo de esta semana', nada ? 'No hubo peticiones, visitas ni avisos nuevos. Buen momento para planificar lo que viene.' : 'Una mirada rápida a tu iglesia, sin cifras que comparar con nadie más.');
+    m.hidden = true;
+    const fila = (ic, tit, detalle, pp) => `<button type="button" class="card item rs-fila" data-pp="${pp}"><span aria-hidden="true">${svg(ic, 20)}</span><span class="rs-tx"><b>${esc(tit)}</b><small>${esc(detalle)}</small></span></button>`;
+    const plural = (n, a, b) => (n === 1 ? a : b);
+    let h = '<h2 class="mi-sub">Esta semana</h2>';
+    h += fila('corazon', oraNuevas + ' ' + plural(oraNuevas, 'petición de oración nueva', 'peticiones de oración nuevas'), oraPend ? oraPend + ' en total por cerrar' : 'Nada pendiente', 'ora');
+    h += fila('lugar', visNuevas + ' ' + plural(visNuevas, 'visita pedida', 'visitas pedidas'), visPend ? visPend + ' sin cerrar' : 'Nada pendiente', 'vis');
+    h += fila('gente', sol.length + ' ' + plural(sol.length, 'solicitud esperando', 'solicitudes esperando'), sol.length ? 'Personas que quieren unirse' : 'Nadie esperando', 'sol');
+    h += fila('altavoz', aviSemana + ' ' + plural(aviSemana, 'aviso publicado', 'avisos publicados'), 'Para tu iglesia o un ministerio', 'avi');
+    h += '<h2 class="mi-sub">Lo próximo (7 días)</h2>';
+    h += proximos.length ? proximos.map((e) => `<div class="card item"><p class="t m0">${esc(e.titulo)}</p><p class="suave m0t">${esc(cercania(diasHasta(e.inicio)) || dtFmt(e.inicio))}${e.lugar ? ' · ' + esc(e.lugar) : ''}</p></div>`).join('') : '<p class="suave">Nada agendado todavía. Agrega algo en tu Agenda.</p>';
+    h += `<button type="button" class="btn sec sep16" id="rsComp">${svg('compartir', 18)} Compartir con mis líderes</button>`;
+    $('#plista').innerHTML = h;
+    document.querySelectorAll('[data-pp]').forEach((b) => b.addEventListener('click', () => ({ ora: pOraciones, vis: pVisitas, sol: pSolicitudes, avi: () => vistaAvisos(modoPastor(p)) }[b.dataset.pp])(p)));
+    // F1338 · Compartir el resumen por WhatsApp u otra app: solo cifras y lo próximo, nunca el contenido de una petición o visita.
+    const rsComp = $('#rsComp');
+    if (rsComp) rsComp.onclick = async () => {
+      let nombreIgl = 'nuestra iglesia';
+      try { const ri = await rpc('iglesia_perfil', { p_codigo: p.codigo }); if (ri.ok && ri.data && ri.data.nombre) nombreIgl = ri.data.nombre; } catch (e) { /* queda el nombre genérico */ }
+      const lineas = [
+        'Resumen semanal de ' + nombreIgl + ' 🗞️',
+        '',
+        '🤲 ' + oraNuevas + ' ' + plural(oraNuevas, 'petición de oración nueva', 'peticiones de oración nuevas') + (oraPend ? ' (' + oraPend + ' en total por cerrar)' : ''),
+        '🏠 ' + visNuevas + ' ' + plural(visNuevas, 'visita pedida', 'visitas pedidas') + (visPend ? ' (' + visPend + ' sin cerrar)' : ''),
+        '🙋 ' + sol.length + ' ' + plural(sol.length, 'solicitud esperando', 'solicitudes esperando'),
+        '📣 ' + aviSemana + ' ' + plural(aviSemana, 'aviso publicado', 'avisos publicados')
+      ];
+      if (proximos.length) { lineas.push(''); lineas.push('Lo próximo:'); proximos.slice(0, 5).forEach((e) => lineas.push('• ' + e.titulo + ' · ' + (cercania(diasHasta(e.inicio)) || dtFmt(e.inicio)))); }
+      lineas.push(''); lineas.push('Enviado desde Tierra Buena 💚');
+      const t = lineas.join('\n');
+      try { if (navigator.share) await navigator.share({ text: t }); else { await navigator.clipboard.writeText(t); rsComp.textContent = 'Copiado ✓'; setTimeout(() => { rsComp.innerHTML = svg('compartir', 18) + ' Compartir con mis líderes'; }, 1800); } } catch (e) { /* se cerró el menú */ }
+    };
   }
   async function pOraciones(p) {
     $('#pantalla').innerHTML = pCab('Oraciones', '<div id="pHero"></div>'); volverA('Panel', vistaPastor);
@@ -4082,9 +4181,11 @@
       const m = +t.mensual, a = +t.anual, ahorro = Math.max(0, Math.round((1 - a / (m * 12)) * 100));
       return `<article class="sb-plan ${esc(t.clase)}"><header class="sb-cab"><span class="sb-ic" aria-hidden="true">${esc(t.icono)}</span><div><small>${esc(t.para)}</small><h3>${esc(t.nombre)}</h3></div>${t.etiqueta ? `<span class="sb-etq">${esc(t.etiqueta)}</span>` : ''}</header>
         <p class="sb-quien">${esc(t.quien)}</p>
+        ${t.problema ? `<p class="sb-problema"><b>El problema:</b> ${esc(t.problema)}</p>` : ''}
         ${t.rangos ? `<p class="sb-eq">Precio por ${per === 'anual' ? 'año' : 'mes'} según el tamaño de tu iglesia:</p><ul class="apoyo-lista sb-rangos">${t.rangos.map((r) => `<li><span><b>${esc(r.t)}</b>: ${moneda(per === 'anual' ? r.anual : r.mensual)} ${per === 'anual' ? 'al año' : 'al mes'}<br><small class="suave">Si son ${r.max} personas, unos ${moneda((per === 'anual' ? r.anual / 12 : r.mensual) / r.max)} por persona al mes.</small></span></li>`).join('')}</ul>` : `<p class="sb-precio"><b>${moneda(per === 'anual' ? a : m)}</b><span> ${per === 'anual' ? 'al año' : 'al mes'}</span></p>
         <p class="sb-eq">${per === 'anual' ? 'Unos ' + moneda(a / 12) + ' al mes · dos meses de regalo' : 'Pagas mes a mes' + (ahorro ? '. Con el anual ahorras ' + ahorro + '%' : '')}</p>`}
         ${t.grupos.map((g) => (g.t ? `<h4 class="sb-sub">${esc(g.t)}</h4>` : '') + lista(g.l)).join('')}
+        ${t.no_incluye && t.no_incluye.length ? `<h4 class="sb-sub sb-sub-no">Este plan no incluye</h4><ul class="apoyo-lista sb-no-incluye">${t.no_incluye.map((x) => `<li>${svg('x', 16)}<span>${esc(x)}</span></li>`).join('')}</ul>` : ''}
         ${t.nota ? `<p class="suave sb-nota">${esc(t.nota)}</p>` : ''}
         ${ya ? '' : `<button type="button" class="btn sb-bt" data-plan="${esc(t.id)}">${esc(t.boton)}</button>`}</article>`;
     };

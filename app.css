@@ -1202,6 +1202,7 @@ button.mo-nota{display:block;width:100%;text-align:left;font:inherit;color:var(-
 
 /* F1190 · Mis ministerios: dónde sirvo y quién me guía (los que lidero primero; cada grupo con su color) */
 .min-card{display:flex;flex-direction:column;gap:2px;border-radius:22px;background:linear-gradient(135deg,color-mix(in srgb,var(--mc,var(--verde)) 14%,var(--tarjeta)),var(--tarjeta))}
+.min-nov{display:flex;align-items:center;gap:6px;margin:4px 0 0;font-size:.82rem;font-weight:600;color:var(--mc,var(--verde))}
 #milista .btn.sec{margin-top:14px}
 @media (prefers-reduced-motion:no-preference){
   html:not([data-anim=off]) .min-card{animation:hac-sube .4s ease-out backwards}
@@ -1300,11 +1301,16 @@ button.mo-nota{display:block;width:100%;text-align:left;font:inherit;color:var(-
 .sb-cab small{display:block;font:700 .72rem/1 system-ui,sans-serif;letter-spacing:.09em;text-transform:uppercase;opacity:.9}
 .sb-cab h3{margin:4px 0 0;font:700 1.25rem/1.15 "TB Titulo",Georgia,serif;color:#fff}
 .sb-quien{margin-top:14px;margin-bottom:8px;line-height:1.4}
+.sb-problema{margin:0 0 10px;padding:8px 10px;border-radius:10px;background:rgba(0,0,0,.05);font-size:.85rem;line-height:1.4}
+.sb-problema b{font-weight:700}
 .sb-precio{margin-top:4px;margin-bottom:0}
 .sb-precio b{font:700 2rem/1.1 "TB Titulo",Georgia,serif}
 .sb-precio span{font-size:.95rem;opacity:.75}
 .sb-eq{margin-top:2px;margin-bottom:12px;font-size:.85rem;opacity:.75}
 .sb-sub{margin-top:12px;margin-bottom:4px;font:700 .95rem/1.2 "TB Titulo",Georgia,serif}
+.sb-sub-no{opacity:.75}
+.sb-no-incluye{opacity:.7}
+.sb-no-incluye.apoyo-lista .ic{color:#9a2f2f}
 .sb-nota{font-size:.85rem}
 .sb-bt{display:block;width:calc(100% - 32px);margin-top:14px}
 @media (prefers-reduced-motion:no-preference){
@@ -1391,6 +1397,11 @@ button.lc-card{cursor:pointer}
 .pas-hero{position:relative;overflow:hidden}
 .pas-hero::after{content:"";position:absolute;right:-30px;bottom:-40px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.28),rgba(255,255,255,0) 70%);pointer-events:none}
 .pas-hero .mi-sl-big{filter:drop-shadow(0 6px 8px rgba(0,0,0,.2))}
+.rs-fila{display:flex;align-items:center;gap:12px;width:100%;text-align:left;cursor:pointer;transition:transform .12s ease,box-shadow .12s ease}
+.rs-fila:hover,.rs-fila:focus-visible{transform:translateY(-1px);box-shadow:var(--sombra-alta,0 6px 16px rgba(0,0,0,.12))}
+.rs-fila .ic{flex:none;color:var(--verde)}
+.rs-tx{display:flex;flex-direction:column;gap:2px}
+.rs-tx small{opacity:.7}
 @media (prefers-reduced-motion:no-preference){
   html:not([data-anim=off]) .pas-hero .mi-sl-big{animation:pas-ave 6s ease-in-out infinite;will-change:transform}
   html:not([data-anim=off]) main .mi-bento .mi-b:nth-child(3){animation-delay:.16s}

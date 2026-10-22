@@ -24,6 +24,7 @@
    "icono": "🌳",
    "clase": "sb-plus",
    "quien": "Tu espacio completo para cuidar tu fe y tu crecimiento cada día, en cualquier teléfono.",
+   "problema": "Lo gratis te acompaña, pero tu jardín se queda corto y no puedes llevar varios planes de vida a la vez.",
    "mensual": 6990,
    "anual": 69900,
    "grupos": [
@@ -50,6 +51,10 @@
      ]
     }
    ],
+   "no_incluye": [
+    "No incluye funciones de iglesia: calendario, proyectos ni avisos de tu congregación (eso lo activa tu iglesia con un Plan Iglesia).",
+    "No incluye panel de pastor ni herramientas de líder."
+   ],
    "id_tienda": {
     "mensual": "tb_plus_mensual",
     "anual": "tb_plus_anual"
@@ -64,6 +69,7 @@
    "icono": "🕍",
    "clase": "sb-iglesia",
    "quien": "Lo que tu iglesia necesita para organizarse mes a mes: calendario, proyectos, líderes y metas. Lo contrata la iglesia; los miembros no pagan nada.",
+   "problema": "Hoy organizar la iglesia mes a mes pasa por chats sueltos y papeles: nada queda en un solo lugar ni con seguimiento.",
    "rangos": [
     {
      "t": "Hasta 50 personas",
@@ -146,6 +152,10 @@
      ]
     }
    ],
+   "no_incluye": [
+    "No incluye Plus para los miembros: cada persona sigue con la versión gratis salvo que compre Plus por su cuenta.",
+    "No incluye copia en la nube del jardín personal ni música y juegos completos (eso es de Plus)."
+   ],
    "nota": "Si tu iglesia es pequeña o no puede pagarlo, el pastor puede pedir una beca gratuita. ¿Más de 400 personas? Escríbenos.",
    "id_tienda": {
     "mensual": "tb_iglesia_mensual",
@@ -161,6 +171,7 @@
    "icono": "🕍",
    "clase": "sb-iglesia",
    "quien": "Todo el Plan Iglesia, y además cada miembro recibe Tierra Buena Plus incluido: su jardín, sus planes de vida y su copia en la nube.",
+   "problema": "Lo mismo que el Plan Iglesia, y además cada miembro se queda con un jardín incompleto si no paga Plus por su cuenta.",
    "rangos": [
     {
      "t": "Hasta 50 personas",
@@ -190,6 +201,9 @@
       "Un extra para toda la congregación: más motivo para quedarse y crecer juntos."
      ]
     }
+   ],
+   "no_incluye": [
+    "El Plus de cada miembro dura mientras la iglesia mantenga este plan: si la iglesia cambia de plan, los miembros vuelven a la versión gratis."
    ],
    "nota": "Mismo tamaño de iglesia que el Plan Iglesia; la diferencia es el Plus de cada miembro.",
    "id_tienda": {
