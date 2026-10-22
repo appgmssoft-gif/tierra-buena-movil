@@ -1,5 +1,5 @@
 {
- "_nota": "F1333 · Planes separados por función (21 oct 2026). Tres planes: Tierra Buena Plus (persona), Plan Iglesia (funciones de iglesia) y Plan Iglesia + Plus (iglesia más Plus para cada miembro). La lista «funciones» es la fuente única: cada función indica en qué plan vive (gratis, plus o iglesia) y si está lista o por construir. Precios CLP con IVA. Documento: compartido/docs/SUSCRIPCIONES.md. APAGADA por defecto (oferta_activa:false).",
+ "_nota": "F1334 · Planes separados por función (21 oct 2026). Tres planes: Tierra Buena Plus (persona), Plan Iglesia (funciones de iglesia) y Plan Iglesia + Plus (iglesia más Plus para cada miembro). La lista «funciones» es la fuente única: cada función indica en qué plan vive (gratis, plus o iglesia) y si está lista o por construir. Precios CLP con IVA. Documento: compartido/docs/SUSCRIPCIONES.md. APAGADA por defecto (oferta_activa:false).",
  "oferta_activa": false,
  "dias_cuidado_minimo": 7,
  "gracia_dias": 7,
@@ -32,11 +32,17 @@
      "l": [
       "Tu jardín completo: 3 hábitats, animales y decoraciones.",
       "Todos los planes de vida a la vez, sin esperar.",
-      "Tu jardín y tu avance en la nube: cambias de teléfono y no pierdes nada.",
+      {
+       "t": "Tu jardín y tu avance en la nube: cambias de teléfono y no pierdes nada.",
+       "pronto": true
+      },
       "Música y juegos completos.",
       "Todas las áreas de Mi crecimiento.",
-      "Temas, letras y recordatorios a tu medida.",
-      "Exportar notas y versículos a PDF.",
+      "Temas de color, tamaño de letra en la lectura y recordatorios.",
+      {
+       "t": "Exportar notas y versículos a PDF.",
+       "pronto": true
+      },
       {
        "t": "Más paisajes y estaciones del año",
        "pronto": true
@@ -85,7 +91,10 @@
       "Calendario mensual que todos ven: cultos, actividades y servicios.",
       "Peticiones de oración y visitas con seguimiento: quién las lleva y cuándo se atendieron.",
       "Ministerios, turnos de servicio y líderes en un solo lugar.",
-      "Resumen semanal de lo pendiente."
+      {
+       "t": "Resumen semanal de lo pendiente.",
+       "pronto": true
+      }
      ]
     },
     {
@@ -215,6 +224,11 @@
   },
   {
    "area": "Palabra",
+   "t": "Sincronizar notas, resaltados y planes entre tus teléfonos",
+   "n": "gratis"
+  },
+  {
+   "area": "Palabra",
    "t": "Imágenes de versículos para compartir",
    "n": "gratis"
   },
@@ -227,7 +241,8 @@
   {
    "area": "Palabra",
    "t": "Exportar notas y versículos a PDF",
-   "n": "plus"
+   "n": "plus",
+   "nota": "Por construir (hoy se imprime o guarda en PDF solo diseños y prédicas)"
   },
   {
    "area": "Vida",
@@ -272,7 +287,8 @@
   {
    "area": "Tu jardín",
    "t": "Copia del jardín y del avance en la nube",
-   "n": "plus"
+   "n": "plus",
+   "nota": "Por construir (requiere permiso, ver TAREAS P5)"
   },
   {
    "area": "Tu jardín",
@@ -294,7 +310,8 @@
   {
    "area": "Organiza tu iglesia",
    "t": "Resumen semanal de lo pendiente",
-   "n": "iglesia"
+   "n": "iglesia",
+   "nota": "Por construir"
   },
   {
    "area": "Organiza tu iglesia",

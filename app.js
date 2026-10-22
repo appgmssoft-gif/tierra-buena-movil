@@ -183,52 +183,7 @@
 
   // F881: íconos de línea propios (un solo estilo, hereda color). Los emojis de las tarjetas se traducen aquí;
   // si un emoji no está en la tabla se muestra tal cual. Nada de style="" (la política de seguridad no lo permite).
-  const SV = {
-    lugar: '<path d="M12 21s-6-5.4-6-10a6 6 0 0 1 12 0c0 4.6-6 10-6 10z"/><circle cx="12" cy="11" r="2.2"/>',
-    reloj: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
-    telefono: '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
-    mas: '<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>',
-    persona: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>',
-    escudo: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
-    ciclo: '<path d="M20 12a8 8 0 0 1-14 5.3M4 12a8 8 0 0 1 14-5.3"/><path d="M18 3v4h-4M6 21v-4h4"/>',
-    libro: '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
-    chispas: '<path d="M9.9 15.5a2 2 0 0 0-1.4-1.4l-6.1-1.6a.5.5 0 0 1 0-1l6.1-1.6a2 2 0 0 0 1.4-1.4l1.6-6.1a.5.5 0 0 1 1 0l1.6 6.1a2 2 0 0 0 1.4 1.4l6.1 1.6a.5.5 0 0 1 0 1l-6.1 1.6a2 2 0 0 0-1.4 1.4l-1.6 6.1a.5.5 0 0 1-1 0z"/><path d="M20 3v4M22 5h-4"/>',
-    rollo: '<path d="M19 17V5a2 2 0 0 0-2-2H4"/><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/>',
-    brote: '<path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/>',
-    corazon: '<path d="M12 20s-7.6-4.5-9.3-9.1C1.6 7.6 3.5 4.5 6.8 4.5c2.1 0 3.6 1.2 5.2 3.1 1.6-1.9 3.1-3.1 5.2-3.1 3.3 0 5.2 3.1 4.1 6.4C19.6 15.5 12 20 12 20z"/>',
-    iglesia: '<path d="M10 9h4M12 7v5"/><path d="M14 22v-4a2 2 0 0 0-4 0v4"/><path d="M18 22V5.6a1 1 0 0 0-.6-.9l-4.5-2.3a2 2 0 0 0-1.8 0L6.6 4.7A1 1 0 0 0 6 5.6V22"/><path d="m18 7 3.4 1.7a1 1 0 0 1 .6.9V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.6a1 1 0 0 1 .6-.9L6 7"/>',
-    llave: '<path d="M2.6 17.4a2 2 0 0 0-.6 1.4V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.2a2 2 0 0 0 1.4-.6l.8-.8a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".6"/>',
-    correo: '<rect x="2" y="4" width="20" height="16" rx="3"/><path d="m22 7-9 5.7a2 2 0 0 1-2 0L2 7"/>',
-    candado: '<rect x="3" y="11" width="18" height="11" rx="3"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
-    altavoz: '<path d="M3 10v4h3.5L11 18V6L6.5 10H3z"/><path d="M15 9.5a3.5 3.5 0 0 1 0 5"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/>',
-    calendario: '<path d="M8 2v4M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M3 10h18"/>',
-    foco: '<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6M10 22h4"/>',
-    birrete: '<path d="M21.4 10.9a1 1 0 0 0 0-1.8L12.8 5.2a2 2 0 0 0-1.6 0L2.6 9.1a1 1 0 0 0 0 1.8l8.6 3.9a2 2 0 0 0 1.6 0z"/><path d="M22 10v6M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>',
-    estrella: '<path d="M11.5 2.3a.5.5 0 0 1 1 0l2.3 4.7a2.1 2.1 0 0 0 1.6 1.2l5.2.7a.5.5 0 0 1 .3.9l-3.7 3.6a2.1 2.1 0 0 0-.6 1.9l.9 5.1a.5.5 0 0 1-.8.6l-4.6-2.4a2.1 2.1 0 0 0-2 0l-4.6 2.4a.5.5 0 0 1-.8-.6l.9-5.1a2.1 2.1 0 0 0-.6-1.9L2.2 9.8a.5.5 0 0 1 .3-.9l5.1-.7A2.1 2.1 0 0 0 9.200 7z"/>',
-    ayuda: '<circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/>',
-    play: '<path d="M7 4.5v15a1 1 0 0 0 1.5.9l12-7.5a1 1 0 0 0 0-1.8l-12-7.5A1 1 0 0 0 7 4.500z"/>',
-    pluma: '<path d="M12 20h9"/><path d="M16.4 3.6a2.1 2.1 0 0 1 3 3L7.4 18.600a2 2 0 0 1-.9.500l-2.900.8a.5.5 0 0 1-.6-.6l.8-2.900a2 2 0 0 1 .5-.9z"/>',
-    gente: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.100a4 4 0 0 1 0 7.800"/>',
-    mente: '<circle cx="12" cy="12" r="10"/><path d="M8 14s1.500 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/>',
-    viento: '<path d="M12.800 19.600A2 2 0 1 0 14 16H2"/><path d="M17.500 8a2.500 2.500 0 1 1 2 4H2"/><path d="M9.800 4.400A2 2 0 1 1 11 8H2"/>',
-    bloques: '<rect x="3" y="3" width="7" height="7" rx="1.500"/><rect x="14" y="3" width="7" height="7" rx="1.500"/><rect x="14" y="14" width="7" height="7" rx="1.500"/><rect x="3" y="14" width="7" height="7" rx="1.500"/>',
-    llave2: '<path d="M14.700 6.300a1 1 0 0 0 0 1.400l1.600 1.600a1 1 0 0 0 1.400 0l3.800-3.800a6 6 0 0 1-7.900 7.900l-6.900 6.900a2.100 2.100 0 0 1-3-3l6.900-6.900a6 6 0 0 1 7.900-7.900z"/>',
-    paloma: '<path d="M16 7h.01"/><path d="M3.400 18H12a8 8 0 0 0 8-8V7a4 4 0 0 0-7.300-2.300L2 20"/><path d="m20 7 2 .5-2 .5M10 18v3M14 17.800V21M7 18a6 6 0 0 0 3.800-10.600"/>',
-    llama: '<path d="M8.500 14.500A2.500 2.500 0 0 0 11 12c0-1.400-.5-2-1-3-1.100-2.100-.2-4.100 2-6 .5 2.500 2 4.900 4 6.500 2 1.600 3 3.500 3 5.500a7 7 0 1 1-14 0c0-1.200.4-2.300 1-3a2.500 2.500 0 0 0 2.500 2.500z"/>',
-    hoja: '<path d="M11 20A7 7 0 0 1 9.800 6.100C15.500 5 17 4.500 19 2c1 2 2 4.200 2 8 0 5.500-4.800 10-10 10z"/><path d="M2 21c0-3 1.900-5.500 5-6.700 3-1.200 5.500-2.300 7-5.300"/>',
-    marcador: '<path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/>',
-    imagen: '<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/>',
-    copiar: '<rect x="8" y="8" width="14" height="14" rx="2"/><path d="M4 16a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2"/>',
-    compartir: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/>',
-    x: '<path d="M18 6 6 18M6 6l12 12"/>',
-    trofeo: '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.7V17c0 .6-.5 1-1.2 1.2C7.8 18.7 7 20.2 7 22M14 14.7V17c0 .6.5 1 1.2 1.2 1 .5 1.8 2 1.8 3.8M18 2H6v7a6 6 0 0 0 12 0z"/>',
-    nota: '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
-    check: '<path d="M20 6 9 17l-5-5"/>',
-    papelera: '<path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6"/>',
-    luna: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/>',
-    sol: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.900 4.900l1.400 1.400M17.700 17.700l1.400 1.400M2 12h2M20 12h2M4.900 19.100l1.400-1.400M17.700 6.300l1.400-1.400"/>'
-  };
-  SV.pausa = '<path d="M8 5v14M16 5v14"/>'; SV.audifonos = '<path d="M4 14v-2a8 8 0 0 1 16 0v2"/><path d="M4 14h3v6H5a1 1 0 0 1-1-1zM20 14h-3v6h2a1 1 0 0 0 1-1z"/>'; SV.texto = '<path d="M4 19 9.500 5 15 19M6 14h7M17 12h3M18.500 12v7"/>';
+  const SV = (window.TB && window.TB.iconos) || {};
   const EMO = { '🎲': 'dado', '🕹': 'joystick', '🕹️': 'joystick', '📖': 'libro', '✨': 'chispas', '📜': 'rollo', '🌱': 'brote', '🙏': 'corazon', '🕍': 'iglesia', '⛪': 'iglesia', '🔑': 'llave', '✉': 'correo', '🔒': 'candado', '📣': 'altavoz', '📅': 'calendario', '💡': 'foco', '🎓': 'birrete', '🌟': 'estrella', '❓': 'ayuda', '▶': 'play', '📝': 'pluma', '🤝': 'gente', '🧠': 'mente', '🫁': 'viento', '🧱': 'bloques', '🧰': 'llave2', '🕊': 'paloma', '🌿': 'hoja', '🔖': 'marcador', '🗓': 'calendario', '🏆': 'trofeo', '🖼': 'imagen', '🎵': 'nota', '🎶': 'nota', '🎉': 'chispas', '🗑': 'papelera', '✓': 'check', '🤲': 'manos', '✍': 'pluma', '🔎': 'lupa', '🌅': 'amanecer', '🔀': 'baraja' };
   // F942: pictogramas a color (más fáciles de reconocer para personas mayores). Si una clave no está aquí, sigue el ícono de línea.
   // Íconos a color de Tierra Buena: contorno café común, tierra/brote/ámbar y un detalle de brote que los une
@@ -1005,22 +960,7 @@
       pm.hidden = false; pm.textContent = !r.ok ? 'No pudimos preparar el archivo en este teléfono.' : (r.copiado ? 'Copié tus datos al portapapeles.' : 'Listo, el archivo quedó en tus descargas.') + (r.sinInternet ? ' Sin internet no pude incluir tus peticiones enviadas.' : '');
     };
   }
-  const AYUDA = [
-    ['⛪', '¿Cómo me uno a mi iglesia?', 'Pídele a tu pastor el código de 6 letras o números. Toca «Mi código» (el ícono de la iglesia, arriba en Mi iglesia), escríbelo, pon tu nombre y espera: tu pastor aprueba la solicitud y listo.'],
-    ['📲', '¿Cómo uso mi cuenta en otro teléfono o en el computador?', 'Entra con el mismo correo y contraseña. Tu iglesia y tus avances te siguen solos. Si no tienes cuenta, créala en «Entrar con mi correo y contraseña».'],
-    ['🔒', '¿Qué ve mi pastor de mí?', 'Tu nombre, tus peticiones de oración y tus pedidos de visita. Tu diario, tu crecimiento y tus avances no los ve nadie de tu iglesia.', 'privacidad'],
-    ['📴', '¿Qué sirve sin internet?', 'La Biblia que ya abriste, el versículo, tu diario, tu crecimiento y los cursos que ya viste. Pedir oración o visita y el muro necesitan internet.'],
-    ['🔑', 'Olvidé mi contraseña', 'En «Entrar con mi correo» toca «¿Olvidaste tu contraseña?». Te llega un correo con un enlace; revisa también «spam».'],
-    ['🛠️', 'No puedo entrar o crear mi cuenta', 'En esa pantalla toca «¿No funciona? Revisar la conexión»: te dice qué falla. Si el correo de confirmación no llega, usa «Reenviar el correo de confirmación».'],
-    ['🗑️', '¿Cómo borro mis datos?', 'En «Mi privacidad» puedes descargarlos, apagar y borrar la copia de tu cuenta, o salir de la iglesia para borrar tu nombre de su lista.', 'privacidad'],
-    ['🌳', '¿Qué es el Inicio y cómo crece mi árbol?', 'Es tu lugar tranquilo. Al empezar eliges un lugar (bosque nativo, desierto florido o costa del Pacífico) y su árbol crece mientras lees y vives la Palabra: madura en 10 días, uno por cada día que entras a Inicio. El lugar se completa también en 10 días, con detalles nuevos que van apareciendo en el camino. Verás siempre cuántos días faltan. Si pasas varios días sin entrar, puede aparecer maleza en tu jardín.'],
-    ['💧', '¿Qué son las gotas de rocío y cómo las gano?', 'Las ganas al leer un capítulo, al hacer un paso de «Hoy lo hago», al avanzar un día de un plan, al jugar (con 6 aciertos de cada 10) y con la trivia diaria. Hay un máximo por día. No vencen, no se compran con dinero y las usas en tu Inicio.'],
-    ['📖', '¿Cómo cambio la versión de la Biblia?', 'En Palabra toca «Leer la Biblia» y elige la versión que prefieras. Los libros que vas leyendo quedan guardados para leer sin internet.'],
-    ['🗓', '¿Cómo sigo un plan de lectura?', 'En Palabra toca «Plan de lectura», elige uno y marca cada día cuando lo leas. Mientras tengas uno en curso, esa tarjeta dice «Mi plan» y te lleva al día que toca.'],
-    ['🙏', '¿Dónde pido ayuda si lo necesito hoy?', 'En Vida toca «Ayuda y contactos»: ahí están las emergencias, las líneas de apoyo en Chile y a quién acudir en tu iglesia. Si hay peligro inmediato, llama primero.'],
-    ['📲', '¿Cómo instalo la app en mi teléfono?', 'Toca «Instalar la app» en el aviso de Palabra o en el menú y sigue los pasos que aparecen. Así se abre como cualquier otra app, desde tu pantalla de inicio.'],
-    ['🗑', '¿Puedo descargar o borrar mis datos?', 'Sí. En «Mi privacidad» puedes descargar tus datos o eliminar tu cuenta y todo lo guardado. Se llega desde Perfil, en la sección Cuenta.', 'privacidad']
-  ];
+  const AYUDA = (window.TB && window.TB.preguntas) || [];
   function vistaPreguntas(id, atras) {   // F1094: antes se llamaba vistaAyuda y la pisaba «Ayuda y contactos»; ahora cada una abre lo que dice su tarjeta
     const dePerfil = atras === 'perfil';
     $('#pantalla').innerHTML = `${dePerfil ? '<button type="button" class="volver" id="volver">‹ Perfil</button>' : volver()}${heroInt('c3', '💬', 'Respuestas rápidas', 'Preguntas frecuentes', 'Toca una pregunta para ver la respuesta.')}
@@ -4499,7 +4439,7 @@
     } catch (e) { /* sin animación */ }
   }
   function ir(tab, directo) {
-    if (!haySesion() && tab !== 'palabra') return puerta();   // F936: sin sesión solo se abre la Palabra (F1097: se lee sin cuenta)
+    if (!haySesion() && tab !== 'palabra' && tab !== 'inicio') return puerta();   // F936: sin sesión se abren la Palabra y el Inicio (F1097; F1332 tarea 1.1)
     const sentido = ORDEN_TAB.indexOf(tab) < ORDEN_TAB.indexOf(tabPrev) ? 'atras' : 'adelante'; tabPrev = tab;
     const tabMarca = tab === 'pastor' ? 'iglesia' : tab === 'perfil' ? 'inicio' : tab;   // F1321: Mi perfil marca Inicio
     document.querySelectorAll('.tab').forEach((b) => { if (b.dataset.tab === tabMarca) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
@@ -4644,7 +4584,7 @@
   // F892: sin cuenta, ni iglesia, ni solicitud (primera vez o quien dijo «solo quiero leer») se abre la portada animada cada vez; con cuenta o iglesia, directo a la app
   const portadaYaVista = () => { try { if (sessionStorage.getItem('tb_movil_portada') === '1') return true; sessionStorage.setItem('tb_movil_portada', '1'); return false; } catch (e) { return true; } };   // una vez por apertura (no en cada recarga); si no hay dónde anotarlo, no molesta
   marcaDentro();
-  if (!haySesion() ? (!hayOnb() || !portadaYaVista()) : (!codigoDeEnlace() && (!hayOnb() || !portadaYaVista()))) onbSplash(); else ir(haySesion() ? tabInicio() : 'palabra');   // F936 · F1097: sin sesión se entra directo a la Palabra: sin sesión, la portada y luego la puerta   // F893: la portada sale al abrir la app para todos (una vez por apertura)
+  if (!haySesion() ? (!hayOnb() || !portadaYaVista()) : (!codigoDeEnlace() && (!hayOnb() || !portadaYaVista()))) onbSplash(); else ir(haySesion() ? tabInicio() : 'inicio');   // F936 · F1097: sin sesión se entra directo a la Palabra: sin sesión, la portada y luego la puerta   // F893: la portada sale al abrir la app para todos (una vez por apertura)
   try {   // F898: atajos del ícono instalado (manifest → shortcuts)
     const q = new URLSearchParams(String((window.location && window.location.search) || '').slice(1)).get('ir');
     const at = { versiculo: vistaVersiculo, biblia: vistaBiblia, calendario: vistaCalendario };
