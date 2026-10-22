@@ -245,7 +245,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Acertijos de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Letras entre las hojas': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => !CABECERAS_ILUSTRADAS ? '' : `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1344';
+  const APP_VERSION = 'F1346';
   // F1171: respaldo si movimiento.js no cargó (pruebas o caché vieja): mismo criterio que TBMov.quieto().
   const MOV_QUIETO = () => { try { if (window.TBMov) return window.TBMov.quieto(); const h = document.documentElement; return h.getAttribute('data-anim') === 'off' || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
@@ -748,7 +748,7 @@
   const ficha = (ico, titulo, ayuda, ir) => `<button type="button" class="mi-ficha" data-ir="${ir}"><span class="mi-ficha-ic" aria-hidden="true">${icono(ico)}</span><b>${titulo}</b><small>${ayuda}</small></button>`;
   function cablearMiembro(id) {
     document.querySelectorAll('[data-chat]').forEach((b) => b.addEventListener('click', () => vistaChat({ rol: 'miembro', codigo: id.codigo, clave: id.clave, nombre: id.nombre })));
-    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ juntos: abrirJuntos, oracion: vistaOracion, agenda: (i) => vistaAgenda(modoMiembro(i)), avisos: (i) => vistaAvisos(modoMiembro(i)), ministerios: vistaMinisterios, muro: vistaMuro, accion: vistaAccion, visita: vistaVisita, mioracion: () => vistaMiOracion(), crec: () => vistaCrecimiento(), privacidad: vistaPrivacidad, ayuda: () => vistaPreguntas(id), servir: vistaMiembroServir, cuenta: vistaMiembroCuenta }[b.dataset.ir] || vistaVisita)(id)));
+    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ juntos: abrirJuntos, oracion: vistaOracion, agenda: (i) => vistaAgenda(modoMiembro(i)), avisos: (i) => vistaAvisos(modoMiembro(i)), ministerios: vistaMinisterios, predicas: () => window.TBPredPub && window.TBPredPub.miembro(id, () => vistaMiembro(id)), muro: vistaMuro, accion: vistaAccion, visita: vistaVisita, mioracion: () => vistaMiOracion(), crec: () => vistaCrecimiento(), privacidad: vistaPrivacidad, ayuda: () => vistaPreguntas(id), servir: vistaMiembroServir, cuenta: vistaMiembroCuenta }[b.dataset.ir] || vistaVisita)(id)));
   }
   function vistaMiembro(id) {
     const ig = leer(K_IG);
@@ -775,6 +775,7 @@
       <h2 class="mi-sub">Mi espacio</h2>
       <div class="mi-chips" role="group" aria-label="Mi espacio">
         <button type="button" class="mi-chip" data-ir="juntos"><span aria-hidden="true">🤲</span>Juntos hacemos el bien</button>
+        <button type="button" class="mi-chip" data-ir="predicas"><span aria-hidden="true">🎙️</span>Prédicas</button>
         <button type="button" class="mi-chip" data-ir="ministerios"><span aria-hidden="true">🕍</span>Mis ministerios</button>
         <button type="button" class="mi-chip" data-ir="privacidad"><span aria-hidden="true">🔒</span>Privacidad</button>
         <button type="button" class="mi-chip" data-ir="ayuda"><span aria-hidden="true">❓</span>Preguntas</button>
@@ -3973,11 +3974,12 @@
     h += fila('lugar', visNuevas + ' ' + plural(visNuevas, 'visita pedida', 'visitas pedidas'), visPend ? visPend + ' sin cerrar' : 'Nada pendiente', 'vis');
     h += fila('gente', sol.length + ' ' + plural(sol.length, 'solicitud esperando', 'solicitudes esperando'), sol.length ? 'Personas que quieren unirse' : 'Nadie esperando', 'sol');
     h += fila('altavoz', aviSemana + ' ' + plural(aviSemana, 'aviso publicado', 'avisos publicados'), 'Para tu iglesia o un ministerio', 'avi');
+    h += fila('altavoz', 'Prédicas para mi iglesia', 'Publica una prédica para que tu iglesia la lea', 'pred');
     h += '<h2 class="mi-sub">Lo próximo (7 días)</h2>';
     h += proximos.length ? proximos.map((e) => `<div class="card item"><p class="t m0">${esc(e.titulo)}</p><p class="suave m0t">${esc(cercania(diasHasta(e.inicio)) || dtFmt(e.inicio))}${e.lugar ? ' · ' + esc(e.lugar) : ''}</p></div>`).join('') : '<p class="suave">Nada agendado todavía. Agrega algo en tu Agenda.</p>';
     h += `<button type="button" class="btn sec sep16" id="rsComp">${svg('compartir', 18)} Compartir con mis líderes</button>`;
     $('#plista').innerHTML = h;
-    document.querySelectorAll('[data-pp]').forEach((b) => b.addEventListener('click', () => ({ ora: pOraciones, vis: pVisitas, sol: pSolicitudes, avi: () => vistaAvisos(modoPastor(p)) }[b.dataset.pp])(p)));
+    document.querySelectorAll('[data-pp]').forEach((b) => b.addEventListener('click', () => ({ ora: pOraciones, vis: pVisitas, sol: pSolicitudes, avi: () => vistaAvisos(modoPastor(p)), pred: () => window.TBPredPub && window.TBPredPub.pastor(p, () => ir('pastor')) }[b.dataset.pp])(p)));
     // F1338 · Compartir el resumen por WhatsApp u otra app: solo cifras y lo próximo, nunca el contenido de una petición o visita.
     const rsComp = $('#rsComp');
     if (rsComp) rsComp.onclick = async () => {
