@@ -245,7 +245,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Acertijos de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Letras entre las hojas': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => !CABECERAS_ILUSTRADAS ? '' : `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1332';
+  const APP_VERSION = 'F1344';
   // F1171: respaldo si movimiento.js no cargó (pruebas o caché vieja): mismo criterio que TBMov.quieto().
   const MOV_QUIETO = () => { try { if (window.TBMov) return window.TBMov.quieto(); const h = document.documentElement; return h.getAttribute('data-anim') === 'off' || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
@@ -3184,7 +3184,11 @@
   const cercania = (d) => (d == null ? '' : d === 0 ? 'Hoy' : d === 1 ? 'Mañana' : d > 1 && d <= 7 ? 'En ' + d + ' días' : '');
   const eventoHTML = (e, borrable) => `<div class="card item evento${diasHasta(e.inicio) === 0 ? ' ev-hoy' : ''}${(diasHasta(e.inicio) || 0) < 0 ? ' ev-paso' : ''}"><div class="ev-fecha" aria-hidden="true"><b>${esc(new Date(e.inicio).toLocaleDateString('es-CL', { day: 'numeric' }))}</b><small>${esc(new Date(e.inicio).toLocaleDateString('es-CL', { month: 'short' }))}</small></div><div class="ev-txt">${cercania(diasHasta(e.inicio)) ? `<span class="ev-pronto">${cercania(diasHasta(e.inicio))}</span>` : ''}<b>${esc(e.titulo)}</b><p class="suave m0">${esc(dtFmt(e.inicio))}${e.lugar ? ' · ' + svg('lugar', 14) + ' ' + esc(e.lugar) : ''}${e.ministerio ? ' · ' + esc(e.ministerio) : ''}</p>${e.detalle ? `<p class="m0t">${esc(e.detalle)}</p>` : ''}${borrable ? `<button type="button" class="enlace" data-bev="${esc(e.id)}">Quitar</button>` : ''}</div></div>`;
   const avisoNuevo = (a) => { const d = diasHasta(a.creado_en); return d != null && d <= 0 && d >= -3; };
-  const avisoHTML = (a, borrable) => `<div class="card item aviso${avisoNuevo(a) ? ' av-nuevo' : ''}"><div class="t"><span aria-hidden="true">${svg('altavoz', 20)}</span>${esc(a.titulo)}${avisoNuevo(a) ? '<span class="av-pill">Nuevo</span>' : ''}${a.ministerio ? `<span class="etiqueta">${esc(a.ministerio)}</span>` : ''}</div><p class="m0t">${esc(a.texto)}</p><p class="suave m0t">${esc(fecha(a.creado_en))}${borrable ? ` · <button type="button" class="enlace" data-bav="${esc(a.id)}">Quitar</button>` : ''}</p></div>`;
+  // F1344 · Confirmación de lectura (Fase 3, FUNCIONES_DEL_PASTOR.md «distribuir información»): el miembro marca
+  // que leyó un aviso con un toque; el pastor ve cuántos confirmaron sin tener que preguntar uno por uno.
+  // Requiere 24_SQL_F1341_CONFIRMACION_LECTURA_AVISOS.sql. Si la app aún usa aviso_*_listar (v1), a.confirmado y
+  // a.confirmados vienen undefined y no se muestra nada nuevo: no rompe nada.
+  const avisoHTML = (a, borrable) => `<div class="card item aviso${avisoNuevo(a) ? ' av-nuevo' : ''}"><div class="t"><span aria-hidden="true">${svg('altavoz', 20)}</span>${esc(a.titulo)}${avisoNuevo(a) ? '<span class="av-pill">Nuevo</span>' : ''}${a.ministerio ? `<span class="etiqueta">${esc(a.ministerio)}</span>` : ''}</div><p class="m0t">${esc(a.texto)}</p><p class="suave m0t">${esc(fecha(a.creado_en))}${a.confirmados != null ? ' · ' + a.confirmados + (a.alcance ? ' de ' + a.alcance : '') + (a.confirmados === 1 ? ' confirmó' : ' confirmaron') : ''}${borrable ? ` · <button type="button" class="enlace" data-bav="${esc(a.id)}">Quitar</button>` : ''}</p>${a.confirmado === true ? '<p class="suave m0t av-leido">✓ Marcaste que lo leíste</p>' : a.confirmado === false ? `<button type="button" class="btn sec chico av-leer" data-lav="${esc(a.id)}">Marcar como leído</button>` : ''}</div>`;
 
   // Pantalla común (miembro/líder y pastor). modo: { pas, id, volverTxt, volverFn }
   async function vistaAgenda(modo) {
@@ -3228,10 +3232,9 @@
     const { pas, id } = modo;
     $('#pantalla').innerHTML = `${cabecera('Avisos', modo.volverTxt)}<div id="avhero"></div><p class="suave" id="avmsg">Cargando…</p><div id="avlista"></div><div id="avform"></div>`;
     volverA(modo.volverTxt, modo.volverFn);
-    const [rA, rM] = await Promise.all([
-      pas ? rpcRaw('aviso_pastor_listar', { p_codigo: pas.codigo, p_secreto: pas.secreto }) : rpcRaw('aviso_miembro_listar', { p_codigo: id.codigo, p_clave: id.clave }),
-      pas ? rpcRaw('ministerio_pastor_listar', { p_codigo: pas.codigo, p_secreto: pas.secreto }) : misMinisterios(id).then((r) => ({ ok: r.ok, data: r.lista }))
-    ]);
+    let rA = pas ? await rpcRaw('aviso_pastor_listar_v2', { p_codigo: pas.codigo, p_secreto: pas.secreto }) : await rpcRaw('aviso_miembro_listar_v2', { p_codigo: id.codigo, p_clave: id.clave });
+    if (!rA.ok && rA.falta) rA = pas ? await rpcRaw('aviso_pastor_listar', { p_codigo: pas.codigo, p_secreto: pas.secreto }) : await rpcRaw('aviso_miembro_listar', { p_codigo: id.codigo, p_clave: id.clave });
+    const rM = await (pas ? rpcRaw('ministerio_pastor_listar', { p_codigo: pas.codigo, p_secreto: pas.secreto }) : misMinisterios(id).then((r) => ({ ok: r.ok, data: r.lista })));
     const m = $('#avmsg'); if (!m) return;
     if (!rA.ok) { m.textContent = rA.falta ? 'Los avisos aún no están listos. Estamos preparándolos; vuelve a intentarlo más tarde.' : MOTIVOS['sin-internet']; return; }
     const mins = (rM.ok && Array.isArray(rM.data) ? rM.data : []).filter((x) => pas || x.es_lider), lista = rA.data || [];
@@ -3244,6 +3247,13 @@
       if (!confirm('¿Quitar este aviso?')) return;
       const q = quien(pas, id); const r = await rpcRaw('aviso_borrar', { p_codigo: q.p_codigo, p_secreto: q.p_secreto, p_clave: q.p_clave, p_id: b.dataset.bav });
       r.ok && r.data ? vistaAvisos(modo) : (m.textContent = errTxt(r.error));
+    }));
+    // F1344 · Marcar como leído (solo miembro; el pastor no confirma sus propios avisos)
+    document.querySelectorAll('[data-lav]').forEach((b) => b.addEventListener('click', async () => {
+      if (pas) return; b.disabled = true;
+      const r = await rpcRaw('aviso_confirmar', { p_codigo: id.codigo, p_clave: id.clave, p_id: b.dataset.lav });
+      const x = r.ok ? primera(r.data) : null;
+      if (x && x.ok) { b.outerHTML = '<p class="suave m0t av-leido">✓ Marcaste que lo leíste</p>'; } else { b.disabled = false; }
     }));
     const ok = $('#avok'); if (!ok) return;
     ok.onclick = async () => {
@@ -3455,6 +3465,13 @@
     prpc('solicitud_pastor_listar', p).then((r) => { if (r.ok) { cuentas.sol = (r.data || []).length; ins('sol', cuentas.sol); pintaResumen(); } });
     prpc('peticion_pastor_listar_v2', p).then((r) => (r.ok ? r : prpc('peticion_pastor_listar', p))).then((r) => { if (r.ok) { cuentas.ora = (r.data || []).length; ins('ora', cuentas.ora); pintaResumen(); } });
     prpc('visita_pastor_listar', p).then((r) => { if (r.ok) { cuentas.vis = (r.data || []).filter((v) => v.estado === 'solicitada').length; ins('vis', cuentas.vis); pintaResumen(); } });
+    // F1341 · El Boletín de la semana se avisa solo: si ya hay avisos activos o algo en la agenda de los próximos
+    // 7 días, aparece un número en su tarjeta. Así el pastor no tiene que acordarse de entrar a revisarlo cada semana.
+    Promise.all([prpc('aviso_pastor_listar', p), prpc('agenda_pastor_listar', p)]).then(([rAv, rAg]) => {
+      const nAv = rAv.ok ? (rAv.data || []).length : 0;
+      const nAg = rAg.ok ? (rAg.data || []).filter((e) => (diasHasta(e.inicio) || 0) >= 0 && (diasHasta(e.inicio) || 0) <= 7).length : 0;
+      ins('bol', nAv + nAg);
+    });
   }
   // F1033 · CALENDARIO PERSONAL del pastor (solo lo ve él). Requiere 15_SQL_F1033_CALENDARIO_PASTOR.sql.
   const CAL_TIPOS = [['visita', 'Visita'], ['reunion', 'Reunión'], ['predica', 'Prédica'], ['personal', 'Personal'], ['descanso', 'Descanso']];
@@ -3993,7 +4010,11 @@
     const nNuevas = l.filter((x) => de(x) === 'recibida').length;
     if ($('#pHero')) $('#pHero').innerHTML = heroInt('c5 pas-hero', '🤲', 'Peticiones de tu iglesia', l.length ? nNuevas + (nNuevas === 1 ? ' por atender' : ' por atender') : 'Todo al día', l.length ? 'Al marcarlas, la persona ve que las viste.' : 'Cuando alguien pida oración, aparecerá aquí.');
     m.hidden = true;
-    const tarjeta = (x) => { const a = de(x); return `<div class="card item ped-card ped-${a}" data-pet="${esc(x.id)}"><div class="t"><span aria-hidden="true">${svg('paloma', 20)}</span>${x.anonima ? 'Anónima' : esc(x.nombre || 'Sin nombre')}${x.tipo ? `<span class="etiqueta">${esc(x.tipo)}</span>` : ''}</div><p class="m0t">${esc(x.texto)}</p><p class="suave m0t">${esc(fecha(x.creado_en))}${x.publica ? ' · quiere que se comparta en el muro' : ''}</p><div class="fab-acc"><button type="button" class="btn chico" data-vi="${esc(x.id)}">Ya la vi</button>${x.publica && !x.aprobada ? `<button type="button" class="btn sec chico" data-pu="${esc(x.id)}" data-an="${x.anonima ? 1 : 0}">Compartir en el muro</button>` : ''}</div><div class="pet-seg" role="group" aria-label="Seguimiento de la petición">${PET_ESTADOS.map(([k, t]) => '<button type="button" class="chip' + (a === k ? ' on' : '') + '" data-pes="' + k + '" data-pid="' + esc(x.id) + '" aria-pressed="' + (a === k) + '">' + t + '</button>').join('')}</div></div>`; };
+    // F1343 · La más antigua primero dentro de cada grupo, con cuántos días lleva esperando: así no hay que
+    // repasar toda la lista para saber qué se está quedando atrás.
+    l.sort((a2, b2) => new Date(a2.creado_en) - new Date(b2.creado_en));
+    const espera = (x) => { const d = -1 * (diasHasta(x.creado_en) || 0); return d >= 1 ? ' · hace ' + d + (d === 1 ? ' día' : ' días') : ''; };
+    const tarjeta = (x) => { const a = de(x); return `<div class="card item ped-card ped-${a}" data-pet="${esc(x.id)}"><div class="t"><span aria-hidden="true">${svg('paloma', 20)}</span>${x.anonima ? 'Anónima' : esc(x.nombre || 'Sin nombre')}${x.tipo ? `<span class="etiqueta">${esc(x.tipo)}</span>` : ''}</div><p class="m0t">${esc(x.texto)}</p><p class="suave m0t">${esc(fecha(x.creado_en))}${a !== 'atendida' ? esc(espera(x)) : ''}${x.publica ? ' · quiere que se comparta en el muro' : ''}</p><div class="fab-acc"><button type="button" class="btn chico" data-vi="${esc(x.id)}">Ya la vi</button>${x.publica && !x.aprobada ? `<button type="button" class="btn sec chico" data-pu="${esc(x.id)}" data-an="${x.anonima ? 1 : 0}">Compartir en el muro</button>` : ''}</div><div class="pet-seg" role="group" aria-label="Seguimiento de la petición">${PET_ESTADOS.map(([k, t]) => '<button type="button" class="chip' + (a === k ? ' on' : '') + '" data-pes="' + k + '" data-pid="' + esc(x.id) + '" aria-pressed="' + (a === k) + '">' + t + '</button>').join('')}</div></div>`; };
     const grupo = (tit, k) => { const g = l.filter((x) => de(x) === k); return g.length ? `<h2 class="mi-sub">${tit} · ${g.length}</h2>${g.map(tarjeta).join('')}` : ''; };
     $('#plista').innerHTML = l.length ? grupo('Nuevas', 'recibida') + grupo('En oración', 'en_oracion') + grupo('Atendidas', 'atendida') : '';
     document.querySelectorAll('[data-vi]').forEach((b) => b.addEventListener('click', async () => { await prpc('peticion_pastor_marcar_vista', p, { p_id: b.dataset.vi }); pOraciones(p); }));
@@ -4012,7 +4033,10 @@
     const nNuevas = l.filter((v) => v.estado === 'solicitada').length;
     if ($('#pHero')) $('#pHero').innerHTML = heroInt('c3 pas-hero', '🏠', 'Pedidos de visita', l.length ? nNuevas + (nNuevas === 1 ? ' nueva' : ' nuevas') : 'Sin pedidos abiertos', l.length ? 'La dirección aparece cuando aceptas.' : 'Cuando alguien pida que lo visites, aparecerá aquí.');
     m.hidden = true;
-    const tarjeta = (v) => `<div class="card item vis-card vis-${esc(v.estado)}"><div class="t"><span aria-hidden="true">${svg('gente', 20)}</span>${esc(v.nombre || 'Sin nombre')}<span class="etiqueta">${esc(ESTADO_V[v.estado] || v.estado)}</span></div><p class="m0t"><b>${esc(v.tipo)}</b>${v.urgencia ? ' · ' + esc(v.urgencia) : ''}</p><p class="m0t">${esc(v.motivo)}</p>${v.horarios ? `<p class="suave m0t">${svg('reloj', 16)} ${esc(v.horarios)}</p>` : ''}${v.telefono ? `<p class="suave m0t">${svg('telefono', 16)} ${esc(v.telefono)}</p>` : ''}${v.direccion ? `<p class="suave m0t">${svg('lugar', 16)} ${esc(v.direccion)}</p>` : ''}
+    // F1343 · La más antigua primero y cuántos días lleva pendiente, para que lo que se está quedando atrás se vea primero.
+    l.sort((a2, b2) => new Date(a2.creado_en) - new Date(b2.creado_en));
+    const esperaVis = (v) => { const d = -1 * (diasHasta(v.creado_en) || 0); return d >= 1 && v.estado !== 'realizada' && v.estado !== 'no_disponible' ? ' · hace ' + d + (d === 1 ? ' día' : ' días') : ''; };
+    const tarjeta = (v) => `<div class="card item vis-card vis-${esc(v.estado)}"><div class="t"><span aria-hidden="true">${svg('gente', 20)}</span>${esc(v.nombre || 'Sin nombre')}<span class="etiqueta">${esc(ESTADO_V[v.estado] || v.estado)}</span></div><p class="m0t"><b>${esc(v.tipo)}</b>${v.urgencia ? ' · ' + esc(v.urgencia) : ''}${esc(esperaVis(v))}</p><p class="m0t">${esc(v.motivo)}</p>${v.horarios ? `<p class="suave m0t">${svg('reloj', 16)} ${esc(v.horarios)}</p>` : ''}${v.telefono ? `<p class="suave m0t">${svg('telefono', 16)} ${esc(v.telefono)}</p>` : ''}${v.direccion ? `<p class="suave m0t">${svg('lugar', 16)} ${esc(v.direccion)}</p>` : ''}
       <label for="vr-${esc(v.id)}">Mensaje para la persona</label><input id="vr-${esc(v.id)}" type="text" maxlength="200" value="${esc(v.respuesta || '')}"><label for="vc-${esc(v.id)}">Cuándo (si agendas)</label><input id="vc-${esc(v.id)}" type="text" maxlength="60" value="${esc(v.cuando || '')}" placeholder="Sábado 5 pm">
       <div class="fab-acc"><button type="button" class="btn chico" data-ve="aceptada" data-id="${esc(v.id)}">Aceptar</button><button type="button" class="btn sec chico" data-ve="agendada" data-id="${esc(v.id)}">Agendar</button><button type="button" class="btn sec chico" data-ve="realizada" data-id="${esc(v.id)}">Realizada</button><button type="button" class="btn sec chico" data-ve="no_disponible" data-id="${esc(v.id)}">No puedo</button></div></div>`;
     const grupo = (tit, ests) => { const g = l.filter((v) => ests.indexOf(v.estado) >= 0); return g.length ? `<h2 class="mi-sub">${tit} · ${g.length}</h2>${g.map(tarjeta).join('')}` : ''; };
