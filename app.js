@@ -245,7 +245,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Acertijos de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Letras entre las hojas': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => !CABECERAS_ILUSTRADAS ? '' : `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1346';
+  const APP_VERSION = 'F1354';
   // F1171: respaldo si movimiento.js no cargó (pruebas o caché vieja): mismo criterio que TBMov.quieto().
   const MOV_QUIETO = () => { try { if (window.TBMov) return window.TBMov.quieto(); const h = document.documentElement; return h.getAttribute('data-anim') === 'off' || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
@@ -746,12 +746,16 @@
   // F1178 · Mi iglesia del miembro, rehecha: una portada corta (sin desplazarse mucho) y dos subpantallas («Servir» y «Mi cuenta»).
   // Antes eran 4 acordeones con ~20 bloques; ahora: 2 botones grandes de ayuda + 6 fichas + 2 entradas. Todo cabe casi sin bajar.
   const ficha = (ico, titulo, ayuda, ir) => `<button type="button" class="mi-ficha" data-ir="${ir}"><span class="mi-ficha-ic" aria-hidden="true">${icono(ico)}</span><b>${titulo}</b><small>${ayuda}</small></button>`;
+  // F1353 · lo que necesita centro_miembro.js: cómo pedir a la base y cómo volver a la pantalla del miembro
+  const ctxCM = (id) => ({ rpc: rpcRaw, volver: () => vistaMiembro(id) });
   function cablearMiembro(id) {
     document.querySelectorAll('[data-chat]').forEach((b) => b.addEventListener('click', () => vistaChat({ rol: 'miembro', codigo: id.codigo, clave: id.clave, nombre: id.nombre })));
-    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ juntos: abrirJuntos, oracion: vistaOracion, agenda: (i) => vistaAgenda(modoMiembro(i)), avisos: (i) => vistaAvisos(modoMiembro(i)), ministerios: vistaMinisterios, predicas: () => window.TBPredPub && window.TBPredPub.miembro(id, () => vistaMiembro(id)), muro: vistaMuro, accion: vistaAccion, visita: vistaVisita, mioracion: () => vistaMiOracion(), crec: () => vistaCrecimiento(), privacidad: vistaPrivacidad, ayuda: () => vistaPreguntas(id), servir: vistaMiembroServir, cuenta: vistaMiembroCuenta }[b.dataset.ir] || vistaVisita)(id)));
+    document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ juntos: abrirJuntos, oracion: vistaOracion, agenda: (i) => vistaAgenda(modoMiembro(i)), avisos: (i) => vistaAvisos(modoMiembro(i)), ministerios: vistaMinisterios, predicas: () => window.TBPredPub && window.TBPredPub.miembro(id, () => vistaMiembro(id)), muro: vistaMuro, accion: vistaAccion, visita: vistaVisita, mioracion: () => vistaMiOracion(), crec: () => vistaCrecimiento(), privacidad: vistaPrivacidad, ayuda: () => vistaPreguntas(id), servir: vistaMiembroServir, cuenta: vistaMiembroCuenta, permisos: () => window.TBCentroMiembro && window.TBCentroMiembro.permisos(id, ctxCM(id)), tarjeta: () => window.TBCentroMiembro && window.TBCentroMiembro.tarjeta(id, ctxCM(id)) }[b.dataset.ir] || vistaVisita)(id)));
   }
   function vistaMiembro(id) {
     const ig = leer(K_IG);
+    // F1354 · Bienvenida y consentimiento (1.5): una sola vez por versión del texto, antes de entrar al área del miembro
+    if (window.TBConsentimiento && !window.TBConsentimiento.aceptado(id)) return window.TBConsentimiento.pantalla(id, { rpc: rpcRaw, iglesia: ig && ig.nombre, seguir: () => vistaMiembro(id), salir: () => ir('inicio') });
     $('#pantalla').innerHTML = `
       ${areaHero('area-iglesia')}<p class="area-tag area-tag-miembro">Tu comunidad</p><section class="saludo"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML(id.nombre, perfilLeer(), false)}<div><p class="suave m0">${saludoHora()}</p><h1>Hola, ${esc(id.nombre)}</h1><p class="suave m0">⛪ ${ig ? esc(ig.nombre) : 'Tu iglesia'}</p></div></section>
       <section class="mi-car" aria-label="Para ti hoy" aria-roledescription="carrusel">
@@ -778,6 +782,8 @@
         <button type="button" class="mi-chip" data-ir="predicas"><span aria-hidden="true">🎙️</span>Prédicas</button>
         <button type="button" class="mi-chip" data-ir="ministerios"><span aria-hidden="true">🕍</span>Mis ministerios</button>
         <button type="button" class="mi-chip" data-ir="privacidad"><span aria-hidden="true">🔒</span>Privacidad</button>
+        <button type="button" class="mi-chip" data-ir="permisos"><span aria-hidden="true">🔐</span>Mis permisos</button>
+        <button type="button" class="mi-chip" data-ir="tarjeta"><span aria-hidden="true">📇</span>Mi tarjeta de contacto</button>
         <button type="button" class="mi-chip" data-ir="ayuda"><span aria-hidden="true">❓</span>Preguntas</button>
         <button type="button" class="mi-chip" data-ir="cuenta"><span aria-hidden="true">🔑</span>Mi cuenta</button>
       </div>`;
@@ -3427,7 +3433,7 @@
     const p = pastorLeer(); if (!p) return vistaPastorEntrar();
     $('#pantalla').innerHTML = `${areaHero('area-pastor')}<section class="saludo"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML('P', { g: perfilLeer().g, e: 'svg:escudo' }, false)}<div><p class="suave m0">Modo pastor</p><h1 id="pIgl">Mi iglesia</h1><p class="suave m0">Código <b>${esc(p.codigo)}</b></p></div></section>
       ${heroInt('c2 pas-hero', '🕊️', 'Hoy en tu iglesia', 'Para atender hoy', '<span id="pResumen" aria-live="polite">Revisando lo de hoy…</span>')}
-      <div class="mi-bento">${bento('mb-ancho mb4', '🗞️', 'Resumen semanal', 'Lo de los últimos 7 días, en un solo lugar', 'rsem', 'pp')}</div>
+      <div class="mi-bento">${bento('mb-ancho mb1', '🏛️', 'Tu iglesia hoy', 'Personas, cumpleaños y lo que pide atención', 'vigl', 'pp')}${bento('mb-ancho mb5', '🧭', 'Todas las áreas', 'Un menú con todo lo que puedes hacer', 'menu', 'pp')}${bento('mb-ancho mb4', '🗞️', 'Resumen semanal', 'Lo de los últimos 7 días, en un solo lugar', 'rsem', 'pp')}</div>
       <h2 class="mi-sub">Mis prédicas</h2><div class="mi-bento">${bento('mb-ancho mb1', '🎙️', 'Mis prédicas', 'Graba tu mensaje, guárdalo y escúchalo', 'mpre', 'pp')}</div>
       <h2 class="mi-sub">Para atender hoy</h2><div class="mi-bento">${bento('mb3', '🏠', 'Visitas', 'Quién pide que lo visites', 'vis', 'pp')}${bento('mb5', '🤲', 'Oraciones', 'Peticiones recibidas', 'ora', 'pp')}${bento('mb-ancho mb1', '🙋', 'Solicitudes', 'Quién quiere unirse a tu iglesia', 'sol', 'pp')}</div>
       <h2 class="mi-sub">Mi agenda</h2><div class="mi-bento">${bento('mb-ancho mb4', '🗓', 'Mi calendario', 'Visitas, reuniones y descanso. Solo tú lo ves', 'mcal', 'pp')}</div>
@@ -3451,7 +3457,10 @@
       else copiarTxt(t, $('#pCodCompartir'), 'Copiado ✓');
     };
     if ($('#pLlaveCopiar')) $('#pLlaveCopiar').onclick = () => copiarTxt('PULPITO-PASTOR-' + btoa(JSON.stringify({ c: p.codigo, s: p.secreto })), $('#pLlaveCopiar'), 'Llave copiada ✓');
-    document.querySelectorAll('[data-pp]').forEach((b) => b.addEventListener('click', () => ({ sol: pSolicitudes, ora: pOraciones, vis: pVisitas, mie: pMiembros, min: pMinisterios, age: () => vistaAgenda(modoPastor(p)), avi: () => vistaAvisos(modoPastor(p)), mcal: () => pCalendario(p), disp: () => pDisponibilidad(p), bien: () => pBienvenida(p), chat: () => vistaChat({ rol: 'pastor', codigo: p.codigo, secreto: p.secreto }), dat: pDatos, mpre: () => window.TBMisPredicas && window.TBMisPredicas.abrir(), rsem: pResumenSemanal, bol: pBoletin }[b.dataset.pp])(p)));
+    // F1352 · Centro del pastor: el panel, «Tu iglesia hoy» y «Todas las áreas» abren las mismas pantallas por una sola tabla
+    const ctxCP = { rpc: prpc, avatar: avatarHTML, volver: () => vistaPastor(), abrir: (k) => irPP(k) };
+    const irPP = (k) => { const f = ({ sol: pSolicitudes, ora: pOraciones, vis: pVisitas, mie: pMiembros, min: pMinisterios, age: () => vistaAgenda(modoPastor(p)), avi: () => vistaAvisos(modoPastor(p)), mcal: () => pCalendario(p), disp: () => pDisponibilidad(p), bien: () => pBienvenida(p), chat: () => vistaChat({ rol: 'pastor', codigo: p.codigo, secreto: p.secreto }), dat: pDatos, mpre: () => window.TBMisPredicas && window.TBMisPredicas.abrir(), rsem: pResumenSemanal, bol: pBoletin, vigl: () => window.TBCentroPastor.vision(p, ctxCP), menu: () => window.TBCentroPastor.menu(p, ctxCP) })[k]; if (f) f(p); };
+    document.querySelectorAll('[data-pp]').forEach((b) => b.addEventListener('click', () => irPP(b.dataset.pp)));
     $('#pSalir').onclick = () => { if (confirm('¿Salir del modo pastor en este teléfono? Tu llave se borra de aquí (sigue en tu computador).')) { borrar(K_PASTOR); borrar('tb_movil_juntos_cache'); barraRefrescar('perfil'); ir('perfil'); } };
     const ins = (k, n) => { if (!(n > 0)) return; const t = document.querySelector('[data-pp="' + k + '"]'); if (!t) return; let e = t.querySelector('.mi-b-n'); if (!e) { e = document.createElement('span'); e.className = 'mi-b-n'; t.appendChild(e); } e.textContent = n > 99 ? '99+' : String(n); e.setAttribute('aria-label', e.textContent + ' por atender'); };
     // F1032 · Resumen del pastor: una frase con lo que requiere atención hoy (sin rankings ni cifras en rojo)
@@ -3873,6 +3882,8 @@
   }
   // F1129 · Miembros: buscador, orden alfabético por letra y lista por tramos de 25 («Mostrar más»).
   async function pMiembros(p) {
+    // F1351 · Centro del pastor (1.2 y 1.3): buscador y ficha en centro_pastor.js; si la base aún no tiene la función, sigue la lista de siempre
+    if (window.TBCentroPastor) { try { if (await window.TBCentroPastor.miembros(p, { rpc: prpc, avatar: avatarHTML, volver: () => vistaPastor() })) return; } catch (e) { /* lista de siempre */ } }
     $('#pantalla').innerHTML = pCab('Miembros', '<div id="pHero"></div><div class="mie-buscar"><input id="mieQ" type="search" placeholder="Buscar por nombre" aria-label="Buscar miembro" autocomplete="off"></div>');
     volverA('Panel', vistaPastor);
     const r = await prpc('miembros_pastor_listar', p), m = $('#pmsg'); if (!m) return;

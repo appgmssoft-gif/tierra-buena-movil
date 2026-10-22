@@ -1,0 +1,21 @@
+{
+  "version": "2026-10-v1",
+  "titulo": "Términos de uso de Tierra Buena",
+  "actualizado": "22 de octubre de 2026",
+  "revisado_por_abogado": false,
+  "nota_interna": "LUGAR DE LOS TÉRMINOS Y CONDICIONES. Borrador para ordenar el contenido. Un abogado debe revisarlo antes de publicar en tiendas (ver TAREAS.md, sección 6). Al cambiar el texto, subir «version» aquí y en centro_consentimiento.js: todas las personas volverán a aceptar.",
+  "secciones": [
+    { "t": "1. Qué es Tierra Buena", "x": "Tierra Buena es una aplicación para acompañar tu vida de fe: leer la Biblia, orar, cuidar tu bienestar y, si lo deseas, participar en tu iglesia. Es una herramienta. No reemplaza a tu pastor, a tu comunidad ni la ayuda de un profesional." },
+    { "t": "2. Quién puede usarla", "x": "Debes tener 18 años o más. Si eres menor de edad, pide a una persona adulta de tu familia que te acompañe y no uses las funciones de iglesia por tu cuenta." },
+    { "t": "3. Tu cuenta y tu llave", "x": "Eres responsable de cuidar tu contraseña y tu llave de iglesia, y de lo que se haga con ellas. Si crees que alguien más entró a tu cuenta, cambia tu contraseña y avísanos." },
+    { "t": "4. Tu iglesia y tu pastor", "x": "Cuando te unes a una iglesia con su código, tu pastor y sus líderes ven lo que tú permites en «Mis permisos» y lo que envías a la iglesia (por ejemplo, peticiones de oración). Cada iglesia decide cómo cuida a sus miembros. Tierra Buena ofrece la herramienta y cuida los datos en línea según la Política de privacidad." },
+    { "t": "5. Ayuda en una emergencia", "x": "Tierra Buena no es un servicio de emergencia ni de salud. Si tú o alguien está en peligro, llama de inmediato a los números de emergencia de tu país (en Chile: 131 ambulancia, 132 bomberos, 133 Carabineros). La sección de Salud mental ofrece apoyo y ejercicios, pero no es diagnóstico ni terapia." },
+    { "t": "6. Uso respetuoso", "x": "Usa la app con respeto. No la uses para acosar, engañar, suplantar a otra persona, difundir contenido ilegal u ofensivo, ni para intentar entrar a datos que no son tuyos. Podemos limitar o cerrar una cuenta que ponga en riesgo a otras personas o a la comunidad." },
+    { "t": "7. Lo que tú compartes", "x": "Lo que escribes sigue siendo tuyo. Nos autorizas solo a guardarlo y mostrarlo a quien corresponda según tus permisos, para que la app funcione. Tu diario personal, tus notas de estudio, tu salud mental y las peticiones anónimas no llegan a tu pastor." },
+    { "t": "8. Planes y pagos", "x": "Parte de la app es gratis. Si hay funciones de pago, verás el precio, qué incluye y cómo cancelar antes de contratar. Nada se cobra sin tu confirmación." },
+    { "t": "9. Cambios y disponibilidad", "x": "Podemos mejorar, cambiar o retirar funciones. Haremos lo posible por que la app esté disponible y por avisarte de los cambios importantes, pero no podemos garantizar que funcione sin interrupciones." },
+    { "t": "10. Responsabilidad", "x": "Hacemos lo razonable por cuidar la app y tus datos. En la medida que la ley lo permita, no respondemos por daños indirectos derivados de su uso o de decisiones que tomes a partir de su contenido. Esto no limita los derechos que la ley chilena te reconoce como persona usuaria y que no se pueden renunciar." },
+    { "t": "11. Cambios a estos términos", "x": "Si cambiamos estos términos, te lo mostraremos y te pediremos aceptarlos de nuevo la próxima vez que entres. Si no los aceptas, puedes seguir usando la Biblia y las funciones personales sin iglesia." },
+    { "t": "12. Ley aplicable y contacto", "x": "Estos términos se rigen por las leyes de Chile. Para cualquier consulta o reclamo, escríbenos a softappgms@outlook.com." }
+  ]
+}

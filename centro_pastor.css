@@ -1,0 +1,41 @@
+/* F1351/F1352 · Centro del pastor: buscador, ficha, visión y menú */
+.cp-titulo,.cp-nombre{margin:6px 2px 4px}
+.cp-filtros{display:flex;gap:8px;margin:8px 0}
+.cp-chip{min-height:44px;padding:8px 16px;border-radius:999px;border:1px solid var(--linea);background:var(--tarjeta,transparent);color:inherit;font:inherit;cursor:pointer}
+.cp-chip.on{background:var(--verde);color:var(--papel);border-color:var(--verde)}
+.cp-fila{display:flex;align-items:center;gap:12px;width:100%;min-height:60px;margin:6px 0;padding:10px 12px;border-radius:14px;border:1px solid var(--linea);background:var(--tarjeta,transparent);color:inherit;font:inherit;text-align:left;cursor:pointer}
+.cp-fila:active{transform:scale(.98)}
+.cp-fila-t{flex:1;min-width:0;display:flex;flex-direction:column}
+.cp-fila-t small{color:var(--suave);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cp-lider{font-size:.7rem;font-weight:700;color:var(--oro);letter-spacing:.06em;text-transform:uppercase}
+.cp-ir{color:var(--suave);font-size:1.4rem}
+.cp-datos{margin:12px 0}
+.cp-datos dt{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--suave);margin-top:12px}
+.cp-datos dd{margin:2px 0 0;font-size:1.02rem}
+.cp-acciones{margin-top:18px}
+.cp-acciones a.btn{text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center}
+.cp-nota{margin-top:12px}
+.cp-ico{font-size:1.5rem;width:36px;text-align:center}
+.cp-cifras{display:flex;gap:10px;margin:12px 0}
+.cp-cifra{flex:1;padding:12px 8px;border-radius:14px;border:1px solid var(--linea);text-align:center;display:flex;flex-direction:column}
+.cp-cifra b{font:700 1.6rem/1.1 "TB Titulo",Georgia,serif;color:var(--oro)}
+.cp-cifra span{font-size:.8rem;color:var(--suave)}
+.cp-cumple{cursor:default}
+.cp-mini{min-height:44px;display:inline-flex;align-items:center;padding:0 14px;border-radius:999px;border:1px solid var(--verde);color:var(--verde);font-weight:700;text-decoration:none}
+/* F1353 · Mis permisos y Mi tarjeta de contacto (lado del miembro) */
+.cm-lista{margin:12px 0}
+.cm-fila{display:flex;align-items:center;gap:14px;min-height:64px;margin:8px 0;padding:12px 14px;border-radius:14px;border:1px solid var(--linea);background:var(--tarjeta,transparent);cursor:pointer}
+.cm-tx{flex:1;display:flex;flex-direction:column;gap:2px}
+.cm-tx small{color:var(--suave)}
+.cm-sw{appearance:none;-webkit-appearance:none;flex:none;width:52px;height:32px;border-radius:999px;border:1px solid var(--linea);background:var(--linea);position:relative;cursor:pointer;transition:background .2s}
+.cm-sw::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.cm-sw:checked{background:var(--verde);border-color:var(--verde)}
+.cm-sw:checked::after{transform:translateX(20px)}
+.cm-sw:focus-visible,.cm-campo input:focus-visible{outline:3px solid var(--oro);outline-offset:2px}
+.cm-sw:disabled{opacity:.6}
+.cm-campo{margin:16px 0}
+.cm-campo label{display:block;font-weight:700;margin-bottom:6px}
+.cm-campo input{width:100%;min-height:48px;border-radius:14px;border:1px solid var(--linea);padding:10px 14px;font:inherit;background:var(--tarjeta,transparent);color:inherit}
+.cm-campo small{display:block;margin-top:4px;color:var(--suave)}
+.cm-err{color:var(--error,#b3261e)}
+@media (prefers-reduced-motion:reduce){.cm-sw,.cm-sw::after{transition:none}}
