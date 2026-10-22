@@ -37,20 +37,6 @@
     return '';
   }
   // F1076 · Los días del suelo se leen sobre 30 días (el doble de la escala anterior). Sin repetir los rasgos y como máximo 3 elementos: no se sobrecarga el inicio.
-  // F1083 · Sombreado automático en dos tonos: cada figura rellena recibe una copia más oscura desplazada abajo-derecha (luz arriba-izquierda).
-  // Se aplica a los dibujos de rasgos y suelo sin reescribirlos a mano.
-  function oscurecer(hex, k) { const n = parseInt(hex.slice(1), 16); const c = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => Math.round(v * k)); return '#' + c.map((v) => v.toString(16).padStart(2, '0')).join(''); }
-  function sombrear(svg) {
-    return svg.replace(/<(path|ellipse|circle|rect)([^>]*?)fill="(#[0-9a-fA-F]{6})"([^>]*?)\/>/g, (m, tag, a1, col, a2) => {
-      const sombra = oscurecer(col, 0.72), tr = /transform="([^"]*)"/.exec(a1 + a2);
-      const dx = ' translate(0.9 1.3)';
-      const copia = tr ? m.replace(tr[0], 'transform="' + tr[1] + dx + '"') : '<' + tag + a1 + 'transform="' + dx.trim() + '"' + a2.replace(/^/, '') .replace('', '') ;
-      const sombraTag = tr ? copia.replace('fill="' + col + '"', 'fill="' + sombra + '"') : ('<' + tag + a1 + ' fill="' + sombra + '" transform="' + dx.trim() + '"' + a2 + '/>');
-      return sombraTag + m;
-    });
-  }
-
-
   // F1203 · Día 9: la atmósfera propia del lugar (rayos de luz desde arriba a la izquierda y partículas). Día 10: halo dorado del lugar completo.
   function ambienteDelDia(dias, hab) {
     const d = Math.floor(dias || 0); if (d < 9 || !hab) return '';
@@ -75,40 +61,6 @@
     }
     return p('tr-t t8', 'M0 0 C-3 -30 3 -62 0 -96') + p('tr-t t4', 'M0 -58 C-14 -66 -26 -76 -34 -90') + p('tr-t t4', 'M0 -70 C14 -80 26 -88 36 -104') + p('tr-t t3', 'M0 -86 C-6 -100 -10 -110 -14 -122')
       + ci('tr-h', -34, -96, 11) + ci('tr-h', 36, -110, 12) + ci('tr-h2', -14, -128, 10) + ci('tr-h', 0, -104, 9) + ci('tr-h2', 20, -96, 8);
-  }
-  // F1066 · Pewén (araucaria) como la especie real: tronco largo y recto, ramas gruesas en verticilos que se curvan hacia arriba
-  // y, en cada punta, una mata densa de hojas punzantes. Entre verticilos se ve el tronco: no es un pino de pisos continuos.
-  function pewenPuas(x0, y0, x1, y1, s) {   // F1079 · Hojas en punta pegadas a la rama, a lo largo de la curva
-    const c1x = x0 + (x1 - x0) * 0.5, c1y = y0 + 5, c2x = x1 - s * 12, c2y = y1 + 9; let g = '';
-    for (let k = 1; k <= 6; k++) {
-      const t = k / 7, mt = 1 - t;
-      const bx = mt * mt * mt * x0 + 3 * mt * mt * t * c1x + 3 * mt * t * t * c2x + t * t * t * x1, by = mt * mt * mt * y0 + 3 * mt * mt * t * c1y + 3 * mt * t * t * c2y + t * t * t * y1;
-      const dx = x1 - x0, dy = y1 - y0, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, nx = -uy, ny = ux;
-      for (const side of [-1, 1]) {
-        const ox = bx + nx * side * 4, oy = by + ny * side * 4;
-        const tx = ox + ux * 8 + nx * side * 5, ty = oy + uy * 8 + ny * side * 5;
-        g += p(side > 0 ? 'tr-h' : 'tr-h2', 'M' + ox.toFixed(1) + ' ' + oy.toFixed(1) + ' L' + tx.toFixed(1) + ' ' + ty.toFixed(1) + ' L' + (ox + ux * 3).toFixed(1) + ' ' + (oy + uy * 3).toFixed(1) + 'Z');
-      }
-    }
-    return g;
-  }
-  function pewenBrazo(x0, y0, x1, y1, w) {
-    const s = x1 < 0 ? -1 : 1, mx = x0 + (x1 - x0) * 0.5;
-    return p('tr-ram t' + w, 'M' + x0 + ' ' + y0 + ' C' + mx.toFixed(1) + ' ' + (y0 + 5) + ' ' + (x1 - s * 12).toFixed(1) + ' ' + (y1 + 9).toFixed(1) + ' ' + x1 + ' ' + y1);
-  }
-  function pewenMata(x, y, r, s) {                          // mata de follaje densa, alargada en la dirección de la rama (sin púas)
-    const a = s === 0 ? 0 : -s * 24;
-    // F1081 · Sombreado en dos tonos con luz constante (arriba a la izquierda): sombra abajo-derecha, masa media y brillo arriba-izquierda
-    // F1081 · Textura en puntas: hojas agudas en el borde de la mata, con ángulos variados (procedural, no a mano)
-    let puntas = '';
-    for (let k = 0; k < 11; k++) {
-      const th = k * 0.571 + (s > 0 ? 0.13 : 0.31), ex = Math.cos(th) * r * 1.02, ey = Math.sin(th) * r * 0.68;
-      const bx = x + ex * 0.94, by = y + ey * 0.94, tx = x + ex * 1.16, ty = y + ey * 1.16 - r * 0.04;
-      const nx = -(ty - by) * 0.22, ny = (tx - bx) * 0.22;
-      puntas += p(k % 3 === 0 ? 'tr-h3' : (k % 2 ? 'tr-h2' : 'tr-h'), 'M' + (bx + nx).toFixed(1) + ' ' + (by + ny).toFixed(1) + ' L' + tx.toFixed(1) + ' ' + ty.toFixed(1) + ' L' + (bx - nx).toFixed(1) + ' ' + (by - ny).toFixed(1) + 'Z');
-    }
-    return puntas + el('tr-sombra', x + r * 0.12, y + r * 0.16, r * 1.04, r * 0.68, a) + el('tr-h', x, y, r * 1.0, r * 0.66, a)
-      + el('tr-h2', x - r * 0.14, y - r * 0.16, r * 0.72, r * 0.4, a) + el('tr-h3', x - r * 0.32, y - r * 0.28, r * 0.3, r * 0.18, a);
   }
   function pewen(n) {
     // F1215 · Pewén real: fuste largo, recto y esbelto de corteza gris parda con anillos; ramas solo arriba, en verticilos que suben

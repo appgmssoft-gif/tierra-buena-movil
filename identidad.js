@@ -16,9 +16,21 @@ const tbArte = (e) => { const k = TB_ARTE[e]; try { return k && window.TBApp && 
   // Fechas locales (F923: estas tres se usaban en el formulario y en «Mis movimientos» pero no estaban definidas; el formulario fallaba al abrirse).
   const DIA = 86400000;
   const hoyISO = (n) => { const d = new Date(Date.now() + (n || 0) * DIA), z = (x) => String(x).padStart(2, '0'); return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate()); };
-  const cuandoTxt = (m) => { try { const n = Math.round((new Date(m.fecha + 'T12:00:00') - new Date(new Date().toDateString() + ' 12:00:00')) / DIA), f = new Date(m.fecha + 'T12:00:00').toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' }); return f + (m.hora ? ' · ' + m.hora : '') + (n === 0 ? ' · hoy' : n === 1 ? ' · falta 1 día' : n > 1 ? ' · faltan ' + n + ' días' : ''); } catch (e) { return String(m.fecha || ''); } };
+  const cuandoTxt = (m) => {
+    try {
+      const n = Math.round((new Date(m.fecha + 'T12:00:00') - new Date(new Date().toDateString() + ' 12:00:00')) / DIA);
+      const f = new Date(m.fecha + 'T12:00:00').toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' });
+      return f + (m.hora ? ' · ' + m.hora : '') + (n === 0 ? ' · hoy' : n === 1 ? ' · falta 1 día' : n > 1 ? ' · faltan ' + n + ' días' : '');
+    } catch (e) { return String(m.fecha || ''); }
+  };
   function aviso(txt) {
-    try { const o = $('.tb-aviso'); if (o) o.remove(); const d = document.createElement('div'); d.className = 'tb-aviso'; d.setAttribute('role', 'status'); d.textContent = txt; document.body.appendChild(d); setTimeout(() => { try { d.remove(); } catch (e) { /* nada */ } }, 3200); } catch (e) { /* nada */ }
+    try {
+      const o = $('.tb-aviso'); if (o) o.remove();
+      const d = document.createElement('div');
+      d.className = 'tb-aviso'; d.setAttribute('role', 'status'); d.textContent = txt;
+      document.body.appendChild(d);
+      setTimeout(() => { try { d.remove(); } catch (e) { /* nada */ } }, 3200);
+    } catch (e) { /* nada */ }
   }
 
   // =====================================================================================================
@@ -87,24 +99,42 @@ const tbArte = (e) => { const k = TB_ARTE[e]; try { return k && window.TBApp && 
       $$('.tbej-card', car).forEach((c) => c.style.setProperty('--hu', c.dataset.hu));   // CSP: sin style en el HTML
       const marca = () => { pt.textContent = (idx + 1) + ' de ' + L.length; };
       const ir = (n, suave) => { idx = (n + L.length) % L.length; const c = car.children[idx]; if (c) { try { car.scrollTo({ left: c.offsetLeft - car.offsetLeft, behavior: suave && !calma() ? 'smooth' : 'auto' }); } catch (e) { car.scrollLeft = c.offsetLeft; } } marca(); };
-      let t = 0; car.addEventListener('scroll', () => { if (t) return; t = setTimeout(() => { t = 0; const w = car.clientWidth || 1; const n = Math.round(car.scrollLeft / (car.children[0] ? car.children[0].offsetWidth + 10 : w)); if (n !== idx && car.children[n]) { idx = n; marca(); } }, 120); }, { passive: true });
+      let t = 0;
+      car.addEventListener('scroll', () => {
+        if (t) return;
+        t = setTimeout(() => {
+          t = 0;
+          const w = car.clientWidth || 1;
+          const n = Math.round(car.scrollLeft / (car.children[0] ? car.children[0].offsetWidth + 10 : w));
+          if (n !== idx && car.children[n]) { idx = n; marca(); }
+        }, 120);
+      }, { passive: true });
       $$('.tbej-fl2', caja).forEach((b) => { b.onclick = () => { auto = false; pa.textContent = '▶'; snd('tab', 1); ir(idx + Number(b.dataset.d), true); }; });
       pa.onclick = () => { auto = !auto; pa.textContent = auto ? '⏸' : '▶'; snd('tab', 2); };
       car.addEventListener('touchstart', () => { auto = false; pa.textContent = '▶'; }, { passive: true });
-      car.addEventListener('keydown', (ev) => { if (ev.key === 'ArrowRight') { ev.preventDefault(); ir(idx + 1, true); } else if (ev.key === 'ArrowLeft') { ev.preventDefault(); ir(idx - 1, true); } });
+      car.addEventListener('keydown', (ev) => {
+        if (ev.key === 'ArrowRight') { ev.preventDefault(); ir(idx + 1, true); }
+        else if (ev.key === 'ArrowLeft') { ev.preventDefault(); ir(idx - 1, true); }
+      });
       $$('.tbej-seg button', caja).forEach((b) => { b.onclick = () => { snd('tab', b.dataset.r === 'pastor' ? 3 : 1); actual = b.dataset.r; dibuja(); }; });
       $$('.tbej-go', caja).forEach((b) => { b.onclick = () => probar(L[Number(b.dataset.i)]); });
       marca();
       const arrancar = () => { if (reloj || calma()) return; reloj = setInterval(() => { if (auto && !document.hidden) ir(idx + 1, true); }, 14000); };
-      if (typeof IntersectionObserver === 'function') { obs = new IntersectionObserver((en) => { if (en[0] && en[0].isIntersecting) arrancar(); else parar(); }, { threshold: 0.4 }); obs.observe(car); } else arrancar();
+      if (typeof IntersectionObserver === 'function') {
+        obs = new IntersectionObserver((en) => { if (en[0] && en[0].isIntersecting) arrancar(); else parar(); }, { threshold: 0.4 });
+        obs.observe(car);
+      } else arrancar();
     };
     dibuja();
   }
-  // F916: los ejemplos ya no ocupan la pantalla: viven detrás de un botón pequeño («Ejemplos de uso»). Se abren solo si la persona los necesita y dicen claro que son inventados.
+  // F916: los ejemplos ya no ocupan la pantalla: viven detrás de un botón pequeño («Ejemplos de uso»).
+  // Se abren solo si la persona los necesita y dicen claro que son inventados.
   function pintarEjemplos(caja, rol) {
     if (!caja) return;
     const cerrado = () => {
-      caja.innerHTML = '<button type="button" class="tbej-btn" aria-expanded="false"><span class="tbej-btn-ic" aria-hidden="true">' + ((window.TBApp && TBApp.svg) ? TBApp.svg('foco', 20) : '💡') + '</span><span class="tbej-btn-tx"><b>Ejemplos de uso</b><small>Historias inventadas para entender cómo se usa. No son personas reales.</small></span><i aria-hidden="true">›</i></button>';
+      caja.innerHTML = '<button type="button" class="tbej-btn" aria-expanded="false"><span class="tbej-btn-ic" aria-hidden="true">'
+        + ((window.TBApp && TBApp.svg) ? TBApp.svg('foco', 20) : '💡')
+        + '</span><span class="tbej-btn-tx"><b>Ejemplos de uso</b><small>Historias inventadas para entender cómo se usa. No son personas reales.</small></span><i aria-hidden="true">›</i></button>';
       $('.tbej-btn', caja).onclick = abierto;
     };
     const abierto = () => {
@@ -147,8 +177,19 @@ const tbArte = (e) => { const k = TB_ARTE[e]; try { return k && window.TBApp && 
   const ideaBase = (m) => (m.tipo === 'paquete' && m.idea_id && MOV.find((z) => z.id === m.idea_id)) || m;
   const favs = () => { const l = leer(K_FAV, []); return Array.isArray(l) ? l : []; };
   const ambitoDe = (m) => (m.cat === 'entre_iglesias' ? 'iglesias' : m.lugar_tipo === 'publico' ? 'barrio' : 'iglesia');
-  const RECETA = [['👀', 'Mira', 'Escoge un problema real que veas cerca, uno solo.'], ['🤝', 'Une', 'Invita a 3 personas. Un movimiento es de muchos o no es movimiento.'], ['⚡', 'Empieza', 'Da un primer paso en 72 horas. Lo pequeño que empieza gana.'], ['📏', 'Mide', 'Ponle un número: platos, personas, abrigos, horas.'], ['🎉', 'Celebra', 'Cuenta lo logrado para que otros se animen.']];
-  const REGLAS = ['Nunca publiques nombres, fotos ni direcciones de personas sin su permiso.', 'No se maneja dinero en la app: se piden tiempo, cosas o ayuda, y se rinde cuentas.', 'Ayuda con dignidad: pregunta qué necesita la persona, no decidas por ella.', 'Respeta a tu congregación: tu pastor y tus líderes guían. Si surge un problema, se conversa dentro de la iglesia.'];
+  const RECETA = [
+    ['👀', 'Mira', 'Escoge un problema real que veas cerca, uno solo.'],
+    ['🤝', 'Une', 'Invita a 3 personas. Un movimiento es de muchos o no es movimiento.'],
+    ['⚡', 'Empieza', 'Da un primer paso en 72 horas. Lo pequeño que empieza gana.'],
+    ['📏', 'Mide', 'Ponle un número: platos, personas, abrigos, horas.'],
+    ['🎉', 'Celebra', 'Cuenta lo logrado para que otros se animen.'],
+  ];
+  const REGLAS = [
+    'Nunca publiques nombres, fotos ni direcciones de personas sin su permiso.',
+    'No se maneja dinero en la app: se piden tiempo, cosas o ayuda, y se rinde cuentas.',
+    'Ayuda con dignidad: pregunta qué necesita la persona, no decidas por ella.',
+    'Respeta a tu congregación: tu pastor y tus líderes guían. Si surge un problema, se conversa dentro de la iglesia.',
+  ];
 
   const est = () => { const e = leer(K_J, null); return e && typeof e === 'object' ? { unidos: e.unidos || {}, mios: e.mios || [], total: e.total || 0 } : { unidos: {}, mios: [], total: 0 }; };
   const salvar = (e) => guardar(K_J, e);
@@ -160,12 +201,29 @@ const tbArte = (e) => { const k = TB_ARTE[e]; try { return k && window.TBApp && 
     try { if (navigator.share) { navigator.share({ text: txt }).catch(() => { /* cancelado */ }); return; } } catch (e) { /* sin compartir */ }
     try { window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank', 'noopener'); } catch (e) { /* nada */ }
   }
-  const confeti = (el) => { if (calma() || !el) return; for (let i = 0; i < 14; i++) { const p = document.createElement('i'); p.className = 'tbj-cf'; p.style.setProperty('--dx', (Math.random() * 160 - 80).toFixed(0) + 'px'); p.style.setProperty('--dy', (-(40 + Math.random() * 90)).toFixed(0) + 'px'); p.style.setProperty('--r', (Math.random() * 360).toFixed(0) + 'deg'); p.style.setProperty('--d', (Math.random() * 0.2).toFixed(2) + 's'); el.appendChild(p); setTimeout(() => { try { p.remove(); } catch (e) { /* nada */ } }, 1200); } };
+  const confeti = (el) => {
+    if (calma() || !el) return;
+    for (let i = 0; i < 14; i++) {
+      const p = document.createElement('i');
+      p.className = 'tbj-cf';
+      p.style.setProperty('--dx', (Math.random() * 160 - 80).toFixed(0) + 'px');
+      p.style.setProperty('--dy', (-(40 + Math.random() * 90)).toFixed(0) + 'px');
+      p.style.setProperty('--r', (Math.random() * 360).toFixed(0) + 'deg');
+      p.style.setProperty('--d', (Math.random() * 0.2).toFixed(2) + 's');
+      el.appendChild(p);
+      setTimeout(() => { try { p.remove(); } catch (e) { /* nada */ } }, 1200);
+    }
+  };
 
 
   let tabJ = 'curso';
   const TABS = [['curso', '🌿', 'En curso'], ['guard', '⭐', 'Guardados'], ['crear', '✏️', 'Crear'], ['listos', '📚', 'Ideas listas']];
-  const SECC = { curso: 'Lo que se está haciendo ahora. Abre uno para ver el plan y sumarte.', guard: 'Tus ideas guardadas y los movimientos ya terminados.', crear: 'Arma un movimiento nuevo con tu iglesia. Abajo está la guía.', listos: 'Ideas y proyectos con el plan ya escrito. Elige uno y úsalo.' };
+  const SECC = {
+    curso: 'Lo que se está haciendo ahora. Abre uno para ver el plan y sumarte.',
+    guard: 'Tus ideas guardadas y los movimientos ya terminados.',
+    crear: 'Arma un movimiento nuevo con tu iglesia. Abajo está la guía.',
+    listos: 'Ideas y proyectos con el plan ya escrito. Elige uno y úsalo.',
+  };
   const PASOS_GUIA = [
     ['Elige una necesidad', 'Escoge un solo problema real y cercano. Mejor algo pequeño que se pueda terminar.'],
     ['Di para quién y qué lograrás', 'Escribe a quién ayudas y ponle una meta que se pueda contar (familias, horas, kilos).'],

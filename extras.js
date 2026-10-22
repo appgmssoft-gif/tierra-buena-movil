@@ -159,20 +159,6 @@
     return c;
   }
 
-  // ---------- 3) FÁBULA VISIBLE ----------
-  let fabCat = null;
-  async function fabulaTarjeta() {
-    try {
-      if (!fabCat) fabCat = await (await fetch('datos/fabulas.json')).json();
-      const ids = Object.keys(fabCat), f = fabCat[ids[new Date().getMonth() % ids.length]]; if (!f) return null;
-      const t = document.createElement('button'); t.type = 'button'; t.className = 'tbfab'; t.setAttribute('data-ir-fab', '1');
-      t.innerHTML = `<span class="tbfab-ic" aria-hidden="true">${esc(f.icono || '📜')}</span><span class="tbfab-tx"><small>Fábula del mes</small><b>${esc(f.titulo)}</b><em>${esc(String(f.intro || '').slice(0, 96))}${String(f.intro || '').length > 96 ? '…' : ''}</em><span class="tbfab-met">${esc(f.tiempo || '')}${f.puertas && f.puertas.length ? ' · ' + f.puertas.length + ' capítulos' : ''}</span></span><span class="tbfab-go">Leer<br>ahora ›</span><i class="tbfab-b1"></i><i class="tbfab-b2"></i>`;
-      if (/^#[0-9a-fA-F]{6}$/.test(f.tono || '')) t.style.setProperty('--tono', f.tono);
-      t.addEventListener('click', () => { snd('abre'); const b = buscar(/F[áa]bula del mes/i); if (b) b.click(); });
-      return t;
-    } catch (e) { return null; }
-  }
-
   // ---------- 4) SONIDO EN PERFIL ----------
   function filaSonido() {
     const d = document.createElement('div'); d.className = 'tbson';
