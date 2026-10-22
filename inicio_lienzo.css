@@ -202,8 +202,6 @@ html:not([data-anim=off]) .il-msg.entra .il-mc.d1{animation-delay:.12s}html:not(
 .il-viv-cab{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 6px}.il-viv-cab h3{margin:0}
 .il-viv-cab .il-viv-saldo{margin:0;padding:6px 14px;border-radius:999px;background:color-mix(in srgb,#7fc4e6 18%,transparent);font-weight:600}
 .il-viv{padding:16px 16px 14px}.il-viv-ay{margin:0 0 10px}
-.il-viv-tabs{display:flex;gap:8px;margin:0 0 10px}.il-viv-tab{flex:1;min-height:40px;padding:6px 12px;border-radius:999px;border:1px solid color-mix(in srgb,var(--suave) 26%,transparent);background:transparent;color:var(--suave);font:600 .86rem/1.2 system-ui,sans-serif;cursor:pointer}
-.il-viv-tab.on{color:var(--tinta);border-color:var(--oro);background:color-mix(in srgb,var(--oro) 12%,transparent)}.il-viv-tab:active{transform:scale(.97)}
 /* F936: carrusel que se desliza de lado (una sola fila) en vez de una lista larga */
 .il-viv-car{display:flex;gap:10px;overflow-x:auto;overflow-y:hidden;margin:0 -16px 12px;padding:2px 16px 8px;scroll-snap-type:x proximity;scroll-padding:0 16px;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;scrollbar-width:none;touch-action:pan-x pan-y}
 .il-viv-car::-webkit-scrollbar{display:none}

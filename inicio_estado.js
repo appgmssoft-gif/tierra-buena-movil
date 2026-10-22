@@ -66,13 +66,6 @@
   // Cuánta maleza corresponde a una ausencia (en días completos SIN entrar). 0 o 1 día sin entrar = ninguna (gracia).
   function malezaPara(ausencia) { let n = 0; for (const f of cat().maleza.tabla) if (ausencia >= f.ausencia) n = f.cantidad; return Math.min(n, cat().ciclo.maleza_max || 5); }
   // Siguiente especie del ciclo: la primera del orden que aún no se ha vivido; si ya se vivieron todas, se repite el orden.
-  function siguienteEspecie(e) {
-    const t = e.tematica && (cat().tematicas || {})[e.tematica], em = t && t.arbol;   // F1071: el árbol sale del emblema del hábitat activo
-    if (em && (cat().especies || {})[em]) return em;
-    const orden = cat().orden_especies, vividas = e.paisaje.map((p) => p.especie).concat(e.ciclo.especie ? [e.ciclo.especie] : []);
-    const libre = orden.find((s) => vividas.indexOf(s) < 0); if (libre) return libre;
-    const k = vividas.length ? orden.indexOf(vividas[vividas.length - 1]) : -1; return orden[(k + 1) % orden.length];
-  }
   function casillaLibre(e, grupo, pref) {                  // primera casilla libre del grupo (o de la lista dada); null si no hay
     const usadas = new Set([].concat(e.maleza.map((m) => m.casilla), e.gotas.pendientes.map((g) => g.casilla), e.vivero.plantas.map((p) => p.casilla), e.paisaje.map((p) => p.casilla)));
     const lista = pref || cat().casillas[grupo] || []; return lista.find((c) => !usadas.has(c)) || null;
@@ -87,10 +80,6 @@
     let mejor = libres[0], md = -1; libres.forEach((c) => { const x = SLOT_X[c]; if (x == null) return; const d = Math.min.apply(null, puestas.map((q) => Math.abs(SLOT_X[q] - x) + 0.6 * Math.abs(SLOT_Y[q] - SLOT_Y[c])));   /* F1256: lejos en ancho y también en profundidad */ if (d > md) { md = d; mejor = c; } }); return mejor;
   }
   function reclamarRegalo() { const e = cargar(); if (e.regalo && e.regalo.tester) return { ok: false, motivo: 'ya' }; e.gotas.saldo += 300; e.regalo = { tester: true }; guardar(e); return { ok: true, gotas: 300 }; }
-  function paisajeNuevo(e) {                                // el árbol maduro pasa al fondo
-    const c = e.ciclo; const cas = casillaLibre(e, 'fondo') || ('fondo-' + (((c.n - 1) % (cat().casillas.fondo.length || 6)) + 1));
-    e.paisaje = e.paisaje.filter((p) => p.casilla !== cas); e.paisaje.push({ ciclo: c.n, especie: c.especie, casilla: cas }); e.paisaje = e.paisaje.slice(-(cat().ciclo.paisaje_guardado || 6));
-  }
 
   // Primera semilla: la persona elige entre las que ofrece el catálogo. Devuelve false si el id no corresponde o ya eligió.
   function elegirPrimera(id) {

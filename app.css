@@ -1457,3 +1457,5 @@ button.lc-card{cursor:pointer}
   html:not([data-anim=off]) main .min-persona:nth-child(2){animation-delay:.06s}
   html:not([data-anim=off]) main .min-persona:nth-child(n+3){animation-delay:.12s}
 }
+/* F1331 · nivel Completo (mismo color que Básico) en la comparativa */
+.sb-n-completo .sb-ins,.sb-n-basico .sb-ins{background:linear-gradient(135deg,#2f7b9c,#1d4f67)}

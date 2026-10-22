@@ -1,4 +1,4 @@
-// suscripcion.js - F941 · Base de «Tierra Buena Plus» (mensual y anual). SIN cobro propio: la verdad la escribe el servidor/tienda (ver PLAN_SUSCRIPCION.md).
+// suscripcion.js - F941 · Base de «Tierra Buena Plus» (mensual y anual). SIN cobro propio: la verdad la escribe el servidor/tienda (ver compartido/docs/SUSCRIPCIONES.md).
 // Guarda solo una copia local del estado (para abrir sin internet). Nunca bloquea la Biblia, la oración ni el árbol. No toca el inicio de sesión ni SYNC_CLAVES.
 'use strict';
 (function () {
@@ -19,8 +19,9 @@
   // La oferta se muestra solo si está encendida desde el catálogo, la persona ya lleva días de cuidado y aún no apoya. Nunca en lectura ni oración (lo decide quien la llama).
   function ofertaVisible(diasCuidado) { return !!(CAT && CAT.oferta_activa === true && (+diasCuidado || 0) >= (CAT.dias_cuidado_minimo != null ? +CAT.dias_cuidado_minimo : 7) && !tengoPlus()); }
   const clp = (n) => '$' + String(Math.round(+n || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' CLP';
-  function precioTexto(periodo) { const p = CAT && CAT.planes && CAT.planes[periodo]; return p ? clp(p.precio_clp) + ' por ' + p.periodo : ''; }
-  function ahorroAnual() { const m = CAT && CAT.planes && CAT.planes.mensual, a = CAT && CAT.planes && CAT.planes.anual; if (!m || !a) return 0; return Math.max(0, Math.round((1 - a.precio_clp / (m.precio_clp * 12)) * 100)); }
+  const plan = (id) => (CAT && CAT.tarjetas || []).find((t) => t.id === (id || 'plus')) || null;
+  function precioTexto(periodo, id) { const t = plan(id); if (!t || t.rangos) return ''; return clp(periodo === 'anual' ? t.anual : t.mensual) + ' por ' + (periodo === 'anual' ? 'año' : 'mes'); }
+  function ahorroAnual(id) { const t = plan(id); if (!t || t.rangos) return 0; return Math.max(0, Math.round((1 - t.anual / (t.mensual * 12)) * 100)); }
   const api = { config(c) { CAT = c; }, catalogo: () => CAT, leer, aplicar, limpiar, tengoPlus, enGracia, ofertaVisible, precioTexto, ahorroAnual, PERIODOS };
   if (typeof window !== 'undefined') window.TBSuscripcion = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

@@ -1,5 +1,5 @@
 // app.js — F856 (MOV2a): esqueleto de la versión móvil/tablet de Tierra Buena.
-// Reutiliza lo que ya se decidió para el miembro (plan archivado en compartido/archivo_NO_LEER.zip):
+// Reutiliza lo que ya se decidió para el miembro:
 // identidad liviana con llave en el dispositivo, solicitud que aprueba el pastor, mismas funciones de Supabase.
 // No usa nada de Electron. F868-F869: se puede entrar con correo y contraseña (Supabase Auth, igual que el escritorio); sin cuenta sigue valiendo el código + llave.
 (function () {
@@ -695,7 +695,6 @@
   function vistaUnirse() {
     if (!leer(K_CUENTA)) return puerta();                  // F936: sin sesión, solo la puerta
     if (codigoDeEnlace()) return vistaCodigo();            // vino de un enlace con el código de su iglesia
-    const conCuenta = !!leer(K_CUENTA);
     $('#pantalla').innerHTML = `
       ${areaHero('unirse')}<div class="ent-top">${icoPastorHTML()}${icoCodigoHTML()}</div>
       <div class="hero hero-viva"><span class="hv-caja" aria-hidden="true"><i></i><i></i><i></i><i></i></span><div class="hero-ico" aria-hidden="true">${svg('iglesia', 38)}</div><h1>Tu iglesia te espera</h1>
@@ -792,7 +791,6 @@
   // F1178 · Mi iglesia del miembro, rehecha: una portada corta (sin desplazarse mucho) y dos subpantallas («Servir» y «Mi cuenta»).
   // Antes eran 4 acordeones con ~20 bloques; ahora: 2 botones grandes de ayuda + 6 fichas + 2 entradas. Todo cabe casi sin bajar.
   const ficha = (ico, titulo, ayuda, ir) => `<button type="button" class="mi-ficha" data-ir="${ir}"><span class="mi-ficha-ic" aria-hidden="true">${icono(ico)}</span><b>${titulo}</b><small>${ayuda}</small></button>`;
-  const filaIr = (ico, titulo, ayuda, ir) => `<button type="button" class="fila" data-ir="${ir}"><span class="fila-ico t2" aria-hidden="true">${icono(ico)}</span><span class="fila-txt">${titulo}<small>${ayuda}</small></span><span class="flecha" aria-hidden="true">›</span></button>`;
   function cablearMiembro(id) {
     document.querySelectorAll('[data-chat]').forEach((b) => b.addEventListener('click', () => vistaChat({ rol: 'miembro', codigo: id.codigo, clave: id.clave, nombre: id.nombre })));
     document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => ({ juntos: abrirJuntos, oracion: vistaOracion, agenda: (i) => vistaAgenda(modoMiembro(i)), avisos: (i) => vistaAvisos(modoMiembro(i)), ministerios: vistaMinisterios, muro: vistaMuro, accion: vistaAccion, visita: vistaVisita, mioracion: () => vistaMiOracion(), crec: () => vistaCrecimiento(), privacidad: vistaPrivacidad, ayuda: () => vistaPreguntas(id), servir: vistaMiembroServir, cuenta: vistaMiembroCuenta }[b.dataset.ir] || vistaVisita)(id)));
@@ -1440,14 +1438,6 @@
     let gano = false; if (total > 0 && aciertos / total >= 0.6) gano = gotaGanar('juego'); return Object.assign({}, q, { gano });
   }
   // F945 · «RAÍCES» (juego B): preguntas con el versículo que explica la respuesta. Reto del día = 5 fijas por fecha; «Otras 5» = al azar.
-  function raicesElegir(bank, diario) {
-    let sem = 0; const f = diario ? hoyTxt() : String(Date.now()); for (let i = 0; i < f.length; i++) sem = (sem * 31 + f.charCodeAt(i)) >>> 0;
-    const azar = () => { sem = (sem * 1664525 + 1013904223) >>> 0; return sem / 4294967296; };
-    const ult = leer(K_BIB), vistas = diario ? [] : ((leer(K_JUEGOS) || {}).vistas_raices || []);   // F1093: «Otras cinco» prefiere preguntas que aún no viste
-    const a = barajarFY(bank, azar).sort((x, y) => (vistas.includes(x.id) ? 1 : 0) - (vistas.includes(y.id) ? 1 : 0));
-    const del = ult ? a.filter((q) => q.cod === ult.cod) : [];   // primero las del libro que leíste por última vez
-    return del.slice(0, 2).concat(a.filter((q) => !del.slice(0, 2).includes(q))).slice(0, 5);
-  }
   // F947 · Texto de los juegos: separa palabras pegadas y arregla espacios (la Biblia y las preguntas llegan de distintas fuentes).
   const limpiaTexto = (t) => String(t == null ? '' : t).replace(/\s+/g, ' ').replace(/([a-záéíóúñ])([A-ZÁÉÍÓÚÑ])/g, '$1 $2').replace(/([,;:.!?»)])(?=[A-Za-zÁÉÍÓÚáéíóúñ¿¡«(])/g, '$1 ').trim();
   const JU_HERO = (n) => !CABECERAS_ILUSTRADAS ? '' : `<svg class="ju-hero" viewBox="0 0 320 96" aria-hidden="true" focusable="false"><path class="ju-suelo" d="M0 70 Q80 58 160 68 T320 62 V96 H0z"/><g class="ju-raiz"><path d="M160 68 C150 78 138 82 124 90 M160 68 C162 80 170 86 176 94 M160 68 C172 76 188 80 204 88"/></g><g class="ju-planta"><path class="ju-tallo" d="M160 68 V${Math.max(22, 62 - n * 8)}"/><path class="ju-hoja h1" d="M160 ${Math.max(40, 62 - n * 5)} c-18-2-28-12-30-24 18 0 30 8 30 24z"/><path class="ju-hoja h2" d="M160 ${Math.max(34, 54 - n * 5)} c18-2 28-12 30-24-18 0-30 8-30 24z"/>${n >= 3 ? '<circle class="ju-flor" cx="160" cy="18" r="7"/><circle class="ju-flor2" cx="160" cy="18" r="3"/>' : ''}</g></svg>`;
@@ -1721,21 +1711,6 @@
     jugar();
   }
   // F953 · «SOPA DEL VIVERO» (juego D): sopa de letras grande, 8x8, solo de izquierda a derecha y de arriba hacia abajo, sin tiempo, con pistas gratis.
-  function sopaArmar(palabras) {   // devuelve { g: matriz de letras, pos: {PALABRA: {f, c, dir}} }
-    const N = 8, L = 'ABCDEFGHIJLMNOPQRSTUVXYZ', g = Array.from({ length: N }, () => Array(N).fill('')), pos = {};
-    const azar = (n) => Math.floor(Math.random() * n);
-    palabras.slice().sort((a, b) => b.length - a.length).forEach((w) => {
-      for (let intento = 0; intento < 200; intento++) {
-        const dir = azar(2), f = azar(dir ? N - w.length + 1 : N), c = azar(dir ? N : N - w.length + 1); let ok = true;
-        for (let k = 0; k < w.length; k++) { const x = g[f + (dir ? k : 0)][c + (dir ? 0 : k)]; if (x && x !== w[k]) { ok = false; break; } }
-        if (!ok) continue;
-        for (let k = 0; k < w.length; k++) g[f + (dir ? k : 0)][c + (dir ? 0 : k)] = w[k];
-        pos[w] = { f, c, dir }; return;
-      }
-    });
-    for (let f = 0; f < N; f++) for (let c = 0; c < N; c++) if (!g[f][c]) g[f][c] = L[azar(L.length)];
-    return { g, pos };
-  }
   // F1106 · SOPA DEL VIVERO por caminos: 3 mapas temáticos × 6 niveles. Cada nivel se desbloquea al completar el anterior. Estrellas según pistas y deshacer.
   const SOPA_MAPAS = [
     { id: 'semillero', nombre: 'Semillero', ayuda: 'Letras rectas, para empezar.', color: '#8dc466', N: 8, n: 4, min: 3, max: 6, dirs: [[0, 1], [1, 0]] },
@@ -2821,7 +2796,6 @@
     return '<svg class="plan-portada" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid slice" role="img" aria-label="' + esc(pl.n) + '">' + cuerpo + '</svg>';
   };
   // Portada de cada Biblia: tapa de cuero verde, filete dorado y el brote de la marca
-  const portadaBiblia = (v) => '<svg class="biblia-portada" viewBox="0 0 320 200" role="img" aria-label="Portada de la ' + esc(v.n) + '"><rect x="4" y="4" width="312" height="192" rx="14" fill="#2f4f3a"/><rect x="16" y="16" width="288" height="168" rx="9" fill="none" stroke="#d9b65c" stroke-width="2"/><rect x="24" y="24" width="272" height="152" rx="6" fill="none" stroke="#d9b65c" stroke-width=".8" opacity=".7"/><text x="160" y="72" text-anchor="middle" font-family="Georgia, serif" font-size="22" letter-spacing="3" fill="#f6ecd2">SANTA BIBLIA</text><g transform="translate(138 84) scale(1.6)">' + PICTO.brote + '</g><text x="160" y="150" text-anchor="middle" font-family="Georgia, serif" font-size="15" fill="#f6ecd2">' + esc(v.c) + '</text><text x="160" y="168" text-anchor="middle" font-family="Georgia, serif" font-size="10.5" fill="#d9b65c">' + esc(v.n) + '</text></svg>';
   const planVidaCardHTML = (pl) => { const h = planVidaHechos(pl.id).length, tot = pl.dias.length; return '<button type="button" class="card plan-card" data-planvida="' + pl.id + '"><div class="plan-foto plan-foto-svg" aria-hidden="true">' + portadaPlanVida(pl.id) + '</div><div class="t"><span aria-hidden="true">' + svg('brote', 22) + '</span>' + esc(pl.n) + '<span class="flecha" aria-hidden="true">›</span></div><p class="suave m0t">' + esc(pl.d) + '</p><p class="suave m0t">' + h + ' de ' + tot + ' días</p>' + (h < tot ? '<p class="suave m0t">Siguiente: ' + esc(pl.dias[pl.dias.findIndex((x, k) => planVidaHechos(pl.id).indexOf(k) < 0)].t) + '</p>' : '<p class="suave m0t">Plan completado</p>') + '</button>'; };
   // F1018 · Juntos hacemos el bien en Vida: pantalla vacía por ahora (se creará el lugar para personas con y sin iglesia).
   function vistaJuntosVida() {
@@ -4102,7 +4076,6 @@
     perfilGuardar(Object.assign({ meta: c.meta, t: c.tema }, r.nombre ? { n: r.nombre.slice(0, 30) } : {})); temaAplicar(c.tema);
     if (onbEstado.plan) { const q = rg(K_PLANES); if (!q[c.plan]) { q[c.plan] = { ini: new Date().toISOString(), h: [] }; guardar(K_PLANES, q); } }
   }
-  function onbIr() { entrandoPon(false); ir('palabra'); toastBib('Tu espacio está listo'); }
   // El inicio de sesión es el de siempre (vistaCuenta, sin cambios): aquí solo se abre. REGLA: no modificarlo sin que el usuario lo pida.
   function onbCuentaIr(modo) { onbParar(); entrandoPon(false); vistaCuenta(modo); }
   const onbBrote = (n) => `<div class="ent-prog" data-paso="${n}" role="img" aria-label="Pregunta ${n} de ${ONB_NQ}"><span class="ent-brote">${svg('brote', 26)}</span><span class="ent-barra">${ONB_P.filter((x) => !x.info).map((x, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</span></div>`;
@@ -4152,8 +4125,8 @@
     document.querySelectorAll('.lc-card[data-tab]').forEach((b) => b.addEventListener('click', () => { vibra(); ir(b.dataset.tab); }));
     window.scrollTo(0, 0);
   }
-  // F1196 · Suscripción según su función (elegir un plan de pago con calma): tres tarjetas (Plus para una persona, Familia para el hogar,
-  // Iglesia para el pastor y su congregación), cada una mensual o anual, con lo que incluye; debajo, lo que siempre es gratis y cómo se cancela.
+  // F1196 · Suscripción según su función (elegir un plan de pago con calma): tres tarjetas (Básico y Completo para una persona,
+  // Plan Iglesia para el pastor y su congregación, con 3 rangos por tamaño), cada una mensual o anual, con lo que incluye; debajo, lo que siempre es gratis y cómo se cancela.
   // El cobro pasa solo por la tienda (window.TBPagos); sin tienda se explica con calma y no se cobra nada.
   async function vistaSuscripcion(periodo, desde) {
     const S = window.TBSuscripcion, atras = desde === 'perfil' ? ['Perfil', vistaPerfil] : ['Menú', menuAbrir];
@@ -4164,12 +4137,13 @@
     const moneda = (n) => '$' + String(Math.round(+n || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     const lista = (l) => `<ul class="apoyo-lista">${l.map((x) => `<li>${svg('check', 18)}<span>${esc(typeof x === 'string' ? x : x.t)}${typeof x !== 'string' && x.pronto ? ' <i class="sb-pronto">Pronto</i>' : ''}</span></li>`).join('')}</ul>`;
     const compara = (a) => `<h3 class="mi-sub">${esc(a.area)}</h3><ul class="sb-comp">${a.filas.map((f) => `<li class="sb-fila sb-n-${esc(f.n)}"><span class="sb-fila-tx"><b>${esc(f.t)}</b>${f.nota ? `<small>${esc(f.nota)}</small>` : ''}</span><span class="sb-ins">${esc((C.niveles || {})[f.n] || f.n)}</span></li>`).join('')}</ul>`;
+    const agrupaFunciones = (fs) => [...new Set(fs.map((f) => f.area))].map((a) => ({ area: a, filas: fs.filter((f) => f.area === a) }));
     const tarjeta = (t) => {
       const m = +t.mensual, a = +t.anual, ahorro = Math.max(0, Math.round((1 - a / (m * 12)) * 100));
       return `<article class="sb-plan ${esc(t.clase)}"><header class="sb-cab"><span class="sb-ic" aria-hidden="true">${esc(t.icono)}</span><div><small>${esc(t.para)}</small><h3>${esc(t.nombre)}</h3></div>${t.etiqueta ? `<span class="sb-etq">${esc(t.etiqueta)}</span>` : ''}</header>
         <p class="sb-quien">${esc(t.quien)}</p>
-        <p class="sb-precio"><b>${moneda(per === 'anual' ? a : m)}</b><span> ${per === 'anual' ? 'al año' : 'al mes'}</span></p>
-        <p class="sb-eq">${per === 'anual' ? 'Unos ' + moneda(a / 12) + ' al mes · dos meses de regalo' : 'Pagas mes a mes' + (ahorro ? '. Con el anual ahorras ' + ahorro + '%' : '')}</p>
+        ${t.rangos ? `<p class="sb-eq">Precio por ${per === 'anual' ? 'año' : 'mes'} según el tamaño de tu iglesia:</p><ul class="apoyo-lista sb-rangos">${t.rangos.map((r) => `<li><span><b>${esc(r.t)}</b>: ${moneda(per === 'anual' ? r.anual : r.mensual)} ${per === 'anual' ? 'al año' : 'al mes'}<br><small class="suave">Si son ${r.max} personas, unos ${moneda((per === 'anual' ? r.anual / 12 : r.mensual) / r.max)} por persona al mes.</small></span></li>`).join('')}</ul>` : `<p class="sb-precio"><b>${moneda(per === 'anual' ? a : m)}</b><span> ${per === 'anual' ? 'al año' : 'al mes'}</span></p>
+        <p class="sb-eq">${per === 'anual' ? 'Unos ' + moneda(a / 12) + ' al mes · dos meses de regalo' : 'Pagas mes a mes' + (ahorro ? '. Con el anual ahorras ' + ahorro + '%' : '')}</p>`}
         ${t.grupos.map((g) => (g.t ? `<h4 class="sb-sub">${esc(g.t)}</h4>` : '') + lista(g.l)).join('')}
         ${t.nota ? `<p class="suave sb-nota">${esc(t.nota)}</p>` : ''}
         ${ya ? '' : `<button type="button" class="btn sb-bt" data-plan="${esc(t.id)}">${esc(t.boton)}</button>`}</article>`;
@@ -4180,7 +4154,7 @@
       <p class="suave sb-aviso">${esc(T.precios_nota)}</p>
       <div class="sb-planes">${C.tarjetas.map(tarjeta).join('')}</div>
       <p class="suave" id="apoyoMsg" role="status" aria-live="polite"></p>
-      <h2 class="mi-sub">Qué es gratis y qué es de pago</h2><p class="suave m0">La Biblia y lo que otras apps también regalan siguen gratis. Los planes suman lo propio de Tierra Buena.</p>${(C.comparativa || []).map(compara).join('')}
+      <h2 class="mi-sub">Qué es gratis y qué es de pago</h2><p class="suave m0">La Biblia y lo que otras apps también regalan siguen gratis. Los planes suman lo propio de Tierra Buena.</p>${agrupaFunciones(C.funciones || []).map(compara).join('')}
       <h2 class="mi-sub">Cómo funciona</h2>${lista(C.como_funciona || [])}
       ${ya ? '' : '<div class="apoyo-acc"><button type="button" class="btn sec" id="apoyoRest">Restaurar compras</button></div>'}
       <p class="suave"><small>Al suscribirte aceptas los Términos y la Política de privacidad.</small></p>`;
@@ -4190,7 +4164,7 @@
     const puente = window.TBPagos;   // lo agrega la versión de tienda (Capacitor/RevenueCat); en la web no existe
     document.querySelectorAll('[data-plan]').forEach((b) => b.addEventListener('click', async () => {
       vibra(); const t = C.tarjetas.find((x) => x.id === b.dataset.plan); if (!t) return;
-      if (t.id === 'iglesia') return msg(T.iglesia_sin_tienda);   // lo contrata el pastor desde su panel (aún no disponible)
+      if (t.rangos) return msg(T.iglesia_sin_tienda);   // lo contrata el pastor desde su panel (aún no disponible)
       if (!puente || typeof puente.comprar !== 'function') return msg(T.sin_tienda);
       b.disabled = true;
       try { const r = await puente.comprar(per, t.id_tienda[per]); if (r && r.ok) { S.aplicar(r.compra); vistaSuscripcion(per, desde); return; } msg('No se completó la compra. No se cobró nada.'); } catch (e) { msg('No pudimos completar la compra ahora. No se cobró nada.'); }

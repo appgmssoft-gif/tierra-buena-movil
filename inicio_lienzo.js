@@ -49,10 +49,6 @@
       return sombraTag + m;
     });
   }
-  function rasgoDibujo(id) {
-    if (AVES[id] && AVES[id].dib) return '<g transform="translate(' + (-AVES[id].vb[0] / 2) + ' ' + (-AVES[id].vb[1]) + ')">' + sombrear(AVES[id].dib()) + '</g>';
-    return sombrear(sueloDibujo(id));
-  }
 
 
   // F1203 · Día 9: la atmósfera propia del lugar (rayos de luz desde arriba a la izquierda y partículas). Día 10: halo dorado del lugar completo.
@@ -331,7 +327,6 @@
   const KV = { pasto_alto: 2.2, bambu: 1.4, flor_de_loto: 2.4, bonsai: 2.2, planta_fantasma: 2.4, welwitschia: 2.4, dracaena_cinnabari: 1.4, orquidea_subterranea: 2.6, secuoya_roja: 1.3, rafflesia: 2.8 }, SOLO = ['bonsai', 'welwitschia', 'dracaena_cinnabari', 'secuoya_roja', 'rafflesia', 'bambu'];   // F961: escala y cuántas copias en la vista previa
   const pet = (cx, cy, r, col, n) => Array.from({ length: n || 5 }, (_, i) => { const a = (i * 360 / (n || 5)) * Math.PI / 180; return '<circle cx="' + (cx + Math.sin(a) * r * 0.62).toFixed(1) + '" cy="' + (cy - Math.cos(a) * r * 0.62).toFixed(1) + '" r="' + (r * 0.5).toFixed(1) + '" fill="' + col + '"/>'; }).join('');
   const campana = (x, y, s) => '<g transform="translate(' + x + ' ' + y + ') scale(' + s + ')"><path d="M0 0C-4 2-7 8-8 14Q-4 16 0 14Q4 16 8 14C7 8 4 2 0 0z" fill="#c8264a"/><path d="M0 3C-2 6-3 10-3.4 13Q0 14.2 3.4 13C3 10 2 6 0 3z" fill="#e8627f"/><path d="M-8 14Q-4 16 0 14Q4 16 8 14" fill="none" stroke="#f6d3da" stroke-width="1.1"/><circle cx="-1.6" cy="16.6" r=".8" fill="#f1d36a"/><circle cx="0" cy="17.6" r=".8" fill="#f1d36a"/><circle cx="1.6" cy="16.6" r=".8" fill="#f1d36a"/></g>';
-  const trompeta = (a) => '<g transform="rotate(' + a + ' 15 15)"><path d="M14.2 15 11.4 3.6Q15 1 18.6 3.6L15.8 15z" fill="#d93a2b"/><ellipse cx="15" cy="3.6" rx="3.1" ry="1.5" fill="#f4c34a"/><path d="M15 3.4V.4M13.4 3.2 12.4 .8M16.6 3.2 17.6 .8" stroke="#f3e2a0" stroke-width=".7" stroke-linecap="round"/></g>';
   const espiga = (x, y0, n, paso, c1, c2) => Array.from({ length: n }, (_, i) => { const y = y0 + i * paso, k = 1 - Math.max(0, (n - 3 - i)) * 0 , w = i < 2 ? 1.5 : 2.2; return '<ellipse cx="' + (x + (i % 2 ? 1.5 : -1.5)) + '" cy="' + y + '" rx="' + w + '" ry="1.8" fill="' + (i % 2 ? c1 : c2) + '"/>'; }).join('');
   const FLORES = {
     copihue: () => `<path d="M12 56 C14 46 8 40 12 30 S19 18 16 8" fill="none" stroke="#3f6e45" stroke-width="2" stroke-linecap="round"/><path d="M12 30 C6 24 3 19 5 13 C11 17 14 23 12 30Z" fill="#4f8a55"/><path d="M14 22 C20 15 26 15 29 19 C23 23 18 24 14 22Z" fill="#5f9e5c"/><path d="M12 42 C6 40 3 42 4 46 C9 46 11 45 12 42Z" fill="#3f7a45"/><path d="M17 11 C13 6 15 2 19 2 C21 6 20 9 17 11Z" fill="#6aae63"/><path d="M13 16 C11 14 12 12 14 12" fill="none" stroke="#c9e8b8" stroke-width=".8" stroke-linecap="round"/>` + campana(24, 21, 1) + campana(6, 40, .85),
@@ -412,11 +407,6 @@ ananuca: () => `<path d="M15 44 C10 36 6 30 4 22 C10 28 13 34 15 44Z" fill="#6b9
   const DIAS = () => (CAT && CAT.ciclo && CAT.ciclo.dias) || 10;   // F1059: la duración del ciclo viene del catálogo
   const catDe = (t) => (t === 'ave' ? CAT.aves : t === 'ambiente' ? CAT.ambientes : CAT.semillas) || {};   // F1055: catálogo según el tipo de decoración
   const enGrupo = (tipo, id, g) => { const it = catDe(tipo)[id] || {}, h = it.habitat && it.habitat.length ? it.habitat : null; return h ? h.indexOf(g) >= 0 : true; };   // F1254: lo sin hábitat (pasto alto, golondrina) sirve en todos los lugares
-  const gruposCon = (tipo) => ['general'].concat(Object.keys(CAT.tematicas || {})).filter((g) => listaDe(tipo).some((i) => enGrupo(tipo, i, g)));
-  function tabsViv(on, n) {                                  // F975 · cuatro pestañas: plantas, aves, otros y cómo ganar gotas
-    const t = (id, txt) => '<button type="button" class="il-viv-tab' + (on === id ? ' on' : '') + '" data-ac="tab" data-id="' + id + '" aria-pressed="' + (on === id) + '">' + txt + '</button>';
-    return '<div class="il-viv-tabs" role="group" aria-label="Qué mirar en el vivero">' + t('flores', 'Plantas') + t('aves', 'Aves') + t('paisaje', 'Ambiente') + '</div>';
-  }
   // F1010 · Miniatura de cada hábitat como se ve en su día 30 (identidad propia; sin copiar otra app).
   function habThumb(g) {
     const P = { bosque: ['#cfe6d6', '#4f8a55', '#2f6b3f', '#c4604a'], desierto: ['#f6e2b3', '#e2b872', '#d1a05a', '#6aa86b'], cordillera: ['#d9e8f2', '#9fb4c7', '#8aa98a', '#fbe8a6'], costa: ['#cfe9ee', '#7fb9c8', '#e8d3a6', '#c4604a'] };
@@ -547,16 +537,6 @@ ananuca: () => `<path d="M15 44 C10 36 6 30 4 22 C10 28 13 34 15 44Z" fill="#6b9
     bosque: '<svg viewBox="0 0 320 96" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><defs><linearGradient id="taBo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfe6f4"/><stop offset="1" stop-color="#eef6e8"/></linearGradient></defs><rect width="320" height="96" fill="url(#taBo)"/><path d="M0 58 C40 34 80 40 120 30 S200 36 240 26 S300 34 320 30 V96 H0Z" fill="#8fb88a"/><g fill="#4f8a55"><ellipse cx="42" cy="48" rx="20" ry="16"/><ellipse cx="78" cy="44" rx="16" ry="14"/><ellipse cx="236" cy="46" rx="20" ry="16"/><ellipse cx="272" cy="42" rx="16" ry="14"/><ellipse cx="304" cy="50" rx="14" ry="12"/></g><g fill="#2f6040"><ellipse cx="128" cy="40" rx="11" ry="20"/><ellipse cx="160" cy="34" rx="13" ry="24"/><ellipse cx="192" cy="42" rx="11" ry="18"/></g><g fill="#7a5a3c"><rect x="40" y="62" width="4" height="22"/><rect x="77" y="58" width="4" height="26"/><rect x="235" y="62" width="4" height="22"/><rect x="271" y="58" width="4" height="26"/><rect x="158" y="56" width="4" height="30"/></g><path d="M0 84 C80 78 160 82 240 80 S300 82 320 80 V96 H0Z" fill="#6f9e68"/><g fill="#d98cb3"><circle cx="100" cy="82" r="2"/><circle cx="210" cy="84" r="2"/></g></svg>',
     desierto: '<svg viewBox="0 0 320 96" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><defs><linearGradient id="taDe" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7dcb0"/><stop offset="1" stop-color="#fbeed6"/></linearGradient></defs><rect width="320" height="96" fill="url(#taDe)"/><circle cx="268" cy="22" r="11" fill="#f5c46a" opacity=".9"/><path d="M0 62 C60 46 120 56 170 48 S270 52 320 44 V96 H0Z" fill="#e6b97a"/><path d="M0 80 C90 70 170 78 250 72 S300 74 320 70 V96 H0Z" fill="#d4a062"/><g fill="#c25b3c"><path d="M52 72 q-4 -10 0 -18 q4 8 0 18z"/><path d="M58 72 q4 -8 10 -10 q-6 6 -10 10z"/></g><g fill="#e7749a"><circle cx="110" cy="66" r="3.4"/><circle cx="118" cy="64" r="3.2"/><circle cx="126" cy="67" r="3.4"/></g><g stroke="#3f7a4c" stroke-width="2.2" stroke-linecap="round"><path d="M110 72 V80"/><path d="M118 70 V80"/><path d="M126 73 V80"/></g><g fill="#5f9a62"><rect x="220" y="58" width="6" height="22" rx="3"/><rect x="226" y="62" width="4" height="10" rx="2"/><rect x="210" y="64" width="4" height="8" rx="2"/></g></svg>',
   };
-  function temasHTML(est) {                                 // F965 · temáticas del vivero: se compran con gotas y cambian el fondo y las plantas permitidas
-    const TM = (CAT && CAT.tematicas) || {}, ids = Object.keys(TM), v = est.vivero || { desbloqueados: [] }, saldo = (est.gotas && est.gotas.saldo) || 0;
-    if (!ids.length) return '';
-    return '<div class="il-tem"><h4 class="il-tem-h">Temáticas</h4>' + ids.map((id) => {
-      const t = TM[id], mio = v.desbloqueados.indexOf('tem_' + id) >= 0, act = est.tematica === id;
-      const bt = act ? '<span class="il-viv-chip ok">En uso</span>' : mio ? '<button type="button" class="il-tem-bt" data-ac="tema-usar" data-id="' + esc(id) + '">Usar esta temática</button>'
-        : '<button type="button" class="il-tem-bt sec" data-ac="tema-comprar" data-id="' + esc(id) + '"' + (saldo < t.precio ? ' disabled' : '') + '>' + (saldo < t.precio ? 'Faltan ' + (t.precio - saldo) + ' gotas' : 'Obtener por ' + t.precio + ' gotas') + '</button>';
-      return '<article class="il-tem-card' + (act ? ' act' : '') + '"><div class="il-tem-arte">' + (TEMA_ARTE[id] || '') + '</div><b>' + esc(t.nombre) + '</b><p>' + esc(t.mensaje) + '</p><p class="il-tem-dato">' + esc(t.dato) + '</p>' + bt + '</article>';
-    }).join('') + '</div>';
-  }
   const MOT = { 'otra-tematica': 'Primero obtén el hábitat de esta planta.', 'no-desbloqueada': 'Primero obtén esta temática.', 'faltan-frutos': 'Aún faltan frutos para esto.', 'falta-lugar': 'Primero hace falta ese paisaje.', 'faltan-gotas': 'Aún faltan gotas para esto.', 'sin-lugar': 'No queda lugar libre en el pasto.', 'maximo': 'Solo pueden estar 2 aves a la vez. Se puede guardar una para llamar a otra.', 'ya-tienes': 'Ya lo tienes.' };
   const nomHab = (h) => ((CAT && CAT.tematicas && CAT.tematicas[h]) || {}).nombre || h;
   // F1067 · Cámara: el escenario se acerca al punto donde se plantó o llamó un ave, y vuelve. Con «reducir movimiento» no se mueve.
@@ -622,8 +602,6 @@ ananuca: () => `<path d="M15 44 C10 36 6 30 4 22 C10 28 13 34 15 44Z" fill="#6b9
     return '';
   }
 
-  function nombreArbol(est) { if (est.tematica === 'costa') return esc((CAT.tematicas.costa || {}).nombre || 'Costa del Pacífico');   // F1090: en la playa no se dibuja árbol
-    const s = CAT && CAT.especies && CAT.especies[est.ciclo.especie]; return s ? esc(s.nombre) + (s.otro ? ' <span>· ' + esc(s.otro) + '</span>' : '') : 'Tu árbol'; }
 
   // ---------- Primera semilla ----------
   // F1076 · Tarjeta de lugar: paisaje del hábitat + su árbol emblemático encima, para reconocerlo de inmediato
