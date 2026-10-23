@@ -81,25 +81,69 @@
     const f = r.ok && r.data && (Array.isArray(r.data) ? r.data[0] : r.data);
     if (!f) { c.textContent = 'No pudimos abrir esta ficha. Revisa tu conexión e inténtalo de nuevo.'; return; }
     c.hidden = true;
-    $('#cpFicha').innerHTML = fichaHTML(f);
+    $('#cpFicha').innerHTML = fichaHTML(f) + '<div id="cpHist"><p class="suave" role="status">Revisando su historial…</p></div>';
+    cargarHistorial(p, ctx, id);
   }
 
-  // ---- F1360 · 1.15 Descargar la lista de miembros para Excel (CSV con «;» y tildes correctas) ----
-  const COLS_CSV = [['Nombre', 'nombre'], ['Líder', 'es_lider'], ['Ministerios', 'ministerios'], ['Familia', 'familia'], ['Teléfono', 'telefono'], ['Cumpleaños', 'cumpleanos'], ['Dirección', 'direccion']];
+  // ---- F1362 · 1.14 Historial del miembro (pastor_historial_leer, SQL 28). Sin datos, no se inventa nada. ----
+  const TIPO_HITO = { integracion: 'Integración', bautismo: 'Bautismo', curso: 'Curso' };
+  const fechaLarga = (f) => { const d = new Date(String(f).slice(0, 10) + 'T12:00:00'); return isNaN(d) ? '' : d.toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' }); };
+  const BIEN_PASOS = [['contacto', 'Primer contacto'], ['visita', 'Visita'], ['grupo', 'Grupo'], ['oracion', 'Oración']];
+  function historialHTML(h) {
+    const hitos = (h.hitos || []).map((x) => '<li><b>' + esc(TIPO_HITO[x.tipo] || x.tipo) + '</b> · ' + esc(fechaLarga(x.fecha)) + (x.detalle ? '<small>' + esc(x.detalle) + '</small>' : '') + '</li>').join('');
+    const serv = (h.servicios || []).map((x) => '<li><b>' + esc(x.titulo) + '</b> · ' + esc(fechaLarga(x.inicio)) + '</li>').join('');
+    const bien = h.bienvenida ? '<ul class="cp-lista">' + BIEN_PASOS.map(([k, t]) => '<li>' + (h.bienvenida[k] ? '✅ ' : '○ ') + esc(t) + '</li>').join('') + '</ul>' : '';
+    return '<h2 class="mi-sub">Integración, bautismo y cursos</h2>' + (hitos ? '<ul class="cp-lista">' + hitos + '</ul>' : '<p class="suave">Todavía no registrado.</p>') +
+      '<h2 class="mi-sub">Últimos servicios</h2>' + (serv ? '<ul class="cp-lista">' + serv + '</ul>' : '<p class="suave">Todavía no tiene servicios asignados.</p>') +
+      '<h2 class="mi-sub">Bienvenida</h2>' + (bien || '<p class="suave">Todavía no ha comenzado la bienvenida.</p>');
+  }
+  async function cargarHistorial(p, ctx, id) {
+    const r = await ctx.rpc('pastor_historial_leer', p, { p_miembro: id });
+    const caja = $('#cpHist'); if (!caja) return;
+    if (!r.ok || !r.data) { caja.innerHTML = '<p class="suave" role="status">No pudimos cargar el historial. Revisa tu conexión e inténtalo de nuevo.</p>'; return; }
+    const h = Array.isArray(r.data) ? r.data[0] : r.data;
+    if (!h || h.ok === false) { caja.innerHTML = '<p class="suave" role="status">No pudimos cargar el historial de esta persona.</p>'; return; }
+    caja.innerHTML = historialHTML(h);
+  }
+
+  // ---- F1360/F1361 · 1.15 Descargar listas para Excel (CSV con «;» y tildes correctas) ----
+  // celdaCSV y csvGenerico son la base compartida: cualquier lista nueva (miembros, oraciones, visitas…)
+  // pasa por aquí, así la protección contra fórmulas de Excel no se repite ni se olvida en una lista nueva.
   function celdaCSV(v) {
     let t = String(v == null ? '' : v).replace(/\s+/g, ' ').trim();
     // Seguridad: Excel ejecuta como fórmula lo que parte con = + - @ ; los teléfonos (+56…) son la única excepción.
     if (/^[=+\-@]/.test(t) && !/^\+\d[\d ]*$/.test(t)) t = "'" + t;
     return /[";\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t;
   }
-  function csvMiembros(lista) {
-    const fila = (x) => COLS_CSV.map((c) => celdaCSV(c[1] === 'es_lider' ? (x.es_lider ? 'Sí' : 'No') : c[1] === 'cumpleanos' ? cumple(x.cumpleanos) : x[c[1]])).join(';');
-    return '\uFEFF' + [COLS_CSV.map((c) => c[0]).join(';')].concat((lista || []).map(fila)).join('\r\n') + '\r\n';
+  // columnas: [[título, (fila)=>valor], …]. Siempre BOM + «;» + CRLF para que Excel abra bien tildes y columnas.
+  function csvGenerico(columnas, lista) {
+    const fila = (x) => columnas.map((c) => celdaCSV(c[1](x))).join(';');
+    return '\uFEFF' + [columnas.map((c) => c[0]).join(';')].concat((lista || []).map(fila)).join('\r\n') + '\r\n';
   }
+  const COLS_CSV = [['Nombre', (x) => x.nombre], ['Líder', (x) => (x.es_lider ? 'Sí' : 'No')], ['Ministerios', (x) => x.ministerios],
+    ['Familia', (x) => x.familia], ['Teléfono', (x) => x.telefono], ['Cumpleaños', (x) => cumple(x.cumpleanos)], ['Dirección', (x) => x.direccion]];
+  const csvMiembros = (lista) => csvGenerico(COLS_CSV, lista);
   function descargarCSV(texto, nombre) {
     const url = URL.createObjectURL(new Blob([texto], { type: 'text/csv;charset=utf-8' }));
     const a = document.createElement('a'); a.href = url; a.download = nombre; document.body.appendChild(a); a.click();
     setTimeout(() => { a.remove(); URL.revokeObjectURL(url); }, 1500);
+  }
+  // Botón «Descargar para Excel» reutilizable: misma pinta y mismo manejo de errores en cualquier lista del pastor.
+  function botonExportar(id, msgId, etiqueta, nota) {
+    return '<button type="button" class="btn sec cp-exp" id="' + id + '">⬇ ' + esc(etiqueta) + '</button>' +
+      '<p class="suave cp-exp-nota" id="' + msgId + '" role="status" aria-live="polite">' + esc(nota || '') + '</p>';
+  }
+  function conectarExportar(id, msgId, obtenerLista, columnas, prefijo, nombres) {
+    const uno = (nombres && nombres[0]) || 'registro', varios = (nombres && nombres[1]) || 'registros';
+    const b = $('#' + id), msg = $('#' + msgId); if (!b || !msg) return;
+    b.onclick = () => {
+      const lista = obtenerLista();
+      if (!lista.length) { msg.textContent = 'No hay nadie en la lista para descargar.'; return; }
+      try {
+        descargarCSV(csvGenerico(columnas, lista), prefijo + '-' + new Date().toISOString().slice(0, 10) + '.csv');
+        msg.textContent = 'Listo: se descargó la lista de ' + lista.length + ' ' + (lista.length === 1 ? uno : varios) + '. Ábrela con Excel.';
+      } catch (e) { msg.textContent = 'No se pudo descargar en este teléfono. Inténtalo de nuevo.'; }
+    };
   }
 
   async function miembros(p, ctx) {
@@ -116,12 +160,7 @@
       '<button type="button" class="btn sec cp-exp" id="cpExp">⬇ Descargar lista para Excel</button><p class="suave cp-exp-nota" id="cpExpMsg" role="status" aria-live="polite">Incluye solo lo que cada persona decidió compartir.</p>' +
       '<div id="cpLista" aria-live="polite"></div>';
     $('#cpVolver').onclick = ctx.volver;
-    $('#cpExp').onclick = () => {
-      const lista = filtrar(todos, $('#mieQ').value, soloLideres), msg = $('#cpExpMsg');
-      if (!lista.length) { msg.textContent = 'No hay nadie en la lista para descargar.'; return; }
-      try { descargarCSV(csvMiembros(lista), 'miembros-iglesia-' + new Date().toISOString().slice(0, 10) + '.csv'); msg.textContent = 'Listo: se descargó la lista de ' + lista.length + (lista.length === 1 ? ' persona.' : ' personas.') + ' Ábrela con Excel.'; }
-      catch (e) { msg.textContent = 'No se pudo descargar en este teléfono. Inténtalo de nuevo.'; }
-    };
+    conectarExportar('cpExp', 'cpExpMsg', () => filtrar(todos, $('#mieQ').value, soloLideres), COLS_CSV, 'miembros-iglesia', ['persona', 'personas']);
     const volverLista = () => miembros(p, ctx);
     const pinta = () => {
       const lista = filtrar(todos, $('#mieQ').value, soloLideres);
@@ -243,6 +282,12 @@
     pinta();
   }
 
-  window.TBCentroPastor = { miembros, vision, menu, _t: { csvMiembros, celdaCSV, proximosCumples, menuHTML, AREAS, wspCumple, cuando, telefonoWsp, telefonoLlamar, enlaceWsp, filtrar, fichaHTML, filaHTML, cumple } };
+  window.TBCentroPastor = {
+    miembros, vision, menu,
+    // F1361 · 1.15 «otras listas»: Oraciones y Visitas usan estos mismos bloques desde app.js (pOraciones/pVisitas),
+    // así la lógica de CSV (BOM, «;», protección contra fórmulas) vive en un solo lugar.
+    exportar: { csvGenerico, descargarCSV, botonExportar, conectarExportar },
+    _t: { historialHTML, csvMiembros, celdaCSV, csvGenerico, proximosCumples, menuHTML, AREAS, wspCumple, cuando, telefonoWsp, telefonoLlamar, enlaceWsp, filtrar, fichaHTML, filaHTML, cumple }
+  };
   if (typeof module !== 'undefined' && module.exports) module.exports = window.TBCentroPastor;
 })();

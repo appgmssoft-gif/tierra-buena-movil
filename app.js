@@ -245,7 +245,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Acertijos de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Letras entre las hojas': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => !CABECERAS_ILUSTRADAS ? '' : `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1360';
+  const APP_VERSION = 'F1362';
   // F1171: respaldo si movimiento.js no cargó (pruebas o caché vieja): mismo criterio que TBMov.quieto().
   const MOV_QUIETO = () => { try { if (window.TBMov) return window.TBMov.quieto(); const h = document.documentElement; return h.getAttribute('data-anim') === 'off' || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
@@ -4010,8 +4010,12 @@
       try { if (navigator.share) await navigator.share({ text: t }); else { await navigator.clipboard.writeText(t); rsComp.textContent = 'Copiado ✓'; setTimeout(() => { rsComp.innerHTML = svg('compartir', 18) + ' Compartir con mis líderes'; }, 1800); } } catch (e) { /* se cerró el menú */ }
     };
   }
+  // F1361 · 1.15 «otras listas»: Oraciones y Visitas se exportan con la misma base segura que Miembros (F1360).
+  // Ojo: app.js carga antes que centro_pastor.js, así que TBCentroPastor se consulta recién al entrar a la pantalla (no al cargar el archivo).
+  const cpExp = () => window.TBCentroPastor && window.TBCentroPastor.exportar;
   async function pOraciones(p) {
-    $('#pantalla').innerHTML = pCab('Oraciones', '<div id="pHero"></div>'); volverA('Panel', vistaPastor);
+    const CP_EXP = cpExp();
+    $('#pantalla').innerHTML = pCab('Oraciones', '<div id="pHero"></div>' + (CP_EXP ? CP_EXP.botonExportar('oraExp', 'oraExpMsg', 'Descargar lista para Excel', 'Incluye solo lo que cada persona envió al pedir oración.') : '')); volverA('Panel', vistaPastor);
     let r = await prpc('peticion_pastor_listar_v2', p); if (!r.ok && r.falta) r = await prpc('peticion_pastor_listar', p);
     const m = $('#pmsg'); if (!m) return; if (!r.ok) { m.textContent = errTxt(r.error); return; }
     const l = r.data || [];
@@ -4037,10 +4041,15 @@
       if (x && x.ok) pOraciones(p); else { m.hidden = false; m.textContent = 'No se pudo guardar el seguimiento. Revisa tu conexión.'; }
     }));
     document.querySelectorAll('[data-pu]').forEach((b) => b.addEventListener('click', async () => { await prpc('peticion_pastor_publicar', p, { p_id: b.dataset.pu, p_ocultar_nombre: b.dataset.an === '1' }); await prpc('peticion_pastor_marcar_vista', p, { p_id: b.dataset.pu }); pOraciones(p); }));
+    if (CP_EXP) CP_EXP.conectarExportar('oraExp', 'oraExpMsg', () => l, [
+      ['Nombre', (x) => (x.anonima ? 'Anónima' : x.nombre || 'Sin nombre')], ['Tipo', (x) => x.tipo], ['Estado', (x) => PET_ESTADOS.find((e) => e[0] === de(x))?.[1] || de(x)],
+      ['Petición', (x) => x.texto], ['Fecha', (x) => fecha(x.creado_en)]
+    ], 'oraciones-iglesia', ['petición', 'peticiones']);
   }
   const ESTADO_V = { solicitada: 'Nueva', aceptada: 'Aceptada', agendada: 'Agendada', realizada: 'Realizada', no_disponible: 'No disponible' };
   async function pVisitas(p) {
-    $('#pantalla').innerHTML = pCab('Visitas', '<div id="pHero"></div>'); volverA('Panel', vistaPastor);
+    const CP_EXP = cpExp();
+    $('#pantalla').innerHTML = pCab('Visitas', '<div id="pHero"></div>' + (CP_EXP ? CP_EXP.botonExportar('visExp', 'visExpMsg', 'Descargar lista para Excel', 'Incluye solo lo que cada persona escribió al pedir la visita.') : '')); volverA('Panel', vistaPastor);
     const r = await prpc('visita_pastor_listar', p), m = $('#pmsg'); if (!m) return; if (!r.ok) { m.textContent = errTxt(r.error); return; }
     const l = r.data || [];
     const nNuevas = l.filter((v) => v.estado === 'solicitada').length;
@@ -4060,6 +4069,11 @@
       const r2 = await prpc('visita_pastor_responder', p, { p_id: id, p_estado: b.dataset.ve, p_respuesta: $('#vr-' + id).value.trim() || null, p_cuando: cu || null });
       if (r2.ok && r2.data) pVisitas(p); else { m.hidden = false; m.textContent = errTxt(r2.error); }
     }));
+    if (CP_EXP) CP_EXP.conectarExportar('visExp', 'visExpMsg', () => l, [
+      ['Nombre', (x) => x.nombre || 'Sin nombre'], ['Estado', (x) => ESTADO_V[x.estado] || x.estado], ['Tipo', (x) => x.tipo], ['Urgencia', (x) => x.urgencia],
+      ['Motivo', (x) => x.motivo], ['Horarios', (x) => x.horarios], ['Teléfono', (x) => x.telefono], ['Dirección', (x) => x.direccion],
+      ['Respuesta', (x) => x.respuesta], ['Cuándo', (x) => x.cuando], ['Fecha del pedido', (x) => fecha(x.creado_en)]
+    ], 'visitas-iglesia', ['visita', 'visitas']);
   }
   const ICONOS_MIN = ['👥', '🎵', '👶', '🧒', '📖', '🙏', '🤝', '🍞', '🎤', '🎬', '💒', '🌱'], COLORES_MIN = ['#4f8a5b', '#b8893a', '#4a7fb0', '#c4604a', '#7a55b0', '#2f8f86', '#c25b86', '#6b6b6b'];
   async function pMinisterios(p) {
