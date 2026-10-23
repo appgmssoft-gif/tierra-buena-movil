@@ -39,3 +39,18 @@
 .cm-campo small{display:block;margin-top:4px;color:var(--suave)}
 .cm-err{color:var(--error,#b3261e)}
 @media (prefers-reduced-motion:reduce){.cm-sw,.cm-sw::after{transition:none}}
+
+/* F1356 · Mi tarjeta de pastor (1.8) */
+.tp-form label{display:block;margin:18px 2px 8px;font-weight:600}
+.tp-form .cp-filtros{margin:0 0 10px}
+.tp-form textarea{width:100%;min-height:84px;resize:vertical}
+.tp-form .btn{margin-top:18px}
+.tp-tarjeta{display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:16px;border:1px solid var(--linea);background:var(--tarjeta,transparent)}
+.tp-fila{display:flex;align-items:flex-start;gap:14px}
+.tp-ico{font-size:1.5rem;line-height:1.2}
+.tp-tx{display:flex;flex-direction:column;min-width:0;overflow-wrap:anywhere}
+.tp-tx small{color:var(--suave)}
+.tp-tx b{font-size:1.05rem}
+.tp-nota{margin:14px 2px 24px}
+.tp-form .cp-filtros{display:flex;flex-wrap:wrap;gap:8px}
+.tp-form .cp-chip{white-space:nowrap;min-height:44px;height:auto;flex:0 0 auto}

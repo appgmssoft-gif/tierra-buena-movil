@@ -245,7 +245,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Acertijos de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Letras entre las hojas': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => !CABECERAS_ILUSTRADAS ? '' : `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1354';
+  const APP_VERSION = 'F1356';
   // F1171: respaldo si movimiento.js no cargó (pruebas o caché vieja): mismo criterio que TBMov.quieto().
   const MOV_QUIETO = () => { try { if (window.TBMov) return window.TBMov.quieto(); const h = document.documentElement; return h.getAttribute('data-anim') === 'off' || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
@@ -762,7 +762,7 @@
         <div class="mi-car-pista" id="miCar" tabindex="0">
           <article class="mi-sl c1"><span class="mi-sl-big" aria-hidden="true">🌟</span><div class="mi-sl-tx"><small>Acción del mes</small><b id="miAccTema">Lo que viviremos juntos</b><span id="miAccRef">Un paso pequeño, con tu iglesia.</span><button type="button" class="mi-sl-bt" data-ir="accion">Ver cómo vivirla</button></div></article>
           <article class="mi-sl c2"><span class="mi-sl-big" aria-hidden="true">🕍</span><div class="mi-sl-tx"><small>Tu próximo servicio</small><b id="miSrvT">Revisando tus turnos…</b><span id="miSrvD">Aquí verás cuándo te toca servir.</span><button type="button" class="mi-sl-bt" data-ir="servir">Ir a Servir</button></div></article>
-          <article class="mi-sl c5"><span class="mi-sl-big" aria-hidden="true">🧱</span><div class="mi-sl-tx"><small>Orar juntos</small><b>Peticiones del Muro</b><span>Lo que tu pastor compartió para que oremos unidos.</span><button type="button" class="mi-sl-bt" data-ir="muro">Orar ahora</button></div></article>
+          <article class="mi-sl c5"><span class="mi-sl-big" aria-hidden="true">🧱</span><div class="mi-sl-tx"><small>Orar juntos</small><b>Peticiones de la Comunidad</b><span>Lo que tu pastor compartió para que oremos unidos.</span><button type="button" class="mi-sl-bt" data-ir="muro">Orar ahora</button></div></article>
           <article class="mi-sl c4"><span class="mi-sl-big" aria-hidden="true">🙏</span><div class="mi-sl-tx"><small>¿Necesitas apoyo?</small><b>Tu pastor está para ti</b><span>Cuéntale por qué orar o pide que te visite.</span><div class="mi-sl-dos"><button type="button" class="mi-sl-bt" data-ir="oracion">Pedir oración</button><button type="button" class="mi-sl-bt" data-ir="visita">Pedir visita</button></div></div></article>
         </div>
         <div class="mi-car-pts" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>
@@ -771,7 +771,7 @@
       <div class="mi-bento">
         <button type="button" class="mi-b mb-alto mb1" data-ir="agenda"><span class="mi-b-big" aria-hidden="true">📅</span><b>Agenda</b><small>Lo que viene en tu iglesia y tus grupos</small></button>
         <button type="button" class="mi-b mb2" data-ir="avisos"><span class="mi-b-big" aria-hidden="true">🔔</span><b>Avisos</b><small>De tu pastor</small></button>
-        <button type="button" class="mi-b mb3" data-ir="muro"><span class="mi-b-big" aria-hidden="true">🧱</span><b>Muro</b><small>Orar juntos</small></button>
+        <button type="button" class="mi-b mb3" data-ir="muro"><span class="mi-b-big" aria-hidden="true">🧱</span><b>Comunidad</b><small>Orar juntos</small></button>
         <button type="button" class="mi-b mb-ancho mb4" data-chat="1"><span class="mi-b-big" aria-hidden="true">💬</span><span class="mi-b-tx"><b>Chat de mi iglesia</b><small>Bendecir, unirnos y organizar</small></span><span class="mi-b-pts" aria-hidden="true"><i></i><i></i><i></i></span></button>
         <button type="button" class="mi-b mb5" data-ir="servir"><span class="mi-b-big" aria-hidden="true">🤲</span><b>Servir</b><small>Turnos y grupos</small></button>
         <button type="button" class="mi-b mb6" data-ir="accion"><span class="mi-b-big" aria-hidden="true">🌟</span><b>Acción del mes</b><small>Juntos este mes</small></button>
@@ -1054,7 +1054,7 @@
   // Misma logica que peticiones.js del escritorio: peticion_muro lista lo que el pastor compartio y
   // peticion_orando suma/quita mi "Estoy orando" (solo un contador, nadie ve quien oro).
   function vistaMuro(id) {
-    $('#pantalla').innerHTML = `${volver()}${heroInt('c5', '🕊️', 'Orando juntos', 'Muro de oración', 'Peticiones que tu pastor compartió. Pulsa el botón para decir que estás orando.')}
+    $('#pantalla').innerHTML = `${volver()}${heroInt('c5', '🕊️', 'Orando juntos', 'Comunidad de oración', 'Peticiones que tu pastor compartió. Pulsa el botón para decir que estás orando.')}
       <p id="msg" role="alert" hidden></p>
       <div id="muro" aria-live="polite"><p class="suave">Cargando…</p></div>`;
     alVolver();
@@ -2985,7 +2985,7 @@
         <div class="chips chips-meta" role="group" aria-label="Capítulos por día">${[1, 2, 3, 5].map((x) => `<button type="button" class="chip${p.meta === x ? ' on' : ''}" data-meta="${x}" aria-pressed="${p.meta === x}">${x}</button>`).join('')}</div></div></div>
       <h2 class="mi-sub">Mi camino</h2>
       <div class="mi-bento">${bento('mb1', svg('trofeo', 34), 'Mis logros', 'Lo que has desbloqueado', 'logros', 'pf')}${bento('mb2', svg('brote', 34), 'Pasos de acción', nHechas() ? nHechas() + (nHechas() === 1 ? ' hecho' : ' hechos') : 'Un paso pequeño cuenta', 'hacer', 'pf')}${bento('mb-ancho mb3', svg('libro', 34), 'Cambiar mi plan', esc(planResumen()), 'plan', 'pf')}</div>
-      ${pastorLeer() ? `${bandaTB('pastor')}<section class="area area-pastor" aria-label="Panel del pastor"><div class="area-cab"><span class="area-tag">Panel del pastor</span><h2 class="area-t">Cuidar a tu iglesia</h2><p class="suave m0">Todo lo que necesitas para guiar, orar y servir con tu comunidad, en un solo lugar.</p></div><div class="card pas-descanso"><b>Tu descanso también cuenta</b><p class="suave m0t">Guiar a una iglesia exige mucho. Aparta tiempo para ti y para tu familia, y busca un par con quien hablar.</p></div><div class="grid">${[['🧱', 'Muro', 'Peticiones que compartiste y cuántas personas oran.', 'muro'], ['📅', 'Agenda', 'Actividades y reuniones de tu iglesia.', 'agenda'], ['📣', 'Avisos', 'Mensajes para todos o para un grupo.', 'avisos'], ['🕍', 'Ministerios', 'Grupos, personas y líderes.', 'ministerios'], ['🤲', 'Juntos hacemos el bien', 'Ideas y movimientos para servir con tu iglesia.', 'juntos'], ['🙏', 'Oraciones', 'Peticiones recibidas.', 'oraciones'], ['💬', 'Mensajes para copiar', 'Textos listos para situaciones de la iglesia.', 'mensajes']].map((x) => activa(x[0], x[1], x[2], x[3]).replace('data-ir=', 'data-pas=')).join('')}</div></section>` : ''}
+      ${pastorLeer() ? `${bandaTB('pastor')}<section class="area area-pastor" aria-label="Panel del pastor"><div class="area-cab"><span class="area-tag">Panel del pastor</span><h2 class="area-t">Cuidar a tu iglesia</h2><p class="suave m0">Todo lo que necesitas para guiar, orar y servir con tu comunidad, en un solo lugar.</p></div><div class="card pas-descanso"><b>Tu descanso también cuenta</b><p class="suave m0t">Guiar a una iglesia exige mucho. Aparta tiempo para ti y para tu familia, y busca un par con quien hablar.</p></div><div class="grid">${[['🧱', 'Comunidad', 'Peticiones que compartiste y cuántas personas oran.', 'muro'], ['📅', 'Agenda', 'Actividades y reuniones de tu iglesia.', 'agenda'], ['📣', 'Avisos', 'Mensajes para todos o para un grupo.', 'avisos'], ['🕍', 'Ministerios', 'Grupos, personas y líderes.', 'ministerios'], ['🤲', 'Juntos hacemos el bien', 'Ideas y movimientos para servir con tu iglesia.', 'juntos'], ['🙏', 'Oraciones', 'Peticiones recibidas.', 'oraciones'], ['💬', 'Mensajes para copiar', 'Textos listos para situaciones de la iglesia.', 'mensajes']].map((x) => activa(x[0], x[1], x[2], x[3]).replace('data-ir=', 'data-pas=')).join('')}</div></section>` : ''}
       <h2 class="mi-sub">${id ? 'Compartir' : 'Empieza'}</h2>
       <div class="lista">${id ? '' : fila('t1', '⛪', 'Unirme a mi iglesia', 'Con el código de tu pastor', 'unir') + fila('t2', '🔑', 'Recuperar mi iglesia', 'Con la llave de otro teléfono', 'llave')}${fila('t2', svg('compartir', 26), 'Invita a un amigo', 'Comparte la app con un mensaje listo', 'invitar')}</div>   <!-- F1174: dos secciones de una fila se unieron en una -->
       <h2 class="mi-sub">Mi perfil</h2>
@@ -3459,7 +3459,7 @@
     if ($('#pLlaveCopiar')) $('#pLlaveCopiar').onclick = () => copiarTxt('PULPITO-PASTOR-' + btoa(JSON.stringify({ c: p.codigo, s: p.secreto })), $('#pLlaveCopiar'), 'Llave copiada ✓');
     // F1352 · Centro del pastor: el panel, «Tu iglesia hoy» y «Todas las áreas» abren las mismas pantallas por una sola tabla
     const ctxCP = { rpc: prpc, avatar: avatarHTML, volver: () => vistaPastor(), abrir: (k) => irPP(k) };
-    const irPP = (k) => { const f = ({ sol: pSolicitudes, ora: pOraciones, vis: pVisitas, mie: pMiembros, min: pMinisterios, age: () => vistaAgenda(modoPastor(p)), avi: () => vistaAvisos(modoPastor(p)), mcal: () => pCalendario(p), disp: () => pDisponibilidad(p), bien: () => pBienvenida(p), chat: () => vistaChat({ rol: 'pastor', codigo: p.codigo, secreto: p.secreto }), dat: pDatos, mpre: () => window.TBMisPredicas && window.TBMisPredicas.abrir(), rsem: pResumenSemanal, bol: pBoletin, vigl: () => window.TBCentroPastor.vision(p, ctxCP), menu: () => window.TBCentroPastor.menu(p, ctxCP) })[k]; if (f) f(p); };
+    const irPP = (k) => { const f = ({ sol: pSolicitudes, ora: pOraciones, vis: pVisitas, mie: pMiembros, min: pMinisterios, age: () => vistaAgenda(modoPastor(p)), avi: () => vistaAvisos(modoPastor(p)), mcal: () => pCalendario(p), disp: () => pDisponibilidad(p), bien: () => pBienvenida(p), chat: () => vistaChat({ rol: 'pastor', codigo: p.codigo, secreto: p.secreto }), dat: pDatos, mpre: () => window.TBMisPredicas && window.TBMisPredicas.abrir(), rsem: pResumenSemanal, bol: pBoletin, vigl: () => window.TBCentroPastor.vision(p, ctxCP), menu: () => window.TBCentroPastor.menu(p, ctxCP), tar: () => window.TBTarjetaPastor.abrir(p, ctxCP) })[k]; if (f) f(p); };
     document.querySelectorAll('[data-pp]').forEach((b) => b.addEventListener('click', () => irPP(b.dataset.pp)));
     $('#pSalir').onclick = () => { if (confirm('¿Salir del modo pastor en este teléfono? Tu llave se borra de aquí (sigue en tu computador).')) { borrar(K_PASTOR); borrar('tb_movil_juntos_cache'); barraRefrescar('perfil'); ir('perfil'); } };
     const ins = (k, n) => { if (!(n > 0)) return; const t = document.querySelector('[data-pp="' + k + '"]'); if (!t) return; let e = t.querySelector('.mi-b-n'); if (!e) { e = document.createElement('span'); e.className = 'mi-b-n'; t.appendChild(e); } e.textContent = n > 99 ? '99+' : String(n); e.setAttribute('aria-label', e.textContent + ' por atender'); };
@@ -3947,7 +3947,7 @@
     };
   }
   async function pMuro(p) {
-    $('#pantalla').innerHTML = `${cabecera('Muro', 'Perfil')}<p class="suave" id="pmsg">Cargando…</p><div id="muro"></div>`; volverA('Perfil', vistaPerfil);
+    $('#pantalla').innerHTML = `${cabecera('Comunidad', 'Perfil')}<p class="suave" id="pmsg">Cargando…</p><div id="muro"></div>`; volverA('Perfil', vistaPerfil);
     let r = await rpcRaw('peticion_muro', { p_codigo: p.codigo, p_secreto: p.secreto });
     if (!r.ok) r = await rpcRaw('peticion_muro', { p_codigo: p.codigo, p_clave: p.secreto });
     let l = r.ok && Array.isArray(r.data) ? r.data : null;
