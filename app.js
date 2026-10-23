@@ -245,7 +245,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Acertijos de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Letras entre las hojas': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => !CABECERAS_ILUSTRADAS ? '' : `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1356';
+  const APP_VERSION = 'F1360';
   // F1171: respaldo si movimiento.js no cargó (pruebas o caché vieja): mismo criterio que TBMov.quieto().
   const MOV_QUIETO = () => { try { if (window.TBMov) return window.TBMov.quieto(); const h = document.documentElement; return h.getAttribute('data-anim') === 'off' || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
@@ -3195,7 +3195,7 @@
   // que leyó un aviso con un toque; el pastor ve cuántos confirmaron sin tener que preguntar uno por uno.
   // Requiere 24_SQL_F1341_CONFIRMACION_LECTURA_AVISOS.sql. Si la app aún usa aviso_*_listar (v1), a.confirmado y
   // a.confirmados vienen undefined y no se muestra nada nuevo: no rompe nada.
-  const avisoHTML = (a, borrable) => `<div class="card item aviso${avisoNuevo(a) ? ' av-nuevo' : ''}"><div class="t"><span aria-hidden="true">${svg('altavoz', 20)}</span>${esc(a.titulo)}${avisoNuevo(a) ? '<span class="av-pill">Nuevo</span>' : ''}${a.ministerio ? `<span class="etiqueta">${esc(a.ministerio)}</span>` : ''}</div><p class="m0t">${esc(a.texto)}</p><p class="suave m0t">${esc(fecha(a.creado_en))}${a.confirmados != null ? ' · ' + a.confirmados + (a.alcance ? ' de ' + a.alcance : '') + (a.confirmados === 1 ? ' confirmó' : ' confirmaron') : ''}${borrable ? ` · <button type="button" class="enlace" data-bav="${esc(a.id)}">Quitar</button>` : ''}</p>${a.confirmado === true ? '<p class="suave m0t av-leido">✓ Marcaste que lo leíste</p>' : a.confirmado === false ? `<button type="button" class="btn sec chico av-leer" data-lav="${esc(a.id)}">Marcar como leído</button>` : ''}</div>`;
+  const avisoHTML = (a, borrable) => `<div class="card item aviso${avisoNuevo(a) ? ' av-nuevo' : ''}"><div class="t"><span aria-hidden="true">${svg('altavoz', 20)}</span><span class="av-tit">${esc(a.titulo)}</span></div>${avisoNuevo(a) || a.ministerio ? `<div class="av-meta">${avisoNuevo(a) ? '<span class="av-pill">Nuevo</span>' : ''}${a.ministerio ? `<span class="etiqueta">${esc(a.ministerio)}</span>` : ''}</div>` : ''}<p class="m0t">${esc(a.texto)}</p><p class="suave m0t">${esc(fecha(a.creado_en))}${a.confirmados != null ? ' · ' + a.confirmados + (a.alcance ? ' de ' + a.alcance : '') + (a.confirmados === 1 ? ' confirmó' : ' confirmaron') : ''}${borrable ? ` · <button type="button" class="enlace" data-bav="${esc(a.id)}">Quitar</button>` : ''}</p>${a.confirmado === true ? '<p class="suave m0t av-leido">✓ Marcaste que lo leíste</p>' : a.confirmado === false ? `<button type="button" class="btn sec chico av-leer" data-lav="${esc(a.id)}">Marcar como leído</button>` : ''}</div>`;
 
   // Pantalla común (miembro/líder y pastor). modo: { pas, id, volverTxt, volverFn }
   async function vistaAgenda(modo) {
@@ -3260,7 +3260,7 @@
       if (pas) return; b.disabled = true;
       const r = await rpcRaw('aviso_confirmar', { p_codigo: id.codigo, p_clave: id.clave, p_id: b.dataset.lav });
       const x = r.ok ? primera(r.data) : null;
-      if (x && x.ok) { b.outerHTML = '<p class="suave m0t av-leido">✓ Marcaste que lo leíste</p>'; } else { b.disabled = false; }
+      if (x && x.ok) { b.outerHTML = '<p class="suave m0t av-leido">✓ Marcaste que lo leíste</p>'; } else { b.disabled = false; m.textContent = 'No pudimos marcarlo como leído. Revisa tu conexión e inténtalo de nuevo.'; }
     }));
     const ok = $('#avok'); if (!ok) return;
     ok.onclick = async () => {
@@ -3459,7 +3459,7 @@
     if ($('#pLlaveCopiar')) $('#pLlaveCopiar').onclick = () => copiarTxt('PULPITO-PASTOR-' + btoa(JSON.stringify({ c: p.codigo, s: p.secreto })), $('#pLlaveCopiar'), 'Llave copiada ✓');
     // F1352 · Centro del pastor: el panel, «Tu iglesia hoy» y «Todas las áreas» abren las mismas pantallas por una sola tabla
     const ctxCP = { rpc: prpc, avatar: avatarHTML, volver: () => vistaPastor(), abrir: (k) => irPP(k) };
-    const irPP = (k) => { const f = ({ sol: pSolicitudes, ora: pOraciones, vis: pVisitas, mie: pMiembros, min: pMinisterios, age: () => vistaAgenda(modoPastor(p)), avi: () => vistaAvisos(modoPastor(p)), mcal: () => pCalendario(p), disp: () => pDisponibilidad(p), bien: () => pBienvenida(p), chat: () => vistaChat({ rol: 'pastor', codigo: p.codigo, secreto: p.secreto }), dat: pDatos, mpre: () => window.TBMisPredicas && window.TBMisPredicas.abrir(), rsem: pResumenSemanal, bol: pBoletin, vigl: () => window.TBCentroPastor.vision(p, ctxCP), menu: () => window.TBCentroPastor.menu(p, ctxCP), tar: () => window.TBTarjetaPastor.abrir(p, ctxCP) })[k]; if (f) f(p); };
+    const irPP = (k) => { const f = ({ sol: pSolicitudes, ora: pOraciones, vis: pVisitas, mie: pMiembros, min: pMinisterios, age: () => vistaAgenda(modoPastor(p)), avi: () => vistaAvisos(modoPastor(p)), mcal: () => pCalendario(p), disp: () => pDisponibilidad(p), bien: () => pBienvenida(p), chat: () => vistaChat({ rol: 'pastor', codigo: p.codigo, secreto: p.secreto }), dat: pDatos, mpre: () => window.TBMisPredicas && window.TBMisPredicas.abrir(), rsem: pResumenSemanal, bol: pBoletin, vigl: () => window.TBCentroPastor.vision(p, ctxCP), menu: () => window.TBCentroPastor.menu(p, ctxCP), tar: () => window.TBTarjetaPastor.abrir(p, ctxCP), cfg: () => window.TBConfigIglesia.abrir(p, ctxCP) })[k]; if (f) f(p); };
     document.querySelectorAll('[data-pp]').forEach((b) => b.addEventListener('click', () => irPP(b.dataset.pp)));
     $('#pSalir').onclick = () => { if (confirm('¿Salir del modo pastor en este teléfono? Tu llave se borra de aquí (sigue en tu computador).')) { borrar(K_PASTOR); borrar('tb_movil_juntos_cache'); barraRefrescar('perfil'); ir('perfil'); } };
     const ins = (k, n) => { if (!(n > 0)) return; const t = document.querySelector('[data-pp="' + k + '"]'); if (!t) return; let e = t.querySelector('.mi-b-n'); if (!e) { e = document.createElement('span'); e.className = 'mi-b-n'; t.appendChild(e); } e.textContent = n > 99 ? '99+' : String(n); e.setAttribute('aria-label', e.textContent + ' por atender'); };

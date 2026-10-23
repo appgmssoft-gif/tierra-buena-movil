@@ -84,6 +84,24 @@
     $('#cpFicha').innerHTML = fichaHTML(f);
   }
 
+  // ---- F1360 · 1.15 Descargar la lista de miembros para Excel (CSV con «;» y tildes correctas) ----
+  const COLS_CSV = [['Nombre', 'nombre'], ['Líder', 'es_lider'], ['Ministerios', 'ministerios'], ['Familia', 'familia'], ['Teléfono', 'telefono'], ['Cumpleaños', 'cumpleanos'], ['Dirección', 'direccion']];
+  function celdaCSV(v) {
+    let t = String(v == null ? '' : v).replace(/\s+/g, ' ').trim();
+    // Seguridad: Excel ejecuta como fórmula lo que parte con = + - @ ; los teléfonos (+56…) son la única excepción.
+    if (/^[=+\-@]/.test(t) && !/^\+\d[\d ]*$/.test(t)) t = "'" + t;
+    return /[";\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t;
+  }
+  function csvMiembros(lista) {
+    const fila = (x) => COLS_CSV.map((c) => celdaCSV(c[1] === 'es_lider' ? (x.es_lider ? 'Sí' : 'No') : c[1] === 'cumpleanos' ? cumple(x.cumpleanos) : x[c[1]])).join(';');
+    return '\uFEFF' + [COLS_CSV.map((c) => c[0]).join(';')].concat((lista || []).map(fila)).join('\r\n') + '\r\n';
+  }
+  function descargarCSV(texto, nombre) {
+    const url = URL.createObjectURL(new Blob([texto], { type: 'text/csv;charset=utf-8' }));
+    const a = document.createElement('a'); a.href = url; a.download = nombre; document.body.appendChild(a); a.click();
+    setTimeout(() => { a.remove(); URL.revokeObjectURL(url); }, 1500);
+  }
+
   async function miembros(p, ctx) {
     const r = await ctx.rpc('pastor_miembros_listar', p, { p_buscar: '' });
     if (!r.ok) return false;   // SQL 26 sin correr o sin conexión: app.js usa la lista de siempre
@@ -93,10 +111,17 @@
     const nLid = todos.filter((x) => x.es_lider).length;
     pant.innerHTML = '<button type="button" class="volver" id="cpVolver">‹ Panel</button><h1 class="cp-titulo">Miembros</h1>' +
       '<p class="suave" id="cpConteo"></p>' +
-      '<div class="mie-buscar"><input id="mieQ" type="search" placeholder="Nombre, ministerio o familia" aria-label="Buscar miembro por nombre, ministerio o familia" autocomplete="off"></div>' +
+      '<div class="mie-buscar"><input id="mieQ" type="search" placeholder="Buscar miembro" aria-label="Buscar miembro por nombre, ministerio o familia" autocomplete="off"></div>' +
       (nLid ? '<div class="cp-filtros"><button type="button" class="cp-chip" id="cpLid" aria-pressed="false">Solo líderes (' + nLid + ')</button></div>' : '') +
+      '<button type="button" class="btn sec cp-exp" id="cpExp">⬇ Descargar lista para Excel</button><p class="suave cp-exp-nota" id="cpExpMsg" role="status" aria-live="polite">Incluye solo lo que cada persona decidió compartir.</p>' +
       '<div id="cpLista" aria-live="polite"></div>';
     $('#cpVolver').onclick = ctx.volver;
+    $('#cpExp').onclick = () => {
+      const lista = filtrar(todos, $('#mieQ').value, soloLideres), msg = $('#cpExpMsg');
+      if (!lista.length) { msg.textContent = 'No hay nadie en la lista para descargar.'; return; }
+      try { descargarCSV(csvMiembros(lista), 'miembros-iglesia-' + new Date().toISOString().slice(0, 10) + '.csv'); msg.textContent = 'Listo: se descargó la lista de ' + lista.length + (lista.length === 1 ? ' persona.' : ' personas.') + ' Ábrela con Excel.'; }
+      catch (e) { msg.textContent = 'No se pudo descargar en este teléfono. Inténtalo de nuevo.'; }
+    };
     const volverLista = () => miembros(p, ctx);
     const pinta = () => {
       const lista = filtrar(todos, $('#mieQ').value, soloLideres);
@@ -192,7 +217,10 @@
       ['avi', '📣', 'Avisos', 'Para todos o un grupo'],
       ['bol', '🗞️', 'Boletín de la semana', 'Avisos y agenda, listo para compartir'],
       ['mpre', '🎙️', 'Mis prédicas', 'Graba tu mensaje, guárdalo y escúchalo']]],
-    ['Agenda y organización', [['age', '📅', 'Agenda', 'Actividades y reuniones'], ['mcal', '🗓', 'Mi calendario', 'Visitas, reuniones y descanso. Solo tú lo ves'], ['dat', '📝', 'Datos y código', 'Nombre, eslogan y código de tu iglesia']]],
+    ['Agenda y organización', [['age', '📅', 'Agenda', 'Actividades y reuniones'],
+      ['mcal', '🗓', 'Mi calendario', 'Visitas, reuniones y descanso. Solo tú lo ves'],
+      ['dat', '📝', 'Datos y código', 'Nombre, eslogan y código de tu iglesia'],
+      ['cfg', '⚙️', 'Configuración de la iglesia', 'Elige cómo trabaja tu iglesia: culto, grupos, cursos y metas']]],
   ];
   function menuHTML(q) {
     const w = norm(q).split(/\s+/).filter(Boolean); let h = '', n = 0;
@@ -215,6 +243,6 @@
     pinta();
   }
 
-  window.TBCentroPastor = { miembros, vision, menu, _t: { proximosCumples, menuHTML, AREAS, wspCumple, cuando, telefonoWsp, telefonoLlamar, enlaceWsp, filtrar, fichaHTML, filaHTML, cumple } };
+  window.TBCentroPastor = { miembros, vision, menu, _t: { csvMiembros, celdaCSV, proximosCumples, menuHTML, AREAS, wspCumple, cuando, telefonoWsp, telefonoLlamar, enlaceWsp, filtrar, fichaHTML, filaHTML, cumple } };
   if (typeof module !== 'undefined' && module.exports) module.exports = window.TBCentroPastor;
 })();

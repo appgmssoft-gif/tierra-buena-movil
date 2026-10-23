@@ -6,13 +6,13 @@
 .cp-fila{display:flex;align-items:center;gap:12px;width:100%;min-height:60px;margin:6px 0;padding:10px 12px;border-radius:14px;border:1px solid var(--linea);background:var(--tarjeta,transparent);color:inherit;font:inherit;text-align:left;cursor:pointer}
 .cp-fila:active{transform:scale(.98)}
 .cp-fila-t{flex:1;min-width:0;display:flex;flex-direction:column}
-.cp-fila-t small{color:var(--suave);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cp-fila-t small{color:var(--suave);overflow-wrap:anywhere;white-space:normal;line-height:1.35}
 .cp-lider{font-size:.7rem;font-weight:700;color:var(--oro);letter-spacing:.06em;text-transform:uppercase}
 .cp-ir{color:var(--suave);font-size:1.4rem}
 .cp-datos{margin:12px 0}
 .cp-datos dt{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--suave);margin-top:12px}
 .cp-datos dd{margin:2px 0 0;font-size:1.02rem}
-.cp-acciones{margin-top:18px}
+.cp-acciones{margin-top:18px;display:flex;flex-direction:column;gap:10px}
 .cp-acciones a.btn{text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center}
 .cp-nota{margin-top:12px}
 .cp-ico{font-size:1.5rem;width:36px;text-align:center}
@@ -20,7 +20,9 @@
 .cp-cifra{flex:1;padding:12px 8px;border-radius:14px;border:1px solid var(--linea);text-align:center;display:flex;flex-direction:column}
 .cp-cifra b{font:700 1.6rem/1.1 "TB Titulo",Georgia,serif;color:var(--oro)}
 .cp-cifra span{font-size:.8rem;color:var(--suave)}
-.cp-cumple{cursor:default}
+.cp-cumple{cursor:default;flex-wrap:wrap}
+.cp-cumple .cp-fila-t{flex:1 1 11rem;overflow-wrap:anywhere}
+.cp-cumple .cp-mini{margin-left:auto}
 .cp-mini{min-height:44px;display:inline-flex;align-items:center;padding:0 14px;border-radius:999px;border:1px solid var(--verde);color:var(--verde);font-weight:700;text-decoration:none}
 /* F1353 · Mis permisos y Mi tarjeta de contacto (lado del miembro) */
 .cm-lista{margin:12px 0}
@@ -54,3 +56,37 @@
 .tp-nota{margin:14px 2px 24px}
 .tp-form .cp-filtros{display:flex;flex-wrap:wrap;gap:8px}
 .tp-form .cp-chip{white-space:nowrap;min-height:44px;height:auto;flex:0 0 auto}
+
+/* F1357 · Configuración de la iglesia: filas que entran suave, chips que responden al toque */
+.cfg-campo{margin:18px 0 6px}
+.cfg-et{display:block;font-weight:600;margin:0 2px 2px}
+.cfg-ayuda{margin:0 2px 8px}
+.cfg-form input[type=text]{width:100%}
+.cfg-form .cp-filtros{flex-wrap:wrap;margin:0}
+.cfg-form .cp-chip{flex:0 0 auto;white-space:nowrap}
+.cfg-form .btn.sec{margin-top:10px}
+.cfg-res{color:var(--verde);font-weight:600}
+.cfg-nota{margin:16px 2px 28px}
+.cfg-lista{display:flex;flex-direction:column;gap:2px}
+@media (prefers-reduced-motion:no-preference){
+  html:not([data-anim=off]) .cfg-fila{animation:cfgEntra .32s ease-out backwards;animation-delay:calc(var(--i,0)*45ms)}
+  html:not([data-anim=off]) .cfg-form{animation:cfgEntra .28s ease-out backwards}
+  html:not([data-anim=off]) .cfg-form .cp-chip{transition:transform .12s ease,background-color .18s ease}
+  html:not([data-anim=off]) .cfg-form .cp-chip:active{transform:scale(.95)}
+  @keyframes cfgEntra{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+}
+
+/* F1360 · Descargar lista de miembros */
+.cp-exp{width:100%;margin:6px 0 2px}
+.cp-exp-nota{margin:4px 2px 12px;font-size:.9rem}
+@media (prefers-reduced-motion:no-preference){
+  html:not([data-anim=off]) .cp-exp{transition:transform .12s ease}
+  html:not([data-anim=off]) .cp-exp:active{transform:scale(.97)}
+  html:not([data-anim=off]) .cp-exp-nota{animation:cfgEntra .3s ease-out}
+}
+
+/* F1360 · Avisos: el título ocupa su ancho y la etiqueta del ministerio y «Nuevo» van debajo, sin cortarse */
+.aviso .av-tit{flex:1 1 0;min-width:0;overflow-wrap:anywhere}
+.aviso .av-meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0 2px 54px}
+.aviso .av-meta .av-pill{margin:0}
+.aviso .av-meta .etiqueta{margin:0;max-width:100%;overflow-wrap:anywhere}
