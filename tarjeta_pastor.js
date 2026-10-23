@@ -2,7 +2,7 @@
    El pastor escribe su cargo, su horario de atención y la dirección de su oficina.
    Se guarda dentro de la configuración de la iglesia (config_pastor_leer / config_pastor_guardar, SQL 26 ya corrido),
    en la clave «tarjeta_pastor». No hace falta SQL nuevo: el guardado fusiona y no toca el resto de la configuración.
-   Los miembros todavía no pueden leerla: la lectura para miembros llega con el próximo SQL grande. */
+   F1372: los miembros la ven en «Mi iglesia» con miembro_tarjeta_pastor_leer (SQL 35), que solo entrega cargo, horario y dirección. */
 (function () {
   'use strict';
   const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -21,7 +21,7 @@
   }
   function vacia(t) { return !t || !Object.keys(t).length; }
 
-  // Vista previa: lo que verán las personas de la iglesia (cuando se active para miembros).
+  // Vista previa: lo que ven las personas de la iglesia en su pantalla «Mi iglesia».
   function previaHTML(t) {
     if (vacia(t)) return '<p class="suave tp-vacia">Aún no has escrito nada. Completa los datos de arriba y aquí verás tu tarjeta.</p>';
     const fila = (ic, tit, v) => (v ? '<div class="tp-fila"><span class="tp-ico" aria-hidden="true">' + ic + '</span><span class="tp-tx"><small>' + tit + '</small><b>' + esc(v) + '</b></span></div>' : '');
@@ -44,7 +44,7 @@
       '<button type="button" class="btn" id="tpGuardar">Guardar mi tarjeta</button>' +
       '<p id="tpMsg" class="suave" role="status" aria-live="polite"></p></div>' +
       '<h2 class="mi-sub">Vista previa</h2><div id="tpPrevia">' + previaHTML(normalizar(t)) + '</div>' +
-      '<p class="suave tp-nota">Tus hermanos verán esta tarjeta cuando se active la vista de miembros, en una próxima actualización. Por ahora queda guardada para ti.</p>';
+      '<p class="suave tp-nota">Tus hermanos ven esta tarjeta en su pantalla «Mi iglesia», con el título «Tu pastor».</p>';
   }
 
   async function abrir(p, ctx) {
@@ -75,6 +75,16 @@
     };
   }
 
-  window.TBTarjetaPastor = { abrir, _t: { normalizar, previaHTML, formHTML, LIM } };
+  // F1372 · Miembro: la tarjeta del pastor dentro de «Mi iglesia». Si el pastor no la llenó o el SQL 35 aún no está corrido, no aparece.
+  async function miembroMostrar(contenedorId, id, rpcRaw) {
+    const c = document.getElementById(contenedorId); if (!c || !id) return;
+    const r = await rpcRaw('miembro_tarjeta_pastor_leer', { p_codigo: id.codigo, p_clave: id.clave });
+    const d = r && r.ok && r.data && (Array.isArray(r.data) ? r.data[0] : r.data);
+    const t = d && d.ok !== false ? normalizar(d.tarjeta) : null;
+    if (!t || vacia(t)) { c.innerHTML = ''; return; }
+    c.innerHTML = '<h2 class="mi-sub">Tu pastor</h2>' + previaHTML(t);
+  }
+
+  window.TBTarjetaPastor = { abrir, miembroMostrar, _t: { normalizar, previaHTML, formHTML, LIM, vacia } };
   if (typeof module !== 'undefined' && module.exports) module.exports = window.TBTarjetaPastor;
 })();

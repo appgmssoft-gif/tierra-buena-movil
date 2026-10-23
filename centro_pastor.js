@@ -282,12 +282,13 @@
     pant.innerHTML = '<button type="button" class="volver" id="cpVolver">‹ Panel</button><h1 class="cp-titulo">Tu iglesia hoy</h1><p class="suave" id="cpCarga" role="status">Revisando tu iglesia…</p><div id="cpVision"></div>';
     $('#cpVolver').onclick = ctx.volver;
     const seguro = (f) => f().catch(() => ({ ok: false }));
-    const [rm, rv, rs, ro, rvi] = await Promise.all([
+    const [rm, rv, rs, ro, rvi, ra] = await Promise.all([
       seguro(() => ctx.rpc('pastor_miembros_listar', p, { p_buscar: '' })),
       seguro(() => ctx.rpc('miembros_pastor_listar', p)),
       seguro(() => ctx.rpc('solicitud_pastor_listar', p)),
       seguro(() => ctx.rpc('peticion_pastor_listar_v2', p)).then((r) => (r.ok ? r : seguro(() => ctx.rpc('peticion_pastor_listar', p)))),
       seguro(() => ctx.rpc('visita_pastor_listar', p)),
+      seguro(() => ctx.rpc('pastor_aniversarios_leer', p, { p_dias: 30 })),
     ]);
     const c = $('#cpCarga'); if (!c) return;
     c.hidden = true;
@@ -313,6 +314,9 @@
     else h += cum.slice(0, 10).map((o) => { const w = wspCumple(o.x.telefono, o.x.nombre);
       return '<div class="cp-fila cp-cumple"><span class="cp-ico" aria-hidden="true">🎂</span><span class="cp-fila-t"><b>' + esc(o.x.nombre) + '</b><small>' + cuando(o.dias) + ' · ' + esc(cumple(o.x.cumpleanos)) + '</small></span>' +
         (w ? '<a class="cp-mini" href="' + esc(w) + '" target="_blank" rel="noopener" aria-label="Saludar a ' + esc(o.x.nombre) + ' por WhatsApp">Saludar</a>' : '') + '</div>'; }).join('');
+    // F1372 · aniversarios de bautismo y de llegada (SQL 35). Si aún no está corrido, no se muestra nada.
+    const da = ra && ra.ok && ra.data && (Array.isArray(ra.data) ? ra.data[0] : ra.data);
+    if (da && da.ok !== false && window.TBCelebraciones) h += window.TBCelebraciones.resumenHTML(da.aniversarios, rm.ok ? rm.data : [], new Date());
     h += '<button type="button" class="btn sec" data-cpk="mie">Ver a todos los miembros</button>';
     $('#cpVision').innerHTML = h;
     document.querySelectorAll('[data-cpk]').forEach((b) => { b.onclick = () => ctx.abrir(b.getAttribute('data-cpk')); });
@@ -329,7 +333,8 @@
       ['bien', '🌱', 'Bienvenida', 'Primeras 4 semanas de quien llega'],
       ['disp', '🕐', 'Disponibilidad', 'Quiénes pueden servir'],
       ['min', '🕍', 'Ministerios y líderes', 'Grupos, personas y líderes'],
-      ['tar', '🪪', 'Mi tarjeta de pastor', 'Cargo, horario de atención y dirección de tu oficina']]],
+      ['tar', '🪪', 'Mi tarjeta de pastor', 'Cargo, horario de atención y dirección de tu oficina'],
+      ['cel', '🎉', 'Celebraciones', 'Cumpleaños y aniversarios de bautismo y de llegada']]],
     ['Comunicación', [['chat', '💬', 'Chat', 'Iglesia, pastor y líderes, y conversaciones'],
       ['avi', '📣', 'Avisos', 'Para todos o un grupo'],
       ['bol', '🗞️', 'Boletín de la semana', 'Avisos y agenda, listo para compartir'],
