@@ -67,8 +67,9 @@
   function campo(id, et, ayuda, input) {
     return '<div class="cm-campo"><label for="' + id + '">' + esc(et) + '</label>' + input + '<small id="' + id + 'A">' + esc(ayuda) + '</small><small class="cm-err" id="' + id + 'E" role="alert"></small></div>';
   }
-  function tarjetaHTML(c) {
+  function tarjetaHTML(c, origen) {
     return '<button type="button" class="volver" id="cmAtras">‹ Volver</button><h1 class="cp-titulo">Mi tarjeta de contacto</h1>' +
+      (origen === 'pastor' ? '<p class="cp-nota" id="cmOrigen" role="status"><b>Datos cargados por el pastor.</b> Revísalos y guarda tu tarjeta para confirmarlos.</p>' : '') +
       '<p class="suave">Todo es opcional. Tu pastor lo ve solo si lo permites en «Mis permisos».</p>' +
       campo('cmTel', 'Teléfono', 'Para que tu pastor te escriba o te llame.', '<input id="cmTel" type="tel" inputmode="tel" autocomplete="tel" maxlength="30" aria-describedby="cmTelA cmTelE" value="' + esc(c.telefono) + '">') +
       campo('cmCum', 'Fecha de nacimiento', 'Para saludarte en tu cumpleaños.', '<input id="cmCum" type="date" autocomplete="bday" aria-describedby="cmCumA cmCumE" value="' + esc(c.cumpleanos) + '">') +
@@ -87,8 +88,11 @@
     const r = await ctx.rpc('miembro_contacto_leer', { p_codigo: id.codigo, p_clave: id.clave });
     const f = r.ok && (Array.isArray(r.data) ? r.data[0] : r.data);
     if (f) c = { telefono: f.telefono || '', cumpleanos: f.cumpleanos || '', familia: f.familia || '', direccion: f.direccion || '' };
+    // F1373 · 1.9: si el pastor cargó estos datos, se marca hasta que la persona guarde su tarjeta (SQL 36).
+    const o = await ctx.rpc('miembro_contacto_origen_leer', { p_codigo: id.codigo, p_clave: id.clave });
+    const od = o.ok && (Array.isArray(o.data) ? o.data[0] : o.data);
     if (!$('#cmCarga')) return;
-    pant.innerHTML = tarjetaHTML(c);
+    pant.innerHTML = tarjetaHTML(c, od && od.ok ? od.origen : null);
     $('#cmAtras').onclick = ctx.volver;
     $('#cmGuardar').onclick = async () => {
       const v = { telefono: limpiaTel($('#cmTel').value), cumpleanos: $('#cmCum').value || '', familia: $('#cmFam').value.trim(), direccion: $('#cmDir').value.trim() };
@@ -99,7 +103,7 @@
       const g = await ctx.rpc('miembro_contacto_guardar', { p_codigo: id.codigo, p_clave: id.clave, p_telefono: v.telefono, p_direccion: v.direccion, p_cumpleanos: v.cumpleanos || null, p_familia: v.familia });
       const fila = g.ok && (Array.isArray(g.data) ? g.data[0] : g.data);
       b.disabled = false;
-      if (fila && fila.ok) { localGuardar(v); est.textContent = 'Tu tarjeta quedó guardada ✓'; return; }
+      if (fila && fila.ok) { localGuardar(v); const mo = $('#cmOrigen'); if (mo) mo.hidden = true; est.textContent = 'Tu tarjeta quedó guardada ✓'; return; }
       est.textContent = g.falta ? 'Esta función se activa pronto en tu iglesia.' : 'No se pudo guardar. Revisa tu conexión e inténtalo de nuevo.';
     };
   }

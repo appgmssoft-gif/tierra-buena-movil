@@ -81,9 +81,11 @@
     const f = r.ok && r.data && (Array.isArray(r.data) ? r.data[0] : r.data);
     if (!f) { c.textContent = 'No pudimos abrir esta ficha. Revisa tu conexión e inténtalo de nuevo.'; return; }
     c.hidden = true;
-    $('#cpFicha').innerHTML = fichaHTML(f) + '<div id="cpHist"><p class="suave" role="status">Revisando su historial…</p></div>' + hitoFormHTML();
+    $('#cpFicha').innerHTML = fichaHTML(f) + '<div id="cpFam"></div><div id="cpHist"><p class="suave" role="status">Revisando su historial…</p></div>' + hitoFormHTML();
     conectarHitoForm(p, ctx, id);
     cargarHistorial(p, ctx, id);
+    // F1373 · 1.13 familia y 1.9 datos del pastor (familias.js). Si el SQL 36 no está, no se muestra nada.
+    if (window.TBFamilias) window.TBFamilias.fichaBloque(p, ctx, id, f, () => abrirFicha(p, ctx, id, volverLista));
   }
 
   // ---- F1362 · 1.14 Historial del miembro (pastor_historial_leer, SQL 28). Sin datos, no se inventa nada. ----
@@ -334,6 +336,8 @@
       ['disp', '🕐', 'Disponibilidad', 'Quiénes pueden servir'],
       ['min', '🕍', 'Ministerios y líderes', 'Grupos, personas y líderes'],
       ['tar', '🪪', 'Mi tarjeta de pastor', 'Cargo, horario de atención y dirección de tu oficina'],
+      ['fam', '👪', 'Familias', 'Agrupa a las personas de cada familia y cómo se relacionan'],
+      ['imp', '📥', 'Importar personas', 'Sube tu lista desde una planilla CSV y revísala antes de guardar'],
       ['cel', '🎉', 'Celebraciones', 'Cumpleaños y aniversarios de bautismo y de llegada']]],
     ['Comunicación', [['chat', '💬', 'Chat', 'Iglesia, pastor y líderes, y conversaciones'],
       ['avi', '📣', 'Avisos', 'Para todos o un grupo'],
