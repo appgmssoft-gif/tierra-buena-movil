@@ -245,7 +245,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Acertijos de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Letras entre las hojas': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => !CABECERAS_ILUSTRADAS ? '' : `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1374';
+  const APP_VERSION = 'F1380';
   // F1171: respaldo si movimiento.js no cargó (pruebas o caché vieja): mismo criterio que TBMov.quieto().
   const MOV_QUIETO = () => { try { if (window.TBMov) return window.TBMov.quieto(); const h = document.documentElement; return h.getAttribute('data-anim') === 'off' || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
@@ -808,7 +808,7 @@
 
   function vistaMiembroServir(id) {
     $('#pantalla').innerHTML = `${cabecera('Servir', 'Mi iglesia')}${heroInt('c2', '🕍', 'Mi servicio', 'Servir con tu iglesia', 'Tus turnos, cuándo puedes servir y los grupos donde ayudas.')}
-      <h2 class="mi-sub">Mis turnos</h2><div id="misTurnos"><p class="suave m0">Cargando tus turnos…</p></div><div id="misAseo"></div><div id="misActiv"></div><div id="misForm"></div><div id="misCelebra"></div>
+      <h2 class="mi-sub">Mis turnos</h2><div id="misTurnos"><p class="suave m0">Cargando tus turnos…</p></div><div id="misAseo"></div><div id="misAsist"></div><div id="misActiv"></div><div id="misForm"></div><div id="misCelebra"></div>
       <div id="turLider"></div>
       <div class="card"><b>¿Cuándo puedes servir?</b><p class="suave m0t">Marca lo que te sirve. Por ahora solo lo ves tú.</p>
         <div class="chips" role="group" aria-label="Mi disponibilidad">${DISP_OPC.map(([k, t]) => `<button type="button" class="chip${dispLeer().indexOf(k) >= 0 ? ' on' : ''}" data-disp="${k}" aria-pressed="${dispLeer().indexOf(k) >= 0}">${t}</button>`).join('')}</div>
@@ -823,6 +823,8 @@
     cablearMiembro(id);
     // F1368 · Mis tareas de aseo de esta semana (SQL 32). Si no hay, la sección no aparece.
     if (window.TBAseo) window.TBAseo.miembroMostrar('misAseo', id, rpcRaw);
+    // F1378 · Mi asistencia: escribir el código de la sesión y ver mi resumen (SQL 39). Si no hay, no aparece.
+    if (window.TBAsistencia) window.TBAsistencia.miembroMostrar('misAsist', id, rpcRaw);
     if (window.TBActividades) window.TBActividades.miembroMostrar('misActiv', id, rpcRaw);
     if (window.TBFormularios) window.TBFormularios.miembroMostrar('misForm', id, rpcRaw);
     // F1372 · Celebraciones de mi ministerio (solo líderes, SQL 35) y la tarjeta de mi pastor (1.8, SQL 35). Si no hay, no aparecen.
@@ -3470,7 +3472,7 @@
     if ($('#pLlaveCopiar')) $('#pLlaveCopiar').onclick = () => copiarTxt('PULPITO-PASTOR-' + btoa(JSON.stringify({ c: p.codigo, s: p.secreto })), $('#pLlaveCopiar'), 'Llave copiada ✓');
     // F1352 · Centro del pastor: el panel, «Tu iglesia hoy» y «Todas las áreas» abren las mismas pantallas por una sola tabla
     const ctxCP = { rpc: prpc, avatar: avatarHTML, volver: () => vistaPastor(), abrir: (k) => irPP(k) };
-    const irPP = (k) => { const f = ({ sol: pSolicitudes, ora: pOraciones, vis: pVisitas, mie: pMiembros, min: pMinisterios, age: () => vistaAgenda(modoPastor(p)), avi: () => vistaAvisos(modoPastor(p)), mcal: () => pCalendario(p), disp: () => pDisponibilidad(p), bien: () => pBienvenida(p), chat: () => vistaChat({ rol: 'pastor', codigo: p.codigo, secreto: p.secreto }), dat: pDatos, mpre: () => window.TBMisPredicas && window.TBMisPredicas.abrir(), rsem: pResumenSemanal, bol: pBoletin, vigl: () => window.TBCentroPastor.vision(p, ctxCP), menu: () => window.TBCentroPastor.menu(p, ctxCP), tar: () => window.TBTarjetaPastor.abrir(p, ctxCP), aseo: () => window.TBAseo.abrir(p, ctxCP), act: () => window.TBActividades.abrir(p, ctxCP), form: () => window.TBFormularios.abrir(p, ctxCP), cel: () => window.TBCelebraciones.abrir(p, ctxCP), fam: () => window.TBFamilias.abrir(p, ctxCP), imp: () => window.TBImportar.abrir(p, ctxCP), cfg: () => window.TBConfigIglesia.abrir(p, ctxCP) })[k]; if (f) f(p); };
+    const irPP = (k) => { const f = ({ sol: pSolicitudes, ora: pOraciones, vis: pVisitas, mie: pMiembros, min: pMinisterios, age: () => vistaAgenda(modoPastor(p)), avi: () => vistaAvisos(modoPastor(p)), mcal: () => pCalendario(p), disp: () => pDisponibilidad(p), bien: () => pBienvenida(p), chat: () => vistaChat({ rol: 'pastor', codigo: p.codigo, secreto: p.secreto }), dat: pDatos, mpre: () => window.TBMisPredicas && window.TBMisPredicas.abrir(), rsem: pResumenSemanal, bol: pBoletin, vigl: () => window.TBCentroPastor.vision(p, ctxCP), menu: () => window.TBCentroPastor.menu(p, ctxCP), tar: () => window.TBTarjetaPastor.abrir(p, ctxCP), aseo: () => window.TBAseo.abrir(p, ctxCP), act: () => window.TBActividades.abrir(p, ctxCP), form: () => window.TBFormularios.abrir(p, ctxCP), cel: () => window.TBCelebraciones.abrir(p, ctxCP), fam: () => window.TBFamilias.abrir(p, ctxCP), impl: () => window.TBImportar.abrirLista(p, ctxCP), cul: () => window.TBPlantillasCulto.abrir(p, ctxCP), asi: () => window.TBAsistencia.abrir(p, ctxCP), imp: () => window.TBImportar.abrir(p, ctxCP), cfg: () => window.TBConfigIglesia.abrir(p, ctxCP) })[k]; if (f) f(p); };
     document.querySelectorAll('[data-pp]').forEach((b) => b.addEventListener('click', () => irPP(b.dataset.pp)));
     $('#pSalir').onclick = () => { if (confirm('¿Salir del modo pastor en este teléfono? Tu llave se borra de aquí (sigue en tu computador).')) { borrar(K_PASTOR); borrar('tb_movil_juntos_cache'); barraRefrescar('perfil'); ir('perfil'); } };
     const ins = (k, n) => { if (!(n > 0)) return; const t = document.querySelector('[data-pp="' + k + '"]'); if (!t) return; let e = t.querySelector('.mi-b-n'); if (!e) { e = document.createElement('span'); e.className = 'mi-b-n'; t.appendChild(e); } e.textContent = n > 99 ? '99+' : String(n); e.setAttribute('aria-label', e.textContent + ' por atender'); };
@@ -4753,6 +4755,16 @@
     const at = { versiculo: vistaVersiculo, biblia: vistaBiblia, calendario: vistaCalendario };
     if (q && at[q] && haySesion() && !codigoDeEnlace()) setTimeout(() => { try { ir('palabra'); at[q](); } catch (e) { /* nada */ } }, 60);
   } catch (e) { /* sin atajo */ }
+  // F1380 · QR de asistencia: el enlace ?asistencia=PASE guarda el código; un miembro con sesión va directo a Mi servicio con el código listo.
+  // asistencia.js carga después que app.js: se espera al evento load para que el módulo ya exista.
+  window.addEventListener('load', () => {
+    try { if (window.TBAsistencia) window.TBAsistencia.leerEnlace(); } catch (e) { /* sin enlace */ }
+    try {
+      if (window.TBAsistencia && window.TBAsistencia.pasePendiente() && haySesion() && leer(K_ID)) {
+        setTimeout(() => { try { ir('iglesia'); vistaMiembroServir(leer(K_ID)); } catch (e) { /* nada */ } }, 200);
+      }
+    } catch (e) { /* sin enlace */ }
+  });
   const fechasProx = () => { try { const hoy = new Date(); hoy.setHours(0, 0, 0, 0); const a = hoy.getFullYear(); return fechasSantas(a, tradLeer()).concat(fechasSantas(a + 1, tradLeer())).filter((x) => x[0] >= hoy && x[4] !== 'mes').sort((x, y) => x[0] - y[0]).slice(0, 6).map((x) => ({ id: 's' + x[0].getTime(), t: x[1], fecha: x[0] })); } catch (e) { return []; } };
   window.TBApp = { reiniciarInicio: reiniciarInicioNube, fechasProx, sb: SB, leer, guardar, esc, ir, vibra, svg, volverVida: () => ir('inicio'), irA: (d) => { const m = { lectura: () => { ir('palabra'); vistaBiblia(); }, vida: () => ir('vida'), plan: () => { ir('palabra'); vistaPlanes(); }, oracion: () => { ir('vida'); vistaMiOracion(); }, juego: () => { ir('palabra'); vistaJuegos(); } }; if (m[d]) m[d](); }, guardarAjuste: (c) => { perfilGuardar(c); ajusteAplicar(); }, apoyar: () => vistaApoyar(), biblia: { cargar: libroCargar, libros: LIBROS, ver: () => verActual() } };   // F901: lo usan identidad.js (ejemplos y Juntos)
   syncInicio();

@@ -323,7 +323,7 @@ button.card:active,.btn:active{transform:scale(.965)}
 
 /* ====== F876 · Temas, Fábula del mes, Agenda y Modo pastor ====== */
 html[data-tema=amanecer]{color-scheme:light;--papel:#fbf3e1;--tinta:#2b2218;--suave:#6e5d44;--oro:#a66a16;--verde:#8a5a12;--tarjeta:#fffaf0;--linea:#ecdcb8;--cristal:rgba(255,250,240,.8);--t1:#f7e2b0;--t2:#f3dcc0;--t3:#f0e4c8;--t4:#f5d7c4}
-html[data-tema=pergamino]{color-scheme:light;--papel:#efe4cc;--tinta:#3a2a1a;--suave:#7a6548;--oro:#a83e2c;--verde:#7a3a22;--tarjeta:#f8efd9;--linea:#d9c8a2;--cristal:rgba(248,239,217,.8);--t1:#ead7aa;--t2:#e6d2b0;--t3:#e2d6b8;--t4:#e9cdb4}
+html[data-tema=pergamino]{color-scheme:light;--papel:#efe4cc;--tinta:#3a2a1a;--suave:#6b5a40;--oro:#a83e2c;--verde:#7a3a22;--tarjeta:#f8efd9;--linea:#d9c8a2;--cristal:rgba(248,239,217,.8);--t1:#ead7aa;--t2:#e6d2b0;--t3:#e2d6b8;--t4:#e9cdb4}
 html[data-tema=bosque]{color-scheme:dark;--papel:#0f1c14;--tinta:#e6f0e4;--suave:#9db89f;--oro:#c9b266;--verde:#6fcf8f;--tarjeta:#16281c;--linea:#25402e;--cristal:rgba(22,40,28,.8);--t1:#2b3d22;--t2:#1f4a30;--t3:#1d3b3a;--t4:#3a3a22;--sombra:0 1px 2px rgba(0,0,0,.4),0 10px 28px -14px rgba(0,0,0,.7)}
 html[data-tema=oceano]{color-scheme:dark;--papel:#0b1722;--tinta:#e4eef8;--suave:#93aec6;--oro:#6cc3e8;--verde:#5aa9e6;--tarjeta:#122537;--linea:#1f3a52;--cristal:rgba(18,37,55,.8);--t1:#17364f;--t2:#143f4a;--t3:#1c3563;--t4:#2a3a55;--sombra:0 1px 2px rgba(0,0,0,.4),0 10px 28px -14px rgba(0,0,0,.7)}
 html[data-tema=atardecer]{color-scheme:light;--papel:#fdeee4;--tinta:#3a2018;--suave:#8a5a48;--oro:#d1603d;--verde:#b8432e;--tarjeta:#fff6ef;--linea:#f1cdb8;--cristal:rgba(255,246,239,.8);--t1:#fbd7bd;--t2:#f9c9c0;--t3:#f6d9d0;--t4:#fbcfa8}

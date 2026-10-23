@@ -327,18 +327,16 @@
   // ---- F1352 · 1.4 Menú del pastor con todas las áreas ----
   const AREAS = [
     ['Hoy', [['vigl', '🏛️', 'Tu iglesia hoy', 'Personas, cumpleaños y lo que pide atención'],
-      ['rsem', '🗞️', 'Resumen semanal', 'Los últimos 7 días en un solo lugar'],
+      ['rsem', '📊', 'Resumen semanal', 'Los últimos 7 días en un solo lugar'],
       ['vis', '🏠', 'Visitas', 'Quién pide que lo visites'],
       ['ora', '🤲', 'Oraciones', 'Peticiones recibidas'],
       ['sol', '🙋', 'Solicitudes', 'Quién quiere unirse a tu iglesia']]],
     ['Personas', [['mie', '👥', 'Miembros', 'Buscar, ver la ficha, escribir por WhatsApp o llamar'],
-      ['bien', '🌱', 'Bienvenida', 'Primeras 4 semanas de quien llega'],
-      ['disp', '🕐', 'Disponibilidad', 'Quiénes pueden servir'],
-      ['min', '🕍', 'Ministerios y líderes', 'Grupos, personas y líderes'],
-      ['tar', '🪪', 'Mi tarjeta de pastor', 'Cargo, horario de atención y dirección de tu oficina'],
       ['fam', '👪', 'Familias', 'Agrupa a las personas de cada familia y cómo se relacionan'],
-      ['imp', '📥', 'Importar personas', 'Sube tu lista desde una planilla CSV y revísala antes de guardar'],
-      ['cel', '🎉', 'Celebraciones', 'Cumpleaños y aniversarios de bautismo y de llegada']]],
+      ['bien', '🌱', 'Bienvenida', 'Primeras 4 semanas de quien llega'],
+      ['cel', '🎉', 'Celebraciones', 'Cumpleaños y aniversarios de bautismo y de llegada'],
+      ['disp', '🕐', 'Disponibilidad', 'Quiénes pueden servir'],
+      ['min', '🕍', 'Ministerios y líderes', 'Grupos, personas y líderes']]],
     ['Comunicación', [['chat', '💬', 'Chat', 'Iglesia, pastor y líderes, y conversaciones'],
       ['avi', '📣', 'Avisos', 'Para todos o un grupo'],
       ['bol', '🗞️', 'Boletín de la semana', 'Avisos y agenda, listo para compartir'],
@@ -346,10 +344,15 @@
     ['Agenda y organización', [['age', '📅', 'Agenda', 'Actividades y reuniones'],
       ['mcal', '🗓', 'Mi calendario', 'Visitas, reuniones y descanso. Solo tú lo ves'],
       ['aseo', '🧹', 'Aseo y tareas', 'Quién hace cada tarea cada semana'],
+      ['cul', '📖', 'Plantillas de culto', 'El orden del culto, con tiempos y responsable de cada bloque'],
       ['act', '🏕️', 'Actividades y paseos', 'Próximas actividades, inscripciones y cupos'],
-      ['form', '📋', 'Formularios e inscripciones', 'Retiros, bautismos y cursos: quién responde'],
+      ['asi', '✅', 'Asistencia', 'Sesiones, código para tus miembros y asistencia de 12 meses'],
+      ['form', '📋', 'Formularios e inscripciones', 'Retiros, bautismos y cursos: quién responde']]],
+    ['Datos de la iglesia', [['tar', '🪪', 'Mi tarjeta de pastor', 'Cargo, horario de atención y dirección de tu oficina'],
+      ['imp', '📥', 'Importar personas', 'Sube tu lista desde una planilla CSV y revísala antes de guardar'],
+      ['impl', '🗂️', 'Personas de la planilla', 'Personas sin cuenta y cuáles ya vinculaste con su cuenta'],
       ['dat', '📝', 'Datos y código', 'Nombre, eslogan y código de tu iglesia'],
-      ['cfg', '⚙️', 'Configuración de la iglesia', 'Elige cómo trabaja tu iglesia: culto, grupos, cursos y metas']]],
+      ['cfg', '⚙️', 'Configuración de la iglesia', 'Elige cómo trabaja tu iglesia: culto, grupos, cursos y metas']]]
   ];
   function menuHTML(q) {
     const w = norm(q).split(/\s+/).filter(Boolean); let h = '', n = 0;

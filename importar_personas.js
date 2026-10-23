@@ -221,6 +221,84 @@
     $('#impFin').onclick = ctx.volver;
   }
 
-  window.TBImportar = { abrir, _t: { parsearCSV, sugerirMapeo, normTel, normFecha, preparar, plantillaCSV, huella, CAMPOS, MAX_FILAS, LOTE } };
+
+  // ---------- F1375 · Lista «Personas de la planilla» (sin cuenta) y vinculación confirmada por el pastor ----------
+  async function abrirLista(p, ctx) {
+    const pant = $('#pantalla'); if (!pant) return;
+    pant.innerHTML = '<button type="button" class="volver" id="plVolver">‹ Panel</button>' +
+      '<h1 class="cp-titulo">Personas de la planilla</h1>' +
+      '<p class="suave" id="plMsg" role="status">Cargando la lista…</p><div id="plLista"></div>';
+    $('#plVolver').onclick = ctx.volver;
+    const [r, mr] = await Promise.all([
+      ctx.rpc('pastor_personas_importadas_leer', p),
+      ctx.rpc('pastor_miembros_listar', p, { p_buscar: '' }),
+    ]);
+    const d = fila(r);
+    if (!d || !d.ok) {
+      aviso('plMsg', r && r.falta
+        ? 'Esta lista se activa pronto en tu iglesia. Tus personas importadas no se perdieron.'
+        : 'No pudimos cargar la lista. Revisa tu conexión y vuelve a intentarlo.');
+      return;
+    }
+    const miembros = mr && mr.ok ? (mr.data || []) : [];
+    pintarLista(p, ctx, d.personas || [], miembros);
+  }
+
+  function pintarLista(p, ctx, personas, miembros) {
+    aviso('plMsg', '');
+    const cont = $('#plLista'); if (!cont) return;
+    if (!personas.length) {
+      cont.innerHTML = '<p class="suave">Todavía no hay personas de la planilla. Usa «Importar personas» para subir una lista.</p>';
+      return;
+    }
+    const pendientes = personas.filter((x) => !x.vinculada_a).length;
+    const resumen = '<p class="suave">' + personas.length + ' personas. ' +
+      (pendientes ? pendientes + ' sin cuenta todavía.' : 'Todas tienen cuenta vinculada.') +
+      ' Solo vincula cuando estés seguro de que es la misma persona.</p>';
+    cont.innerHTML = resumen + personas.map((x) => {
+      const datos = [x.telefono, x.familia].filter(Boolean).map(esc).join(' · ');
+      const estado = x.vinculada_a
+        ? '<p class="pl-estado ok">Vinculada con <b>' + esc(x.vinculada_nombre || 'una cuenta') + '</b></p>' +
+          '<button type="button" class="btn chico sec" data-pl-quitar="' + esc(x.id) + '">Desvincular</button>'
+        : (miembros.length
+            ? '<p class="pl-estado">Sin cuenta todavía</p>' +
+              '<label class="suave" for="pl-' + esc(x.id) + '">Cuenta de la persona</label>' +
+              '<select id="pl-' + esc(x.id) + '"><option value="">Elegir una cuenta…</option>' +
+              miembros.map((m) => '<option value="' + esc(m.id) + '">' + esc(m.nombre) + '</option>').join('') +
+              '</select><button type="button" class="btn chico sec" data-pl-vincular="' + esc(x.id) + '">Vincular</button>'
+            : '<p class="pl-estado">Sin cuenta todavía. Cuando haya miembros con cuenta podrás vincularla aquí.</p>');
+      return '<article class="card pl-item"><h2>' + esc(x.nombre) + '</h2>' +
+        (datos ? '<p class="suave">' + datos + '</p>' : '') + estado + '</article>';
+    }).join('');
+
+    cont.querySelectorAll('[data-pl-vincular]').forEach((b) => b.onclick = async () => {
+      const id = b.getAttribute('data-pl-vincular');
+      const sel = document.getElementById('pl-' + id);
+      const mid = sel && sel.value;
+      if (!mid) { aviso('plMsg', 'Primero elige la cuenta a vincular.'); return; }
+      const nombre = sel.options[sel.selectedIndex].text;
+      if (!window.confirm('¿Confirmas que esta persona de la planilla es «' + nombre + '»? Vincúlalas solo si es la misma persona.')) return;
+      await cambiarVinculo(p, ctx, id, mid);
+    });
+    cont.querySelectorAll('[data-pl-quitar]').forEach((b) => b.onclick = async () => {
+      if (!window.confirm('¿Quitar la vinculación? La persona queda sin cuenta, y sus datos no se borran.')) return;
+      await cambiarVinculo(p, ctx, b.getAttribute('data-pl-quitar'), null);
+    });
+  }
+
+  async function cambiarVinculo(p, ctx, persona, miembro) {
+    aviso('plMsg', 'Guardando…');
+    const r = await ctx.rpc('pastor_persona_importada_vincular', p, { p_persona: persona, p_miembro: miembro });
+    const d = fila(r);
+    if (!d || !d.ok) {
+      aviso('plMsg', d && d.motivo === 'miembro-no-encontrado'
+        ? 'Esa cuenta ya no está en tu iglesia. Actualiza la lista e inténtalo de nuevo.'
+        : 'No pudimos guardar el cambio. Revisa tu conexión e inténtalo de nuevo.');
+      return;
+    }
+    abrirLista(p, ctx);
+  }
+
+  window.TBImportar = { abrir, abrirLista, _t: { parsearCSV, sugerirMapeo, normTel, normFecha, preparar, plantillaCSV, huella, CAMPOS, MAX_FILAS, LOTE } };
   if (typeof module !== 'undefined' && module.exports) module.exports = window.TBImportar;
 })();

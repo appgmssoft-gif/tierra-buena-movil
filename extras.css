@@ -626,3 +626,23 @@ html[data-anim=off] .so-nodo:not(.bloq):not(.hecho){animation:none}
   .card.tbplan-on::before{content:"";position:absolute;top:0;bottom:0;left:0;width:34%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);pointer-events:none;transform:translateX(-140%) skewX(-18deg)}
   html:not([data-anim=off]) .card.tbplan-on::before{animation:tb-brillo 1.3s ease-out .5s 1 both}
 }
+
+/* F1375 · Personas de la planilla */
+.pl-item{display:flex;flex-direction:column;gap:8px}
+.pl-item h2{margin:0}
+.pl-estado{margin:4px 0}
+.pl-estado.ok{color:var(--verde);font-weight:700}
+.pl-item select{min-height:48px}
+
+/* F1380 · QR de asistencia: impresión solo del código, y estilos del QR */
+.asi-qr-bloque{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:12px 0}
+.asi-qr{width:180px;height:180px;max-width:100%;background:#fff;border-radius:10px;padding:4px;box-sizing:border-box}
+.asi-qr-acc{flex:1 1 180px;display:flex;flex-direction:column;gap:8px}
+.asi-aviso{background:var(--tarjeta);border-left:4px solid var(--verde);padding:10px 12px;border-radius:8px;font-weight:600}
+.asi-print{display:none}
+@media print{
+  body.asi-imprimiendo *{visibility:hidden}
+  body.asi-imprimiendo .asi-print,body.asi-imprimiendo .asi-print *{visibility:visible}
+  body.asi-imprimiendo .asi-print{display:block;position:absolute;left:0;top:0;width:100%;text-align:center;color:#000;background:#fff;padding:24px}
+  body.asi-imprimiendo .asi-print .asi-qr{width:320px;height:320px;margin:0 auto}
+}
