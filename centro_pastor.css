@@ -57,6 +57,10 @@
 .tp-form .cp-filtros{display:flex;flex-wrap:wrap;gap:8px}
 .tp-form .cp-chip{white-space:nowrap;min-height:44px;height:auto;flex:0 0 auto}
 
+/* F1363 · Registrar un hito en la ficha del miembro (1.14) */
+.cp-hito-form{margin-top:18px}
+.cp-hito-form input[type=date]{width:100%;min-height:48px;border-radius:14px;border:1px solid var(--linea);padding:10px 14px;font:inherit;background:var(--tarjeta,transparent);color:inherit}
+
 /* F1357 · Configuración de la iglesia: filas que entran suave, chips que responden al toque */
 .cfg-campo{margin:18px 0 6px}
 .cfg-et{display:block;font-weight:600;margin:0 2px 2px}

@@ -81,22 +81,40 @@
     const f = r.ok && r.data && (Array.isArray(r.data) ? r.data[0] : r.data);
     if (!f) { c.textContent = 'No pudimos abrir esta ficha. Revisa tu conexión e inténtalo de nuevo.'; return; }
     c.hidden = true;
-    $('#cpFicha').innerHTML = fichaHTML(f) + '<div id="cpHist"><p class="suave" role="status">Revisando su historial…</p></div>';
+    $('#cpFicha').innerHTML = fichaHTML(f) + '<div id="cpHist"><p class="suave" role="status">Revisando su historial…</p></div>' + hitoFormHTML();
+    conectarHitoForm(p, ctx, id);
     cargarHistorial(p, ctx, id);
   }
 
   // ---- F1362 · 1.14 Historial del miembro (pastor_historial_leer, SQL 28). Sin datos, no se inventa nada. ----
   const TIPO_HITO = { integracion: 'Integración', bautismo: 'Bautismo', curso: 'Curso' };
   const fechaLarga = (f) => { const d = new Date(String(f).slice(0, 10) + 'T12:00:00'); return isNaN(d) ? '' : d.toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' }); };
+  const TIPO_VISITA = { hogar: 'Visita al hogar', enfermo: 'Enfermo', iglesia: 'Visita a la iglesia', conversacion: 'Conversación', otro: 'Otro' };
+  const ESTADO_VISITA = { solicitada: 'Pedida', aceptada: 'Aceptada', agendada: 'Agendada', realizada: 'Realizada', no_disponible: 'No disponible' };
   const BIEN_PASOS = [['contacto', 'Primer contacto'], ['visita', 'Visita'], ['grupo', 'Grupo'], ['oracion', 'Oración']];
   function historialHTML(h) {
-    const hitos = (h.hitos || []).map((x) => '<li><b>' + esc(TIPO_HITO[x.tipo] || x.tipo) + '</b> · ' + esc(fechaLarga(x.fecha)) + (x.detalle ? '<small>' + esc(x.detalle) + '</small>' : '') + '</li>').join('');
+    const hitos = (h.hitos || []).map((x) => '<li><b>' + esc(TIPO_HITO[x.tipo] || x.tipo) + '</b> · ' + esc(fechaLarga(x.fecha)) + (x.detalle ? '<small>' + esc(x.detalle) + '</small>' : '') +
+      ' <button type="button" class="cp-mini cp-borrar" data-hid="' + esc(x.id) + '" aria-label="Borrar el hito de ' + esc(TIPO_HITO[x.tipo] || x.tipo) + ' del ' + esc(fechaLarga(x.fecha)) + '">Borrar</button></li>').join('');
+    const vis = (h.visitas || []).map((x) => '<li><b>' + esc(TIPO_VISITA[x.tipo] || x.tipo) + '</b> · ' + esc(ESTADO_VISITA[x.estado] || x.estado) + ' · ' + esc(fechaLarga(x.creado_en))  + '</li>').join('');
     const serv = (h.servicios || []).map((x) => '<li><b>' + esc(x.titulo) + '</b> · ' + esc(fechaLarga(x.inicio)) + '</li>').join('');
     const bien = h.bienvenida ? '<ul class="cp-lista">' + BIEN_PASOS.map(([k, t]) => '<li>' + (h.bienvenida[k] ? '✅ ' : '○ ') + esc(t) + '</li>').join('') + '</ul>' : '';
     return '<h2 class="mi-sub">Integración, bautismo y cursos</h2>' + (hitos ? '<ul class="cp-lista">' + hitos + '</ul>' : '<p class="suave">Todavía no registrado.</p>') +
       '<h2 class="mi-sub">Últimos servicios</h2>' + (serv ? '<ul class="cp-lista">' + serv + '</ul>' : '<p class="suave">Todavía no tiene servicios asignados.</p>') +
-      '<h2 class="mi-sub">Bienvenida</h2>' + (bien || '<p class="suave">Todavía no ha comenzado la bienvenida.</p>');
+      '<h2 class="mi-sub">Bienvenida</h2>' + (bien || '<p class="suave">Todavía no ha comenzado la bienvenida.</p>') +
+      '<h2 class="mi-sub">Visitas pedidas</h2>' + (vis ? '<ul class="cp-lista">' + vis + '</ul>' : '<p class="suave">Todavía no ha pedido visitas.</p>');
   }
+  // F1366 · 1.15 Historial del miembro para Excel: hitos, servicios y visitas en una sola lista (sin motivo ni dirección).
+  let ultimoHistorial = null;
+  const soloDia = (f) => String(f || '').slice(0, 10);
+  function filasHistorial(h) {
+    if (!h) return [];
+    const hitos = (h.hitos || []).map((x) => ({ tipo: TIPO_HITO[x.tipo] || x.tipo, fecha: soloDia(x.fecha), detalle: x.detalle || '', estado: '' }));
+    const serv = (h.servicios || []).map((x) => ({ tipo: 'Servicio', fecha: soloDia(x.inicio), detalle: x.titulo || '', estado: '' }));
+    const vis = (h.visitas || []).map((x) => ({ tipo: 'Visita', fecha: soloDia(x.creado_en), detalle: TIPO_VISITA[x.tipo] || x.tipo || '', estado: ESTADO_VISITA[x.estado] || x.estado || '' }));
+    return hitos.concat(serv, vis);
+  }
+  const COLS_HIST = [['Tipo', (x) => x.tipo], ['Fecha', (x) => x.fecha], ['Detalle', (x) => x.detalle], ['Estado', (x) => x.estado]];
+
   async function cargarHistorial(p, ctx, id) {
     const r = await ctx.rpc('pastor_historial_leer', p, { p_miembro: id });
     const caja = $('#cpHist'); if (!caja) return;
@@ -104,6 +122,66 @@
     const h = Array.isArray(r.data) ? r.data[0] : r.data;
     if (!h || h.ok === false) { caja.innerHTML = '<p class="suave" role="status">No pudimos cargar el historial de esta persona.</p>'; return; }
     caja.innerHTML = historialHTML(h);
+    ultimoHistorial = h;
+    const filas = filasHistorial(h);
+    if (filas.length) {
+      caja.insertAdjacentHTML('beforeend', botonExportar('cpHistExp', 'cpHistExpMsg', 'Descargar historial para Excel', 'Hitos, servicios y visitas (sin el motivo ni la dirección de las visitas).'));
+      conectarExportar('cpHistExp', 'cpHistExpMsg', () => filasHistorial(ultimoHistorial), COLS_HIST, 'historial-miembro', ['registro', 'registros']);
+    }
+    conectarBorrar(p, ctx, id);
+  }
+
+  // F1364 · 1.14 Borrar un hito (pastor_hito_borrar, SQL 29). Pide confirmación; si falla, lo dice y no pierde nada.
+  function conectarBorrar(p, ctx, id) {
+    document.querySelectorAll('[data-hid]').forEach((b) => {
+      b.onclick = async () => {
+        if (!window.confirm('¿Borrar este hito? No se puede deshacer.')) return;
+        b.disabled = true;
+        const g = await ctx.rpc('pastor_hito_borrar', p, { p_hito: b.getAttribute('data-hid') });
+        const fila = Array.isArray(g.data) ? g.data[0] : g.data;
+        if (g.ok && fila && fila.ok) { cargarHistorial(p, ctx, id); return; }
+        b.disabled = false;
+        const er = $('#chErr');
+        if (er) { er.textContent = 'No se pudo borrar el hito. Revisa tu conexión e inténtalo de nuevo.'; er.hidden = false; }
+      };
+    });
+  }
+
+  // ---- F1363 · 1.14 Registrar un hito (pastor_hito_guardar, SQL 28). Solo el pastor registra y borra; la persona no edita. ----
+  const hoyISO = () => new Date().toISOString().slice(0, 10);
+  function hitoFormHTML() {
+    const tipos = Object.keys(TIPO_HITO);
+    return '<div class="card tp-form cp-hito-form"><h2 class="mi-sub">Registrar un hito</h2>' +
+      '<label for="chFecha">Tipo</label>' +
+      '<div class="cp-filtros" role="group" aria-label="Tipo de hito">' +
+      tipos.map((k, i) => '<button type="button" class="cp-chip' + (i === 0 ? ' on' : '') + '" data-chtipo="' + k + '" aria-pressed="' + (i === 0 ? 'true' : 'false') + '">' + esc(TIPO_HITO[k]) + '</button>').join('') + '</div>' +
+      '<label for="chFecha">Fecha</label><input id="chFecha" type="date" value="' + hoyISO() + '" max="' + hoyISO() + '">' +
+      '<label for="chDet">Detalle (opcional)</label><textarea id="chDet" rows="2" maxlength="160" placeholder="Ej.: Bautizado en el río, junto a su familia"></textarea>' +
+      '<p id="chErr" class="error" role="alert" hidden></p>' +
+      '<button type="button" class="btn sec" id="chGuardar">Guardar hito</button>' +
+      '<p id="chMsg" class="suave" role="status" aria-live="polite"></p></div>';
+  }
+  function conectarHitoForm(p, ctx, id) {
+    const chips = document.querySelectorAll('[data-chtipo]'); let tipo = chips.length ? chips[0].getAttribute('data-chtipo') : 'integracion';
+    chips.forEach((b) => {
+      b.onclick = () => {
+        tipo = b.getAttribute('data-chtipo');
+        chips.forEach((x) => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', String(x === b)); });
+      };
+    });
+    const btn = $('#chGuardar'); if (!btn) return;
+    btn.onclick = async () => {
+      const er = $('#chErr'), msg = $('#chMsg'), fecha = $('#chFecha').value;
+      er.hidden = true; msg.textContent = '';
+      if (!fecha) { er.textContent = 'Elige una fecha.'; er.hidden = false; return; }
+      btn.disabled = true;
+      const detalle = $('#chDet').value.replace(/\s+/g, ' ').trim().slice(0, 160);
+      const g = await ctx.rpc('pastor_hito_guardar', p, { p_miembro: id, p_tipo: tipo, p_fecha: fecha, p_detalle: detalle || null });
+      btn.disabled = false;
+      const fila = Array.isArray(g.data) ? g.data[0] : g.data;
+      if (g.ok && fila && fila.ok) { msg.textContent = 'Hito guardado.'; $('#chDet').value = ''; cargarHistorial(p, ctx, id); }
+      else { er.textContent = 'No se pudo guardar. Revisa tu conexión e inténtalo de nuevo.'; er.hidden = false; }
+    };
   }
 
   // ---- F1360/F1361 · 1.15 Descargar listas para Excel (CSV con «;» y tildes correctas) ----
@@ -258,6 +336,9 @@
       ['mpre', '🎙️', 'Mis prédicas', 'Graba tu mensaje, guárdalo y escúchalo']]],
     ['Agenda y organización', [['age', '📅', 'Agenda', 'Actividades y reuniones'],
       ['mcal', '🗓', 'Mi calendario', 'Visitas, reuniones y descanso. Solo tú lo ves'],
+      ['aseo', '🧹', 'Aseo y tareas', 'Quién hace cada tarea cada semana'],
+      ['act', '🏕️', 'Actividades y paseos', 'Próximas actividades, inscripciones y cupos'],
+      ['form', '📋', 'Formularios e inscripciones', 'Retiros, bautismos y cursos: quién responde'],
       ['dat', '📝', 'Datos y código', 'Nombre, eslogan y código de tu iglesia'],
       ['cfg', '⚙️', 'Configuración de la iglesia', 'Elige cómo trabaja tu iglesia: culto, grupos, cursos y metas']]],
   ];
@@ -287,7 +368,7 @@
     // F1361 · 1.15 «otras listas»: Oraciones y Visitas usan estos mismos bloques desde app.js (pOraciones/pVisitas),
     // así la lógica de CSV (BOM, «;», protección contra fórmulas) vive en un solo lugar.
     exportar: { csvGenerico, descargarCSV, botonExportar, conectarExportar },
-    _t: { historialHTML, csvMiembros, celdaCSV, csvGenerico, proximosCumples, menuHTML, AREAS, wspCumple, cuando, telefonoWsp, telefonoLlamar, enlaceWsp, filtrar, fichaHTML, filaHTML, cumple }
+    _t: { historialHTML, filasHistorial, hitoFormHTML, conectarHitoForm, conectarBorrar, csvMiembros, celdaCSV, csvGenerico, proximosCumples, menuHTML, AREAS, wspCumple, cuando, telefonoWsp, telefonoLlamar, enlaceWsp, filtrar, fichaHTML, filaHTML, cumple }
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = window.TBCentroPastor;
 })();

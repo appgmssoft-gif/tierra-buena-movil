@@ -245,7 +245,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Acertijos de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Letras entre las hojas': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => !CABECERAS_ILUSTRADAS ? '' : `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1362';
+  const APP_VERSION = 'F1371';
   // F1171: respaldo si movimiento.js no cargó (pruebas o caché vieja): mismo criterio que TBMov.quieto().
   const MOV_QUIETO = () => { try { if (window.TBMov) return window.TBMov.quieto(); const h = document.documentElement; return h.getAttribute('data-anim') === 'off' || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
@@ -808,7 +808,7 @@
 
   function vistaMiembroServir(id) {
     $('#pantalla').innerHTML = `${cabecera('Servir', 'Mi iglesia')}${heroInt('c2', '🕍', 'Mi servicio', 'Servir con tu iglesia', 'Tus turnos, cuándo puedes servir y los grupos donde ayudas.')}
-      <h2 class="mi-sub">Mis turnos</h2><div id="misTurnos"><p class="suave m0">Cargando tus turnos…</p></div>
+      <h2 class="mi-sub">Mis turnos</h2><div id="misTurnos"><p class="suave m0">Cargando tus turnos…</p></div><div id="misAseo"></div><div id="misActiv"></div><div id="misForm"></div>
       <div id="turLider"></div>
       <div class="card"><b>¿Cuándo puedes servir?</b><p class="suave m0t">Marca lo que te sirve. Por ahora solo lo ves tú.</p>
         <div class="chips" role="group" aria-label="Mi disponibilidad">${DISP_OPC.map(([k, t]) => `<button type="button" class="chip${dispLeer().indexOf(k) >= 0 ? ' on' : ''}" data-disp="${k}" aria-pressed="${dispLeer().indexOf(k) >= 0}">${t}</button>`).join('')}</div>
@@ -819,6 +819,10 @@
       <details class="pf-grupo mi-grupo"><summary>Cuidar a tu pastor</summary><section class="cuidar-pastor"><p class="suave m0t">Tu pastor también es una persona. Formas concretas de acompañarlo:</p><ul class="ayuda-pasos"><li>Ora por él y por su familia, por su nombre.</li><li>Agradécele con una palabra sincera, en persona o por escrito.</li><li>Respeta sus días de descanso: no todo es urgente.</li><li>Ofrece una ayuda concreta: un servicio, transporte o una compra para el aseo.</li><li>Si ves una carga que no puede con todo, dile que cuentas con él.</li></ul></section></details>`;
     volverA('Mi iglesia', () => vistaMiembro(id));
     cablearMiembro(id);
+    // F1368 · Mis tareas de aseo de esta semana (SQL 32). Si no hay, la sección no aparece.
+    if (window.TBAseo) window.TBAseo.miembroMostrar('misAseo', id, rpcRaw);
+    if (window.TBActividades) window.TBActividades.miembroMostrar('misActiv', id, rpcRaw);
+    if (window.TBFormularios) window.TBFormularios.miembroMostrar('misForm', id, rpcRaw);
     // F1038 · Mis turnos: los servicios que el pastor me asignó en los próximos 14 días.
     (async () => {
       const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
@@ -3459,7 +3463,7 @@
     if ($('#pLlaveCopiar')) $('#pLlaveCopiar').onclick = () => copiarTxt('PULPITO-PASTOR-' + btoa(JSON.stringify({ c: p.codigo, s: p.secreto })), $('#pLlaveCopiar'), 'Llave copiada ✓');
     // F1352 · Centro del pastor: el panel, «Tu iglesia hoy» y «Todas las áreas» abren las mismas pantallas por una sola tabla
     const ctxCP = { rpc: prpc, avatar: avatarHTML, volver: () => vistaPastor(), abrir: (k) => irPP(k) };
-    const irPP = (k) => { const f = ({ sol: pSolicitudes, ora: pOraciones, vis: pVisitas, mie: pMiembros, min: pMinisterios, age: () => vistaAgenda(modoPastor(p)), avi: () => vistaAvisos(modoPastor(p)), mcal: () => pCalendario(p), disp: () => pDisponibilidad(p), bien: () => pBienvenida(p), chat: () => vistaChat({ rol: 'pastor', codigo: p.codigo, secreto: p.secreto }), dat: pDatos, mpre: () => window.TBMisPredicas && window.TBMisPredicas.abrir(), rsem: pResumenSemanal, bol: pBoletin, vigl: () => window.TBCentroPastor.vision(p, ctxCP), menu: () => window.TBCentroPastor.menu(p, ctxCP), tar: () => window.TBTarjetaPastor.abrir(p, ctxCP), cfg: () => window.TBConfigIglesia.abrir(p, ctxCP) })[k]; if (f) f(p); };
+    const irPP = (k) => { const f = ({ sol: pSolicitudes, ora: pOraciones, vis: pVisitas, mie: pMiembros, min: pMinisterios, age: () => vistaAgenda(modoPastor(p)), avi: () => vistaAvisos(modoPastor(p)), mcal: () => pCalendario(p), disp: () => pDisponibilidad(p), bien: () => pBienvenida(p), chat: () => vistaChat({ rol: 'pastor', codigo: p.codigo, secreto: p.secreto }), dat: pDatos, mpre: () => window.TBMisPredicas && window.TBMisPredicas.abrir(), rsem: pResumenSemanal, bol: pBoletin, vigl: () => window.TBCentroPastor.vision(p, ctxCP), menu: () => window.TBCentroPastor.menu(p, ctxCP), tar: () => window.TBTarjetaPastor.abrir(p, ctxCP), aseo: () => window.TBAseo.abrir(p, ctxCP), act: () => window.TBActividades.abrir(p, ctxCP), form: () => window.TBFormularios.abrir(p, ctxCP), cfg: () => window.TBConfigIglesia.abrir(p, ctxCP) })[k]; if (f) f(p); };
     document.querySelectorAll('[data-pp]').forEach((b) => b.addEventListener('click', () => irPP(b.dataset.pp)));
     $('#pSalir').onclick = () => { if (confirm('¿Salir del modo pastor en este teléfono? Tu llave se borra de aquí (sigue en tu computador).')) { borrar(K_PASTOR); borrar('tb_movil_juntos_cache'); barraRefrescar('perfil'); ir('perfil'); } };
     const ins = (k, n) => { if (!(n > 0)) return; const t = document.querySelector('[data-pp="' + k + '"]'); if (!t) return; let e = t.querySelector('.mi-b-n'); if (!e) { e = document.createElement('span'); e.className = 'mi-b-n'; t.appendChild(e); } e.textContent = n > 99 ? '99+' : String(n); e.setAttribute('aria-label', e.textContent + ' por atender'); };
