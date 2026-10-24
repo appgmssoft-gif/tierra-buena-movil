@@ -62,6 +62,8 @@
     if (tel) acc += '<a class="btn sec cp-llamar" id="cpLlamar" href="tel:' + esc(tel) + '">Llamar</a>';
     if (!acc) acc = '<p class="suave cp-nota" id="cpSinTel">' + (f.directorio === false || f.contacto_app_wsp === false
       ? 'Esta persona decidió no compartir su teléfono. Puedes hablarle en persona o por la iglesia.' : 'Todavía no hay un teléfono guardado para esta persona.') + '</p>';
+    // F1408 · 2.1 Chat privado miembro-pastor desde la ficha (canal directo, SQL 23). Siempre visible.
+    acc += '<button type="button" class="btn sec" id="cpChat">Escribir en la app</button>';
     const filas = [];
     if (f.ministerios) filas.push(['Ministerios', f.ministerios + (f.es_lider ? ' (líder)' : '')]);
     if (f.familia) filas.push(['Familia', f.familia]);
@@ -82,6 +84,7 @@
     if (!f) { c.textContent = 'No pudimos abrir esta ficha. Revisa tu conexión e inténtalo de nuevo.'; return; }
     c.hidden = true;
     $('#cpFicha').innerHTML = fichaHTML(f) + '<div id="cpFam"></div><div id="cpHist"><p class="suave" role="status">Revisando su historial…</p></div>' + hitoFormHTML();
+    const cc = $('#cpChat'); if (cc) cc.onclick = () => ctx.chatCon(id);
     conectarHitoForm(p, ctx, id);
     cargarHistorial(p, ctx, id);
     // F1373 · 1.13 familia y 1.9 datos del pastor (familias.js). Si el SQL 36 no está, no se muestra nada.
@@ -336,11 +339,14 @@
       ['bien', '🌱', 'Bienvenida', 'Primeras 4 semanas de quien llega'],
       ['cel', '🎉', 'Celebraciones', 'Cumpleaños y aniversarios de bautismo y de llegada'],
       ['disp', '🕐', 'Disponibilidad', 'Quiénes pueden servir'],
-      ['min', '🕍', 'Ministerios y líderes', 'Grupos, personas y líderes']]],
+      ['min', '🕍', 'Ministerios y líderes', 'Grupos, personas y líderes'],
+      ['bus', '🔎', 'Buscar', 'Personas, etiquetas, encuestas y áreas del panel']]],
     ['Comunicación', [['chat', '💬', 'Chat', 'Iglesia, pastor y líderes, y conversaciones'],
       ['avi', '📣', 'Avisos', 'Para todos o un grupo'],
       ['bol', '🗞️', 'Boletín de la semana', 'Avisos y agenda, listo para compartir'],
-      ['mpre', '🎙️', 'Mis prédicas', 'Graba tu mensaje, guárdalo y escúchalo']]],
+      ['mpre', '🎙️', 'Mis prédicas', 'Graba tu mensaje, guárdalo y escúchalo'],
+      ['enc', '🗳️', 'Encuestas', 'Pregunta a tu iglesia y mira los resultados'],
+      ['eti', '🏷️', 'Etiquetas y grupos', 'Agrupa personas para enviarles mensajes']]],
     ['Agenda y organización', [['age', '📅', 'Agenda', 'Actividades y reuniones'],
       ['mcal', '🗓', 'Mi calendario', 'Visitas, reuniones y descanso. Solo tú lo ves'],
       ['aseo', '🧹', 'Aseo y tareas', 'Quién hace cada tarea cada semana'],
