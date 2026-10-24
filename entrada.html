@@ -47,6 +47,11 @@
   .ent-probar:hover { background: color-mix(in srgb, var(--acento) 12%, transparent); }
   .ent-act span { display: inline-block; margin-top: 2px; }
   .ent-enviar:active { transform: scale(.99); }
+  .ent-img { display: block; width: 100%; max-height: 220px; object-fit: cover; border-radius: 14px; margin: 0 0 12px; }
+  .ent-desc { color: var(--suave); font-size: .95rem; }
+  .ent-paso { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 14px; padding: 14px 16px; margin: 14px 0; }
+  .ent-paso p { margin: 6px 0; }
+  .ent-app { margin-top: 16px; text-align: center; }
   @keyframes entAparece { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
   @keyframes entDibuja { to { stroke-dashoffset: 0; } }
   @media (prefers-reduced-motion: reduce) { main, .ent-ok circle, .ent-ok path { animation: none; } .ent-ok circle, .ent-ok path { stroke-dashoffset: 0; } }

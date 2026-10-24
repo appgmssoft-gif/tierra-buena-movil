@@ -659,3 +659,38 @@ html[data-anim=off] .so-nodo:not(.bloq):not(.hecho){animation:none}
 .asi-guia p { margin: 8px 0; }
 @keyframes asiPulso { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
 @media (prefers-reduced-motion: reduce) { .asi-estado.on { animation: none; } }
+.asi-check { display: flex; gap: 8px; align-items: center; margin: 12px 0; font-weight: 600; }
+.asi-check input { width: auto; }
+
+/* F1392 · Asistencia en pestañas: una sección a la vez, fácil de recorrer */
+.asi-tabs { display: flex; gap: 6px; overflow-x: auto; padding: 6px 0 14px; scrollbar-width: none; }
+.asi-tabs::-webkit-scrollbar { display: none; }
+.asi-tab { flex: 0 0 auto; font: inherit; font-weight: 600; padding: 8px 14px; border-radius: 999px;
+  border: 1.5px solid var(--borde, #cfd8d1); background: transparent; color: inherit; cursor: pointer; }
+.asi-tab[aria-selected="true"] { background: var(--acento, #2e7d5b); color: #fff; border-color: transparent; }
+.asi-tab:focus-visible { outline: 3px solid var(--acento, #2e7d5b); outline-offset: 2px; }
+.asi-panel[hidden] { display: none; }
+.asi-panel:not([hidden]) { animation: asiEntra .25s ease-out both; }
+.asi-hoy { border-left: 4px solid var(--acento, #2e7d5b); }
+.asi-hoy-item { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; padding: 8px 0; border-top: 1px solid var(--borde, #cfd8d1); }
+.asi-resumen { margin: 4px 2px 12px; }
+@keyframes asiEntra { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .asi-panel:not([hidden]) { animation: none; } }
+
+/* F1393 · Diseño de Asistencia: jerarquía clara, acciones peligrosas marcadas, pestañas fijas y mejor uso en el celular */
+#pantalla .asi-tabs { position: sticky; top: 0; z-index: 5; background: var(--fondo, #f6f3ec); margin: 0 -4px; padding-left: 4px; padding-right: 4px; }
+.asi-peligro { background: transparent !important; color: #b3261e !important; border: 1.5px solid #b3261e !important; }
+.asi-peligro:hover { background: rgba(179, 38, 30, .08) !important; }
+.asi-peligro:focus-visible { outline: 3px solid #b3261e; outline-offset: 2px; }
+.asi-vacio { text-align: center; padding: 22px 14px; border: 1.5px dashed var(--borde, #cfd8d1); border-radius: 14px; margin: 10px 0; }
+.asi-vacio b { display: block; margin-bottom: 4px; font-size: 1.05rem; }
+.asi-panel h2.mi-sub { margin: 20px 0 8px; font-size: 1.1rem; }
+.asi-sesion h2 { font-size: 1.15rem; margin: 0 0 4px; }
+.asi-sesion { transition: box-shadow .2s ease; }
+.asi-sesion:hover, .asi-sesion:focus-within { box-shadow: 0 4px 16px rgba(0, 0, 0, .06); }
+@media (max-width: 480px) {
+  .asi-duracion { flex-direction: column; align-items: stretch; }
+  .asi-duracion > * { width: 100%; max-width: none; }
+  .asi-tab { padding: 8px 12px; }
+}
+@media (prefers-color-scheme: dark) { .asi-peligro { color: #ff8a80 !important; border-color: #ff8a80 !important; } }

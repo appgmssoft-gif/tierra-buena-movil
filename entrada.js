@@ -16,6 +16,8 @@
     'nombre': 'Escribe tu nombre y tu apellido (hasta 60 letras cada uno).',
     'tipo': 'Elige si eres miembro o visita.',
     'lleno': 'Esta actividad llegó al máximo de registros. Avisa al pastor.',
+    'ya-paso': 'Esta actividad ya pasó. Si quieres marcar asistencia, escanea el QR el día del evento.',
+    'muy-lejos': 'Aún es muy temprano para confirmar. Vuelve a escanear unos días antes.',
   };
 
   async function rpc(fn, cuerpo) {
@@ -49,13 +51,25 @@
     try { localStorage.setItem(CLAVE_RECUERDO, JSON.stringify({ nombre, apellido })); } catch (e) { /* sin almacenamiento: no pasa nada */ }
   }
 
+  // F1389 · Lo que el pastor personalizó: eslogan, lugar, descripción e imagen (solo enlaces https).
+  function detalleHTML(info) {
+    const img = info.imagen_url && /^https:\/\//i.test(info.imagen_url)
+      ? '<img class="ent-img" src="' + esc(info.imagen_url) + '" alt="" loading="lazy" referrerpolicy="no-referrer">' : '';
+    return img + '<p class="ent-act"><b>' + esc(info.nombre) + '</b>' +
+      (info.eslogan ? '<br><i>' + esc(info.eslogan) + '</i>' : '') +
+      (info.lugar ? '<br><span>Lugar: ' + esc(info.lugar) + '</span>' : '') +
+      '<br><span id="entAhora"></span>' +
+      (info.cierra_en ? '<br><span class="ent-cierre">Se cierra a las ' + horaEnt(info.cierra_en) + '</span>' : '') +
+      (info.descripcion ? '<br><span class="ent-desc">' + esc(info.descripcion) + '</span>' : '') + '</p>';
+  }
+
   function mostrarAviso(texto) { const a = $('entAviso'); a.textContent = texto || ''; a.hidden = !texto; }
 
   function formularioHTML(info) {
-    return '<p class="ent-act">' + esc(info.nombre) + '<br><span id="entAhora"></span></p>' +
+    return detalleHTML(info) +
       '<form id="entForm" novalidate>' +
-      '<label for="entNombre">Tu nombre</label><input id="entNombre" name="nombre" autocomplete="given-name" maxlength="60" required autofocus>' +
-      '<label for="entApellido">Tu apellido</label><input id="entApellido" name="apellido" autocomplete="family-name" maxlength="60" required>' +
+      '<label for="entNombre">Tu nombre</label><input id="entNombre" name="nombre" autocomplete="given-name" maxlength="60" required autofocus placeholder="Ej: Ana">' +
+      '<label for="entApellido">Tu apellido</label><input id="entApellido" name="apellido" autocomplete="family-name" maxlength="60" required placeholder="Ej: Pérez">' +
       '<p class="ent-pregunta" id="entTipoTitulo">¿Eres miembro o visita?</p>' +
       '<div class="ent-tipos" role="group" aria-labelledby="entTipoTitulo">' +
       '<button type="button" class="ent-tipo" data-tipo="miembro" aria-pressed="false"><b>Soy miembro</b><span>Ya formo parte de la iglesia</span></button>' +
@@ -65,27 +79,39 @@
       '<p class="ent-privado">Tu nombre solo lo usa el pastor para contar la asistencia. Quedas registrado al instante, sin cuenta ni claves.</p>';
   }
 
-  function conectarFormulario(codigo) {
+  // F1401 · Nombres bien escritos: espacios limpios y mayúscula inicial en cada palabra.
+  function nombreBien(t) {
+    return String(t || '').trim().replace(/\s+/g, ' ').toLowerCase()
+      .replace(/(^|[\s-])(\p{L})/gu, (m, a, b) => a + b.toUpperCase());
+  }
+
+  function conectarFormulario(codigo, modo, sinRecuerdo) {
+    const fn = modo === 'confirmar' ? 'asistencia_confirmar' : 'asistencia_registrar_persona';
     let tipo = '';
-    const previo = recordado();
+    const previo = sinRecuerdo ? {} : recordado();
     if (previo.nombre) $('entNombre').value = previo.nombre;
     if (previo.apellido) $('entApellido').value = previo.apellido;
     pintarAhora();
+    $('entNombre').oninput = () => mostrarAviso('');
+    $('entApellido').oninput = () => mostrarAviso('');
     const reloj = setInterval(pintarAhora, 30000);
     document.querySelectorAll('.ent-tipo').forEach((b) => b.onclick = () => {
       tipo = b.getAttribute('data-tipo');
       document.querySelectorAll('.ent-tipo').forEach((x) => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
       mostrarAviso('');
-      if ($('entNombre').value.trim() && $('entApellido').value.trim()) $('entForm').requestSubmit ? $('entForm').requestSubmit() : null;
+      if (!$('entNombre').value.trim()) { $('entNombre').focus(); return; }
+      if (!$('entApellido').value.trim()) { $('entApellido').focus(); return; }
+      $('entForm').requestSubmit ? $('entForm').requestSubmit() : null;
     });
     $('entForm').onsubmit = async (e) => {
       e.preventDefault();
-      const nombre = $('entNombre').value.trim(), apellido = $('entApellido').value.trim();
+      const nombre = nombreBien($('entNombre').value), apellido = nombreBien($('entApellido').value);
       if (!nombre || !apellido) { mostrarAviso(MENSAJES.nombre); return; }
+      if (!/^[\p{L} '\-]+$/u.test(nombre + ' ' + apellido)) { mostrarAviso('Usa solo letras en tu nombre y apellido.'); return; }
       if (!tipo) { mostrarAviso(MENSAJES.tipo); return; }
       const boton = document.querySelector('.ent-enviar'); boton.disabled = true; boton.textContent = 'Guardando…';
       try {
-        const r = await rpc('asistencia_registrar_persona', { p_pase: codigo, p_nombre: nombre, p_apellido: apellido, p_tipo: tipo });
+        const r = await rpc(fn, { p_pase: codigo, p_nombre: nombre, p_apellido: apellido, p_tipo: tipo });
         if (!r || !r.ok) {
           boton.disabled = false; boton.textContent = 'Marcar mi asistencia';
           mostrarAviso(MENSAJES[r && r.motivo] || 'No pudimos guardar. Revisa tu conexión e inténtalo de nuevo.');
@@ -93,7 +119,7 @@
         }
         clearInterval(reloj);
         recordar(nombre, apellido);
-        exito(r);
+        if (modo === 'confirmar') confirmadoHTML(r); else exito(r);
       } catch (err) {
         boton.disabled = false; boton.textContent = 'Marcar mi asistencia';
         mostrarAviso('No pudimos guardar. Revisa tu conexión e inténtalo de nuevo.');
@@ -107,10 +133,27 @@
     $('entCuerpo').innerHTML = '<div class="ent-ok" aria-hidden="true"><svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="24"/><path d="M15 27l7 7 15-16"/></svg></div>' +
       '<h1>' + (r.ya ? 'Ya tenías tu asistencia marcada, ' + nombre : '¡Gracias, ' + nombre + '!') + '</h1>' +
       '<p class="ent-gracias">' + (r.ya ? 'No hace falta hacer nada más.' : 'Tu asistencia a «' + esc(r.actividad) + '» quedó registrada.') + '</p>' +
+      (r.ya ? '' : '<p class="ent-privado">Registrado a las ' + horaEnt(new Date().toISOString()) + '</p>') +
       '<blockquote class="ent-bendicion"><p>' + esc(BENDICION) + '</p><cite>' + esc(CITA) + '</cite></blockquote>' +
+      (infoActual && infoActual.mensaje_bienvenida ? '<p class="ent-bien">' + esc(infoActual.mensaje_bienvenida) + '</p>' : '') +
       (r.tipo === 'visita' ? '<p class="ent-bien">Qué bueno tenerte aquí. Esperamos verte de nuevo.</p>' : '') +
+      '<button type="button" class="ent-probar" id="entOtra">Registrar a otra persona</button>' +
       '<a class="ent-probar" href="./">Conocer la app Tierra Buena</a>' +
       '<p class="ent-privado">Puedes cerrar esta página cuando quieras.</p>';
+    $('entOtra').onclick = () => { $('entCuerpo').innerHTML = '<h1>Marca tu asistencia</h1>' + formularioHTML(infoActual); conectarFormulario(codigoActual, 'registrar', true); };
+  }
+
+  // F1389 · Confirmación anticipada: «Quedas confirmado».
+  function confirmadoHTML(r) {
+    // Dos etapas: confirmar antes (paso 1, hecho) y marcar el día del evento con el QR (paso 2, asistencia real).
+    const app = infoActual && infoActual.mostrar_app
+      ? '<div class="ent-app"><p><b>¿Quieres conocer la app Tierra Buena?</b></p><p>Ahí puedes ver tus actividades y mantenerte al día con tu iglesia.</p><a class="ent-probar" href="./">Probar la app</a></div>'
+      : '';
+    $('entCuerpo').innerHTML = '<div class="ent-ok" aria-hidden="true"><svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="24"/><path d="M15 27l7 7 15-16"/></svg></div>' +
+      '<h1>' + (r.ya ? 'Ya estabas confirmado' : '¡Quedas confirmado, ' + esc(r.nombre) + '!') + '</h1>' +
+      '<p class="ent-gracias">Te esperamos en «' + esc(r.actividad) + '» el ' + esc(fechaLarga(r.fecha)) + '.</p>' +
+      '<div class="ent-paso"><p><b>Paso 1 de 2 · Hecho:</b> confirmaste tu asistencia.</p>' +
+      '<p><b>Paso 2 de 2 · El día del evento:</b> escanea el QR de la entrada para confirmar que llegaste. Esa es tu asistencia real.</p></div>' + app;
   }
 
   function mensajeCentral(texto) { $('entCuerpo').innerHTML = '<p class="ent-cerrado">' + esc(texto) + '</p>'; }
@@ -127,7 +170,7 @@
   function pantallaYo(info, yo, codigo) {
     const primero = esc(String(yo.nombre).trim().split(/\s+/)[0]);
     $('entCuerpo').innerHTML = '<h1>Hola, ' + primero + '</h1>' +
-      '<p class="ent-act">' + esc(info.nombre) + '<br><span id="entAhora"></span></p>' +
+      detalleHTML(info) +
       '<button type="button" class="ent-enviar" id="entYo">Marcar mi asistencia</button>' +
       '<p class="ent-aviso" id="entAviso" role="alert" hidden></p>' +
       '<p class="ent-cambio"><button type="button" class="enlace" id="entNoSoy">No soy yo, quiero escribir mi nombre</button></p>' +
@@ -151,19 +194,34 @@
     };
   }
 
+  let infoActual = null;
+  let codigoActual = null;
+  // F1401 · Hora de cierre del QR, para que la persona sepa hasta cuándo puede marcar.
+  function horaEnt(iso) { try { return new Date(iso).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; } }
+
   async function iniciar() {
     const codigo = pase();
+    codigoActual = codigo;
     if (!codigo || codigo.length !== 8) { mensajeCentral(MENSAJES['codigo-no-valido']); return; }
     try {
       const info = await rpc('asistencia_pase_info', { p_pase: codigo });
       if (!info || !info.ok) { mensajeCentral(MENSAJES[info && info.motivo] || MENSAJES['codigo-no-valido']); return; }
-      if (!info.vigente) { mensajeCentral(MENSAJES['sesion-cerrada']); return; }
+      infoActual = info;
+      if (!info.vigente) {
+        if (info.proxima) {
+          $('entCuerpo').innerHTML = '<h1>Confirma tu asistencia</h1>' + formularioHTML(info);
+          conectarFormulario(codigo, 'confirmar');
+          return;
+        }
+        mensajeCentral(MENSAJES['sesion-cerrada']); return;
+      }
       const yo = identidadGuardada();
       if (yo) { pantallaYo(info, yo, codigo); return; }
       $('entCuerpo').innerHTML = '<h1>Marca tu asistencia</h1>' + formularioHTML(info);
       conectarFormulario(codigo);
     } catch (err) {
-      mensajeCentral('No pudimos conectar. Revisa tu conexión y vuelve a escanear el código.');
+      $('entCuerpo').innerHTML = '<p class="ent-cerrado">No pudimos conectar. Revisa tu conexión.</p><button type="button" class="ent-enviar" id="entReintentar">Volver a intentar</button>';
+      $('entReintentar').onclick = () => iniciar();
     }
   }
 
