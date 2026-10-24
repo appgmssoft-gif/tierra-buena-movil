@@ -245,7 +245,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Acertijos de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Letras entre las hojas': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => !CABECERAS_ILUSTRADAS ? '' : `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1404';
+  const APP_VERSION = 'F1407';
   // F1171: respaldo si movimiento.js no cargó (pruebas o caché vieja): mismo criterio que TBMov.quieto().
   const MOV_QUIETO = () => { try { if (window.TBMov) return window.TBMov.quieto(); const h = document.documentElement; return h.getAttribute('data-anim') === 'off' || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
@@ -808,7 +808,7 @@
 
   function vistaMiembroServir(id) {
     $('#pantalla').innerHTML = `${cabecera('Servir', 'Mi iglesia')}${heroInt('c2', '🕍', 'Mi servicio', 'Servir con tu iglesia', 'Tus turnos, cuándo puedes servir y los grupos donde ayudas.')}
-      <h2 class="mi-sub">Mis turnos</h2><div id="misTurnos"><p class="suave m0">Cargando tus turnos…</p></div><div id="misAseo"></div><div id="misAsist"></div><div id="misActiv"></div><div id="misForm"></div><div id="misCelebra"></div>
+      <h2 class="mi-sub">Mis turnos</h2><div id="misTurnos"><p class="suave m0">Cargando tus turnos…</p></div><div id="misAseo"></div><div id="misAsist"></div><div id="misActiv"></div><div id="misForm"></div><div id="misCelebra"></div><div id="misPrograma"></div>
       <div id="turLider"></div>
       <div class="card"><b>¿Cuándo puedes servir?</b><p class="suave m0t">Marca lo que te sirve. Por ahora solo lo ves tú.</p>
         <div class="chips" role="group" aria-label="Mi disponibilidad">${DISP_OPC.map(([k, t]) => `<button type="button" class="chip${dispLeer().indexOf(k) >= 0 ? ' on' : ''}" data-disp="${k}" aria-pressed="${dispLeer().indexOf(k) >= 0}">${t}</button>`).join('')}</div>
@@ -830,6 +830,8 @@
     // F1372 · Celebraciones de mi ministerio (solo líderes, SQL 35) y la tarjeta de mi pastor (1.8, SQL 35). Si no hay, no aparecen.
     if (window.TBCelebraciones) window.TBCelebraciones.miembroMostrar('misCelebra', id, rpcRaw);
     if (window.TBTarjetaPastor) window.TBTarjetaPastor.miembroMostrar('misTarjeta', id, rpcRaw);
+    // F1406 · Programa del domingo publicado por el pastor (SQL 57). Si no hay, no aparece.
+    if (window.TBPrograma) window.TBPrograma.miembroMostrar('misPrograma', id, rpcRaw);
     // F1373 · 1.13 «Mi familia» (solo nombres y relaciones). Si el SQL 36 no está, no aparece.
     if (window.TBFamilias) window.TBFamilias.miembroMostrar('misFamilia', id, rpcRaw);
     // F1038 · Mis turnos: los servicios que el pastor me asignó en los próximos 14 días.
@@ -3229,6 +3231,7 @@
     const prox = lista.find((e) => (diasHasta(e.inicio) || 0) >= 0);
     if (prox) $('#aghero').innerHTML = heroInt('c1', '🗓️', 'Lo próximo', esc(prox.titulo), esc((cercania(diasHasta(prox.inicio)) || dtFmt(prox.inicio)) + (prox.lugar ? ' · ' + prox.lugar : '')));
     const gAg = [['Esta semana', (e) => { const d = diasHasta(e.inicio); return d != null && d >= 0 && d <= 7; }], ['Más adelante', (e) => (diasHasta(e.inicio) || 0) > 7], ['Ya pasaron', (e) => (diasHasta(e.inicio) || 0) < 0]];
+    if (pas) botonCSV15('#aglista', 'agExp', 'Descargar agenda para Excel', 'agenda', lista, COLS_AGENDA15);
     $('#aglista').innerHTML = gAg.map((g) => { const l = lista.filter(g[1]); return l.length ? '<h2 class="mi-sub">' + g[0] + '</h2>' + l.map((e) => eventoHTML(e, !!pas || e.puede_borrar)).join('') : ''; }).join('');
     if (pas || mins.length) $('#agform').innerHTML = formAgenda(mins, !!pas);
     document.querySelectorAll('[data-bev]').forEach((b) => b.addEventListener('click', async () => {
@@ -3248,6 +3251,23 @@
       er.textContent = errP(x ? x.motivo : r.error); er.hidden = false;
     };
   }
+  // F1404 · 1.15 Exportar listas de avisos y agenda para Excel (CSV). Misma forma que las demás listas del pastor.
+  const csvCelda15 = (v) => { const s = String(v == null ? '' : v); return /[";\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+  function exportarListaCSV15(nombre, columnas, lista) {
+    const texto = '\uFEFF' + [columnas.map((c) => csvCelda15(c[0])).join(';')].concat(lista.map((x) => columnas.map((c) => csvCelda15(c[1](x))).join(';'))).join('\r\n');
+    const url = URL.createObjectURL(new Blob([texto], { type: 'text/csv;charset=utf-8' }));
+    const a = document.createElement('a'); a.href = url; a.download = nombre + '-' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { a.remove(); URL.revokeObjectURL(url); }, 1500);
+  }
+  const COLS_AVISOS15 = [['Título', (a) => a.titulo], ['Fecha', (a) => String(a.creado_en || '').slice(0, 10)], ['Ministerio', (a) => a.ministerio || '']];
+  const COLS_AGENDA15 = [['Actividad', (e) => e.titulo], ['Fecha y hora', (e) => e.inicio ? new Date(e.inicio).toLocaleString('es-CL') : ''], ['Lugar', (e) => e.lugar || '']];
+  function botonCSV15(antes, id, texto, nombre, lista, columnas) {
+    const el = $(antes); if (!el || !lista.length) return;
+    el.insertAdjacentHTML('beforebegin', '<button type="button" class="btn chico sec" id="' + id + '">⬇ ' + texto + '</button>');
+    const b = $('#' + id); if (b) b.onclick = () => exportarListaCSV15(nombre, columnas, lista);
+  }
+
   async function vistaAvisos(modo) {
     const { pas, id } = modo;
     $('#pantalla').innerHTML = `${cabecera('Avisos', modo.volverTxt)}<div id="avhero"></div><p class="suave" id="avmsg">Cargando…</p><div id="avlista"></div><div id="avform"></div>`;
@@ -3262,6 +3282,7 @@
     const nNuevos = lista.filter(avisoNuevo).length;
     if (lista.length) $('#avhero').innerHTML = heroInt('c5', '📣', nNuevos ? nNuevos + (nNuevos === 1 ? ' aviso nuevo' : ' avisos nuevos') : 'Al día', 'Avisos de tu iglesia', 'Lo que tu pastor y los líderes quieren que sepas.');
     $('#avlista').innerHTML = lista.map((a) => avisoHTML(a, !!pas || a.puede_borrar)).join('');
+    if (pas) botonCSV15('#avlista', 'avExp', 'Descargar avisos para Excel', 'avisos', lista, COLS_AVISOS15);
     if (pas || mins.length) $('#avform').innerHTML = formAviso(mins, !!pas);
     document.querySelectorAll('[data-bav]').forEach((b) => b.addEventListener('click', async () => {
       if (!confirm('¿Quitar este aviso?')) return;

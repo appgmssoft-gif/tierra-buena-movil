@@ -108,6 +108,7 @@
       '<button type="button" class="btn chico sec" id="plAgregar"' + (est.bloques.length >= MAX_BLOQUES ? ' disabled' : '') + '>+ Agregar bloque</button>' +
       '<p class="suave" id="plMsg" role="alert" hidden></p>' +
       '<button type="button" class="btn" id="plGuardar">Guardar plantilla</button>' +
+      (est.id ? '<button type="button" class="btn chico sec" id="plPublicar">Usar como programa del domingo</button>' : '') +
       (est.id ? '<button type="button" class="btn chico sec" id="plBorrar">Borrar esta plantilla</button>' : '');
   }
 
@@ -194,6 +195,7 @@
         });
         $('#plGuardar').onclick = () => guardar();
         $('#plBorrar') && ($('#plBorrar').onclick = () => borrar());
+        $('#plPublicar') && ($('#plPublicar').onclick = () => publicar());
       };
 
       const guardar = async () => {
@@ -216,6 +218,13 @@
         cargarLista();
       };
 
+      const publicar = async () => {
+        if (!window.confirm('¿Usar esta plantilla como el programa del domingo? Los miembros verán este orden en Mi servicio y reemplaza el que estaba publicado.')) return;
+        const d = fila(await ctx.rpc('pastor_plantilla_publicar', p, { p_id: est.id, p_publicar: true }));
+        if (!d || !d.ok) { aviso('plMsg', (d && MOTIVOS[d.motivo]) || 'No pudimos publicarla. Revisa tu conexión e inténtalo de nuevo.'); return; }
+        mensaje = 'Listo: los miembros ya ven este programa en Mi servicio.';
+        cargarLista();
+      };
       const borrar = async () => {
         if (!window.confirm('¿Borrar esta plantilla? Sus bloques también se borran. Esto no se puede deshacer.')) return;
         const d = fila(await ctx.rpc('pastor_plantilla_borrar', p, { p_id: est.id }));
