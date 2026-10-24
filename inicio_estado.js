@@ -48,7 +48,7 @@
         if (b.vivero.desbloqueados.indexOf('tem_jardin') >= 0) b.gotas.saldo += 150;
         b.vivero.desbloqueados = dj;
         if (b.tematica === 'jardin') {
-          b.tematica = 'bosque'; if (!b.eligiendo) b.ciclo.especie = 'araucaria';
+          b.tematica = 'bosque'; if (!b.eligiendo) b.ciclo.especie = 'canelo';
           ['tem_bosque', 'lug_bosque'].forEach((k) => { if (b.vivero.desbloqueados.indexOf(k) < 0) b.vivero.desbloqueados.push(k); });
         }
       }

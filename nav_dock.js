@@ -50,6 +50,8 @@
   // acciones: { inicio: fn, chat: fn, agenda: fn, muro: fn, servir: fn }
   function montar(acciones) {
     quitar();
+    // La app ya tiene su barra principal (.barra). No se duplica: la barra secundaria va encima de ella.
+    if (document.querySelector('.barra')) return;
     const nav = document.createElement('nav');
     nav.id = 'tbDock';
     nav.className = 'tb-dock';

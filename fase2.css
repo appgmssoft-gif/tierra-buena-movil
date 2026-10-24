@@ -163,3 +163,7 @@ body.en-chat.tb-con-dock{padding-bottom:0}
 .tb-dock2-b:focus-visible{outline:2px solid var(--verde);outline-offset:2px}
 body.tb-con-dock2{padding-bottom:calc(136px + env(safe-area-inset-bottom,0px))}
 body.en-chat .tb-dock2{display:none}
+
+/* F1411 · Dentro del chat se oculta la barra principal: el campo de escribir queda libre */
+body.en-chat .barra{display:none}
+body.en-chat .tb-dock2{display:none}
