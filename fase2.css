@@ -1,0 +1,60 @@
+/* F1409 · Estilos de las pantallas nuevas (encuestas, etiquetas, ánimo, gracias, búsqueda, vistas de agenda, impresión).
+   Solo variables de color de la app, así respeta todos los temas y el modo oscuro. Sin atributos style en el HTML (la política de seguridad los bloquea). */
+.cp-campo{display:flex;flex-direction:column;gap:6px;margin:10px 0;font-weight:600}
+.cp-campo input[type=text],.cp-campo textarea,.cp-campo select{font:inherit;font-weight:400;color:inherit;background:var(--tarjeta);border:1px solid var(--linea);border-radius:12px;padding:10px 12px;min-height:44px;width:100%;box-sizing:border-box}
+.cp-campo input[type=checkbox]{width:22px;height:22px;margin-right:8px;vertical-align:middle}
+.cp-wsp{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 14px;text-decoration:none}
+
+/* Encuestas */
+.enc-caja{margin:12px 0;padding:12px;border:1px solid var(--linea);border-radius:14px;background:var(--tarjeta)}
+.enc-fila{display:grid;grid-template-columns:1fr auto;gap:4px 10px;margin:8px 0}
+.enc-fila .enc-barra{grid-column:1 / -1}
+.enc-barra{width:100%;height:10px;border:0;border-radius:999px;overflow:hidden;background:var(--linea);accent-color:var(--verde);appearance:none;-webkit-appearance:none}
+.enc-barra::-webkit-progress-bar{background:var(--linea);border-radius:999px}
+.enc-barra::-webkit-progress-value{background:var(--verde);border-radius:999px}
+.enc-barra::-moz-progress-bar{background:var(--verde);border-radius:999px}
+.enc-acc,.enc-opciones{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.enc-opc{min-height:44px;flex:1 1 140px;text-align:left}
+.enc-opc[aria-pressed=true]{border-color:var(--verde);font-weight:700}
+
+/* Etiquetas */
+.et-nueva{display:flex;gap:8px}
+.et-nueva input{flex:1;min-width:0}
+.et-fila{flex-wrap:wrap}
+.et-marca{cursor:pointer}
+.et-marca input{width:22px;height:22px;flex:none}
+
+/* Búsqueda y agenda por vistas */
+.agv-barra{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.agv-barra .cp-chip{flex:none}
+.agv-nav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:8px 0}
+.agv-nav b{text-transform:capitalize;text-align:center;flex:1}
+.agv-rejilla{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:6px 0}
+.agv-cab{text-align:center;font-size:.75rem;color:var(--suave);font-weight:700;padding:2px 0}
+.agv-dia{min-height:48px;padding:4px 2px;border:1px solid var(--linea);border-radius:10px;background:var(--tarjeta);color:inherit;font:inherit;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;cursor:pointer}
+.agv-dia.fuera{opacity:.45}
+.agv-dia.hoy{border-color:var(--oro);border-width:2px}
+.agv-dia[aria-pressed=true]{background:var(--verde);color:var(--papel);border-color:var(--verde)}
+.agv-puntos{display:flex;flex-wrap:wrap;gap:2px;justify-content:center}
+.agv-punto{width:8px;height:8px;border-radius:50%;display:inline-block;background:var(--suave)}
+.agv-c0{background:#2e7d5b}.agv-c1{background:#c0392b}.agv-c2{background:#2f6fb3}.agv-c3{background:#b9770e}
+.agv-c4{background:#8e44ad}.agv-c5{background:#16808d}.agv-c6{background:#b03a77}.agv-c7{background:#6b7b2a}
+.agv-leyenda{display:flex;flex-wrap:wrap;gap:6px 14px;margin:8px 0;font-size:.85rem}
+.agv-leyenda span{display:inline-flex;align-items:center;gap:6px}
+.agv-semana-dia{margin:10px 0 2px}
+.agv-semana-dia.hoy{color:var(--oro)}
+
+/* Impresión (tarea 1.15, PDF desde el navegador): solo se imprime la tabla preparada, no la pantalla. */
+#tbImprimible{display:none}
+@media print{
+  body.tb-imprimiendo > *:not(#tbImprimible){display:none !important}
+  body.tb-imprimiendo #tbImprimible{display:block !important;color:#000;background:#fff;padding:0;font:12pt/1.4 system-ui,sans-serif}
+  #tbImprimible h1{font-size:18pt;margin:0 0 4pt}
+  #tbImprimible .imp-nota{font-size:10pt;color:#444;margin:0 0 10pt}
+  #tbImprimible table{width:100%;border-collapse:collapse}
+  #tbImprimible th,#tbImprimible td{border:1px solid #888;padding:4pt 6pt;text-align:left;vertical-align:top;font-size:10.5pt}
+  #tbImprimible th{background:#eee}
+  #tbImprimible thead{display:table-header-group}
+  #tbImprimible tr{break-inside:avoid}
+  @page{margin:16mm}
+}

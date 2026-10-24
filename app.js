@@ -245,7 +245,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Acertijos de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Letras entre las hojas': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => !CABECERAS_ILUSTRADAS ? '' : `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1408';
+  const APP_VERSION = 'F1409';
   // F1171: respaldo si movimiento.js no cargó (pruebas o caché vieja): mismo criterio que TBMov.quieto().
   const MOV_QUIETO = () => { try { if (window.TBMov) return window.TBMov.quieto(); const h = document.documentElement; return h.getAttribute('data-anim') === 'off' || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
@@ -808,7 +808,7 @@
 
   function vistaMiembroServir(id) {
     $('#pantalla').innerHTML = `${cabecera('Servir', 'Mi iglesia')}${heroInt('c2', '🕍', 'Mi servicio', 'Servir con tu iglesia', 'Tus turnos, cuándo puedes servir y los grupos donde ayudas.')}
-      <h2 class="mi-sub">Mis turnos</h2><div id="misTurnos"><p class="suave m0">Cargando tus turnos…</p></div><div id="misAseo"></div><div id="misAsist"></div><div id="misActiv"></div><div id="misForm"></div><div id="misCelebra"></div><div id="misPrograma"></div><div id="misEncuestas"></div>
+      <h2 class="mi-sub">Mis turnos</h2><div id="misTurnos"><p class="suave m0">Cargando tus turnos…</p></div><div id="misAseo"></div><div id="misAsist"></div><div id="misActiv"></div><div id="misForm"></div><div id="misCelebra"></div><div id="misPrograma"></div><div id="misEncuestas"></div><div id="misAnimos"></div><div id="misGracias"></div>
       <div id="turLider"></div>
       <div class="card"><b>¿Cuándo puedes servir?</b><p class="suave m0t">Marca lo que te sirve. Por ahora solo lo ves tú.</p>
         <div class="chips" role="group" aria-label="Mi disponibilidad">${DISP_OPC.map(([k, t]) => `<button type="button" class="chip${dispLeer().indexOf(k) >= 0 ? ' on' : ''}" data-disp="${k}" aria-pressed="${dispLeer().indexOf(k) >= 0}">${t}</button>`).join('')}</div>
@@ -834,6 +834,10 @@
     if (window.TBPrograma) window.TBPrograma.miembroMostrar('misPrograma', id, rpcRaw);
     // F1408 · Encuestas de mi iglesia para votar (SQL 58). Si no hay, no aparecen.
     if (window.TBEncuestas) window.TBEncuestas.miembroMostrar('misEncuestas', id, rpcRaw);
+    // F1409 · 2.15 Palabras de ánimo recibidas (SQL 61). Si no hay, no aparecen.
+    if (window.TBAnimo) window.TBAnimo.miembroMostrar('misAnimos', id, rpcRaw);
+    // F1409 · 2.13 Gracias entre miembros (SQL 60, 63, 64). Si no hay, no aparecen.
+    if (window.TBGracias) window.TBGracias.miembroMostrar('misGracias', id, rpcRaw);
     // F1373 · 1.13 «Mi familia» (solo nombres y relaciones). Si el SQL 36 no está, no aparece.
     if (window.TBFamilias) window.TBFamilias.miembroMostrar('misFamilia', id, rpcRaw);
     // F1038 · Mis turnos: los servicios que el pastor me asignó en los próximos 14 días.
@@ -3235,6 +3239,8 @@
     const gAg = [['Esta semana', (e) => { const d = diasHasta(e.inicio); return d != null && d >= 0 && d <= 7; }], ['Más adelante', (e) => (diasHasta(e.inicio) || 0) > 7], ['Ya pasaron', (e) => (diasHasta(e.inicio) || 0) < 0]];
     if (pas) botonCSV15('#aglista', 'agExp', 'Descargar agenda para Excel', 'agenda', lista, COLS_AGENDA15);
     $('#aglista').innerHTML = gAg.map((g) => { const l = lista.filter(g[1]); return l.length ? '<h2 class="mi-sub">' + g[0] + '</h2>' + l.map((e) => eventoHTML(e, !!pas || e.puede_borrar)).join('') : ''; }).join('');
+    // F1409 · 3.1 Vistas Semana y Mes con color por ministerio (sobre la misma lista; «Quitar» sigue en la vista Lista).
+    if (window.TBAgendaVistas) { try { window.TBAgendaVistas.montar({ lista, antes: '#aglista', pintarEvento: (e) => eventoHTML(e, false) }); } catch (e) { /* si falla, queda la lista de siempre */ } }
     if (pas || mins.length) $('#agform').innerHTML = formAgenda(mins, !!pas);
     document.querySelectorAll('[data-bev]').forEach((b) => b.addEventListener('click', async () => {
       if (!confirm('¿Quitar esta actividad de la agenda?')) return;
@@ -3268,6 +3274,11 @@
     const el = $(antes); if (!el || !lista.length) return;
     el.insertAdjacentHTML('beforebegin', '<button type="button" class="btn chico sec" id="' + id + '">⬇ ' + texto + '</button>');
     const b = $('#' + id); if (b) b.onclick = () => exportarListaCSV15(nombre, columnas, lista);
+    // F1409 · 1.15 Imprimir o guardar PDF (misma lista).
+    if (b && window.TBCentroPastor && window.TBCentroPastor.exportar) {
+      b.insertAdjacentHTML('afterend', ' <button type="button" class="btn chico sec" id="' + id + 'Pdf">🖨 Imprimir o guardar PDF</button>');
+      const q = $('#' + id + 'Pdf'); if (q) q.onclick = () => window.TBCentroPastor.exportar.imprimirLista(nombre === 'agenda' ? 'Agenda de la iglesia' : 'Avisos de la iglesia', columnas, lista, '');
+    }
   }
 
   async function vistaAvisos(modo) {
@@ -3505,7 +3516,7 @@
         const k = (c2.data || []).find((z) => z.id === ok.canal_id);
         if (k) vistaChat(x, k);
       } };
-    const irPP = (k) => { const f = ({ sol: pSolicitudes, ora: pOraciones, vis: pVisitas, mie: pMiembros, min: pMinisterios, age: () => vistaAgenda(modoPastor(p)), avi: () => vistaAvisos(modoPastor(p)), mcal: () => pCalendario(p), disp: () => pDisponibilidad(p), bien: () => pBienvenida(p), chat: () => vistaChat({ rol: 'pastor', codigo: p.codigo, secreto: p.secreto }), dat: pDatos, mpre: () => window.TBMisPredicas && window.TBMisPredicas.abrir(), rsem: pResumenSemanal, bol: pBoletin, vigl: () => window.TBCentroPastor.vision(p, ctxCP), menu: () => window.TBCentroPastor.menu(p, ctxCP), tar: () => window.TBTarjetaPastor.abrir(p, ctxCP), aseo: () => window.TBAseo.abrir(p, ctxCP), act: () => window.TBActividades.abrir(p, ctxCP), form: () => window.TBFormularios.abrir(p, ctxCP), cel: () => window.TBCelebraciones.abrir(p, ctxCP), fam: () => window.TBFamilias.abrir(p, ctxCP), impl: () => window.TBImportar.abrirLista(p, ctxCP), cul: () => window.TBPlantillasCulto.abrir(p, ctxCP), enc: () => window.TBEncuestas.abrir(p, ctxCP), bus: () => window.TBBuscar.abrir(p, ctxCP), eti: () => window.TBEtiquetas.abrir(p, ctxCP), asi: () => window.TBAsistencia.abrir(p, ctxCP), imp: () => window.TBImportar.abrir(p, ctxCP), cfg: () => window.TBConfigIglesia.abrir(p, ctxCP), cop: () => window.TBCopia.abrir(p, ctxCP) })[k]; if (f) f(p); };
+    const irPP = (k) => { const f = ({ sol: pSolicitudes, ora: pOraciones, vis: pVisitas, mie: pMiembros, min: pMinisterios, age: () => vistaAgenda(modoPastor(p)), avi: () => vistaAvisos(modoPastor(p)), mcal: () => pCalendario(p), disp: () => pDisponibilidad(p), bien: () => pBienvenida(p), chat: () => vistaChat({ rol: 'pastor', codigo: p.codigo, secreto: p.secreto }), dat: pDatos, mpre: () => window.TBMisPredicas && window.TBMisPredicas.abrir(), rsem: pResumenSemanal, bol: pBoletin, vigl: () => window.TBCentroPastor.vision(p, ctxCP), menu: () => window.TBCentroPastor.menu(p, ctxCP), tar: () => window.TBTarjetaPastor.abrir(p, ctxCP), aseo: () => window.TBAseo.abrir(p, ctxCP), act: () => window.TBActividades.abrir(p, ctxCP), form: () => window.TBFormularios.abrir(p, ctxCP), cel: () => window.TBCelebraciones.abrir(p, ctxCP), fam: () => window.TBFamilias.abrir(p, ctxCP), impl: () => window.TBImportar.abrirLista(p, ctxCP), cul: () => window.TBPlantillasCulto.abrir(p, ctxCP), enc: () => window.TBEncuestas.abrir(p, ctxCP), ani: () => window.TBAnimo.abrir(p, ctxCP), lec: () => window.TBLecturaPredicas.abrir(p, ctxCP), bus: () => window.TBBuscar.abrir(p, ctxCP), eti: () => window.TBEtiquetas.abrir(p, ctxCP), asi: () => window.TBAsistencia.abrir(p, ctxCP), imp: () => window.TBImportar.abrir(p, ctxCP), cfg: () => window.TBConfigIglesia.abrir(p, ctxCP), cop: () => window.TBCopia.abrir(p, ctxCP) })[k]; if (f) f(p); };
     document.querySelectorAll('[data-pp]').forEach((b) => b.addEventListener('click', () => irPP(b.dataset.pp)));
     $('#pSalir').onclick = () => { if (confirm('¿Salir del modo pastor en este teléfono? Tu llave se borra de aquí (sigue en tu computador).')) { borrar(K_PASTOR); borrar('tb_movil_juntos_cache'); barraRefrescar('perfil'); ir('perfil'); } };
     const ins = (k, n) => { if (!(n > 0)) return; const t = document.querySelector('[data-pp="' + k + '"]'); if (!t) return; let e = t.querySelector('.mi-b-n'); if (!e) { e = document.createElement('span'); e.className = 'mi-b-n'; t.appendChild(e); } e.textContent = n > 99 ? '99+' : String(n); e.setAttribute('aria-label', e.textContent + ' por atender'); };

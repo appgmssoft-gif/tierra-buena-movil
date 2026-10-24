@@ -99,6 +99,9 @@
     return ['BEGIN:VEVENT', 'UID:' + icsEscapa(ev.id) + '@tierrabuena', 'DTSTAMP:' + sello,
       'DTSTART;VALUE=DATE:' + ymd, 'DTEND;VALUE=DATE:' + fin,
       'SUMMARY:' + icsEscapa(ev.titulo), 'DESCRIPTION:' + icsEscapa(ev.descripcion || ''),
+      // F1409 · 3.4 Dos recordatorios: el día anterior a las 9:00 y el mismo día a las 8:00 (el evento es de día completo).
+      'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + icsEscapa('Mañana: ' + ev.titulo), 'TRIGGER:-PT15H', 'END:VALARM',
+      'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + icsEscapa('Hoy: ' + ev.titulo), 'TRIGGER:PT8H', 'END:VALARM',
       'END:VEVENT'].map(icsPliega).join('\r\n') + '\r\n';
   }
   function icsCalendario(eventos, nombre) {

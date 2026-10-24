@@ -60,7 +60,7 @@
         const v = c ? c.votos : 0;
         const pct = porcentaje(v, total);
         return '<div class="enc-fila"><span>' + esc(texto) + '</span><span class="suave">' + v + ' · ' + pct + '%</span>' +
-          '<div class="enc-barra" aria-hidden="true"><i style="width:' + pct + '%"></i></div></div>';
+          '<progress class="enc-barra" max="100" value="' + pct + '" aria-label="' + esc(texto) + ': ' + pct + ' por ciento"></progress></div>';
       }).join('');
       return '<section class="enc-caja"><h2 class="mi-sub">' + esc(e.pregunta) + '</h2>' +
         '<p class="suave">' + (e.abierta ? 'Abierta' : 'Cerrada') + ' · ' + total + (total === 1 ? ' voto' : ' votos') + '</p>' +

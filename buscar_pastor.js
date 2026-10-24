@@ -25,19 +25,23 @@
     const pant = $('#pantalla'); if (!pant) return;
     pant.innerHTML = '<button type="button" class="volver" id="busVolver">‹ Panel</button>' +
       '<h1 class="cp-titulo">Buscar</h1>' +
-      '<p class="suave">Busca personas, etiquetas, encuestas, avisos, prédicas y áreas del panel.</p>' +
+      '<p class="suave">Busca personas, etiquetas, encuestas, avisos, prédicas, agenda, actividades y áreas del panel.</p>' +
       '<div class="mie-buscar"><input id="busQ" type="search" placeholder="Nombre, etiqueta, encuesta o área" aria-label="Buscar en el panel" autocomplete="off"></div>' +
       '<div id="busRes" role="status"><p class="suave">Cargando…</p></div>';
     $('#busVolver').onclick = ctx.volver;
 
     // Avisos y prédicas devuelven filas (lista); el resto devuelve un objeto con su lista.
-    const [mr, et, en, av, pr] = await Promise.all([
+    const [mr, et, en, av, pr, ag, ac] = await Promise.all([
       ctx.rpc('pastor_miembros_listar', p, { p_buscar: '' }),
       ctx.rpc('pastor_etiquetas_listar', p),
       ctx.rpc('pastor_encuestas_listar', p),
       ctx.rpc('aviso_pastor_listar_v2', p),
-      ctx.rpc('predica_pastor_listar', p)
+      ctx.rpc('predica_pastor_listar', p),
+      ctx.rpc('agenda_pastor_listar', p),
+      ctx.rpc('pastor_actividades_leer', p, {})
     ]);
+    const agenda = ag && ag.ok ? (ag.data || []) : [];
+    const actividades = ((fila(ac) || {}).actividades) || [];
     const avisos = av && av.ok ? (av.data || []) : [];
     const predicas = pr && pr.ok ? (pr.data || []) : [];
     const personas = mr && mr.ok ? (mr.data || []) : [];
@@ -62,7 +66,11 @@
         .map((a) => '<button type="button" class="cp-fila" data-bus-ir="avi"><span class="cp-fila-t"><b>' + esc(a.titulo || 'Aviso') + '</b><small>' + esc(a.ministerio || 'Toda la iglesia') + '</small></span><span class="cp-ir" aria-hidden="true">›</span></button>');
       const prs = predicas.filter((x) => coincide((x.titulo || '') + ' ' + (x.pasaje || '') + ' ' + (x.resumen || ''), q))
         .map((x) => '<button type="button" class="cp-fila" data-bus-ir="mpre"><span class="cp-fila-t"><b>' + esc(x.titulo || 'Prédica') + '</b><small>' + esc(x.pasaje || '') + '</small></span><span class="cp-ir" aria-hidden="true">›</span></button>');
-      const html = bloque('Personas', pers) + bloque('Etiquetas', etis) + bloque('Encuestas', encs) + bloque('Avisos', avs) + bloque('Prédicas', prs) + bloque('Áreas del panel', ars);
+      const ags = agenda.filter((e) => coincide((e.titulo || '') + ' ' + (e.lugar || '') + ' ' + (e.ministerio || ''), q))
+        .map((e) => '<button type="button" class="cp-fila" data-bus-ir="age"><span class="cp-fila-t"><b>' + esc(e.titulo) + '</b><small>' + esc((e.inicio ? new Date(e.inicio).toLocaleDateString('es-CL') : '') + (e.lugar ? ' · ' + e.lugar : '')) + '</small></span><span class="cp-ir" aria-hidden="true">›</span></button>');
+      const acs = actividades.filter((a) => coincide((a.titulo || '') + ' ' + (a.lugar || ''), q))
+        .map((a) => '<button type="button" class="cp-fila" data-bus-ir="act"><span class="cp-fila-t"><b>' + esc(a.titulo) + '</b><small>' + esc((a.inicio ? new Date(a.inicio).toLocaleDateString('es-CL') : '') + (a.lugar ? ' · ' + a.lugar : '')) + '</small></span><span class="cp-ir" aria-hidden="true">›</span></button>');
+      const html = bloque('Personas', pers) + bloque('Etiquetas', etis) + bloque('Encuestas', encs) + bloque('Avisos', avs) + bloque('Prédicas', prs) + bloque('Agenda', ags) + bloque('Actividades', acs) + bloque('Áreas del panel', ars);
       $('#busRes').innerHTML = html || '<p class="suave">No encontramos nada con esa palabra. Prueba con otra.</p>';
       document.querySelectorAll('[data-bus-ir]').forEach((b) => b.onclick = () => ctx.abrir(b.getAttribute('data-bus-ir')));
     };

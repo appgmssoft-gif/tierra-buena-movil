@@ -229,6 +229,25 @@
     };
   }
 
+  // F1409 · 1.15 Imprimir o guardar como PDF: se prepara una tabla en la propia página y se imprime solo ella
+  // (la política de seguridad no permite iframes). El teléfono ofrece «Guardar como PDF» en el cuadro de impresión.
+  function tablaImprimible(titulo, columnas, lista, nota, fecha) {
+    const cab = columnas.map((c) => '<th scope="col">' + esc(c[0]) + '</th>').join('');
+    const filas = (lista || []).map((x) => '<tr>' + columnas.map((c) => '<td>' + esc(c[1](x)) + '</td>').join('') + '</tr>').join('');
+    const total = (lista || []).length;
+    return '<h1>' + esc(titulo) + '</h1><p class="imp-nota">' + esc((nota ? nota + ' · ' : '') + total + (total === 1 ? ' registro' : ' registros') + ' · ' + (fecha || new Date().toLocaleDateString('es-CL'))) + '</p>' +
+      '<table><thead><tr>' + cab + '</tr></thead><tbody>' + filas + '</tbody></table>';
+  }
+  function imprimirLista(titulo, columnas, lista, nota) {
+    let c = document.getElementById('tbImprimible');
+    if (!c) { c = document.createElement('div'); c.id = 'tbImprimible'; document.body.appendChild(c); }
+    c.innerHTML = tablaImprimible(titulo, columnas, lista, nota);
+    document.body.classList.add('tb-imprimiendo');
+    const fin = () => { document.body.classList.remove('tb-imprimiendo'); c.innerHTML = ''; window.removeEventListener('afterprint', fin); };
+    window.addEventListener('afterprint', fin);
+    setTimeout(() => { try { window.print(); } catch (e) { fin(); } }, 50);
+  }
+
   async function miembros(p, ctx) {
     const r = await ctx.rpc('pastor_miembros_listar', p, { p_buscar: '' });
     if (!r.ok) return false;   // SQL 26 sin correr o sin conexión: app.js usa la lista de siempre
@@ -241,8 +260,10 @@
       '<div class="mie-buscar"><input id="mieQ" type="search" placeholder="Buscar miembro" aria-label="Buscar miembro por nombre, ministerio o familia" autocomplete="off"></div>' +
       (nLid ? '<div class="cp-filtros"><button type="button" class="cp-chip" id="cpLid" aria-pressed="false">Solo líderes (' + nLid + ')</button></div>' : '') +
       '<button type="button" class="btn sec cp-exp" id="cpExp">⬇ Descargar lista para Excel</button><p class="suave cp-exp-nota" id="cpExpMsg" role="status" aria-live="polite">Incluye solo lo que cada persona decidió compartir.</p>' +
+      '<button type="button" class="btn sec cp-exp" id="cpImp">🖨 Imprimir o guardar PDF</button>' +
       '<div id="cpLista" aria-live="polite"></div>';
     $('#cpVolver').onclick = ctx.volver;
+    $('#cpImp').onclick = () => { const l = filtrar(todos, $('#mieQ').value, soloLideres); if (!l.length) { $('#cpExpMsg').textContent = 'No hay nadie en la lista para imprimir.'; return; } imprimirLista('Miembros de la iglesia', COLS_CSV, l, 'Solo lo que cada persona decidió compartir'); };
     conectarExportar('cpExp', 'cpExpMsg', () => filtrar(todos, $('#mieQ').value, soloLideres), COLS_CSV, 'miembros-iglesia', ['persona', 'personas']);
     const volverLista = () => miembros(p, ctx);
     const pinta = () => {
@@ -346,7 +367,8 @@
       ['bol', '🗞️', 'Boletín de la semana', 'Avisos y agenda, listo para compartir'],
       ['mpre', '🎙️', 'Mis prédicas', 'Graba tu mensaje, guárdalo y escúchalo'],
       ['enc', '🗳️', 'Encuestas', 'Pregunta a tu iglesia y mira los resultados'],
-      ['eti', '🏷️', 'Etiquetas y grupos', 'Agrupa personas para enviarles mensajes']]],
+      ['eti', '🏷️', 'Etiquetas y grupos', 'Agrupa personas para enviarles mensajes'],
+      ['ani', '💛', 'Palabra de ánimo', 'Envía una frase de ánimo a una persona en un toque']]],
     ['Agenda y organización', [['age', '📅', 'Agenda', 'Actividades y reuniones'],
       ['mcal', '🗓', 'Mi calendario', 'Visitas, reuniones y descanso. Solo tú lo ves'],
       ['aseo', '🧹', 'Aseo y tareas', 'Quién hace cada tarea cada semana'],
@@ -359,7 +381,8 @@
       ['impl', '🗂️', 'Personas de la planilla', 'Personas sin cuenta y cuáles ya vinculaste con su cuenta'],
       ['dat', '📝', 'Datos y código', 'Nombre, eslogan y código de tu iglesia'],
       ['cfg', '⚙️', 'Configuración de la iglesia', 'Elige cómo trabaja tu iglesia: culto, grupos, cursos y metas'],
-      ['cop', '💾', 'Copia de seguridad', 'Descarga una copia de los datos de tu iglesia']]]
+      ['cop', '💾', 'Copia de seguridad', 'Descarga una copia de los datos de tu iglesia'],
+      ['lec', '👀', 'Lectura de prédicas', 'Cuántas personas abrieron cada prédica']]]
   ];
   function menuHTML(q) {
     const w = norm(q).split(/\s+/).filter(Boolean); let h = '', n = 0;
@@ -386,8 +409,8 @@
     miembros, vision, menu,
     // F1361 · 1.15 «otras listas»: Oraciones y Visitas usan estos mismos bloques desde app.js (pOraciones/pVisitas),
     // así la lógica de CSV (BOM, «;», protección contra fórmulas) vive en un solo lugar.
-    exportar: { csvGenerico, descargarCSV, botonExportar, conectarExportar },
-    _t: { historialHTML, filasHistorial, hitoFormHTML, conectarHitoForm, conectarBorrar, csvMiembros, celdaCSV, csvGenerico, proximosCumples, menuHTML, AREAS, wspCumple, cuando, telefonoWsp, telefonoLlamar, enlaceWsp, filtrar, fichaHTML, filaHTML, cumple }
+    exportar: { csvGenerico, descargarCSV, botonExportar, conectarExportar, imprimirLista, tablaImprimible },
+    _t: { historialHTML, filasHistorial, hitoFormHTML, conectarHitoForm, conectarBorrar, csvMiembros, celdaCSV, csvGenerico, tablaImprimible, proximosCumples, menuHTML, AREAS, wspCumple, cuando, telefonoWsp, telefonoLlamar, enlaceWsp, filtrar, fichaHTML, filaHTML, cumple }
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = window.TBCentroPastor;
 })();
