@@ -180,6 +180,18 @@
   }
 
   let periodoIndicadores = 3;
+  // F1387 · Frente al período anterior: subió o bajó, en porcentaje.
+  function flecha(x, y) {
+    if (!y && !x) return 'igual';
+    if (!y) return 'más que antes';
+    const q = Math.round((x - y) / y * 100);
+    return q === 0 ? 'igual que antes' : (q > 0 ? 'subió ' : 'bajó ') + Math.abs(q) + '%';
+  }
+  function comparacionHTML(a, b) {
+    return '<h3 class="mi-sub">Frente al período anterior</h3><ul class="asi-lista">' +
+      '<li>Asistencias: <b>' + a.asistencias + '</b> (' + flecha(a.asistencias, b.asistencias) + ')</li>' +
+      '<li>Visitas distintas: <b>' + a.visitantes_distintos + '</b> (' + flecha(a.visitantes_distintos, b.visitantes_distintos) + ')</li></ul>';
+  }
   // F1385 · Visitas que no han vuelto (7 a 90 días): para llamarlas o escribirles.
   async function visitasSinVolver(p, ctx) {
     const d = fila(await ctx.rpc('pastor_visitas_sin_volver', p, { p_dias_min: 7, p_dias_max: 90 }));
@@ -189,7 +201,8 @@
     return '<p class="suave">Visitas que vinieron hace al menos una semana y no han vuelto. Un saludo a tiempo ayuda mucho.</p>' +
       '<ul class="asi-lista">' + lista.map((v) => '<li><b>' + esc(v.nombre + ' ' + v.apellido) + '</b> · ' +
         esc(fechaCorta(v.ultima)) + ' (hace ' + (Number(v.dias_sin_venir) || 0) + ' días)' +
-        (Number(v.veces) > 1 ? ' · ' + v.veces + ' veces' : ' · vino una vez') + '</li>').join('') + '</ul>';
+        (Number(v.veces) > 1 ? ' · ' + v.veces + ' veces' : ' · vino una vez') +
+        ' <button type="button" class="btn chico sec" data-visita-contactada="' + esc(v.clave) + '">Ya la contacté</button></li>').join('') + '</ul>';
   }
   async function abrir(p, ctx) {
     const pant = $('#pantalla'); if (!pant) return;
@@ -205,19 +218,38 @@
       const hoy = new Date();
       const desde = new Date(hoy.getFullYear(), hoy.getMonth() - (periodoIndicadores - 1), 1);
       const d = fila(await ctx.rpc('pastor_asistencia_indicadores', p, { p_desde: isoFecha(desde), p_hasta: isoFecha(hoy) }));
+      const finPrev = new Date(hoy.getFullYear(), hoy.getMonth() - (periodoIndicadores - 1), 0);
+      const desdePrev = new Date(hoy.getFullYear(), hoy.getMonth() - (2 * periodoIndicadores - 1), 1);
+      const dPrev = fila(await ctx.rpc('pastor_asistencia_indicadores', p, { p_desde: isoFecha(desdePrev), p_hasta: isoFecha(finPrev) }));
       const el = $('#asiIndicadores'); if (!el) return;
       if (!d || !d.ok) { el.innerHTML = '<p class="suave">No pudimos cargar los indicadores. Revisa tu conexión.</p>'; return; }
       el.innerHTML = '<h2 class="mi-sub">Qué funciona y dónde trabajar más</h2><div class="card">' +
         '<label for="asiPeriodo">Período</label><select id="asiPeriodo">' +
         [3, 6, 12].map((m) => '<option value="' + m + '"' + (m === periodoIndicadores ? ' selected' : '') + '>Últimos ' + m + ' meses</option>').join('') +
-        '</select>' + indicadoresHTML(d, periodoIndicadores) + '</div>' +
+        '</select>' + indicadoresHTML(d, periodoIndicadores) +
+        (dPrev && dPrev.ok && d.ok ? comparacionHTML(d, dPrev) : '') + '</div>' +
         '<h2 class="mi-sub">Visitas para dar seguimiento</h2><div class="card">' + (await visitasSinVolver(p, ctx)) + '</div>';
       $('#asiPeriodo').onchange = () => { periodoIndicadores = Number($('#asiPeriodo').value) || 3; refrescarIndicadores(); };
+      el.querySelectorAll('[data-visita-contactada]').forEach((b) => b.onclick = async () => {
+        const r = fila(await ctx.rpc('pastor_visita_contactada', p, { p_clave: b.getAttribute('data-visita-contactada') }));
+        if (!r || !r.ok) { aviso('asiMsg', 'No pudimos guardar el seguimiento. Inténtalo de nuevo.'); return; }
+        refrescarIndicadores();
+      });
     };
 
     const cargar = async (mensaje) => {
       const d = fila(await ctx.rpc('pastor_asistencia_listar', p));
-      if (!d) { aviso('asiMsg', 'No pudimos cargar la asistencia. Revisa tu conexión y vuelve a intentarlo.'); return; }
+      // F1386 · Error visible con «Reintentar»; si es un tema de permisos, se dice claro.
+      if (!d) {
+        aviso('asiMsg', 'No pudimos cargar la asistencia. Revisa tu conexión y vuelve a intentarlo.');
+        $('#asiMsg').insertAdjacentHTML('beforeend', ' <button type="button" class="btn chico sec" id="asiReintentar">Reintentar</button>');
+        $('#asiReintentar').onclick = () => abrir(p, ctx);
+        return;
+      }
+      if (d.ok === false) {
+        aviso('asiMsg', d.motivo === 'sin-permiso' ? 'Tu clave de pastor no tiene permiso para ver la asistencia. Vuelve a entrar con tu cuenta de pastor.' : 'No pudimos cargar la asistencia (' + (d.motivo || 'error') + ').');
+        return;
+      }
       aviso('asiMsg', mensaje || '');
       const miembrosR = await ctx.rpc('pastor_miembros_listar', p, { p_buscar: '' });
       const miembros = miembrosR && miembrosR.ok ? (miembrosR.data || []) : [];
