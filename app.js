@@ -3766,7 +3766,7 @@
       const volver = esPastor ? vistaPastor : vistaIglesia;
       $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ ${esPastor ? 'Panel' : 'Mi iglesia'}</button>${heroInt('c3', '💬', 'Tu iglesia conversa', 'Chat de mi iglesia', 'Un espacio para bendecir, unirnos y organizar. Los desacuerdos se hablan en persona o en privado con el pastor.')}
         <div id="chMsg" class="suave" role="status"></div><h2 class="mi-sub">Tus conversaciones</h2><div id="chLista" class="mi-lista"><p class="suave">Cargando…</p></div>
-        ${esPastor ? '<button type="button" class="btn sec" id="chNuevo">Nueva conversación con una persona</button><div id="chPersona" class="mi-lista" hidden></div>' : '<button type="button" class="btn sec" id="chPrivado">Hablar en privado con mi pastor</button>'}`;
+        ${esPastor ? '<button type="button" class="btn sec" id="chNuevo">Escribir a un miembro</button><div id="chPersona" class="mi-lista" hidden></div>' : '<button type="button" class="btn sec" id="chPrivado">Hablar en privado con mi pastor</button>'}`;
       volverA(esPastor ? 'Panel' : 'Mi iglesia', volver);
       const abrir = (c) => vistaChat(x, c);
       const r = await rpcRaw('chat_canales_listar', q);
@@ -3774,7 +3774,7 @@
       if (!r.ok) { caja.innerHTML = '<p class="suave">No pudimos abrir el chat. Revisa tu conexión.</p>'; }
       else {
         const c = r.data || [];
-        caja.innerHTML = c.length ? c.map((k) => `<button type="button" class="mi-curso ch-sala ch-${esc(k.tipo)}" data-chc="${esc(k.id)}"><span class="mi-curso-ic" aria-hidden="true">${k.tipo === 'iglesia' ? '🕊️' : k.tipo === 'lideres' ? '🤝' : k.tipo === 'ministerio' ? '🧭' : k.tipo === 'seccion' ? (CAT_ICO[k.seccion] || '💬') : '🔒'}</span><span class="mi-curso-tx"><b>${esc(k.tipo === 'directo' ? k.directo_nombre || k.nombre : k.nombre)}</b><small>${k.tipo === 'iglesia' ? 'Toda la iglesia' : k.tipo === 'lideres' ? 'Pastor y líderes: reuniones y organización' : 'Conversación privada'}</small></span><span class="mi-curso-est">${k.tipo === 'iglesia' ? 'Todos' : k.tipo === 'lideres' ? 'Equipo' : 'Privado'}</span></button>`).join('') : '<p class="suave">Aún no hay conversaciones.</p>';
+        caja.innerHTML = c.length ? c.map((k) => `<button type="button" class="mi-curso ch-sala ch-${esc(k.tipo)}" data-chc="${esc(k.id)}"><span class="mi-curso-ic" aria-hidden="true">${k.tipo === 'iglesia' ? '🕊️' : k.tipo === 'lideres' ? '🤝' : k.tipo === 'ministerio' ? '🧭' : k.tipo === 'seccion' ? (CAT_ICO[k.seccion] || '💬') : '🔒'}</span><span class="mi-curso-tx"><b>${esc(k.tipo === 'directo' ? (x.rol === 'pastor' ? (k.directo_nombre || k.nombre) : 'Mi pastor') : k.nombre)}</b><small>${k.tipo === 'iglesia' ? 'Toda la iglesia' : k.tipo === 'lideres' ? 'Pastor y líderes: reuniones y organización' : 'Conversación privada'}</small></span><span class="mi-curso-est">${k.tipo === 'iglesia' ? 'Todos' : k.tipo === 'lideres' ? 'Equipo' : 'Privado'}</span></button>`).join('') : '<p class="suave">Aún no hay conversaciones.</p>';
         caja.querySelectorAll('[data-chc]').forEach((b) => b.addEventListener('click', () => abrir(c.find((k) => k.id === b.dataset.chc))));
       }
       const pv = $('#chPrivado');
@@ -3794,7 +3794,9 @@
     }
     // ----- dentro de un canal -----
     const puedeVideo = esPastor ? canal.tipo !== 'iglesia' : (x.esLider && canal.tipo === 'lideres');
-    const normas = canal.normas ? `<div class="card chat-normas"><b>Normas de este espacio</b><p class="m0t">${esc(canal.normas)}</p></div>` : '';
+    // F1410 · Normas: un botón; al entrar se muestran 10 segundos y luego se ocultan.
+    const normas = canal.normas ? `<div class="chat-normas-bar"><button type="button" class="btn sec chico" id="chVerNormas" aria-expanded="true">📌 Normas</button><div class="card chat-normas" id="chNormasBox"><b>Normas de este espacio</b><p class="m0t">${esc(canal.normas)}</p></div></div>` : '';
+    setTimeout(() => { const bx = document.getElementById('chNormasBox'), bt = document.getElementById('chVerNormas'); if (!bx || !bt) return; const ver = (on) => { bx.hidden = !on; bt.setAttribute('aria-expanded', String(on)); }; ver(true); const tm = setTimeout(() => ver(false), 10000); bt.onclick = () => { clearTimeout(tm); ver(bx.hidden); }; }, 0);
     const privadoBtn = (!esPastor && canal.tipo === 'iglesia') ? '<button type="button" class="btn sec chico" id="chDirecto">Hablar en privado con mi pastor</button>' : '';
     const pastorTools = esPastor ? `<div class="cr-acc"><button type="button" class="btn sec chico" id="chNormas">Editar normas</button><button type="button" class="btn sec chico" id="chLimpiar">Limpiar historial</button></div><div id="chPanel" hidden></div>` : '';
     const videoBox = puedeVideo ? `<div class="cr-acc"><button type="button" class="btn sec chico" id="chVideo">Crear reunión por video</button></div><div id="chVideoForm" class="card" hidden><label for="chVT">Título de la reunión</label><input id="chVT" type="text" maxlength="80"><label for="chVI">Cuándo</label><input id="chVI" type="datetime-local" value="${aLocal(new Date())}"><button type="button" class="btn" id="chVG">Crear y compartir</button></div><div id="chReuniones" class="lista"></div>` : '';

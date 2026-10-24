@@ -108,3 +108,21 @@
 .vid-barra .btn{min-height:48px}
 .vid-barra [aria-pressed=false]{opacity:.6}
 #vidMsg{text-align:center;color:#ffd9a0;margin:4px 0 0}
+
+/* F1410 · Chat con diseño propio: burbujas, normas plegables y barra de escritura */
+.chat-normas-bar{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin:6px 0 10px}
+.chat-normas{width:100%;box-sizing:border-box;margin:0;padding:12px 14px;border-radius:16px;border:1px solid var(--linea);background:color-mix(in srgb, var(--oro) 10%, var(--tarjeta));font-size:.92rem;line-height:1.45}
+.chat-normas[hidden]{display:none}
+.chat-normas b{display:block;margin-bottom:4px}
+.chat-msg{margin:10px 0}
+.chat-msg .ch-burbuja{border-radius:18px;padding:10px 14px;box-shadow:0 1px 2px rgba(0,0,0,.06);background:var(--tarjeta);border:1px solid var(--linea)}
+.chat-msg.es-mio .ch-burbuja{background:color-mix(in srgb, var(--verde) 14%, var(--tarjeta));border-color:color-mix(in srgb, var(--verde) 35%, var(--linea))}
+.chat-msg .chat-quien{margin:0 0 4px;font-size:.84rem;color:var(--suave);display:flex;flex-wrap:wrap;align-items:center;gap:4px}
+.chat-msg .chat-quien b{color:var(--tinta)}
+.chat-msg p:not(.chat-quien){margin:0;line-height:1.45;white-space:pre-wrap;word-break:break-word}
+.chat-escribir{position:sticky;bottom:calc(env(safe-area-inset-bottom,0px) + 6px);z-index:5;margin-top:12px;padding:10px;border-radius:20px;box-shadow:0 -4px 16px rgba(0,0,0,.08);backdrop-filter:saturate(1.2) blur(6px)}
+.chat-escribir textarea{border-radius:14px;min-height:48px;font:inherit;width:100%;box-sizing:border-box}
+.ch-cats{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px}
+.ch-cats .ch-cat{min-height:36px;border-radius:999px;padding:4px 12px;border:1px solid var(--linea);background:var(--tarjeta);font:inherit;font-size:.86rem;cursor:pointer}
+.ch-cats .ch-cat[aria-pressed=true]{background:var(--verde);color:var(--papel);border-color:var(--verde)}
+.ch-cats[hidden]{display:none}

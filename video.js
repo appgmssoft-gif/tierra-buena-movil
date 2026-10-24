@@ -4,7 +4,7 @@
 (function () {
   'use strict';
   const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const LIMITE = 4;            // personas en la sala, incluida quien llama
+  const LIMITE = 10;           // personas en la sala, incluida quien llama (mallado: con muchas personas el teléfono se calienta)
   const LATIDO_MS = 2000;
   const STUN = [{ urls: 'stun:stun.l.google.com:19302' }];
   const MOT = {
