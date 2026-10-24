@@ -58,3 +58,19 @@
   #tbImprimible tr{break-inside:avoid}
   @page{margin:16mm}
 }
+
+/* F1409 · Chat: cada categoría se ve distinta (ícono, texto y un borde de color en la burbuja). */
+.ch-tag{display:inline-flex;align-items:center;gap:4px;margin-left:6px;padding:2px 9px;border-radius:999px;font-size:.78rem;font-weight:700;background:var(--linea);color:var(--tinta);vertical-align:middle;white-space:nowrap}
+.chat-msg .ch-burbuja{border-left:4px solid var(--linea)}
+.chat-msg.cat-preguntas .ch-burbuja{border-left-color:#2f6fb3}
+.chat-msg.cat-oracion .ch-burbuja{border-left-color:#8e44ad}
+.chat-msg.cat-ayuda .ch-burbuja{border-left-color:#b9770e}
+.chat-msg.cat-servicio .ch-burbuja{border-left-color:#2e7d5b}
+.chat-msg.cat-avisos .ch-burbuja{border-left-color:#c0392b;background:color-mix(in srgb, #c0392b 8%, var(--tarjeta))}
+.chat-msg.cat-reunion .ch-burbuja{border-left-color:#16808d}
+.ch-tag.cat-oracion{background:color-mix(in srgb, #8e44ad 18%, var(--tarjeta))}
+.ch-tag.cat-preguntas{background:color-mix(in srgb, #2f6fb3 18%, var(--tarjeta))}
+.ch-tag.cat-ayuda{background:color-mix(in srgb, #b9770e 18%, var(--tarjeta))}
+.ch-tag.cat-servicio{background:color-mix(in srgb, #2e7d5b 18%, var(--tarjeta))}
+.ch-tag.cat-avisos{background:color-mix(in srgb, #c0392b 18%, var(--tarjeta))}
+.ch-tag.cat-reunion{background:color-mix(in srgb, #16808d 18%, var(--tarjeta))}
