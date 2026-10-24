@@ -1,447 +1,452 @@
 {
- "_nota": "F1334 · Planes separados por función (21 oct 2026). Tres planes: Tierra Buena Plus (persona), Plan Iglesia (funciones de iglesia) y Plan Iglesia + Plus (iglesia más Plus para cada miembro). La lista «funciones» es la fuente única: cada función indica en qué plan vive (gratis, plus o iglesia) y si está lista o por construir. Precios CLP con IVA. Documento: compartido/docs/SUSCRIPCIONES.md. APAGADA por defecto (oferta_activa:false).",
- "oferta_activa": false,
- "dias_cuidado_minimo": 7,
- "gracia_dias": 7,
- "textos": {
-  "titulo": "Apoyar Tierra Buena",
-  "intro": "La Biblia y lo esencial son gratis y seguirán siéndolo. Plus suma tu jardín completo y tus herramientas; los Planes Iglesia dan a tu iglesia lo que necesita para acompañar a su gente.",
-  "sin_tienda": "Las suscripciones se activan cuando la app esté instalada desde la tienda. Gracias por querer apoyar.",
-  "vence": "Tu apoyo termina el",
-  "activo": "Gracias por apoyar Tierra Buena.",
-  "cancelar": "Para cambiar o cancelar tu suscripción, abre los ajustes de suscripciones de tu tienda (App Store o Google Play).",
-  "gracia": "Tu suscripción venció hace poco. Tus cosas siguen aquí; puedes renovar cuando quieras.",
-  "planes_titulo": "Elige tu plan",
-  "planes_intro": "Lo esencial de la Biblia es gratis y seguirá siéndolo. Plus es para ti; los Planes Iglesia son para pastores y su congregación.",
-  "precios_nota": "Precios de referencia en pesos chilenos. La tienda muestra el precio final antes de que pagues.",
-  "iglesia_sin_tienda": "El Plan Iglesia lo contrata el pastor desde su panel. Aún no está disponible; cuando lo esté, te avisaremos aquí."
- },
- "tarjetas": [
-  {
-   "id": "plus",
-   "para": "Para ti",
-   "nombre": "Tierra Buena Plus",
-   "icono": "🌳",
-   "clase": "sb-plus",
-   "quien": "Tu espacio completo para cuidar tu fe y tu crecimiento cada día, en cualquier teléfono.",
-   "problema": "Lo gratis te acompaña, pero tu jardín se queda corto y no puedes llevar varios planes de vida a la vez.",
-   "mensual": 6990,
-   "anual": 69900,
-   "grupos": [
+  "_nota": "F1334 · Planes separados por función (21 oct 2026). Tres planes: Tierra Buena Plus (persona), Plan Iglesia (funciones de iglesia) y Plan Iglesia + Plus (iglesia más Plus para cada miembro). La lista «funciones» es la fuente única: cada función indica en qué plan vive (gratis, plus o iglesia) y si está lista o por construir. Precios CLP con IVA. Documento: compartido/docs/SUSCRIPCIONES.md. APAGADA por defecto (oferta_activa:false).",
+  "oferta_activa": false,
+  "dias_cuidado_minimo": 7,
+  "gracia_dias": 7,
+  "textos": {
+    "titulo": "Apoyar Tierra Buena",
+    "intro": "La Biblia y lo esencial son gratis y seguirán siéndolo. Plus suma tu jardín completo y tus herramientas; los Planes Iglesia dan a tu iglesia lo que necesita para acompañar a su gente.",
+    "sin_tienda": "Las suscripciones se activan cuando la app esté instalada desde la tienda. Gracias por querer apoyar.",
+    "vence": "Tu apoyo termina el",
+    "activo": "Gracias por apoyar Tierra Buena.",
+    "cancelar": "Para cambiar o cancelar tu suscripción, abre los ajustes de suscripciones de tu tienda (App Store o Google Play).",
+    "gracia": "Tu suscripción venció hace poco. Tus cosas siguen aquí; puedes renovar cuando quieras.",
+    "planes_titulo": "Elige tu plan",
+    "planes_intro": "Lo esencial de la Biblia es gratis y seguirá siéndolo. Plus es para ti; los Planes Iglesia son para pastores y su congregación.",
+    "precios_nota": "Precios de referencia en pesos chilenos. La tienda muestra el precio final antes de que pagues.",
+    "iglesia_sin_tienda": "El Plan Iglesia lo contrata el pastor desde su panel. Aún no está disponible; cuando lo esté, te avisaremos aquí."
+  },
+  "tarjetas": [
     {
-     "t": "Todo lo gratis, más:",
-     "l": [
-      "Tu jardín completo: 3 hábitats, animales y decoraciones.",
-      "Todos los planes de vida a la vez, sin esperar.",
-      {
-       "t": "Tu jardín y tu avance en la nube: cambias de teléfono y no pierdes nada.",
-       "pronto": true
+      "id": "plus",
+      "para": "Para ti",
+      "nombre": "Tierra Buena Plus",
+      "icono": "🌳",
+      "clase": "sb-plus",
+      "quien": "Tu espacio completo para cuidar tu fe y tu crecimiento cada día, en cualquier teléfono.",
+      "problema": "Lo gratis te acompaña, pero tu jardín se queda corto y no puedes llevar varios planes de vida a la vez.",
+      "mensual": 6990,
+      "anual": 69900,
+      "grupos": [
+        {
+          "t": "Todo lo gratis, más:",
+          "l": [
+            "Tu jardín completo: 3 hábitats, animales y decoraciones.",
+            "Todos los planes de vida a la vez, sin esperar.",
+            {
+              "t": "Tu jardín y tu avance en la nube: cambias de teléfono y no pierdes nada.",
+              "pronto": true
+            },
+            "Música y juegos completos.",
+            "Todas las áreas de Mi crecimiento.",
+            "Temas de color, tamaño de letra en la lectura y recordatorios.",
+            {
+              "t": "Exportar notas y versículos a PDF.",
+              "pronto": true
+            },
+            {
+              "t": "Más paisajes y estaciones del año",
+              "pronto": true
+            }
+          ]
+        }
+      ],
+      "no_incluye": [
+        "No incluye funciones de iglesia: calendario, proyectos ni avisos de tu congregación (eso lo activa tu iglesia con un Plan Iglesia).",
+        "No incluye panel de pastor ni herramientas de líder."
+      ],
+      "id_tienda": {
+        "mensual": "tb_plus_mensual",
+        "anual": "tb_plus_anual"
       },
-      "Música y juegos completos.",
-      "Todas las áreas de Mi crecimiento.",
-      "Temas de color, tamaño de letra en la lectura y recordatorios.",
-      {
-       "t": "Exportar notas y versículos a PDF.",
-       "pronto": true
-      },
-      {
-       "t": "Más paisajes y estaciones del año",
-       "pronto": true
+      "boton": "Elegir Plus",
+      "etiqueta": "Para ti",
+      "prueba_dias": 7,
+      "promo": {
+        "precio": 3990,
+        "meses": 2
       }
-     ]
-    }
-   ],
-   "no_incluye": [
-    "No incluye funciones de iglesia: calendario, proyectos ni avisos de tu congregación (eso lo activa tu iglesia con un Plan Iglesia).",
-    "No incluye panel de pastor ni herramientas de líder."
-   ],
-   "id_tienda": {
-    "mensual": "tb_plus_mensual",
-    "anual": "tb_plus_anual"
-   },
-   "boton": "Elegir Plus",
-   "etiqueta": "Para ti"
-  },
-  {
-   "id": "iglesia",
-   "para": "Para tu iglesia",
-   "nombre": "Plan Iglesia",
-   "icono": "🕍",
-   "clase": "sb-iglesia",
-   "quien": "Lo que tu iglesia necesita para organizarse mes a mes: calendario, proyectos, líderes y metas. Lo contrata la iglesia; los miembros no pagan nada.",
-   "problema": "Hoy organizar la iglesia mes a mes pasa por chats sueltos y papeles: nada queda en un solo lugar ni con seguimiento.",
-   "rangos": [
-    {
-     "t": "Hasta 50 personas",
-     "max": 50,
-     "mensual": 5990,
-     "anual": 59900
     },
     {
-     "t": "De 51 a 150 personas",
-     "max": 150,
-     "mensual": 9990,
-     "anual": 99900
-    },
-    {
-     "t": "De 151 a 400 personas",
-     "max": 400,
-     "mensual": 13990,
-     "anual": 139900
-    }
-   ],
-   "grupos": [
-    {
-     "t": "Organiza tu iglesia",
-     "l": [
-      "Calendario mensual que todos ven: cultos, actividades y servicios.",
-      "Peticiones de oración y visitas con seguimiento: quién las lleva y cuándo se atendieron.",
-      "Ministerios, turnos de servicio y líderes en un solo lugar.",
-      {
-       "t": "Resumen semanal de lo pendiente.",
-       "pronto": true
-      }
-     ]
-    },
-    {
-     "t": "Proyectos, planes y metas",
-     "l": [
-      {
-       "t": "Proyectos de la iglesia con responsables, fechas y avances",
-       "pronto": true
+      "id": "iglesia",
+      "para": "Para tu iglesia",
+      "nombre": "Plan Iglesia",
+      "icono": "🕍",
+      "clase": "sb-iglesia",
+      "quien": "Lo que tu iglesia necesita para organizarse mes a mes: calendario, proyectos, líderes y metas. Lo contrata la iglesia; los miembros no pagan nada.",
+      "problema": "Hoy organizar la iglesia mes a mes pasa por chats sueltos y papeles: nada queda en un solo lugar ni con seguimiento.",
+      "rangos": [
+        {
+          "t": "Hasta 50 personas",
+          "max": 50,
+          "mensual": 8990,
+          "anual": 89900,
+          "promo": {
+            "precio": 4990,
+            "meses": 2
+          }
+        },
+        {
+          "t": "De 51 a 150 personas",
+          "max": 150,
+          "mensual": 12990,
+          "anual": 129900,
+          "promo": {
+            "precio": 8990,
+            "meses": 2
+          }
+        },
+        {
+          "t": "De 151 a 400 personas",
+          "max": 400,
+          "mensual": 16990,
+          "anual": 169900,
+          "promo": {
+            "precio": 12990,
+            "meses": 2
+          }
+        },
+        {
+          "t": "De 401 a 1.000 personas",
+          "max": 1000,
+          "mensual": 22990,
+          "anual": 229900,
+          "promo": {
+            "precio": 17242,
+            "meses": 2
+          }
+        }
+      ],
+      "grupos": [
+        {
+          "t": "Organiza tu iglesia",
+          "l": [
+            "Calendario mensual que todos ven: cultos, actividades y servicios.",
+            "Peticiones de oración y visitas con seguimiento: quién las lleva y cuándo se atendieron.",
+            "Ministerios, turnos de servicio y líderes en un solo lugar.",
+            {
+              "t": "Resumen semanal de lo pendiente.",
+              "pronto": true
+            }
+          ]
+        },
+        {
+          "t": "Proyectos, planes y metas",
+          "l": [
+            {
+              "t": "Proyectos de la iglesia con responsables, fechas y avances",
+              "pronto": true
+            },
+            {
+              "t": "Planes de trabajo por mes para toda la iglesia",
+              "pronto": true
+            },
+            {
+              "t": "Planes de trabajo con cada líder y su equipo",
+              "pronto": true
+            },
+            {
+              "t": "Metas mensuales de la iglesia, con avance visible",
+              "pronto": true
+            },
+            {
+              "t": "Proyectos para servir a la comunidad, con voluntarios",
+              "pronto": true
+            }
+          ]
+        },
+        {
+          "t": "Comunicación interna",
+          "l": [
+            "Chat de la iglesia para coordinar.",
+            "Avisos a toda la congregación.",
+            {
+              "t": "Comunicación por ministerio y por líder",
+              "pronto": true
+            }
+          ]
+        },
+        {
+          "t": "Para cada miembro, sin pagar",
+          "l": [
+            "Entra con el código de la iglesia.",
+            "Pide oración o visita y ve cuándo fue recibida.",
+            "Ve el calendario del mes, avisos y los turnos donde puede servir.",
+            {
+              "t": "Ve las metas y proyectos de su iglesia",
+              "pronto": true
+            }
+          ]
+        }
+      ],
+      "no_incluye": [
+        "No incluye Plus para los miembros: cada persona sigue con la versión gratis salvo que compre Plus por su cuenta.",
+        "No incluye copia en la nube del jardín personal ni música y juegos completos (eso es de Plus)."
+      ],
+      "nota": "Si tu iglesia es pequeña o no puede pagarlo, el pastor puede pedir una beca gratuita. ¿Más de 400 personas? Escríbenos.",
+      "id_tienda": {
+        "mensual": "tb_iglesia_mensual",
+        "anual": "tb_iglesia_anual"
       },
-      {
-       "t": "Planes de trabajo por mes para toda la iglesia",
-       "pronto": true
-      },
-      {
-       "t": "Planes de trabajo con cada líder y su equipo",
-       "pronto": true
-      },
-      {
-       "t": "Metas mensuales de la iglesia, con avance visible",
-       "pronto": true
-      },
-      {
-       "t": "Proyectos para servir a la comunidad, con voluntarios",
-       "pronto": true
-      }
-     ]
-    },
-    {
-     "t": "Comunicación interna",
-     "l": [
-      "Chat de la iglesia para coordinar.",
-      "Avisos a toda la congregación.",
-      {
-       "t": "Comunicación por ministerio y por líder",
-       "pronto": true
-      }
-     ]
-    },
-    {
-     "t": "Para cada miembro, sin pagar",
-     "l": [
-      "Entra con el código de la iglesia.",
-      "Pide oración o visita y ve cuándo fue recibida.",
-      "Ve el calendario del mes, avisos y los turnos donde puede servir.",
-      {
-       "t": "Ve las metas y proyectos de su iglesia",
-       "pronto": true
-      }
-     ]
+      "boton": "Contratar Plan Iglesia",
+      "etiqueta": "Lo esencial de tu iglesia",
+      "prueba_dias": 7
     }
-   ],
-   "no_incluye": [
-    "No incluye Plus para los miembros: cada persona sigue con la versión gratis salvo que compre Plus por su cuenta.",
-    "No incluye copia en la nube del jardín personal ni música y juegos completos (eso es de Plus)."
-   ],
-   "nota": "Si tu iglesia es pequeña o no puede pagarlo, el pastor puede pedir una beca gratuita. ¿Más de 400 personas? Escríbenos.",
-   "id_tienda": {
-    "mensual": "tb_iglesia_mensual",
-    "anual": "tb_iglesia_anual"
-   },
-   "boton": "Contratar Plan Iglesia",
-   "etiqueta": "Lo esencial de tu iglesia"
-  },
-  {
-   "id": "iglesia_plus",
-   "para": "Para tu iglesia, con extra",
-   "nombre": "Plan Iglesia + Plus",
-   "icono": "🕍",
-   "clase": "sb-iglesia",
-   "quien": "Todo el Plan Iglesia, y además cada miembro recibe Tierra Buena Plus incluido: su jardín, sus planes de vida y su copia en la nube.",
-   "problema": "Lo mismo que el Plan Iglesia, y además cada miembro se queda con un jardín incompleto si no paga Plus por su cuenta.",
-   "rangos": [
+  ],
+  "como_funciona": [
+    "Cancelas cuando quieras, desde los ajustes de suscripciones de tu tienda.",
+    "Si tu suscripción vence, tienes 7 días de gracia y luego vuelves a lo gratis. No se borra nada.",
+    "Pagando por año ahorras: son dos meses de regalo.",
+    "Puedes restaurar tus compras si cambias de teléfono."
+  ],
+  "funciones": [
     {
-     "t": "Hasta 50 personas",
-     "max": 50,
-     "mensual": 8990,
-     "anual": 89900
+      "area": "Palabra",
+      "t": "La Biblia completa, escucharla y buscarla",
+      "n": "gratis"
     },
     {
-     "t": "De 51 a 150 personas",
-     "max": 150,
-     "mensual": 12990,
-     "anual": 129900
+      "area": "Palabra",
+      "t": "Planes de lectura y versículo del día",
+      "n": "gratis"
     },
     {
-     "t": "De 151 a 400 personas",
-     "max": 400,
-     "mensual": 16990,
-     "anual": 169900
-    }
-   ],
-   "grupos": [
+      "area": "Palabra",
+      "t": "Resaltar, notas y guardados con copia en tu cuenta",
+      "n": "gratis"
+    },
     {
-     "t": "Todo lo del Plan Iglesia, y además",
-     "l": [
-      "Cada miembro tiene Tierra Buena Plus incluido mientras la iglesia tenga este plan.",
-      "Su jardín completo, sus planes de vida y su copia en la nube, sin pagar nada.",
-      "Un extra para toda la congregación: más motivo para quedarse y crecer juntos."
-     ]
+      "area": "Palabra",
+      "t": "Sincronizar notas, resaltados y planes entre tus teléfonos",
+      "n": "gratis"
+    },
+    {
+      "area": "Palabra",
+      "t": "Imágenes de versículos para compartir",
+      "n": "gratis"
+    },
+    {
+      "area": "Palabra",
+      "t": "Más temas de color y tipos de letra",
+      "n": "plus",
+      "nota": "Gratis: los temas básicos"
+    },
+    {
+      "area": "Palabra",
+      "t": "Exportar notas y versículos a PDF",
+      "n": "plus",
+      "nota": "Por construir (hoy se imprime o guarda en PDF solo diseños y prédicas)"
+    },
+    {
+      "area": "Vida",
+      "t": "Mi oración, Hoy lo hago y cursos de Aprender",
+      "n": "gratis"
+    },
+    {
+      "area": "Vida",
+      "t": "Ayuda, contactos y Salud mental",
+      "n": "gratis",
+      "nota": "Siempre gratis, para que nadie se quede sin apoyo"
+    },
+    {
+      "area": "Vida",
+      "t": "Todos los planes de vida a la vez",
+      "n": "plus",
+      "nota": "Gratis: un plan a la vez"
+    },
+    {
+      "area": "Vida",
+      "t": "Todas las áreas de Mi crecimiento",
+      "n": "plus",
+      "nota": "Gratis: un área"
+    },
+    {
+      "area": "Vida",
+      "t": "Música y juegos completos",
+      "n": "plus",
+      "nota": "Gratis: una selección"
+    },
+    {
+      "area": "Tu jardín",
+      "t": "Tu árbol y un hábitat",
+      "n": "gratis"
+    },
+    {
+      "area": "Tu jardín",
+      "t": "Los 3 hábitats, animales y decoraciones",
+      "n": "plus",
+      "nota": "Gratis: se ganan con gotas"
+    },
+    {
+      "area": "Tu jardín",
+      "t": "Copia del jardín y del avance en la nube",
+      "n": "plus",
+      "nota": "Por construir (requiere permiso, ver TAREAS P5)"
+    },
+    {
+      "area": "Tu jardín",
+      "t": "Recordatorios a tu medida",
+      "n": "plus",
+      "nota": "Gratis: un recordatorio diario"
+    },
+    {
+      "area": "Organiza tu iglesia",
+      "t": "Calendario mensual que todos ven: cultos, actividades y servicios",
+      "n": "iglesia",
+      "nota": "En construcción"
+    },
+    {
+      "area": "Organiza tu iglesia",
+      "t": "Seguimiento de peticiones y visitas: quién lleva cada una y cuándo",
+      "n": "iglesia"
+    },
+    {
+      "area": "Organiza tu iglesia",
+      "t": "Resumen semanal de lo pendiente",
+      "n": "iglesia",
+      "nota": "Por construir"
+    },
+    {
+      "area": "Organiza tu iglesia",
+      "t": "Ministerios, turnos de servicio y líderes",
+      "n": "iglesia"
+    },
+    {
+      "area": "Organiza tu iglesia",
+      "t": "Grabar prédicas y compartirlas con la congregación",
+      "n": "iglesia",
+      "nota": "En construcción"
+    },
+    {
+      "area": "Organiza tu iglesia",
+      "t": "Planes de lectura con resultados de la congregación",
+      "n": "iglesia",
+      "nota": "Por construir"
+    },
+    {
+      "area": "Proyectos y metas",
+      "t": "Proyectos de la iglesia con responsables, fechas y avances",
+      "n": "iglesia",
+      "nota": "Por construir"
+    },
+    {
+      "area": "Proyectos y metas",
+      "t": "Planes de trabajo por mes para toda la iglesia",
+      "n": "iglesia",
+      "nota": "Por construir"
+    },
+    {
+      "area": "Proyectos y metas",
+      "t": "Planes de trabajo con cada líder y su equipo",
+      "n": "iglesia",
+      "nota": "Por construir"
+    },
+    {
+      "area": "Proyectos y metas",
+      "t": "Metas mensuales de la iglesia, con avance visible",
+      "n": "iglesia",
+      "nota": "Por construir"
+    },
+    {
+      "area": "Proyectos y metas",
+      "t": "Proyectos para servir a la comunidad, con voluntarios",
+      "n": "iglesia",
+      "nota": "Por construir"
+    },
+    {
+      "area": "Comunicación interna",
+      "t": "Chat de la iglesia",
+      "n": "iglesia"
+    },
+    {
+      "area": "Comunicación interna",
+      "t": "Avisos a toda la congregación",
+      "n": "iglesia"
+    },
+    {
+      "area": "Comunicación interna",
+      "t": "Comunicación por ministerio y por líder",
+      "n": "iglesia",
+      "nota": "Por construir"
+    },
+    {
+      "area": "Vida de la iglesia",
+      "t": "Asistencia por actividad",
+      "n": "iglesia",
+      "nota": "Por construir"
+    },
+    {
+      "area": "Vida de la iglesia",
+      "t": "Registro de bautismos y membresía",
+      "n": "iglesia",
+      "nota": "Por construir"
+    },
+    {
+      "area": "Vida de la iglesia",
+      "t": "Cumpleaños y aniversarios de la congregación",
+      "n": "iglesia",
+      "nota": "Por construir"
+    },
+    {
+      "area": "Vida de la iglesia",
+      "t": "Clases y escuela dominical",
+      "n": "iglesia",
+      "nota": "Por construir"
+    },
+    {
+      "area": "Vida de la iglesia",
+      "t": "Boletín semanal en PDF para compartir",
+      "n": "iglesia",
+      "nota": "Por construir"
+    },
+    {
+      "area": "Tu iglesia (miembros)",
+      "t": "Unirte con el código, pedir oración o visita",
+      "n": "gratis",
+      "nota": "Sin pagar, siempre"
+    },
+    {
+      "area": "Tu iglesia (miembros)",
+      "t": "Ver avisos, agenda y los turnos donde puedo servir",
+      "n": "gratis",
+      "nota": "Sin pagar, siempre"
+    },
+    {
+      "area": "Tu iglesia (miembros)",
+      "t": "Ver el calendario mensual de mi iglesia",
+      "n": "gratis",
+      "nota": "En construcción"
     }
-   ],
-   "no_incluye": [
-    "El Plus de cada miembro dura mientras la iglesia mantenga este plan: si la iglesia cambia de plan, los miembros vuelven a la versión gratis."
-   ],
-   "nota": "Mismo tamaño de iglesia que el Plan Iglesia; la diferencia es el Plus de cada miembro.",
-   "id_tienda": {
-    "mensual": "tb_iglesia_plus_mensual",
-    "anual": "tb_iglesia_plus_anual"
-   },
-   "boton": "Contratar Plan Iglesia + Plus",
-   "etiqueta": "Plus para toda la congregación"
-  }
- ],
- "como_funciona": [
-  "Cancelas cuando quieras, desde los ajustes de suscripciones de tu tienda.",
-  "Si tu suscripción vence, tienes 7 días de gracia y luego vuelves a lo gratis. No se borra nada.",
-  "Pagando por año ahorras: son dos meses de regalo.",
-  "Puedes restaurar tus compras si cambias de teléfono."
- ],
- "funciones": [
-  {
-   "area": "Palabra",
-   "t": "La Biblia completa, escucharla y buscarla",
-   "n": "gratis"
+  ],
+  "niveles": {
+    "gratis": "Gratis",
+    "plus": "Plus",
+    "iglesia": "Plan Iglesia"
   },
-  {
-   "area": "Palabra",
-   "t": "Planes de lectura y versículo del día",
-   "n": "gratis"
+  "pendiente_precio": {
+    "iglesia_plus": {
+      "nota": "Plan Iglesia + Plus: precio no decidido (24 oct 2026). Oculto en la app hasta decidirlo.",
+      "rangos_propuesta": [
+        {
+          "t": "Hasta 50 personas",
+          "max": 50,
+          "mensual": 8990,
+          "anual": 89900
+        },
+        {
+          "t": "De 51 a 150 personas",
+          "max": 150,
+          "mensual": 12990,
+          "anual": 129900
+        },
+        {
+          "t": "De 151 a 400 personas",
+          "max": 400,
+          "mensual": 16990,
+          "anual": 169900
+        }
+      ]
+    }
   },
-  {
-   "area": "Palabra",
-   "t": "Resaltar, notas y guardados con copia en tu cuenta",
-   "n": "gratis"
-  },
-  {
-   "area": "Palabra",
-   "t": "Sincronizar notas, resaltados y planes entre tus teléfonos",
-   "n": "gratis"
-  },
-  {
-   "area": "Palabra",
-   "t": "Imágenes de versículos para compartir",
-   "n": "gratis"
-  },
-  {
-   "area": "Palabra",
-   "t": "Más temas de color y tipos de letra",
-   "n": "plus",
-   "nota": "Gratis: los temas básicos"
-  },
-  {
-   "area": "Palabra",
-   "t": "Exportar notas y versículos a PDF",
-   "n": "plus",
-   "nota": "Por construir (hoy se imprime o guarda en PDF solo diseños y prédicas)"
-  },
-  {
-   "area": "Vida",
-   "t": "Mi oración, Hoy lo hago y cursos de Aprender",
-   "n": "gratis"
-  },
-  {
-   "area": "Vida",
-   "t": "Ayuda, contactos y Salud mental",
-   "n": "gratis",
-   "nota": "Siempre gratis, para que nadie se quede sin apoyo"
-  },
-  {
-   "area": "Vida",
-   "t": "Todos los planes de vida a la vez",
-   "n": "plus",
-   "nota": "Gratis: un plan a la vez"
-  },
-  {
-   "area": "Vida",
-   "t": "Todas las áreas de Mi crecimiento",
-   "n": "plus",
-   "nota": "Gratis: un área"
-  },
-  {
-   "area": "Vida",
-   "t": "Música y juegos completos",
-   "n": "plus",
-   "nota": "Gratis: una selección"
-  },
-  {
-   "area": "Tu jardín",
-   "t": "Tu árbol y un hábitat",
-   "n": "gratis"
-  },
-  {
-   "area": "Tu jardín",
-   "t": "Los 3 hábitats, animales y decoraciones",
-   "n": "plus",
-   "nota": "Gratis: se ganan con gotas"
-  },
-  {
-   "area": "Tu jardín",
-   "t": "Copia del jardín y del avance en la nube",
-   "n": "plus",
-   "nota": "Por construir (requiere permiso, ver TAREAS P5)"
-  },
-  {
-   "area": "Tu jardín",
-   "t": "Recordatorios a tu medida",
-   "n": "plus",
-   "nota": "Gratis: un recordatorio diario"
-  },
-  {
-   "area": "Organiza tu iglesia",
-   "t": "Calendario mensual que todos ven: cultos, actividades y servicios",
-   "n": "iglesia",
-   "nota": "En construcción"
-  },
-  {
-   "area": "Organiza tu iglesia",
-   "t": "Seguimiento de peticiones y visitas: quién lleva cada una y cuándo",
-   "n": "iglesia"
-  },
-  {
-   "area": "Organiza tu iglesia",
-   "t": "Resumen semanal de lo pendiente",
-   "n": "iglesia",
-   "nota": "Por construir"
-  },
-  {
-   "area": "Organiza tu iglesia",
-   "t": "Ministerios, turnos de servicio y líderes",
-   "n": "iglesia"
-  },
-  {
-   "area": "Organiza tu iglesia",
-   "t": "Grabar prédicas y compartirlas con la congregación",
-   "n": "iglesia",
-   "nota": "En construcción"
-  },
-  {
-   "area": "Organiza tu iglesia",
-   "t": "Planes de lectura con resultados de la congregación",
-   "n": "iglesia",
-   "nota": "Por construir"
-  },
-  {
-   "area": "Proyectos y metas",
-   "t": "Proyectos de la iglesia con responsables, fechas y avances",
-   "n": "iglesia",
-   "nota": "Por construir"
-  },
-  {
-   "area": "Proyectos y metas",
-   "t": "Planes de trabajo por mes para toda la iglesia",
-   "n": "iglesia",
-   "nota": "Por construir"
-  },
-  {
-   "area": "Proyectos y metas",
-   "t": "Planes de trabajo con cada líder y su equipo",
-   "n": "iglesia",
-   "nota": "Por construir"
-  },
-  {
-   "area": "Proyectos y metas",
-   "t": "Metas mensuales de la iglesia, con avance visible",
-   "n": "iglesia",
-   "nota": "Por construir"
-  },
-  {
-   "area": "Proyectos y metas",
-   "t": "Proyectos para servir a la comunidad, con voluntarios",
-   "n": "iglesia",
-   "nota": "Por construir"
-  },
-  {
-   "area": "Comunicación interna",
-   "t": "Chat de la iglesia",
-   "n": "iglesia"
-  },
-  {
-   "area": "Comunicación interna",
-   "t": "Avisos a toda la congregación",
-   "n": "iglesia"
-  },
-  {
-   "area": "Comunicación interna",
-   "t": "Comunicación por ministerio y por líder",
-   "n": "iglesia",
-   "nota": "Por construir"
-  },
-  {
-   "area": "Vida de la iglesia",
-   "t": "Asistencia por actividad",
-   "n": "iglesia",
-   "nota": "Por construir"
-  },
-  {
-   "area": "Vida de la iglesia",
-   "t": "Registro de bautismos y membresía",
-   "n": "iglesia",
-   "nota": "Por construir"
-  },
-  {
-   "area": "Vida de la iglesia",
-   "t": "Cumpleaños y aniversarios de la congregación",
-   "n": "iglesia",
-   "nota": "Por construir"
-  },
-  {
-   "area": "Vida de la iglesia",
-   "t": "Clases y escuela dominical",
-   "n": "iglesia",
-   "nota": "Por construir"
-  },
-  {
-   "area": "Vida de la iglesia",
-   "t": "Boletín semanal en PDF para compartir",
-   "n": "iglesia",
-   "nota": "Por construir"
-  },
-  {
-   "area": "Tu iglesia (miembros)",
-   "t": "Unirte con el código, pedir oración o visita",
-   "n": "gratis",
-   "nota": "Sin pagar, siempre"
-  },
-  {
-   "area": "Tu iglesia (miembros)",
-   "t": "Ver avisos, agenda y los turnos donde puedo servir",
-   "n": "gratis",
-   "nota": "Sin pagar, siempre"
-  },
-  {
-   "area": "Tu iglesia (miembros)",
-   "t": "Ver el calendario mensual de mi iglesia",
-   "n": "gratis",
-   "nota": "En construcción"
-  }
- ],
- "niveles": {
-  "gratis": "Gratis",
-  "plus": "Plus",
-  "iglesia": "Plan Iglesia"
- }
+  "_nota_fase0": "F1403 · precios del 24 oct 2026. Promoción de 2 meses (solo mensual). Prueba gratis 7 días. Oferta visible: apagada (decisión pendiente del dueño). Pago: suspendido (Flow en pausa); el cobro se integra cuando se defina el sistema de pago. Anual de iglesia = 10 meses (mismo criterio que Plus): confirmar."
 }

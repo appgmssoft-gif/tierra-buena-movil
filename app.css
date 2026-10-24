@@ -1470,3 +1470,9 @@ button.lc-card{cursor:pointer}
 }
 /* F1331 · nivel Completo (mismo color que Básico) en la comparativa */
 .sb-n-completo .sb-ins,.sb-n-basico .sb-ins{background:linear-gradient(135deg,#2f7b9c,#1d4f67)}
+
+/* F1403 · Promoción de 2 meses y prueba gratis de 7 días en los planes */
+.sb-promo{display:inline-block;margin-top:4px;padding:2px 10px;border-radius:99px;font:700 .78rem/1.5 system-ui,sans-serif;background:rgba(127,127,127,.16)}
+.sb-promo-linea{margin:4px 0 10px}
+.sb-prueba{margin:6px 0 4px;font-size:.9rem}
+.sb-prueba span{font-weight:700}

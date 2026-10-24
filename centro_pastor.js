@@ -352,7 +352,8 @@
       ['imp', '📥', 'Importar personas', 'Sube tu lista desde una planilla CSV y revísala antes de guardar'],
       ['impl', '🗂️', 'Personas de la planilla', 'Personas sin cuenta y cuáles ya vinculaste con su cuenta'],
       ['dat', '📝', 'Datos y código', 'Nombre, eslogan y código de tu iglesia'],
-      ['cfg', '⚙️', 'Configuración de la iglesia', 'Elige cómo trabaja tu iglesia: culto, grupos, cursos y metas']]]
+      ['cfg', '⚙️', 'Configuración de la iglesia', 'Elige cómo trabaja tu iglesia: culto, grupos, cursos y metas'],
+      ['cop', '💾', 'Copia de seguridad', 'Descarga una copia de los datos de tu iglesia']]]
   ];
   function menuHTML(q) {
     const w = norm(q).split(/\s+/).filter(Boolean); let h = '', n = 0;
