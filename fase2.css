@@ -74,3 +74,23 @@
 .ch-tag.cat-servicio{background:color-mix(in srgb, #2e7d5b 18%, var(--tarjeta))}
 .ch-tag.cat-avisos{background:color-mix(in srgb, #c0392b 18%, var(--tarjeta))}
 .ch-tag.cat-reunion{background:color-mix(in srgb, #16808d 18%, var(--tarjeta))}
+
+/* F1410 · Campana y centro de notificaciones (estilo Instagram) */
+.ntf-campana{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:14px;z-index:50;width:48px;height:48px;border-radius:50%;border:1px solid var(--linea);background:var(--tarjeta);font-size:1.35rem;display:flex;align-items:center;justify-content:center;box-shadow:var(--sombra);cursor:pointer}
+.ntf-punto{position:absolute;top:8px;right:8px;width:11px;height:11px;border-radius:50%;background:#e0245e;border:2px solid var(--tarjeta)}
+.ntf-punto[hidden]{display:none}
+.ntf-capa{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.35);display:flex;justify-content:center;align-items:flex-end}
+.ntf-panel{width:min(520px,100%);max-height:86vh;overflow:auto;background:var(--papel);color:var(--tinta);border-radius:20px 20px 0 0;padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px))}
+.ntf-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.ntf-cab{font-size:.85rem;color:var(--suave);margin:12px 0 4px;text-transform:uppercase;letter-spacing:.05em}
+.ntf-fila{display:flex;align-items:center;gap:12px;padding:8px 2px;border-bottom:1px solid var(--linea)}
+.ntf-ico{width:42px;height:42px;border-radius:50%;background:var(--tarjeta);border:1px solid var(--linea);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex:none}
+.ntf-tx{display:flex;flex-direction:column;min-width:0}
+.ntf-tx small{color:var(--suave)}
+.ntf-ajustes{margin-top:14px;border-top:1px solid var(--linea);padding-top:10px}
+.ntf-ajustes summary{font-weight:700;cursor:pointer;min-height:44px;display:flex;align-items:center}
+.ntf-op{display:flex;align-items:center;gap:8px;min-height:44px}
+.ntf-op input{width:22px;height:22px}
+.ntf-horas{display:flex;gap:12px;flex-wrap:wrap;margin:8px 0}
+.ntf-horas label{display:flex;flex-direction:column;gap:4px}
+.ntf-horas input{min-height:44px;font:inherit;color:inherit;background:var(--tarjeta);border:1px solid var(--linea);border-radius:10px;padding:6px 8px}

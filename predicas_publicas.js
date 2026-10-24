@@ -38,6 +38,8 @@
     l.querySelectorAll('[data-pp-abrir]').forEach((b) => b.addEventListener('click', () => {
       const t = document.getElementById('pp-' + b.dataset.ppAbrir); if (!t) return;
       t.hidden = !t.hidden; b.setAttribute('aria-expanded', String(!t.hidden));
+      // F1410 · 2.16: al abrirla, queda marcada como leída (solo se guarda que la abrió; el pastor ve el número).
+      if (!t.hidden) Promise.resolve(rpc('miembro_predica_marcar_leida', { p_codigo: id.codigo, p_clave: id.clave, p_predica: b.dataset.ppAbrir })).catch(() => {});
     }));
   }
 

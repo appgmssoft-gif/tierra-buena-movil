@@ -754,6 +754,8 @@
   }
   function vistaMiembro(id) {
     const ig = leer(K_IG);
+    // F1410 · Centro de notificaciones (2.5): se monta después de dibujar la pantalla.
+    setTimeout(() => { if (window.TBNotif) window.TBNotif.montar(id, rpcRaw); }, 0);
     // F1354 · Bienvenida y consentimiento (1.5): una sola vez por versión del texto, antes de entrar al área del miembro
     if (window.TBConsentimiento && !window.TBConsentimiento.aceptado(id)) return window.TBConsentimiento.pantalla(id, { rpc: rpcRaw, iglesia: ig && ig.nombre, seguir: () => vistaMiembro(id), salir: () => ir('inicio') });
     $('#pantalla').innerHTML = `
@@ -3772,7 +3774,7 @@
       if (!r.ok) { caja.innerHTML = '<p class="suave">No pudimos abrir el chat. Revisa tu conexión.</p>'; }
       else {
         const c = r.data || [];
-        caja.innerHTML = c.length ? c.map((k) => `<button type="button" class="mi-curso ch-sala ch-${esc(k.tipo)}" data-chc="${esc(k.id)}"><span class="mi-curso-ic" aria-hidden="true">${k.tipo === 'iglesia' ? '🕊️' : k.tipo === 'lideres' ? '🤝' : k.tipo === 'ministerio' ? '🧭' : '🔒'}</span><span class="mi-curso-tx"><b>${esc(k.tipo === 'directo' ? k.directo_nombre || k.nombre : k.nombre)}</b><small>${k.tipo === 'iglesia' ? 'Toda la iglesia' : k.tipo === 'lideres' ? 'Pastor y líderes: reuniones y organización' : 'Conversación privada'}</small></span><span class="mi-curso-est">${k.tipo === 'iglesia' ? 'Todos' : k.tipo === 'lideres' ? 'Equipo' : 'Privado'}</span></button>`).join('') : '<p class="suave">Aún no hay conversaciones.</p>';
+        caja.innerHTML = c.length ? c.map((k) => `<button type="button" class="mi-curso ch-sala ch-${esc(k.tipo)}" data-chc="${esc(k.id)}"><span class="mi-curso-ic" aria-hidden="true">${k.tipo === 'iglesia' ? '🕊️' : k.tipo === 'lideres' ? '🤝' : k.tipo === 'ministerio' ? '🧭' : k.tipo === 'seccion' ? (CAT_ICO[k.seccion] || '💬') : '🔒'}</span><span class="mi-curso-tx"><b>${esc(k.tipo === 'directo' ? k.directo_nombre || k.nombre : k.nombre)}</b><small>${k.tipo === 'iglesia' ? 'Toda la iglesia' : k.tipo === 'lideres' ? 'Pastor y líderes: reuniones y organización' : 'Conversación privada'}</small></span><span class="mi-curso-est">${k.tipo === 'iglesia' ? 'Todos' : k.tipo === 'lideres' ? 'Equipo' : 'Privado'}</span></button>`).join('') : '<p class="suave">Aún no hay conversaciones.</p>';
         caja.querySelectorAll('[data-chc]').forEach((b) => b.addEventListener('click', () => abrir(c.find((k) => k.id === b.dataset.chc))));
       }
       const pv = $('#chPrivado');
@@ -3797,11 +3799,13 @@
     const pastorTools = esPastor ? `<div class="cr-acc"><button type="button" class="btn sec chico" id="chNormas">Editar normas</button><button type="button" class="btn sec chico" id="chLimpiar">Limpiar historial</button></div><div id="chPanel" hidden></div>` : '';
     const videoBox = puedeVideo ? `<div class="cr-acc"><button type="button" class="btn sec chico" id="chVideo">Crear reunión por video</button></div><div id="chVideoForm" class="card" hidden><label for="chVT">Título de la reunión</label><input id="chVT" type="text" maxlength="80"><label for="chVI">Cuándo</label><input id="chVI" type="datetime-local" value="${aLocal(new Date())}"><button type="button" class="btn" id="chVG">Crear y compartir</button></div><div id="chReuniones" class="lista"></div>` : '';
     const nomCanal = canal.tipo === 'directo' ? (canal.directo_nombre || canal.nombre) : canal.nombre;
-    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ Chat</button>${heroInt(canal.tipo === 'iglesia' ? 'c2' : canal.tipo === 'lideres' ? 'c1' : 'c3', canal.tipo === 'iglesia' ? '🕊️' : canal.tipo === 'lideres' ? '🤝' : canal.tipo === 'ministerio' ? '🧭' : '🔒', canal.tipo === 'iglesia' ? 'Toda la iglesia' : canal.tipo === 'lideres' ? 'Pastor y líderes' : canal.tipo === 'ministerio' ? 'Chat del ministerio' : 'Conversación privada', esc(nomCanal), canal.tipo === 'directo' ? 'Solo ustedes dos ven esta conversación.' : 'Escribe con respeto: aquí nos acompañamos.')}${normas}${privadoBtn}${pastorTools}${videoBox}
+    $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ Chat</button>${heroInt(canal.tipo === 'iglesia' ? 'c2' : canal.tipo === 'lideres' ? 'c1' : 'c3', canal.tipo === 'iglesia' ? '🕊️' : canal.tipo === 'lideres' ? '🤝' : canal.tipo === 'ministerio' ? '🧭' : canal.tipo === 'seccion' ? (CAT_ICO[canal.seccion] || '💬') : '🔒', canal.tipo === 'iglesia' ? 'Toda la iglesia' : canal.tipo === 'lideres' ? 'Pastor y líderes' : canal.tipo === 'ministerio' ? 'Chat del ministerio' : canal.tipo === 'seccion' ? ((CHAT_CAT.find((z) => z[0] === canal.seccion) || [0, 'Sección'])[1]) : 'Conversación privada', esc(nomCanal), canal.tipo === 'directo' ? 'Solo ustedes dos ven esta conversación.' : 'Escribe con respeto: aquí nos acompañamos.')}${normas}${privadoBtn}${pastorTools}${videoBox}
       <p class="suave" id="chMsg" role="status"></p><div id="chHilo" class="chat-hilo" aria-live="polite"><p class="suave">Cargando mensajes…</p></div>
       <div class="card chat-escribir"><input type="hidden" id="chCat" value="${CHAT_CAT[0][0]}"><div class="ch-cats" role="radiogroup" aria-label="Tipo de mensaje">${CHAT_CAT.map((c, i) => `<button type="button" class="ch-cat${i ? '' : ' on'}" role="radio" aria-checked="${i ? 'false' : 'true'}" data-cat="${c[0]}">${c[1]}</button>`).join('')}</div>
         <label for="chTxt" class="ch-lbl">Escribe con cariño</label><div class="ch-fila"><textarea id="chTxt" rows="2" maxlength="1000"></textarea><button type="button" class="btn ch-env" id="chEnviar" aria-label="Enviar mensaje">Enviar</button></div></div>`;
     document.querySelectorAll('.ch-cat').forEach((b) => b.addEventListener('click', () => { document.querySelectorAll('.ch-cat').forEach((z) => { const on = z === b; z.classList.toggle('on', on); z.setAttribute('aria-checked', on ? 'true' : 'false'); }); $('#chCat').value = b.dataset.cat; const tx = $('#chTxt'); if (tx) tx.placeholder = CAT_PH[b.dataset.cat] || ''; }));
+    // F1410 · Chat por secciones: la sección ya dice el tema, así que no se eligen categorías.
+    if (canal.tipo === 'seccion') { const cc = document.querySelector('.ch-cats'); if (cc) cc.hidden = true; $('#chCat').value = canal.seccion; }
     volverA('Chat', () => vistaChat(x));
     const msg = (t, ok) => { const m = $('#chMsg'); if (m) { m.textContent = t; m.className = ok ? 'ok suave' : 'suave'; } };
     const cargarHilo = async () => {
@@ -4090,10 +4094,11 @@
       if (x && x.ok) pOraciones(p); else { m.hidden = false; m.textContent = 'No se pudo guardar el seguimiento. Revisa tu conexión.'; }
     }));
     document.querySelectorAll('[data-pu]').forEach((b) => b.addEventListener('click', async () => { await prpc('peticion_pastor_publicar', p, { p_id: b.dataset.pu, p_ocultar_nombre: b.dataset.an === '1' }); await prpc('peticion_pastor_marcar_vista', p, { p_id: b.dataset.pu }); pOraciones(p); }));
-    if (CP_EXP) CP_EXP.conectarExportar('oraExp', 'oraExpMsg', () => l, [
+    const colsOra = [
       ['Nombre', (x) => (x.anonima ? 'Anónima' : x.nombre || 'Sin nombre')], ['Tipo', (x) => x.tipo], ['Estado', (x) => PET_ESTADOS.find((e) => e[0] === de(x))?.[1] || de(x)],
       ['Petición', (x) => x.texto], ['Fecha', (x) => fecha(x.creado_en)]
-    ], 'oraciones-iglesia', ['petición', 'peticiones']);
+    ];
+    if (CP_EXP) { CP_EXP.conectarExportar('oraExp', 'oraExpMsg', () => l, colsOra, 'oraciones-iglesia', ['petición', 'peticiones']); if (CP_EXP.imprimirLista) { const bo = $('#oraExp'); if (bo) bo.insertAdjacentHTML('afterend', ' <button type="button" class="btn sec cp-exp" id="oraImp">🖨 Imprimir o guardar PDF</button>'); const bi = $('#oraImp'); if (bi) bi.onclick = () => CP_EXP.imprimirLista('Oraciones de la iglesia', colsOra, l, ''); } }
   }
   const ESTADO_V = { solicitada: 'Nueva', aceptada: 'Aceptada', agendada: 'Agendada', realizada: 'Realizada', no_disponible: 'No disponible' };
   async function pVisitas(p) {
@@ -4118,11 +4123,12 @@
       const r2 = await prpc('visita_pastor_responder', p, { p_id: id, p_estado: b.dataset.ve, p_respuesta: $('#vr-' + id).value.trim() || null, p_cuando: cu || null });
       if (r2.ok && r2.data) pVisitas(p); else { m.hidden = false; m.textContent = errTxt(r2.error); }
     }));
-    if (CP_EXP) CP_EXP.conectarExportar('visExp', 'visExpMsg', () => l, [
+    const colsVis = [
       ['Nombre', (x) => x.nombre || 'Sin nombre'], ['Estado', (x) => ESTADO_V[x.estado] || x.estado], ['Tipo', (x) => x.tipo], ['Urgencia', (x) => x.urgencia],
       ['Motivo', (x) => x.motivo], ['Horarios', (x) => x.horarios], ['Teléfono', (x) => x.telefono], ['Dirección', (x) => x.direccion],
       ['Respuesta', (x) => x.respuesta], ['Cuándo', (x) => x.cuando], ['Fecha del pedido', (x) => fecha(x.creado_en)]
-    ], 'visitas-iglesia', ['visita', 'visitas']);
+    ];
+    if (CP_EXP) { CP_EXP.conectarExportar('visExp', 'visExpMsg', () => l, colsVis, 'visitas-iglesia', ['visita', 'visitas']); if (CP_EXP.imprimirLista) { const bv = $('#visExp'); if (bv) bv.insertAdjacentHTML('afterend', ' <button type="button" class="btn sec cp-exp" id="visImp">🖨 Imprimir o guardar PDF</button>'); const bw = $('#visImp'); if (bw) bw.onclick = () => CP_EXP.imprimirLista('Visitas de la iglesia', colsVis, l, ''); } }
   }
   const ICONOS_MIN = ['👥', '🎵', '👶', '🧒', '📖', '🙏', '🤝', '🍞', '🎤', '🎬', '💒', '🌱'], COLORES_MIN = ['#4f8a5b', '#b8893a', '#4a7fb0', '#c4604a', '#7a55b0', '#2f8f86', '#c25b86', '#6b6b6b'];
   async function pMinisterios(p) {
