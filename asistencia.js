@@ -180,6 +180,17 @@
   }
 
   let periodoIndicadores = 3;
+  // F1385 · Visitas que no han vuelto (7 a 90 días): para llamarlas o escribirles.
+  async function visitasSinVolver(p, ctx) {
+    const d = fila(await ctx.rpc('pastor_visitas_sin_volver', p, { p_dias_min: 7, p_dias_max: 90 }));
+    if (!d || !d.ok) return '<p class="suave">No pudimos cargar las visitas. Revisa tu conexión.</p>';
+    const lista = d.visitas || [];
+    if (!lista.length) return '<p class="suave">Por ahora no hay visitas pendientes de seguimiento. Así se ve cuando la gente vuelve.</p>';
+    return '<p class="suave">Visitas que vinieron hace al menos una semana y no han vuelto. Un saludo a tiempo ayuda mucho.</p>' +
+      '<ul class="asi-lista">' + lista.map((v) => '<li><b>' + esc(v.nombre + ' ' + v.apellido) + '</b> · ' +
+        esc(fechaCorta(v.ultima)) + ' (hace ' + (Number(v.dias_sin_venir) || 0) + ' días)' +
+        (Number(v.veces) > 1 ? ' · ' + v.veces + ' veces' : ' · vino una vez') + '</li>').join('') + '</ul>';
+  }
   async function abrir(p, ctx) {
     const pant = $('#pantalla'); if (!pant) return;
     const hoy = new Date();
@@ -199,7 +210,8 @@
       el.innerHTML = '<h2 class="mi-sub">Qué funciona y dónde trabajar más</h2><div class="card">' +
         '<label for="asiPeriodo">Período</label><select id="asiPeriodo">' +
         [3, 6, 12].map((m) => '<option value="' + m + '"' + (m === periodoIndicadores ? ' selected' : '') + '>Últimos ' + m + ' meses</option>').join('') +
-        '</select>' + indicadoresHTML(d, periodoIndicadores) + '</div>';
+        '</select>' + indicadoresHTML(d, periodoIndicadores) + '</div>' +
+        '<h2 class="mi-sub">Visitas para dar seguimiento</h2><div class="card">' + (await visitasSinVolver(p, ctx)) + '</div>';
       $('#asiPeriodo').onchange = () => { periodoIndicadores = Number($('#asiPeriodo').value) || 3; refrescarIndicadores(); };
     };
 

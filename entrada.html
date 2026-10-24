@@ -38,7 +38,15 @@
   .ent-ok, .ent-ok h1, .ent-ok + h1 { text-align: center; }
   #entCuerpo > h1 { text-align: left; }
   #entCuerpo > h1 + p, #entCuerpo > p { text-align: center; }
-  .ent-bien { color: var(--acento); font-weight: 600; }
+  .ent-bien { color: var(--acento); font-weight: 600; text-align: center; }
+  .ent-gracias { text-align: center; }
+  .ent-bendicion { margin: 18px 0; padding: 16px 18px; border-left: 4px solid var(--acento); background: var(--tarjeta); border-radius: 12px; font-style: italic; }
+  .ent-bendicion p { margin: 0 0 6px; font-size: 1.1rem; }
+  .ent-bendicion cite { font-style: normal; color: var(--suave); font-size: .88rem; }
+  .ent-probar { display: block; text-align: center; margin: 18px 0 6px; padding: 14px; border-radius: 14px; border: 2px solid var(--acento); color: var(--acento); font-weight: 700; text-decoration: none; transition: background .2s; }
+  .ent-probar:hover { background: color-mix(in srgb, var(--acento) 12%, transparent); }
+  .ent-act span { display: inline-block; margin-top: 2px; }
+  .ent-enviar:active { transform: scale(.99); }
   @keyframes entAparece { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
   @keyframes entDibuja { to { stroke-dashoffset: 0; } }
   @media (prefers-reduced-motion: reduce) { main, .ent-ok circle, .ent-ok path { animation: none; } .ent-ok circle, .ent-ok path { stroke-dashoffset: 0; } }
