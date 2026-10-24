@@ -66,7 +66,7 @@
   // F1072 · Atajo: deja el Inicio con un hábitat ya comprado y elegido, para probar sin gastar gotas.
   function probarHabitat(h) {
     const T = window.TBInicio; if (!T) return;
-    const EMBLEMA = { bosque: 'araucaria', desierto: 'chanar', costa: 'palma_chilena' };   // mismo emblema que el catálogo (F1071)
+    const EMBLEMA = { bosque: 'canelo', desierto: 'chanar', costa: 'palma_chilena' };   // mismo emblema que el catálogo (F1071)
     const e = T.cargar();
     if (e.eligiendo || (EMBLEMA[h] && e.ciclo.especie !== EMBLEMA[h])) {   // F1079: al probar un lugar, su árbol emblemático siempre es el que crece
       const hoyS = iso(new Date()); e.eligiendo = false; e.habDias = 1; e.tematica = h; e.ciclo = { n: 1, especie: EMBLEMA[h] || e.ciclo.especie || 'araucaria', inicio: hoyS, diasCuidado: 1, ultimoDia: hoyS, ultimaVisita: hoyS, cerrado: false, diaPendiente: false };

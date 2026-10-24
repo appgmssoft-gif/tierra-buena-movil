@@ -83,6 +83,15 @@
       if (vista === 'lista') { cuerpo.innerHTML = ''; return; }
       if (vista === 'mes') pintarMes(); else pintarSemana();
     }
+    // F1410 · Barra secundaria de la agenda: Lista, Semana y Mes encima de la barra principal.
+    const elegir = (v) => { const bt = document.querySelector('#agvBarra [data-agv="' + v + '"]'); if (bt) bt.click(); };
+    if (window.TBDock && window.TBDock.montarSecundaria) {
+      window.TBDock.montarSecundaria([
+        { k: 'lista', t: 'Lista', fn: () => elegir('lista') },
+        { k: 'semana', t: 'Semana', fn: () => elegir('semana') },
+        { k: 'mes', t: 'Mes', fn: () => elegir('mes') }
+      ], 'lista');
+    }
     document.getElementById('agvBarra').querySelectorAll('[data-agv]').forEach((b) => b.onclick = () => {
       vista = b.getAttribute('data-agv');
       document.getElementById('agvBarra').querySelectorAll('[data-agv]').forEach((x) => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));

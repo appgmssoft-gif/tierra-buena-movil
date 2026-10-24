@@ -126,3 +126,40 @@
 .ch-cats .ch-cat{min-height:36px;border-radius:999px;padding:4px 12px;border:1px solid var(--linea);background:var(--tarjeta);font:inherit;font-size:.86rem;cursor:pointer}
 .ch-cats .ch-cat[aria-pressed=true]{background:var(--verde);color:var(--papel);border-color:var(--verde)}
 .ch-cats[hidden]{display:none}
+
+/* F1410 · Estilo limpio tipo Apple: tokens sobrios, radios y sombras suaves, y animaciones mínimas.
+   Fuente de referencia: reglas de diseño tipo Apple (dayviwong/apple-design-skill y aphlo/apple-design). */
+:root{
+  --ap-radio-s:10px; --ap-radio-m:14px; --ap-radio-l:20px;
+  --ap-sombra-s:0 1px 2px rgba(0,0,0,.05);
+  --ap-sombra-m:0 1px 2px rgba(0,0,0,.04),0 8px 24px rgba(0,0,0,.06);
+  --ap-tiempo:.16s;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.card,.item{border-radius:var(--ap-radio-m);box-shadow:var(--ap-sombra-m)}
+.btn{border-radius:var(--ap-radio-s);transition:opacity var(--ap-tiempo) ease,transform var(--ap-tiempo) ease}
+.btn:active{transform:scale(.98);opacity:.9}
+.btn.sec{box-shadow:var(--ap-sombra-s)}
+input,textarea,select{border-radius:var(--ap-radio-s)}
+/* Sin movimiento innecesario: quien tenga activado «reducir movimiento» no ve animaciones. */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none !important;transition:none !important;scroll-behavior:auto !important}
+}
+
+/* F1410 · Barra de navegación inferior (dock): flotante, clara, con texto bajo cada ícono */
+.tb-dock{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 10px);z-index:40;display:flex;gap:4px;padding:6px;width:min(520px,calc(100% - 20px));box-sizing:border-box;border-radius:24px;background:color-mix(in srgb, var(--tarjeta) 86%, transparent);backdrop-filter:saturate(1.6) blur(18px);-webkit-backdrop-filter:saturate(1.6) blur(18px);border:1px solid var(--linea);box-shadow:0 6px 24px rgba(0,0,0,.14)}
+.tb-dock-b{flex:1 1 0;min-height:54px;border:0;background:transparent;color:var(--suave);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-radius:18px;font:inherit;font-size:.72rem;font-weight:600;cursor:pointer}
+.tb-dock-b[aria-current=page]{color:var(--verde);background:color-mix(in srgb, var(--verde) 13%, transparent);font-weight:700}
+.tb-dock-ico{font-size:1.3rem;line-height:1}
+.tb-dock-b:focus-visible{outline:2px solid var(--verde);outline-offset:2px}
+body.tb-con-dock{padding-bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+body.en-chat .tb-dock{display:none}
+body.en-chat.tb-con-dock{padding-bottom:0}
+
+/* F1410 · Barra secundaria (vistas de la sección): fila fina encima de la barra principal */
+.tb-dock2{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 84px);z-index:39;display:flex;gap:4px;padding:4px;border-radius:999px;background:color-mix(in srgb, var(--tarjeta) 88%, transparent);backdrop-filter:saturate(1.5) blur(14px);-webkit-backdrop-filter:saturate(1.5) blur(14px);border:1px solid var(--linea);box-shadow:0 4px 16px rgba(0,0,0,.10)}
+.tb-dock2-b{min-height:36px;padding:4px 14px;border:0;border-radius:999px;background:transparent;color:var(--suave);font:inherit;font-size:.84rem;font-weight:600;cursor:pointer}
+.tb-dock2-b[aria-pressed=true]{background:var(--verde);color:var(--papel)}
+.tb-dock2-b:focus-visible{outline:2px solid var(--verde);outline-offset:2px}
+body.tb-con-dock2{padding-bottom:calc(136px + env(safe-area-inset-bottom,0px))}
+body.en-chat .tb-dock2{display:none}

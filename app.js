@@ -758,6 +758,8 @@
     setTimeout(() => { if (window.TBNotif) window.TBNotif.montar(id, rpcRaw); }, 0);
     // F1354 · Bienvenida y consentimiento (1.5): una sola vez por versión del texto, antes de entrar al área del miembro
     if (window.TBConsentimiento && !window.TBConsentimiento.aceptado(id)) return window.TBConsentimiento.pantalla(id, { rpc: rpcRaw, iglesia: ig && ig.nombre, seguir: () => vistaMiembro(id), salir: () => ir('inicio') });
+    // F1410 · Barra inferior: mismos destinos que el inicio, sin esperar a que se dibuje la pantalla.
+    setTimeout(() => { if (window.TBDock) window.TBDock.montar({ inicio: () => vistaMiembro(id), chat: () => vistaChat({ rol: 'miembro', codigo: id.codigo, clave: id.clave, nombre: id.nombre }), agenda: () => vistaAgenda(modoMiembro(id)), muro: vistaMuro, servir: vistaMiembroServir }); if (window.TBDock) window.TBDock.marcar('inicio'); }, 0);
     $('#pantalla').innerHTML = `
       ${areaHero('area-iglesia')}<p class="area-tag area-tag-miembro">Tu comunidad</p><section class="saludo"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML(id.nombre, perfilLeer(), false)}<div><p class="suave m0">${saludoHora()}</p><h1>Hola, ${esc(id.nombre)}</h1><p class="suave m0">⛪ ${ig ? esc(ig.nombre) : 'Tu iglesia'}</p></div></section>
       <section class="mi-car" aria-label="Para ti hoy" aria-roledescription="carrusel">
@@ -3757,6 +3759,7 @@
   const chatSala = (sala) => 'https://meet.jit.si/' + encodeURIComponent(sala);
   const chatMot = (r) => { const x = r && r.ok ? primera(r.data) : null; return x && x.ok ? null : (CHAT_MOT[x ? x.motivo : ''] || 'No se pudo completar. Revisa tu conexión.'); };
   async function vistaChat(x, canal) {
+    document.body.classList.add('en-chat'); // F1410 · la barra inferior se oculta dentro del chat
     const q = chatQ(x), esPastor = x.rol === 'pastor';
     if (!esPastor && x.esLider === undefined) {   // el miembro que lidera un ministerio puede crear reuniones con el pastor
       const mm = await misMinisterios({ codigo: x.codigo, clave: x.clave });

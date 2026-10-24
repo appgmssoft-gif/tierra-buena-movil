@@ -63,34 +63,21 @@
       + ci('tr-h', -34, -96, 11) + ci('tr-h', 36, -110, 12) + ci('tr-h2', -14, -128, 10) + ci('tr-h', 0, -104, 9) + ci('tr-h2', 20, -96, 8);
   }
   function pewen(n) {
-    // F1215 · Pewén real: fuste largo, recto y esbelto de corteza gris parda con anillos; ramas solo arriba, en verticilos que suben
-    // como candelabro, con cordones de hojas escamosas punzantes verde oscuro; copa compacta tipo paraguas y piñas arriba.
-    const m = Math.max(5, Math.min(7, n + 2)), f1 = (v) => v.toFixed(1);
-    let g = '<path d="M-9 0 C-6 -4 -5.4 -30 -5 -80 C-4.6 -130 -4.2 -170 -3.4 -204 L3.4 -204 C4.2 -170 4.6 -130 5 -80 C5.4 -30 6 -4 9 0Z" fill="#6b5848"/>'
-      + '<path d="M1.2 0 C2.4 -40 2.6 -120 1.6 -204 L3.4 -204 C4.2 -170 4.6 -130 5 -80 C5.4 -30 6 -4 9 0Z" fill="#54443a" opacity=".55"/>'
-      + '<path d="M-5.6 -6 C-5.2 -70 -4.6 -150 -3.4 -200" fill="none" stroke="#8a7560" stroke-width="1.4" stroke-linecap="round" opacity=".7"/>';
-    for (let y = -8; y > -200; y -= 7.5) { const w = 5.6 - (-y / 200) * 2.2; g += '<path d="M' + f1(-w) + ' ' + y + ' q' + f1(w) + ' 1.6 ' + f1(2 * w) + ' 0" fill="none" stroke="#3f3128" stroke-width=".8" opacity=".55"/>'; }
-    g += '<path d="M-3 -96 l-7 6 M3 -84 l8 5 M-3 -72 l-6 7" stroke="#5a4636" stroke-width="1.6" stroke-linecap="round" fill="none"/>';   // muñones de ramas caídas: el fuste bajo queda limpio
-    const pt = (x0, y0, cx, cy, x1, y1, t) => { const u = 1 - t; return [u * u * x0 + 2 * u * t * cx + t * t * x1, u * u * y0 + 2 * u * t * cy + t * t * y1]; };
-    for (let i = 0; i < m; i++) {
-      const t = m === 1 ? 0 : i / (m - 1), y = -112 - t * 80, L = 60 - t * 26, yt = y - 4 - t * 18;
+    // F1411 · Araucaria rediseñada: tronco recto y gris, ramas en pisos que caen con elegancia y una copa compacta
+    // de hojas punzantes. Base en (0,0), alto cercano a 200 px. Dibujo simple y legible.
+    const pisos = Math.max(3, Math.min(5, Math.round((n || 4) * 0.8)));
+    let g = '<path d="M-7 0 C-5 -60 -4 -140 -3 -196 L3 -196 C4 -140 5 -60 7 0Z" fill="#7a6550"/>';
+    g += '<path d="M1 0 C2 -60 2 -140 1 -196 L3 -196 C4 -140 5 -60 7 0Z" fill="#5a4a3c" opacity=".45"/>';
+    for (let i = 0; i < pisos; i++) {
+      const t = i / Math.max(1, pisos - 1), y = -62 - t * 104, L = 50 - t * 18;
       for (const s of [-1, 1]) {
-        const x1 = s * L, cx = s * L * 0.55, cy = y + 3 - t * 4;
-        g += '<path d="M0 ' + y + ' Q' + f1(cx) + ' ' + f1(cy) + ' ' + f1(x1) + ' ' + f1(yt) + '" fill="none" stroke="#5b4a3c" stroke-width="' + f1(3.4 - t * 0.9) + '" stroke-linecap="round"/>';
-        let sp = '', cord = '';
-        for (let k = 0; k <= 8; k++) {
-          const tt = 0.34 + k * 0.083, q = pt(0, y, cx, cy, x1, yt, tt), q2 = pt(0, y, cx, cy, x1, yt, Math.min(1, tt + 0.05));
-          const ux = q2[0] - q[0], uy = q2[1] - q[1], Ln = Math.hypot(ux, uy) || 1, nx = -uy / Ln, ny = ux / Ln;
-          for (const sd of [-1, 1]) sp += '<path class="' + (sd > 0 ? 'tr-h2' : 'tr-h') + '" d="M' + f1(q[0]) + ' ' + f1(q[1]) + ' L' + f1(q[0] + nx * sd * 7 + ux / Ln * 3) + ' ' + f1(q[1] + ny * sd * 7 + uy / Ln * 3) + ' L' + f1(q[0] + ux / Ln * 4) + ' ' + f1(q[1] + uy / Ln * 4) + 'Z"/>';
-        }
-        const p0 = pt(0, y, cx, cy, x1, yt, 0.3), p1 = pt(0, y, cx, cy, x1, yt, 0.62);
-        cord = '<path class="tr-ram2" d="M' + f1(p0[0]) + ' ' + f1(p0[1]) + ' Q' + f1(p1[0] * 1.02) + ' ' + f1(p1[1] - 1) + ' ' + f1(x1) + ' ' + f1(yt) + '" fill="none" stroke-width="' + f1(10 - t * 2) + '" stroke-linecap="round"/>';
-        g += cord + sp + '<path class="tr-ram3" d="M' + f1(p0[0]) + ' ' + f1(p0[1] - 2.2) + ' Q' + f1(p1[0]) + ' ' + f1(p1[1] - 3.4) + ' ' + f1(x1) + ' ' + f1(yt - 2.4) + '" fill="none" stroke-width="2.2" stroke-linecap="round" opacity=".55"/>' + el('tr-h', x1, yt - 1, 6.5, 4.6, s * -14);
+        g += '<path d="M0 ' + y + ' Q' + (s * L * 0.55) + ' ' + (y - 12) + ' ' + (s * L) + ' ' + (y + 14) + '" fill="none" stroke="#5a4a3c" stroke-width="2.6" stroke-linecap="round"/>';
+        g += '<path d="M' + (s * L * 0.25) + ' ' + (y - 4) + ' Q' + (s * L * 0.65) + ' ' + (y - 14) + ' ' + (s * L) + ' ' + (y + 10) + ' Q' + (s * L * 0.6) + ' ' + (y + 6) + ' ' + (s * L * 0.25) + ' ' + (y + 4) + 'Z" fill="#2f5d3a"/>';
       }
     }
-    g += '<ellipse cx="-17" cy="-199" rx="3.6" ry="4.6" fill="#6d6a2c"/><ellipse cx="17" cy="-201" rx="3.6" ry="4.6" fill="#6d6a2c"/>';   // piñas
-    return g + el('tr-h', 0, -206, 21, 7.5) + el('tr-h2', -9, -210, 12, 5) + el('tr-h2', 10, -211, 11, 4.6) + el('tr-h3', -6, -213, 6, 2.6)
-      + el('tr-h', -19, -197, 10, 5, -16) + el('tr-h', 19, -198, 10, 5, 16);
+    g += '<path d="M0 -202 C15 -198 22 -182 18 -164 C13 -146 -13 -146 -18 -164 C-22 -182 -15 -198 0 -202Z" fill="#2f5d3a"/>';
+    g += '<path d="M0 -198 C7 -192 9 -182 6 -171 C2 -163 -2 -163 -6 -171 C-9 -182 -7 -192 0 -198Z" fill="#4a8456" opacity=".85"/>';
+    return g;
   }
   function frondoso(forma, especie, dias) {
     // F1058/F1059/F1066 · Pewén: copa en verticilos (ver pewen()); gana verticilos con los días.
@@ -175,13 +162,12 @@
   const nube = (x, y, k) => '<g class="nu" transform="translate(' + x + ' ' + y + ') scale(' + k + ')"><ellipse cx="0" cy="0" rx="30" ry="9"/><ellipse cx="-14" cy="-6" rx="14" ry="9"/><ellipse cx="6" cy="-10" rx="17" ry="11"/><ellipse cx="20" cy="-4" rx="12" ry="7"/></g>';
   // Detrás de las colinas (cielo y lejanía)
   function atras(f) {
-    if (f === 'montanas') return '<g class="pa-mont"><path class="mo m2" d="M-60 292 L10 214 L52 252 L104 196 L170 276 L228 208 L284 262 L330 220 L430 292Z"/><path class="mo m1" d="M-40 296 L40 206 L84 256 L140 168 L206 270 L262 190 L318 258 L372 204 L440 296Z"/>'
+    if (f === 'montanas') return '<g class="pa-mont"><path class="mo m2" d="M-60 292 L10 214 L52 252 L104 196 L170 276 L228 208 L284 262 L330 220 L430 292Z"/><path class="mo m1" d="M-40 296 L40 206 L84 256 L140 168 L206 270 L262 190 L318 258 L372 204 L440 296Z"/><path fill="#ffffff" opacity=".92" d="M92 204 L104 196 L116 204 L110 210 L104 204 L98 210Z M158 180 L168 168 L178 180 L172 186 L168 181 L162 186Z"/><path fill="#8a8f96" d="M18 300 L44 272 L70 300Z M240 300 L268 266 L296 300Z"/><path fill="#b9b3a8" d="M136 302 L156 282 L176 302Z"/><path fill="#c9a25a" d="M120 304 l4 -8 l4 8 M130 306 l3 -6 l3 6 M296 302 l4 -7 l4 7 M60 304 l3 -6 l3 6"/><path fill="none" stroke="#c9a25a" stroke-width="1.4" stroke-dasharray="4 5" d="M190 310 Q230 298 270 310 T350 306"/>'
       + '<path class="nv" d="M140 168 L124 188 L134 184 L142 194 L150 184 L158 188Z"/><path class="nv" d="M262 190 L248 208 L256 204 L264 212 L272 204 L278 208Z"/><path class="nv" d="M40 206 L28 222 L36 219 L42 226 L48 219 L54 222Z"/></g>';
     if (f === 'volcan') return '<g class="pa-volc"><path class="mo m2" d="M-60 292 L30 232 L90 262 L150 226 L210 278 L330 236 L430 292Z"/><path class="mo m1" d="M196 292 L258 196 C264 184 276 184 282 196 L346 292Z"/><path class="nv" d="M250 210 L258 196 C264 184 276 184 282 196 L290 212 C280 204 272 214 266 206 C260 214 254 206 250 210Z"/><ellipse class="humo" cx="272" cy="176" rx="9" ry="5"/><ellipse class="humo" cx="280" cy="164" rx="12" ry="6"/><ellipse class="humo" cx="292" cy="152" rx="15" ry="7"/></g>';
-    if (f === 'bosque') {   // F1078 · Bosque nativo: una franja de copas en dos tonos, sin conos (los conos parecían pinos). Posiciones fijas.
-      let g = '<g class="pa-bosque">';
-      // F1088: el bosque ya no lleva fondo de árboles (pedido del usuario)
-      return g + '</g>';
+    if (f === 'bosque') {   // F1411 · Bosque nativo: árboles nativos de fondo (canelo, roble, quillay), en distintas alturas. Sin conos.
+      const arb = (x, y, k, c1, c2) => '<g transform="translate(' + x + ' ' + y + ') scale(' + k + ')"><path d="M-3 0 L3 0 L2 -36 L-2 -36Z" fill="#7a5c45"/><ellipse cx="0" cy="-50" rx="26" ry="21" fill="' + c1 + '"/><ellipse cx="-11" cy="-42" rx="15" ry="13" fill="' + c2 + '" opacity=".8"/><ellipse cx="11" cy="-44" rx="14" ry="12" fill="' + c2 + '" opacity=".6"/></g>';
+      return '<g class="pa-bosque" aria-hidden="true">' + arb(-24, 300, 0.9, '#3f7a4d', '#5d9a62') + arb(46, 306, 1.1, '#2f6b3f', '#4f8a55') + arb(118, 298, 0.8, '#4f8a55', '#7ab07c') + arb(186, 304, 1, '#2f6b3f', '#5d9a62') + arb(262, 300, 0.95, '#3f7a4d', '#6aa86b') + arb(340, 306, 1.05, '#2f6b3f', '#4f8a55') + '</g>';
     }
     if (f === 'desierto') return '<g class="pa-desierto" aria-hidden="true">'   // F1056 · Desierto: dunas, una mesa lejana y dos cactus (fondo propio, no vacío)
       + '<path class="mo m2" fill="#ecd29c" d="M-60 300 C20 262 80 270 130 286 S240 258 300 276 S380 262 430 290 L430 330 L-60 330Z"/>'
