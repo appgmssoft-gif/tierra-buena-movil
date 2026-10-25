@@ -245,7 +245,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Acertijos de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Letras entre las hojas': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => !CABECERAS_ILUSTRADAS ? '' : `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1411';
+  const APP_VERSION = 'F1414';
   // F1171: respaldo si movimiento.js no cargó (pruebas o caché vieja): mismo criterio que TBMov.quieto().
   const MOV_QUIETO = () => { try { if (window.TBMov) return window.TBMov.quieto(); const h = document.documentElement; return h.getAttribute('data-anim') === 'off' || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
@@ -3758,8 +3758,24 @@
   const chatQ = (x) => (x.rol === 'pastor' ? { p_codigo: x.codigo, p_clave: null, p_secreto: x.secreto } : { p_codigo: x.codigo, p_clave: x.clave, p_secreto: null });
   const chatSala = (sala) => 'https://meet.jit.si/' + encodeURIComponent(sala);
   const chatMot = (r) => { const x = r && r.ok ? primera(r.data) : null; return x && x.ok ? null : (CHAT_MOT[x ? x.motivo : ''] || 'No se pudo completar. Revisa tu conexión.'); };
+  // F1411 · Abre una sección del chat desde la barra secundaria (Iglesia, Preguntas, Oración, Ayuda, Servicio).
+  async function chatIrSeccion(x, clave) {
+    const r = await rpcRaw('chat_canales_listar', chatQ(x));
+    const lista = r.ok ? (r.data || []) : [];
+    const k = clave === 'iglesia' ? lista.find((z) => z.tipo === 'iglesia') : lista.find((z) => z.tipo === 'seccion' && z.seccion === clave);
+    if (!k) { msg('Esta sección todavía no está lista. Intenta de nuevo en un momento.'); return; }
+    vistaChat(x, k);
+  }
   async function vistaChat(x, canal) {
-    document.body.classList.add('en-chat'); // F1410 · la barra inferior se oculta dentro del chat
+    // F1411 · La barra principal solo se oculta dentro de una conversación. En la lista se ve la barra de secciones.
+    document.body.classList.toggle('en-chat', !!canal);
+    if (!canal && window.TBDock) setTimeout(() => window.TBDock.montarSecundaria([
+      { k: 'iglesia', t: 'Iglesia', fn: () => chatIrSeccion(x, 'iglesia') },
+      { k: 'preguntas', t: 'Preguntas', fn: () => chatIrSeccion(x, 'preguntas') },
+      { k: 'oracion', t: 'Oración', fn: () => chatIrSeccion(x, 'oracion') },
+      { k: 'ayuda', t: 'Ayuda', fn: () => chatIrSeccion(x, 'ayuda') },
+      { k: 'servicio', t: 'Servicio', fn: () => chatIrSeccion(x, 'servicio') }
+    ], 'iglesia'), 0);
     const q = chatQ(x), esPastor = x.rol === 'pastor';
     if (!esPastor && x.esLider === undefined) {   // el miembro que lidera un ministerio puede crear reuniones con el pastor
       const mm = await misMinisterios({ codigo: x.codigo, clave: x.clave });

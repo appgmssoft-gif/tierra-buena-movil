@@ -167,3 +167,12 @@ body.en-chat .tb-dock2{display:none}
 /* F1411 · Dentro del chat se oculta la barra principal: el campo de escribir queda libre */
 body.en-chat .barra{display:none}
 body.en-chat .tb-dock2{display:none}
+
+/* F1413 · Barra del Inicio más clara: tres accesos + «Más». Respuesta táctil breve (idea 4). */
+.ib-bt:active,.il-mas-op:active,.il-mas-cerrar:active,.il-maleza:active{transform:scale(.96);transition:transform .08s ease}
+.il-mas{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.28);display:flex;align-items:flex-end;justify-content:center;padding:12px 12px calc(12px + env(safe-area-inset-bottom,0px))}
+.il-mas-caja{width:min(420px,100%);display:flex;flex-direction:column;gap:8px;padding:10px;border-radius:20px;background:var(--papel);border:1px solid var(--linea);box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.il-mas-op,.il-mas-cerrar{min-height:52px;border:1px solid var(--linea);border-radius:14px;background:var(--tarjeta);color:var(--tinta);font:inherit;font-weight:600;text-align:left;padding:0 16px;cursor:pointer}
+.il-mas-cerrar{text-align:center;color:var(--suave);border:0;background:transparent}
+.il-mas-op[aria-pressed=true]{border-color:var(--verde)}
+.il-mas-nuevo{margin-left:6px;padding:1px 8px;border-radius:999px;background:var(--verde);color:var(--papel);font-style:normal;font-size:.75rem}

@@ -205,7 +205,7 @@
       + '<g class="ip-bruma b2"><rect x="-20" y="288" width="430" height="64" fill="url(#ipBruma)"/></g>'
       + '<path fill="#6f9e86" d="' + cresta(rB, -6, 396, 430) + '"/>' + copasR(rB, -6, 396, 7, 9, 15, 11, '#4d8568', '#9cc9a0')   // segunda fila: cerros verdes más cerca
       + '<path fill="none" stroke="#fff" stroke-opacity=".3" stroke-width="1.2" d="' + filo(rB, -6, 396) + '"/>'
-      + capilla(312, f(rB(312)) + 5, 1.2, franja()) + copasR(rB, 284, 289, 3, 9, 11, 20, '#4d8568', '#9cc9a0') + copasR(rB, 340, 345, 5, 8, 10, 20, '#4d8568', '#9cc9a0');
+      + capilla(312, f(rB(312)) + 5, 1.2, franja());   // F1413 · sin árboles detrás de la capilla ni de las cabañas: la escena queda limpia
   }
 
   function colinas(lugar, p) {
@@ -252,6 +252,8 @@
   const llareta = (x, y, k) => '<g transform="translate(' + x + ' ' + y + ') scale(' + k + ')"><ellipse cx="2" cy="1" rx="22" ry="4" fill="#2a2a12" opacity=".2"/><path fill="#8d9f4a" d="M-22 0Q-24-16-8-20Q4-26 16-18Q26-12 22 0Z"/><path fill="#b4c266" d="M-18-4Q-18-14-6-17Q4-22 12-15Q4-14-2-8Q-10-4-18-4Z"/><g fill="#dfe79a" opacity=".85"><circle cx="-8" cy="-12" r="1.6"/><circle cx="2" cy="-16" r="1.5"/><circle cx="11" cy="-10" r="1.5"/><circle cx="-1" cy="-8" r="1.3"/></g></g>';
   const DES2 = '<defs><filter id="ipDes2" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation=".6"/></filter></defs>';
   function decor(lugar, p) {
+    // F1413 · Inicio limpio: si la persona apagó la decoración, no se dibuja (rocas, hongos, flores decorativas).
+    try { if (localStorage.getItem('tb_inicio_decor') === 'no') return ''; } catch (e) { /* sin guardar: se muestra */ }
     if (lugar === 'bosque') {   // F1285: decoración mínima bajo el tronco (una roca y dos hongos) para bajar el ruido visual
       return DES2 + '<g filter="url(#ipDes2)">' + roca(366, 748, 52, 32, '#7f8c82', '#4c5a52', '#6faa59') + hongo(322, 750, 1.2) + hongo(344, 754, .85) + '</g>';
     }

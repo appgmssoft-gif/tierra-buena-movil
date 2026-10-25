@@ -134,7 +134,8 @@
 
 
   // ---------- F937 · Paisaje y clima elegibles (se guardan en este teléfono; no tocan la cuenta ni SYNC_CLAVES) ----------
-  const KFONDO = 'tb_inicio_fondo', KCLIMA = 'tb_inicio_clima';
+  const KFONDO = 'tb_inicio_fondo', KCLIMA = 'tb_inicio_clima', KDECOR = 'tb_inicio_decor';
+  let contActual = null;   // F1413 · recordar el contenedor para volver a dibujar al cambiar la decoración
   const FONDOS = [['colinas', 'Colinas'], ['lago', 'Lago'], ['rio', 'Río'], ['bosque', 'Bosque nativo'], ['montanas', 'Cordillera'], ['volcan', 'Volcán nevado'], ['costa', 'Costa del Pacífico'], ['desierto', 'Desierto florido']];
   const CLIMAS = [['natural', 'Según la estación'], ['despejado', 'Despejado'], ['nublado', 'Nublado'], ['lluvia', 'Lluvia suave'], ['estrellas', 'Noche estrellada'], ['nieve', 'Nieve'], ['arcoiris', 'Arcoíris']];
   const abierto = (tipo, id) => { try { return !!(window.TBInicio && window.TBInicio.tiene(tipo, id)); } catch (e) { return false; } };
@@ -580,7 +581,7 @@ ananuca: () => `<path d="M15 44 C10 36 6 30 4 22 C10 28 13 34 15 44Z" fill="#6b9
     if (r.panoramica && !quieto()) { esc0.classList.add('pano'); later(() => esc0.classList.remove('pano'), 3000); } else if ((extra && extra.plantado) && !quieto()) { esc0.classList.add('brota'); later(() => esc0.classList.remove('brota'), 1800); }
     if (!(extra && extra.repinta)) { esc0.classList.add('entra'); later(() => esc0.classList.remove('entra'), 1400); }   // F1272: la entrada solo al abrir, no en cada repintado
     try { window.TBCasillas && window.TBCasillas.ajustar(esc0); } catch (e) { /* sin ajuste */ }   // F1214: cada pieza se ajusta a su casilla
-    paralaje(esc0); ligar(cont, mi); pantalla(); barraMarcar();
+    paralaje(esc0); ligar(cont, mi); pantalla(); barraMarcar(); colocarAves(cont);
   }
 
   function paralaje(esc0) {                                   // el fondo se mueve apenas mientras se arrastra el dedo; al soltar vuelve solo (transición CSS). Sin dedo, no hay trabajo.
@@ -780,13 +781,38 @@ ananuca: () => `<path d="M15 44 C10 36 6 30 4 22 C10 28 13 34 15 44Z" fill="#6b9
   function barraHTML() {
     const b = (k, t, al, d) => '<button type="button" class="ib-bt ib-' + k + '" data-ab="' + k + '" aria-label="' + esc(al) + '"><span class="ib-ic">' + ic(d, 22) + '</span><span class="ib-t">' + esc(t) + '</span></button>';
     return '<div class="il-barra" id="ilBarra"><div class="il-barra-in" role="toolbar" aria-label="Accesos del Inicio">'
-      + b('msg', 'Mensajes', 'Mensajes de hoy', IC.libro) + b('tri', 'Trivia', 'Trivia del día', IC.mundo) + b('viv', 'Vivero', 'Vivero y tu paisaje', IC.hoja) + b('jue', 'Juegos', 'Juegos', IC_JUEGOS) + '</div></div>';
+      + b('msg', 'Mensajes', 'Mensajes de hoy', IC.libro) + b('viv', 'Vivero', 'Vivero y tu paisaje', IC.hoja)
+      + '<button type="button" class="ib-bt ib-mas" data-ab="mas" aria-label="Más: trivia, juegos y decoración"><span class="ib-ic" aria-hidden="true">⋯</span><span class="ib-t">Más</span></button>'
+      + '</div></div>';
   }
   function barraMarcar() {
     const bar = $('#ilBarra'); if (!bar) return; let t = null;
     try { t = CAT && window.TBInicio ? window.TBInicio.triviaHoy() : null; } catch (e) { t = null; }
     const pon = (k, on) => { const b = bar.querySelector('[data-ab="' + k + '"]'); if (b) b.classList.toggle('nuevo', !!on); };
-    pon('tri', !!t && !t.resuelta); pon('msg', lsGet(KMSG) !== hoyClave());
+    pon('tri', !!t && !t.resuelta); pon('msg', lsGet(KMSG) !== hoyClave()); pon('mas', !!t && !t.resuelta);
+  }
+  // F1413 · «Más»: trivia, juegos y decoración en una hoja pequeña, para no saturar la barra.
+  function abrirMas(juegos) {
+    const previa = document.getElementById('ilMas'); if (previa) { previa.remove(); return; }
+    const t = (() => { try { return CAT && window.TBInicio ? window.TBInicio.triviaHoy() : null; } catch (e) { return null; } })();
+    const dec = lsGet(KDECOR) !== 'no';
+    const o = document.createElement('div');
+    o.id = 'ilMas'; o.className = 'il-mas';
+    o.innerHTML = '<div class="il-mas-caja" role="dialog" aria-label="Más opciones">'
+      + '<button type="button" class="il-mas-op" data-mo="tri">🌍 Trivia del día' + (t && !t.resuelta ? ' <i class="il-mas-nuevo">nuevo</i>' : '') + '</button>'
+      + '<button type="button" class="il-mas-op" data-mo="jue">🎮 Juegos</button>'
+      + '<button type="button" class="il-mas-op" data-mo="dec" aria-pressed="' + (dec ? 'true' : 'false') + '">✦ Decoración: ' + (dec ? 'encendida' : 'apagada') + '</button>'
+      + '<button type="button" class="il-mas-cerrar" data-mo="x">Cerrar</button></div>';
+    document.body.appendChild(o);
+    const cerrar = () => { const x = document.getElementById('ilMas'); if (x) x.remove(); };
+    o.addEventListener('click', (e) => { if (e.target === o) cerrar(); });
+    o.querySelectorAll('[data-mo]').forEach((b) => b.addEventListener('click', () => {
+      const k = b.getAttribute('data-mo');
+      cerrar();
+      if (k === 'tri') abrirTrivia();
+      else if (k === 'jue' && juegos) juegos();
+      else if (k === 'dec') { lsSet(KDECOR, dec ? 'no' : 'si'); if (contActual) montar(contActual); }
+    }));
   }
   function ligarBarra(juegos) {
     const bar = $('#ilBarra'); if (!bar) return;
@@ -794,10 +820,21 @@ ananuca: () => `<path d="M15 44 C10 36 6 30 4 22 C10 28 13 34 15 44Z" fill="#6b9
       b.onclick = () => {
         try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) { /* sin vibración */ }
         const k = b.getAttribute('data-ab');
-        if (k === 'msg') abrirMensajes(); else if (k === 'tri') abrirTrivia(); else if (k === 'viv') abrirVivero(); else if (k === 'jue' && juegos) juegos();
+        if (k === 'msg') abrirMensajes(); else if (k === 'viv') abrirVivero(); else if (k === 'mas') abrirMas(juegos);
       };
     });
     barraMarcar();
+  }
+
+  // F1413 · Aves: cada una en su zona (cielo, rama, flor o suelo) y separadas entre sí.
+  const ZONA_AVE = { cielo: { x0: 8, x1: 90, y0: 6, y1: 30 }, rama: { x0: 12, x1: 88, y0: 30, y1: 62 }, flor: { x0: 10, x1: 88, y0: 58, y1: 84 }, suelo: { x0: 10, x1: 88, y0: 78, y1: 92 } };
+  function colocarAves(cont) {
+    if (!cont || !window.TBDistribucion) return;
+    const cajas = Array.prototype.slice.call(cont.querySelectorAll('.il-ave'));
+    if (!cajas.length) return;
+    const zonas = cajas.map((c) => { const m = /\bl-([a-z]+)/.exec(c.className); return (m && ZONA_AVE[m[1]]) || ZONA_AVE.rama; });
+    const pos = window.TBDistribucion.distribuir(zonas, { minDist: 16, sem: 11 });
+    cajas.forEach((c, i) => { c.style.left = pos[i].x + '%'; c.style.top = pos[i].y + '%'; });
   }
 
   // ---------- Entrada y salida ----------
@@ -808,7 +845,7 @@ ananuca: () => `<path d="M15 44 C10 36 6 30 4 22 C10 28 13 34 15 44Z" fill="#6b9
   }
   function soltar0() { gen++; timers.forEach(clearTimeout); timers = []; if (resp) { resp.forEach(clearTimeout); resp = null; } if (raf) { cancelAnimationFrame(raf); raf = 0; } liberar(); }
   function montar(cont) {
-    if (!cont || !window.TBInicio) return; soltar0(); const mi = gen;
+    if (!cont || !window.TBInicio) return; soltar0(); const mi = gen; contActual = cont;
     cont.innerHTML = '<p class="il-carga">Preparando tu jardín…</p>';
     catalogo().then((c) => {
       if (mi !== gen || !cont.isConnected) return;
