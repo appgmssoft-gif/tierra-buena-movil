@@ -171,7 +171,7 @@ html:not([data-anim=off]) .il-planta svg{animation:il-mece 5s ease-in-out infini
 .il-planta.s-pasto-3,.il-planta.s-pasto-4{transform:scale(.82);transform-origin:50% 0}.il-planta.s-pasto-1,.il-planta.s-pasto-6{transform:scale(.92);transform-origin:50% 0}.il-planta.s-pasto-7,.il-planta.s-pasto-8{transform:scale(1.12);transform-origin:50% 0}
 /* F936: cada ave tiene su lugar: el cóndor en el cielo, la golondrina y el gorrión en el aire cerca del árbol, el chucao y el queltehue en el suelo, el picaflor junto a las flores. */
 .il-ave{position:absolute;display:flex;justify-content:center;align-items:flex-end;width:120px;height:0;margin:0 0 0 -60px;pointer-events:none}.il-ave svg{display:block}
-.il-ave.a-condor{left:74%;top:19%}.il-ave.a-golondrina{left:22%;top:34%}.il-ave.a-gorrion{left:77%;top:47%}.il-ave.a-picaflor{left:46%;top:77%}.il-ave.a-chucao{left:21%;top:91%}.il-ave.a-queltehue{left:56%;top:94%}
+.il-ave.a-condor{left:74%;top:19%}.il-ave.a-golondrina{left:22%;top:34%}.il-ave.a-gorrion{left:77%;top:47%}.il-ave.a-picaflor{left:46%;top:77%}.il-ave.a-chucao{left:42%;top:90%}.il-ave.a-queltehue{left:56%;top:94%}
 html:not([data-anim=off]) .il-ave.l-cielo svg{animation:il-planea 9s ease-in-out infinite alternate}
 html:not([data-anim=off]) .il-ave.a-golondrina svg{animation:il-surca 5.5s ease-in-out infinite alternate}
 html:not([data-anim=off]) .il-ave.l-flor svg{animation:il-flota 1.6s ease-in-out infinite alternate}

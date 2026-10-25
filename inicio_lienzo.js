@@ -20,7 +20,10 @@
   const sonido = (n, a) => { try { if (window.TBSonido && typeof window.TBSonido[n] === 'function') window.TBSonido[n](a); } catch (e) { /* sin sonido */ } };
 
   const ETAPAS = { brote: 'Brote', raiz: 'Echando raíces', ramas: 'Creciendo ramas', frondoso: 'Frondoso' };
-  const FORMA = { chanar: 'paraguas', canelo: 'redondo', quillay: 'redondo', roble: 'redondo', cerezo: 'redondo', alerce: 'cono', sauce: 'cascada', palma_chilena: 'palma', jacaranda: 'florido', peumo: 'redondo', maiten: 'cascada' };
+  // F1416 · El copihue va siempre en los bordes (izquierda o derecha), nunca en el centro donde andan las aves.
+  const BORDES = ['pasto-7', 'pasto-1', 'pasto-8', 'pasto-6'];
+  const bordeCopihue = (c) => BORDES[(parseInt(String(c).replace(/\D/g, ''), 10) || 0) % BORDES.length];
+  const FORMA = { chanar: 'redondo', canelo: 'redondo', quillay: 'redondo', roble: 'redondo', cerezo: 'redondo', alerce: 'cono', sauce: 'cascada', palma_chilena: 'palma', jacaranda: 'florido', peumo: 'redondo', maiten: 'cascada' };
   const MALEZA = { hoja_seca: 'hoja seca', trebol_gris: 'trébol marchito', hierba_seca: 'hierba seca' };
   // Casillas del paisaje lejano: [x, y, escala] dentro del lienzo de 360 x 420.
   const FONDO = { 'fondo-1': [52, 296, 0.30], 'fondo-2': [110, 290, 0.26], 'fondo-3': [258, 292, 0.28], 'fondo-4': [312, 298, 0.32], 'fondo-5': [2, 300, 0.34], 'fondo-6': [356, 296, 0.30] };
@@ -128,7 +131,7 @@
     // F1414 · Cordillera sin árbol alto: la quenoa es un arbusto bajo. Una especie retirada que quedó guardada en una partida se dibuja como canelo.
     if (especie === 'araucaria') especie = 'canelo';
     if (FORMA[especie] === 'arbusto') return arbusto(etapa);
-    const f = FORMA[especie] || 'redondo';
+    const f = (FORMA[especie] === 'paraguas' ? 'redondo' : FORMA[especie]) || 'redondo';
     const cuerpo = etapa === 'frondoso' ? frondoso(f, especie, dias) : etapa === 'ramas' ? ramas(f) : etapa === 'raiz' ? raiz() : brote();
     const bellotas = especie === 'roble' && etapa === 'frondoso' ? '<g fill="#b07a3e" stroke="#7a5024" stroke-width=".5">' + [[-30,-132],[-16,-120],[-2,-112],[14,-118],[28,-130],[-22,-150],[20,-152]].map((q) => '<ellipse cx="' + q[0] + '" cy="' + q[1] + '" rx="2.2" ry="2.8"/>').join('') + '</g>' : '';
     const flores = especie === 'canelo' && etapa === 'frondoso' ? '<g fill="#fbfbf4" stroke="#c9d6b8" stroke-width=".5">' + [[-22,-150],[-8,-168],[12,-160],[24,-142],[-30,-132],[2,-138],[-16,-150],[18,-172]].map((q) => '<circle cx="' + q[0] + '" cy="' + q[1] + '" r="2.6"/>').join('') + '</g>' : '';
@@ -307,7 +310,7 @@ ananuca: () => `<path d="M15 44 C10 36 6 30 4 22 C10 28 13 34 15 44Z" fill="#6b9
   const vis = (tipo, id, est) => !window.TBInicio || window.TBInicio.visibleEn(tipo, id, est.tematica);   // F1067
   function vivEscena(est) {
     const v = est.vivero || {};
-    return (v.plantas || []).filter((q) => vis('semilla', q.id, est)).map((q) => '<span class="il-planta p-' + esc(q.id) + ' s-' + esc(q.casilla) + '" aria-hidden="true">' + flor(q.id, 0.9) + '</span>').join('')
+    return (v.plantas || []).filter((q) => vis('semilla', q.id, est)).map((q) => '<span class="il-planta p-' + esc(q.id) + ' s-' + esc(q.id === 'copihue' ? bordeCopihue(q.casilla) : q.casilla) + '" aria-hidden="true">' + flor(q.id, 0.9) + '</span>').join('')
       + (v.aves || []).filter((a) => vis('ave', a.id, est)).slice(0, 2).map((a, i) => '<span class="il-ave n' + (i + 1) + ' a-' + esc(a.id) + ' l-' + esc((AVES[a.id] || {}).lugar || 'rama') + '" aria-hidden="true">' + ave(a.id) + '</span>').join('')
       // F1055 · luciérnagas encendidas: seis luces que flotan en el cielo (la animación se apaga con movimiento reducido o en modo ahorro)
       + (v.ambientes || []).filter((id) => vis('ambiente', id, est)).slice(0, 2).map((id) => id === 'luciernagas' ? '<span class="il-luci-grupo" aria-hidden="true"><i class="il-luci k1"></i><i class="il-luci k2"></i><i class="il-luci k3"></i><i class="il-luci k4"></i><i class="il-luci k5"></i><i class="il-luci k6"></i></span>'
@@ -520,7 +523,7 @@ ananuca: () => `<path d="M15 44 C10 36 6 30 4 22 C10 28 13 34 15 44Z" fill="#6b9
       + '<g class="cap cap0">' + cielo(cl) + '<g class="plano-lejano">' + atras(fo) + '</g></g><g class="cap cap1"><path class="col c1" d="' + COL.c1 + '"/>' + fondo + '</g>'
       + '<g class="cap cap2"><path class="col c2" d="' + COL.c2 + '"/></g>'
       + '<g class="cap cap3"><path class="col c3" d="' + COL.c3 + '"/></g></g>'
-      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g></svg>' + '<svg class="il-svg il-svg-dia" viewBox="0 110 360 310" preserveAspectRatio="xMidYMax meet" aria-hidden="true" focusable="false">' + '<g class="pa-dia">' + ((window.TBCasillas && window.TBCasillas.tiene(est.tematica)) ? window.TBCasillas.capa(est.tematica) : '') + '</g></svg>' + '<svg class="il-svg il-svg-top" viewBox="0 110 360 310" preserveAspectRatio="xMidYMax meet" aria-hidden="true" focusable="false">' + ambienteDelDia(9, est.tematica) + '<g class="cap cap3"><g class="mundo" transform="translate(180 344) scale(' + (0.78).toFixed(3) + ')">' + (est.tematica === 'desierto' ? '<g transform="translate(' + ((EMB_DES[0] - 180) / Math.max(0.05, 0.78)).toFixed(1) + ' ' + ((EMB_DES[1] - 344) / Math.max(0.05, 0.78)).toFixed(1) + ') scale(' + (EMB_DES[2] / 0.78).toFixed(3) + ')">' + sueloDibujo('cactus') + '</g>' : est.tematica === 'costa' ? '' : arbol(c.especie, et, c.diasCuidado) + hojasTB(42, et)) + '</g></g>' + '<g class="tb-hierba" aria-hidden="true">' + (est.tematica === 'desierto' || est.tematica === 'costa' ? '' : hierbaTB(0, 360, 392, 90, 17)) + '</g><g class="clima">' + climaSvg(cl) + '</g></svg>'
+      + '<g mask="url(#ilMasc)">' + frente(fo) + '</g></svg>' + '<svg class="il-svg il-svg-dia" viewBox="0 110 360 310" preserveAspectRatio="xMidYMax meet" aria-hidden="true" focusable="false">' + '<g class="pa-dia">' + ((window.TBCasillas && window.TBCasillas.tiene(est.tematica)) ? window.TBCasillas.capa(est.tematica) : '') + '</g></svg>' + '<svg class="il-svg il-svg-top" viewBox="0 110 360 310" preserveAspectRatio="xMidYMax meet" aria-hidden="true" focusable="false">' + ambienteDelDia(9, est.tematica) + '<g class="cap cap3"><g class="mundo" transform="translate(180 344) scale(' + (0.78).toFixed(3) + ')">' + (est.tematica === 'desierto' ? '<g transform="translate(' + ((EMB_DES[0] - 180) / Math.max(0.05, 0.78)).toFixed(1) + ' ' + ((EMB_DES[1] - 344) / Math.max(0.05, 0.78)).toFixed(1) + ') scale(' + (EMB_DES[2] / 0.78).toFixed(3) + ')">' + sueloDibujo('cactus') + '</g>' : est.tematica === 'costa' ? '' : '') + '</g></g>'   /* F1418 · Árbol central retirado por pedido del dueño: ya no se dibuja en ningún lugar. */ + '<g class="tb-hierba" aria-hidden="true">' + (est.tematica === 'desierto' || est.tematica === 'costa' ? '' : hierbaTB(0, 360, 392, 90, 17)) + '</g><g class="clima">' + climaSvg(cl) + '</g></svg>'
       + '<i class="il-anillo" id="ilAnillo" aria-hidden="true"></i>'
       + '<button type="button" class="il-resp" id="ilResp" aria-label="Respirar con tu árbol. Toca para una pausa de unos 30 segundos"></button>' + mal + gotasHTML(est)  + vivEscena(est) + '</div>';
   }
