@@ -30,12 +30,15 @@
   };
 
   // Busca por nombre, ministerio o familia, sin importar tildes ni mayúsculas. Cada palabra debe aparecer.
+  // F1432 · 7.1 El texto de cada persona (sin tildes ni mayúsculas) se calcula una sola vez, no en cada letra que se escribe.
+  const PAJAR = new WeakMap();
+  const pajarDe = (x) => { let h = PAJAR.get(x); if (h === undefined) { h = norm([x.nombre, x.ministerios, x.familia].join(' ')); PAJAR.set(x, h); } return h; };
   function filtrar(lista, q, soloLideres) {
     const pal = norm(q).split(/\s+/).filter(Boolean);
     return lista.filter((x) => {
       if (soloLideres && !x.es_lider) return false;
       if (!pal.length) return true;
-      const pajar = norm([x.nombre, x.ministerios, x.familia].join(' '));
+      const pajar = pajarDe(x);
       return pal.every((w) => pajar.includes(w));
     });
   }
@@ -276,7 +279,9 @@
       document.querySelectorAll('[data-cpid]').forEach((b) => { b.onclick = () => abrirFicha(p, ctx, b.getAttribute('data-cpid'), volverLista); });
       const mas = $('#cpMas'); if (mas) mas.onclick = () => { tope += TOPE; pinta(); };
     };
-    $('#mieQ').addEventListener('input', () => { tope = TOPE; pinta(); });
+    // F1432 · 7.1 Espera 150 milésimas a que termines de escribir, así el teléfono no repinta la lista en cada letra.
+    let espera = null;
+    $('#mieQ').addEventListener('input', () => { tope = TOPE; clearTimeout(espera); espera = setTimeout(pinta, 150); });
     const lid = $('#cpLid'); if (lid) lid.onclick = () => { soloLideres = !soloLideres; lid.setAttribute('aria-pressed', String(soloLideres)); lid.classList.toggle('on', soloLideres); tope = TOPE; pinta(); };
     pinta();
     return true;
@@ -418,7 +423,7 @@
     // F1361 · 1.15 «otras listas»: Oraciones y Visitas usan estos mismos bloques desde app.js (pOraciones/pVisitas),
     // así la lógica de CSV (BOM, «;», protección contra fórmulas) vive en un solo lugar.
     exportar: { csvGenerico, descargarCSV, botonExportar, conectarExportar, imprimirLista, tablaImprimible },
-    _t: { historialHTML, filasHistorial, hitoFormHTML, conectarHitoForm, conectarBorrar, csvMiembros, celdaCSV, csvGenerico, tablaImprimible, proximosCumples, menuHTML, AREAS, wspCumple, cuando, telefonoWsp, telefonoLlamar, enlaceWsp, filtrar, fichaHTML, filaHTML, cumple }
+    _t: { filtrar, filaHTML, historialHTML, filasHistorial, hitoFormHTML, conectarHitoForm, conectarBorrar, csvMiembros, celdaCSV, csvGenerico, tablaImprimible, proximosCumples, menuHTML, AREAS, wspCumple, cuando, telefonoWsp, telefonoLlamar, enlaceWsp, filtrar, fichaHTML, filaHTML, cumple }
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = window.TBCentroPastor;
 })();

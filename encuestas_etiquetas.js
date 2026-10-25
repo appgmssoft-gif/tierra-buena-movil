@@ -169,17 +169,28 @@
       const mr = await ctx.rpc('pastor_miembros_listar', p, { p_buscar: '' });
       const todas = mr && mr.ok ? (mr.data || []) : [];
       const disponibles = todas.filter((m) => !dentro.has(String(m.id)));
+      // F1432 · 7.1 Se muestran 50 por vez («Mostrar más») y las personas marcadas se recuerdan aunque cambies la búsqueda.
+      const PAG_AG = 50;
+      let topeAg = PAG_AG;
+      const marcadasAg = new Set();
       const pintarAgregar = () => {
         const q = ($('#etBuscar').value || '').trim().toLowerCase();
         const lista = disponibles.filter((m) => nombreDe(m).toLowerCase().includes(q));
         $('#etAgregar').innerHTML = lista.length
-          ? lista.map((m) => '<label class="cp-fila et-marca"><input type="checkbox" value="' + esc(m.id) + '"> <span>' + esc(nombreDe(m)) + '</span></label>').join('')
+          ? lista.slice(0, topeAg).map((m) => '<label class="cp-fila et-marca"><input type="checkbox" value="' + esc(m.id) + '"' + (marcadasAg.has(String(m.id)) ? ' checked' : '') + '> <span>' + esc(nombreDe(m)) + '</span></label>').join('') +
+            (lista.length > topeAg ? '<button type="button" class="btn sec" id="etMas">Mostrar más (' + (lista.length - topeAg) + ' más)</button>' : '')
           : '<p class="suave">No hay personas para agregar.</p>';
+        const mas = $('#etMas'); if (mas) mas.onclick = () => { topeAg += PAG_AG; pintarAgregar(); };
       };
-      $('#etBuscar').addEventListener('input', pintarAgregar);
+      $('#etAgregar').addEventListener('change', (e) => {
+        const t = e.target; if (!t || t.type !== 'checkbox') return;
+        if (t.checked) marcadasAg.add(String(t.value)); else marcadasAg.delete(String(t.value));
+      });
+      let esperaAg = null;
+      $('#etBuscar').addEventListener('input', () => { topeAg = PAG_AG; clearTimeout(esperaAg); esperaAg = setTimeout(pintarAgregar, 150); });
       pintarAgregar();
       $('#etAgregarOk').onclick = async () => {
-        const marcadas = Array.from(document.querySelectorAll('#etAgregar input[type=checkbox]:checked')).map((c) => c.value);
+        const marcadas = Array.from(marcadasAg);
         if (!marcadas.length) { $('#etSegMsg').textContent = 'Marca al menos una persona.'; return; }
         const g = fila(await ctx.rpc('pastor_etiqueta_asignar', p, { p_etiqueta: id, p_miembros: marcadas, p_quitar: false }));
         segmento(id, nombre, g && g.ok ? 'Personas agregadas al grupo.' : textoMotivo(g));

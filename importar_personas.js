@@ -244,18 +244,19 @@
     pintarLista(p, ctx, d.personas || [], miembros);
   }
 
-  function pintarLista(p, ctx, personas, miembros) {
-    aviso('plMsg', '');
-    const cont = $('#plLista'); if (!cont) return;
-    if (!personas.length) {
-      cont.innerHTML = '<p class="suave">Todavía no hay personas de la planilla. Usa «Importar personas» para subir una lista.</p>';
-      return;
-    }
+  // F1432 · 7.1 Listas grandes. Antes cada persona de la planilla llevaba su propia lista con TODAS las cuentas
+  // (500 personas × 500 cuentas = 250.000 opciones dibujadas de una vez y el teléfono se congelaba).
+  // Ahora se muestran 20 por vez («Mostrar más») y la lista de cuentas se arma una sola vez.
+  const PAGINA = 20;
+  function listaHTML(personas, miembros, tope) {
+    const n = Math.max(PAGINA, tope || PAGINA);
     const pendientes = personas.filter((x) => !x.vinculada_a).length;
     const resumen = '<p class="suave">' + personas.length + ' personas. ' +
       (pendientes ? pendientes + ' sin cuenta todavía.' : 'Todas tienen cuenta vinculada.') +
+      (personas.length > n ? ' Mostrando ' + n + ' de ' + personas.length + '.' : '') +
       ' Solo vincula cuando estés seguro de que es la misma persona.</p>';
-    cont.innerHTML = resumen + personas.map((x) => {
+    const opciones = miembros.map((m) => '<option value="' + esc(m.id) + '">' + esc(m.nombre) + '</option>').join('');
+    const filas = personas.slice(0, n).map((x) => {
       const datos = [x.telefono, x.familia].filter(Boolean).map(esc).join(' · ');
       const estado = x.vinculada_a
         ? '<p class="pl-estado ok">Vinculada con <b>' + esc(x.vinculada_nombre || 'una cuenta') + '</b></p>' +
@@ -263,13 +264,31 @@
         : (miembros.length
             ? '<p class="pl-estado">Sin cuenta todavía</p>' +
               '<label class="suave" for="pl-' + esc(x.id) + '">Cuenta de la persona</label>' +
-              '<select id="pl-' + esc(x.id) + '"><option value="">Elegir una cuenta…</option>' +
-              miembros.map((m) => '<option value="' + esc(m.id) + '">' + esc(m.nombre) + '</option>').join('') +
+              '<select id="pl-' + esc(x.id) + '"><option value="">Elegir una cuenta…</option>' + opciones +
               '</select><button type="button" class="btn chico sec" data-pl-vincular="' + esc(x.id) + '">Vincular</button>'
             : '<p class="pl-estado">Sin cuenta todavía. Cuando haya miembros con cuenta podrás vincularla aquí.</p>');
       return '<article class="card pl-item"><h2>' + esc(x.nombre) + '</h2>' +
         (datos ? '<p class="suave">' + datos + '</p>' : '') + estado + '</article>';
     }).join('');
+    const mas = personas.length > n
+      ? '<button type="button" class="btn sec" id="plMas">Mostrar más (' + (personas.length - n) + ' más)</button>' : '';
+    return resumen + filas + mas;
+  }
+
+  function pintarLista(p, ctx, personas, miembros, tope) {
+    aviso('plMsg', '');
+    const cont = $('#plLista'); if (!cont) return;
+    if (!personas.length) {
+      cont.innerHTML = '<p class="suave">Todavía no hay personas de la planilla. Usa «Importar personas» para subir una lista.</p>';
+      return;
+    }
+    // Al pedir «Mostrar más» se conservan las cuentas que ya habías elegido en pantalla.
+    const elegidas = {};
+    cont.querySelectorAll('select[id^="pl-"]').forEach((sel) => { if (sel.value) elegidas[sel.id] = sel.value; });
+    cont.innerHTML = listaHTML(personas, miembros, tope);
+    Object.keys(elegidas).forEach((id) => { const sel = document.getElementById(id); if (sel) sel.value = elegidas[id]; });
+    const mas = document.getElementById('plMas');
+    if (mas) mas.onclick = () => pintarLista(p, ctx, personas, miembros, (tope || PAGINA) + PAGINA);
 
     cont.querySelectorAll('[data-pl-vincular]').forEach((b) => b.onclick = async () => {
       const id = b.getAttribute('data-pl-vincular');
@@ -299,6 +318,6 @@
     abrirLista(p, ctx);
   }
 
-  window.TBImportar = { abrir, abrirLista, _t: { parsearCSV, sugerirMapeo, normTel, normFecha, preparar, plantillaCSV, huella, CAMPOS, MAX_FILAS, LOTE } };
+  window.TBImportar = { abrir, abrirLista, _t: { listaHTML, PAGINA, parsearCSV, sugerirMapeo, normTel, normFecha, preparar, plantillaCSV, huella, CAMPOS, MAX_FILAS, LOTE } };
   if (typeof module !== 'undefined' && module.exports) module.exports = window.TBImportar;
 })();

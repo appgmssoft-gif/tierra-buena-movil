@@ -245,7 +245,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Acertijos de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Letras entre las hojas': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => !CABECERAS_ILUSTRADAS ? '' : `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1431';
+  const APP_VERSION = 'F1432';
   // F1171: respaldo si movimiento.js no cargó (pruebas o caché vieja): mismo criterio que TBMov.quieto().
   const MOV_QUIETO = () => { try { if (window.TBMov) return window.TBMov.quieto(); const h = document.documentElement; return h.getAttribute('data-anim') === 'off' || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
@@ -3765,7 +3765,7 @@
   const CAT_ICO = { preguntas: '❓', oracion: '🙏', ayuda: '🤲', servicio: '🧹', avisos: '📣', reunion: '📅' };
   const CAT_PH = { preguntas: 'Escribe tu pregunta. Quien pueda te responde.', oracion: 'Escribe tu petición de oración. La iglesia ora contigo.', ayuda: 'Cuenta en qué necesitas ayuda.', servicio: 'Escribe qué servicio ofreces o necesitas.', avisos: 'Escribe el aviso para la iglesia.', reunion: 'Escribe el tema y el día de la reunión.' };
   const catTag = (c) => (CAT_ICO[c] ? '<span class="ch-tag cat-' + esc(c) + '">' + CAT_ICO[c] + ' ' + esc((CHAT_CAT.find((z) => z[0] === c) || [0, 'Mensaje'])[1]) + '</span>' : '');
-  const CHAT_MOT = { 'sin-permiso': 'Tu acceso a este espacio no lo permite.', 'texto-invalido': 'Escribe un mensaje de 1 a 1000 letras.', 'categoria-invalida': 'Elige una categoría.', 'demasiados': 'Has enviado muchos mensajes en poco tiempo. Espera un momento.', 'no-existe': 'Eso ya no está disponible.', 'titulo-invalido': 'Escribe un título de 2 a 80 letras.', 'fecha-invalida': 'Elige cuándo es la reunión.', 'miembro-invalido': 'Elige a una persona de tu iglesia.' };
+  const CHAT_MOT = { 'sin-permiso': 'Tu acceso a este espacio no lo permite.', 'texto-invalido': 'Escribe un mensaje de 1 a 1000 letras.', 'categoria-invalida': 'Elige una categoría.', 'demasiados': 'Has enviado muchos mensajes en poco tiempo. Espera un momento.', 'no-existe': 'Eso ya no está disponible.', 'titulo-invalido': 'Escribe un título de 2 a 80 letras.', 'fecha-invalida': 'Elige cuándo es la reunión.', 'miembro-invalido': 'Elige a una persona de tu iglesia.', 'respuesta-invalida': 'Ese mensaje ya no está. Escribe tu mensaje de nuevo, sin responder a otro.' };
   const chatQ = (x) => (x.rol === 'pastor' ? { p_codigo: x.codigo, p_clave: null, p_secreto: x.secreto } : { p_codigo: x.codigo, p_clave: x.clave, p_secreto: null });
   const chatSala = (sala) => 'https://meet.jit.si/' + encodeURIComponent(sala);
   const chatMot = (r) => { const x = r && r.ok ? primera(r.data) : null; return x && x.ok ? null : (CHAT_MOT[x ? x.motivo : ''] || 'No se pudo completar. Revisa tu conexión.'); };
@@ -3786,10 +3786,17 @@
       const abrir = (c) => vistaChat(x, c);
       const r = await rpcRaw('chat_canales_listar', q);
       const caja = $('#chLista'); if (!caja) return;
+      // F1432 · punto de mensajes nuevos (SQL 76, parte 4). Si aún no está corrido, no aparece y todo sigue igual.
+      let act = {};
+      if (r.ok && window.TBChatHilos && TBChatHilos.actividadEstado() !== false) {
+        const ra = await rpcRaw('chat_canales_actividad', q);
+        if (ra.ok) { TBChatHilos.ponerActividad(true); act = TBChatHilos.actividadPorCanal(ra.data); } else if (ra.falta) TBChatHilos.ponerActividad(false);
+      }
       if (!r.ok) { caja.innerHTML = '<p class="suave">No pudimos abrir el chat. Revisa tu conexión.</p>'; }
       else {
-        const c = r.data || [];
-        caja.innerHTML = c.length ? c.map((k) => `<button type="button" class="mi-curso ch-sala ch-${esc(k.tipo)}" data-chc="${esc(k.id)}"><span class="mi-curso-ic" aria-hidden="true">${k.tipo === 'iglesia' ? '🕊️' : k.tipo === 'lideres' ? '🤝' : k.tipo === 'ministerio' ? '🧭' : k.tipo === 'seccion' ? (CAT_ICO[k.seccion] || '💬') : '🔒'}</span><span class="mi-curso-tx"><b>${esc(k.tipo === 'directo' ? (x.rol === 'pastor' ? (k.directo_nombre || k.nombre) : 'Mi pastor') : k.nombre)}</b><small>${k.tipo === 'iglesia' ? 'Toda la iglesia' : k.tipo === 'lideres' ? 'Pastor y líderes: reuniones y organización' : 'Conversación privada'}</small></span><span class="mi-curso-est">${k.tipo === 'iglesia' ? 'Todos' : k.tipo === 'lideres' ? 'Equipo' : 'Privado'}</span></button>`).join('') : '<p class="suave">Aún no hay conversaciones.</p>';
+        const sil = window.TBChatHilos ? TBChatHilos.silenciados() : [], vis = window.TBChatHilos ? TBChatHilos.vistos() : {};
+        const c = window.TBChatHilos ? TBChatHilos.ordenar(r.data || [], sil) : (r.data || []);
+        caja.innerHTML = c.length ? c.map((k) => `<button type="button" class="mi-curso ch-sala ch-${esc(k.tipo)}" data-chc="${esc(k.id)}"><span class="mi-curso-ic" aria-hidden="true">${k.tipo === 'iglesia' ? '🕊️' : k.tipo === 'lideres' ? '🤝' : k.tipo === 'ministerio' ? '🧭' : k.tipo === 'seccion' ? (CAT_ICO[k.seccion] || '💬') : '🔒'}</span><span class="mi-curso-tx"><b>${esc(k.tipo === 'directo' ? (x.rol === 'pastor' ? (k.directo_nombre || k.nombre) : 'Mi pastor') : k.nombre)}</b>${window.TBChatHilos ? TBChatHilos.marcaListaHTML(TBChatHilos.hayNuevo(k.id, act, vis, sil), sil.indexOf(String(k.id)) >= 0) : ''}<small>${k.tipo === 'iglesia' ? 'Toda la iglesia' : k.tipo === 'lideres' ? 'Pastor y líderes: reuniones y organización' : 'Conversación privada'}</small></span><span class="mi-curso-est">${k.tipo === 'iglesia' ? 'Todos' : k.tipo === 'lideres' ? 'Equipo' : 'Privado'}</span></button>`).join('') : '<p class="suave">Aún no hay conversaciones.</p>';
         caja.querySelectorAll('[data-chc]').forEach((b) => b.addEventListener('click', () => abrir(c.find((k) => k.id === b.dataset.chc))));
       }
       const pv = $('#chPrivado');
@@ -3808,6 +3815,7 @@
       return;
     }
     // ----- dentro de un canal -----
+    try { window.TBChatHilos && TBChatHilos.marcarVisto(canal.id); } catch (e0) { /* sin guardar */ }
     const puedeVideo = esPastor ? canal.tipo !== 'iglesia' : (x.esLider && canal.tipo === 'lideres');
     // F1410 · Normas: un botón; al entrar se muestran 10 segundos y luego se ocultan.
     const normas = canal.normas ? `<div class="chat-normas-bar"><button type="button" class="btn sec chico" id="chVerNormas" aria-expanded="true">📌 Normas</button><div class="card chat-normas" id="chNormasBox"><b>Normas de este espacio</b><p class="m0t">${esc(canal.normas)}</p></div></div>` : '';
@@ -3817,34 +3825,57 @@
     const videoBox = puedeVideo ? `<div class="cr-acc"><button type="button" class="btn sec chico" id="chVideo">Crear reunión por video</button></div><div id="chVideoForm" class="card" hidden><label for="chVT">Título de la reunión</label><input id="chVT" type="text" maxlength="80"><label for="chVI">Cuándo</label><input id="chVI" type="datetime-local" value="${aLocal(new Date())}"><button type="button" class="btn" id="chVG">Crear y compartir</button></div><div id="chReuniones" class="lista"></div>` : '';
     const nomCanal = canal.tipo === 'directo' ? (canal.directo_nombre || canal.nombre) : canal.nombre;
     $('#pantalla').innerHTML = `<button type="button" class="volver" id="volver">‹ Chat</button>${heroInt(canal.tipo === 'iglesia' ? 'c2' : canal.tipo === 'lideres' ? 'c1' : 'c3', canal.tipo === 'iglesia' ? '🕊️' : canal.tipo === 'lideres' ? '🤝' : canal.tipo === 'ministerio' ? '🧭' : canal.tipo === 'seccion' ? (CAT_ICO[canal.seccion] || '💬') : '🔒', canal.tipo === 'iglesia' ? 'Toda la iglesia' : canal.tipo === 'lideres' ? 'Pastor y líderes' : canal.tipo === 'ministerio' ? 'Chat del ministerio' : canal.tipo === 'seccion' ? ((CHAT_CAT.find((z) => z[0] === canal.seccion) || [0, 'Sección'])[1]) : 'Conversación privada', esc(nomCanal), canal.tipo === 'directo' ? 'Solo ustedes dos ven esta conversación.' : 'Escribe con respeto: aquí nos acompañamos.')}${normas}${privadoBtn}${pastorTools}${videoBox}
-      <p class="suave" id="chMsg" role="status"></p><div id="chHilo" class="chat-hilo" aria-live="polite"><p class="suave">Cargando mensajes…</p></div>
+      ${window.TBChatHilos ? '<div class="cr-acc">' + TBChatHilos.botonSilencioHTML(TBChatHilos.esSilenciado(canal.id)) + '</div>' : ''}<p class="suave" id="chMsg" role="status"></p><div id="chHilo" class="chat-hilo" aria-live="polite"><p class="suave">Cargando mensajes…</p></div>
       <div class="card chat-escribir"><input type="hidden" id="chCat" value="${CHAT_CAT[0][0]}"><div class="ch-cats" role="radiogroup" aria-label="Tipo de mensaje">${CHAT_CAT.map((c, i) => `<button type="button" class="ch-cat${i ? '' : ' on'}" role="radio" aria-checked="${i ? 'false' : 'true'}" data-cat="${c[0]}">${c[1]}</button>`).join('')}</div>
-        <label for="chTxt" class="ch-lbl">Escribe con cariño</label><div class="ch-fila"><textarea id="chTxt" rows="2" maxlength="1000"></textarea><button type="button" class="btn ch-env" id="chEnviar" aria-label="Enviar mensaje">Enviar</button></div></div>`;
+        <div id="chResp" aria-live="polite" hidden></div><label for="chTxt" class="ch-lbl">Escribe con cariño</label><div class="ch-fila"><textarea id="chTxt" rows="2" maxlength="1000"></textarea><button type="button" class="btn ch-env" id="chEnviar" aria-label="Enviar mensaje">Enviar</button></div></div>`;
     document.querySelectorAll('.ch-cat').forEach((b) => b.addEventListener('click', () => { document.querySelectorAll('.ch-cat').forEach((z) => { const on = z === b; z.classList.toggle('on', on); z.setAttribute('aria-checked', on ? 'true' : 'false'); }); $('#chCat').value = b.dataset.cat; const tx = $('#chTxt'); if (tx) tx.placeholder = CAT_PH[b.dataset.cat] || ''; }));
     // F1410 · Chat por secciones: la sección ya dice el tema, así que no se eligen categorías.
     if (canal.tipo === 'seccion') { const cc = document.querySelector('.ch-cats'); if (cc) cc.hidden = true; $('#chCat').value = canal.seccion; }
     volverA('Chat', () => vistaChat(x));
     const msg = (t, ok) => { const m = $('#chMsg'); if (m) { m.textContent = t; m.className = ok ? 'ok suave' : 'suave'; } };
+    // F1432 · Responder a un mensaje (SQL 76) y silenciar este espacio (solo en este teléfono).
+    let respondiendo = null;
+    const pintarResp = () => {
+      const bx = $('#chResp'); if (!bx || !window.TBChatHilos) return;
+      bx.hidden = !respondiendo; bx.innerHTML = respondiendo ? TBChatHilos.respondiendoHTML(respondiendo) : '';
+      const cx = $('#chRespCancelar'); if (cx) cx.onclick = () => { respondiendo = null; pintarResp(); const tx = $('#chTxt'); if (tx) tx.focus(); };
+    };
+    const sb = $('#chSilenciar');
+    if (sb && window.TBChatHilos) sb.onclick = () => {
+      const on = TBChatHilos.alternarSilencio(canal.id);
+      sb.setAttribute('aria-pressed', String(on)); sb.textContent = on ? '🔔 Dejar de silenciar' : '🔕 Silenciar este espacio';
+      msg(on ? 'Espacio silenciado en este teléfono: no verás el punto de mensajes nuevos.' : 'Listo, volverás a ver el punto de mensajes nuevos de este espacio.', true);
+    };
     const cargarHilo = async () => {
-      const r = await rpcRaw('chat_mensajes_listar', Object.assign({}, q, { p_canal: canal.id }));
+      const arg = Object.assign({}, q, { p_canal: canal.id }), CH = window.TBChatHilos;
+      let r = CH && CH.hilosEstado() !== false ? await rpcRaw('chat_mensajes_listar_hilo', arg) : { ok: false, falta: true };
+      if (r.ok && CH) CH.ponerHilos(true);
+      else if (r.falta || !CH) { if (CH) CH.ponerHilos(false); r = await rpcRaw('chat_mensajes_listar', arg); }
       const h = $('#chHilo'); if (!h) return;
       if (!r.ok) { h.innerHTML = '<p class="suave">No pudimos cargar los mensajes.</p>'; return; }
       const l = r.data || [];
-      h.innerHTML = l.length ? l.map((m) => `<article class="chat-msg${m.es_mio ? ' mio' : ''}${m.oculto ? ' oculto' : ''} rol-${esc(m.autor_rol || 'miembro')} cat-${esc(m.categoria || 'preguntas')}"><span class="ch-av ${mbCol(String(m.autor_nombre || 'a').charCodeAt(0))}" aria-hidden="true">${esc(String(m.autor_nombre || '?').trim().charAt(0).toUpperCase())}</span><div class="ch-burbuja"><p class="chat-quien"><b>${esc(m.autor_nombre)}</b> ${catTag(m.categoria)} <span class="etiqueta">${esc(m.autor_rol === 'pastor' ? 'Pastor' : m.autor_rol === 'lider' ? 'Líder' : 'Miembro')}</span> <small class="suave">${esc(new Date(m.creado_en).toLocaleString('es-CL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }))}</small></p><p class="chat-txt">${m.texto === null ? '<em>Mensaje oculto por el pastor.</em>' : esc(m.texto)}</p><div class="cr-acc">${esPastor ? `<button type="button" class="btn sec chico" data-ocu="${esc(m.id)}" data-val="${m.oculto ? '0' : '1'}">${m.oculto ? 'Mostrar' : 'Ocultar'}</button>` : ''}</div></div></article>`).join('') : '<p class="suave">Todavía no hay mensajes. Sé el primero en bendecir.</p>';
+      h.innerHTML = l.length ? l.map((m) => `<article class="chat-msg${m.es_mio ? ' mio' : ''}${m.oculto ? ' oculto' : ''} rol-${esc(m.autor_rol || 'miembro')} cat-${esc(m.categoria || 'preguntas')}"><span class="ch-av ${mbCol(String(m.autor_nombre || 'a').charCodeAt(0))}" aria-hidden="true">${esc(String(m.autor_nombre || '?').trim().charAt(0).toUpperCase())}</span><div class="ch-burbuja"><p class="chat-quien"><b>${esc(m.autor_nombre)}</b> ${catTag(m.categoria)} <span class="etiqueta">${esc(m.autor_rol === 'pastor' ? 'Pastor' : m.autor_rol === 'lider' ? 'Líder' : 'Miembro')}</span> <small class="suave">${esc(new Date(m.creado_en).toLocaleString('es-CL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }))}</small></p>${window.TBChatHilos && TBChatHilos.hilosOk() ? TBChatHilos.citaHTML(m) : ''}<p class="chat-txt">${m.texto === null ? '<em>Mensaje oculto por el pastor.</em>' : esc(m.texto)}</p><div class="cr-acc">${window.TBChatHilos && TBChatHilos.hilosOk() && m.texto !== null ? TBChatHilos.botonResponderHTML(m) : ''}${esPastor ? `<button type="button" class="btn sec chico" data-ocu="${esc(m.id)}" data-val="${m.oculto ? '0' : '1'}">${m.oculto ? 'Mostrar' : 'Ocultar'}</button>` : ''}</div></div></article>`).join('') : '<p class="suave">Todavía no hay mensajes. Sé el primero en bendecir.</p>';
       h.querySelectorAll('[data-ocu]').forEach((b) => b.addEventListener('click', async () => {
         const rr = await rpcRaw('chat_mensaje_ocultar', { p_codigo: x.codigo, p_secreto: x.secreto, p_mensaje: b.dataset.ocu, p_ocultar: b.dataset.val === '1' });
         if (chatMot(rr)) msg(chatMot(rr)); else cargarHilo();
+      }));
+      h.querySelectorAll('[data-resp]').forEach((b) => b.addEventListener('click', () => {
+        const m = l.find((z) => z.id === b.dataset.resp); if (!m) return;
+        respondiendo = m; pintarResp(); const tx = $('#chTxt'); if (tx) tx.focus();
       }));
     };
     $('#chEnviar').onclick = async () => {
       const t = ($('#chTxt').value || '').trim();
       if (!t) return msg('Escribe un mensaje antes de enviar.');
       const btn = $('#chEnviar'); btn.disabled = true;
-      const rr = await rpcRaw('chat_mensajes_enviar', Object.assign({}, q, { p_canal: canal.id, p_categoria: $('#chCat').value, p_texto: t }));
+      const cuerpo = Object.assign({}, q, { p_canal: canal.id, p_categoria: $('#chCat').value, p_texto: t });
+      const rr = respondiendo && window.TBChatHilos && TBChatHilos.hilosOk()
+        ? await rpcRaw('chat_mensaje_responder', Object.assign(cuerpo, { p_responde_a: respondiendo.id }))
+        : await rpcRaw('chat_mensajes_enviar', cuerpo);
       btn.disabled = false;
       const e = chatMot(rr);
       if (e) return msg(e);
-      $('#chTxt').value = ''; msg('Enviado.', true); try { window.TBSonido && TBSonido.mensaje(); } catch (e0) { /* sin sonido */ } cargarHilo();
+      $('#chTxt').value = ''; respondiendo = null; pintarResp(); msg('Enviado.', true); try { window.TBSonido && TBSonido.mensaje(); } catch (e0) { /* sin sonido */ } cargarHilo();
     };
     const dc = $('#chDirecto');
     if (dc) dc.onclick = async () => { const rr = await rpcRaw('chat_directo_abrir', Object.assign({}, q, { p_miembro: null })); if (chatMot(rr)) return msg(chatMot(rr)); const c2 = await rpcRaw('chat_canales_listar', q); const k = (c2.data || []).find((z) => z.id === primera(rr.data).canal_id); if (k) vistaChat(x, k); else msg('No encontramos tu conversación con el pastor. Toca de nuevo; si sigue igual, avísale al pastor.'); };

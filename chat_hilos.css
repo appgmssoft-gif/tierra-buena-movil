@@ -1,0 +1,11 @@
+/* F1432 · Chat: respuestas, punto de mensajes nuevos y silenciar. Solo transform/opacity en movimiento; sin animaciones propias. */
+.ch-cita{margin:0 0 6px;padding:6px 10px;border-left:3px solid var(--oro);border-radius:6px 12px 12px 6px;background:color-mix(in srgb,var(--oro) 10%,var(--tarjeta));display:flex;flex-direction:column;gap:2px;font-size:.84rem;color:var(--tinta)}
+.ch-cita b{font-size:.78rem;color:var(--verde)}
+.ch-cita span{color:var(--suave);overflow-wrap:anywhere}
+.ch-resp-caja{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 8px;padding:8px 10px;border-radius:14px;border:1px solid var(--linea);border-left:4px solid var(--oro);background:color-mix(in srgb,var(--oro) 8%,var(--tarjeta))}
+.ch-resp-txt{display:flex;flex-direction:column;min-width:0}
+.ch-resp-txt b{font-size:.88rem}
+.ch-resp-txt small{color:var(--suave);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ch-punto{display:inline-block;width:10px;height:10px;margin-left:6px;border-radius:50%;background:var(--oro);box-shadow:0 0 0 3px color-mix(in srgb,var(--oro) 28%,transparent);vertical-align:middle}
+.ch-silencio{margin-left:6px;font-size:.85rem;opacity:.8}
+.ch-resp-btn,.ch-sil-btn{min-height:44px}
