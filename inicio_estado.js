@@ -41,6 +41,8 @@
       // F1237 · La tienda de «especiales» de Tu paisaje se retiró (sin entrada en el Vivero y repetía los rasgos de cada lugar): se devuelven las gotas de lo comprado, una sola vez.
       const RET = { nenufares: 40, cisne: 80, piedras: 30, sauce: 60, helechos: 40, tronco: 60, guanaco: 80, flores_altura: 40, rocas_volcanicas: 30, araucarias: 70, gaviota: 50, conchas: 30, cactus: 40, zorro: 80, huemul: 90 };
       let dev = 0; b.vivero.desbloqueados = b.vivero.desbloqueados.filter((k) => { if (k.indexOf('esp_') !== 0) return true; dev += RET[k.slice(4)] || 0; return false; });
+      // F1414 · Partidas guardadas con araucaria: en cordillera pasan a quenoa (arbusto bajo); en el resto, a canelo.
+      if (b.ciclo && b.ciclo.especie === 'araucaria') b.ciclo.especie = b.tematica === 'cordillera' ? 'quenoa' : 'canelo';
       if (dev) b.gotas.saldo += dev;
       // F1229 · «Jardín del mundo» ya no existe: la cuenta pasa al bosque nativo (con su pewén) y se devuelven las gotas de esa compra, una sola vez.
       const dj = b.vivero.desbloqueados.filter((k) => k !== 'tem_jardin' && k !== 'lug_jardin');

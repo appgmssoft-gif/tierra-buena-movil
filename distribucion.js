@@ -20,7 +20,9 @@
       for (let k = 0; k < o.intentos; k++) {
         const c = { x: z.x0 + R() * (z.x1 - z.x0), y: z.y0 + R() * (z.y1 - z.y0) };
         const d = out.length ? Math.min.apply(null, out.map((p) => Math.hypot(p.x - c.x, p.y - c.y))) : Infinity;
-        if (d >= o.minDist) { mejor = c; mejorD = d; break; }
+        // F1414 · no caer encima de elementos fijos del paisaje (copihue, fogata, setas)
+        const choca = (o.evitar || []).some((e) => Math.hypot(e.x - c.x, e.y - c.y) < e.r + o.minDist / 2);
+        if (d >= o.minDist && !choca) { mejor = c; mejorD = d; break; }
         if (d > mejorD) { mejor = c; mejorD = d; }
       }
       out.push({ x: Math.round(mejor.x * 100) / 100, y: Math.round(mejor.y * 100) / 100 });

@@ -117,7 +117,17 @@
     return tronco + copa;
   }
   // Árbol de una especie en una etapa: dibujo con la base en (0,0). Si la especie o la etapa no se conocen, se usa el brote (nunca se rompe la pantalla).
+  // F1414 · Arbusto bajo (cordillera): crece con las etapas, sin tronco alto.
+  function arbusto(etapa) {
+    const k = ({ brote: 0.45, raiz: 0.55, ramas: 0.8, frondoso: 1 })[etapa] || 0.45;
+    return '<g transform="scale(' + k + ')"><path d="M-16 0 C-18 -10 -10 -16 0 -16 C10 -16 18 -10 16 0Z" fill="#3f6b47"/>'
+      + '<ellipse cx="-9" cy="-14" rx="11" ry="8" fill="#5d9a62"/><ellipse cx="8" cy="-15" rx="10" ry="7" fill="#4f8a55"/>'
+      + '<ellipse cx="0" cy="-21" rx="7" ry="5" fill="#6aa86b" opacity=".85"/></g>';
+  }
   function arbol(especie, etapa, dias) {
+    // F1414 · Cordillera sin árbol alto: la quenoa es un arbusto bajo. Una especie retirada que quedó guardada en una partida se dibuja como canelo.
+    if (especie === 'araucaria') especie = 'canelo';
+    if (FORMA[especie] === 'arbusto') return arbusto(etapa);
     const f = FORMA[especie] || 'redondo';
     const cuerpo = etapa === 'frondoso' ? frondoso(f, especie, dias) : etapa === 'ramas' ? ramas(f) : etapa === 'raiz' ? raiz() : brote();
     const bellotas = especie === 'roble' && etapa === 'frondoso' ? '<g fill="#b07a3e" stroke="#7a5024" stroke-width=".5">' + [[-30,-132],[-16,-120],[-2,-112],[14,-118],[28,-130],[-22,-150],[20,-152]].map((q) => '<ellipse cx="' + q[0] + '" cy="' + q[1] + '" rx="2.2" ry="2.8"/>').join('') + '</g>' : '';
@@ -833,7 +843,9 @@ ananuca: () => `<path d="M15 44 C10 36 6 30 4 22 C10 28 13 34 15 44Z" fill="#6b9
     const cajas = Array.prototype.slice.call(cont.querySelectorAll('.il-ave'));
     if (!cajas.length) return;
     const zonas = cajas.map((c) => { const m = /\bl-([a-z]+)/.exec(c.className); return (m && ZONA_AVE[m[1]]) || ZONA_AVE.rama; });
-    const pos = window.TBDistribucion.distribuir(zonas, { minDist: 16, sem: 11 });
+    // F1414 · Elementos fijos del paisaje (porcentaje del escenario) que las aves deben evitar.
+    const evitar = [{ x: 8, y: 79, r: 9 }, { x: 32, y: 78, r: 9 }, { x: 78, y: 79, r: 10 }];
+    const pos = window.TBDistribucion.distribuir(zonas, { minDist: 16, sem: 11, evitar: evitar });
     cajas.forEach((c, i) => { c.style.left = pos[i].x + '%'; c.style.top = pos[i].y + '%'; });
   }
 
