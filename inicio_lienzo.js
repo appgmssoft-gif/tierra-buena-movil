@@ -162,7 +162,7 @@
     if (f === 'volcan') return '<g class="pa-volc"><path class="mo m2" d="M-60 292 L30 232 L90 262 L150 226 L210 278 L330 236 L430 292Z"/><path class="mo m1" d="M196 292 L258 196 C264 184 276 184 282 196 L346 292Z"/><path class="nv" d="M250 210 L258 196 C264 184 276 184 282 196 L290 212 C280 204 272 214 266 206 C260 214 254 206 250 210Z"/><ellipse class="humo" cx="272" cy="176" rx="9" ry="5"/><ellipse class="humo" cx="280" cy="164" rx="12" ry="6"/><ellipse class="humo" cx="292" cy="152" rx="15" ry="7"/></g>';
     if (f === 'bosque') {   // F1411 · Bosque nativo: árboles nativos de fondo (canelo, roble, quillay), en distintas alturas. Sin conos.
       const arb = (x, y, k, c1, c2) => '<g transform="translate(' + x + ' ' + y + ') scale(' + k + ')"><path d="M-3 0 L3 0 L2 -36 L-2 -36Z" fill="#7a5c45"/><ellipse cx="0" cy="-50" rx="26" ry="21" fill="' + c1 + '"/><ellipse cx="-11" cy="-42" rx="15" ry="13" fill="' + c2 + '" opacity=".8"/><ellipse cx="11" cy="-44" rx="14" ry="12" fill="' + c2 + '" opacity=".6"/></g>';
-      return '<g class="pa-bosque" aria-hidden="true">' + arb(-24, 300, 0.9, '#3f7a4d', '#5d9a62') + arb(46, 306, 1.1, '#2f6b3f', '#4f8a55') + arb(118, 298, 0.8, '#4f8a55', '#7ab07c') + arb(186, 304, 1, '#2f6b3f', '#5d9a62') + arb(262, 300, 0.95, '#3f7a4d', '#6aa86b') + arb(340, 306, 1.05, '#2f6b3f', '#4f8a55') + '</g>';
+      return '<g class="pa-bosque" aria-hidden="true">' + arb(-24, 300, 0.9, '#3f7a4d', '#5d9a62') + arb(46, 306, 1.1, '#2f6b3f', '#4f8a55') + arb(118, 298, 0.8, '#4f8a55', '#7ab07c') + '</g>';
     }
     if (f === 'desierto') return '<g class="pa-desierto" aria-hidden="true">'   // F1056 · Desierto: dunas, una mesa lejana y dos cactus (fondo propio, no vacío)
       + '<path class="mo m2" fill="#ecd29c" d="M-60 300 C20 262 80 270 130 286 S240 258 300 276 S380 262 430 290 L430 330 L-60 330Z"/>'
@@ -310,7 +310,7 @@ ananuca: () => `<path d="M15 44 C10 36 6 30 4 22 C10 28 13 34 15 44Z" fill="#6b9
   const vis = (tipo, id, est) => !window.TBInicio || window.TBInicio.visibleEn(tipo, id, est.tematica);   // F1067
   function vivEscena(est) {
     const v = est.vivero || {};
-    return (v.plantas || []).filter((q) => vis('semilla', q.id, est)).map((q) => '<span class="il-planta p-' + esc(q.id) + ' s-' + esc(q.id === 'copihue' ? bordeCopihue(q.casilla) : q.casilla) + '" aria-hidden="true">' + flor(q.id, 0.9) + '</span>').join('')
+    return (v.plantas || []).filter((q) => vis('semilla', q.id, est)).slice(-1).map((q) => '<span class="il-planta p-' + esc(q.id) + ' s-' + esc(q.casilla) + '" aria-hidden="true">' + flor(q.id, 0.9) + '</span>').join('')
       + (v.aves || []).filter((a) => vis('ave', a.id, est)).slice(0, 2).map((a, i) => '<span class="il-ave n' + (i + 1) + ' a-' + esc(a.id) + ' l-' + esc((AVES[a.id] || {}).lugar || 'rama') + '" aria-hidden="true">' + ave(a.id) + '</span>').join('')
       // F1055 · luciérnagas encendidas: seis luces que flotan en el cielo (la animación se apaga con movimiento reducido o en modo ahorro)
       + (v.ambientes || []).filter((id) => vis('ambiente', id, est)).slice(0, 2).map((id) => id === 'luciernagas' ? '<span class="il-luci-grupo" aria-hidden="true"><i class="il-luci k1"></i><i class="il-luci k2"></i><i class="il-luci k3"></i><i class="il-luci k4"></i><i class="il-luci k5"></i><i class="il-luci k6"></i></span>'
@@ -512,7 +512,7 @@ ananuca: () => `<path d="M15 44 C10 36 6 30 4 22 C10 28 13 34 15 44Z" fill="#6b9
   const EMB_DES = [194, 356, 0.95];
   function escena(est) {
     const c = est.ciclo, et = 'frondoso';   // F1281: sin crecimiento por días: el árbol siempre está maduro
-    const pais = est.paisaje || [], nPais = pais.length, escAv = 1;
+    const pais = est.paisaje || [], nPais = Math.min(pais.length, 1), escAv = 1;   // F1419 · a lo más un árbol de paisaje: el Inicio se ve limpio
   const fondo = pais.slice(0, nPais).map((q) => { const s = FONDO[q.casilla]; return s ? '<g transform="translate(' + s[0] + ' ' + s[1] + ') scale(' + (s[2] * escAv) + ')">' + arbol(q.especie, 'frondoso') + '</g>' : ''; }).join('');
     const mal = (est.maleza || []).map((m) => '<button type="button" class="il-maleza s-' + esc(m.casilla) + '" data-id="' + esc(m.id) + '" aria-label="Quitar maleza (' + esc(MALEZA[m.tipo] || 'maleza') + '). Toca para limpiarla">' + malezaIcono(m.tipo) + '</button>').join('');
     const TM = est.tematica && CAT && CAT.tematicas && CAT.tematicas[est.tematica], fo = (TM && TM.fondo) || fondoActual(), cl = climaReal(climaActual());   // F965: la temática cambia el fondo

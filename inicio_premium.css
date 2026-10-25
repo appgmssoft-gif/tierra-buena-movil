@@ -175,3 +175,51 @@ body:has(.ip-con-fondo) .barra{box-shadow:0 0 0 1px rgba(201,162,74,.5),0 0 0 4p
 .ha-cuerpo .viv-accion:has(.viv-est-prev) .viv-ayuda{display:none}
 .ha-cuerpo .viv-accion:has(.viv-est-prev) .il-viv-ok2,.ha-cuerpo .viv-accion:has(.viv-est-prev) .il-viv-pre,.ha-cuerpo .viv-accion:has(.viv-est-prev) .suave{grid-column:1/-1;margin:8px 0 0;font-size:.84rem}
 .ha-cuerpo .viv-accion:has(.viv-est-prev) .il-viv-bt{grid-column:1/-1;margin-top:8px}
+
+/* F1419 · Pulido del Inicio: texto legible sobre el paisaje, píldora más clara y escena menos recargada. */
+.ip-con-fondo .il-sal,.ip-con-fondo .il-hora{text-shadow:0 1px 16px rgba(255,255,255,.85),0 0 2px rgba(255,255,255,.5)}
+.ip-con-fondo .il-pill{box-shadow:0 0 0 1px rgba(201,162,74,.45),0 10px 24px -10px rgba(30,25,10,.45),inset 0 1px 0 #fff}
+.ip-con-fondo .il-pill .il-juntos{opacity:1;color:#5a4420}
+.ip-con-fondo .il-ave.l-suelo,.ip-con-fondo .il-planta{filter:drop-shadow(0 3px 4px rgba(20,35,15,.28))}
+@media (prefers-color-scheme:dark){
+  .ip-con-fondo .il-sal,.ip-con-fondo .il-hora{text-shadow:0 1px 14px rgba(0,0,0,.55)}
+  .ip-con-fondo .il-pill .il-juntos{color:#f1e6c9}
+}
+
+/* ======================================================================
+   F1420 · Estilo Apple (HIG): claridad, deferencia y profundidad.
+   - Un solo material translúcido para todos los controles flotantes (sin degradados ni anillos dorados).
+   - Filete de 0,5 px en vez de bordes gruesos; una sola sombra suave.
+   - Grilla de 8 pt: controles de 44 pt separados 8 pt; radios concéntricos.
+   - Curva de movimiento de Apple y respeto a «reducir movimiento».
+   ====================================================================== */
+body:has(.ip-con-fondo){
+  --hig-mat:color-mix(in srgb,var(--tarjeta,#fff) 64%,transparent);
+  --hig-filete:color-mix(in srgb,var(--tinta,#000) 12%,transparent);
+  --hig-sombra:0 6px 20px -10px rgba(0,0,0,.35);
+  --hig-ease:cubic-bezier(.2,.8,.2,1);
+}
+body:has(.ip-con-fondo) :is(.btn-menu,.tb-rapido,.ntf-campana,.il-pill){
+  background:var(--hig-mat)!important;
+  -webkit-backdrop-filter:blur(20px) saturate(180%)!important;backdrop-filter:blur(20px) saturate(180%)!important;
+  border:0!important;box-shadow:0 0 0 .5px var(--hig-filete),var(--hig-sombra)!important;
+  transition:transform .28s var(--hig-ease),opacity .28s var(--hig-ease);
+}
+body:has(.ip-con-fondo) :is(.btn-menu,.tb-rapido,.ntf-campana){width:44px;height:44px;opacity:1}
+body:has(.ip-con-fondo) .btn-menu .avatar{width:34px;height:34px}
+body:has(.ip-con-fondo) :is(.btn-menu,.tb-rapido,.ntf-campana,.il-pill .il-juntos):active{transform:scale(.94)}
+/* Esquina superior derecha: configuración (12) · campana (+8) · píldora (+8) */
+body:has(.ip-con-fondo) .ntf-campana{right:calc(64px + var(--sa-r,0px))}
+body:has(.ip-con-fondo) .il-pill{right:116px;padding:4px;gap:0}
+.ip-con-fondo .il-pill .il-juntos{background:transparent!important;box-shadow:none!important}
+/* Barra inferior: sin brillo dorado ni resplandor; la pestaña activa se marca solo con color y fondo suave */
+body:has(.ip-con-fondo) .barra{border:0!important;box-shadow:0 0 0 .5px rgba(255,255,255,.12),0 12px 32px -14px rgba(0,0,0,.5)!important}
+body:has(.ip-con-fondo) .barra::before{display:none}
+body:has(.ip-con-fondo) .tab[aria-current=page]::after{display:none}
+body:has(.ip-con-fondo) .tab[aria-current=page] .ico{filter:none}
+/* Jerarquía del encabezado: la hora manda; el saludo y la frase acompañan */
+.ip-con-fondo .il-sal{letter-spacing:.16em;opacity:.92}
+.ip-con-fondo .il-frase{max-width:20em;line-height:1.45}
+@media (prefers-reduced-motion:reduce){
+  body:has(.ip-con-fondo) :is(.btn-menu,.tb-rapido,.ntf-campana,.il-pill){transition:none}
+}

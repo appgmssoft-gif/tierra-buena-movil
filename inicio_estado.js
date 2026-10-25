@@ -175,7 +175,8 @@
   function plantar(id) {                                   // planta una semilla ya desbloqueada en una casilla libre permitida
     const e = cargar(), it = cat().semillas[id]; if (!it || e.vivero.desbloqueados.indexOf('sem_' + id) < 0) return { ok: false, motivo: 'no-desbloqueada' };
     if (it.habitat && it.habitat.indexOf(e.tematica) < 0) return { ok: false, motivo: 'otra-tematica' };   // F965/F1067: una planta de hábitat se planta solo con ese hábitat como fondo (nunca cambia el fondo sola)
-    const cas = casillaLejana(e, it.casillas); if (!cas) return { ok: false, motivo: 'sin-lugar' };   // F1255: se reparte por el pasto, no se amontona
+    e.vivero.plantas = [];   // F1419 · Solo hay una planta a la vez: la nueva reemplaza a la anterior
+    const cas = casillaLejana(e, it.casillas); if (!cas) return { ok: false, motivo: 'sin-lugar' };
     e.vivero.plantas.push({ id, casilla: cas, en: hoy() }); guardar(e); return { ok: true, casilla: cas };
   }
   function elegirTematica(id) {                            // F965: usa una temática ya comprada; null la quita. Devuelve { ok, motivo }

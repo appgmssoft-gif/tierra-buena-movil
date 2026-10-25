@@ -202,9 +202,9 @@
       + '<g fill="url(#ipNieve)"><path d="M118 156L136 176L128 172L122 182L112 172L104 178Z"/><path d="M272 120L296 158L286 152L278 164L268 150L256 158L254 150Z"/><path d="M92 196L104 206L96 204L90 212L80 204Z"/><path d="M226 190L238 206L230 202L224 212L214 204Z"/></g>'
       + '<g class="ip-bruma b1"><rect x="-20" y="236" width="430" height="70" fill="url(#ipBruma)"/></g>'
       + '<path fill="' + p.medio + '" d="' + cresta(rA, -6, 396, 400) + '"/>'
-      + copasR(rA, -6, 396, 11, 6, 11, 9, p.cerro, '#a4cfa2')
+      + copasR(rA, -6, 396, 11, 6, 11, 16, p.cerro, '#a4cfa2')
       + '<g class="ip-bruma b2"><rect x="-20" y="288" width="430" height="64" fill="url(#ipBruma)"/></g>'
-      + '<path fill="#6f9e86" d="' + cresta(rB, -6, 396, 430) + '"/>' + copasR(rB, -6, 396, 7, 9, 15, 11, '#4d8568', '#9cc9a0')   // segunda fila: cerros verdes más cerca
+      + '<path fill="#6f9e86" d="' + cresta(rB, -6, 396, 430) + '"/>' + copasR(rB, -6, 396, 7, 9, 15, 20, '#4d8568', '#9cc9a0')   // segunda fila: cerros verdes más cerca
       + '<path fill="none" stroke="#fff" stroke-opacity=".3" stroke-width="1.2" d="' + filo(rB, -6, 396) + '"/>'
       + capilla(312, f(rB(312)) + 5, 1.2, franja());   // F1413 · sin árboles detrás de la capilla ni de las cabañas: la escena queda limpia
   }
@@ -326,7 +326,7 @@
     let out = '';
     for (let g = 1; g <= 3; g++) {
       let c = '';
-      for (let i = 0; i < 7; i++) { const x = 20 + R() * 350, y = 300 + R() * 360, r = .9 + R() * 2.1; c += '<circle cx="' + f(x) + '" cy="' + f(y) + '" r="' + f(r) + '"/><circle cx="' + f(x) + '" cy="' + f(y) + '" r="' + f(r * 3.4) + '" opacity=".16"/>'; }
+      for (let i = 0; i < 4; i++) { const x = 20 + R() * 350, y = 300 + R() * 360, r = .9 + R() * 2.1; c += '<circle cx="' + f(x) + '" cy="' + f(y) + '" r="' + f(r) + '"/><circle cx="' + f(x) + '" cy="' + f(y) + '" r="' + f(r * 3.4) + '" opacity=".16"/>'; }
       out += '<g class="ip-part p' + g + '" fill="' + col + '">' + c + '</g>';
     }
     return out;
