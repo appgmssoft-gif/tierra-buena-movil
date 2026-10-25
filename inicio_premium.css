@@ -7,7 +7,7 @@
 .ip-con-fondo .il-frase{font-style:italic;font-weight:400;font-size:.95rem;line-height:1.4;color:#3a2d17;max-width:19em;text-shadow:0 1px 14px rgba(255,255,255,.9)}
 
 /* ---------- Dock superior: sin choque con el botón de ajustes ---------- */
-.il-pill{left:auto;right:68px;border-radius:999px;background:linear-gradient(165deg,rgba(255,255,255,.8),rgba(255,244,220,.5));border:1px solid rgba(255,255,255,.75);box-shadow:0 0 0 1px rgba(201,162,74,.4),0 10px 26px -8px rgba(30,25,10,.4),inset 0 1px 0 #fff;-webkit-backdrop-filter:blur(14px) saturate(1.5);backdrop-filter:blur(14px) saturate(1.5)}
+.il-pill{left:auto;right:124px;border-radius:999px;background:linear-gradient(165deg,rgba(255,255,255,.8),rgba(255,244,220,.5));border:1px solid rgba(255,255,255,.75);box-shadow:0 0 0 1px rgba(201,162,74,.4),0 10px 26px -8px rgba(30,25,10,.4),inset 0 1px 0 #fff;-webkit-backdrop-filter:blur(14px) saturate(1.5);backdrop-filter:blur(14px) saturate(1.5)}
 .tb-rapido{background:linear-gradient(165deg,rgba(255,255,255,.8),rgba(255,244,220,.5));border:1px solid rgba(255,255,255,.75);box-shadow:0 0 0 1px rgba(201,162,74,.4),0 10px 26px -8px rgba(30,25,10,.4),inset 0 1px 0 #fff;-webkit-backdrop-filter:blur(14px) saturate(1.5);backdrop-filter:blur(14px) saturate(1.5)}
 
 /* ---------- Pista y gotas: más discretas, mismo cristal ---------- */

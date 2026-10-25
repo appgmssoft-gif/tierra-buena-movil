@@ -264,7 +264,7 @@
     }
     if (lugar === 'cordillera') {   // F1231: rocas frías, llaretas (cojines de altura), una añañuca entre piedras
       return DES2 + '<g filter="url(#ipDes2)">' + roca(366, 748, 52, 32, '#8d939b', '#565d66', '#9aa85a') + roca(48, 750, 38, 22, '#9aa0a8', '#5f666f', '#a7b566')
-        + llareta(318, 742, 1.25) + llareta(96, 756, .95) + llareta(204, 764, .7) + ananuca(268, 752, .62) + piedras(150, 766, 6, '#a9adb3', '#80858d')   // F1414 · añañuca corrida: ya no queda pegada a la fogata + '</g>';
+        + llareta(318, 742, 1.25) + llareta(96, 756, .95) + llareta(204, 764, .7) + ananuca(268, 752, .62) + piedras(150, 766, 6, '#a9adb3', '#80858d') + '</g>';   // F1414 · añañuca corrida: ya no queda pegada a la fogata
     }
     return DES2 + '<g filter="url(#ipDes2)">'
       + '<path d="M-12 746Q36 724 98 738" fill="none" stroke="#8d7456" stroke-width="11" stroke-linecap="round"/><path d="M-10 742Q36 721 96 734" fill="none" stroke="#b8a07e" stroke-width="3" stroke-linecap="round" opacity=".7"/><circle cx="24" cy="735" r="2.6" fill="#6f5a40"/>'

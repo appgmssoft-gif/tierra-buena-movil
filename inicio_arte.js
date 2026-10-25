@@ -7,19 +7,12 @@
   const rg = (id, c, o) => '<radialGradient id="' + id + '"><stop offset="0" stop-color="' + c + '" stop-opacity="' + o + '"/><stop offset="1" stop-color="' + c + '" stop-opacity="0"/></radialGradient>';
   const brillos = (pts, col) => pts.map((p) => '<circle class="pt-brillo" cx="' + p[0] + '" cy="' + p[1] + '" r="' + (p[2] || 1.4) + '" fill="' + col + '"/>').join('');
 
-  // Pewén: tronco largo y copa en candelabro (ramas que suben y se abren), como en la escena del Inicio.
+  // Árbol nativo de copa redonda (canelo/roble). F1416 · reemplaza al antiguo pewén (araucaria), que se retiró del juego.
   function pewen(x, y, alto, esc) {
     const s = esc || 1, top = -alto;
-    let ramas = '';
-    [[-1, 0.0], [1, 0.0], [-1, 0.22], [1, 0.22], [-1, 0.42], [1, 0.42]].forEach((r, i) => {
-      const dir = r[0], t = top + alto * r[1] * 0.55, largo = 26 - i * 2.2;
-      ramas += '<path d="M0 ' + (t + 6) + ' Q' + dir * largo * 0.6 + ' ' + (t - 2) + ' ' + dir * largo + ' ' + (t - 12 + i * 1.2) + '" fill="none" stroke="#3b6b3f" stroke-width="2.6" stroke-linecap="round"/>'
-        + '<ellipse cx="' + dir * largo + '" cy="' + (t - 13 + i * 1.2) + '" rx="' + (11 - i * 0.7) + '" ry="4.6" fill="#2f6b3f"/>'
-        + '<ellipse cx="' + dir * (largo - 5) + '" cy="' + (t - 16 + i * 1.2) + '" rx="' + (8 - i * 0.5) + '" ry="3.2" fill="#4f8a55"/>';
-    });
     return '<g transform="translate(' + x + ' ' + y + ') scale(' + s + ')"><path d="M-3 0 L-2 ' + top + ' L2 ' + top + ' L3.2 0Z" fill="#6b4a32"/>'
-      + '<path d="M0 -4 V' + top + '" stroke="#4d3523" stroke-width=".9" opacity=".5"/>' + ramas
-      + '<ellipse cx="0" cy="' + (top - 7) + '" rx="13" ry="5.6" fill="#2f6b3f"/><ellipse cx="0" cy="' + (top - 11) + '" rx="8" ry="4" fill="#4f8a55"/></g>';
+      + '<ellipse cx="0" cy="' + (top - 8) + '" rx="' + (alto * 0.34 + 8) + '" ry="' + (alto * 0.26 + 7) + '" fill="#2f6b3f"/>'
+      + '<ellipse cx="' + (-alto * 0.1) + '" cy="' + (top - 12) + '" rx="' + (alto * 0.2 + 5) + '" ry="' + (alto * 0.15 + 4) + '" fill="#4f8a55"/></g>';
   }
   const copihue = (x, y, h, col) => '<g transform="translate(' + x + ' ' + y + ')"><path d="M0 0 Q' + (h * 0.1) + ' ' + (-h * 0.5) + ' ' + (h * 0.05) + ' ' + (-h) + '" fill="none" stroke="#3f7a45" stroke-width="1.5" stroke-linecap="round"/>'
     + '<path d="M' + (h * 0.05) + ' ' + (-h) + ' q-6 2 -5 12 q5 4 10 0 q1 -10 -5 -12Z" fill="' + col + '"/><path d="M' + (h * 0.05 - 4) + ' ' + (-h + 10) + ' q4 3 8 0" stroke="#fff" stroke-width="1" fill="none" opacity=".7"/></g>';

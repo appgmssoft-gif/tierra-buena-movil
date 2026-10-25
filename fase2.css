@@ -76,7 +76,7 @@
 .ch-tag.cat-reunion{background:color-mix(in srgb, #16808d 18%, var(--tarjeta))}
 
 /* F1410 · Campana y centro de notificaciones (estilo Instagram) */
-.ntf-campana{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:14px;z-index:50;width:48px;height:48px;border-radius:50%;border:1px solid var(--linea);background:var(--tarjeta);font-size:1.35rem;display:flex;align-items:center;justify-content:center;box-shadow:var(--sombra);cursor:pointer}
+.ntf-campana{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:calc(68px + var(--sa-r,0px));z-index:50;width:48px;height:48px;border-radius:50%;border:1px solid var(--linea);background:var(--tarjeta);font-size:1.35rem;display:flex;align-items:center;justify-content:center;box-shadow:var(--sombra);cursor:pointer}
 .ntf-punto{position:absolute;top:8px;right:8px;width:11px;height:11px;border-radius:50%;background:#e0245e;border:2px solid var(--tarjeta)}
 .ntf-punto[hidden]{display:none}
 .ntf-capa{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.35);display:flex;justify-content:center;align-items:flex-end}

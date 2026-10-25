@@ -482,6 +482,7 @@ ananuca: () => `<path d="M15 44 C10 36 6 30 4 22 C10 28 13 34 15 44Z" fill="#6b9
   // F1218: el Vivero ahora es una pantalla propia: ver abrirVivero() más abajo.
   // F999 · Hierba: mechones con varios verdes sobre el suelo (determinista: el mismo dibujo siempre).
   function hierbaTB(x0, x1, yb, n, seed) {
+    return '';   // F1416 · Sin pasto en ningún lugar (pedido del dueño).
     let k = seed || 11; const r = () => (k = (k * 9301 + 49297) % 233280) / 233280;
     const tonos = ['#5f9a62', '#7cb36f', '#4f8a55', '#94c27f'];
     let g = '';
