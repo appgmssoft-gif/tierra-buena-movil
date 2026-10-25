@@ -156,17 +156,9 @@ body.tb-con-dock{padding-bottom:calc(88px + env(safe-area-inset-bottom,0px))}
 body.en-chat .tb-dock{display:none}
 body.en-chat.tb-con-dock{padding-bottom:0}
 
-/* F1410 · Barra secundaria (vistas de la sección): fila fina encima de la barra principal */
-.tb-dock2{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 84px);z-index:39;display:flex;gap:4px;padding:4px;border-radius:999px;background:color-mix(in srgb, var(--tarjeta) 88%, transparent);backdrop-filter:saturate(1.5) blur(14px);-webkit-backdrop-filter:saturate(1.5) blur(14px);border:1px solid var(--linea);box-shadow:0 4px 16px rgba(0,0,0,.10)}
-.tb-dock2-b{min-height:36px;padding:4px 14px;border:0;border-radius:999px;background:transparent;color:var(--suave);font:inherit;font-size:.84rem;font-weight:600;cursor:pointer}
-.tb-dock2-b[aria-pressed=true]{background:var(--verde);color:var(--papel)}
-.tb-dock2-b:focus-visible{outline:2px solid var(--verde);outline-offset:2px}
-body.tb-con-dock2{padding-bottom:calc(136px + env(safe-area-inset-bottom,0px))}
-body.en-chat .tb-dock2{display:none}
 
 /* F1411 · Dentro del chat se oculta la barra principal: el campo de escribir queda libre */
 body.en-chat .barra{display:none}
-body.en-chat .tb-dock2{display:none}
 
 /* F1413 · Barra del Inicio más clara: tres accesos + «Más». Respuesta táctil breve (idea 4). */
 .ib-bt:active,.il-mas-op:active,.il-mas-cerrar:active,.il-maleza:active{transform:scale(.96);transition:transform .08s ease}

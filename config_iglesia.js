@@ -25,6 +25,11 @@
     { k: 'metas', ico: '🎯', t: 'Metas de líderes', d: 'Cada cuánto se revisan y qué ve el pastor', campos: [
       { k: 'periodo', r: 'Revisión', t: 'Cada cuánto se revisan', ayuda: 'El tiempo que dura cada ronda de metas.', op: [['semanal', 'Cada semana'], ['quincenal', 'Cada 2 semanas'], ['mensual', 'Cada mes']], def: 'mensual' },
       { k: 'notas', r: 'El pastor ve', t: 'Qué ve el pastor', ayuda: 'Las notas son lo que el líder escribe con sus palabras.', op: [['todo', 'Notas y resultados'], ['resultados', 'Solo resultados']], def: 'todo' }] },
+    { k: 'temas', ico: '📖', t: 'Tema de estudio del mes', d: 'El tema que la iglesia estudia este mes (se cambia cada mes)', campos: [
+      { k: 'tema', r: 'Tema', t: 'Tema del mes', ayuda: 'Ej.: La oración en familia. Déjalo vacío si no hay tema este mes.', max: 80, def: '' },
+      { k: 'pasaje', r: 'Pasaje', t: 'Pasaje para leer', ayuda: 'Ej.: Mateo 6:5-15. Se muestra junto al tema.', max: 60, def: '' },
+      { k: 'responsable', r: 'Responsable', t: 'Quién lo guía', ayuda: 'Nombre de la persona que guía el estudio.', max: 40, def: '' },
+      { k: 'mostrar', r: 'Mostrar', t: 'Mostrar a los miembros', ayuda: 'Si dices Sí, el tema aparece en la pantalla de los miembros.', op: [['si', 'Sí'], ['no', 'No']], def: 'no' }] },
   ];
 
   const area = (k) => ESQUEMA.find((a) => a.k === k);

@@ -1,0 +1,18 @@
+/* F1430 · Tableros y plan por ministerio. Animaciones solo con transform y opacity. */
+.tm-tablero { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 10px 0; }
+.tm-col { background: var(--fondo-suave, #f7f3ea); border-radius: 14px; padding: 10px; border: 1px solid var(--borde, #e5dccb); animation: tmEntra .4s ease both; min-width: 0; }
+.tm-col h3 { font-size: 1em; margin: 0 0 8px; }
+.tm-lista { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.tm-tarjeta { background: #fff; border-radius: 12px; padding: 10px; border: 1px solid var(--borde, #e5dccb); transition: transform .18s ease; }
+.tm-tarjeta:active { transform: scale(.98); }
+.tm-titulo { font-weight: 600; margin: 0 0 4px; overflow-wrap: anywhere; }
+.tm-acc { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.tm-vacio { font-size: .9em; }
+.tm-form input, .tm-form select, .tm-acciones input, #tmObj, #tmCols { width: 100%; box-sizing: border-box; margin-bottom: 8px; }
+.tm-acciones { list-style: none; padding: 0; margin: 10px 0; display: grid; gap: 8px; }
+.tm-accion { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 6px 0; border-top: 1px solid var(--borde, #e5dccb); }
+.tm-accion.hecha span { text-decoration: line-through; opacity: .7; }
+.tm-chk { display: flex; gap: 8px; align-items: flex-start; }
+.sr-solo { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@keyframes tmEntra { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .tm-col, .tm-tarjeta { animation: none; transition: none; } }

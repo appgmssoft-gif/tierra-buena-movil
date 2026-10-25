@@ -1,0 +1,17 @@
+/* F1429 · Revisión de metas y archivos por ministerio. Animaciones solo con transform y opacity. */
+.rv-card, .arc-grupo, .arc-form { animation: rvEntra .45s ease both; }
+.rv-lista-wrap { list-style: none; padding: 0; margin: 12px 0; display: grid; gap: 12px; }
+.rv-item { background: var(--fondo-suave, #f7f3ea); border-radius: 14px; padding: 12px; border: 1px solid var(--borde, #e5dccb); }
+.rv-titulo { font-weight: 600; margin: 0 0 6px; }
+.rv-ok { color: #2f6b3f; font-size: .85em; font-weight: 500; margin-left: 6px; }
+.rv-opc { border: 0; padding: 0; margin: 6px 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.rv-opc legend { font-size: .9em; margin-bottom: 4px; }
+.rv-op { display: inline-flex; align-items: center; gap: 4px; padding: 6px 10px; border-radius: 999px; background: #fff; border: 1px solid var(--borde, #e5dccb); transition: transform .18s ease, background-color .18s ease; cursor: pointer; }
+.rv-op:active { transform: scale(.97); }
+.rv-op:has(input:checked) { background: #e6f2e6; border-color: #2f6b3f; }
+.arc-form input, .arc-form select, .rv-item textarea { width: 100%; box-sizing: border-box; margin-bottom: 8px; }
+.arc-lista li.arc-item { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 0; border-top: 1px solid var(--borde, #e5dccb); }
+.arc-txt { display: grid; gap: 2px; min-width: 0; }
+.arc-txt a { overflow-wrap: anywhere; color: #2f6b3f; font-weight: 600; }
+@keyframes rvEntra { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .rv-card, .arc-grupo, .arc-form, .rv-op { animation: none; transition: none; } }

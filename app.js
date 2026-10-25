@@ -58,7 +58,7 @@
   // ---------- F872 · Avances por cuenta (nube) ----------
   // Lo personal (oración, crecimiento, ideas, cursos, lectura, acción del mes) se guarda en el teléfono Y en la cuenta
   // (tabla public.avances_cuenta, solo la ve su dueño: docs/sql/SQL_AVANCES_CUENTA.sql). Sin sesión o sin la tabla, todo sigue local.
-  const SYNC_CLAVES = ['tb_movil_planvida', 'tb_movil_mi_oracion', 'tb_movil_crecimiento', 'tb_movil_ideas_fav', 'tb_movil_aprender', 'tb_movil_biblia_ultimo', 'tb_movil_accion_mes', 'tb_movil_perfil', 'tb_movil_racha', 'tb_movil_biblia_res', 'tb_movil_canciones_mias', 'tb_movil_canciones_fav', 'tb_movil_biblia_col', 'tb_movil_biblia_notas', 'tb_movil_biblia_marc', 'tb_movil_leidos', 'tb_movil_planes', 'tb_inicio_v1', 'tb_movil_juegos', 'tb_movil_tablero', 'tb_movil_disponibilidad', 'tb_movil_acciones', 'tb_inicio_fondo', 'tb_inicio_clima', 'tb_movil_estudios', 'tb_movil_predicas', 'tb_movil_ep_ideas', 'tb_movil_ep_apuntes'];   // F946: + Inicio (árbol, gotas, vivero), juegos, «Hoy lo hago», paisaje y clima
+  const SYNC_CLAVES = ['tb_movil_tema_seguido', 'tb_movil_planvida', 'tb_movil_mi_oracion', 'tb_movil_crecimiento', 'tb_movil_ideas_fav', 'tb_movil_aprender', 'tb_movil_biblia_ultimo', 'tb_movil_accion_mes', 'tb_movil_perfil', 'tb_movil_racha', 'tb_movil_biblia_res', 'tb_movil_canciones_mias', 'tb_movil_canciones_fav', 'tb_movil_biblia_col', 'tb_movil_biblia_notas', 'tb_movil_biblia_marc', 'tb_movil_leidos', 'tb_movil_planes', 'tb_inicio_v1', 'tb_movil_juegos', 'tb_movil_tablero', 'tb_movil_disponibilidad', 'tb_movil_acciones', 'tb_inicio_fondo', 'tb_inicio_clima', 'tb_movil_estudios', 'tb_movil_predicas', 'tb_movil_ep_ideas', 'tb_movil_ep_apuntes'];   // F946: + Inicio (árbol, gotas, vivero), juegos, «Hoy lo hago», paisaje y clima
   const K_SYNC = 'tb_movil_sync';
   const sync = { estado: 'local', cuando: null, timer: null, ocupado: false };   // estado: local | ok | pendiente | falta | error
   const metaLeer = () => { const m = leer(K_SYNC); return m && typeof m === 'object' ? { dueno: m.dueno || null, t: m.t || {}, d: m.d || {}, off: m.off === true } : { dueno: null, t: {}, d: {}, off: false }; };
@@ -245,7 +245,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Acertijos de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Letras entre las hojas': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => !CABECERAS_ILUSTRADAS ? '' : `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1415';
+  const APP_VERSION = 'F1431';
   // F1171: respaldo si movimiento.js no cargó (pruebas o caché vieja): mismo criterio que TBMov.quieto().
   const MOV_QUIETO = () => { try { if (window.TBMov) return window.TBMov.quieto(); const h = document.documentElement; return h.getAttribute('data-anim') === 'off' || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
@@ -812,7 +812,7 @@
 
   function vistaMiembroServir(id) {
     $('#pantalla').innerHTML = `${cabecera('Servir', 'Mi iglesia')}${heroInt('c2', '🕍', 'Mi servicio', 'Servir con tu iglesia', 'Tus turnos, cuándo puedes servir y los grupos donde ayudas.')}
-      <h2 class="mi-sub">Mis turnos</h2><div id="misTurnos"><p class="suave m0">Cargando tus turnos…</p></div><div id="misAseo"></div><div id="misAsist"></div><div id="misActiv"></div><div id="misForm"></div><div id="misCelebra"></div><div id="misPrograma"></div><div id="misEncuestas"></div><div id="misAnimos"></div><div id="misGracias"></div>
+      <h2 class="mi-sub">Mis turnos</h2><div id="misTurnos"><p class="suave m0">Cargando tus turnos…</p></div><div id="misAseo"></div><div id="misMetas"></div><div id="misRevision"></div><div id="misArchivos"></div><div id="misTableros"></div><div id="misTema"></div><div id="misReuniones"></div><div id="misMetasIglesia"></div><div id="misClima"></div><div id="misAsist"></div><div id="misActiv"></div><div id="misForm"></div><div id="misCelebra"></div><div id="misPrograma"></div><div id="misEncuestas"></div><div id="misAnimos"></div><div id="misGracias"></div>
       <div id="turLider"></div>
       <div class="card"><b>¿Cuándo puedes servir?</b><p class="suave m0t">Marca lo que te sirve. Por ahora solo lo ves tú.</p>
         <div class="chips" role="group" aria-label="Mi disponibilidad">${DISP_OPC.map(([k, t]) => `<button type="button" class="chip${dispLeer().indexOf(k) >= 0 ? ' on' : ''}" data-disp="${k}" aria-pressed="${dispLeer().indexOf(k) >= 0}">${t}</button>`).join('')}</div>
@@ -827,6 +827,17 @@
     cablearMiembro(id);
     // F1368 · Mis tareas de aseo de esta semana (SQL 32). Si no hay, la sección no aparece.
     if (window.TBAseo) window.TBAseo.miembroMostrar('misAseo', id, rpcRaw);
+    if (window.TBMetasLider) window.TBMetasLider.miembroMostrar('misMetas', id, rpcRaw);
+    // F1429 · 6.4 revisión del mes anterior y 6.11 archivos de mis grupos (SQL 73).
+    if (window.TBRevisionMetas) window.TBRevisionMetas.miembroMostrar('misRevision', id, rpcRaw);
+    if (window.TBArchivos) window.TBArchivos.miembroMostrar('misArchivos', id, rpcRaw);
+    // F1430 · 5.2 y 5.3 tablero y plan de mis grupos (SQL 74).
+    if (window.TBMinisterioTablero) window.TBMinisterioTablero.miembroMostrar('misTableros', id, rpcRaw);
+    // F1431 · 4.7 tema de estudio del mes (SQL 75). La marca «lo sigo» es privada y se sincroniza si hay cuenta.
+    if (window.TBTemasEstudio) window.TBTemasEstudio.miembroMostrar('misTema', id, rpcRaw);
+    if (window.TBReunionesLideres) window.TBReunionesLideres.miembroMostrar('misReuniones', id, rpcRaw);
+    if (window.TBMetasIglesia) window.TBMetasIglesia.miembroMostrar('misMetasIglesia', id, rpcRaw);
+    if (window.TBClima) window.TBClima.miembroMostrar('misClima', id, rpcRaw);
     // F1378 · Mi asistencia: escribir el código de la sesión y ver mi resumen (SQL 39). Si no hay, no aparece.
     if (window.TBAsistencia) window.TBAsistencia.miembroMostrar('misAsist', id, rpcRaw);
     if (window.TBActividades) window.TBActividades.miembroMostrar('misActiv', id, rpcRaw);
@@ -3520,7 +3531,7 @@
         const k = (c2.data || []).find((z) => z.id === ok.canal_id);
         if (k) vistaChat(x, k);
       } };
-    const irPP = (k) => { const f = ({ sol: pSolicitudes, ora: pOraciones, vis: pVisitas, mie: pMiembros, min: pMinisterios, age: () => vistaAgenda(modoPastor(p)), avi: () => vistaAvisos(modoPastor(p)), mcal: () => pCalendario(p), disp: () => pDisponibilidad(p), bien: () => pBienvenida(p), chat: () => vistaChat({ rol: 'pastor', codigo: p.codigo, secreto: p.secreto }), dat: pDatos, mpre: () => window.TBMisPredicas && window.TBMisPredicas.abrir(), rsem: pResumenSemanal, bol: pBoletin, vigl: () => window.TBCentroPastor.vision(p, ctxCP), menu: () => window.TBCentroPastor.menu(p, ctxCP), tar: () => window.TBTarjetaPastor.abrir(p, ctxCP), aseo: () => window.TBAseo.abrir(p, ctxCP), act: () => window.TBActividades.abrir(p, ctxCP), form: () => window.TBFormularios.abrir(p, ctxCP), cel: () => window.TBCelebraciones.abrir(p, ctxCP), fam: () => window.TBFamilias.abrir(p, ctxCP), impl: () => window.TBImportar.abrirLista(p, ctxCP), cul: () => window.TBPlantillasCulto.abrir(p, ctxCP), enc: () => window.TBEncuestas.abrir(p, ctxCP), ani: () => window.TBAnimo.abrir(p, ctxCP), lec: () => window.TBLecturaPredicas.abrir(p, ctxCP), bus: () => window.TBBuscar.abrir(p, ctxCP), eti: () => window.TBEtiquetas.abrir(p, ctxCP), asi: () => window.TBAsistencia.abrir(p, ctxCP), imp: () => window.TBImportar.abrir(p, ctxCP), cfg: () => window.TBConfigIglesia.abrir(p, ctxCP), cop: () => window.TBCopia.abrir(p, ctxCP) })[k]; if (f) f(p); };
+    const irPP = (k) => { const f = ({ sol: pSolicitudes, ora: pOraciones, vis: pVisitas, mie: pMiembros, min: pMinisterios, age: () => vistaAgenda(modoPastor(p)), avi: () => vistaAvisos(modoPastor(p)), mcal: () => pCalendario(p), disp: () => pDisponibilidad(p), bien: () => pBienvenida(p), chat: () => vistaChat({ rol: 'pastor', codigo: p.codigo, secreto: p.secreto }), dat: pDatos, mpre: () => window.TBMisPredicas && window.TBMisPredicas.abrir(), rsem: pResumenSemanal, bol: pBoletin, vigl: () => window.TBCentroPastor.vision(p, ctxCP), menu: () => window.TBCentroPastor.menu(p, ctxCP), tar: () => window.TBTarjetaPastor.abrir(p, ctxCP), aseo: () => window.TBAseo.abrir(p, ctxCP), act: () => window.TBActividades.abrir(p, ctxCP), form: () => window.TBFormularios.abrir(p, ctxCP), cel: () => window.TBCelebraciones.abrir(p, ctxCP), fam: () => window.TBFamilias.abrir(p, ctxCP), impl: () => window.TBImportar.abrirLista(p, ctxCP), cul: () => window.TBPlantillasCulto.abrir(p, ctxCP), enc: () => window.TBEncuestas.abrir(p, ctxCP), ani: () => window.TBAnimo.abrir(p, ctxCP), lec: () => window.TBLecturaPredicas.abrir(p, ctxCP), bus: () => window.TBBuscar.abrir(p, ctxCP), eti: () => window.TBEtiquetas.abrir(p, ctxCP), asi: () => window.TBAsistencia.abrir(p, ctxCP), imp: () => window.TBImportar.abrir(p, ctxCP), cfg: () => window.TBConfigIglesia.abrir(p, ctxCP), salud: () => window.TBSaludIglesia.abrir(p, ctxCP), mgl: () => window.TBMetasLideres.abrir(p, ctxCP), rli: () => window.TBReunionesLideres.abrir(p, ctxCP), mig: () => window.TBMetasIglesia.abrir(p, ctxCP), cli: () => window.TBClima.abrir(p, ctxCP), cop: () => window.TBCopia.abrir(p, ctxCP), rev: () => window.TBRevisionMetas.abrir(p, ctxCP), arc: () => window.TBArchivos.abrir(p, ctxCP), tab: () => window.TBMinisterioTablero.abrir(p, ctxCP), tem: () => window.TBTemasEstudio.abrir(p, ctxCP) })[k]; if (f) f(p); };
     document.querySelectorAll('[data-pp]').forEach((b) => b.addEventListener('click', () => irPP(b.dataset.pp)));
     $('#pSalir').onclick = () => { if (confirm('¿Salir del modo pastor en este teléfono? Tu llave se borra de aquí (sigue en tu computador).')) { borrar(K_PASTOR); borrar('tb_movil_juntos_cache'); barraRefrescar('perfil'); ir('perfil'); } };
     const ins = (k, n) => { if (!(n > 0)) return; const t = document.querySelector('[data-pp="' + k + '"]'); if (!t) return; let e = t.querySelector('.mi-b-n'); if (!e) { e = document.createElement('span'); e.className = 'mi-b-n'; t.appendChild(e); } e.textContent = n > 99 ? '99+' : String(n); e.setAttribute('aria-label', e.textContent + ' por atender'); };
@@ -3758,24 +3769,9 @@
   const chatQ = (x) => (x.rol === 'pastor' ? { p_codigo: x.codigo, p_clave: null, p_secreto: x.secreto } : { p_codigo: x.codigo, p_clave: x.clave, p_secreto: null });
   const chatSala = (sala) => 'https://meet.jit.si/' + encodeURIComponent(sala);
   const chatMot = (r) => { const x = r && r.ok ? primera(r.data) : null; return x && x.ok ? null : (CHAT_MOT[x ? x.motivo : ''] || 'No se pudo completar. Revisa tu conexión.'); };
-  // F1411 · Abre una sección del chat desde la barra secundaria (Iglesia, Preguntas, Oración, Ayuda, Servicio).
-  async function chatIrSeccion(x, clave) {
-    const r = await rpcRaw('chat_canales_listar', chatQ(x));
-    const lista = r.ok ? (r.data || []) : [];
-    const k = clave === 'iglesia' ? lista.find((z) => z.tipo === 'iglesia') : lista.find((z) => z.tipo === 'seccion' && z.seccion === clave);
-    if (!k) { msg('Esta sección todavía no está lista. Intenta de nuevo en un momento.'); return; }
-    vistaChat(x, k);
-  }
   async function vistaChat(x, canal) {
     // F1411 · La barra principal solo se oculta dentro de una conversación. En la lista se ve la barra de secciones.
     document.body.classList.toggle('en-chat', !!canal);
-    if (!canal && window.TBDock) setTimeout(() => window.TBDock.montarSecundaria([
-      { k: 'iglesia', t: 'Iglesia', fn: () => chatIrSeccion(x, 'iglesia') },
-      { k: 'preguntas', t: 'Preguntas', fn: () => chatIrSeccion(x, 'preguntas') },
-      { k: 'oracion', t: 'Oración', fn: () => chatIrSeccion(x, 'oracion') },
-      { k: 'ayuda', t: 'Ayuda', fn: () => chatIrSeccion(x, 'ayuda') },
-      { k: 'servicio', t: 'Servicio', fn: () => chatIrSeccion(x, 'servicio') }
-    ], 'iglesia'), 0);
     const q = chatQ(x), esPastor = x.rol === 'pastor';
     if (!esPastor && x.esLider === undefined) {   // el miembro que lidera un ministerio puede crear reuniones con el pastor
       const mm = await misMinisterios({ codigo: x.codigo, clave: x.clave });
@@ -4177,11 +4173,28 @@
     const l = r.data || []; m.hidden = true;
     const nSirven = l.filter((x) => x.asignado).length, nLid = l.filter((x) => x.es_lider).length;
     if ($('#pHero')) $('#pHero').innerHTML = heroInt('c2 pas-hero pas-min-h', esc(mi.icono || '👥'), 'Ministerio', esc(mi.nombre), l.length ? nSirven + (nSirven === 1 ? ' persona sirve' : ' personas sirven') + (nLid ? ' · ' + nLid + (nLid === 1 ? ' líder' : ' líderes') : ' · sin líder') + '. Un líder puede crear actividades y avisos.' : 'Aún no hay personas en la iglesia para sumar.');
-    $('#plista').innerHTML = `<h2 class="mi-sub">Personas</h2><div class="mi-lista">${l.map((x) => `<div class="mi-curso min-persona${x.asignado ? ' hecho' : ''}"><span class="mi-curso-ic" aria-hidden="true">${esc((x.nombre || '?').trim().charAt(0).toUpperCase())}</span><span class="mi-curso-tx"><b>${esc(x.nombre)}</b><small>${x.es_lider ? '⭐ Líder' : x.asignado ? 'Sirve aquí' : 'No está en este grupo'}</small><span class="min-acc"><button type="button" class="chip${x.asignado ? ' on' : ''}" data-as="${esc(x.miembro_id)}" data-l="${x.es_lider ? 1 : 0}" data-a="${x.asignado ? 1 : 0}">${x.asignado ? 'Quitar' : 'Sumar'}</button>${x.asignado ? `<button type="button" class="chip${x.es_lider ? ' on' : ''}" data-li="${esc(x.miembro_id)}" data-l="${x.es_lider ? 1 : 0}">${x.es_lider ? 'Quitar líder' : 'Hacer líder'}</button>` : ''}</span></span></div>`).join('')}</div><h2 class="mi-sub">Zona delicada</h2><div class="card dat-seg"><p class="suave m0">Si borras el ministerio, sus actividades y avisos también se borran.</p><button type="button" class="btn sec sep16" id="mnDel">Borrar este ministerio</button></div>`;
+    $('#plista').innerHTML = `<div class="cp-acciones"><button type="button" class="btn sec" id="mnEdit">Editar nombre e ícono</button></div><h2 class="mi-sub">Personas</h2><div class="mi-lista">${l.map((x) => `<div class="mi-curso min-persona${x.asignado ? ' hecho' : ''}"><span class="mi-curso-ic" aria-hidden="true">${esc((x.nombre || '?').trim().charAt(0).toUpperCase())}</span><span class="mi-curso-tx"><b>${esc(x.nombre)}</b><small>${x.es_lider ? '⭐ Líder' : x.asignado ? 'Sirve aquí' : 'No está en este grupo'}</small><span class="min-acc"><button type="button" class="chip${x.asignado ? ' on' : ''}" data-as="${esc(x.miembro_id)}" data-l="${x.es_lider ? 1 : 0}" data-a="${x.asignado ? 1 : 0}">${x.asignado ? 'Quitar' : 'Sumar'}</button>${x.asignado ? `<button type="button" class="chip${x.es_lider ? ' on' : ''}" data-li="${esc(x.miembro_id)}" data-l="${x.es_lider ? 1 : 0}">${x.es_lider ? 'Quitar líder' : 'Hacer líder'}</button>` : ''}</span></span></div>`).join('')}</div><h2 class="mi-sub">Zona delicada</h2><div class="card dat-seg"><p class="suave m0">Si borras el ministerio, sus actividades y avisos también se borran.</p><button type="button" class="btn sec sep16" id="mnDel">Borrar este ministerio</button></div>`;
     const cambia = async (idm, asig, lid) => { const r2 = await prpc('ministerio_asignar', p, { p_ministerio: mi.id, p_miembro: idm, p_asignado: asig, p_lider: lid }); if (r2.ok) pMinisterio(p, mi); else { m.hidden = false; m.textContent = errTxt(r2.error); } };
     document.querySelectorAll('[data-as]').forEach((b) => b.addEventListener('click', () => cambia(b.dataset.as, b.dataset.a !== '1', false)));
     document.querySelectorAll('[data-li]').forEach((b) => b.addEventListener('click', () => cambia(b.dataset.li, true, b.dataset.l !== '1')));
     $('#mnDel').onclick = async () => { if (!confirm('¿Borrar el ministerio «' + mi.nombre + '»? Sus actividades y avisos también se borran.')) return; await prpc('ministerio_borrar', p, { p_ministerio: mi.id }); pMinisterios(p); };
+    // F1428 · 5.5 Editar nombre e ícono del ministerio (ministerio_editar, SQL 68).
+    $('#mnEdit') && ($('#mnEdit').onclick = () => {
+      const f = $('#mnEditForm'); if (f) { f.hidden = !f.hidden; return; }
+      const cont = document.createElement('div'); cont.id = 'mnEditForm'; cont.className = 'card dat-cod';
+      cont.innerHTML = '<label for="mnEditN">Nombre</label><input id="mnEditN" type="text" maxlength="40" value="' + esc(mi.nombre) + '">' +
+        '<label for="mnEditI">Ícono (una letra o un emoji)</label><input id="mnEditI" type="text" maxlength="4" value="' + esc(mi.icono || '') + '">' +
+        '<p id="mnEditErr" class="error" role="alert" hidden></p><button type="button" class="btn" id="mnEditOk">Guardar cambios</button>';
+      $('#plista').parentNode.insertBefore(cont, $('#plista'));
+      $('#mnEditOk').onclick = async () => {
+        const nom = $('#mnEditN').value.trim(), err = $('#mnEditErr'); err.hidden = true;
+        if (nom.length < 2) { err.textContent = 'El nombre debe tener al menos 2 letras.'; err.hidden = false; return; }
+        const r2 = await prpc('ministerio_editar', p, { p_ministerio: mi.id, p_nombre: nom, p_icono: $('#mnEditI').value.trim() });
+        if (r2.ok && r2.data && r2.data.ok !== false) { pMinisterio(p, Object.assign({}, mi, { nombre: nom, icono: $('#mnEditI').value.trim() || mi.icono })); return; }
+        err.textContent = (r2.data && r2.data.motivo === 'sin-permiso') ? 'Tu clave de pastor no tiene permiso para editar.' : (r2.falta ? 'Esta función aún no está activada. Avisa a quien administra la app.' : 'No se pudo guardar. Revisa tu conexión e inténtalo de nuevo.');
+        err.hidden = false;
+      };
+    });
   }
   async function pDatos(p) {
     $('#pantalla').innerHTML = `${cabecera('Datos y código', 'Panel')}<div id="pHero">${heroInt('c1 pas-hero', '🕍', 'Tu iglesia', 'Datos y código', 'Nombre, eslogan y el código para invitar.')}</div><p class="suave" id="pmsg">Cargando…</p><div id="plista"></div>`; volverA('Panel', vistaPastor);

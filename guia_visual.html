@@ -114,7 +114,7 @@ const CAB={n:'Cabaña de alerce',fp:'4×2',f:p=>sh(60)+R(-42,-40,84,40,'#a3704a'
 const CASA={n:'Casa del árbol',fp:'4×2',f:p=>sh(40)+P('M-14 0Q-10-30-8-70H10Q12-30 18 0z',p.t)+C(-30,-100,20,p.d)+C(30,-104,22,p.d)+C(0,-122,22,p.m)+R(-34,-62,68,6,'#8a5a38')+R(-24,-90,48,28,'#bd8a5f',2)+P('M-30-88L0-110L30-88z',p.k)+R(-5,-80,10,18,'#4a3228',4)+R(10,-84,10,10,'#3c4654',2)+S('M26-56L30 0',p.t,2),o:()=>R(10,-84,10,10,'#ffd877',2)};
 const V={bosque:[
  [CAB,CASA,{...HAB.bosque.st,fp:'4×2',lock:1}],
- [{n:'Alerce',fp:'1×2',f:ov(PINO,{t:'#9a5a3a',d:'#4a7a5a',m:'#6a9a6a'})},{n:'Pino',fp:'1×2',f:PINO}],
+ [{n:'Alerce',fp:'1×2',f:ov(PINO,{t:'#9a5a3a',d:'#4a7a5a',m:'#6a9a6a'})},{n:'Pino',fp:'1×2',f:PINO},{n:'Ulmo',fp:'1×2',f:ov(ROBLE,{d:'#3f7a4d',m:'#5d9a62',l:'#7ab07c'})}],
  [{n:'Copihue',fp:'1×1',f:p=>sh(22)+C(0,-14,13,p.d)+C(-6,-18,10,p.m)+[[-8,-24],[6,-26],[10,-14],[-12,-12]].map(a=>P(`M${a[0]-3} ${a[1]}Q${a[0]} ${a[1]+10} ${a[0]+3} ${a[1]}z`,'#d6263b')).join('')},{n:'Helecho',fp:'1×1',f:p=>sh(22)+[-70,-40,-12,15,45,70].map((a,i)=>rot(a,P('M0 0Q7-16 2-32Q-4-16 0 0z',i%2?p.m:p.d))).join('')},{n:'Arbusto florido',fp:'1×1',f:fn('Arbusto florido')}],
  [{n:'Roble',fp:'2×2',f:ROBLE},{n:'Lenga otoñal',fp:'2×2',f:ov(ROBLE,{d:'#b4582f',m:'#d9843f',l:'#f0b25a'})},{n:'Coihue',fp:'2×2',f:ov(ROBLE,{d:'#2f6f5a',m:'#4a9a7a',l:'#7bc7a0'})}],
  [{n:'Tronco',fp:'2×1',f:fn('Tronco')},{n:'Roca musgosa',fp:'2×1',f:p=>sh(40)+E(0,-12,36,14,p.s1)+P('M-30-14Q-10-32 14-26Q32-22 34-12Q0-4-30-14z',p.s2)+E(-6,-24,16,6,p.m)+E(14,-22,8,4,p.l)},{n:'Banca de madera',fp:'2×1',f:p=>sh(40)+R(-34,-34,68,6,'#a3704a',2)+R(-34,-22,68,7,p.t,2)+R(-30,-16,6,16,'#8a5a38')+R(24,-16,6,16,'#8a5a38')}],
