@@ -23,13 +23,12 @@
     "bloque_dias": 1
   },
   "primera_eleccion": [
-    "araucaria",
+    "roble",
     "canelo",
     "quillay",
     "jacaranda"
   ],
   "orden_especies": [
-    "araucaria",
     "canelo",
     "quillay",
     "jacaranda",
@@ -42,52 +41,6 @@
     "maiten"
   ],
   "especies": {
-    "araucaria": {
-      "nombre": "Araucaria",
-      "otro": "Pewén",
-      "origen": "nativo de Chile",
-      "mensaje": "La paciencia también construye. Algunas de las más antiguas llevan más de mil años de pie.",
-      "dato": "Es Monumento Natural desde 1976. Puede superar los 1.600 años y llega a la madurez reproductiva entre los 100 y los 300; su piñón fue base de la alimentación pehuenche.",
-      "vida": [
-        {
-          "tema": "Trabajo y metas",
-          "texto": "Hay metas que no se alcanzan en un mes. Se puede avanzar un poco cada día y confiar en que el tiempo también trabaja."
-        },
-        {
-          "tema": "Familia",
-          "texto": "Los vínculos fuertes crecen despacio, como las raíces. Una llamada o una visita pequeña hoy suma más de lo que parece."
-        },
-        {
-          "tema": "Cambios y pérdidas",
-          "texto": "Después de un incendio o de una sequía, la araucaria sigue en pie. Si algo se perdió, se puede empezar de nuevo desde lo que quedó."
-        },
-        {
-          "tema": "Descanso",
-          "texto": "No todo depende de uno cada día. Hoy se puede dejar una tarea para mañana sin que nada se derrumbe."
-        },
-        {
-          "tema": "Paciencia con uno mismo",
-          "texto": "Un cambio personal también tarda. Se sugiere medir el avance por estaciones, no por días."
-        },
-        {
-          "tema": "Cuidar el planeta",
-          "texto": "Un bosque milenario depende de decisiones de hoy. Evitar el fuego y cuidar el entorno cuando se sale de paseo protege lo que tarda siglos en crecer."
-        }
-      ],
-      "arbol": [
-        "Es Monumento Natural desde 1976 y una de las especies más emblemáticas del sur de Chile.",
-        "Algunas superan los 1.600 años: hay ejemplares vivos que ya estaban en pie mucho antes de la llegada de los españoles.",
-        "Su piñón fue base de la alimentación del pueblo pehuenche, cuyo nombre significa «gente del pewén».",
-        "Su familia de árboles ya existía en la era de los dinosaurios; se la considera casi un fósil viviente.",
-        "Hay ejemplares femeninos y masculinos, y solo los femeninos producen piñones.",
-        "Su corteza gruesa funciona como una armadura: ayuda a los ejemplares adultos a resistir el fuego."
-      ],
-      "planeta": [
-        "Sus bosques de cordillera sufren con los incendios. Un fuego pequeño en un paseo puede borrar siglos de crecimiento.",
-        "El piñón alimenta a personas, aves y animales del bosque. Recoger solo lo necesario deja alimento para todos.",
-        "En un bosque nativo, caminar por los senderos protege a las plántulas, que crecen muy despacio."
-      ]
-    },
     "canelo": {
       "nombre": "Canelo",
       "otro": "Foye",
@@ -1047,7 +1000,7 @@
     "montanas": {
       "nombre": "Cordillera",
       "precio": 120,
-      "dato": "En la cordillera crecen araucarias sobre las laderas: rocas, nieve y coirón acompañan cada subida, paso a paso."
+      "dato": "En la cordillera, la nieve y las rocas acompañan cada subida, paso a paso."
     },
     "volcan": {
       "nombre": "Volcán nevado",
@@ -1454,7 +1407,7 @@
       "fondo": "montanas",
       "mensaje": "En lo alto, la nieve guarda el agua que llega a todo el valle. Cuidar las alturas también es cuidar lo de abajo.",
       "dato": "Aquí se pueden plantar especies de la zona cordillerana, como algunas añañucas que crecen entre rocas y laderas.",
-      "arbol": "araucaria",
+      "arbol": "quenoa",
       "rasgos": [
         "Llareta",
         "Vicuña",

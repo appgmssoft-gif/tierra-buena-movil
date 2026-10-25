@@ -20,7 +20,7 @@
   const sonido = (n, a) => { try { if (window.TBSonido && typeof window.TBSonido[n] === 'function') window.TBSonido[n](a); } catch (e) { /* sin sonido */ } };
 
   const ETAPAS = { brote: 'Brote', raiz: 'Echando raíces', ramas: 'Creciendo ramas', frondoso: 'Frondoso' };
-  const FORMA = { chanar: 'paraguas', araucaria: 'pewen', canelo: 'redondo', quillay: 'redondo', roble: 'redondo', cerezo: 'redondo', alerce: 'cono', sauce: 'cascada', palma_chilena: 'palma', jacaranda: 'florido', peumo: 'redondo', maiten: 'cascada' };
+  const FORMA = { chanar: 'paraguas', canelo: 'redondo', quillay: 'redondo', roble: 'redondo', cerezo: 'redondo', alerce: 'cono', sauce: 'cascada', palma_chilena: 'palma', jacaranda: 'florido', peumo: 'redondo', maiten: 'cascada' };
   const MALEZA = { hoja_seca: 'hoja seca', trebol_gris: 'trébol marchito', hierba_seca: 'hierba seca' };
   // Casillas del paisaje lejano: [x, y, escala] dentro del lienzo de 360 x 420.
   const FONDO = { 'fondo-1': [52, 296, 0.30], 'fondo-2': [110, 290, 0.26], 'fondo-3': [258, 292, 0.28], 'fondo-4': [312, 298, 0.32], 'fondo-5': [2, 300, 0.34], 'fondo-6': [356, 296, 0.30] };
@@ -62,26 +62,7 @@
     return p('tr-t t8', 'M0 0 C-3 -30 3 -62 0 -96') + p('tr-t t4', 'M0 -58 C-14 -66 -26 -76 -34 -90') + p('tr-t t4', 'M0 -70 C14 -80 26 -88 36 -104') + p('tr-t t3', 'M0 -86 C-6 -100 -10 -110 -14 -122')
       + ci('tr-h', -34, -96, 11) + ci('tr-h', 36, -110, 12) + ci('tr-h2', -14, -128, 10) + ci('tr-h', 0, -104, 9) + ci('tr-h2', 20, -96, 8);
   }
-  function pewen(n) {
-    // F1411 · Araucaria rediseñada: tronco recto y gris, ramas en pisos que caen con elegancia y una copa compacta
-    // de hojas punzantes. Base en (0,0), alto cercano a 200 px. Dibujo simple y legible.
-    const pisos = Math.max(3, Math.min(5, Math.round((n || 4) * 0.8)));
-    let g = '<path d="M-7 0 C-5 -60 -4 -140 -3 -196 L3 -196 C4 -140 5 -60 7 0Z" fill="#7a6550"/>';
-    g += '<path d="M1 0 C2 -60 2 -140 1 -196 L3 -196 C4 -140 5 -60 7 0Z" fill="#5a4a3c" opacity=".45"/>';
-    for (let i = 0; i < pisos; i++) {
-      const t = i / Math.max(1, pisos - 1), y = -62 - t * 104, L = 50 - t * 18;
-      for (const s of [-1, 1]) {
-        g += '<path d="M0 ' + y + ' Q' + (s * L * 0.55) + ' ' + (y - 12) + ' ' + (s * L) + ' ' + (y + 14) + '" fill="none" stroke="#5a4a3c" stroke-width="2.6" stroke-linecap="round"/>';
-        g += '<path d="M' + (s * L * 0.25) + ' ' + (y - 4) + ' Q' + (s * L * 0.65) + ' ' + (y - 14) + ' ' + (s * L) + ' ' + (y + 10) + ' Q' + (s * L * 0.6) + ' ' + (y + 6) + ' ' + (s * L * 0.25) + ' ' + (y + 4) + 'Z" fill="#2f5d3a"/>';
-      }
-    }
-    g += '<path d="M0 -202 C15 -198 22 -182 18 -164 C13 -146 -13 -146 -18 -164 C-22 -182 -15 -198 0 -202Z" fill="#2f5d3a"/>';
-    g += '<path d="M0 -198 C7 -192 9 -182 6 -171 C2 -163 -2 -163 -6 -171 C-9 -182 -7 -192 0 -198Z" fill="#4a8456" opacity=".85"/>';
-    return g;
-  }
   function frondoso(forma, especie, dias) {
-    // F1058/F1059/F1066 · Pewén: copa en verticilos (ver pewen()); gana verticilos con los días.
-    if (forma === 'pewen') return pewen(Math.round(Math.max(4, dias || 11) / 3));
     if (forma === 'paraguas') {
       return p('tr-t t10', 'M0 0 C-3 -60 3 -120 0 -168') + p('tr-t t3', 'M0 -58 L-15 -66') + p('tr-t t3', 'M0 -78 L15 -86') + p('tr-t t3', 'M0 -98 L-13 -104')
         + p('tr-t t4', 'M0 -150 C-24 -152 -44 -160 -60 -176') + p('tr-t t4', 'M0 -150 C24 -152 44 -160 60 -176') + p('tr-t t3', 'M0 -162 C-8 -172 -14 -182 -16 -192')
@@ -138,7 +119,7 @@
   // Árbol de una especie en una etapa: dibujo con la base en (0,0). Si la especie o la etapa no se conocen, se usa el brote (nunca se rompe la pantalla).
   function arbol(especie, etapa, dias) {
     const f = FORMA[especie] || 'redondo';
-    const cuerpo = etapa === 'frondoso' ? frondoso(f, especie, dias) : (etapa === 'ramas' && f === 'pewen') ? frondoso('pewen', especie, 8) : etapa === 'ramas' ? ramas(f) : etapa === 'raiz' ? raiz() : brote();
+    const cuerpo = etapa === 'frondoso' ? frondoso(f, especie, dias) : etapa === 'ramas' ? ramas(f) : etapa === 'raiz' ? raiz() : brote();
     const bellotas = especie === 'roble' && etapa === 'frondoso' ? '<g fill="#b07a3e" stroke="#7a5024" stroke-width=".5">' + [[-30,-132],[-16,-120],[-2,-112],[14,-118],[28,-130],[-22,-150],[20,-152]].map((q) => '<ellipse cx="' + q[0] + '" cy="' + q[1] + '" rx="2.2" ry="2.8"/>').join('') + '</g>' : '';
     const flores = especie === 'canelo' && etapa === 'frondoso' ? '<g fill="#fbfbf4" stroke="#c9d6b8" stroke-width=".5">' + [[-22,-150],[-8,-168],[12,-160],[24,-142],[-30,-132],[2,-138],[-16,-150],[18,-172]].map((q) => '<circle cx="' + q[0] + '" cy="' + q[1] + '" r="2.6"/>').join('') + '</g>' : '';
     const espinas = especie === 'chanar' ? '<g fill="none" stroke="#5a4a2a" stroke-width="1.6" stroke-linecap="round">' + [[-3, -66], [3, -92], [-3, -132], [3, -156]].map((q) => '<path d="M' + q[0] + ' ' + q[1] + ' l' + (q[0] < 0 ? -6 : 6) + ' -3"/>').join('') + '</g>' : '';

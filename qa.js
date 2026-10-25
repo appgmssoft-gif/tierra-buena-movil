@@ -69,7 +69,7 @@
     const EMBLEMA = { bosque: 'canelo', desierto: 'chanar', costa: 'palma_chilena' };   // mismo emblema que el catálogo (F1071)
     const e = T.cargar();
     if (e.eligiendo || (EMBLEMA[h] && e.ciclo.especie !== EMBLEMA[h])) {   // F1079: al probar un lugar, su árbol emblemático siempre es el que crece
-      const hoyS = iso(new Date()); e.eligiendo = false; e.habDias = 1; e.tematica = h; e.ciclo = { n: 1, especie: EMBLEMA[h] || e.ciclo.especie || 'araucaria', inicio: hoyS, diasCuidado: 1, ultimoDia: hoyS, ultimaVisita: hoyS, cerrado: false, diaPendiente: false };
+      const hoyS = iso(new Date()); e.eligiendo = false; e.habDias = 1; e.tematica = h; e.ciclo = { n: 1, especie: EMBLEMA[h] || e.ciclo.especie || 'canelo', inicio: hoyS, diasCuidado: 1, ultimoDia: hoyS, ultimaVisita: hoyS, cerrado: false, diaPendiente: false };
     }
     const c = 'tem_' + h; if (e.vivero.desbloqueados.indexOf(c) < 0) e.vivero.desbloqueados.push(c);
     e.tematica = h; T.guardar(e); location.reload();
