@@ -65,7 +65,7 @@
 .pp-cat:active{transform:scale(.97)}
 .pp-cat>span{font-size:1.6rem;line-height:1}.pp-cat b{font-size:1rem;line-height:1.2}.pp-cat small{color:var(--suave)}
 .pp-cat.sug{border-color:var(--oro);background:linear-gradient(160deg,color-mix(in srgb,var(--oro) 14%,var(--tarjeta)),var(--tarjeta))}
-.pp-cat em{position:absolute;top:8px;right:10px;font-style:normal;font-size:.7rem;font-weight:700;color:var(--oro)}
+.pp-cat em{position:absolute;top:8px;right:10px;font-style:normal;font-size:.7rem;font-weight:700;color:var(--oro-txt)}
 .pp-busca{margin:4px 0 10px}
 .pp-res b{display:block}
 .pp-chip2{background:var(--verde);margin:0 0 10px!important}
@@ -88,7 +88,7 @@
 .pp-reparto{list-style:none;margin:4px 0 0;padding:0;display:grid;gap:6px}
 .pp-reparto li{display:flex;justify-content:space-between;padding:8px 12px;border-radius:12px;background:var(--papel);animation:ppSube .35s ease both}
 .pp-reparto li:nth-child(2){animation-delay:.05s}.pp-reparto li:nth-child(3){animation-delay:.1s}.pp-reparto li:nth-child(4){animation-delay:.15s}.pp-reparto li:nth-child(5){animation-delay:.2s}.pp-reparto li:nth-child(6){animation-delay:.25s}
-.pp-reparto b{color:var(--oro)}
+.pp-reparto b{color:var(--oro-txt)}
 
 /* F1294 · Crear fácil: Empezar, continuar, texto bíblico dentro del editor, botones fijos abajo */
 .pp-sub{margin:20px 0 8px;font-size:1.02rem;color:var(--suave);font-weight:700}
@@ -141,7 +141,7 @@
 
 /* F1297 · Fecha de predicar, próxima prédica, imprimir */
 .pp-prox{display:flex;flex-direction:column;gap:2px;width:100%;margin:0 0 10px;padding:16px;border:2px solid var(--oro);border-radius:20px;background:var(--tarjeta);color:var(--tinta);font:inherit;text-align:left;cursor:pointer}
-.pp-prox small{color:var(--oro);font-weight:700}.pp-prox b{font-size:1.15rem}.pp-prox span{color:var(--suave);font-size:.9rem}
+.pp-prox small{color:var(--oro-txt);font-weight:700}.pp-prox b{font-size:1.15rem}.pp-prox span{color:var(--suave);font-size:.9rem}
 .pp-fecha{margin:14px 0;padding:14px 16px;border:1px solid var(--linea);border-radius:16px;background:var(--tarjeta)}
 .pp-fecha h3{margin:0 0 8px;font-size:1.02rem}.pp-fecha label{display:block;margin:10px 0 4px}.pp-fecha p{margin:6px 0 0}
 #ppPrint{display:none}

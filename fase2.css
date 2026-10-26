@@ -42,7 +42,7 @@
 .agv-leyenda{display:flex;flex-wrap:wrap;gap:6px 14px;margin:8px 0;font-size:.85rem}
 .agv-leyenda span{display:inline-flex;align-items:center;gap:6px}
 .agv-semana-dia{margin:10px 0 2px}
-.agv-semana-dia.hoy{color:var(--oro)}
+.agv-semana-dia.hoy{color:var(--oro-txt)}
 
 /* Impresión (tarea 1.15, PDF desde el navegador): solo se imprime la tabla preparada, no la pantalla. */
 #tbImprimible{display:none}

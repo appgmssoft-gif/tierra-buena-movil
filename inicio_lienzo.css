@@ -80,7 +80,7 @@ html:not([data-anim=off]) .il-maleza::after{animation:il-late 1.8s ease-in-out 2
 .il-nombre{margin:0;font:600 1.05rem/1.3 Fraunces,Georgia,serif;color:var(--tinta)}
 .il-nombre span{font-weight:500;color:var(--suave)}
 .il-estado{margin:0;font-size:.9rem;line-height:1.4;color:var(--suave);min-height:1.4em}
-.il-guia{margin:0;font-size:.84rem;color:var(--oro);font-weight:600}
+.il-guia{margin:0;font-size:.84rem;color:var(--oro-txt);font-weight:600}
 .il-btn-msg{margin-top:16px;min-height:48px;padding:10px 22px;border-radius:999px;border:1px solid color-mix(in srgb,var(--suave) 30%,transparent);background:var(--vidrio,transparent);color:var(--tinta);font:inherit;font-size:.88rem;cursor:pointer}
 .il-btn-msg:active{transform:scale(.97)}
 .il-msg{margin-top:14px;padding:20px 22px;border-radius:20px;background:var(--vidrio,transparent);border:1px solid color-mix(in srgb,var(--suave) 22%,transparent);text-align:left;width:100%}
@@ -162,8 +162,8 @@ html[data-eco="2"] .il-gota svg{animation:none!important}
 .il-viv-lista{display:flex;flex-direction:column;gap:14px}
 .il-viv-fila{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;border-radius:16px;border:1px solid color-mix(in srgb,var(--suave) 18%,transparent)}
 .il-viv-tx{display:flex;flex-direction:column;gap:4px;min-width:0}.il-viv-tx b{font-size:1rem}.il-viv-tx small{font-size:.8rem;line-height:1.4;color:var(--suave)}
-.il-viv-bt{flex:none;min-height:44px;padding:8px 16px}.il-viv-ok{flex:none;font-size:.82rem;font-weight:600;color:var(--oro)}
-.il-viv-est{margin:16px 0 0;min-height:1.4em;font-size:.88rem;color:var(--oro);font-weight:600}
+.il-viv-bt{flex:none;min-height:44px;padding:8px 16px}.il-viv-ok{flex:none;font-size:.82rem;font-weight:600;color:var(--oro-txt)}
+.il-viv-est{margin:16px 0 0;min-height:1.4em;font-size:.88rem;color:var(--oro-txt);font-weight:600}
 .il-planta{position:absolute;display:flex;justify-content:center;align-items:flex-end;width:80px;height:0;margin:0 0 0 -40px;pointer-events:none}
 .il-planta svg{display:block;transform-origin:50% 100%}
 html:not([data-anim=off]) .il-planta svg{animation:il-mece 5s ease-in-out infinite alternate}
@@ -193,7 +193,7 @@ html[data-eco="2"] .il-planta svg,html[data-eco="2"] .il-ave svg{animation:none!
 .il-mc header{display:flex;align-items:center;gap:8px;margin:0 0 8px;font:600 .74rem/1.3 system-ui,sans-serif;letter-spacing:.05em;text-transform:uppercase;color:var(--c-mc)}.il-mc header .il-ic{margin:0}
 .il-mc .il-tema{margin:0 0 4px}.il-mc .il-vida{margin:0;font-size:.98rem;line-height:1.55}
 .il-mini{display:inline-flex;align-items:center;gap:6px;margin-top:12px;min-height:40px;padding:6px 14px;border-radius:999px;border:1px solid color-mix(in srgb,var(--suave) 28%,transparent);background:transparent;color:var(--suave);font:inherit;font-size:.8rem;cursor:pointer}.il-mini .il-ic{margin:0}.il-mini:active{transform:scale(.96)}
-.il-msg .il-como{margin:4px 0 6px;font-size:.86rem;line-height:1.5;color:var(--suave)}.il-manana{margin:0!important;font-size:.78rem!important;color:var(--oro)!important;font-weight:600}
+.il-msg .il-como{margin:4px 0 6px;font-size:.86rem;line-height:1.5;color:var(--suave)}.il-manana{margin:0!important;font-size:.78rem!important;color:var(--oro-txt)!important;font-weight:600}
 html:not([data-anim=off]) .il-msg.entra .il-mc{animation:il-mc-in .5s ease-out backwards}
 html:not([data-anim=off]) .il-msg.entra .il-mc.d1{animation-delay:.12s}html:not([data-anim=off]) .il-msg.entra .il-mc.d2{animation-delay:.24s}
 @keyframes il-mc-in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
@@ -210,7 +210,7 @@ html:not([data-anim=off]) .il-msg.entra .il-mc.d1{animation-delay:.12s}html:not(
 .il-viv-arte{display:flex;align-items:flex-end;justify-content:center;width:100%;height:74px;padding-bottom:4px;border-radius:12px;background:linear-gradient(180deg,color-mix(in srgb,#9fcbe4 22%,transparent),color-mix(in srgb,#86b97a 34%,transparent));overflow:hidden}
 .il-viv-arte svg{display:block;max-width:100%;max-height:100%}
 .il-viv-tile.mio .il-viv-arte{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,#6fae6e 55%,transparent)}
-.il-viv-chip{display:inline-flex;align-items:center;gap:4px;font-size:.76rem;font-weight:600;color:#4a97bd}.il-viv-chip .il-ic{margin:0}.il-viv-chip.ok{color:var(--oro)}
+.il-viv-chip{display:inline-flex;align-items:center;gap:4px;font-size:.76rem;font-weight:600;color:#4a97bd}.il-viv-chip .il-ic{margin:0}.il-viv-chip.ok{color:var(--oro-txt)}
 .il-viv-vista{margin:0;border-radius:16px;overflow:hidden;border:1px solid color-mix(in srgb,var(--suave) 18%,transparent);line-height:0}
 .il-viv-svg{display:block;width:100%;height:auto}
 .il-viv-vista.pop{animation:il-pop .4s ease-out 1}@keyframes il-pop{from{opacity:.4;transform:scale(.97)}to{opacity:1;transform:none}}
@@ -221,10 +221,10 @@ html:not([data-anim=off]) .vv-planea{animation:vv-plan 8s ease-in-out infinite a
 @keyframes vv-plan{from{transform:translate(-22px,2px) rotate(-1.5deg)}to{transform:translate(22px,-6px) rotate(1.5deg)}}
 html:not([data-anim=off]) .av-ala{transform-box:fill-box;transform-origin:70% 100%;animation:av-bate .16s linear infinite alternate}@keyframes av-bate{from{transform:scaleY(.55)}to{transform:scaleY(1.05)}}
 .il-viv-ficha{padding:12px 2px 2px}.il-viv-ficha h4{margin:0 0 2px;font:600 1.08rem/1.3 Fraunces,Georgia,serif;text-transform:none;letter-spacing:0;color:var(--tinta)}
-.il-viv-rasgo{margin:0 0 8px;font-size:.78rem;font-weight:600;color:var(--oro);line-height:1.4}
+.il-viv-rasgo{margin:0 0 8px;font-size:.78rem;font-weight:600;color:var(--oro-txt);line-height:1.4}
 .il-viv-dato{margin:0 0 6px;font-size:.86rem;line-height:1.5;color:var(--suave)}.il-viv-frase{margin:0 0 12px;font-size:.9rem;line-height:1.5;font-style:italic}
 .il-viv-prog{margin:0 0 6px}
-.il-viv-pre{margin:0 0 10px;font-size:.84rem;color:var(--suave)}.il-viv-main{width:100%}.il-viv-ok2{margin:0;font-weight:600;color:var(--oro);font-size:.9rem}
+.il-viv-pre{margin:0 0 10px;font-size:.84rem;color:var(--suave)}.il-viv-main{width:100%}.il-viv-ok2{margin:0;font-weight:600;color:var(--oro-txt);font-size:.9rem}
 .il-viv-jardin{margin:12px 0 0;font-size:.82rem;color:var(--suave);line-height:1.5}.il-viv-est{margin:8px 0 0;min-height:1.2em}
 @media (prefers-reduced-motion:reduce){.il-msg.entra,.il-msg.entra .il-mc,.il-viv-vista.pop,.vv-sway,.vv-posa,.vv-flota,.vv-planea,.vv-salta,.av-ala{animation:none!important}}
 html[data-eco="2"] .vv-sway,html[data-eco="2"] .vv-posa,html[data-eco="2"] .vv-flota,html[data-eco="2"] .vv-planea,html[data-eco="2"] .vv-salta,html[data-eco="2"] .av-ala{animation:none!important}
@@ -323,14 +323,14 @@ html[data-eco="2"] .il-tri-op.pop,html[data-eco="2"] .il-btn-msg.nuevo::after{an
 @media (prefers-reduced-motion:reduce){.il-viv-gota{animation:none}.il-viv-grp-bt{transition:none}}
 
 /* F991 · Vivero: detalles de cada planta dentro de «Saber más» (la acción principal queda a la vista) */
-.il-viv-mas{margin:8px 0 0}.il-viv-mas summary{cursor:pointer;min-height:40px;display:flex;align-items:center;color:var(--suave);font-weight:600;list-style:none}.il-viv-mas summary::-webkit-details-marker{display:none}.il-viv-mas summary::after{content:"＋";margin-left:6px;color:var(--oro)}.il-viv-mas[open] summary::after{content:"－"}.il-viv-mas p{margin:6px 0}
+.il-viv-mas{margin:8px 0 0}.il-viv-mas summary{cursor:pointer;min-height:40px;display:flex;align-items:center;color:var(--suave);font-weight:600;list-style:none}.il-viv-mas summary::-webkit-details-marker{display:none}.il-viv-mas summary::after{content:"＋";margin-left:6px;color:var(--oro-txt)}.il-viv-mas[open] summary::after{content:"－"}.il-viv-mas p{margin:6px 0}
 
 /* F1003 · El contador de gotas del Vivero abre «Obtener gotas» */
 .il-viv-saldo-bt{cursor:pointer;min-height:40px;font:inherit}
 
 /* F1008 · Vivero: pasos numerados y hábitat activo con su nombre */
 .viv-paso{margin:14px 0 6px;font-size:.95rem;color:var(--suave);font-weight:600;letter-spacing:.02em}
-.il-viv-grp-act{display:block;font-size:.72rem;color:var(--oro);margin-top:2px}
+.il-viv-grp-act{display:block;font-size:.72rem;color:var(--oro-txt);margin-top:2px}
 
 /* F1009 · Vivero: cabecera con píldoras y hábitats como tarjetas con estado y precio */
 .viv-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.viv-titulo{margin:0}.viv-pills{display:flex;gap:8px;flex-wrap:wrap}
@@ -345,7 +345,7 @@ html[data-eco="2"] .il-tri-op.pop,html[data-eco="2"] .il-btn-msg.nuevo::after{an
 .viv-habitats::-webkit-scrollbar{display:none}
 .viv-hab{flex:0 0 150px;scroll-snap-align:start;display:grid;gap:6px;text-align:left;padding:8px;border-radius:16px;border:1px solid color-mix(in srgb,var(--suave) 26%,transparent);background:color-mix(in srgb,var(--tinta) 4%,transparent);color:inherit;font:inherit;cursor:pointer}
 .viv-hab.on{border-color:var(--oro);box-shadow:0 0 0 1px var(--oro) inset}
-.viv-hab b{font-size:.95rem}.viv-hab span{font-size:.78rem;color:var(--oro);min-height:1em}
+.viv-hab b{font-size:.95rem}.viv-hab span{font-size:.78rem;color:var(--oro-txt);min-height:1em}
 .viv-thumb{width:100%;height:auto;border-radius:12px;display:block}
 .viv-filtros{display:flex;gap:8px;overflow-x:auto;padding:4px 0 8px;scrollbar-width:none}
 .viv-pill{flex:0 0 auto;min-height:40px;padding:8px 16px;border-radius:999px;border:1px solid color-mix(in srgb,var(--suave) 30%,transparent);background:transparent;color:var(--suave);font:inherit;cursor:pointer}
@@ -363,13 +363,13 @@ html[data-eco="2"] .il-tri-op.pop,html[data-eco="2"] .il-btn-msg.nuevo::after{an
 .og-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .og-card{display:grid;gap:8px;padding:14px;border-radius:18px;border:1px solid color-mix(in srgb,var(--oro) 45%,transparent);background:color-mix(in srgb,var(--tinta) 6%,transparent)}
 .og-card:first-child{grid-column:1 / -1}
-.og-h{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--oro)}
+.og-h{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--oro-txt)}
 .og-h em{font-style:normal;border:1px solid color-mix(in srgb,var(--oro) 45%,transparent);border-radius:999px;padding:2px 8px}
 .og-card p{margin:0;color:var(--suave);font-size:.92rem;line-height:1.45}
 .og-hoy{color:var(--suave)}
 .og-bt{min-height:44px;width:100%}
 .og-trivia{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:16px;padding:14px 16px;border-radius:18px;border:1px solid color-mix(in srgb,var(--oro) 45%,transparent)}
-.og-trivia em{font-style:normal;margin-left:6px;color:var(--oro)}
+.og-trivia em{font-style:normal;margin-left:6px;color:var(--oro-txt)}
 .og-trivia p{margin:4px 0 0;color:var(--suave)}
 .og-jugar{width:auto;min-width:96px}
 @media (max-width:360px){.og-grid{grid-template-columns:1fr}}

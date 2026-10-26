@@ -124,35 +124,17 @@
             "Calendario mensual que todos ven: cultos, actividades y servicios.",
             "Peticiones de oración y visitas con seguimiento: quién las lleva y cuándo se atendieron.",
             "Ministerios, turnos de servicio y líderes en un solo lugar.",
-            {
-              "t": "Resumen semanal de lo pendiente.",
-              "pronto": true
-            }
+            "Resumen semanal de lo pendiente."
           ]
         },
         {
           "t": "Proyectos, planes y metas",
           "l": [
-            {
-              "t": "Proyectos de la iglesia con responsables, fechas y avances",
-              "pronto": true
-            },
-            {
-              "t": "Planes de trabajo por mes para toda la iglesia",
-              "pronto": true
-            },
-            {
-              "t": "Planes de trabajo con cada líder y su equipo",
-              "pronto": true
-            },
-            {
-              "t": "Metas mensuales de la iglesia, con avance visible",
-              "pronto": true
-            },
-            {
-              "t": "Proyectos para servir a la comunidad, con voluntarios",
-              "pronto": true
-            }
+            "Proyectos de la iglesia con responsables, fechas y avances",
+            "Planes de trabajo por mes para toda la iglesia",
+            "Planes de trabajo con cada líder y su equipo",
+            "Metas mensuales de la iglesia, con avance visible",
+            "Proyectos para servir a la comunidad, con voluntarios"
           ]
         },
         {
@@ -160,10 +142,7 @@
           "l": [
             "Chat de la iglesia para coordinar.",
             "Avisos a toda la congregación.",
-            {
-              "t": "Comunicación por ministerio y por líder",
-              "pronto": true
-            }
+            "Comunicación por ministerio y por líder"
           ]
         },
         {
@@ -172,10 +151,7 @@
             "Entra con el código de la iglesia.",
             "Pide oración o visita y ve cuándo fue recibida.",
             "Ve el calendario del mes, avisos y los turnos donde puede servir.",
-            {
-              "t": "Ve las metas y proyectos de su iglesia",
-              "pronto": true
-            }
+            "Ve las metas y proyectos de su iglesia"
           ]
         }
       ],
@@ -292,8 +268,7 @@
     {
       "area": "Organiza tu iglesia",
       "t": "Calendario mensual que todos ven: cultos, actividades y servicios",
-      "n": "iglesia",
-      "nota": "En construcción"
+      "n": "iglesia"
     },
     {
       "area": "Organiza tu iglesia",
@@ -303,8 +278,7 @@
     {
       "area": "Organiza tu iglesia",
       "t": "Resumen semanal de lo pendiente",
-      "n": "iglesia",
-      "nota": "Por construir"
+      "n": "iglesia"
     },
     {
       "area": "Organiza tu iglesia",
@@ -314,44 +288,37 @@
     {
       "area": "Organiza tu iglesia",
       "t": "Grabar prédicas y compartirlas con la congregación",
-      "n": "iglesia",
-      "nota": "En construcción"
+      "n": "iglesia"
     },
     {
       "area": "Organiza tu iglesia",
       "t": "Planes de lectura con resultados de la congregación",
-      "n": "iglesia",
-      "nota": "Por construir"
+      "n": "iglesia"
     },
     {
       "area": "Proyectos y metas",
       "t": "Proyectos de la iglesia con responsables, fechas y avances",
-      "n": "iglesia",
-      "nota": "Por construir"
+      "n": "iglesia"
     },
     {
       "area": "Proyectos y metas",
       "t": "Planes de trabajo por mes para toda la iglesia",
-      "n": "iglesia",
-      "nota": "Por construir"
+      "n": "iglesia"
     },
     {
       "area": "Proyectos y metas",
       "t": "Planes de trabajo con cada líder y su equipo",
-      "n": "iglesia",
-      "nota": "Por construir"
+      "n": "iglesia"
     },
     {
       "area": "Proyectos y metas",
       "t": "Metas mensuales de la iglesia, con avance visible",
-      "n": "iglesia",
-      "nota": "Por construir"
+      "n": "iglesia"
     },
     {
       "area": "Proyectos y metas",
       "t": "Proyectos para servir a la comunidad, con voluntarios",
-      "n": "iglesia",
-      "nota": "Por construir"
+      "n": "iglesia"
     },
     {
       "area": "Comunicación interna",
@@ -366,38 +333,32 @@
     {
       "area": "Comunicación interna",
       "t": "Comunicación por ministerio y por líder",
-      "n": "iglesia",
-      "nota": "Por construir"
+      "n": "iglesia"
     },
     {
       "area": "Vida de la iglesia",
       "t": "Asistencia por actividad",
-      "n": "iglesia",
-      "nota": "Por construir"
+      "n": "iglesia"
     },
     {
       "area": "Vida de la iglesia",
       "t": "Registro de bautismos y membresía",
-      "n": "iglesia",
-      "nota": "Por construir"
+      "n": "iglesia"
     },
     {
       "area": "Vida de la iglesia",
       "t": "Cumpleaños y aniversarios de la congregación",
-      "n": "iglesia",
-      "nota": "Por construir"
+      "n": "iglesia"
     },
     {
       "area": "Vida de la iglesia",
       "t": "Clases y escuela dominical",
-      "n": "iglesia",
-      "nota": "Por construir"
+      "n": "iglesia"
     },
     {
       "area": "Vida de la iglesia",
       "t": "Boletín semanal en PDF para compartir",
-      "n": "iglesia",
-      "nota": "Por construir"
+      "n": "iglesia"
     },
     {
       "area": "Tu iglesia (miembros)",
@@ -414,8 +375,7 @@
     {
       "area": "Tu iglesia (miembros)",
       "t": "Ver el calendario mensual de mi iglesia",
-      "n": "gratis",
-      "nota": "En construcción"
+      "n": "gratis"
     }
   ],
   "niveles": {

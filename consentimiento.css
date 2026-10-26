@@ -15,3 +15,5 @@
 .cc-enl a{display:inline-flex;align-items:center;min-height:44px;color:var(--verde);font-weight:700}
 .cc-nota{margin-top:16px}
 .cc-err{min-height:1.4em;margin:12px 2px 0;color:var(--error,#a33a2a);font-weight:700}
+/* Accesibilidad (F1446k): el formulario de consentimiento va sobre fondo sólido, no sobre la escena de la bienvenida */
+#pantalla:has(.cc-fila){background:var(--papel);background-image:none}

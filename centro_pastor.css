@@ -7,7 +7,7 @@
 .cp-fila:active{transform:scale(.98)}
 .cp-fila-t{flex:1;min-width:0;display:flex;flex-direction:column}
 .cp-fila-t small{color:var(--suave);overflow-wrap:anywhere;white-space:normal;line-height:1.35}
-.cp-lider{font-size:.7rem;font-weight:700;color:var(--oro);letter-spacing:.06em;text-transform:uppercase}
+.cp-lider{font-size:.7rem;font-weight:700;color:var(--oro-txt);letter-spacing:.06em;text-transform:uppercase}
 .cp-ir{color:var(--suave);font-size:1.4rem}
 .cp-datos{margin:12px 0}
 .cp-datos dt{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--suave);margin-top:12px}
@@ -18,7 +18,7 @@
 .cp-ico{font-size:1.5rem;width:36px;text-align:center}
 .cp-cifras{display:flex;gap:10px;margin:12px 0}
 .cp-cifra{flex:1;padding:12px 8px;border-radius:14px;border:1px solid var(--linea);text-align:center;display:flex;flex-direction:column}
-.cp-cifra b{font:700 1.6rem/1.1 "TB Titulo",Georgia,serif;color:var(--oro)}
+.cp-cifra b{font:700 1.6rem/1.1 "TB Titulo",Georgia,serif;color:var(--oro-txt)}
 .cp-cifra span{font-size:.8rem;color:var(--suave)}
 .cp-cumple{cursor:default;flex-wrap:wrap}
 .cp-cumple .cp-fila-t{flex:1 1 11rem;overflow-wrap:anywhere}

@@ -269,7 +269,7 @@ html:not([data-anim=off]) .ju-planta{animation:ju-brota 1.1s cubic-bezier(.2,.9,
 .so-cuenta{margin:0 0 8px;font-size:.9rem;opacity:.75}
 
 /* F1096 · Tarjetas de acción con el efecto translúcido del saludo de «Mi iglesia». F1097: fondo totalmente transparente (sin tinte); queda el borde fino y el desenfoque. */
-.grid>button.card:not(.plan-card):not(.versiculo){position:relative;overflow:hidden;border-radius:22px;background:transparent;border:1px solid color-mix(in srgb,var(--verde) 30%,transparent);box-shadow:none;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.grid>button.card:not(.plan-card):not(.versiculo){position:relative;overflow:hidden;border-radius:22px;background:color-mix(in srgb,var(--tarjeta) 94%,transparent);border:1px solid color-mix(in srgb,var(--verde) 30%,transparent);box-shadow:none;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 .grid>button.card:not(.plan-card):not(.versiculo)::before{content:"";position:absolute;z-index:0;left:-30px;top:-46px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--oro) 26%,transparent),transparent 70%);pointer-events:none}
 .grid>button.card:not(.plan-card):not(.versiculo)>*{position:relative;z-index:1}
 .grid>button.card:not(.plan-card):not(.versiculo):active{box-shadow:none;background:color-mix(in srgb,var(--verde) 7%,transparent)}
@@ -282,7 +282,7 @@ html:not([data-anim=off]) .ju-planta{animation:ju-brota 1.1s cubic-bezier(.2,.9,
 
 /* F1100 · Se nota en todas las pantallas: íconos rellenos (el corazón de Ayuda salía invisible), listas y bloques con el mismo vidrio translúcido de las tarjetas */
 [class*="ic-color"] > path:not([fill]):not([stroke]){fill:currentColor}
-.card.item{background:transparent!important;border:1px solid color-mix(in srgb,var(--verde) 28%,transparent)!important;box-shadow:none!important;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.card.item{background:color-mix(in srgb,var(--tarjeta) 94%,transparent)!important;border:1px solid color-mix(in srgb,var(--verde) 28%,transparent)!important;box-shadow:none!important;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 .tbej-btn{background:transparent!important;border:1px solid color-mix(in srgb,var(--verde) 30%,transparent)!important;box-shadow:none!important;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 .tbson{display:flex!important;flex-wrap:wrap;align-items:center;gap:12px;background:transparent!important;border:1px solid color-mix(in srgb,var(--verde) 30%,transparent)!important;box-shadow:none!important;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 .tbson-tx{flex:1 1 170px;min-width:0}
