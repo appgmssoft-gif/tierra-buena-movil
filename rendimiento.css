@@ -71,7 +71,8 @@ html.tb-cambia .tb-anima,html.tb-cambia .tb-anima::before,html.tb-cambia .tb-ani
 
 /* F936 · Sesión obligatoria: sin sesión no hay barra, menú ni accesos rápidos; solo la portada, la puerta y el inicio de sesión. */
 html[data-sesion="0"] .btn-menu,html[data-sesion="0"] .tb-rapido,html[data-sesion="0"] .barra-top{display:none!important}
-html[data-sesion="0"] #pantalla{padding-bottom:24px}
+html[data-sesion="0"] body.entrando #pantalla{padding-bottom:24px}
+html[data-sesion="0"] body:not(.entrando) #pantalla{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))}
 
 /* F1128 · Efectos y sonido: su icono es transparente para no molestar en cada pantalla */
 .tb-rapido{opacity:.35}

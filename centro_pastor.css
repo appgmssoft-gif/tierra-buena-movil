@@ -1,7 +1,7 @@
 /* F1351/F1352 · Centro del pastor: buscador, ficha, visión y menú */
 .cp-titulo,.cp-nombre{margin:6px 2px 4px}
-.cp-filtros{display:flex;gap:8px;margin:8px 0}
-.cp-chip{min-height:44px;padding:8px 16px;border-radius:999px;border:1px solid var(--linea);background:var(--tarjeta,transparent);color:inherit;font:inherit;cursor:pointer}
+.cp-filtros{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.cp-chip{min-height:44px;padding:8px 14px;white-space:nowrap;border-radius:999px;border:1px solid var(--linea);background:var(--tarjeta,transparent);color:inherit;font:inherit;cursor:pointer}
 .cp-chip.on{background:var(--verde);color:var(--papel);border-color:var(--verde)}
 .cp-fila{display:flex;align-items:center;gap:12px;width:100%;min-height:60px;margin:6px 0;padding:10px 12px;border-radius:14px;border:1px solid var(--linea);background:var(--tarjeta,transparent);color:inherit;font:inherit;text-align:left;cursor:pointer}
 .cp-fila:active{transform:scale(.98)}

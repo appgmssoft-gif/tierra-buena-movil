@@ -245,7 +245,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Acertijos de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Letras entre las hojas': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => !CABECERAS_ILUSTRADAS ? '' : `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1432';
+  const APP_VERSION = 'F1434';
   // F1171: respaldo si movimiento.js no cargó (pruebas o caché vieja): mismo criterio que TBMov.quieto().
   const MOV_QUIETO = () => { try { if (window.TBMov) return window.TBMov.quieto(); const h = document.documentElement; return h.getAttribute('data-anim') === 'off' || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
@@ -977,7 +977,7 @@
   function vistaPrivacidad(id, atras) {
     const cuenta = !!leer(K_CUENTA), off = metaLeer().off;
     $('#pantalla').innerHTML = `${volver()}${heroInt('c2', '🔒', 'Tus datos son tuyos', 'Mi privacidad', 'Así de claro: qué ve cada persona y qué puedes hacer tú.')}
-      <p class="suave"><a href="privacidad.html" target="_blank" rel="noopener">Leer la política de privacidad completa</a></p>
+      <p class="suave cc-enl"><a href="privacidad.html" target="_blank" rel="noopener">Leer la política de privacidad completa</a></p>
       <h2 class="mi-sub">Qué ve cada persona</h2>
       <div class="quien-lista">${PRIV_FILAS.map((f) => `<div class="card quien"><span class="quien-ico" aria-hidden="true">${f[0]}</span><div><b>${esc(f[1])}</b><span class="quien-chip ${QUIEN[f[2]][1]}">${esc(QUIEN[f[2]][0])}</span><p class="suave m0t">${esc(f[3])}</p></div></div>`).join('')}</div>
       <h2 class="mi-sub">Lo que puedes hacer</h2>
@@ -3263,7 +3263,7 @@
     const mins = (rM.ok && Array.isArray(rM.data) ? rM.data : []).filter((x) => pas || x.es_lider);
     const lista = rE.data || [];
     try { guardar('tb_movil_agenda_cache', lista.map((e) => ({ id: e.id, t: e.titulo, fecha: e.inicio, lugar: e.lugar || '' }))); } catch (e) { /* sin copia */ }   // F921: alimenta calendario y avisos
-    m.textContent = lista.length ? 'Lo que viene en tu iglesia.' : 'Todavía no hay actividades.';
+    m.textContent = lista.length ? 'Lo que viene en tu iglesia.' : ((pas || mins.length) ? 'Todavía no hay actividades. Agrega la primera abajo.' : 'Todavía no hay actividades. Cuando tu pastor agregue cultos o reuniones, las verás aquí.');
     const prox = lista.find((e) => (diasHasta(e.inicio) || 0) >= 0);
     if (prox) $('#aghero').innerHTML = heroInt('c1', '🗓️', 'Lo próximo', esc(prox.titulo), esc((cercania(diasHasta(prox.inicio)) || dtFmt(prox.inicio)) + (prox.lugar ? ' · ' + prox.lugar : '')));
     const gAg = [['Esta semana', (e) => { const d = diasHasta(e.inicio); return d != null && d >= 0 && d <= 7; }], ['Más adelante', (e) => (diasHasta(e.inicio) || 0) > 7], ['Ya pasaron', (e) => (diasHasta(e.inicio) || 0) < 0]];
