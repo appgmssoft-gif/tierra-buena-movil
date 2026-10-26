@@ -201,7 +201,7 @@ main{padding-bottom:calc(112px + var(--sa-b))}
   @keyframes respira{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.18);opacity:1}}
   @keyframes flota{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
   @keyframes brilla{to{background-position:-200% 0}}
-  @keyframes cruza{0%,70%{left:-70%}100%{left:140%}}
+  /* F1433 · @keyframes cruza eliminada: no se usaba */
   @keyframes rebota{0%{transform:scale(.7)}60%{transform:translateY(-3px) scale(1.2)}100%{transform:translateY(-1px) scale(1.08)}}
   @keyframes crece{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 }
@@ -864,7 +864,7 @@ input[type=tel]:focus{outline:0;border-color:var(--verde);box-shadow:0 0 0 4px c
 .pt-fin .pt-a{margin-top:14px}
 .pt-pie{padding-top:8px;display:flex;flex-direction:column;gap:2px}
 .pt-pts{display:flex;justify-content:center;margin-bottom:10px}
-.pt-pt{width:26px;height:26px;border:0;background:none;padding:0;display:grid;place-items:center;cursor:pointer}
+.pt-pt{width:44px;height:44px;border:0;background:none;padding:0;display:grid;place-items:center;cursor:pointer}   /* F1433 · área de toque de 44 px (el punto visual sigue igual) */
 .pt-pt::before{content:"";width:8px;height:8px;border-radius:99px;background:color-mix(in srgb,var(--tinta) 22%,transparent);transition:width .35s,background .35s}
 .pt-pt.on::before{width:24px;background:var(--verde)}
 @media (prefers-reduced-motion:reduce){.pt-pista,.pt-sl,.pt-pt::before{transition:none}}
@@ -1476,3 +1476,7 @@ button.lc-card{cursor:pointer}
 .sb-promo-linea{margin:4px 0 10px}
 .sb-prueba{margin:6px 0 4px;font-size:.9rem}
 .sb-prueba span{font-weight:700}
+
+/* F1433 · En pantallas de 320 px, el aviso de instalar en Palabra puede bajar a dos líneas y no se sale de la pantalla. */
+.hoy-inst{flex-wrap:wrap;max-width:100%}
+.hoy-inst .hoy-fecha{min-width:0;max-width:100%;white-space:normal;text-align:left}

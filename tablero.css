@@ -163,17 +163,17 @@ body.tb-full #pantalla { padding-bottom: 0; }
 .tbl-carta.abierta .tbl-carta-f, .tbl-carta.pareja .tbl-carta-f { display: none; }
 .tbl-carta.pareja { background: linear-gradient(160deg, #c9f0c6, #7cc08a); }
 .tbl-cosecha { position: relative; flex: 1; width: 100%; min-height: 200px; overflow: hidden; border-radius: 14px; background: rgba(255,255,255,.06); }
-.tbl-caida { position: absolute; top: -12%; background: none; border: 0; font-size: 30px; padding: 0; cursor: pointer; animation-name: tblCaeItem; animation-timing-function: linear; animation-fill-mode: forwards; }
-@keyframes tblCaeItem { to { top: 104%; } }
+.tbl-caida { position: absolute; top: -12%; background: none; border: 0; font-size: 30px; padding: 0; cursor: pointer; }
+/* F1433 · tblCaeItem eliminada: las piezas se mueven con element.animate (transform) */
 .tbl-marca { margin: 0; font-weight: 700; font-size: 1.05rem; min-height: 1.4em; }
 .tbl-mini .tbl-btn { margin-top: 4px; }
 
 /* F1127 · Arreo de ovejas */
 .tbl-corral { font-size: .85rem; font-weight: 700; color: #ffe9a8; background: rgba(155,106,58,.45); border: 2px dashed #d9a441; border-radius: 12px; padding: 6px 12px; }
-.tbl-oveja { position: absolute; left: -12%; width: 56px; height: 56px; padding: 0; border: 0; background: none; cursor: pointer; animation-name: tblCruzaOveja; animation-timing-function: linear; animation-fill-mode: forwards; }
+.tbl-oveja { position: absolute; left: -12%; width: 56px; height: 56px; padding: 0; border: 0; background: none; cursor: pointer; }
 .tbl-oveja img { width: 100%; height: 100%; display: block; pointer-events: none; }
 .tbl-oveja.llevada { opacity: 0; transform: scale(.4); transition: opacity .3s ease, transform .3s ease; }
-@keyframes tblCruzaOveja { to { left: 104%; } }
+/* F1433 · tblCruzaOveja eliminada: las ovejas se mueven con element.animate (transform) */
 
 /* F1128 · Piezas como fichas de ajedrez (sin el círculo dorado: la ficha ya trae su base) */
 .tbl-pieza-in { background: none !important; box-shadow: none !important; }
@@ -395,11 +395,11 @@ body.tb-full #pantalla { padding-bottom: 0; }
 @keyframes tblPareja { 0% { transform: rotateY(180deg) scale(1); } 40% { transform: rotateY(180deg) scale(1.12); } 100% { transform: rotateY(180deg) scale(1); } }
 
 /* Cosecha: frutas dibujadas que caen con balanceo; feedback +1 / −1 al tocar */
-.tbl-caida { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: none; border: 0; padding: 0; cursor: pointer; animation-name: tblCaeItem, tblBalanceo; animation-timing-function: linear, ease-in-out; animation-fill-mode: forwards, none; animation-iteration-count: 1, infinite; animation-duration: var(--d, 3.6s), 1.6s; }
+.tbl-caida { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: none; border: 0; padding: 0; cursor: pointer; }
 .tbl-caida svg { width: 40px; height: 40px; display: block; filter: drop-shadow(0 3px 3px rgba(0,0,0,.4)); }
 .tbl-caida.rara svg { filter: drop-shadow(0 3px 3px rgba(0,0,0,.5)) saturate(.7); }
 .tbl-caida.tocada { transform: scale(1.3); opacity: 0; transition: transform .18s, opacity .18s; }
-@keyframes tblBalanceo { 0%, 100% { margin-left: -4px; } 50% { margin-left: 4px; } }
+/* F1433 · tblBalanceo eliminada: animaba margin-left y las piezas ya tienen animation: none */
 .tbl-pop { position: absolute; transform: translate(-50%, -50%); font-weight: 900; font-size: 1.3rem; pointer-events: none; text-shadow: 0 2px 4px #000; animation: tblPop .7s ease-out forwards; z-index: 3; }
 .tbl-pop.bien { color: #bff0a8; } .tbl-pop.mal { color: #ffb3a3; }
 @keyframes tblPop { 0% { opacity: 0; transform: translate(-50%, -50%) scale(.5); } 25% { opacity: 1; transform: translate(-50%, -90%) scale(1.2); } 100% { opacity: 0; transform: translate(-50%, -160%) scale(1); } }

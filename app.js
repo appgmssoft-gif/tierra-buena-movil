@@ -759,7 +759,6 @@
     // F1354 · Bienvenida y consentimiento (1.5): una sola vez por versión del texto, antes de entrar al área del miembro
     if (window.TBConsentimiento && !window.TBConsentimiento.aceptado(id)) return window.TBConsentimiento.pantalla(id, { rpc: rpcRaw, iglesia: ig && ig.nombre, seguir: () => vistaMiembro(id), salir: () => ir('inicio') });
     // F1410 · Barra inferior: mismos destinos que el inicio, sin esperar a que se dibuje la pantalla.
-    setTimeout(() => { if (window.TBDock) window.TBDock.montar({ inicio: () => vistaMiembro(id), chat: () => vistaChat({ rol: 'miembro', codigo: id.codigo, clave: id.clave, nombre: id.nombre }), agenda: () => vistaAgenda(modoMiembro(id)), muro: vistaMuro, servir: vistaMiembroServir }); if (window.TBDock) window.TBDock.marcar('inicio'); }, 0);
     $('#pantalla').innerHTML = `
       ${areaHero('area-iglesia')}<p class="area-tag area-tag-miembro">Tu comunidad</p><section class="saludo"><div class="perfil-aura" aria-hidden="true"></div>${avatarHTML(id.nombre, perfilLeer(), false)}<div><p class="suave m0">${saludoHora()}</p><h1>Hola, ${esc(id.nombre)}</h1><p class="suave m0">⛪ ${ig ? esc(ig.nombre) : 'Tu iglesia'}</p></div></section>
       <section class="mi-car" aria-label="Para ti hoy" aria-roledescription="carrusel">
@@ -812,7 +811,7 @@
 
   function vistaMiembroServir(id) {
     $('#pantalla').innerHTML = `${cabecera('Servir', 'Mi iglesia')}${heroInt('c2', '🕍', 'Mi servicio', 'Servir con tu iglesia', 'Tus turnos, cuándo puedes servir y los grupos donde ayudas.')}
-      <h2 class="mi-sub">Mis turnos</h2><div id="misTurnos"><p class="suave m0">Cargando tus turnos…</p></div><div id="misAseo"></div><div id="misMetas"></div><div id="misRevision"></div><div id="misArchivos"></div><div id="misTableros"></div><div id="misTema"></div><div id="misReuniones"></div><div id="misMetasIglesia"></div><div id="misClima"></div><div id="misAsist"></div><div id="misActiv"></div><div id="misForm"></div><div id="misCelebra"></div><div id="misPrograma"></div><div id="misEncuestas"></div><div id="misAnimos"></div><div id="misGracias"></div>
+      <h2 class="mi-sub">Mis turnos</h2><div id="misTurnos"><p class="suave m0">Cargando tus turnos…</p></div><div id="misAseo"></div><div id="misMetas"></div><div id="misRevision"></div><div id="misArchivos"></div><div id="misTableros"></div><div id="misTema"></div><div id="misReuniones"></div><div id="misMetasIglesia"></div><div id="misProyectos"></div><div id="misPlanIglesia"></div><div id="misClases"></div><div id="misClima"></div><div id="misAsist"></div><div id="misActiv"></div><div id="misForm"></div><div id="misCelebra"></div><div id="misPrograma"></div><div id="misEncuestas"></div><div id="misAnimos"></div><div id="misGracias"></div>
       <div id="turLider"></div>
       <div class="card"><b>¿Cuándo puedes servir?</b><p class="suave m0t">Marca lo que te sirve. Por ahora solo lo ves tú.</p>
         <div class="chips" role="group" aria-label="Mi disponibilidad">${DISP_OPC.map(([k, t]) => `<button type="button" class="chip${dispLeer().indexOf(k) >= 0 ? ' on' : ''}" data-disp="${k}" aria-pressed="${dispLeer().indexOf(k) >= 0}">${t}</button>`).join('')}</div>
@@ -837,6 +836,10 @@
     if (window.TBTemasEstudio) window.TBTemasEstudio.miembroMostrar('misTema', id, rpcRaw);
     if (window.TBReunionesLideres) window.TBReunionesLideres.miembroMostrar('misReuniones', id, rpcRaw);
     if (window.TBMetasIglesia) window.TBMetasIglesia.miembroMostrar('misMetasIglesia', id, rpcRaw);
+    if (window.TBProyectosIglesia) window.TBProyectosIglesia.miembroMostrar('misProyectos', id, rpcRaw);   // F1433 · promesa 9
+    if (window.TBPlanIglesia) window.TBPlanIglesia.miembroMostrar('misPlanIglesia', id, rpcRaw);   // F1433 · promesa 10
+    if (window.TBPlanesLectura) window.TBPlanesLectura.sincronizar(id, rpcRaw, PLANES.map((pl) => ({ id: pl.id, n: pl.n, dias: (planEstado(pl.id) || { h: [] }).h.length, total: PD(pl).length })));   // F1433 · promesa 15 (SQL 85)
+    if (window.TBClases) window.TBClases.miembroMostrar('misClases', id, rpcRaw);   // F1433 · promesa 14 (SQL 84)
     if (window.TBClima) window.TBClima.miembroMostrar('misClima', id, rpcRaw);
     // F1378 · Mi asistencia: escribir el código de la sesión y ver mi resumen (SQL 39). Si no hay, no aparece.
     if (window.TBAsistencia) window.TBAsistencia.miembroMostrar('misAsist', id, rpcRaw);
@@ -2794,7 +2797,7 @@
     const sec = (tit, cuerpo) => '<h2 class="mi-sub">' + esc(tit) + '</h2>' + cuerpo;
     const llamar = (nombre, numero, detalle) => '<a class="ay-llamar" href="' + telDe(numero) + '"><span class="ay-num">' + esc(numero) + '</span><span class="ay-tx"><b>' + esc(nombre) + '</b><small>' + esc(detalle) + '</small></span><span class="ay-tel" aria-hidden="true">📞</span></a>';
     const emergencias = '<div class="ay-grande">' + llamar('Ambulancia (SAMU)', '131', 'Emergencias de salud, a cualquier hora.') + llamar('Bomberos', '132', 'Incendios y rescates.') + llamar('Carabineros', '133', 'Seguridad y peligro inmediato.') + '</div><p class="suave m0">Si hay peligro inmediato, llama primero.</p>';
-    const apoyo = '<div class="ay-lista">' + llamar('Fono *4141 (Minsal)', '*4141', 'Prevención del suicidio. Gratuito, 24 horas, confidencial.') + llamar('Sernameg', '1455', 'Violencia contra la mujer y violencia intrafamiliar.') + llamar('SENDA', '1412', 'Consumo de drogas y alcohol. Gratuito y anónimo.') + llamar('Fono Infancia', '800 200 818', 'Apoyo para la crianza y para niños y adolescentes.') + '</div><p class="suave m0">Confirma estos números en el sitio oficial antes de publicar la app.</p>';
+    const apoyo = '<div class="ay-lista">' + llamar('Fono *4141 (Minsal)', '*4141', 'Prevención del suicidio. Gratuito, 24 horas, confidencial.') + llamar('Fono 1455 (Ministerio de la Mujer)', '1455', 'Orientación y ayuda por violencia contra las mujeres. Gratuito, 24 horas.') + llamar('Fono Drogas y Alcohol (SENDA)', '1412', 'Consumo de drogas y alcohol. Gratuito.') + llamar('Fono Infancia', '800 200 818', 'Apoyo para la crianza. Lunes a viernes, de 8:30 a 19:00. Gratuito.') + '</div><p class="suave m0">Confirma estos números en el sitio oficial antes de publicar la app.</p>';
     const cuidados = '<ol class="mi-pasos">' + ['Come algo, aunque sea poco, y bebe agua.', 'Sal a caminar cinco minutos, si puedes.', 'Habla hoy con una persona de confianza.', 'Respira lento: cuatro segundos adentro, seis afuera.', 'Aleja de tu alcance lo que pueda hacerte daño.'].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol>';
     const iglesia = '<div class="card"><p class="m0">Tu pastor o un líder de tu comunidad de fe puede acompañarte, orar contigo y ayudarte a buscar apoyo profesional.</p><ul class="ayuda-pasos"><li>Habla con tu pastor en persona o por teléfono.</li><li>Visita una iglesia cercana y pide un momento de oración o consejería pastoral.</li><li>Pide que te acompañen a buscar un profesional si lo necesitas.</li></ul><p class="suave m0">La iglesia acompaña; no reemplaza a los servicios de emergencia ni al tratamiento profesional.</p></div>';
     $('#pantalla').innerHTML = cabecera('Ayuda y contactos', 'Vida') + heroInt('c3', '🤝', 'No estás solo ni sola', 'A quién acudir', 'Si estás en peligro, llama primero.') + sec('Tu iglesia y tu pastor', iglesia) + sec('Cuidarte hoy', cuidados) + sec('Emergencias', emergencias) + sec('Líneas de apoyo en Chile', apoyo);
@@ -3065,7 +3068,7 @@
   const invitaNumero = (t) => { let d = String(t || '').replace(/\D/g, ''); if (d.slice(0, 2) === '00') d = d.slice(2); if (/^9\d{8}$/.test(d)) d = '56' + d; else if (d[0] === '0') d = d.replace(/^0+/, ''); return d.length >= 8 && d.length <= 15 ? d : ''; };
   const invitaCorreoOk = (t) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(t || '').trim());
   const invitaWa = (num, txt) => 'https://wa.me/' + (num || '') + '?text=' + encodeURIComponent(txt);
-  const invitaMail = (correo, txt) => 'mailto:' + (correo || '').trim() + '?subject=' + encodeURIComponent('Te invito a Tierra Buena 🌱') + '&body=' + encodeURIComponent(txt);
+  const invitaMail = (correo, txt) => 'mailto:' + (correo || '').trim() + '?subject=' + encodeURIComponent('Te invito a Tierra Buena Suite 🌱') + '&body=' + encodeURIComponent(txt);
   // </invitar>
   function invitarHoja() {
     const p = perfilLeer(), id = leer(K_ID), yo = p.n || (id && id.nombre) || '';
@@ -3181,7 +3184,7 @@
     try { const S = window.TBSuscripcion; if (!S || !S.catalogo()) return '';
       const dias = (window.TBInicio && window.TBInicio.cargar().ciclo.diasCuidado) || 0;
       if (S.tengoPlus()) return `<h2 class="sep">Apoyo</h2><div class="lista">${fila('t1', svg('corazon', 22), 'Gracias por apoyar', 'Ver o administrar mi apoyo', 'apoyar')}</div>`;
-      if (S.ofertaVisible(dias)) return `<h2 class="sep">Apoyo</h2><div class="lista">${fila('t1', svg('corazon', 22), 'Apoyar Tierra Buena', 'Es opcional y lo esencial sigue gratis', 'apoyar')}</div>`;
+      if (S.ofertaVisible(dias)) return `<h2 class="sep">Apoyo</h2><div class="lista">${fila('t1', svg('corazon', 22), 'Apoyar Tierra Buena Suite', 'Es opcional y lo esencial sigue gratis', 'apoyar')}</div>`;
     } catch (e) { /* sin oferta */ }
     return '';
   };
@@ -3531,7 +3534,7 @@
         const k = (c2.data || []).find((z) => z.id === ok.canal_id);
         if (k) vistaChat(x, k);
       } };
-    const irPP = (k) => { const f = ({ sol: pSolicitudes, ora: pOraciones, vis: pVisitas, mie: pMiembros, min: pMinisterios, age: () => vistaAgenda(modoPastor(p)), avi: () => vistaAvisos(modoPastor(p)), mcal: () => pCalendario(p), disp: () => pDisponibilidad(p), bien: () => pBienvenida(p), chat: () => vistaChat({ rol: 'pastor', codigo: p.codigo, secreto: p.secreto }), dat: pDatos, mpre: () => window.TBMisPredicas && window.TBMisPredicas.abrir(), rsem: pResumenSemanal, bol: pBoletin, vigl: () => window.TBCentroPastor.vision(p, ctxCP), menu: () => window.TBCentroPastor.menu(p, ctxCP), tar: () => window.TBTarjetaPastor.abrir(p, ctxCP), aseo: () => window.TBAseo.abrir(p, ctxCP), act: () => window.TBActividades.abrir(p, ctxCP), form: () => window.TBFormularios.abrir(p, ctxCP), cel: () => window.TBCelebraciones.abrir(p, ctxCP), fam: () => window.TBFamilias.abrir(p, ctxCP), impl: () => window.TBImportar.abrirLista(p, ctxCP), cul: () => window.TBPlantillasCulto.abrir(p, ctxCP), enc: () => window.TBEncuestas.abrir(p, ctxCP), ani: () => window.TBAnimo.abrir(p, ctxCP), lec: () => window.TBLecturaPredicas.abrir(p, ctxCP), bus: () => window.TBBuscar.abrir(p, ctxCP), eti: () => window.TBEtiquetas.abrir(p, ctxCP), asi: () => window.TBAsistencia.abrir(p, ctxCP), imp: () => window.TBImportar.abrir(p, ctxCP), cfg: () => window.TBConfigIglesia.abrir(p, ctxCP), salud: () => window.TBSaludIglesia.abrir(p, ctxCP), mgl: () => window.TBMetasLideres.abrir(p, ctxCP), rli: () => window.TBReunionesLideres.abrir(p, ctxCP), mig: () => window.TBMetasIglesia.abrir(p, ctxCP), cli: () => window.TBClima.abrir(p, ctxCP), cop: () => window.TBCopia.abrir(p, ctxCP), rev: () => window.TBRevisionMetas.abrir(p, ctxCP), arc: () => window.TBArchivos.abrir(p, ctxCP), tab: () => window.TBMinisterioTablero.abrir(p, ctxCP), tem: () => window.TBTemasEstudio.abrir(p, ctxCP) })[k]; if (f) f(p); };
+    const irPP = (k) => { const f = ({ sol: pSolicitudes, ora: pOraciones, vis: pVisitas, mie: pMiembros, min: pMinisterios, age: () => vistaAgenda(modoPastor(p)), avi: () => vistaAvisos(modoPastor(p)), mcal: () => pCalendario(p), disp: () => pDisponibilidad(p), bien: () => pBienvenida(p), chat: () => vistaChat({ rol: 'pastor', codigo: p.codigo, secreto: p.secreto }), dat: pDatos, mpre: () => window.TBMisPredicas && window.TBMisPredicas.abrir(), rsem: pResumenSemanal, bol: pBoletin, vigl: () => window.TBCentroPastor.vision(p, ctxCP), menu: () => window.TBCentroPastor.menu(p, ctxCP), tar: () => window.TBTarjetaPastor.abrir(p, ctxCP), aseo: () => window.TBAseo.abrir(p, ctxCP), act: () => window.TBActividades.abrir(p, ctxCP), form: () => window.TBFormularios.abrir(p, ctxCP), cel: () => window.TBCelebraciones.abrir(p, ctxCP), fam: () => window.TBFamilias.abrir(p, ctxCP), impl: () => window.TBImportar.abrirLista(p, ctxCP), cul: () => window.TBPlantillasCulto.abrir(p, ctxCP), enc: () => window.TBEncuestas.abrir(p, ctxCP), ani: () => window.TBAnimo.abrir(p, ctxCP), lec: () => window.TBLecturaPredicas.abrir(p, ctxCP), bus: () => window.TBBuscar.abrir(p, ctxCP), eti: () => window.TBEtiquetas.abrir(p, ctxCP), asi: () => window.TBAsistencia.abrir(p, ctxCP), imp: () => window.TBImportar.abrir(p, ctxCP), cfg: () => window.TBConfigIglesia.abrir(p, ctxCP), salud: () => window.TBSaludIglesia.abrir(p, ctxCP), mgl: () => window.TBMetasLideres.abrir(p, ctxCP), rli: () => window.TBReunionesLideres.abrir(p, ctxCP), mig: () => window.TBMetasIglesia.abrir(p, ctxCP), pro: () => window.TBProyectosIglesia.abrir(p, ctxCP), plan: () => window.TBPlanIglesia.abrir(p, ctxCP), mem: () => window.TBMembresiaLista.abrir(p, ctxCP), cla: () => window.TBClases.abrir(p, ctxCP), plp: () => window.TBPlanesLectura.abrir(p, ctxCP, PLANES.map((pl) => ({ id: pl.id, n: pl.n, total: PD(pl).length }))), cli: () => window.TBClima.abrir(p, ctxCP), cop: () => window.TBCopia.abrir(p, ctxCP), rev: () => window.TBRevisionMetas.abrir(p, ctxCP), arc: () => window.TBArchivos.abrir(p, ctxCP), tab: () => window.TBMinisterioTablero.abrir(p, ctxCP), tem: () => window.TBTemasEstudio.abrir(p, ctxCP) })[k]; if (f) f(p); };
     document.querySelectorAll('[data-pp]').forEach((b) => b.addEventListener('click', () => irPP(b.dataset.pp)));
     $('#pSalir').onclick = () => { if (confirm('¿Salir del modo pastor en este teléfono? Tu llave se borra de aquí (sigue en tu computador).')) { borrar(K_PASTOR); borrar('tb_movil_juntos_cache'); barraRefrescar('perfil'); ir('perfil'); } };
     const ins = (k, n) => { if (!(n > 0)) return; const t = document.querySelector('[data-pp="' + k + '"]'); if (!t) return; let e = t.querySelector('.mi-b-n'); if (!e) { e = document.createElement('span'); e.className = 'mi-b-n'; t.appendChild(e); } e.textContent = n > 99 ? '99+' : String(n); e.setAttribute('aria-label', e.textContent + ' por atender'); };
@@ -3776,6 +3779,7 @@
     if (!esPastor && x.esLider === undefined) {   // el miembro que lidera un ministerio puede crear reuniones con el pastor
       const mm = await misMinisterios({ codigo: x.codigo, clave: x.clave });
       x.esLider = !!(mm.ok && mm.lista.some((z) => z.es_lider));
+      if (document.body.classList.contains('tb-full')) return;   // F1433 · si ya abriste el tablero mientras cargaba, el chat no se dibuja encima
     }
     if (!canal) {
       const volver = esPastor ? vistaPastor : vistaIglesia;
@@ -4018,7 +4022,20 @@
   // Hoy esto le toma al pastor escribirlo a mano cada semana; aquí se arma solo con lo que ya cargó en Avisos y Agenda.
   // Reusa aviso_pastor_listar y agenda_pastor_listar (sin SQL nuevo, sin generar PDF todavía: eso queda para cuando
   // se decida el formato final, ver TAREAS.md).
-  async function pBoletin(p) {
+  // F1433 · Imprime el boletín de la semana (o guarda como PDF) con la misma plantilla de impresión de las listas.
+function imprimirBoletin(avisos, proximos) {
+  const fecha = new Date().toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' });
+  const bloqueAvisos = (avisos || []).length ? '<h2>Avisos</h2>' + avisos.map((a) => '<p><strong>' + esc(a.titulo || 'Aviso') + '</strong><br>' + esc(a.texto || a.detalle || '') + '</p>').join('') : '';
+  const bloqueAgenda = (proximos || []).length ? '<h2>Esta semana</h2>' + proximos.map((e) => '<p><strong>' + esc(e.titulo) + '</strong><br>' + esc(dtFmt(e.inicio)) + (e.lugar ? ' · ' + esc(e.lugar) : '') + (e.ministerio ? ' · ' + esc(e.ministerio) : '') + '</p>').join('') : '';
+  let c = document.getElementById('tbImprimible');
+  if (!c) { c = document.createElement('div'); c.id = 'tbImprimible'; document.body.appendChild(c); }
+  c.innerHTML = '<h1>Boletín de la semana</h1><p class="imp-nota">Tierra Buena Suite · ' + esc(fecha) + '</p>' + bloqueAvisos + bloqueAgenda;
+  document.body.classList.add('tb-imprimiendo');
+  const fin = () => { document.body.classList.remove('tb-imprimiendo'); c.innerHTML = ''; window.removeEventListener('afterprint', fin); };
+  window.addEventListener('afterprint', fin);
+  setTimeout(() => { try { window.print(); } catch (e) { fin(); } }, 50);
+}
+async function pBoletin(p) {
     $('#pantalla').innerHTML = pCab('Boletín de la semana', '<div id="pHero"></div>');
     volverA('Panel', vistaPastor);
     const m = $('#pmsg');
@@ -4034,7 +4051,9 @@
     if (avisos.length) h += '<h2 class="mi-sub">Avisos</h2>' + avisos.map((a) => avisoHTML(a, false)).join('');
     if (proximos.length) h += '<h2 class="mi-sub">Esta semana</h2>' + proximos.map((e) => `<div class="card item"><p class="t m0">${esc(e.titulo)}</p><p class="suave m0t">${esc(cercania(diasHasta(e.inicio)) || dtFmt(e.inicio))}${e.lugar ? ' · ' + esc(e.lugar) : ''}${e.ministerio ? ' · ' + esc(e.ministerio) : ''}</p></div>`).join('');
     if (!vacio) h += `<button type="button" class="btn sep16" id="bolComp">${svg('compartir', 18)} Compartir boletín con mi iglesia</button>`;
+    if (!vacio) h += `<button type="button" class="btn sec sep8" id="bolPdf">🖨 Imprimir o guardar PDF</button>`;   // F1433 · promesa: boletín semanal en PDF
     $('#plista').innerHTML = h;
+    const bp = $('#bolPdf'); if (bp) bp.onclick = () => imprimirBoletin(avisos, proximos);
     const bc = $('#bolComp');
     if (bc) bc.onclick = async () => {
       let nombreIgl = 'nuestra iglesia';
@@ -4361,7 +4380,7 @@
         ${t.nota ? `<p class="suave sb-nota">${esc(t.nota)}</p>` : ''}
         ${ya ? '' : `<button type="button" class="btn sb-bt" data-plan="${esc(t.id)}">${esc(t.boton)}</button>`}</article>`;
     };
-    $('#pantalla').innerHTML = `${cabecera('Suscripción', atras[0])}${heroInt('c4', '💚', 'Tierra Buena', esc(T.planes_titulo), esc(T.planes_intro))}
+    $('#pantalla').innerHTML = `${cabecera('Suscripción', atras[0])}${heroInt('c4', '💚', 'Tierra Buena Suite', esc(T.planes_titulo), esc(T.planes_intro))}
       ${ya ? `<div class="card apoyo-ok"><b>${esc(T.activo)}</b>${est && est.vence ? `<p class="suave m0t">${esc(T.vence)} ${esc(fecha(est.vence))}.</p>` : ''}${S.enGracia() ? `<p class="suave m0t">${esc(T.gracia)}</p>` : ''}<p class="suave m0t">${esc(T.cancelar)}</p></div>` : ''}
       <div class="chips apoyo-per" role="group" aria-label="Elige el periodo">${S.PERIODOS.map((p) => `<button type="button" class="chip${p === per ? ' on' : ''}" data-per="${p}" aria-pressed="${p === per}">${p === 'anual' ? 'Anual · 2 meses de regalo' : 'Mensual'}</button>`).join('')}</div>
       <p class="suave sb-aviso">${esc(T.precios_nota)}</p>

@@ -146,15 +146,6 @@ input,textarea,select{border-radius:var(--ap-radio-s)}
   *,*::before,*::after{animation:none !important;transition:none !important;scroll-behavior:auto !important}
 }
 
-/* F1410 · Barra de navegación inferior (dock): flotante, clara, con texto bajo cada ícono */
-.tb-dock{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 10px);z-index:40;display:flex;gap:4px;padding:6px;width:min(520px,calc(100% - 20px));box-sizing:border-box;border-radius:24px;background:color-mix(in srgb, var(--tarjeta) 86%, transparent);backdrop-filter:saturate(1.6) blur(18px);-webkit-backdrop-filter:saturate(1.6) blur(18px);border:1px solid var(--linea);box-shadow:0 6px 24px rgba(0,0,0,.14)}
-.tb-dock-b{flex:1 1 0;min-height:54px;border:0;background:transparent;color:var(--suave);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-radius:18px;font:inherit;font-size:.72rem;font-weight:600;cursor:pointer}
-.tb-dock-b[aria-current=page]{color:var(--verde);background:color-mix(in srgb, var(--verde) 13%, transparent);font-weight:700}
-.tb-dock-ico{font-size:1.3rem;line-height:1}
-.tb-dock-b:focus-visible{outline:2px solid var(--verde);outline-offset:2px}
-body.tb-con-dock{padding-bottom:calc(88px + env(safe-area-inset-bottom,0px))}
-body.en-chat .tb-dock{display:none}
-body.en-chat.tb-con-dock{padding-bottom:0}
 
 
 /* F1411 · Dentro del chat se oculta la barra principal: el campo de escribir queda libre */

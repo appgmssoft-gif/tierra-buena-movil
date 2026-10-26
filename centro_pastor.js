@@ -86,9 +86,10 @@
     const f = r.ok && r.data && (Array.isArray(r.data) ? r.data[0] : r.data);
     if (!f) { c.textContent = 'No pudimos abrir esta ficha. Revisa tu conexión e inténtalo de nuevo.'; return; }
     c.hidden = true;
-    $('#cpFicha').innerHTML = fichaHTML(f) + '<div id="cpFam"></div><div id="cpHist"><p class="suave" role="status">Revisando su historial…</p></div>' + hitoFormHTML();
+    $('#cpFicha').innerHTML = fichaHTML(f) + '<div id="cpFam"></div><div id="cpHist"><p class="suave" role="status">Revisando su historial…</p></div>' + membresiaFormHTML() + hitoFormHTML();
     const cc = $('#cpChat'); if (cc) cc.onclick = () => ctx.chatCon(id);
     conectarHitoForm(p, ctx, id);
+    conectarMembresia(p, ctx, id);   // F1433 · promesa 13 (SQL 80)
     cargarHistorial(p, ctx, id);
     // F1373 · 1.13 familia y 1.9 datos del pastor (familias.js). Si el SQL 36 no está, no se muestra nada.
     if (window.TBFamilias) window.TBFamilias.fichaBloque(p, ctx, id, f, () => abrirFicha(p, ctx, id, volverLista));
@@ -135,6 +136,9 @@
     if (filas.length) {
       caja.insertAdjacentHTML('beforeend', botonExportar('cpHistExp', 'cpHistExpMsg', 'Descargar historial para Excel', 'Hitos, servicios y visitas (sin el motivo ni la dirección de las visitas).'));
       conectarExportar('cpHistExp', 'cpHistExpMsg', () => filasHistorial(ultimoHistorial), COLS_HIST, 'historial-miembro', ['registro', 'registros']);
+      // F1433 · 1.15 Historial también para imprimir o guardar como PDF (misma tabla que Excel).
+      caja.insertAdjacentHTML('beforeend', '<p><button type="button" class="btn chico sec" id="cpHistPdf">🖨 Imprimir o guardar PDF</button></p>');
+      const bp = $('#cpHistPdf'); if (bp) bp.onclick = () => imprimirLista('Historial del miembro', COLS_HIST, filasHistorial(ultimoHistorial), 'Integración, servicios y visitas');
     }
     conectarBorrar(p, ctx, id);
   }
@@ -157,6 +161,31 @@
 
   // ---- F1363 · 1.14 Registrar un hito (pastor_hito_guardar, SQL 28). Solo el pastor registra y borra; la persona no edita. ----
   const hoyISO = () => new Date().toISOString().slice(0, 10);
+  // F1433 · Promesa 13: membresía de cada persona (SQL 80). Visitante, congregado o miembro.
+  function membresiaFormHTML() {
+    return '<div class="card tp-form" id="cpMembresia"><h2 class="mi-sub">Membresía</h2>' +
+      '<label for="cpMemEst">Estado en la iglesia</label><select id="cpMemEst"><option value="">Sin definir</option>' +
+      '<option value="visitante">Visitante</option><option value="congregado">Congregado</option><option value="miembro">Miembro</option></select>' +
+      '<label for="cpMemFec">Desde cuándo</label><input id="cpMemFec" type="date" max="' + hoyISO() + '">' +
+      '<p id="cpMemErr" class="error" role="alert" hidden></p>' +
+      '<button type="button" class="btn sec" id="cpMemGuardar">Guardar membresía</button>' +
+      '<p class="suave" id="cpMemMsg" role="status" aria-live="polite"></p></div>';
+  }
+  async function conectarMembresia(p, ctx, id) {
+    const sel = $('#cpMemEst'), fec = $('#cpMemFec'), btn = $('#cpMemGuardar'); if (!sel || !btn) return;
+    const r = await ctx.rpc('pastor_membresia_leer', p, { p_miembro: id });
+    const fila = r && r.ok && Array.isArray(r.data) ? r.data[0] : null;
+    if (fila) { sel.value = fila.membresia || ''; fec.value = fila.fecha || ''; }
+    btn.onclick = async () => {
+      const er = $('#cpMemErr'), msg = $('#cpMemMsg'); er.hidden = true; msg.textContent = '';
+      btn.disabled = true;
+      const row = await ctx.rpc('pastor_membresia_guardar', p, { p_miembro: id, p_estado: sel.value || null, p_fecha: fec.value || null });
+      btn.disabled = false;
+      const f = row && row.ok && Array.isArray(row.data) ? row.data[0] : null;
+      if (!f || !f.ok) { er.textContent = f && f.motivo === 'fecha-futura' ? 'La fecha no puede ser futura.' : 'No se pudo guardar la membresía. Revisa tu conexión.'; er.hidden = false; return; }
+      msg.textContent = 'Membresía guardada.';
+    };
+  }
   function hitoFormHTML() {
     const tipos = Object.keys(TIPO_HITO);
     return '<div class="card tp-form cp-hito-form"><h2 class="mi-sub">Registrar un hito</h2>' +
@@ -375,18 +404,23 @@
       ['enc', '🗳️', 'Encuestas', 'Pregunta a tu iglesia y mira los resultados'],
       ['eti', '🏷️', 'Etiquetas y grupos', 'Agrupa personas para enviarles mensajes'],
       ['ani', '💛', 'Palabra de ánimo', 'Envía una frase de ánimo a una persona en un toque']]],
+    ['Vida de la iglesia', [['cla', '🎓', 'Clases y escuela dominical', 'Ministerios con horario, profesor y alumnos'],
+      ['plp', '📚', 'Planes de lectura', 'Cuántas personas leen cada plan, sin nombres'],
+      ['mem', '📇', 'Membresía', 'Visitantes, congregados y miembros de la iglesia'],
+      ['act', '🏕️', 'Actividades y paseos', 'Próximas actividades, inscripciones y cupos']]],
     ['Agenda y organización', [['age', '📅', 'Agenda', 'Actividades y reuniones'],
       ['mcal', '🗓', 'Mi calendario', 'Visitas, reuniones y descanso. Solo tú lo ves'],
       ['aseo', '🧹', 'Aseo y tareas', 'Quién hace cada tarea cada semana'],
       ['cul', '📖', 'Plantillas de culto', 'El orden del culto, con tiempos y responsable de cada bloque'],
-      ['act', '🏕️', 'Actividades y paseos', 'Próximas actividades, inscripciones y cupos'],
       ['asi', '✅', 'Asistencia', 'Sesiones, código para tus miembros y asistencia de 12 meses'],
       ['form', '📋', 'Formularios e inscripciones', 'Retiros, bautismos y cursos: quién responde']]],
-    ['Equipo y personas', [['mig', '🧭', 'Metas de la iglesia', 'Hasta 5 metas del mes con avance visible para todos'],
-      ['cli', '🫶', 'Encuesta de clima', 'Preguntas anónimas para conocer cómo se siente la iglesia'],
+    ['Proyectos y metas', [['mig', '🧭', 'Metas de la iglesia', 'Hasta 5 metas del mes con avance visible para todos'],
+      ['pro', '🏗️', 'Proyectos de la iglesia', 'Responsable, fechas y avance de cada proyecto'],
+      ['plan', '📆', 'Plan de la iglesia', 'Objetivo del mes y acciones con responsable'],
+      ['mgl', '🎯', 'Metas de líderes', 'Pon metas del mes a cada persona y marca si se cumplen']]],
+    ['Equipo y personas', [['cli', '🫶', 'Encuesta de clima', 'Preguntas anónimas para conocer cómo se siente la iglesia'],
       ['min', '🕍', 'Ministerios y líderes', 'Grupos, personas y líderes'],
       ['rli', '🤝', 'Reuniones de líderes', 'Elige la fecha con tus líderes y guarda el acta con los acuerdos'],
-      ['mgl', '🎯', 'Metas de líderes', 'Pon metas del mes a cada persona y marca si se cumplen'],
       ['rev', '🔁', 'Revisión de metas', 'Cómo se cumplieron las metas del mes, en números'],
       ['tab', '🧩', 'Tableros y planes por ministerio', 'Tareas de cada grupo en columnas y su plan del mes']]],
     ['Datos de la iglesia', [['tar', '🪪', 'Mi tarjeta de pastor', 'Cargo, horario de atención y dirección de tu oficina'],
