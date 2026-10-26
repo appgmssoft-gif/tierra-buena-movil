@@ -106,7 +106,7 @@ html:not([data-anim=off]) .il-maleza::after{animation:il-late 1.8s ease-in-out 2
 .il-sem-tx small{display:none;font-size:.82rem;line-height:1.4;color:var(--suave)}
 .il-semilla.on .il-sem-tx small{display:block}
 .il-plantar{width:100%;position:sticky;bottom:calc(104px + env(safe-area-inset-bottom,0px))}
-.il-plantar:disabled{opacity:.55}
+.il-plantar:disabled{opacity:.55;position:static}
 
 @media (prefers-reduced-motion:reduce){
   .il-maleza::after{animation:none!important}

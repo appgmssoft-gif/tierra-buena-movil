@@ -2,7 +2,8 @@
 .cc-h2{margin:22px 2px 8px;font:700 1.15rem/1.2 "TB Titulo",Georgia,serif}
 .cc-h3{margin:16px 0 4px;font-size:1rem}
 .cc-fila{display:flex;align-items:flex-start;gap:14px;min-height:56px;margin:8px 0;padding:12px 14px;border-radius:14px;border:1px solid var(--linea);background:var(--tarjeta,transparent);cursor:pointer}
-.cc-fila span{flex:1;display:flex;flex-direction:column;gap:2px}
+.cc-fila span{flex:1;display:block;line-height:1.45}
+.cc-fila .cc-col{display:flex;flex-direction:column;gap:2px}   /* F1433 · UX: solo las opciones van en columna; el texto de Términos y Privacidad fluye en una línea */
 .cc-fila small{color:var(--suave)}
 .cc-ck{flex:none;width:26px;height:26px;margin:2px 0 0;accent-color:var(--verde);cursor:pointer}
 .cc-ck:focus-visible,.cc-det summary:focus-visible,.cc-enl a:focus-visible{outline:3px solid var(--oro);outline-offset:2px}

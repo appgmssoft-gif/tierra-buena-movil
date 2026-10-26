@@ -928,7 +928,7 @@ body.entrando main{padding-top:calc(22px + var(--sa-t))}
 /* F897 · fecha santa cercana en Hoy (discreta, solo ≤7 días) */
 .hoy-fecha{display:inline-flex;align-items:center;gap:8px;margin:10px 0 0;padding:8px 14px;border-radius:999px;border:1px solid color-mix(in srgb,var(--oro) 45%,transparent);background:color-mix(in srgb,var(--oro) 12%,transparent);color:var(--tinta);font:inherit;font-size:.92rem;cursor:pointer;min-height:40px;max-width:100%}
 .hoy-fecha svg{color:var(--oro);flex:none}
-.hoy-fecha span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hoy-fecha span{overflow:hidden;text-overflow:ellipsis;white-space:normal;text-align:left}
 .hoy-fecha:active{transform:scale(.97)}
 
 /* F898 · dock firme: la barra de abajo no se mueve con el contenido ni con el rebote del dedo */
@@ -1478,5 +1478,9 @@ button.lc-card{cursor:pointer}
 .sb-prueba span{font-weight:700}
 
 /* F1433 · En pantallas de 320 px, el aviso de instalar en Palabra puede bajar a dos líneas y no se sale de la pantalla. */
-.hoy-inst{flex-wrap:wrap;max-width:100%}
+.hoy-inst{max-width:100%}
+@media (max-width:330px){.hoy-inst{flex-wrap:wrap}}
 .hoy-inst .hoy-fecha{min-width:0;max-width:100%;white-space:normal;text-align:left}
+
+/* F1433 · UX: el aviso de instalar se lee en una sola línea; solo el texto de fecha de Hoy puede bajar de línea. */
+.hoy-inst .hoy-fecha span{white-space:nowrap}

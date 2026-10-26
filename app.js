@@ -1111,7 +1111,7 @@
       <button type="button" class="btn ${p.yo_oro ? '' : 'sec'} chico" data-orando="${esc(p.id)}" data-yo="${p.yo_oro ? '1' : '0'}" data-n="${Number(p.orando) || 0}">${muroEtiqueta(!!p.yo_oro, Number(p.orando) || 0)}</button></div>`).join('');
     caja.querySelectorAll('[data-orando]').forEach((b) => b.addEventListener('click', () => muroOrar(id, b)));
   }
-  const muroEtiqueta = (yo, n) => '🙏 ' + (yo ? 'Estoy orando' : 'Voy a orar') + ' · ' + Math.max(0, n);
+  const muroEtiqueta = (yo, n) => (yo ? '✓ Estoy orando por esto' : '🙏 Orar por esto') + ' · ' + Math.max(0, n);   // F1433 · UX: el texto dice la acción que hace la persona
   function muroPintar(b, yo, n) {
     b.dataset.yo = yo ? '1' : '0'; b.dataset.n = String(Math.max(0, n));
     b.classList.toggle('sec', !yo); b.textContent = muroEtiqueta(yo, n);
@@ -1150,11 +1150,11 @@
     } catch (e) { return null; }
   }
   function vistaAccion(id) {
-    $('#pantalla').innerHTML = `${volver()}<h1>Acción del mes</h1><div class="filete"></div>
+    $('#pantalla').innerHTML = `${volver()}<h1>Acción del mes</h1><div class="filete"></div><p class="suave">Elige una acción pequeña para este mes y cuéntanos cómo te fue. Todo queda guardado en tu teléfono, y tus meses anteriores aparecen abajo.</p>
       <div id="amtema"><p class="suave">Cargando…</p></div>
       <h2 class="sep">Mis acciones de este mes</h2>
       <p id="msg" role="alert" hidden></p>
-      <div id="amlista" aria-live="polite"></div>
+      <div id="amlista" aria-live="polite"></div><div id="amhist"></div>
       <button type="button" id="amagregar" class="btn sec" hidden>+ Agregar otra acción</button>
       <div id="amform" hidden>
         <label for="amnuevo">Ponle un título corto a tu acción</label>
@@ -1190,17 +1190,29 @@
     caja.innerHTML = mias.map((a) => `<div class="card item"><div class="fila"><b>${a.esDefault ? '🌟 ' : '✚ '}${esc(a.titulo)}</b>${a.esDefault ? '' : `<button type="button" class="btn sec chico" data-amdel="${esc(a.id)}" aria-label="Eliminar acción">🗑️</button>`}</div>
       <label class="suave" for="amt_${esc(a.id)}">¿Cómo te fue con esto? Cuéntalo en pocas palabras.</label>
       <textarea id="amt_${esc(a.id)}" rows="3" maxlength="600" placeholder="Escribe cómo te fue…">${esc(a.comoMeFue || '')}</textarea>
-      <div class="cr-acc"><button type="button" class="btn ${a.hecho ? 'sec' : ''} chico" data-amhecho="${esc(a.id)}" aria-pressed="${!!a.hecho}">${a.hecho ? '✓ Hecho este mes (quitar)' : 'Lo hice este mes'}</button><button type="button" class="btn sec chico" data-amsave="${esc(a.id)}">Guardar nota</button></div></div>`).join('');
-    caja.querySelectorAll('[data-amsave]').forEach((b) => b.addEventListener('click', () => {
-      const texto = ($('#amt_' + b.dataset.amsave).value || '').trim();
-      const l = accTodas(); const it = l.find((x) => x.id === b.dataset.amsave); if (!it) return;
-      if (!texto) return msg(it.comoMeFue ? 'Tu nota anterior sigue guardada. Escribe algo nuevo para cambiarla.' : 'Puedes escribir una nota cuando quieras.', false);
-      it.comoMeFue = texto.slice(0, 600); accGuardar(l); msg('Guardado en este teléfono.', true);
-    }));
+      <div class="cr-acc"><button type="button" class="btn ${a.hecho ? 'sec' : ''} chico" data-amhecho="${esc(a.id)}" aria-pressed="${!!a.hecho}">${a.hecho ? '✓ Hecho este mes (quitar)' : 'Lo hice este mes'}</button><span class="suave" id="amest_${esc(a.id)}" role="status" aria-live="polite">${a.comoMeFue ? 'Guardado en tu teléfono' : 'Se guarda sola mientras escribes'}</span></div></div>`).join('');
+    const guardarNota = (id, texto) => { const l = accTodas(); const it = l.find((x) => x.id === id); if (!it) return false; it.comoMeFue = (texto || '').trim().slice(0, 600); accGuardar(l); return true; };
+    caja.querySelectorAll('textarea[id^="amt_"]').forEach((t) => {
+      const id = t.id.slice(4); let tm = null;
+      const confirmar = () => { const e = document.getElementById('amest_' + id); if (e) e.textContent = t.value.trim() ? 'Guardado en tu teléfono' : 'Nota vacía: se borró'; };
+      t.addEventListener('input', () => { clearTimeout(tm); tm = setTimeout(() => { guardarNota(id, t.value); confirmar(); }, 600); });
+      t.addEventListener('blur', () => { clearTimeout(tm); guardarNota(id, t.value); confirmar(); });
+    });
     caja.querySelectorAll('[data-amhecho]').forEach((b) => b.addEventListener('click', () => {
       const l = accTodas(); const it = l.find((x) => x.id === b.dataset.amhecho); if (!it) return;
       it.hecho = !it.hecho; accGuardar(l); vibra(); accionPintar();
     }));
+    const hist = document.getElementById('amhist');
+    if (hist) {
+      const pasadas = accTodas().filter((x) => x.mes !== claveMes());
+      const meses = [...new Set(pasadas.map((x) => x.mes))].sort().reverse();
+      const nombreMes = (m) => { try { const [y, mo] = m.split('-'); return new Date(+y, +mo - 1, 1).toLocaleDateString('es-CL', { month: 'long', year: 'numeric' }); } catch (e) { return m; } };
+      hist.innerHTML = meses.length ? '<h2 class="sep">Meses anteriores</h2>' + meses.map((m) => {
+        const lista = pasadas.filter((x) => x.mes === m);
+        return '<details class="card item"><summary><b>' + esc(nombreMes(m)) + '</b> · ' + lista.filter((x) => x.hecho).length + ' de ' + lista.length + ' hechas</summary>' +
+          lista.map((a) => '<p class="m0">' + (a.hecho ? '✓ ' : '○ ') + esc(a.titulo) + (a.comoMeFue ? '<br><span class="suave">' + esc(a.comoMeFue) + '</span>' : '') + '</p>').join('') + '</details>';
+      }).join('') : '';
+    }
     caja.querySelectorAll('[data-amdel]').forEach((b) => b.addEventListener('click', () => {
       if (!confirm('¿Eliminar esta acción?')) return;
       accGuardar(accTodas().filter((x) => x.id !== b.dataset.amdel)); msg(''); accionPintar();

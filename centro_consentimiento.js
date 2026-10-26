@@ -42,7 +42,7 @@
       '<label class="cc-fila"><input type="checkbox" class="cc-ck" id="ccPri" aria-describedby="ccErr"><span>Entiendo qué datos ve mi pastor y acepto la <b>Política de privacidad</b>.</span></label>' +
       '<p class="cc-enl"><a href="privacidad.html" target="_blank" rel="noopener">Leer la política de privacidad completa</a></p>' +
       '<h2 class="cc-h2">Tú decides</h2><p class="suave">Vienen activadas para que tu pastor pueda cuidarte mejor. Apaga las que no quieras.</p>' +
-      OPCIONES.map((o) => '<label class="cc-fila"><input type="checkbox" class="cc-ck" data-opc="' + o[0] + '" checked><span><b>' + esc(o[1]) + '</b><small>' + esc(o[2]) + '</small></span></label>').join('') +
+      OPCIONES.map((o) => '<label class="cc-fila"><input type="checkbox" class="cc-ck" data-opc="' + o[0] + '" checked><span class="cc-col"><b>' + esc(o[1]) + '</b><small>' + esc(o[2]) + '</small></span></label>').join('') +
       '<p class="suave cc-nota">' + esc(NUNCA) + '</p>' +
       '<p class="cc-err" id="ccErr" role="alert"></p>' +
       '<button type="button" class="btn" id="ccAceptar">Aceptar y continuar</button>' +
