@@ -1,4 +1,4 @@
-/* tema_tb.css · F1457 · sistema de tarjetas translúcidas (capa final, sin cambiar pantallas).
+/* tema_tb.css · F1458 · sistema de tarjetas translúcidas (capa final, sin cambiar pantallas).
    Regla de tonos: nunca vidrio claro sobre vidrio claro. El vidrio siempre sobre color.
    Niveles: fondo medio saturado · vidrio blanco (contenido) · tinte sólido (lo importante). */
 :root{
@@ -28,7 +28,7 @@
 }
 @media (prefers-reduced-motion:reduce){ .barra.barra{transition:none} }
 
-/* Palabra (F1457): tarjetas translúcidas sobre color. Convive con los íconos de la familia canelo
+/* Palabra (F1458): tarjetas translúcidas sobre color. Convive con los íconos de la familia canelo
    y con el encabezado "Hoy" que ya cambia según la hora. Solo aplica al carrusel bajo .hoy. */
 :root{ --tb-fondo-carrusel:#cbd7c4; }
 @media (prefers-color-scheme:dark){ :root{ --tb-fondo-carrusel:#1e2a20; } }
@@ -54,27 +54,29 @@
   :is(.hoy,.mb-ayuda) + .mi-car .mi-sl-bt{background:rgba(243,239,224,.92);color:#1d3a24}
 }
 
-/* Vida (F1457): mismo carrusel de vidrio + fichas (bento) de vidrio sobre su propio fondo de color.
+/* Vida y Palabra (F1458): la grilla de fichas de vidrio ahora cubre las dos pantallas (.hoy = Palabra, .mb-ayuda = Vida).
+   Vida (F1458): mismo carrusel de vidrio + fichas (bento) de vidrio sobre su propio fondo de color.
    Los íconos de cada ficha no cambian: siguen siendo los de la app (reemplazo automático por familia). */
 :is(.hoy,.mb-ayuda) + .mi-car .mi-sl.c4{background:linear-gradient(160deg,rgba(150,80,50,.9),rgba(104,52,32,.88));color:#fff4ea;border-color:rgba(255,255,255,.3)}
 :is(.hoy,.mb-ayuda) + .mi-car .mi-sl.c4 .mi-sl-bt{color:#6b2f1e}
-.mb-ayuda ~ .mi-bento{position:relative;isolation:isolate;padding:10px;border-radius:28px;overflow:hidden}
-.mb-ayuda ~ .mi-bento::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+:is(.mb-ayuda,.hoy) ~ .mi-bento{position:relative;isolation:isolate;padding:10px;border-radius:28px;overflow:hidden}
+:is(.mb-ayuda,.hoy) ~ .mi-bento::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
   background:radial-gradient(circle at 10% 12%,rgba(232,169,62,.8) 0,rgba(232,169,62,0) 44%),
              radial-gradient(circle at 92% 40%,rgba(79,147,179,.75) 0,rgba(79,147,179,0) 46%),
              radial-gradient(circle at 30% 100%,rgba(63,127,75,.75) 0,rgba(63,127,75,0) 46%),
              var(--tb-fondo-carrusel)}
-.mb-ayuda ~ .mi-bento .mi-b{-webkit-backdrop-filter:blur(20px) saturate(170%);backdrop-filter:blur(20px) saturate(170%);
+:is(.mb-ayuda,.hoy) ~ .mi-bento .mi-b{-webkit-backdrop-filter:blur(20px) saturate(170%);backdrop-filter:blur(20px) saturate(170%);
   border:1px solid rgba(255,255,255,.55);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 18px 32px -20px rgba(20,30,15,.6)}
-.mb-ayuda ~ .mi-bento .mi-b small{opacity:.92}
-.mb-ayuda ~ .mi-bento .mb1{background:linear-gradient(160deg,rgba(47,110,62,.86),rgba(24,66,38,.84))}
-.mb-ayuda ~ .mi-bento .mb2{background:linear-gradient(160deg,rgba(142,92,14,.92),rgba(104,66,10,.9))}
-.mb-ayuda ~ .mi-bento .mb3{background:linear-gradient(160deg,rgba(150,80,50,.92),rgba(104,52,32,.9))}
-.mb-ayuda ~ .mi-bento .mb4{background:linear-gradient(90deg,rgba(34,90,118,.92),rgba(46,108,138,.9))}
-.mb-ayuda ~ .mi-bento .mb5{background:linear-gradient(160deg,rgba(104,76,148,.88),rgba(66,46,104,.86))}
-.mb-ayuda ~ .mi-bento .mb6{background:linear-gradient(160deg,rgba(120,96,20,.92),rgba(44,92,52,.9))}
+:is(.mb-ayuda,.hoy) ~ .mi-bento .mi-b small{opacity:.92}
+:is(.mb-ayuda,.hoy) ~ .mi-bento .mb1{background:linear-gradient(160deg,rgba(47,110,62,.86),rgba(24,66,38,.84))}
+:is(.mb-ayuda,.hoy) ~ .mi-bento .mb2{background:linear-gradient(160deg,rgba(142,92,14,.92),rgba(104,66,10,.9))}
+:is(.mb-ayuda,.hoy) ~ .mi-bento .mb3{background:linear-gradient(160deg,rgba(150,80,50,.92),rgba(104,52,32,.9))}
+:is(.mb-ayuda,.hoy) ~ .mi-bento .mb4{background:linear-gradient(90deg,rgba(34,90,118,.92),rgba(46,108,138,.9))}
+:is(.mb-ayuda,.hoy) ~ .mi-bento .mb5{background:linear-gradient(160deg,rgba(104,76,148,.88),rgba(66,46,104,.86))}
+:is(.mb-ayuda,.hoy) ~ .mi-bento .mb7{background:linear-gradient(160deg,rgba(150,112,40,.92),rgba(70,76,40,.9))}
+:is(.mb-ayuda,.hoy) ~ .mi-bento .mb6{background:linear-gradient(160deg,rgba(120,96,20,.92),rgba(44,92,52,.9))}
 /* Ayuda y contactos: se mantiene claro y reconocible (es un botón de emergencia) */
 .mb-ayuda{background:linear-gradient(90deg,rgba(172,64,58,.92),rgba(140,48,44,.9));color:#fff;border-color:rgba(255,255,255,.4);
   -webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 16px 30px -18px rgba(90,20,20,.6)}
 .mb-ayuda small{opacity:.95}
-#pantalla .mb-ayuda ~ .mi-bento button.mi-b:not(.mb-ancho):not(.mb-alto){min-height:116px}
+#pantalla :is(.mb-ayuda,.hoy) ~ .mi-bento button.mi-b:not(.mb-ancho):not(.mb-alto){min-height:116px}
