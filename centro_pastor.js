@@ -5,6 +5,8 @@
    si no compartió su teléfono, no se muestra nada ni se inventa. «Escribir en la app» llega con 2.1 (SQL).
    app.js solo llama a TBCentroPastor.miembros(p, ctx); si la función nueva no está en la base, devuelve false
    y app.js usa la lista de siempre. */
+// F1444 · Iconos 2.5D del centro (primer bloque). Lo que no esté aquí sigue con su emoji.
+const ICO3 = { vigl: 'iglesia', vis: 'casa', mie: 'gente', bien: 'brote', chat: 'chat', avi: 'altavoz', plp: 'libro', age: 'calendario', mcal: 'calendario', asi: 'check', cul: 'libro', mem: 'persona', min: 'iglesia' };
 (function () {
   'use strict';
   const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -437,7 +439,7 @@
       const it = g[1].filter((a) => w.every((t) => norm(a[2] + ' ' + a[3]).includes(t)));
       if (!it.length) return; n += it.length;
       h += '<h2 class="mi-sub">' + esc(g[0]) + '</h2>' + it.map((a) => '<button type="button" class="cp-fila" data-cpk="' + a[0] + '">' +
-        '<span class="cp-ico" aria-hidden="true">' + a[1] + '</span><span class="cp-fila-t"><b>' + esc(a[2]) + '</b><small>' + esc(a[3]) + '</small></span>' +
+        '<span class="cp-ico" aria-hidden="true">' + (ICO3[a[0]] && window.TB && TB.svg3d ? TB.svg3d(ICO3[a[0]], 40) : a[1]) + '</span><span class="cp-fila-t"><b>' + esc(a[2]) + '</b><small>' + esc(a[3]) + '</small></span>' +
         '<span class="cp-ir" aria-hidden="true">›</span></button>').join('');
     });
     return n ? h : '<p class="suave">No encontramos esa área. Prueba con otra palabra.</p>';

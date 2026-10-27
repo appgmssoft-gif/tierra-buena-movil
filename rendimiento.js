@@ -148,7 +148,7 @@
   }
   function boton() {
     if (document.getElementById('tbRapido')) return;
-    const b = document.createElement('button'); b.type = 'button'; b.id = 'tbRapido'; b.className = 'tb-rapido'; b.setAttribute('aria-label', 'Efectos y sonido'); b.textContent = '🎚️';
+    const b = document.createElement('button'); b.type = 'button'; b.id = 'tbRapido'; b.className = 'tb-rapido'; b.setAttribute('aria-label', 'Efectos y sonido'); b.innerHTML = (window.TB && TB.iconos && TB.iconos.altavoz) ? '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + TB.iconos.altavoz + '</svg>' : '🎚️';
     b.onclick = hoja; document.body.appendChild(b);
   }
 

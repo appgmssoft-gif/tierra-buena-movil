@@ -3,11 +3,11 @@
 .ip-estr circle{opacity:.85}
 .ip-estr .t2 circle{opacity:.7}.ip-estr .t3 circle{opacity:.55}
 @media (prefers-reduced-motion:no-preference){
-  html:not([data-anim=off]):not([data-eco="2"]) .ip-estr .t1{animation:ip-tit 4.2s ease-in-out infinite}
-  html:not([data-anim=off]):not([data-eco="2"]) .ip-estr .t2{animation:ip-tit 5.6s ease-in-out -1.8s infinite}
-  html:not([data-anim=off]):not([data-eco="2"]) .ip-estr .t3{animation:ip-tit 3.4s ease-in-out -2.6s infinite}
-  html:not([data-anim=off]):not([data-eco="2"]) .ip-nube.n4{animation:ip-deriva 110s ease-in-out -30s infinite alternate}
-  html:not([data-anim=off]):not([data-eco="2"]) .ip-ave{animation:ip-vuela 34s ease-in-out infinite alternate}
+  html:not([data-anim=off]):not([data-eco="2"]) .ip-estr .t1{animation:ip-tit 4.2s ease-in-out}
+  html:not([data-anim=off]):not([data-eco="2"]) .ip-estr .t2{animation:ip-tit 5.6s ease-in-out -1.8s}
+  html:not([data-anim=off]):not([data-eco="2"]) .ip-estr .t3{animation:ip-tit 3.4s ease-in-out -2.6s}
+  html:not([data-anim=off]):not([data-eco="2"]) .ip-nube.n4{animation:ip-deriva 110s ease-in-out -30s alternate}
+  html:not([data-anim=off]):not([data-eco="2"]) .ip-ave{animation:ip-vuela 34s ease-in-out alternate}
   html:not([data-anim=off]):not([data-eco="2"]) .ip-ave.a2{animation-duration:41s;animation-delay:-9s}
   html:not([data-anim=off]):not([data-eco="2"]) .ip-ave.a3{animation-duration:47s;animation-delay:-20s}
 }

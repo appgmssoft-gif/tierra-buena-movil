@@ -232,6 +232,7 @@
     campana: "<g stroke=\"#5a3d24\" stroke-width=\"1.2\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M6.5 16.5V11a5.5 5.5 0 0 1 11 0v5.5l1.5 2H5z\" fill=\"#f6ecd2\"/><path d=\"M10 20.5a2.2 2.2 0 0 0 4 0\" fill=\"#4f8a5b\"/><circle cx=\"12\" cy=\"4.6\" r=\"1.4\" fill=\"#c4604a\"/></g>",
   };
   const svg = (k, tam) => PICTO[k] ? `<svg class="ic ic-color" viewBox="0 0 24 24" width="${tam || 24}" height="${tam || 24}" aria-hidden="true" focusable="false">${PICTO[k]}</svg>` : (SV[k] ? `<svg class="ic" viewBox="0 0 24 24" width="${tam || 24}" height="${tam || 24}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${SV[k]}</svg>` : '');
+  const svg3d = (n, t) => (window.TB && TB.svg3d ? TB.svg3d(n, t) : svg(n, t > 60 ? 40 : 22));
   // F987 · Banda de identidad: escena de Tierra Buena (cielo, sol, colinas y brote). Va en Perfil y en Mi iglesia (pastor). SVG en línea, sin imágenes externas.
   // F989 · Banda de identidad con escena según el lugar: camino (Perfil), comunidad (Mi iglesia y miembro), crecer (Vida). SVG en línea.
   const BANDA_BASE = '<rect width="320" height="110" fill="#e4f0f6"/><rect width="320" height="70" fill="#f1f7ea"/>';
@@ -245,7 +246,7 @@
   const HERO_CAB = { 'Música': 'musica', 'Mi oración': 'oracion', 'Mi crecimiento': 'crecimiento', 'Salud mental': 'salud-mental', 'Juntos hacemos el bien': 'juntos', 'Ayuda y contactos': 'ayuda', 'Planes de vida': 'indice-vida', 'Planes de lectura': 'indice-lectura', 'Acertijos de la Palabra': 'juego-raices', 'Completa el versículo': 'juego-brotes', 'Letras entre las hojas': 'juego-sopa' };   // F1114 · F1117
   const areaHero = (id) => !CABECERAS_ILUSTRADAS ? '' : `<div class="area-hero" aria-hidden="true"><img src="img/areas/${id}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('sin')"></div>`;
   // F1096 · Versión visible (Perfil, al final): así se sabe si el teléfono ya cargó lo último. Debe coincidir con sw.js.
-  const APP_VERSION = 'F1434';
+  const APP_VERSION = 'F1444';
   // F1171: respaldo si movimiento.js no cargó (pruebas o caché vieja): mismo criterio que TBMov.quieto().
   const MOV_QUIETO = () => { try { if (window.TBMov) return window.TBMov.quieto(); const h = document.documentElement; return h.getAttribute('data-anim') === 'off' || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } };
   // F1096 · Toda subpantalla que vuelve a un área lleva una banda ilustrada baja, como las pantallas principales (antes quedaban solo con texto).
@@ -602,7 +603,7 @@
       ${ya ? '' : lcTarjeta('lc-pronto', '👆', 'Después, un atajo', 'Mantén tocado el ícono para ir directo a tu versículo, a la Biblia o a tus fechas importantes.')}</div>`;
     $('#volver').onclick = menuAbrir; window.scrollTo(0, 0);
   }
-  const instalarChip = () => { try { if (yaInstalada() || localStorage.getItem('tb_movil_inst_no') === String(new Date().getMonth())) return ''; } catch (e) { return ''; } return `<span class="hoy-inst"><button type="button" class="hoy-fecha" data-ir="inst">${svg('compartir', 16)}<span><b>Instalar la app</b> · un toque</span></button><button type="button" class="hoy-inst-x" data-ir="instno" aria-label="Ahora no">${svg('x', 14)}</button></span>`; };
+  const instalarChip = () => { try { if (yaInstalada() || localStorage.getItem('tb_movil_inst_no') === String(new Date().getMonth())) return ''; } catch (e) { return ''; } return `<span class="hoy-inst"><button type="button" class="hoy-fecha" data-ir="inst">${svg('compartir', 16)}<span><b>Instalar la app</b> · un toque</span></button><button type="button" class="hoy-inst-x" data-ir="instno" aria-label="Ahora no">Ahora no</button></span>`; };
   const bloqueInstalar = () => '<div data-instalar-box class="sep16"></div>';
   const codigoDeEnlace = () => { try { const q = new URLSearchParams(location.search.slice(1) || location.hash.replace(/^#\??/, '')); const c = (q.get('c') || q.get('codigo') || '').toUpperCase(); return /^[A-Z0-9]{6}$/.test(c) ? c : ''; } catch (e) { return ''; } };
 
@@ -1991,7 +1992,7 @@
       <h1>Hoy</h1><div class="hoy-verso" id="hoyVerso"><span class="esqueleto"></span><span class="esqueleto corto"></span></div>
       ${racha ? `<p class="hoy-racha">${svg('llama', 18)}<span>${racha === 1 ? '1 día leyendo la Palabra' : racha + ' días seguidos leyendo la Palabra'}</span></p>` : ''}${fechaCercanaChip()}${instalarChip()}</div>
       ${carHTML([
-        planAct ? slide('c2', '🗓', 'Tu plan', esc(planAct.pl.n || 'Plan de lectura'), 'Día ' + (planAct.n + 1) + ' de ' + planAct.pl.dias.length + ' · sigue donde ibas.', slBt('Seguir mi plan', 'plan')) : slide('c2', '🗓', 'Plan de lectura', 'Un poquito cada día', 'Elige un plan y avanza a tu ritmo, con tu progreso.', slBt('Elegir un plan', 'planes')),
+        planAct ? slide('c2', svg3d('calendario', 96), 'Tu plan', esc(planAct.pl.n || 'Plan de lectura'), 'Día ' + (planAct.n + 1) + ' de ' + planAct.pl.dias.length + ' · sigue donde ibas.', slBt('Seguir mi plan', 'plan')) : slide('c2', svg3d('calendario', 96), 'Plan de lectura', 'Un poquito cada día', 'Elige un plan y avanza a tu ritmo, con tu progreso.', slBt('Elegir un plan', 'planes')),
         inf ? slide('c1', '▶️', 'Seguir leyendo', esc(inf[1]) + ' ' + Number(ult.cap), 'Justo donde te quedaste.', slBt('Seguir', 'seguir') + slBt('Escuchar la Biblia', 'biblia')) : slide('c1', '📖', 'Leer la Biblia', 'Tu primera lectura', 'Elige tu versión, léela o escúchala.', slBt('Abrir la Biblia', 'biblia')),
         slide('c5', '📜', 'Fábula del mes', '<span id="pfFabT">Un relato para practicar</span>', 'Un relato corto, capítulo a capítulo.', slBt('Leerla', 'fabula')),
         slide('c3', '🔀', 'Para repasar', 'Juegos de la Palabra', 'Sin anuncios y sin tiempo.', slBt('Jugar', 'juegos'))
@@ -3265,7 +3266,7 @@
     try { guardar('tb_movil_agenda_cache', lista.map((e) => ({ id: e.id, t: e.titulo, fecha: e.inicio, lugar: e.lugar || '' }))); } catch (e) { /* sin copia */ }   // F921: alimenta calendario y avisos
     m.textContent = lista.length ? 'Lo que viene en tu iglesia.' : ((pas || mins.length) ? 'Todavía no hay actividades. Agrega la primera abajo.' : 'Todavía no hay actividades. Cuando tu pastor agregue cultos o reuniones, las verás aquí.');
     const prox = lista.find((e) => (diasHasta(e.inicio) || 0) >= 0);
-    if (prox) $('#aghero').innerHTML = heroInt('c1', '🗓️', 'Lo próximo', esc(prox.titulo), esc((cercania(diasHasta(prox.inicio)) || dtFmt(prox.inicio)) + (prox.lugar ? ' · ' + prox.lugar : '')));
+    if (prox) $('#aghero').innerHTML = heroInt('c1', svg3d('calendario', 46), 'Lo próximo', esc(prox.titulo), esc((cercania(diasHasta(prox.inicio)) || dtFmt(prox.inicio)) + (prox.lugar ? ' · ' + prox.lugar : '')));
     const gAg = [['Esta semana', (e) => { const d = diasHasta(e.inicio); return d != null && d >= 0 && d <= 7; }], ['Más adelante', (e) => (diasHasta(e.inicio) || 0) > 7], ['Ya pasaron', (e) => (diasHasta(e.inicio) || 0) < 0]];
     if (pas) botonCSV15('#aglista', 'agExp', 'Descargar agenda para Excel', 'agenda', lista, COLS_AGENDA15);
     $('#aglista').innerHTML = gAg.map((g) => { const l = lista.filter(g[1]); return l.length ? '<h2 class="mi-sub">' + g[0] + '</h2>' + l.map((e) => eventoHTML(e, !!pas || e.puede_borrar)).join('') : ''; }).join('');
@@ -3513,7 +3514,7 @@
       <div class="mi-bento">${bento('mb-ancho mb1', '🏛️', 'Tu iglesia hoy', 'Personas, cumpleaños y lo que pide atención', 'vigl', 'pp')}${bento('mb-ancho mb5', '🧭', 'Todas las áreas', 'Un menú con todo lo que puedes hacer', 'menu', 'pp')}${bento('mb-ancho mb4', '🗞️', 'Resumen semanal', 'Lo de los últimos 7 días, en un solo lugar', 'rsem', 'pp')}</div>
       <h2 class="mi-sub">Mis prédicas</h2><div class="mi-bento">${bento('mb-ancho mb1', '🎙️', 'Mis prédicas', 'Graba tu mensaje, guárdalo y escúchalo', 'mpre', 'pp')}</div>
       <h2 class="mi-sub">Para atender hoy</h2><div class="mi-bento">${bento('mb3', '🏠', 'Visitas', 'Quién pide que lo visites', 'vis', 'pp')}${bento('mb5', '🤲', 'Oraciones', 'Peticiones recibidas', 'ora', 'pp')}${bento('mb-ancho mb1', '🙋', 'Solicitudes', 'Quién quiere unirse a tu iglesia', 'sol', 'pp')}</div>
-      <h2 class="mi-sub">Mi agenda</h2><div class="mi-bento">${bento('mb-ancho mb4', '🗓', 'Mi calendario', 'Visitas, reuniones y descanso. Solo tú lo ves', 'mcal', 'pp')}</div>
+      <h2 class="mi-sub">Mi agenda</h2><div class="mi-bento">${bento('mb-ancho mb4', svg3d('calendario', 52), 'Mi calendario', 'Visitas, reuniones y descanso. Solo tú lo ves', 'mcal', 'pp')}</div>
       <h2 class="mi-sub">Código de tu iglesia</h2><div class="card pas-cod"><p class="suave m0">Compártelo con tus miembros para que se unan a tu iglesia.</p><p class="pas-cod-num" id="pCodNum">${esc(p.codigo || '—')}</p><div class="hoja-bt"><button type="button" class="btn" id="pCodCopiar">Copiar código</button><button type="button" class="btn sec" id="pCodCompartir">Compartir</button></div><details class="pas-llave"><summary>Llave para mi otro teléfono (privada)</summary><p class="suave">Es como una contraseña: no la compartas con nadie.</p><button type="button" class="btn sec" id="pLlaveCopiar">Copiar llave</button></details></div>
       <h2 class="mi-sub">Personas</h2><div class="mi-bento">${bento('mb-alto mb1', '👥', 'Miembros', 'Quiénes forman tu iglesia', 'mie', 'pp')}${bento('mb2', '🌱', 'Bienvenida', 'Primeras 4 semanas', 'bien', 'pp')}${bento('mb6', '🕐', 'Disponibilidad', 'Quiénes pueden servir', 'disp', 'pp')}</div>
       <h2 class="mi-sub">Comunicación</h2><div class="mi-bento">${bento('mb-ancho mb4', '💬', 'Chat', 'Iglesia, pastor y líderes, y conversaciones', 'chat', 'pp')}${bento('mb3', '📣', 'Avisos', 'Para todos o un grupo', 'avi', 'pp')}${bento('mb2', '📅', 'Agenda', 'Actividades y reuniones', 'age', 'pp')}${bento('mb-ancho mb5', '🗞️', 'Boletín de la semana', 'Junta avisos y agenda, listo para compartir', 'bol', 'pp')}</div>
@@ -3578,7 +3579,7 @@
     const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
     const hasta = new Date(hoy.getTime() + 14 * 86400000);
     const etiqueta = (d) => d.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' });
-    $('#pantalla').innerHTML = `${cabecera('Mi calendario', 'Panel')}<div id="calHero">${heroInt('c3 pas-hero', '🗓', 'Solo tú lo ves', 'Mi calendario', 'Visitas, reuniones, prédicas y descanso.')}</div>
+    $('#pantalla').innerHTML = `${cabecera('Mi calendario', 'Panel')}<div id="calHero">${heroInt('c3 pas-hero', svg3d('calendario', 46), 'Solo tú lo ves', 'Mi calendario', 'Visitas, reuniones, prédicas y descanso.')}</div>
       <div class="cr-acc"><button type="button" class="btn sec" id="calNuevo" aria-expanded="false" aria-controls="calForm">+ Agregar a mi calendario</button><button type="button" class="btn sec" id="calVerMes">Ver el mes</button></div>
       <div id="calForm" class="card" hidden>
         <label for="calT">¿Qué es?</label><input id="calT" type="text" maxlength="80" placeholder="Ej.: Visitar a la familia Soto">
@@ -3597,7 +3598,7 @@
       const caja = $('#calLista'); if (!caja) return;
       if (!r.ok) { caja.innerHTML = '<p class="suave">No pudimos abrir tu calendario. Revisa tu conexión y vuelve a intentarlo.</p>'; return; }
       const evs = r.data || [];
-      if ($('#calHero')) $('#calHero').innerHTML = heroInt('c3 pas-hero', '🗓', 'Próximos 14 días', evs.length ? evs.length + (evs.length === 1 ? ' cosa agendada' : ' cosas agendadas') : 'Calendario libre', evs.length ? 'Visitas, reuniones, prédicas y descanso. Solo tú lo ves.' : 'Un espacio libre también es parte del servicio.');
+      if ($('#calHero')) $('#calHero').innerHTML = heroInt('c3 pas-hero', svg3d('calendario', 46), 'Próximos 14 días', evs.length ? evs.length + (evs.length === 1 ? ' cosa agendada' : ' cosas agendadas') : 'Calendario libre', evs.length ? 'Visitas, reuniones, prédicas y descanso. Solo tú lo ves.' : 'Un espacio libre también es parte del servicio.');
       if (!evs.length) { caja.innerHTML = '<p class="suave">No tienes nada agendado en las próximas dos semanas. Un espacio libre también es parte del servicio.</p>'; return; }
       let dia = '', html = '';
       evs.forEach((e) => {
@@ -4491,7 +4492,7 @@ async function pBoletin(p) {
     const fila = (x) => `<div class="fx-fila fx-santa${x[4] === 'mes' ? ' fx-mes' : ''}"><span class="fx-fecha" aria-hidden="true"><b>${x[4] === 'mes' ? '✦' : x[0].getDate()}</b><small>${esc(x[0].toLocaleDateString('es', { month: 'short' }).replace('.', ''))}</small></span><span class="fx-tx"><b>${esc(x[1])}</b><small>${esc(dias(x[0], x[4]))}</small><em>${esc(x[3])}</em></span></div>`;
     const igl = (() => { try { return (window.TBFechas && window.TBFechas.listaHTML(['juntos', 'agenda'])) || ''; } catch (e) { return ''; } })();
     $('#pantalla').innerHTML = `${cabecera('Fechas importantes', 'Menú')}
-      ${p ? heroInt('c2', '🕊️', esc(dias(p[0], p[4])), esc(p[1]), esc(fmt(p[0]))) : heroInt('c2', '🗓️', 'Por ahora', 'Sin fechas cercanas', 'Cuando haya una, aparece aquí.')}
+      ${p ? heroInt('c2', '🕊️', esc(dias(p[0], p[4])), esc(p[1]), esc(fmt(p[0]))) : heroInt('c2', svg3d('calendario', 46), 'Por ahora', 'Sin fechas cercanas', 'Cuando haya una, aparece aquí.')}
       <p class="cal-trad"><span>${svg('calendario', 18)} ${esc(TRAD_N[tradLeer()] || 'Fechas para todos')}</span><button type="button" class="enlace" id="calCambiar">Cambiar tradición</button></p>
       ${p ? `<h2 class="mi-sub">Para vivirla</h2><div class="card fx-vivir"><p class="m0">${esc(p[2])}</p><p class="cal-paso">${svg('chispas', 18)} <span><b>Sugerencia:</b> ${esc(p[3])}</span></p></div>` : ''}
       ${igl ? `<h2 class="mi-sub">Lo de tu iglesia</h2><div class="fx-lista">${igl}</div>` : ''}

@@ -120,7 +120,7 @@
 .chat-msg .chat-quien{margin:0 0 4px;font-size:.84rem;color:var(--suave);display:flex;flex-wrap:wrap;align-items:center;gap:4px}
 .chat-msg .chat-quien b{color:var(--tinta)}
 .chat-msg p:not(.chat-quien){margin:0;line-height:1.45;white-space:pre-wrap;word-break:break-word}
-.chat-escribir{position:sticky;bottom:calc(env(safe-area-inset-bottom,0px) + 6px);z-index:5;margin-top:12px;padding:10px;border-radius:20px;box-shadow:0 -4px 16px rgba(0,0,0,.08);backdrop-filter:saturate(1.2) blur(6px)}
+.chat-escribir{position:sticky;bottom:calc(env(safe-area-inset-bottom,0px) + 6px);z-index:5;margin-top:12px;padding:10px;border-radius:20px;box-shadow:0 -4px 16px rgba(0,0,0,.08)}
 .chat-escribir textarea{border-radius:14px;min-height:48px;font:inherit;width:100%;box-sizing:border-box}
 .ch-cats{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px}
 .ch-cats .ch-cat{min-height:36px;border-radius:999px;padding:4px 12px;border:1px solid var(--linea);background:var(--tarjeta);font:inherit;font-size:.86rem;cursor:pointer}

@@ -20,29 +20,29 @@
 .inicio-limpio.il-con-lienzo.ip-con-fondo .il-escena{margin-top:-6px;margin-bottom:-30px}
 .ip-con-fondo .il-datos{gap:4px;padding-top:2px}
 .ip-con-fondo .il-franja{margin:2px auto 0;gap:6px}
-.ip-con-fondo .il-guia{font-size:.72rem;white-space:nowrap;font-weight:600;color:#6b480d;margin:2px 0 0;padding:5px 14px;border-radius:999px;background:rgba(255,250,238,.78);border:1px solid rgba(201,162,74,.4);box-shadow:0 4px 12px rgba(40,30,10,.14);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.ip-con-fondo .il-guia{font-size:.72rem;white-space:nowrap;font-weight:600;color:#6b480d;margin:2px 0 0;padding:5px 14px;border-radius:999px;background:rgba(255,250,238,.78);border:1px solid rgba(201,162,74,.4);box-shadow:0 4px 12px rgba(40,30,10,.14)}
 /* El sol y la luna los dibuja el paisaje de atrás; la escena conserva nubes, lluvia y arcoíris */
 .ip-con-fondo .clima .cl-sol,.ip-con-fondo .clima .cl-luna{display:none}
 
 /* ---------- Piezas de cristal y oro ---------- */
-.ip-con-fondo .il-franja .il-gotas{background:linear-gradient(180deg,rgba(255,255,255,.82),rgba(255,248,232,.62));border:1px solid rgba(201,162,74,.55);box-shadow:0 6px 18px rgba(40,30,10,.18),inset 0 1px 0 rgba(255,255,255,.9);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.ip-con-fondo .il-franja .il-gotas{background:linear-gradient(180deg,rgba(255,255,255,.82),rgba(255,248,232,.62));border:1px solid rgba(201,162,74,.55);box-shadow:0 6px 18px rgba(40,30,10,.18),inset 0 1px 0 rgba(255,255,255,.9)}
 .ip-con-fondo .il-pill{background:linear-gradient(180deg,rgba(255,255,255,.8),rgba(255,247,230,.6));border:1px solid rgba(201,162,74,.5);box-shadow:0 8px 20px rgba(40,30,10,.18),inset 0 1px 0 rgba(255,255,255,.9)}
 
 /* ---------- Movimiento (solo transform y opacity; pocos grupos) ---------- */
 @media (prefers-reduced-motion:no-preference){
   html:not([data-anim=off]):not([data-eco="2"]) .ip-fondo{animation:ip-entra 1.2s ease-out both}
-  html:not([data-anim=off]):not([data-eco="2"]) .ip-rayos{animation:ip-respira 9s ease-in-out infinite}
-  html:not([data-anim=off]):not([data-eco="2"]) .ip-astro{transform-box:fill-box;transform-origin:center;animation:ip-late 8s ease-in-out infinite}
-  html:not([data-anim=off]):not([data-eco="2"]) .ip-nube{animation:ip-deriva 60s ease-in-out infinite alternate}
+  html:not([data-anim=off]):not([data-eco="2"]) .ip-rayos{animation:ip-respira 9s ease-in-out}
+  html:not([data-anim=off]):not([data-eco="2"]) .ip-astro{transform-box:fill-box;transform-origin:center;animation:ip-late 8s ease-in-out}
+  html:not([data-anim=off]):not([data-eco="2"]) .ip-nube{animation:ip-deriva 60s ease-in-out alternate}
   html:not([data-anim=off]):not([data-eco="2"]) .ip-nube.n2{animation-duration:78s;animation-delay:-20s}
   html:not([data-anim=off]):not([data-eco="2"]) .ip-nube.n3{animation-duration:95s;animation-delay:-45s}
-  html:not([data-anim=off]):not([data-eco="2"]) .ip-bruma{animation:ip-bruma 28s ease-in-out infinite alternate}
+  html:not([data-anim=off]):not([data-eco="2"]) .ip-bruma{animation:ip-bruma 28s ease-in-out alternate}
   html:not([data-anim=off]):not([data-eco="2"]) .ip-bruma.b2{animation-duration:36s;animation-delay:-12s}
-  html:not([data-anim=off]):not([data-eco="2"]) .ip-ola{animation:ip-ola 7s ease-in-out infinite alternate}
+  html:not([data-anim=off]):not([data-eco="2"]) .ip-ola{animation:ip-ola 7s ease-in-out alternate}
   html:not([data-anim=off]):not([data-eco="2"]) .ip-ola.o2{animation-duration:9s;animation-delay:-3s}
-  html:not([data-anim=off]):not([data-eco="2"]) .ip-part.p1{animation:ip-sube 17s ease-in-out infinite alternate}
-  html:not([data-anim=off]):not([data-eco="2"]) .ip-part.p2{animation:ip-sube 23s ease-in-out -7s infinite alternate}
-  html:not([data-anim=off]):not([data-eco="2"]) .ip-part.p3{animation:ip-sube 29s ease-in-out -13s infinite alternate}
+  html:not([data-anim=off]):not([data-eco="2"]) .ip-part.p1{animation:ip-sube 17s ease-in-out alternate}
+  html:not([data-anim=off]):not([data-eco="2"]) .ip-part.p2{animation:ip-sube 23s ease-in-out -7s alternate}
+  html:not([data-anim=off]):not([data-eco="2"]) .ip-part.p3{animation:ip-sube 29s ease-in-out -13s alternate}
 }
 @keyframes ip-entra{from{opacity:0}to{opacity:1}}
 @keyframes ip-respira{0%,100%{opacity:.7}50%{opacity:1}}

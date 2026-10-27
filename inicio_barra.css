@@ -5,8 +5,7 @@
 .il-barra{position:absolute;top:0;left:0;right:0;z-index:3;display:flex;justify-content:center;padding:0 12px;box-sizing:border-box;pointer-events:none}
 .il-barra-in{pointer-events:auto;display:flex;align-items:stretch;width:max-content;max-width:min(100%,332px);padding:4px;box-sizing:border-box;border-radius:26px;
   background:linear-gradient(180deg,rgba(255,255,255,.88),rgba(255,247,230,.66));border:1px solid rgba(201,162,74,.55);
-  box-shadow:0 10px 24px -8px rgba(40,30,10,.34),0 0 0 1px rgba(255,255,255,.5) inset,inset 0 1px 0 rgba(255,255,255,.95);
-  -webkit-backdrop-filter:blur(12px) saturate(1.4);backdrop-filter:blur(12px) saturate(1.4)}
+  box-shadow:0 10px 24px -8px rgba(40,30,10,.34),0 0 0 1px rgba(255,255,255,.5) inset,inset 0 1px 0 rgba(255,255,255,.95)}
 .ib-bt{position:relative;flex:1 1 0;min-width:44px;min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 2px;border:0;border-radius:21px;
   background:transparent;color:#3a2a0f;font:650 .75rem/1.1 inherit;font-family:inherit;letter-spacing:.02em;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .16s ease,background-color .2s ease}
 .ib-bt+.ib-bt::before{content:"";position:absolute;left:0;top:13px;bottom:13px;width:1px;background:linear-gradient(transparent,rgba(201,162,74,.6),transparent);pointer-events:none}
@@ -21,9 +20,9 @@
 html:not([data-anim=off]):not([data-eco="2"]) .ib-bt.nuevo::after{animation:ib-late 1.8s ease-in-out 3}
 @keyframes ib-late{0%,100%{transform:scale(1)}50%{transform:scale(1.35)}}
 @media (prefers-reduced-motion:reduce){.ib-bt.nuevo::after{animation:none!important}.ib-bt,.ib-ic{transition:none}}
-html[data-eco="2"] .il-barra-in{-webkit-backdrop-filter:none;backdrop-filter:none;background:#fbf4e3}
+html[data-eco="2"] .il-barra-in{background:#fbf4e3}
 @media (prefers-color-scheme:dark){
-  .il-barra-in{background:linear-gradient(165deg,rgba(60,52,36,.78),rgba(30,26,18,.6));border-color:rgba(214,170,84,.55);box-shadow:0 12px 26px -10px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.14)}
+  .il-barra-in{background:linear-gradient(165deg,rgba(60,52,36,.94),rgba(30,26,18,.9));border-color:rgba(214,170,84,.55);box-shadow:0 12px 26px -10px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.14)}
   .ib-bt{color:#f6ecd4}.ib-ic{color:#e2bd6c}.ib-tri .ib-ic{color:#6fd0c0}.ib-viv .ib-ic{color:#8fd49b}.ib-jue .ib-ic{color:#f08fb9}
   .ib-bt.nuevo::after{box-shadow:0 0 0 2px rgba(30,26,18,.9)}
 }
@@ -32,7 +31,7 @@ html[data-eco="2"] .il-barra-in{-webkit-backdrop-filter:none;backdrop-filter:non
 .inicio-limpio.il-con-lienzo{padding-top:72px;padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 
 /* ---------- Pantallas propias: cabecera de color, cuerpo que se desliza ---------- */
-.hoja-area{z-index:60;background:rgba(18,14,8,.52);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+.hoja-area{z-index:60;background:rgba(18,14,8,.52)}
 .hoja-area .hoja-in{position:relative;padding:0;display:flex;flex-direction:column;overflow:hidden;max-height:min(92vh,92dvh);border-radius:28px 28px 0 0;box-shadow:0 -14px 44px rgba(0,0,0,.4)}
 .ha-cab{position:relative;flex:none;display:flex;align-items:center;gap:12px;padding:24px 68px 16px 18px;overflow:hidden;color:#fff;background:linear-gradient(135deg,#d9a441,#a46f1c)}
 .ha-cab::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:linear-gradient(90deg,transparent,#f6dc9a,transparent)}
@@ -73,7 +72,7 @@ html[data-eco="2"] .il-barra-in{-webkit-backdrop-filter:none;backdrop-filter:non
 #hojaPaisaje{z-index:70}
 
 /* Dentro de su pantalla, los envoltorios no llevan cristal propio: la tarjeta es la protagonista */
-.ha-cuerpo .il-msg,.ha-cuerpo .il-tri,.ha-cuerpo .il-viv{background:transparent;border:0;-webkit-backdrop-filter:none;backdrop-filter:none;padding:0}
+.ha-cuerpo .il-msg,.ha-cuerpo .il-tri,.ha-cuerpo .il-viv{background:transparent;border:0;padding:0}
 .ha-cuerpo .il-mc{box-shadow:0 8px 18px -14px rgba(40,30,10,.5)}
 .ha-cuerpo .il-tema{margin:0 0 4px;font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:color-mix(in srgb,var(--oro,#c9a24a) 75%,var(--tinta))}
 .ha-deco{right:60px}

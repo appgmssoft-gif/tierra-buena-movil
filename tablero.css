@@ -28,11 +28,11 @@ body.tb-full #pantalla { padding-bottom: 0; }
 .tbl-bola::before { content: ""; position: absolute; inset: 0; z-index: 0; border-radius: 50%; pointer-events: none; overflow: hidden;
   background: conic-gradient(from 0deg, transparent 0 8%, var(--tb-aura-b) 16%, transparent 26% 52%, #ffffff 62%, transparent 72% 100%);
   -webkit-mask: radial-gradient(circle closest-side, transparent 84%, #000 90%, #000 97%, transparent 100%); mask: radial-gradient(circle closest-side, transparent 84%, #000 90%, #000 97%, transparent 100%);
-  opacity: .8; animation: tblAura 7s linear infinite; }
+  opacity: .8; animation: tblAura 7s linear; }
 .tbl-bola::after { content: ""; position: absolute; inset: 0; z-index: 0; border-radius: 50%; pointer-events: none; opacity: .5;
   background: radial-gradient(circle closest-side at 35% 60%, color-mix(in srgb, var(--tb-aura-b) 70%, transparent), transparent 70%), radial-gradient(circle closest-side at 68% 34%, rgba(255,255,255,.6), transparent 60%);
-  animation: tblNiebla 9s ease-in-out infinite alternate; }
-.tbl-aura { position: absolute; inset: 0; z-index: 0; border-radius: 50%; pointer-events: none; background: radial-gradient(circle closest-side, transparent 60%, color-mix(in srgb, var(--tb-aura-b) 40%, transparent) 88%, transparent 100%); animation: tblRespira 3.2s ease-in-out infinite; }
+  animation: tblNiebla 9s ease-in-out alternate; }
+.tbl-aura { position: absolute; inset: 0; z-index: 0; border-radius: 50%; pointer-events: none; background: radial-gradient(circle closest-side, transparent 60%, color-mix(in srgb, var(--tb-aura-b) 40%, transparent) 88%, transparent 100%); animation: tblRespira 3.2s ease-in-out; }
 @keyframes tblRespira { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
 .tbl-bola p { margin: 0; position: relative; z-index: 2; max-height: 100%; display: -webkit-box; -webkit-line-clamp: 8; -webkit-box-orient: vertical; overflow: hidden; }
 .tbl-destello { position: absolute; left: var(--x); top: var(--y); width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%; background: #fff; z-index: 1; pointer-events: none; opacity: 0;
@@ -71,7 +71,7 @@ body.tb-full #pantalla { padding-bottom: 0; }
 .tbl-pieza-in.salta { animation: tblSaltoPieza .42s ease-out; }
 .tbl-pieza-in.retro { animation: tblRetroPieza .5s ease-in-out; }
 .tbl-pieza::after { content: ""; position: absolute; left: 18%; right: 18%; bottom: -6px; height: 6px; border-radius: 50%; background: rgba(0,0,0,.4); filter: blur(2px); z-index: -1; }
-.tbl-mesa.con-escudo .tbl-pieza-in::before { content: ""; position: absolute; inset: -8px; border-radius: 50%; border: 2px solid rgba(156,195,214,.95); box-shadow: 0 0 12px rgba(156,195,214,.85); animation: tblHalo 1.8s ease-in-out infinite; }
+.tbl-mesa.con-escudo .tbl-pieza-in::before { content: ""; position: absolute; inset: -8px; border-radius: 50%; border: 2px solid rgba(156,195,214,.95); box-shadow: 0 0 12px rgba(156,195,214,.85); animation: tblHalo 1.8s ease-in-out; }
 
 /* Destellos, hojas y chispas (se crean desde el JS; van en el tablero o en la página) */
 .tbl-flash { position: absolute; inset: 0; border-radius: 24px; pointer-events: none; z-index: 4; animation: tblFlash .95s ease-out forwards; }
@@ -221,7 +221,7 @@ body.tb-full #pantalla { padding-bottom: 0; }
 
 /* F1136 · Fase 1: ambientación viva. Medallones que respiran y aura del lugar que late. Respeta reducir movimiento. */
 @keyframes tblAuraLate { 0%, 100% { opacity: .55; } 50% { opacity: .95; } }
-.tbl-aura { animation: tblAuraLate 5s ease-in-out infinite; }
+.tbl-aura { animation: tblAuraLate 5s ease-in-out; }
 @media (prefers-reduced-motion: reduce) { .tbl-aura { animation: none; } }
 
 /* F1137 · Tarjeta de instrucciones de cada minijuego: entrada animada y pasos claros */
@@ -237,7 +237,7 @@ body.tb-full #pantalla { padding-bottom: 0; }
 
 /* F1137 · Tarjeta de instrucciones: contenido centrado, texto a la izquierda, ícono grande */
 .tbl-intro { justify-content: center; }
-.tbl-intro-ico { font-size: 3.4rem; text-align: center; line-height: 1; filter: drop-shadow(0 3px 6px rgba(0,0,0,.5)); animation: tblIcoFlota 3.6s ease-in-out infinite; }
+.tbl-intro-ico { font-size: 3.4rem; text-align: center; line-height: 1; filter: drop-shadow(0 3px 6px rgba(0,0,0,.5)); animation: tblIcoFlota 3.6s ease-in-out; }
 @keyframes tblIcoFlota { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 .tbl-intro > b { text-align: center; font-size: 1.25rem; }
 .tbl-pasos li { text-align: left; }
@@ -278,7 +278,7 @@ body.tb-full #pantalla { padding-bottom: 0; }
 .tbl-bola { width: var(--bola-w, min(46%, 186px)); top: var(--bola-y, 50%);
   box-shadow: inset 0 0 30px rgba(180,230,255,.45), inset 10px 12px 24px -12px rgba(255,255,255,.7), inset -12px -16px 26px -12px rgba(0,0,0,.45),
     0 0 0 5px #5a3d22, 0 0 0 8px var(--tb-oro), 0 0 40px color-mix(in srgb, var(--tb-aura-b) 55%, transparent); }
-.tbl-orbita { position: absolute; inset: 8%; border-radius: 50%; border: 2px dotted rgba(255,233,168,.6); z-index: 1; pointer-events: none; animation: tblAura 22s linear infinite; }
+.tbl-orbita { position: absolute; inset: 8%; border-radius: 50%; border: 2px dotted rgba(255,233,168,.6); z-index: 1; pointer-events: none; animation: tblAura 22s linear; }
 .tbl-tiro { position: absolute; left: 0; right: 0; top: var(--tiro-y, 70%); z-index: 3; display: flex; justify-content: center; pointer-events: none; }
 .tbl-tiro-base { pointer-events: auto; display: flex; align-items: center; gap: 12px; padding: 6px 12px 6px 10px; border-radius: 24px; border: 2px solid #3b2612;
   background: linear-gradient(180deg, #8a5e33, #4e3118); box-shadow: inset 0 2px 0 rgba(255,220,150,.25), inset 0 -3px 0 rgba(0,0,0,.35), 0 6px 14px rgba(0,0,0,.45); }
@@ -313,7 +313,7 @@ body.tb-full #pantalla { padding-bottom: 0; }
 .tbl-rosa { position: absolute; left: 50%; top: var(--bola-y, 50%); width: calc(var(--bola-w, 170px) * 1.62); aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; z-index: 0; pointer-events: none;
   background: repeating-conic-gradient(from 0deg, rgba(255,233,168,.55) 0deg 1.2deg, transparent 1.2deg 10deg);
   -webkit-mask: radial-gradient(circle closest-side, transparent 80%, #000 83%, #000 88%, transparent 90%, transparent 93%, #000 95%, transparent 97%); mask: radial-gradient(circle closest-side, transparent 80%, #000 83%, #000 88%, transparent 90%, transparent 93%, #000 95%, transparent 97%);
-  animation: tblAura 80s linear infinite; }
+  animation: tblAura 80s linear; }
 .tbl.en-pregunta .tbl-rosa { display: none; }
 @media (prefers-reduced-motion: reduce) { .tbl-rosa { animation: none; } }
 
@@ -348,12 +348,12 @@ body.tb-full #pantalla { padding-bottom: 0; }
 .tbl-sendero .todo { stroke: rgba(255,233,168,.55); stroke-width: 3.5; stroke-dasharray: 1 7; }
 
 /* Ambiente: nubes que pasan y aves en el cielo */
-.tbl-nube { position: absolute; left: -30%; width: 74px; height: 22px; border-radius: 40px; background: rgba(255,250,235,.26); pointer-events: none; z-index: 0; animation: tblNubePasa 46s linear infinite; }
+.tbl-nube { position: absolute; left: -30%; width: 74px; height: 22px; border-radius: 40px; background: rgba(255,250,235,.26); pointer-events: none; z-index: 0; animation: tblNubePasa 46s linear; }
 .tbl-nube::before { content: ""; position: absolute; width: 36px; height: 30px; left: 14px; top: -14px; border-radius: 50%; background: inherit; }
 .tbl-nube::after { content: ""; position: absolute; width: 26px; height: 24px; left: 40px; top: -9px; border-radius: 50%; background: inherit; }
 @keyframes tblNubePasa { from { transform: translateX(0); } to { transform: translateX(520px); } }
-.tbl-ave { position: absolute; left: -10%; width: 16px; height: 8px; border-top: 2px solid rgba(43,34,24,.55); border-radius: 50% 50% 0 0; pointer-events: none; z-index: 0; animation: tblAvePasa 18s linear infinite; }
-.tbl-ave::after { content: ""; position: absolute; inset: -3px -3px auto -3px; height: 8px; border-top: 2px solid rgba(43,34,24,.55); border-radius: 50% 50% 0 0; animation: tblAleteo .5s ease-in-out infinite alternate; }
+.tbl-ave { position: absolute; left: -10%; width: 16px; height: 8px; border-top: 2px solid rgba(43,34,24,.55); border-radius: 50% 50% 0 0; pointer-events: none; z-index: 0; animation: tblAvePasa 18s linear; }
+.tbl-ave::after { content: ""; position: absolute; inset: -3px -3px auto -3px; height: 8px; border-top: 2px solid rgba(43,34,24,.55); border-radius: 50% 50% 0 0; animation: tblAleteo .5s ease-in-out alternate; }
 @keyframes tblAvePasa { from { transform: translateX(0) translateY(0); } 50% { transform: translateX(260px) translateY(-14px); } to { transform: translateX(520px) translateY(0); } }
 @keyframes tblAleteo { from { transform: scaleY(1); } to { transform: scaleY(-.6); } }
 
@@ -461,7 +461,7 @@ body.tb-full #pantalla { padding-bottom: 0; }
 .tbl-arreo { position: relative; }
 
 /* F1152 · Tablero: marco interior sencillo (sin figuras en las esquinas) */
-.tbl-mesa::after { content: ""; position: absolute; inset: 6px; z-index: 3; pointer-events: none; border-radius: 18px; border: 2px solid rgba(217,164,65,.55); box-shadow: inset 0 0 0 4px rgba(40,22,8,.42), inset 0 0 0 5px rgba(217,164,65,.22); }/* F1152 · Caja cerrada de madera: veta en la tapa y en el cuerpo{ background-image: repeating-linear-gradient(-7deg, rgba(42,24,10,0) 0 11px, rgba(42,24,10,.26) 11px 12px), linear-gradient(160deg, #9a6a3a, #5b3a1d); }/* F1153 · Cofre de madera cerrado: se abre levantando la tapa{ position: absolute; left: 50%; top: 58px; width: 250px; height: 136px; margin-left: -125px; perspective: 700px; animation: tblCofreRespira 4.6s ease-in-out infinite; }
+.tbl-mesa::after { content: ""; position: absolute; inset: 6px; z-index: 3; pointer-events: none; border-radius: 18px; border: 2px solid rgba(217,164,65,.55); box-shadow: inset 0 0 0 4px rgba(40,22,8,.42), inset 0 0 0 5px rgba(217,164,65,.22); }/* F1152 · Caja cerrada de madera: veta en la tapa y en el cuerpo{ background-image: repeating-linear-gradient(-7deg, rgba(42,24,10,0) 0 11px, rgba(42,24,10,.26) 11px 12px), linear-gradient(160deg, #9a6a3a, #5b3a1d); }/* F1153 · Cofre de madera cerrado: se abre levantando la tapa{ position: absolute; left: 50%; top: 58px; width: 250px; height: 136px; margin-left: -125px; perspective: 700px; animation: tblCofreRespira 4.6s ease-in-out; }
 @keyframes tblCofreRespira { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
 .tbl-caja.abriendo { animation: tblCajaSale .45s 1.35s ease forwards; }
 @keyframes tblCajaSale { from { opacity: 1; } to { opacity: 0; } }
@@ -543,7 +543,7 @@ body.tb-full .ambiente i, body.tb-full .ambiente::before, body.tb-full .ambiente
 .tbl-oveja.dorada img { filter: drop-shadow(0 0 8px rgba(255,211,77,.8)); }
 .tbl-oveja.avispero img { filter: drop-shadow(0 3px 3px rgba(0,0,0,.45)); }
 .tbl-oveja.picado img { animation: tblMal .3s ease; }
-@media (prefers-reduced-motion: no-preference) { .tbl-oveja.avispero img { animation: tblZumba .5s ease-in-out infinite; } }
+@media (prefers-reduced-motion: no-preference) { .tbl-oveja.avispero img { animation: tblZumba .5s ease-in-out; } }
 @keyframes tblZumba { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
 
 /* F1247 · Atrapa la cosecha: caen por su propio camino (Web Animations), con manzana dorada, gota de rocío y racha */
@@ -552,7 +552,7 @@ body.tb-full .ambiente i, body.tb-full .ambiente::before, body.tb-full .ambiente
 .tbl-caida.mov.tocada { opacity: 0; scale: 1.4; transition: opacity .2s ease, scale .2s ease; }
 .tbl-caida.dorada img { filter: drop-shadow(0 0 10px rgba(255,211,77,.85)); }
 .tbl-caida.rocio img { filter: drop-shadow(0 0 8px #9fd8ff); }
-@media (prefers-reduced-motion: no-preference) { .tbl-caida.dorada img { animation: tblDoradaBrilla 1s ease-in-out infinite; } }
+@media (prefers-reduced-motion: no-preference) { .tbl-caida.dorada img { animation: tblDoradaBrilla 1s ease-in-out; } }
 @keyframes tblDoradaBrilla { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
 
 /* F1248 · Ovejas en fuga: prado claro y fresco (antes verde oscuro con puntos) y sombras suaves, para que las figuras se vean limpias */

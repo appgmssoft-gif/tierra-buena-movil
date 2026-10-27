@@ -3,7 +3,7 @@
 .ip-fl{transform-box:fill-box;transform-origin:50% 100%}
 .ip-fl.v{transform-origin:50% 0}
 @media (prefers-reduced-motion:no-preference){
-  html:not([data-anim=off]):not([data-eco="2"]) .ip-fl{animation:ip-mece 6.5s ease-in-out infinite alternate}
+  html:not([data-anim=off]):not([data-eco="2"]) .ip-fl{animation:ip-mece 6.5s ease-in-out alternate}
   html:not([data-anim=off]):not([data-eco="2"]) .ip-fl.v{animation-duration:8.5s;animation-delay:-3s}
 }
 @keyframes ip-mece{from{transform:rotate(-1.4deg)}to{transform:rotate(1.4deg)}}
