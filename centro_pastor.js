@@ -6,7 +6,11 @@
    app.js solo llama a TBCentroPastor.miembros(p, ctx); si la función nueva no está en la base, devuelve false
    y app.js usa la lista de siempre. */
 // F1444 · Iconos 2.5D del centro (primer bloque). Lo que no esté aquí sigue con su emoji.
-const ICO3 = { vigl: 'iglesia', vis: 'casa', mie: 'gente', bien: 'brote', chat: 'chat', avi: 'altavoz', plp: 'libro', age: 'calendario', mcal: 'calendario', asi: 'check', cul: 'libro', mem: 'persona', min: 'iglesia' };
+const ICO3 = { vigl: 'iglesia', vis: 'casa', mie: 'gente', bien: 'brote', chat: 'chat', avi: 'altavoz', plp: 'libro', age: 'calendario', mcal: 'calendario', asi: 'check', cul: 'libro', mem: 'persona', min: 'iglesia',
+  // F1445 · segundo bloque
+  arc: 'carpeta', impl: 'carpeta', rsem: 'grafico', salud: 'corazon', cfg: 'engranaje', cop: 'disco', bus: 'lupa', mgl: 'diana', cla: 'birrete', form: 'formulario', tar: 'tarjeta',
+  // F1446 · tercer bloque: completa el centro del pastor
+  ora: 'manos', sol: 'persona', tem: 'mente', fam: 'gente', cel: 'chispas', disp: 'reloj', bol: 'periodico', mpre: 'micro', enc: 'check', eti: 'marcador', ani: 'corazon', act: 'tienda', aseo: 'escoba', mig: 'brujula', pro: 'edificio', plan: 'calendario', cli: 'termometro', rli: 'gente', rev: 'ciclo', tab: 'bloques', imp: 'flecha', dat: 'pluma', lec: 'ojo' };
 (function () {
   'use strict';
   const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
