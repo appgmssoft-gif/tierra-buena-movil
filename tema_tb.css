@@ -1,0 +1,55 @@
+/* tema_tb.css · F1456 · sistema de tarjetas translúcidas (capa final, sin cambiar pantallas).
+   Regla de tonos: nunca vidrio claro sobre vidrio claro. El vidrio siempre sobre color.
+   Niveles: fondo medio saturado · vidrio blanco (contenido) · tinte sólido (lo importante). */
+:root{
+  --tb-vidrio-hi:rgba(255,255,255,.6);
+  --tb-vidrio-lo:rgba(255,255,255,.34);
+  --tb-borde-vidrio:rgba(255,255,255,.85);
+  --tb-sombra-vidrio:0 20px 36px -18px rgba(20,30,15,.55);
+  --tb-verde:#24502c;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --tb-vidrio-hi:rgba(40,46,38,.72);
+    --tb-vidrio-lo:rgba(40,46,38,.42);
+    --tb-borde-vidrio:rgba(255,255,255,.14);
+    --tb-sombra-vidrio:0 20px 36px -18px rgba(0,0,0,.7);
+    --tb-verde:#9cc793;
+  }
+}
+/* Barra inferior: vidrio con borde de luz y reflejo superior */
+.barra.barra{
+  background:linear-gradient(160deg,var(--tb-vidrio-hi),var(--tb-vidrio-lo));
+  -webkit-backdrop-filter:saturate(180%) blur(28px);
+  backdrop-filter:saturate(180%) blur(28px);
+  border:1px solid var(--tb-borde-vidrio);
+  border-radius:30px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),var(--tb-sombra-vidrio);
+}
+@media (prefers-reduced-motion:reduce){ .barra.barra{transition:none} }
+
+/* Palabra (F1456): tarjetas translúcidas sobre color. Convive con los íconos de la familia canelo
+   y con el encabezado "Hoy" que ya cambia según la hora. Solo aplica al carrusel bajo .hoy. */
+:root{ --tb-fondo-carrusel:#cbd7c4; }
+@media (prefers-color-scheme:dark){ :root{ --tb-fondo-carrusel:#1e2a20; } }
+.hoy + .mi-car{position:relative;isolation:isolate;overflow:hidden;border-radius:28px;padding:6px 0 2px}
+.hoy + .mi-car::before{content:"";position:absolute;inset:-24px -16px;z-index:-1;pointer-events:none;
+  background:radial-gradient(circle at 12% 18%,rgba(232,169,62,.85) 0,rgba(232,169,62,0) 42%),
+             radial-gradient(circle at 88% 74%,rgba(79,147,179,.8) 0,rgba(79,147,179,0) 46%),
+             radial-gradient(circle at 36% 104%,rgba(63,127,75,.75) 0,rgba(63,127,75,0) 44%),
+             var(--tb-fondo-carrusel)}
+.hoy + .mi-car .mi-sl{background:linear-gradient(160deg,rgba(255,255,255,.5),rgba(255,255,255,.22));
+  -webkit-backdrop-filter:blur(22px) saturate(170%);backdrop-filter:blur(22px) saturate(170%);
+  border:1px solid rgba(255,255,255,.75);color:#1b2418;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 20px 36px -20px rgba(20,30,15,.5)}
+.hoy + .mi-car .mi-sl.c1{background:linear-gradient(160deg,rgba(232,169,62,.78),rgba(160,100,20,.7));color:#fff8ea;border-color:rgba(255,255,255,.35)}
+.hoy + .mi-car .mi-sl.c2{background:linear-gradient(160deg,rgba(47,110,62,.86),rgba(24,66,38,.84));color:#f3efe0;border-color:rgba(255,255,255,.25)}
+.hoy + .mi-car .mi-sl.c3{background:linear-gradient(160deg,rgba(79,147,179,.82),rgba(38,96,124,.8));color:#f3fafc;border-color:rgba(255,255,255,.3)}
+.hoy + .mi-car .mi-sl.c5{background:linear-gradient(160deg,rgba(228,131,106,.78),rgba(186,86,62,.74));color:#fff8f0;border-color:rgba(255,255,255,.35)}
+.hoy + .mi-car .mi-sl-bt{background:rgba(255,255,255,.88);color:#24502c;border-color:rgba(255,255,255,.9);box-shadow:0 8px 18px -10px rgba(20,50,25,.6)}
+.hoy + .mi-car .mi-sl.c1 .mi-sl-bt,.hoy + .mi-car .mi-sl.c5 .mi-sl-bt{color:#6b2f1e}
+.hoy + .mi-car .mi-sl.c2 .mi-sl-bt,.hoy + .mi-car .mi-sl.c3 .mi-sl-bt{color:#1f4d2a}
+@media (prefers-color-scheme:dark){
+  .hoy + .mi-car .mi-sl{color:#f3efe0;background:linear-gradient(160deg,rgba(40,46,38,.7),rgba(24,28,22,.6));border-color:rgba(255,255,255,.14);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 20px 36px -20px rgba(0,0,0,.7)}
+  .hoy + .mi-car .mi-sl-bt{background:rgba(243,239,224,.92);color:#1d3a24}
+}
