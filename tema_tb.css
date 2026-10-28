@@ -59,24 +59,59 @@
    Los íconos de cada ficha no cambian: siguen siendo los de la app (reemplazo automático por familia). */
 :is(.hoy,.mb-ayuda) + .mi-car .mi-sl.c4{background:linear-gradient(160deg,rgba(150,80,50,.9),rgba(104,52,32,.88));color:#fff4ea;border-color:rgba(255,255,255,.3)}
 :is(.hoy,.mb-ayuda) + .mi-car .mi-sl.c4 .mi-sl-bt{color:#6b2f1e}
-:is(.mb-ayuda,.hoy) ~ .mi-bento{position:relative;isolation:isolate;padding:10px;border-radius:28px;overflow:hidden}
-:is(.mb-ayuda,.hoy) ~ .mi-bento::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+:is(.mb-ayuda,.hoy,.pas-hero,.mi-car,.perfil-hero) ~ .mi-bento{position:relative;isolation:isolate;padding:10px;border-radius:28px;overflow:hidden}
+:is(.mb-ayuda,.hoy,.pas-hero,.mi-car,.perfil-hero) ~ .mi-bento::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
   background:radial-gradient(circle at 10% 12%,rgba(232,169,62,.8) 0,rgba(232,169,62,0) 44%),
              radial-gradient(circle at 92% 40%,rgba(79,147,179,.75) 0,rgba(79,147,179,0) 46%),
              radial-gradient(circle at 30% 100%,rgba(63,127,75,.75) 0,rgba(63,127,75,0) 46%),
              var(--tb-fondo-carrusel)}
-:is(.mb-ayuda,.hoy) ~ .mi-bento .mi-b{-webkit-backdrop-filter:blur(20px) saturate(170%);backdrop-filter:blur(20px) saturate(170%);
+:is(.mb-ayuda,.hoy,.pas-hero,.mi-car,.perfil-hero) ~ .mi-bento .mi-b{-webkit-backdrop-filter:blur(20px) saturate(170%);backdrop-filter:blur(20px) saturate(170%);
   border:1px solid rgba(255,255,255,.55);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 18px 32px -20px rgba(20,30,15,.6)}
-:is(.mb-ayuda,.hoy) ~ .mi-bento .mi-b small{opacity:.92}
-:is(.mb-ayuda,.hoy) ~ .mi-bento .mb1{background:linear-gradient(160deg,rgba(47,110,62,.86),rgba(24,66,38,.84))}
-:is(.mb-ayuda,.hoy) ~ .mi-bento .mb2{background:linear-gradient(160deg,rgba(142,92,14,.92),rgba(104,66,10,.9))}
-:is(.mb-ayuda,.hoy) ~ .mi-bento .mb3{background:linear-gradient(160deg,rgba(150,80,50,.92),rgba(104,52,32,.9))}
-:is(.mb-ayuda,.hoy) ~ .mi-bento .mb4{background:linear-gradient(90deg,rgba(34,90,118,.92),rgba(46,108,138,.9))}
-:is(.mb-ayuda,.hoy) ~ .mi-bento .mb5{background:linear-gradient(160deg,rgba(104,76,148,.88),rgba(66,46,104,.86))}
-:is(.mb-ayuda,.hoy) ~ .mi-bento .mb7{background:linear-gradient(160deg,rgba(150,112,40,.92),rgba(70,76,40,.9))}
-:is(.mb-ayuda,.hoy) ~ .mi-bento .mb6{background:linear-gradient(160deg,rgba(120,96,20,.92),rgba(44,92,52,.9))}
+:is(.mb-ayuda,.hoy,.pas-hero,.mi-car,.perfil-hero) ~ .mi-bento .mi-b small{opacity:.92}
+:is(.mb-ayuda,.hoy,.pas-hero,.mi-car,.perfil-hero) ~ .mi-bento .mb1{background:linear-gradient(160deg,rgba(47,110,62,.78),rgba(24,66,38,.78))}
+:is(.mb-ayuda,.hoy,.pas-hero,.mi-car,.perfil-hero) ~ .mi-bento .mb2{background:linear-gradient(160deg,rgba(142,92,14,.78),rgba(104,66,10,.78))}
+:is(.mb-ayuda,.hoy,.pas-hero,.mi-car,.perfil-hero) ~ .mi-bento .mb3{background:linear-gradient(160deg,rgba(150,80,50,.78),rgba(104,52,32,.78))}
+:is(.mb-ayuda,.hoy,.pas-hero,.mi-car,.perfil-hero) ~ .mi-bento .mb4{background:linear-gradient(90deg,rgba(34,90,118,.78),rgba(46,108,138,.78))}
+:is(.mb-ayuda,.hoy,.pas-hero,.mi-car,.perfil-hero) ~ .mi-bento .mb5{background:linear-gradient(160deg,rgba(104,76,148,.78),rgba(66,46,104,.78))}
+:is(.mb-ayuda,.hoy,.pas-hero,.mi-car,.perfil-hero) ~ .mi-bento .mb7{background:linear-gradient(160deg,rgba(150,112,40,.78),rgba(70,76,40,.78))}
+:is(.mb-ayuda,.hoy,.pas-hero,.mi-car,.perfil-hero) ~ .mi-bento .mb6{background:linear-gradient(160deg,rgba(120,96,20,.78),rgba(44,92,52,.78))}
 /* Ayuda y contactos: se mantiene claro y reconocible (es un botón de emergencia) */
 .mb-ayuda{background:linear-gradient(90deg,rgba(172,64,58,.92),rgba(140,48,44,.9));color:#fff;border-color:rgba(255,255,255,.4);
   -webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 16px 30px -18px rgba(90,20,20,.6)}
 .mb-ayuda small{opacity:.95}
-#pantalla :is(.mb-ayuda,.hoy) ~ .mi-bento button.mi-b:not(.mb-ancho):not(.mb-alto){min-height:116px}
+#pantalla :is(.mb-ayuda,.hoy,.pas-hero,.mi-car,.perfil-hero) ~ .mi-bento button.mi-b:not(.mb-ancho):not(.mb-alto){min-height:116px}
+
+/* F1458 · íconos en círculo (pedido del dueño): los contenedores de íconos de tarjetas, de Crear y la cabecera de Vida son redondos. */
+.card .t>span:first-child:not(.flecha),.ec-ci,.hero-ico{border-radius:50%!important}
+
+/* F1458 · translúcido: fichas de vidrio con brillo y más desenfoque (Palabra, Vida, Iglesia y Pastor). */
+:is(.mb-ayuda,.hoy,.pas-hero,.mi-car,.perfil-hero) ~ .mi-bento .mi-b{isolation:isolate;-webkit-backdrop-filter:blur(26px) saturate(180%);backdrop-filter:blur(26px) saturate(180%);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 0 0 1px rgba(255,255,255,.1),0 18px 32px -20px rgba(20,30,15,.6)}
+:is(.mb-ayuda,.hoy,.pas-hero,.mi-car,.perfil-hero) ~ .mi-bento .mi-b::after{content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;background:linear-gradient(165deg,rgba(255,255,255,.3),rgba(255,255,255,0) 52%)}
+@media (prefers-color-scheme:dark){ :is(.mb-ayuda,.hoy,.pas-hero,.mi-car,.perfil-hero) ~ .mi-bento .mi-b::after{background:linear-gradient(165deg,rgba(255,255,255,.14),rgba(255,255,255,0) 52%)} }
+@media (prefers-reduced-motion:reduce){ :is(.mb-ayuda,.hoy,.pas-hero,.mi-car,.perfil-hero) ~ .mi-bento .mi-b{transition:none} }
+/* F1458 · legibilidad sobre vidrio: sombra suave al texto de las fichas (el fondo se ve a través). */
+:is(.mb-ayuda,.hoy,.pas-hero,.mi-car,.perfil-hero) ~ .mi-bento .mi-b b,:is(.mb-ayuda,.hoy,.pas-hero,.mi-car,.perfil-hero) ~ .mi-bento .mi-b small{text-shadow:0 1px 2px rgba(10,20,8,.45)}
+
+/* F1458 · Inicio (propuesta aprobada 1, 2 y 4):
+   1) la tarjeta «Elige el lugar de tu jardín» pasa a vidrio translúcido sobre la escena;
+   2) los íconos de la barra superior (Mensajes, Vivero, Más) en círculo;
+   4) la etiqueta de categoría de «Obtener gotas» no se corta («PRÁCTICAS»). */
+.inicio-limpio .il-elige{background:color-mix(in srgb,var(--papel) 58%,transparent);-webkit-backdrop-filter:blur(24px) saturate(170%);backdrop-filter:blur(24px) saturate(170%);border:1px solid rgba(255,255,255,.38);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 18px 34px -22px rgba(20,30,15,.6)}
+html body .ib-bt .ib-ic{border-radius:50%!important;width:36px!important;height:36px!important;display:grid;place-items:center;background:color-mix(in srgb,var(--papel) 26%,transparent)!important;border:1px solid rgba(201,162,74,.55)!important;box-sizing:border-box}
+.og-h{flex-wrap:wrap;row-gap:4px}
+.og-h>span{white-space:nowrap;letter-spacing:.04em;min-width:0}
+
+/* F1458 · Perfil: tarjetas de arriba (días, capítulos, resaltados, notas) y Meta de hoy en vidrio sobre color, como Mi camino. */
+.perfil-hero ~ .stats .stat{color:#fff;border:1px solid rgba(255,255,255,.3);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 18px 32px -20px rgba(20,30,15,.6);-webkit-backdrop-filter:blur(26px) saturate(180%);backdrop-filter:blur(26px) saturate(180%);position:relative;isolation:isolate;overflow:hidden}
+.perfil-hero ~ .stats .stat::after{content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;background:linear-gradient(165deg,rgba(255,255,255,.3),rgba(255,255,255,0) 52%)}
+.perfil-hero ~ .stats .stat:nth-child(1){background:linear-gradient(160deg,rgba(150,80,50,.78),rgba(104,52,32,.78))}
+.perfil-hero ~ .stats .stat:nth-child(2){background:linear-gradient(160deg,rgba(47,110,62,.78),rgba(24,66,38,.78))}
+.perfil-hero ~ .stats .stat:nth-child(3){background:linear-gradient(160deg,rgba(104,76,148,.78),rgba(66,46,104,.78))}
+.perfil-hero ~ .stats .stat:nth-child(4){background:linear-gradient(160deg,rgba(142,92,14,.78),rgba(104,66,10,.78))}
+.perfil-hero ~ .stats .stat b{background:none;-webkit-text-fill-color:#fff;color:#fff;font-size:1.6rem;text-shadow:0 1px 2px rgba(10,20,8,.45)}
+.perfil-hero ~ .stats .stat small{color:rgba(255,255,255,.92);text-shadow:0 1px 2px rgba(10,20,8,.45)}
+.perfil-hero ~ .meta-hoy{color:#fff;border:1px solid rgba(255,255,255,.3);background:linear-gradient(160deg,rgba(47,110,62,.78),rgba(24,66,38,.78));-webkit-backdrop-filter:blur(26px) saturate(180%);backdrop-filter:blur(26px) saturate(180%);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 18px 32px -20px rgba(20,30,15,.6)}
+.perfil-hero ~ .meta-hoy h3,.perfil-hero ~ .meta-hoy p,.perfil-hero ~ .meta-hoy .suave{color:#fff;text-shadow:0 1px 2px rgba(10,20,8,.45)}
+.perfil-hero ~ .meta-hoy .anillo{color:#fff}
+.perfil-hero ~ .meta-hoy .anillo b{color:#fff;text-shadow:0 1px 2px rgba(10,20,8,.45)}
+.perfil-hero ~ .meta-hoy .t{color:#fff;text-shadow:0 1px 2px rgba(10,20,8,.45)}
