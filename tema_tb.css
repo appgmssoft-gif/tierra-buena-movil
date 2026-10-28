@@ -115,3 +115,20 @@ html body .ib-bt .ib-ic{border-radius:50%!important;width:36px!important;height:
 .perfil-hero ~ .meta-hoy .anillo{color:#fff}
 .perfil-hero ~ .meta-hoy .anillo b{color:#fff;text-shadow:0 1px 2px rgba(10,20,8,.45)}
 .perfil-hero ~ .meta-hoy .t{color:#fff;text-shadow:0 1px 2px rgba(10,20,8,.45)}
+
+/* F1458 · Iglesia (miembro y pastor): saludo y píldoras de «Mi espacio» en vidrio translúcido. */
+#pantalla .saludo{background:color-mix(in srgb,var(--papel) 58%,transparent)!important;-webkit-backdrop-filter:blur(24px) saturate(170%);backdrop-filter:blur(24px) saturate(170%);border:1px solid rgba(255,255,255,.38);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 18px 34px -22px rgba(20,30,15,.6)}
+#pantalla .mi-chips .mi-chip{background:color-mix(in srgb,var(--papel) 60%,transparent)!important;-webkit-backdrop-filter:blur(22px) saturate(170%);backdrop-filter:blur(22px) saturate(170%);border:1px solid rgba(255,255,255,.4)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+
+/* F1458 · Crear: biblioteca, videos/canciones, Estudios y Miembros en vidrio sobre color.
+   Prédicas (2.ª de «Plantillas para compartir») se queda con su estilo actual, a pedido del dueño. */
+#pantalla .ec-biblio,#pantalla .ec-duo>*,#pantalla .ec-cats>*:not(:nth-child(2)){position:relative;isolation:isolate;overflow:hidden;color:#fff!important;border:1px solid rgba(255,255,255,.3)!important;-webkit-backdrop-filter:blur(26px) saturate(180%);backdrop-filter:blur(26px) saturate(180%);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 18px 32px -20px rgba(20,30,15,.6)!important;background:linear-gradient(160deg,rgba(47,110,62,.78),rgba(24,66,38,.78))!important}
+#pantalla .ec-duo>*:nth-child(2){background:linear-gradient(160deg,rgba(142,92,14,.78),rgba(104,66,10,.78))!important}
+#pantalla .ec-cats>*:nth-child(3){background:linear-gradient(90deg,rgba(34,90,118,.78),rgba(46,108,138,.78))!important}
+#pantalla .ec-biblio::after,#pantalla .ec-duo>*::after,#pantalla .ec-cats>*:not(:nth-child(2))::after{content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;background:linear-gradient(165deg,rgba(255,255,255,.3),rgba(255,255,255,0) 52%)}
+#pantalla .ec-biblio *,#pantalla .ec-duo>* *,#pantalla .ec-cats>*:not(:nth-child(2)) *{color:#fff!important;text-shadow:0 1px 2px rgba(10,20,8,.45)}
+#pantalla .ec-biblio .ec-ci,#pantalla .ec-duo .ec-ci,#pantalla .ec-cats>*:not(:nth-child(2)) .ec-ci{background:rgba(255,255,255,.22)!important;border:1px solid rgba(255,255,255,.4)!important}
+
+/* F1458 · experiencia: el ícono de la esquina de las fichas pequeñas es más chico y no tapa el título. */
+:is(.mb-ayuda,.hoy,.pas-hero,.mi-car,.perfil-hero) ~ .mi-bento .mi-b:not(.mb-alto) .mi-b-big{width:36px;height:36px;top:6px;right:6px}
+:is(.mb-ayuda,.hoy,.pas-hero,.mi-car,.perfil-hero) ~ .mi-bento .mi-b:not(.mb-alto) .mi-b-big svg{width:26px;height:26px}
